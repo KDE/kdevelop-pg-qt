@@ -1,0 +1,14 @@
+AC_INIT(configure.in)
+
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(kdev-pg, 0.1)
+
+AC_LANG_CPLUSPLUS
+AC_PROG_CXX
+AC_PROG_LEX
+AC_PROG_YACC
+
+AC_OUTPUT(Makefile
+  src/Makefile
+  examples/Makefile
+  examples/fact/Makefile)

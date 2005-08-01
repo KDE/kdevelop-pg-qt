@@ -49,6 +49,16 @@ namespace
     if (initial && s.find(_G_system.zero()) != s.end())
       out << "true /*epsilon*/";
   }
+
+  void gen_test_condition(model::node *node, std::ostream &out)
+  {
+    world::node_set s = _G_system.FIRST(node);
+    if (reduce_to_epsilon(node))
+      s.insert(_G_system.FOLLOW(node).begin(), _G_system.FOLLOW(node).end());
+
+    gen_condition(s, out);
+  }
+
 } // namespace
 
 void code_generator::operator()(model::node *node)
@@ -75,7 +85,7 @@ void code_generator::visit_terminal(model::terminal_item *node)
 void code_generator::visit_bang(model::bang_item *node)
 {
   out << "while (";
-  gen_condition(_G_system.FIRST[node->_M_item], out);
+  gen_test_condition(node->_M_item, out);
   out << ") {" << std::endl;
   visit_node(node->_M_item);
   out << "}" << std::endl;
@@ -127,7 +137,7 @@ void code_generator::visit_alternative(model::alternative_item *node)
       if (cond)
 	out << "(" << cond->_M_code << ") && (";
 
-      gen_condition(_G_system.FIRST[n], out);
+      gen_test_condition(n, out);
 
       if (cond)
 	out << ")";
@@ -155,16 +165,11 @@ void code_generator::visit_evolve(model::evolve_item *node)
   if (cond)
     out << "(" << cond->_M_code << " && ";
 
-  gen_condition(_G_system.FIRST[node], out);
+  gen_test_condition(node, out);
 
   if (cond)
     out << ")";
 
-  if (reduce_to_epsilon(node->_M_item))
-    {
-      out << std::endl << "|| ";
-      gen_condition(_G_system.FOLLOW[node->_M_symbol], out);
-    }
   out << ") {" << std::endl;
 
   out << node->_M_code;
@@ -271,14 +276,14 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
       initial = false;
     }
 
-  out << "else" << std::endl << "return 0;"
+  out << "else" << std::endl << "return 0;" << std::endl
       << std::endl;
 
   out << "yynode->end_token = token_stream->index() - 1;" << std::endl
       << std::endl
-      << "return yynode;"
-      << std::endl
-      << "}" << std::endl << std::endl;
+      << "return yynode;" << std::endl
+      << "}" << std::endl 
+      << std::endl;
 }
 
 void gen_token::operator()(std::pair<std::string, model::terminal_item*> const &__it)

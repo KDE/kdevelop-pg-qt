@@ -156,7 +156,7 @@ bool reduce_to_epsilon(model::node *node)
     }
   else if (model::symbol_item *s = node_cast<model::symbol_item*>(node))
     {
-      return _G_system.FIRST[s].find(_G_system.zero()) != _G_system.FIRST[s].end(); // hmm
+      return _G_system.FIRST(s).find(_G_system.zero()) != _G_system.FIRST(s).end(); // hmm
     }
   else if (model::bang_item *b = node_cast<model::bang_item*>(node))
     {

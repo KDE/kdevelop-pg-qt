@@ -30,7 +30,7 @@ void initialize_FOLLOW::operator()(model::node *node)
 
 void initialize_FOLLOW::visit_symbol(model::symbol_item *node)
 {
-  if (_G_system.FOLLOW.find(node) != _G_system.FOLLOW.end())
+  if (_G_system.find_in_FOLLOW(node) != _G_system.FOLLOW_end())
     return ;
 
   default_visitor::visit_symbol(node);
@@ -50,7 +50,7 @@ void next_FOLLOW::operator()(model::node *node)
 
 void next_FOLLOW::merge(model::node*__dest, world::node_set const &source)
 {
-  world::node_set &dest = _G_system.FOLLOW[__dest];
+  world::node_set &dest = _G_system.FOLLOW(__dest);
 
   for (world::node_set::const_iterator it = source.begin(); it != source.end(); ++it)
     {
@@ -65,22 +65,22 @@ void next_FOLLOW::visit_condition(model::condition_item *node)
 {
   default_visitor::visit_condition(node);
 
-  merge(node, _G_system.FOLLOW[node->_M_item]);
+  merge(node, _G_system.FOLLOW(node->_M_item));
 }
 
 void next_FOLLOW::visit_annotation(model::annotation_item *node)
 {
   default_visitor::visit_annotation(node);
 
-  merge(node, _G_system.FOLLOW[node->_M_item]);
+  merge(node, _G_system.FOLLOW(node->_M_item));
 }
 
 void next_FOLLOW::visit_alternative(model::alternative_item *node)
 {
   default_visitor::visit_alternative(node);
 
-  merge(node, _G_system.FOLLOW[node->_M_left]);
-  merge(node, _G_system.FOLLOW[node->_M_right]);
+  merge(node, _G_system.FOLLOW(node->_M_left));
+  merge(node, _G_system.FOLLOW(node->_M_right));
 }
 
 void next_FOLLOW::visit_cons(model::cons_item *node)
@@ -95,8 +95,8 @@ void next_FOLLOW::visit_cons(model::cons_item *node)
   for (std::set <model::symbol_item*>::iterator it = symbols.begin(); it != symbols.end(); ++it)
     {
       model::symbol_item *sym = *it;
-      merge(sym, _G_system.FIRST[node->_M_right]);
-      merge(node, _G_system.FOLLOW[sym]);
+      merge(sym, _G_system.FIRST(node->_M_right));
+      merge(node, _G_system.FOLLOW(sym));
     }
 }
 
@@ -105,7 +105,7 @@ void next_FOLLOW::visit_evolve(model::evolve_item *node)
   default_visitor::visit_evolve(node);
 
   model::terminal_item *teof = _G_system.push_terminal("EOF");
-  if (node == _G_system.start && _G_system.FOLLOW[node->_M_symbol].insert(teof).second)
+  if (node == _G_system.start && _G_system.FOLLOW(node->_M_symbol).insert(teof).second)
     _M_changed = true;
 
   check_right_tail(node->_M_item);
@@ -124,21 +124,21 @@ void next_FOLLOW::check_right_tail(model::node *node)
     {
       check_right_tail(a->_M_left);
       check_right_tail(a->_M_right);
-      merge(a, _G_system.FOLLOW[_M_symbol]);
+      merge(a, _G_system.FOLLOW(_M_symbol));
     }
   else if (model::symbol_item *s = node_cast<model::symbol_item*>(node))
     {
-      merge(s, _G_system.FOLLOW[_M_symbol]);
+      merge(s, _G_system.FOLLOW(_M_symbol));
     }
   else if (model::annotation_item *a = node_cast<model::annotation_item*>(node))
     {
       check_right_tail(a->_M_item);
-      merge(a, _G_system.FOLLOW[a->_M_item]);
+      merge(a, _G_system.FOLLOW(a->_M_item));
     }
   else if (model::condition_item *c = node_cast<model::condition_item*>(node))
     {
       check_right_tail(c->_M_item);
-      merge(c, _G_system.FOLLOW[c->_M_item]);
+      merge(c, _G_system.FOLLOW(c->_M_item));
     }
 }
 

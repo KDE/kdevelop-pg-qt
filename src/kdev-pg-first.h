@@ -50,7 +50,7 @@ struct next_FIRST: protected default_visitor
 
 protected:
   bool block_merge(bool block);
-  void merge(model::node *__dest, model::node *__source);
+  void merge(model::node *__dest, model::node *__source, int K = 1);
 
   virtual void visit_node(model::node *node);
   virtual void visit_zero(model::zero_item *node);

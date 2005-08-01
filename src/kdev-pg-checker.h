@@ -40,6 +40,9 @@ protected:
 
   virtual void visit_evolve(model::evolve_item *node);
   virtual void visit_alternative(model::alternative_item *node);
+
+private:
+  model::node *_M_toplevel;
 };
 
 struct FIRST_FOLLOW_conflict_checker: protected default_visitor

@@ -28,7 +28,7 @@ void initialize_FIRST::operator ()(model::node *node)
 
 void initialize_FIRST::visit_node(model::node *node)
 {
-  if (_G_system.FIRST.find(node) != _G_system.FIRST.end())
+  if (_G_system.find_in_FIRST(node) != _G_system.FIRST_end())
     return ; // nothing to do
 
   default_visitor::visit_node(node);
@@ -36,12 +36,12 @@ void initialize_FIRST::visit_node(model::node *node)
 
 void initialize_FIRST::visit_zero(model::zero_item *node)
 {
-  _G_system.FIRST[node].insert(node);
+  _G_system.FIRST(node).insert(node);
 }
 
 void initialize_FIRST::visit_terminal(model::terminal_item *node)
 {
-  _G_system.FIRST[node].insert(node);
+  _G_system.FIRST(node).insert(node);
 }
 
 void initialize_FIRST::visit_condition(model::condition_item *node)
@@ -108,10 +108,10 @@ bool next_FIRST::block_merge(bool block)
   return old;
 }
 
-void next_FIRST::merge(model::node *__dest, model::node *__source)
+void next_FIRST::merge(model::node *__dest, model::node *__source, int K)
 {
-  world::node_set &dest = _G_system.FIRST[__dest];
-  world::node_set &source = _G_system.FIRST[__source];
+  world::node_set &dest = _G_system.FIRST(__dest, K);
+  world::node_set &source = _G_system.FIRST(__source, K);
 
   for (world::node_set::iterator it = source.begin(); it != source.end(); ++it)
     {
@@ -145,7 +145,7 @@ void next_FIRST::visit_bang(model::bang_item *node)
 {
   default_visitor::visit_bang(node);
 
-  if (_G_system.FIRST[node].insert(_G_system.zero()).second)
+  if (_G_system.FIRST(node).insert(_G_system.zero()).second)
     _M_changed = true;
 
   merge(node, node->_M_item);
@@ -172,12 +172,14 @@ void next_FIRST::visit_cons(model::cons_item *node)
   merge(node, node->_M_left);
 
   bool blocked = block_merge(true);
-  reduce_to_epsilon(node->_M_left);
   visit_node(node->_M_right);
   block_merge(blocked);
 
   if (reduce_to_epsilon(node->_M_left))
-    merge(node, node->_M_right);
+    {
+      visit_node(node->_M_right);
+      merge(node, node->_M_right);
+    }
 }
 
 void next_FIRST::visit_evolve(model::evolve_item *node)

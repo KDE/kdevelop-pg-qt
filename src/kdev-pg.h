@@ -45,6 +45,14 @@ namespace pg
 
 struct world
 {
+  typedef std::set<model::node*> node_set;
+  typedef std::map<std::string, model::symbol_item*> symbol_set;
+  typedef std::map<std::string, model::terminal_item*> terminal_set;
+  typedef std::multimap<model::symbol_item*, model::evolve_item *> environment;
+
+  typedef std::map<std::pair<model::node*, int>, node_set> first_set;
+  typedef std::map<std::pair<model::node*, int>, node_set> follow_set;
+
   world()
     : token_stream("kdev_pg_token_stream"), decl(0), bits(0),
       start(0), _M_zero(0)
@@ -91,10 +99,23 @@ struct world
     return (*it).second;
   }
 
-  typedef std::set <model::node*> node_set;
-  typedef std::map<std::string, model::symbol_item*> symbol_set;
-  typedef std::map<std::string, model::terminal_item*> terminal_set;
-  typedef std::multimap<model::symbol_item*, model::evolve_item *> environment;
+  first_set::iterator FIRST_begin() { return FIRST_K.begin(); }
+  first_set::iterator FIRST_end() { return FIRST_K.end(); }
+
+  follow_set::iterator FOLLOW_begin() { return FOLLOW_K.begin(); }
+  follow_set::iterator FOLLOW_end() { return FOLLOW_K.end(); }
+
+  node_set &FIRST(model::node *node, int K = 1)
+  { return FIRST_K[std::make_pair(node, K)]; }
+
+  node_set &FOLLOW(model::node *node, int K = 1)
+  { return FOLLOW_K[std::make_pair(node, K)]; }
+
+  first_set::iterator find_in_FIRST(model::node *node, int K = 1)
+  { return FIRST_K.find(std::make_pair(node, K)); }
+
+  follow_set::iterator find_in_FOLLOW(model::node *node, int K = 1)
+  { return FOLLOW_K.find(std::make_pair(node, K)); }
 
   model::evolve_item *start;
   model::zero_item *_M_zero;
@@ -105,13 +126,13 @@ struct world
 
   environment env;
 
-  std::map<model::node*, node_set> FIRST;
-  std::map<model::node*, node_set> FOLLOW;
+private:
+  first_set FIRST_K;
+  follow_set FOLLOW_K;
 };
 
 bool reduce_to_epsilon(model::node *node);
 std::ostream &operator << (std::ostream &out, model::node const *__node);
-
 
 extern world _G_system;
 extern FILE *file;

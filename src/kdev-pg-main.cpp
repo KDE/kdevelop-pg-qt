@@ -67,13 +67,13 @@ struct debug_rule
     pretty_printer p(out);
     p(e);
     out << " FIRST:[";
-    std::for_each(_G_system.FIRST[e].begin(), 
-		  _G_system.FIRST[e].end(), p);
+    std::for_each(_G_system.FIRST(e).begin(), 
+		  _G_system.FIRST(e).end(), p);
     out << "]";
 
     out << " FOLLOW:[";
-    std::for_each(_G_system.FOLLOW[e->_M_symbol].begin(), 
-		  _G_system.FOLLOW[e->_M_symbol].end(), p);
+    std::for_each(_G_system.FOLLOW(e->_M_symbol).begin(), 
+		  _G_system.FOLLOW(e->_M_symbol).end(), p);
     out << "]";
     out << std::endl;
   }

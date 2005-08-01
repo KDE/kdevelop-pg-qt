@@ -27,7 +27,9 @@
 
 void FIRST_FIRST_conflict_checker::operator()(model::node *node)
 {
+  _M_toplevel = node;
   visit_node(node);
+  node = 0;
 }
 
 void FIRST_FIRST_conflict_checker::visit_alternative(model::alternative_item *node)
@@ -39,8 +41,8 @@ void FIRST_FIRST_conflict_checker::visit_alternative(model::alternative_item *no
 
 void FIRST_FIRST_conflict_checker::check(model::node *left, model::node *right)
 {
-  world::node_set const &left_first = _G_system.FIRST[left];
-  world::node_set const &right_first = _G_system.FIRST[right];
+  world::node_set const &left_first = _G_system.FIRST(left);
+  world::node_set const &right_first = _G_system.FIRST(right);
 
   std::deque<model::node*> U;
   std::set_intersection(left_first.begin(), left_first.end(),
@@ -50,7 +52,8 @@ void FIRST_FIRST_conflict_checker::check(model::node *left, model::node *right)
     {
       pretty_printer p(std::cerr);
       std::cerr << "** WARNING found FIRST/FIRST conflict in" << std::endl << "\tRule ``";
-      p(left);
+      p(_M_toplevel);
+      //      p(left);
       std::cerr << "''" << std::endl << "\tTerminals [";
 
       std::deque<model::node*>::iterator it = U.begin();
@@ -95,8 +98,8 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
   if (!sym)
     sym = node;
 
-  world::node_set const &first = _G_system.FIRST[node];
-  world::node_set const &follow = _G_system.FOLLOW[sym];
+  world::node_set const &first = _G_system.FIRST(node);
+  world::node_set const &follow = _G_system.FOLLOW(sym);
 
   std::deque<model::node*> U;
 
@@ -172,7 +175,7 @@ void empty_FIRST_checker::operator()(model::node *node)
 
 void empty_FIRST_checker::visit_symbol(model::symbol_item *node)
 {
-  if (_G_system.FIRST[node].empty())
+  if (_G_system.FIRST(node).empty())
     {
       std::cerr << "** WARNING Empty FIRST set for ``" << node->_M_name << "''" << std::endl;
       exit(EXIT_FAILURE);

@@ -8,6 +8,7 @@
 #include "kdev-pg-allocator.h"
 #include "kdev-pg-list.h"
 #include "kdev-pg-token-stream.h"
+#include <cassert>
 
 struct assignment_statement_ast;
 struct block_statement_ast;
@@ -227,9 +228,6 @@ class fact
   public:
     typedef kdev_pg_token_stream token_stream_type;
     typedef kdev_pg_token_stream::token_type token_type;
-    typedef kdev_pg_memory_pool memory_pool_type;
-
-    kdev_pg_memory_pool *memory_pool;
     kdev_pg_token_stream *token_stream;
     int yytoken;
 
@@ -242,17 +240,20 @@ class fact
       return (yytoken = token_stream->next_token());
     }
 
-    // memory pool
-    void set_memory_pool(kdev_pg_memory_pool *p)
-    {
-      memory_pool = p;
-    }
     // token stream
     void set_token_stream(kdev_pg_token_stream *s)
     {
       token_stream = s;
     }
 
+    // memory pool
+    typedef kdev_pg_memory_pool memory_pool_type;
+
+    kdev_pg_memory_pool *memory_pool;
+    void set_memory_pool(kdev_pg_memory_pool *p)
+    {
+      memory_pool = p;
+    }
     template <class T>
     inline T *create()
     {

@@ -2,7 +2,6 @@
 // WARNING! All changes made in this file will be lost!
 
 #include "fact.h"
-#include <cassert>
 
 
 bool fact::parse_assignment_statement(assignment_statement_ast **yynode)
@@ -14,21 +13,36 @@ bool fact::parse_assignment_statement(assignment_statement_ast **yynode)
   if (yytoken == Token_ID)
     {
       if (yytoken != Token_ID)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       (*yynode)->id = token_stream->index() - 1;
       yylex();
       if (yytoken != Token_EQUAL)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       expression_ast *__node_0 = 0;
       if (!parse_expression(&__node_0))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       if (yytoken != Token_SEMICOLON)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -44,27 +58,36 @@ bool fact::parse_block_statement(block_statement_ast **yynode)
   if (yytoken == Token_LBRACE)
     {
       if (yytoken != Token_LBRACE)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       while (yytoken == Token_ID
              || yytoken == Token_LBRACE
              || yytoken == Token_IF
              || yytoken == Token_RETURN)
         {
-          {
-            statement_ast *__node_1 = 0;
-            if (!parse_statement(&__node_1))
+          statement_ast *__node_1 = 0;
+          if (!parse_statement(&__node_1))
+            {
+              assert(0);
               return false;
-            (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_1, memory_pool);
-          }
-
+            }
+          (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_1, memory_pool);
         }
       if (yytoken != Token_RBRACE)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -80,37 +103,46 @@ bool fact::parse_body(body_ast **yynode)
   if (yytoken == Token_LBRACE)
     {
       if (yytoken != Token_LBRACE)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       while (yytoken == Token_VAR)
         {
-          {
-            declaration_ast *__node_2 = 0;
-            if (!parse_declaration(&__node_2))
+          declaration_ast *__node_2 = 0;
+          if (!parse_declaration(&__node_2))
+            {
+              assert(0);
               return false;
-            (*yynode)->decl_sequence = snoc((*yynode)->decl_sequence, __node_2, memory_pool);
-          }
-
+            }
+          (*yynode)->decl_sequence = snoc((*yynode)->decl_sequence, __node_2, memory_pool);
         }
       while (yytoken == Token_ID
              || yytoken == Token_LBRACE
              || yytoken == Token_IF
              || yytoken == Token_RETURN)
         {
-          {
-            statement_ast *__node_3 = 0;
-            if (!parse_statement(&__node_3))
+          statement_ast *__node_3 = 0;
+          if (!parse_statement(&__node_3))
+            {
+              assert(0);
               return false;
-            (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_3, memory_pool);
-          }
-
+            }
+          (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_3, memory_pool);
         }
       if (yytoken != Token_RBRACE)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -128,17 +160,29 @@ bool fact::parse_condition(condition_ast **yynode)
     {
       expression_ast *__node_4 = 0;
       if (!parse_expression(&__node_4))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       if (yytoken != Token_EQUAL_EQUAL)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       (*yynode)->op = token_stream->index() - 1;
       yylex();
       expression_ast *__node_5 = 0;
       if (!parse_expression(&__node_5))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -154,26 +198,44 @@ bool fact::parse_declaration(declaration_ast **yynode)
   if (yytoken == Token_VAR)
     {
       if (yytoken != Token_VAR)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       variable_ast *__node_6 = 0;
       if (!parse_variable(&__node_6))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       while (yytoken == Token_COMMA)
         {
           if (yytoken != Token_COMMA)
-            return false;
+            {
+              assert(0);
+              return false;
+            }
           yylex();
           variable_ast *__node_7 = 0;
           if (!parse_variable(&__node_7))
-            return false;
+            {
+              assert(0);
+              return false;
+            }
         }
       if (yytoken != Token_SEMICOLON)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -191,20 +253,32 @@ bool fact::parse_expression(expression_ast **yynode)
     {
       mult_expression_ast *__node_8 = 0;
       if (!parse_mult_expression(&__node_8))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       while (yytoken == Token_MINUS)
         {
           if (yytoken != Token_MINUS)
-            return false;
+            {
+              assert(0);
+              return false;
+            }
           (*yynode)->op = token_stream->index() - 1;
           yylex();
           mult_expression_ast *__node_9 = 0;
           if (!parse_mult_expression(&__node_9))
-            return false;
+            {
+              assert(0);
+              return false;
+            }
         }
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -220,49 +294,70 @@ bool fact::parse_function_definition(function_definition_ast **yynode)
   if (yytoken == Token_FUNCTION)
     {
       if (yytoken != Token_FUNCTION)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       if (yytoken != Token_ID)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       (*yynode)->id = token_stream->index() - 1;
       yylex();
       if (yytoken != Token_LPAREN)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       if (yytoken == Token_ID)
         {
-          {
-            if (yytoken != Token_ID)
+          if (yytoken != Token_ID)
+            {
+              assert(0);
               return false;
-            (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
-            yylex();
-          }
-
+            }
+          (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
+          yylex();
           while (yytoken == Token_COMMA)
             {
               if (yytoken != Token_COMMA)
-                return false;
-              yylex();
-              {
-                if (yytoken != Token_ID)
+                {
+                  assert(0);
                   return false;
-                (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
-                yylex();
-              }
-
+                }
+              yylex();
+              if (yytoken != Token_ID)
+                {
+                  assert(0);
+                  return false;
+                }
+              (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
+              yylex();
             }
         }
       else if (true /*epsilon*/)
       {}
       if (yytoken != Token_RPAREN)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       body_ast *__node_10 = 0;
       if (!parse_body(&__node_10))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -278,34 +373,58 @@ bool fact::parse_if_statement(if_statement_ast **yynode)
   if (yytoken == Token_IF)
     {
       if (yytoken != Token_IF)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       if (yytoken != Token_LPAREN)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       condition_ast *__node_11 = 0;
       if (!parse_condition(&__node_11))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       if (yytoken != Token_RPAREN)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       yylex();
       statement_ast *__node_12 = 0;
       if (!parse_statement(&__node_12))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       if (yytoken == Token_ELSE)
         {
           if (yytoken != Token_ELSE)
-            return false;
+            {
+              assert(0);
+              return false;
+            }
           yylex();
           statement_ast *__node_13 = 0;
           if (!parse_statement(&__node_13))
-            return false;
+            {
+              assert(0);
+              return false;
+            }
         }
       else if (true /*epsilon*/)
       {}
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -323,20 +442,32 @@ bool fact::parse_mult_expression(mult_expression_ast **yynode)
     {
       primary_ast *__node_14 = 0;
       if (!parse_primary(&__node_14))
-        return false;
+        {
+          assert(0);
+          return false;
+        }
       while (yytoken == Token_STAR)
         {
           if (yytoken != Token_STAR)
-            return false;
+            {
+              assert(0);
+              return false;
+            }
           (*yynode)->op = token_stream->index() - 1;
           yylex();
           primary_ast *__node_15 = 0;
           if (!parse_primary(&__node_15))
-            return false;
+            {
+              assert(0);
+              return false;
+            }
         }
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -355,43 +486,58 @@ bool fact::parse_primary(primary_ast **yynode)
       if (yytoken == Token_NUMBER)
         {
           if (yytoken != Token_NUMBER)
-            return false;
+            {
+              assert(0);
+              return false;
+            }
           (*yynode)->num = token_stream->index() - 1;
           yylex();
         }
       else if (yytoken == Token_ID)
         {
           if (yytoken != Token_ID)
-            return false;
+            {
+              assert(0);
+              return false;
+            }
           (*yynode)->id = token_stream->index() - 1;
           yylex();
           if (yytoken == Token_LPAREN)
             {
               if (yytoken != Token_LPAREN)
-                return false;
-              yylex();
-              {
-                expression_ast *__node_16 = 0;
-                if (!parse_expression(&__node_16))
+                {
+                  assert(0);
                   return false;
-                (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_16, memory_pool);
-              }
-
+                }
+              yylex();
+              expression_ast *__node_16 = 0;
+              if (!parse_expression(&__node_16))
+                {
+                  assert(0);
+                  return false;
+                }
+              (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_16, memory_pool);
               while (yytoken == Token_COMMA)
                 {
                   if (yytoken != Token_COMMA)
-                    return false;
-                  yylex();
-                  {
-                    expression_ast *__node_17 = 0;
-                    if (!parse_expression(&__node_17))
+                    {
+                      assert(0);
                       return false;
-                    (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_17, memory_pool);
-                  }
-
+                    }
+                  yylex();
+                  expression_ast *__node_17 = 0;
+                  if (!parse_expression(&__node_17))
+                    {
+                      assert(0);
+                      return false;
+                    }
+                  (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_17, memory_pool);
                 }
               if (yytoken != Token_RPAREN)
-                return false;
+                {
+                  assert(0);
+                  return false;
+                }
               yylex();
             }
           else if (true /*epsilon*/)
@@ -399,7 +545,10 @@ bool fact::parse_primary(primary_ast **yynode)
         }
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -416,19 +565,25 @@ bool fact::parse_program(program_ast **yynode)
     {
       while (yytoken == Token_FUNCTION)
         {
-          {
-            function_definition_ast *__node_18 = 0;
-            if (!parse_function_definition(&__node_18))
+          function_definition_ast *__node_18 = 0;
+          if (!parse_function_definition(&__node_18))
+            {
+              assert(0);
               return false;
-            (*yynode)->fun_sequence = snoc((*yynode)->fun_sequence, __node_18, memory_pool);
-          }
-
+            }
+          (*yynode)->fun_sequence = snoc((*yynode)->fun_sequence, __node_18, memory_pool);
         }
       if (Token_EOF != yytoken)
-        return false;
+        {
+          assert(0);
+          return false;
+        }
     }
   else
-    return false;
+    {
+      assert(0);
+      return false;
+    }
 
   (*yynode)->end_token = token_stream->index() - 1;
 
@@ -444,17 +599,29 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                          if (yytoken == Token_RETURN)
                            {
                              if (yytoken != Token_RETURN)
-                               return false;
+                               {
+                                 assert(0);
+                                 return false;
+                               }
                              yylex();
                              expression_ast *__node_19 = 0;
                              if (!parse_expression(&__node_19))
-                               return false;
+                               {
+                                 assert(0);
+                                 return false;
+                               }
                              if (yytoken != Token_SEMICOLON)
-                               return false;
+                               {
+                                 assert(0);
+                                 return false;
+                               }
                              yylex();
                            }
                          else
-                           return false;
+                           {
+                             assert(0);
+                             return false;
+                           }
 
                          (*yynode)->end_token = token_stream->index() - 1;
 
@@ -476,29 +643,44 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                                {
                                  assignment_statement_ast *__node_20 = 0;
                                  if (!parse_assignment_statement(&__node_20))
-                                   return false;
+                                   {
+                                     assert(0);
+                                     return false;
+                                   }
                                }
                              else if (yytoken == Token_IF)
                                {
                                  if_statement_ast *__node_21 = 0;
                                  if (!parse_if_statement(&__node_21))
-                                   return false;
+                                   {
+                                     assert(0);
+                                     return false;
+                                   }
                                }
                              else if (yytoken == Token_LBRACE)
                                {
                                  block_statement_ast *__node_22 = 0;
                                  if (!parse_block_statement(&__node_22))
-                                   return false;
+                                   {
+                                     assert(0);
+                                     return false;
+                                   }
                                }
                              else if (yytoken == Token_RETURN)
                                {
                                  return_statement_ast *__node_23 = 0;
                                  if (!parse_return_statement(&__node_23))
-                                   return false;
+                                   {
+                                     assert(0);
+                                     return false;
+                                   }
                                }
                            }
                          else
-                           return false;
+                           {
+                             assert(0);
+                             return false;
+                           }
 
                          (*yynode)->end_token = token_stream->index() - 1;
 
@@ -514,12 +696,18 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                          if (yytoken == Token_ID)
                            {
                              if (yytoken != Token_ID)
-                               return false;
+                               {
+                                 assert(0);
+                                 return false;
+                               }
                              (*yynode)->id = token_stream->index() - 1;
                              yylex();
                            }
                          else
-                           return false;
+                           {
+                             assert(0);
+                             return false;
+                           }
 
                          (*yynode)->end_token = token_stream->index() - 1;
 

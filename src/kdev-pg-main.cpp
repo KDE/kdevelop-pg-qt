@@ -93,6 +93,10 @@ int main(int, char *argv[])
         {
           parser = arg + 9;
         }
+      else if (!strcmp("--no-ast", arg))
+	{
+	  _G_system.generate_ast = false;
+	}
       else if (!strcmp("--help", arg))
 	{
 	  usage();
@@ -187,20 +191,33 @@ int main(int, char *argv[])
 
     s << "#ifndef " << parser << "_h_INCLUDED" << std::endl
       << "#define " << parser << "_h_INCLUDED" << std::endl
-      << std::endl
-      << "#include \"kdev-pg-memory-pool.h\"" << std::endl
-      << "#include \"kdev-pg-allocator.h\"" << std::endl
-      << "#include \"kdev-pg-list.h\"" << std::endl;
+      << std::endl;
+
+    if (_G_system.generate_ast)
+      {
+	s << "#include \"kdev-pg-memory-pool.h\"" << std::endl
+	  << "#include \"kdev-pg-allocator.h\"" << std::endl
+	  << "#include \"kdev-pg-list.h\"" << std::endl;
+      }
    
     if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
       s << "#include \"kdev-pg-token-stream.h\"" << std::endl;
 
-    s << std::endl;
+    s << "#include <cassert>" << std::endl
+      << std::endl;
 
-    __ast();
+    if (_G_system.generate_ast)
+      {
+	__ast();
+      }
+
     __decls();
-    __visitor();
-    __default_visitor();
+
+    if (_G_system.generate_ast)
+      {
+	__visitor();
+	__default_visitor();
+      }
 
     s << "#endif" << std::endl << std::endl;
 
@@ -220,14 +237,17 @@ int main(int, char *argv[])
       << std::endl;
 
     s << "#include \"" << parser << ".h\"" << std::endl
-      << "#include <cassert>" << std::endl
       << std::endl;
 
     generate_parser_bits __bits(s, parser);
     generate_visitor_bits __visitor_bits(s, parser);
 
     __bits();
-    __visitor_bits();
+
+    if (_G_system.generate_ast)
+      {
+	__visitor_bits();
+      }
 
     std::string oname = parser;
     oname += ".cpp";

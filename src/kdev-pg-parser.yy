@@ -17,9 +17,9 @@ void yyerror(char const *msg);
     int ival;
 }
 
-%token T_IDENTIFIER T_CODE T_ARROW T_TERMINAL T_CONDITION T_TOKEN_STREAM
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CONDITION T_TOKEN_STREAM
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_CONDITION T_TOKEN_STREAM name code_opt
+%type<str> T_IDENTIFIER T_TERMINAL T_CONDITION T_TOKEN_STREAM name code_opt
 %type<item> rule item primary_item unary_item question question_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<ival> scope
@@ -89,7 +89,7 @@ postfix_item
 	  clone_tree cl;
 	  $$ = pg::cons($1, pg::bang(pg::cons(cl.clone($3), cl.clone($1))));
 	}
-    | postfix_item T_CODE               { $$ = pg::action($1, $2); }
+    | postfix_item T_CONDITION               { $$ = pg::action($1, $2); }
     ;
 
 item_sequence
@@ -119,8 +119,8 @@ item
     ;
 
 code_opt
-    :                                   { $$ = ""; }
-    | T_CODE                            { $$ = $1; }
+    :                                        { $$ = ""; }
+    | T_CONDITION                            { $$ = $1; }
     ;
 
 %%
@@ -191,17 +191,6 @@ again:
     } else if (yytoken == '-' && ch == '-') {
         do { inp(); } while (ch != EOF && ch != '\n');
         goto again;
-    } else if (yytoken == '/' && ch == ':') {
-        inp();
-        yytext = yyptr;
-        yylval.str = yytext;
-        do 
-          { *yyptr++ = ch; yytoken = ch; inp(); } 
-        while (ch != 0 && (yytoken != ':' || ch != '/'));
-        assert(ch == '/');
-        *(yyptr-1) = '\0';
-        inp();
-        return (yytoken = T_CODE);
     } else if (yytoken == '[' && ch == ':') {
         inp();
         yytext = yyptr;

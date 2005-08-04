@@ -54,13 +54,15 @@ struct world
   typedef std::map<std::pair<model::node*, int>, node_set> follow_set;
 
   world()
-    : token_stream("kdev_pg_token_stream"), decl(0), bits(0),
+    : token_stream("kdev_pg_token_stream"), decl(0), bits(0), generate_ast(true),
       start(0), _M_zero(0)
   {}
 
+  // options
   char const *token_stream;
   char const *decl;
   char const *bits;
+  bool generate_ast;
 
   model::zero_item *zero()
   {

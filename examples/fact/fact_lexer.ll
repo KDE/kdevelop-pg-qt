@@ -58,21 +58,3 @@ WS		[ \t\r\n]
 
 int yywrap() { return 1; }
 
-void fact::require_token(int token, int expected)
-{
-  if (token != expected)
-    {
-      std::cerr << "** ERROR expected token type ``" << expected
-                << "'' found ``" << token << "''" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-}
-
-void fact::require(fact_ast_node *node, int kind)
-{
-  if (!node || node->kind != kind)
-    {
-      std::cerr << "** SYNTAX ERROR" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-}

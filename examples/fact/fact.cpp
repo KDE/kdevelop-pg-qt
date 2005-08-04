@@ -5,505 +5,541 @@
 #include <cassert>
 
 
-assignment_statement_ast *fact::parse_assignment_statement()
+bool fact::parse_assignment_statement(assignment_statement_ast **yynode)
 {
-  assignment_statement_ast *yynode = create<assignment_statement_ast>();
+  *yynode = create<assignment_statement_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_ID)
     {
-      require_token(yytoken, Token_ID);
-      yynode->id = token_stream->index() - 1;
+      if (yytoken != Token_ID)
+        return false;
+      (*yynode)->id = token_stream->index() - 1;
       yylex();
-      require_token(yytoken, Token_EQUAL);
+      if (yytoken != Token_EQUAL)
+        return false;
       yylex();
-      require(yynode->expr = parse_expression(), fact_ast_node::Kind_expression);
-      require_token(yytoken, Token_SEMICOLON);
+      expression_ast *__node_0 = 0;
+      if (!parse_expression(&__node_0))
+        return false;
+      if (yytoken != Token_SEMICOLON)
+        return false;
       yylex();
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-block_statement_ast *fact::parse_block_statement()
+bool fact::parse_block_statement(block_statement_ast **yynode)
 {
-  block_statement_ast *yynode = create<block_statement_ast>();
+  *yynode = create<block_statement_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_LBRACE)
     {
-      require_token(yytoken, Token_LBRACE);
+      if (yytoken != Token_LBRACE)
+        return false;
       yylex();
-
       while (yytoken == Token_ID
              || yytoken == Token_LBRACE
              || yytoken == Token_IF
              || yytoken == Token_RETURN)
         {
           {
-            statement_ast *stmt;
-            require(stmt = parse_statement(), fact_ast_node::Kind_statement);
-            yynode->stmt_sequence = snoc(yynode->stmt_sequence, stmt, memory_pool);
+            statement_ast *__node_1 = 0;
+            if (!parse_statement(&__node_1))
+              return false;
+            (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_1, memory_pool);
           }
 
         }
-
-      require_token(yytoken, Token_RBRACE);
+      if (yytoken != Token_RBRACE)
+        return false;
       yylex();
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-body_ast *fact::parse_body()
+bool fact::parse_body(body_ast **yynode)
 {
-  body_ast *yynode = create<body_ast>();
+  *yynode = create<body_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_LBRACE)
     {
-      require_token(yytoken, Token_LBRACE);
+      if (yytoken != Token_LBRACE)
+        return false;
       yylex();
-
       while (yytoken == Token_VAR)
         {
           {
-            declaration_ast *decl;
-            require(decl = parse_declaration(), fact_ast_node::Kind_declaration);
-            yynode->decl_sequence = snoc(yynode->decl_sequence, decl, memory_pool);
+            declaration_ast *__node_2 = 0;
+            if (!parse_declaration(&__node_2))
+              return false;
+            (*yynode)->decl_sequence = snoc((*yynode)->decl_sequence, __node_2, memory_pool);
           }
 
         }
-
       while (yytoken == Token_ID
              || yytoken == Token_LBRACE
              || yytoken == Token_IF
              || yytoken == Token_RETURN)
         {
           {
-            statement_ast *stmt;
-            require(stmt = parse_statement(), fact_ast_node::Kind_statement);
-            yynode->stmt_sequence = snoc(yynode->stmt_sequence, stmt, memory_pool);
+            statement_ast *__node_3 = 0;
+            if (!parse_statement(&__node_3))
+              return false;
+            (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_3, memory_pool);
           }
 
         }
-
-      require_token(yytoken, Token_RBRACE);
+      if (yytoken != Token_RBRACE)
+        return false;
       yylex();
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-condition_ast *fact::parse_condition()
+bool fact::parse_condition(condition_ast **yynode)
 {
-  condition_ast *yynode = create<condition_ast>();
+  *yynode = create<condition_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_ID
       || yytoken == Token_NUMBER)
     {
-      require(yynode->left_expr = parse_expression(), fact_ast_node::Kind_expression);
-      require_token(yytoken, Token_EQUAL_EQUAL);
-      yynode->op = token_stream->index() - 1;
+      expression_ast *__node_4 = 0;
+      if (!parse_expression(&__node_4))
+        return false;
+      if (yytoken != Token_EQUAL_EQUAL)
+        return false;
+      (*yynode)->op = token_stream->index() - 1;
       yylex();
-      require(yynode->right_expr = parse_expression(), fact_ast_node::Kind_expression);
+      expression_ast *__node_5 = 0;
+      if (!parse_expression(&__node_5))
+        return false;
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-declaration_ast *fact::parse_declaration()
+bool fact::parse_declaration(declaration_ast **yynode)
 {
-  declaration_ast *yynode = create<declaration_ast>();
+  *yynode = create<declaration_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_VAR)
     {
-      require_token(yytoken, Token_VAR);
+      if (yytoken != Token_VAR)
+        return false;
       yylex();
-      require(yynode->var = parse_variable(), fact_ast_node::Kind_variable);
-
+      variable_ast *__node_6 = 0;
+      if (!parse_variable(&__node_6))
+        return false;
       while (yytoken == Token_COMMA)
         {
-          require_token(yytoken, Token_COMMA);
+          if (yytoken != Token_COMMA)
+            return false;
           yylex();
-          require(yynode->var = parse_variable(), fact_ast_node::Kind_variable);
+          variable_ast *__node_7 = 0;
+          if (!parse_variable(&__node_7))
+            return false;
         }
-
-      require_token(yytoken, Token_SEMICOLON);
+      if (yytoken != Token_SEMICOLON)
+        return false;
       yylex();
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-expression_ast *fact::parse_expression()
+bool fact::parse_expression(expression_ast **yynode)
 {
-  expression_ast *yynode = create<expression_ast>();
+  *yynode = create<expression_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_ID
       || yytoken == Token_NUMBER)
     {
-      require(yynode->left_expr = parse_mult_expression(), fact_ast_node::Kind_mult_expression);
-
+      mult_expression_ast *__node_8 = 0;
+      if (!parse_mult_expression(&__node_8))
+        return false;
       while (yytoken == Token_MINUS)
         {
-          require_token(yytoken, Token_MINUS);
-          yynode->op = token_stream->index() - 1;
+          if (yytoken != Token_MINUS)
+            return false;
+          (*yynode)->op = token_stream->index() - 1;
           yylex();
-          require(yynode->right_expr = parse_mult_expression(), fact_ast_node::Kind_mult_expression);
+          mult_expression_ast *__node_9 = 0;
+          if (!parse_mult_expression(&__node_9))
+            return false;
         }
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-function_definition_ast *fact::parse_function_definition()
+bool fact::parse_function_definition(function_definition_ast **yynode)
 {
-  function_definition_ast *yynode = create<function_definition_ast>();
+  *yynode = create<function_definition_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_FUNCTION)
     {
-      require_token(yytoken, Token_FUNCTION);
+      if (yytoken != Token_FUNCTION)
+        return false;
       yylex();
-      require_token(yytoken, Token_ID);
-      yynode->id = token_stream->index() - 1;
+      if (yytoken != Token_ID)
+        return false;
+      (*yynode)->id = token_stream->index() - 1;
       yylex();
-      require_token(yytoken, Token_LPAREN);
+      if (yytoken != Token_LPAREN)
+        return false;
       yylex();
-
       if (yytoken == Token_ID)
         {
           {
-            require_token(yytoken, Token_ID);
-            yynode->param_sequence = snoc(yynode->param_sequence, token_stream->index() - 1, memory_pool);
+            if (yytoken != Token_ID)
+              return false;
+            (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
             yylex();
           }
 
           while (yytoken == Token_COMMA)
             {
-              require_token(yytoken, Token_COMMA);
+              if (yytoken != Token_COMMA)
+                return false;
               yylex();
               {
-                require_token(yytoken, Token_ID);
-                yynode->param_sequence = snoc(yynode->param_sequence, token_stream->index() - 1, memory_pool);
+                if (yytoken != Token_ID)
+                  return false;
+                (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
                 yylex();
               }
 
             }
         }
-
       else if (true /*epsilon*/)
       {}
-
-      require_token(yytoken, Token_RPAREN);
-
+      if (yytoken != Token_RPAREN)
+        return false;
       yylex();
-      require(yynode->body = parse_body(), fact_ast_node::Kind_body);
+      body_ast *__node_10 = 0;
+      if (!parse_body(&__node_10))
+        return false;
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-if_statement_ast *fact::parse_if_statement()
+bool fact::parse_if_statement(if_statement_ast **yynode)
 {
-  if_statement_ast *yynode = create<if_statement_ast>();
+  *yynode = create<if_statement_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_IF)
     {
-      require_token(yytoken, Token_IF);
+      if (yytoken != Token_IF)
+        return false;
       yylex();
-      require_token(yytoken, Token_LPAREN);
+      if (yytoken != Token_LPAREN)
+        return false;
       yylex();
-      require(yynode->cond = parse_condition(), fact_ast_node::Kind_condition);
-      require_token(yytoken, Token_RPAREN);
+      condition_ast *__node_11 = 0;
+      if (!parse_condition(&__node_11))
+        return false;
+      if (yytoken != Token_RPAREN)
+        return false;
       yylex();
-      require(yynode->stmt = parse_statement(), fact_ast_node::Kind_statement);
-
+      statement_ast *__node_12 = 0;
+      if (!parse_statement(&__node_12))
+        return false;
       if (yytoken == Token_ELSE)
         {
-          require_token(yytoken, Token_ELSE);
+          if (yytoken != Token_ELSE)
+            return false;
           yylex();
-          require(yynode->else_stmt = parse_statement(), fact_ast_node::Kind_statement);
+          statement_ast *__node_13 = 0;
+          if (!parse_statement(&__node_13))
+            return false;
         }
-
       else if (true /*epsilon*/)
       {}
-
     }
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-mult_expression_ast *fact::parse_mult_expression()
+bool fact::parse_mult_expression(mult_expression_ast **yynode)
 {
-  mult_expression_ast *yynode = create<mult_expression_ast>();
+  *yynode = create<mult_expression_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_ID
       || yytoken == Token_NUMBER)
     {
-      require(yynode->left_expr = parse_primary(), fact_ast_node::Kind_primary);
-
+      primary_ast *__node_14 = 0;
+      if (!parse_primary(&__node_14))
+        return false;
       while (yytoken == Token_STAR)
         {
-          require_token(yytoken, Token_STAR);
-          yynode->op = token_stream->index() - 1;
+          if (yytoken != Token_STAR)
+            return false;
+          (*yynode)->op = token_stream->index() - 1;
           yylex();
-          require(yynode->right_expr = parse_primary(), fact_ast_node::Kind_primary);
+          primary_ast *__node_15 = 0;
+          if (!parse_primary(&__node_15))
+            return false;
         }
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-primary_ast *fact::parse_primary()
+bool fact::parse_primary(primary_ast **yynode)
 {
-  primary_ast *yynode = create<primary_ast>();
+  *yynode = create<primary_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_ID
       || yytoken == Token_NUMBER)
     {
       if (yytoken == Token_NUMBER)
         {
-          require_token(yytoken, Token_NUMBER);
-          yynode->num = token_stream->index() - 1;
+          if (yytoken != Token_NUMBER)
+            return false;
+          (*yynode)->num = token_stream->index() - 1;
           yylex();
         }
-
       else if (yytoken == Token_ID)
         {
-          require_token(yytoken, Token_ID);
-          yynode->id = token_stream->index() - 1;
+          if (yytoken != Token_ID)
+            return false;
+          (*yynode)->id = token_stream->index() - 1;
           yylex();
-
           if (yytoken == Token_LPAREN)
             {
-              require_token(yytoken, Token_LPAREN);
+              if (yytoken != Token_LPAREN)
+                return false;
               yylex();
               {
-                expression_ast *arg;
-                require(arg = parse_expression(), fact_ast_node::Kind_expression);
-                yynode->arg_sequence = snoc(yynode->arg_sequence, arg, memory_pool);
+                expression_ast *__node_16 = 0;
+                if (!parse_expression(&__node_16))
+                  return false;
+                (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_16, memory_pool);
               }
 
               while (yytoken == Token_COMMA)
                 {
-                  require_token(yytoken, Token_COMMA);
+                  if (yytoken != Token_COMMA)
+                    return false;
                   yylex();
                   {
-                    expression_ast *arg;
-                    require(arg = parse_expression(), fact_ast_node::Kind_expression);
-                    yynode->arg_sequence = snoc(yynode->arg_sequence, arg, memory_pool);
+                    expression_ast *__node_17 = 0;
+                    if (!parse_expression(&__node_17))
+                      return false;
+                    (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_17, memory_pool);
                   }
 
                 }
-
-              require_token(yytoken, Token_RPAREN);
+              if (yytoken != Token_RPAREN)
+                return false;
               yylex();
             }
-
           else if (true /*epsilon*/)
           {}
-
         }
-
     }
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-program_ast *fact::parse_program()
+bool fact::parse_program(program_ast **yynode)
 {
-  program_ast *yynode = create<program_ast>();
+  *yynode = create<program_ast>();
 
-  yynode->start_token = token_stream->index() - 1;
+  (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_FUNCTION
-      || yytoken == Token_EOF)
+  if (yytoken == Token_FUNCTION)
     {
       while (yytoken == Token_FUNCTION)
         {
           {
-            function_definition_ast *fun;
-            require(fun = parse_function_definition(), fact_ast_node::Kind_function_definition);
-            yynode->fun_sequence = snoc(yynode->fun_sequence, fun, memory_pool);
+            function_definition_ast *__node_18 = 0;
+            if (!parse_function_definition(&__node_18))
+              return false;
+            (*yynode)->fun_sequence = snoc((*yynode)->fun_sequence, __node_18, memory_pool);
           }
 
         }
-
-      require_token(Token_EOF, yytoken);
+      if (Token_EOF != yytoken)
+        return false;
     }
-
   else
-    return 0;
+    return false;
 
-  yynode->end_token = token_stream->index() - 1;
+  (*yynode)->end_token = token_stream->index() - 1;
 
-  return yynode;
+  return true;
 }
 
-return_statement_ast *fact::parse_return_statement()
-                                        {
-                                          return_statement_ast *yynode = create<return_statement_ast>();
+bool fact::parse_return_statement(return_statement_ast **yynode)
+                       {
+                         *yynode = create<return_statement_ast>();
 
-                                          yynode->start_token = token_stream->index() - 1;
+                         (*yynode)->start_token = token_stream->index() - 1;
 
-                                          if (yytoken == Token_RETURN)
-                                            {
-                                              require_token(yytoken, Token_RETURN);
-                                              yylex();
-                                              require(yynode->expr = parse_expression(), fact_ast_node::Kind_expression);
-                                              require_token(yytoken, Token_SEMICOLON);
-                                              yylex();
-                                            }
+                         if (yytoken == Token_RETURN)
+                           {
+                             if (yytoken != Token_RETURN)
+                               return false;
+                             yylex();
+                             expression_ast *__node_19 = 0;
+                             if (!parse_expression(&__node_19))
+                               return false;
+                             if (yytoken != Token_SEMICOLON)
+                               return false;
+                             yylex();
+                           }
+                         else
+                           return false;
 
-                                          else
-                                            return 0;
+                         (*yynode)->end_token = token_stream->index() - 1;
 
-                                          yynode->end_token = token_stream->index() - 1;
+                         return true;
+                       }
 
-                                          return yynode;
-                                        }
+                       bool fact::parse_statement(statement_ast **yynode)
+                       {
+                         *yynode = create<statement_ast>();
 
-                                        statement_ast *fact::parse_statement()
-                                        {
-                                          statement_ast *yynode = create<statement_ast>();
+                         (*yynode)->start_token = token_stream->index() - 1;
 
-                                          yynode->start_token = token_stream->index() - 1;
+                         if (yytoken == Token_ID
+                             || yytoken == Token_LBRACE
+                             || yytoken == Token_IF
+                             || yytoken == Token_RETURN)
+                           {
+                             if (yytoken == Token_ID)
+                               {
+                                 assignment_statement_ast *__node_20 = 0;
+                                 if (!parse_assignment_statement(&__node_20))
+                                   return false;
+                               }
+                             else if (yytoken == Token_IF)
+                               {
+                                 if_statement_ast *__node_21 = 0;
+                                 if (!parse_if_statement(&__node_21))
+                                   return false;
+                               }
+                             else if (yytoken == Token_LBRACE)
+                               {
+                                 block_statement_ast *__node_22 = 0;
+                                 if (!parse_block_statement(&__node_22))
+                                   return false;
+                               }
+                             else if (yytoken == Token_RETURN)
+                               {
+                                 return_statement_ast *__node_23 = 0;
+                                 if (!parse_return_statement(&__node_23))
+                                   return false;
+                               }
+                           }
+                         else
+                           return false;
 
-                                          if (yytoken == Token_ID
-                                              || yytoken == Token_LBRACE
-                                              || yytoken == Token_IF
-                                              || yytoken == Token_RETURN)
-                                            {
-                                              if (yytoken == Token_ID)
-                                                {
-                                                  require(yynode->assgn_stmt = parse_assignment_statement(), fact_ast_node::Kind_assignment_statement);
-                                                }
+                         (*yynode)->end_token = token_stream->index() - 1;
 
-                                              else if (yytoken == Token_IF)
-                                                {
-                                                  require(yynode->if_stmt = parse_if_statement(), fact_ast_node::Kind_if_statement);
-                                                }
+                         return true;
+                       }
 
-                                              else if (yytoken == Token_LBRACE)
-                                                {
-                                                  require(yynode->block_stmt = parse_block_statement(), fact_ast_node::Kind_block_statement);
-                                                }
+                       bool fact::parse_variable(variable_ast **yynode)
+                       {
+                         *yynode = create<variable_ast>();
 
-                                              else if (yytoken == Token_RETURN)
-                                                {
-                                                  require(yynode->ret_stmt = parse_return_statement(), fact_ast_node::Kind_return_statement);
-                                                }
-                                            }
+                         (*yynode)->start_token = token_stream->index() - 1;
 
-                                          else
-                                            return 0;
+                         if (yytoken == Token_ID)
+                           {
+                             if (yytoken != Token_ID)
+                               return false;
+                             (*yynode)->id = token_stream->index() - 1;
+                             yylex();
+                           }
+                         else
+                           return false;
 
-                                          yynode->end_token = token_stream->index() - 1;
+                         (*yynode)->end_token = token_stream->index() - 1;
 
-                                          return yynode;
-                                        }
+                         return true;
+                       }
 
-                                        variable_ast *fact::parse_variable()
-                                        {
-                                          variable_ast *yynode = create<variable_ast>();
-
-                                          yynode->start_token = token_stream->index() - 1;
-
-                                          if (yytoken == Token_ID)
-                                            {
-                                              require_token(yytoken, Token_ID);
-                                              yynode->id = token_stream->index() - 1;
-                                              yylex();
-                                            }
-
-                                          else
-                                            return 0;
-
-                                          yynode->end_token = token_stream->index() - 1;
-
-                                          return yynode;
-                                        }
-
-                                        fact_visitor::parser_fun_t fact_visitor::_S_parser_table[] = {
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_assignment_statement),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_block_statement),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_body),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_condition),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_declaration),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_expression),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_function_definition),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_if_statement),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_mult_expression),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_primary),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_program),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_return_statement),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_statement),
-                                              reinterpret_cast<parser_fun_t>(&fact_visitor::visit_variable)
-                                            }; // _S_parser_table[]
+                       fact_visitor::parser_fun_t fact_visitor::_S_parser_table[] = {
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_assignment_statement),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_block_statement),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_body),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_condition),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_declaration),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_expression),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_function_definition),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_if_statement),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_mult_expression),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_primary),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_program),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_return_statement),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_statement),
+                             reinterpret_cast<parser_fun_t>(&fact_visitor::visit_variable)
+                           }; // _S_parser_table[]
 

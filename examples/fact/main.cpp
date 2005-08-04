@@ -46,8 +46,8 @@ int main(int, char *argv[])
   tokenize(parser);
 
   // 2) parse
-  fact_ast_node *ast = parser.parse_program();
-  parser.require(ast, fact_ast_node::Kind_program);  
+  program_ast *ast = 0;
+  assert(parser.parse_program(&ast));
 
   delete[] _G_contents;
 

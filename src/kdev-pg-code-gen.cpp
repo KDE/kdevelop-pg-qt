@@ -59,6 +59,20 @@ namespace
     gen_condition(s, out);
   }
 
+  std::string gen_parser_call(model::symbol_item *node, std::ostream &out)
+  {
+    static int __id = 0;
+    static char __var[1024];
+
+    sprintf(__var, "__node_%d", __id++);
+
+    out << node->_M_name << "_ast *" << __var << " = 0;" << std::endl
+	<< " if (!parse_" << node->_M_name << "(&" << __var << ")) return false;" << std::endl;
+
+    return __var;
+  }
+
+
 } // namespace
 
 void code_generator::operator()(model::node *node)
@@ -73,12 +87,12 @@ void code_generator::visit_zero(model::zero_item *node)
 
 void code_generator::visit_symbol(model::symbol_item *node)
 {
-  out << "require(parse_" << node->_M_name << "(), " << parser << "_ast_node::Kind_" << node->_M_name << ");" << std::endl;
+  gen_parser_call(node, out);
 }
 
 void code_generator::visit_terminal(model::terminal_item *node)
 {
-  out << "require_token(yytoken, Token_" << node->_M_name << ");" << std::endl
+  out << "if (yytoken != Token_" << node->_M_name << ") return false;" << std::endl
       << "yylex();" << std::endl;
 }
 
@@ -177,7 +191,7 @@ void code_generator::visit_evolve(model::evolve_item *node)
   visit_node(node->_M_item);
 
   if (node == _G_system.start)
-    out << "require_token(Token_EOF, yytoken);" << std::endl;
+    out << "if (Token_EOF != yytoken) return false;" << std::endl;
 
   out << "}" << std::endl;
 }
@@ -199,19 +213,19 @@ void code_generator::visit_annotation(model::annotation_item *node)
           std::string target;
 
           if (!node->_M_local)
-            target += "yynode->";
+            target += "(*yynode)->";
 
           target += node->_M_name;
           target += "_sequence";
 
-          out << "require_token(yytoken, Token_" << t->_M_name << ");" << std::endl
+          out << "if (yytoken != Token_" << t->_M_name << ") return false;" << std::endl
               << target << " = snoc(" << target << ", " << "token_stream->index() - 1, memory_pool);" << std::endl
               << "yylex();" << std::endl;
         }
       else
         {
-          out << "require_token(yytoken, Token_" << t->_M_name << ");" << std::endl
-              << "yynode->" << node->_M_name << " = token_stream->index() - 1;" << std::endl
+          out << "if (yytoken != Token_" << t->_M_name << ") return false;" << std::endl
+              << "(*yynode)->" << node->_M_name << " = token_stream->index() - 1;" << std::endl
               << "yylex();" << std::endl;
         }
     }
@@ -222,18 +236,18 @@ void code_generator::visit_annotation(model::annotation_item *node)
           std::string target;
 
           if (!node->_M_local)
-            target += "yynode->";
+            target += "(*yynode)->";
 
           target += node->_M_name;
           target += "_sequence";
 
-          out << s->_M_name << "_ast *" << node->_M_name << ";" << std::endl
-              << "require(" << node->_M_name << " = parse_" << s->_M_name << "(), " << parser << "_ast_node::Kind_" << s->_M_name << ");" << std::endl
-              << target << " = " << "snoc(" << target << ", " << node->_M_name << ", memory_pool);" << std::endl;
+	  std::string __var = gen_parser_call(s, out);
+	  out << target << " = " << "snoc(" << target << ", " << __var << ", memory_pool);" << std::endl;
         }
       else
-        out << "require(" << (!node->_M_local ? "yynode->" : "") << node->_M_name << " = parse_" << s->_M_name << "(), "
-            << parser << "_ast_node::Kind_" << s->_M_name << ");" << std::endl;
+	{
+	  gen_parser_call(s, out);
+	}
     }
   else
     assert(0); // ### not supported
@@ -246,17 +260,19 @@ void code_generator::visit_annotation(model::annotation_item *node)
 void gen_forward_parser_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
 {
   model::symbol_item *sym = __it.second;
-  out << sym->_M_name << "_ast *" << "parse_" << sym->_M_name << "();" << std::endl;
+  out << "bool" << " " << "parse_" << sym->_M_name << "(" << sym->_M_name << "_ast **yynode" << ");" << std::endl;
 }
 
 void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
 {
   model::symbol_item *sym = __it.second;
   code_generator cg(out, parser);
-  out << sym->_M_name << "_ast *" << parser << "::parse_" << sym->_M_name << "()" << std::endl << "{" << std::endl
-      << sym->_M_name << "_ast *yynode = create<" << sym->_M_name << "_ast" << ">();" << std::endl << std::endl;
 
-  out << "yynode->start_token = token_stream->index() - 1;" << std::endl
+  out << "bool" << " " << parser << "::parse_" << sym->_M_name << "(" << sym->_M_name << "_ast **yynode" << ")" << std::endl 
+      << "{" << std::endl
+      << "*yynode = create<" << sym->_M_name << "_ast" << ">();" << std::endl << std::endl;
+
+  out << "(*yynode)->start_token = token_stream->index() - 1;" << std::endl
       << std::endl;
 
   world::environment::iterator it = _G_system.env.find(sym);
@@ -276,12 +292,12 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
       initial = false;
     }
 
-  out << "else" << std::endl << "return 0;" << std::endl
+  out << "else" << std::endl << "return false;" << std::endl
       << std::endl;
 
-  out << "yynode->end_token = token_stream->index() - 1;" << std::endl
+  out << "(*yynode)->end_token = token_stream->index() - 1;" << std::endl
       << std::endl
-      << "return yynode;" << std::endl
+      << "return true;" << std::endl
       << "}" << std::endl 
       << std::endl;
 }
@@ -320,10 +336,6 @@ void generate_parser_decls::operator()()
       << "// token stream" << std::endl
       << "void set_token_stream(" << _G_system.token_stream << " *s)" << std::endl
       << "{ token_stream = s; }" << std::endl
-      << "// error recovery" << std::endl
-      << "void require(" << parser << "_ast_node *node, int kind);" 
-      << std::endl
-      << "void require_token(int token, int kind);" << std::endl
       << std::endl;
 
   out << "template <class T>" << std::endl

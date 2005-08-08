@@ -188,6 +188,12 @@ void code_generator::visit_evolve(model::evolve_item *node)
 
   gen_test_condition(node, out);
 
+  if (reduce_to_epsilon(node->_M_item))
+    {
+      out << " || ";
+      gen_condition(_G_system.FOLLOW(node->_M_symbol), out);
+    }
+
   if (cond)
     out << ")";
 

@@ -1,3 +1,3 @@
-SUBDIRS = fact
+SUBDIRS = fact cool
 
 

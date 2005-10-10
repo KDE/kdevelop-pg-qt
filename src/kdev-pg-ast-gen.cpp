@@ -58,6 +58,8 @@ void generate_ast::operator()()
 void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
 {
   _M_names.clear();
+  _M_in_alternative = false;
+  _M_in_cons = false;
 
   model::symbol_item *sym = __it.second;
   out << "struct " << sym->_M_name << "_ast: public " << parser << "_ast_node"
@@ -95,22 +97,22 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
       out << "const list_node<";
 
       if (node_cast<model::terminal_item*>(node->_M_item))
-	out << "std::size_t";
+        out << "std::size_t";
       else if (model::symbol_item *sym = node_cast<model::symbol_item*>(node->_M_item))
-	out << sym->_M_name << "_ast *";
+        out << sym->_M_name << "_ast *";
       else
-	assert(0); // ### not supported
+        assert(0); // ### not supported
 
       out << "> *";
     }
   else
     {
       if (node_cast<model::terminal_item*>(node->_M_item))
-	out << "std::size_t ";
+        out << "std::size_t ";
       else if (model::symbol_item *sym = node_cast<model::symbol_item*>(node->_M_item))
-	out << sym->_M_name << "_ast *";
+        out << sym->_M_name << "_ast *";
       else
-	assert(0); // ### not supported
+        assert(0); // ### not supported
     }
 
   out << node->_M_name;
@@ -123,3 +125,66 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
   _M_names.insert(node->_M_name);
 }
 
+void gen_ast_rule::visit_alternative(model::alternative_item *node)
+{
+  bool in_alternative = switch_alternative(true);
+
+#if defined(AST_OPT_BRANCH)
+  if (!in_alternative)
+    {
+      out << "union" << std::endl
+          << "{" << std::endl
+          << parser << "_ast_node *__node_cast;" << std::endl
+          << "std::size_t __token_cast;" << std::endl
+          << std::endl;
+    }
+#endif
+
+  default_visitor::visit_alternative(node);
+
+#if defined(AST_OPT_BRANCH)
+  if (!in_alternative)
+    out << "}; // union" << std::endl;
+#endif
+
+  switch_alternative(in_alternative);
+}
+
+void gen_ast_rule::visit_cons(model::cons_item *node)
+{
+  bool in_cons = switch_cons(true);
+
+#if defined(AST_OPT_BRANCH)
+  if (!in_cons)
+    {
+      out << "struct" << std::endl
+          << "{" << std::endl;
+    }
+#endif
+
+  default_visitor::visit_cons(node);
+
+#if defined(AST_OPT_BRANCH)
+  if (!in_cons)
+    {
+      out << "}; // struct" << std::endl;
+      _M_names.clear();
+    }
+#endif
+
+  switch_cons(in_cons);
+}
+
+bool gen_ast_rule::switch_alternative(bool alt)
+{
+  bool old = _M_in_alternative;
+  _M_in_alternative = alt;
+  return old;
+}
+
+bool gen_ast_rule::switch_cons(bool c)
+{
+  bool old = _M_in_cons;
+  _M_in_cons = c;
+  return old;
+}

@@ -43,6 +43,8 @@ class gen_ast_rule: protected default_visitor
   std::ostream &out;
   char const *parser;
   std::set<std::string> _M_names;
+  bool _M_in_alternative;
+  bool _M_in_cons;
 
 public:
   gen_ast_rule(std::ostream &o, char const *p): out(o), parser(p) {}
@@ -50,7 +52,12 @@ public:
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
 
 protected:
+  virtual void visit_alternative(model::alternative_item *node);
   virtual void visit_annotation(model::annotation_item *node);
+  virtual void visit_cons(model::cons_item *node);
+
+  bool switch_alternative(bool alt);
+  bool switch_cons(bool c);
 };
 
 #endif // KDEV_PG_AST_GEN_H

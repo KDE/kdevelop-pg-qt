@@ -11,4 +11,5 @@ AC_PROG_YACC
 AC_OUTPUT(Makefile
   src/Makefile
   examples/Makefile
-  examples/fact/Makefile)
+  examples/fact/Makefile
+  examples/cool/Makefile)

@@ -54,7 +54,7 @@ int main(int, char *argv[])
     }
   else
     {
-      std::cerr << "** ERROR expected a declaration" << std::endl;
+      std::cerr << "** ERROR expected a declaration: token position:" << _M_token_begin << std::endl;
     }
 
   delete[] _G_contents;

@@ -33,7 +33,9 @@ extern std::size_t _G_current_offset;
 
 "@" return cool::Token_AT;
 "case" return cool::Token_CASE;
+"esac" return cool::Token_ESAC;
 "class" return cool::Token_CLASS;
+"Class" return cool::Token_CLASS;
 ":" return cool::Token_COLON;
 "," return cool::Token_COMMA;
 "/" return cool::Token_DIVIDE;
@@ -43,6 +45,7 @@ extern std::size_t _G_current_offset;
 "false" return cool::Token_FALSE;
 "if" return cool::Token_IF;
 "in" return cool::Token_IN;
+"fi" return cool::Token_FI;
 "inherits" return cool::Token_INHERITS;
 "isvoid" return cool::Token_ISVOID;
 "{" return cool::Token_LBRACE;
@@ -56,7 +59,7 @@ extern std::size_t _G_current_offset;
 "new" return cool::Token_NEW;
 "not" return cool::Token_NOT;
 "of" return cool::Token_OF;
-"plus" return cool::Token_PLUS;
+"+" return cool::Token_PLUS;
 "pool" return cool::Token_POOL;
 "}" return cool::Token_RBRACE;
 "=>" return cool::Token_RIGHT_ARROW;
@@ -72,17 +75,12 @@ extern std::size_t _G_current_offset;
 [a-z_][a-zA-Z0-9_]* return cool::Token_ID;
 [0-9]+ return cool::Token_INTEGER;
 
-"/*"                          BEGIN(IN_COMMENT);
-<IN_COMMENT>"*/"              BEGIN(INITIAL);
+"(*"                          BEGIN(IN_COMMENT);
+<IN_COMMENT>"*)"              { BEGIN(INITIAL); }
 <IN_COMMENT>\n                /*advance*/ ;
 <IN_COMMENT>.                 /*advance*/ ;
 
-"\""                          BEGIN(IN_STRING);
-<IN_STRING>"\""               BEGIN(INITIAL); return cool::Token_STRING;
-<IN_STRING>\n                 assert(0);
-<IN_STRING>\\[b|t|n|f]        /*advance*/ ;
-<IN_STRING>\\\\               /*advance*/ ;
-<IN_STRING>.                  /*advance*/ ;
+"\""([^"\\]|\\.)*"\""          { fprintf(stderr, "** found string: .%s.\n", yytext); return cool::Token_STRING; }
 
 . return yytext[0];
 

@@ -80,7 +80,7 @@ extern std::size_t _G_current_offset;
 <IN_COMMENT>\n                /*advance*/ ;
 <IN_COMMENT>.                 /*advance*/ ;
 
-"\""([^"\\]|\\.)*"\""          { fprintf(stderr, "** found string: .%s.\n", yytext); return cool::Token_STRING; }
+"\""([^"\\]|\\.)*"\""          { return cool::Token_STRING; }
 
 . return yytext[0];
 

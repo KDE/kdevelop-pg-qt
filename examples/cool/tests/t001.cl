@@ -1,15 +1,13 @@
 
-/*
- * an example
- */
+(**********
+ ** something
+ *)
 
-class Fact inherits Object {
-  fact(n: Int): Int {
-    if n = 0 then 1
-             else n * fact(n - 1)
-  };
+class Main inherits IO {  -- a comment
+   add(x: Int, y: Int): Int { x + y };
+   identity(x: Object): Object { x };
 
-  test(): String { 10.toString() };
-  main(): Int  { fact(1000) };
+   main(): SELF_TYPE {
+	out_string("Hello, World.\n")
+   };
 };
-

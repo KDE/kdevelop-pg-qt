@@ -316,6 +316,10 @@ class cool
       token_stream = s;
     }
 
+    // error recovery
+    bool yy_expected_symbol(int kind, char const *name);
+    bool yy_expected_token(int kind, std::size_t token, char const *name);
+
     // memory pool
     typedef kdev_pg_memory_pool memory_pool_type;
 

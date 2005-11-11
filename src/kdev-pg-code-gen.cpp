@@ -59,7 +59,7 @@ namespace
     gen_condition(s, out);
   }
 
-  std::string gen_parser_call(model::symbol_item *node, std::ostream &out)
+  std::string gen_parser_call(model::symbol_item *node, char const *parser, std::ostream &out)
   {
     static int __id = 0;
     static char __var[1024];
@@ -69,14 +69,14 @@ namespace
         sprintf(__var, "__node_%d", __id++);
 
         out << node->_M_name << "_ast *" << __var << " = 0;" << std::endl
-            << "if (!parse_" << node->_M_name << "(&" << __var << ")) "
-            << "{ fprintf(stderr, \"** ERROR expected ``" << node->_M_name << "''\\n\"); return false; }"
+            << "if (!parse_" << node->_M_name << "(&" << __var << "))"
+            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_" << node->_M_name << ", \"" << node->_M_name << "\"" << "); }"
             << std::endl;
       }
     else
       {
         out << "if (!parse_" << node->_M_name << "())"
-            << "{ fprintf(stderr, \"** ERROR expected ``" << node->_M_name << "''\\n\"); return false; }"
+            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_" << node->_M_name << ", \"" << node->_M_name << "\"" << "); }"
             << std::endl;
       }
 
@@ -98,13 +98,13 @@ void code_generator::visit_zero(model::zero_item *node)
 
 void code_generator::visit_symbol(model::symbol_item *node)
 {
-  gen_parser_call(node, out);
+  gen_parser_call(node, parser, out);
 }
 
 void code_generator::visit_terminal(model::terminal_item *node)
 {
-  out << "if (yytoken != Token_" << node->_M_name << ") {"
-      << "fprintf(stderr, \"** ERROR expected token ``" << node->_M_name << "''\\n\");" << " return false; }"
+  out << "if (yytoken != Token_" << node->_M_name << ")"
+      << "return yy_expected_token(yytoken, Token_" << node->_M_name << ", \"" << node->_M_name << "\");"
       << std::endl
       << "yylex();" << std::endl;
 }
@@ -232,7 +232,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
   if (model::terminal_item *t = node_cast<model::terminal_item*>(node->_M_item))
     {
       out << "if (yytoken != Token_" << t->_M_name << ") "
-          << "{ fprintf(stderr, \"** ERROR expected token ``" << node->_M_name << "''\\n\");" << " return false; }"
+          << "return yy_expected_token(yytoken, Token_" << t->_M_name << ", \"" << t->_M_name << "\");"
           << std::endl;
 
       if (node->_M_sequence)
@@ -258,7 +258,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
     {
       if (node->_M_sequence)
         {
-          std::string __var = gen_parser_call(s, out);
+          std::string __var = gen_parser_call(s, parser, out);
 
           std::string target;
           if (!node->_M_local)
@@ -271,7 +271,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
         }
       else
         {
-          std::string __var = gen_parser_call(s, out);
+          std::string __var = gen_parser_call(s, parser, out);
 
           std::string target;
           if (!node->_M_local)
@@ -379,6 +379,11 @@ void generate_parser_decls::operator()()
   out << "// token stream" << std::endl
       << "void set_token_stream(" << _G_system.token_stream << " *s)" << std::endl
       << "{ token_stream = s; }" << std::endl
+      << std::endl;
+
+  out << "// error recovery" << std::endl
+      << "bool yy_expected_symbol(int kind, char const *name);" << std::endl
+      << "bool yy_expected_token(int kind, std::size_t token, char const *name);" << std::endl
       << std::endl;
 
     if (_G_system.generate_ast)

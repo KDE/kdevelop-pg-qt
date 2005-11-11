@@ -15,6 +15,20 @@ std::size_t _G_current_offset;
 static void tokenize(cool &m);
 int yylex();
 
+
+// custom error recovery
+bool cool::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+{
+    std::cerr << "** ERROR expected token ``" << name << "''" << std::endl;
+    return false;
+}
+
+bool cool::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+    std::cerr << "** ERROR expected symbol ``" << name << "''" << std::endl;
+    return false;
+}
+
 int main(int, char *argv[])
 {
   if (!*++argv)
@@ -54,7 +68,7 @@ int main(int, char *argv[])
     }
   else
     {
-      std::cerr << "** ERROR expected a declaration: token position:" << _M_token_begin << std::endl;
+      parser.yy_expected_symbol(cool_ast_node::Kind_program, "program"); // ### remove me
     }
 
   delete[] _G_contents;

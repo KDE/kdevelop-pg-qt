@@ -160,7 +160,7 @@ bool reduce_to_epsilon(model::node *node)
     }
   else if (model::bang_item *b = node_cast<model::bang_item*>(node))
     {
-      return true;
+      return reduce_to_epsilon(b->_M_item);
     }
   else if (model::zero_item *z = node_cast<model::zero_item*>(node))
     {

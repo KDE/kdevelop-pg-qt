@@ -87,7 +87,7 @@ postfix_item
     | postfix_item '@' primary_item
 	{
 	  clone_tree cl;
-	  $$ = pg::cons($1, pg::bang(pg::cons(cl.clone($3), cl.clone($1))));
+	  $$ = pg::cons($1, pg::alternative (pg::bang(pg::cons(cl.clone($3), cl.clone($1))), _G_system.zero()));
 	}
     | postfix_item T_CONDITION               { $$ = pg::action($1, $2); }
     ;
@@ -100,8 +100,8 @@ item_sequence
 conditional_item
     : item_sequence			{ $$ = $1; }
     | '?' T_CONDITION item_sequence	{ $$ = pg::condition($2, $3); }
-    | '?' '(' question ')' item_sequence{ 
-					  $$ = $5; 
+    | '?' '(' question ')' item_sequence{
+					  $$ = $5;
 					  fprintf(stderr, "** WARNING ``question'' not implemented!!\n");
 					}
     ;
@@ -195,8 +195,8 @@ again:
         inp();
         yytext = yyptr;
         yylval.str = yytext;
-        do 
-          { *yyptr++ = ch; yytoken = ch; inp(); } 
+        do
+          { *yyptr++ = ch; yytoken = ch; inp(); }
         while (ch != 0 && (yytoken != ':' || ch != ']'));
         assert(ch == ']');
         *(yyptr-1) = '\0';

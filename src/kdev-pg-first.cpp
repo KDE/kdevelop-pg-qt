@@ -145,9 +145,6 @@ void next_FIRST::visit_bang(model::bang_item *node)
 {
   default_visitor::visit_bang(node);
 
-  if (_G_system.FIRST(node).insert(_G_system.zero()).second)
-    _M_changed = true;
-
   merge(node, node->_M_item);
 }
 
@@ -212,14 +209,14 @@ void next_FIRST::visit_condition(model::condition_item* node)
 
 void compute_FIRST() // the closure of the FIRST sets
 {
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(), 
+  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
 		initialize_FIRST());
 
   bool changed = true;
   while (changed)
     {
       changed = false;
-      std::for_each(_G_system.rules.begin(), _G_system.rules.end(), 
+      std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
 		    next_FIRST(changed));
     }
 }

@@ -11,18 +11,31 @@
 #include <cassert>
 
 struct assignment_statement_ast;
+
 struct block_statement_ast;
+
 struct body_ast;
+
 struct condition_ast;
+
 struct declaration_ast;
+
 struct expression_ast;
+
 struct function_definition_ast;
+
 struct if_statement_ast;
+
 struct mult_expression_ast;
+
 struct primary_ast;
+
 struct program_ast;
+
 struct return_statement_ast;
+
 struct statement_ast;
+
 struct variable_ast;
 
 struct fact_ast_node
@@ -225,6 +238,7 @@ struct variable_ast: public fact_ast_node
 
 class fact
   {
+
   public:
     typedef kdev_pg_token_stream token_stream_type;
     typedef kdev_pg_token_stream::token_type token_type;
@@ -235,6 +249,7 @@ class fact
       {
         return token_stream->token(token_stream->index() - 1 + k - 1);
       }
+
     inline int yylex()
     {
       return (yytoken = token_stream->next_token());
@@ -246,6 +261,10 @@ class fact
       token_stream = s;
     }
 
+    // error recovery
+    bool yy_expected_symbol(int kind, char const *name);
+    bool yy_expected_token(int kind, std::size_t token, char const *name);
+
     // memory pool
     typedef kdev_pg_memory_pool memory_pool_type;
 
@@ -254,6 +273,7 @@ class fact
     {
       memory_pool = p;
     }
+
     template <class T>
     inline T *create()
     {
@@ -307,6 +327,7 @@ class fact
     bool parse_statement(statement_ast **yynode);
     bool parse_variable(variable_ast **yynode);
   };
+
 class fact_visitor
   {
     typedef void (fact_visitor::*parser_fun_t)(fact_ast_node *);
@@ -315,43 +336,62 @@ class fact_visitor
   public:
     virtual ~fact_visitor()
     {}
+
     virtual void visit_node(fact_ast_node *node)
     {
       if (node)
         (this->*_S_parser_table[node->kind - 1000])(node);
     }
+
     virtual void visit_assignment_statement(assignment_statement_ast *)
   {}
+
     virtual void visit_block_statement(block_statement_ast *)
     {}
+
     virtual void visit_body(body_ast *)
     {}
+
     virtual void visit_condition(condition_ast *)
     {}
+
     virtual void visit_declaration(declaration_ast *)
     {}
+
     virtual void visit_expression(expression_ast *)
     {}
+
     virtual void visit_function_definition(function_definition_ast *)
     {}
+
     virtual void visit_if_statement(if_statement_ast *)
     {}
+
     virtual void visit_mult_expression(mult_expression_ast *)
     {}
+
     virtual void visit_primary(primary_ast *)
     {}
+
     virtual void visit_program(program_ast *)
     {}
+
     virtual void visit_return_statement(return_statement_ast *)
                              {}
+
                              virtual void visit_statement(statement_ast *)
                              {}
+
                              virtual void visit_variable(variable_ast *)
                              {}
+
                            }
+
                          ;
+
 class fact_default_visitor: public fact_visitor
   {
+
   public:
     virtual void visit_assignment_statement(assignment_statement_ast *node)
     {
@@ -363,11 +403,13 @@ class fact_default_visitor: public fact_visitor
       if (node->stmt_sequence)
         {
           const list_node<statement_ast*> *__it = node->stmt_sequence->to_front(), *__end = __it;
+
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
+
           while (__it != __end);
         }
     }
@@ -377,21 +419,26 @@ class fact_default_visitor: public fact_visitor
       if (node->decl_sequence)
         {
           const list_node<declaration_ast*> *__it = node->decl_sequence->to_front(), *__end = __it;
+
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
+
           while (__it != __end);
         }
+
       if (node->stmt_sequence)
         {
           const list_node<statement_ast*> *__it = node->stmt_sequence->to_front(), *__end = __it;
+
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
+
           while (__it != __end);
         }
     }
@@ -436,11 +483,13 @@ class fact_default_visitor: public fact_visitor
       if (node->arg_sequence)
         {
           const list_node<expression_ast*> *__it = node->arg_sequence->to_front(), *__end = __it;
+
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
+
           while (__it != __end);
         }
     }
@@ -450,11 +499,13 @@ class fact_default_visitor: public fact_visitor
       if (node->fun_sequence)
         {
           const list_node<function_definition_ast*> *__it = node->fun_sequence->to_front(), *__end = __it;
+
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
+
           while (__it != __end);
         }
     }
@@ -476,6 +527,7 @@ class fact_default_visitor: public fact_visitor
                              {}
 
                            }
+
                          ;
 #endif
 

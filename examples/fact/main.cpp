@@ -15,6 +15,20 @@ std::size_t _G_current_offset;
 static void tokenize(fact &m);
 int yylex();
 
+
+// custom error recovery
+bool fact::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+{
+    std::cerr << "** ERROR expected token ``" << name << "''" << std::endl;
+    return false;
+}
+
+bool fact::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+    std::cerr << "** ERROR expected symbol ``" << name << "''" << std::endl;
+    return false;
+}
+
 int main(int, char *argv[])
 {
   if (!*++argv)
@@ -22,7 +36,7 @@ int main(int, char *argv[])
       std::cerr << "usage: fact file.f" << std::endl;
       exit(EXIT_FAILURE);
     }
-  
+
   if (FILE *fp = fopen(*argv, "r"))
     {
       fread(_G_contents = new char[MAX_BUFF], 1, MAX_BUFF, fp);

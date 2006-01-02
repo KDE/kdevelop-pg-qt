@@ -35,40 +35,47 @@ bool cool::parse_additive_expression(additive_expression_ast **yynode)
 
       (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_0, memory_pool);
 
-      while (yytoken == Token_PLUS
-             || yytoken == Token_MINUS)
+      if (yytoken == Token_PLUS
+          || yytoken == Token_MINUS)
         {
-          if (yytoken == Token_PLUS)
+          while (yytoken == Token_PLUS
+                 || yytoken == Token_MINUS)
             {
-              if (yytoken != Token_PLUS)
-                return yy_expected_token(yytoken, Token_PLUS, "PLUS");
+              if (yytoken == Token_PLUS)
+                {
+                  if (yytoken != Token_PLUS)
+                    return yy_expected_token(yytoken, Token_PLUS, "PLUS");
 
-              (*yynode)->op = token_stream->index() - 1;
+                  (*yynode)->op = token_stream->index() - 1;
 
-              yylex();
+                  yylex();
+                }
+
+              else if (yytoken == Token_MINUS)
+                {
+                  if (yytoken != Token_MINUS)
+                    return yy_expected_token(yytoken, Token_MINUS, "MINUS");
+
+                  (*yynode)->op = token_stream->index() - 1;
+
+                  yylex();
+                }
+
+              multiplicative_expression_ast *__node_1 = 0;
+
+              if (!parse_multiplicative_expression(&__node_1))
+                {
+                  return yy_expected_symbol(cool_ast_node::Kind_multiplicative_expression, "multiplicative_expression");
+                }
+
+              (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_1, memory_pool);
             }
-
-          else if (yytoken == Token_MINUS)
-            {
-              if (yytoken != Token_MINUS)
-                return yy_expected_token(yytoken, Token_MINUS, "MINUS");
-
-              (*yynode)->op = token_stream->index() - 1;
-
-              yylex();
-            }
-
-          multiplicative_expression_ast *__node_1 = 0;
-
-          if (!parse_multiplicative_expression(&__node_1))
-            {
-              return yy_expected_symbol(cool_ast_node::Kind_multiplicative_expression, "multiplicative_expression");
-            }
-
-          (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_1, memory_pool);
         }
-    }
 
+      else if (true /*epsilon*/)
+      {}
+
+    }
   else
     {
       return false;
@@ -402,24 +409,30 @@ bool cool::parse_feature(feature_ast **yynode)
 
               (*yynode)->formal_sequence = snoc((*yynode)->formal_sequence, __node_8, memory_pool);
 
-              while (yytoken == Token_COMMA)
+              if (yytoken == Token_COMMA)
                 {
-                  if (yytoken != Token_COMMA)
-                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-                  yylex();
-
-                  formal_ast *__node_9 = 0;
-
-                  if (!parse_formal(&__node_9))
+                  while (yytoken == Token_COMMA)
                     {
-                      return yy_expected_symbol(cool_ast_node::Kind_formal, "formal");
+                      if (yytoken != Token_COMMA)
+                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+
+                      yylex();
+
+                      formal_ast *__node_9 = 0;
+
+                      if (!parse_formal(&__node_9))
+                        {
+                          return yy_expected_symbol(cool_ast_node::Kind_formal, "formal");
+                        }
+
+                      (*yynode)->formal_sequence = snoc((*yynode)->formal_sequence, __node_9, memory_pool);
                     }
-
-                  (*yynode)->formal_sequence = snoc((*yynode)->formal_sequence, __node_9, memory_pool);
                 }
-            }
 
+              else if (true /*epsilon*/)
+              {}
+
+            }
           else if (true /*epsilon*/)
           {}
 
@@ -698,22 +711,28 @@ bool cool::parse_let_expression(let_expression_ast **yynode)
 
       (*yynode)->declaration_sequence = snoc((*yynode)->declaration_sequence, __node_16, memory_pool);
 
-      while (yytoken == Token_COMMA)
+      if (yytoken == Token_COMMA)
         {
-          if (yytoken != Token_COMMA)
-            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-          yylex();
-
-          let_declaration_ast *__node_17 = 0;
-
-          if (!parse_let_declaration(&__node_17))
+          while (yytoken == Token_COMMA)
             {
-              return yy_expected_symbol(cool_ast_node::Kind_let_declaration, "let_declaration");
-            }
+              if (yytoken != Token_COMMA)
+                return yy_expected_token(yytoken, Token_COMMA, "COMMA");
 
-          (*yynode)->declaration_sequence = snoc((*yynode)->declaration_sequence, __node_17, memory_pool);
+              yylex();
+
+              let_declaration_ast *__node_17 = 0;
+
+              if (!parse_let_declaration(&__node_17))
+                {
+                  return yy_expected_symbol(cool_ast_node::Kind_let_declaration, "let_declaration");
+                }
+
+              (*yynode)->declaration_sequence = snoc((*yynode)->declaration_sequence, __node_17, memory_pool);
+            }
         }
+
+      else if (true /*epsilon*/)
+      {}
 
       if (yytoken != Token_IN)
         return yy_expected_token(yytoken, Token_IN, "IN");
@@ -771,40 +790,47 @@ bool cool::parse_multiplicative_expression(multiplicative_expression_ast **yynod
 
       (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_19, memory_pool);
 
-      while (yytoken == Token_STAR
-             || yytoken == Token_DIVIDE)
+      if (yytoken == Token_STAR
+          || yytoken == Token_DIVIDE)
         {
-          if (yytoken == Token_STAR)
+          while (yytoken == Token_STAR
+                 || yytoken == Token_DIVIDE)
             {
-              if (yytoken != Token_STAR)
-                return yy_expected_token(yytoken, Token_STAR, "STAR");
+              if (yytoken == Token_STAR)
+                {
+                  if (yytoken != Token_STAR)
+                    return yy_expected_token(yytoken, Token_STAR, "STAR");
 
-              (*yynode)->op = token_stream->index() - 1;
+                  (*yynode)->op = token_stream->index() - 1;
 
-              yylex();
+                  yylex();
+                }
+
+              else if (yytoken == Token_DIVIDE)
+                {
+                  if (yytoken != Token_DIVIDE)
+                    return yy_expected_token(yytoken, Token_DIVIDE, "DIVIDE");
+
+                  (*yynode)->op = token_stream->index() - 1;
+
+                  yylex();
+                }
+
+              postfix_expression_ast *__node_20 = 0;
+
+              if (!parse_postfix_expression(&__node_20))
+                {
+                  return yy_expected_symbol(cool_ast_node::Kind_postfix_expression, "postfix_expression");
+                }
+
+              (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_20, memory_pool);
             }
-
-          else if (yytoken == Token_DIVIDE)
-            {
-              if (yytoken != Token_DIVIDE)
-                return yy_expected_token(yytoken, Token_DIVIDE, "DIVIDE");
-
-              (*yynode)->op = token_stream->index() - 1;
-
-              yylex();
-            }
-
-          postfix_expression_ast *__node_20 = 0;
-
-          if (!parse_postfix_expression(&__node_20))
-            {
-              return yy_expected_symbol(cool_ast_node::Kind_postfix_expression, "postfix_expression");
-            }
-
-          (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_20, memory_pool);
         }
-    }
 
+      else if (true /*epsilon*/)
+      {}
+
+    }
   else
     {
       return false;
@@ -905,24 +931,30 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
                   (*yynode)->arguments_sequence = snoc((*yynode)->arguments_sequence, __node_22, memory_pool);
 
-                  while (yytoken == Token_COMMA)
+                  if (yytoken == Token_COMMA)
                     {
-                      if (yytoken != Token_COMMA)
-                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-                      yylex();
-
-                      expression_ast *__node_23 = 0;
-
-                      if (!parse_expression(&__node_23))
+                      while (yytoken == Token_COMMA)
                         {
-                          return yy_expected_symbol(cool_ast_node::Kind_expression, "expression");
+                          if (yytoken != Token_COMMA)
+                            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+
+                          yylex();
+
+                          expression_ast *__node_23 = 0;
+
+                          if (!parse_expression(&__node_23))
+                            {
+                              return yy_expected_symbol(cool_ast_node::Kind_expression, "expression");
+                            }
+
+                          (*yynode)->arguments_sequence = snoc((*yynode)->arguments_sequence, __node_23, memory_pool);
                         }
-
-                      (*yynode)->arguments_sequence = snoc((*yynode)->arguments_sequence, __node_23, memory_pool);
                     }
-                }
 
+                  else if (true /*epsilon*/)
+                  {}
+
+                }
               else if (true /*epsilon*/)
               {}
 
@@ -976,24 +1008,30 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
                   (*yynode)->arguments_sequence = snoc((*yynode)->arguments_sequence, __node_24, memory_pool);
 
-                  while (yytoken == Token_COMMA)
+                  if (yytoken == Token_COMMA)
                     {
-                      if (yytoken != Token_COMMA)
-                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-                      yylex();
-
-                      expression_ast *__node_25 = 0;
-
-                      if (!parse_expression(&__node_25))
+                      while (yytoken == Token_COMMA)
                         {
-                          return yy_expected_symbol(cool_ast_node::Kind_expression, "expression");
+                          if (yytoken != Token_COMMA)
+                            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+
+                          yylex();
+
+                          expression_ast *__node_25 = 0;
+
+                          if (!parse_expression(&__node_25))
+                            {
+                              return yy_expected_symbol(cool_ast_node::Kind_expression, "expression");
+                            }
+
+                          (*yynode)->arguments_sequence = snoc((*yynode)->arguments_sequence, __node_25, memory_pool);
                         }
-
-                      (*yynode)->arguments_sequence = snoc((*yynode)->arguments_sequence, __node_25, memory_pool);
                     }
-                }
 
+                  else if (true /*epsilon*/)
+                  {}
+
+                }
               else if (true /*epsilon*/)
               {}
 
@@ -1097,24 +1135,30 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
 
               (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_27, memory_pool);
 
-              while (yytoken == Token_COMMA)
+              if (yytoken == Token_COMMA)
                 {
-                  if (yytoken != Token_COMMA)
-                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-                  yylex();
-
-                  expression_ast *__node_28 = 0;
-
-                  if (!parse_expression(&__node_28))
+                  while (yytoken == Token_COMMA)
                     {
-                      return yy_expected_symbol(cool_ast_node::Kind_expression, "expression");
+                      if (yytoken != Token_COMMA)
+                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+
+                      yylex();
+
+                      expression_ast *__node_28 = 0;
+
+                      if (!parse_expression(&__node_28))
+                        {
+                          return yy_expected_symbol(cool_ast_node::Kind_expression, "expression");
+                        }
+
+                      (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_28, memory_pool);
                     }
-
-                  (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_28, memory_pool);
                 }
-            }
 
+              else if (true /*epsilon*/)
+              {}
+
+            }
           else if (true /*epsilon*/)
           {}
 
@@ -1288,7 +1332,7 @@ bool cool::parse_program(program_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_CLASS || yytoken == Token_EOF)
+  if (yytoken == Token_CLASS)
     {
       while (yytoken == Token_CLASS)
         {
@@ -1354,51 +1398,59 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
 
       (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_36, memory_pool);
 
-      while (yytoken == Token_EQUAL
-             || yytoken == Token_LESS_EQUAL
-             || yytoken == Token_LESS)
+      if (yytoken == Token_EQUAL
+          || yytoken == Token_LESS_EQUAL
+          || yytoken == Token_LESS)
         {
-          if (yytoken == Token_EQUAL)
+          while (yytoken == Token_EQUAL
+                 || yytoken == Token_LESS_EQUAL
+                 || yytoken == Token_LESS)
             {
-              if (yytoken != Token_EQUAL)
-                return yy_expected_token(yytoken, Token_EQUAL, "EQUAL");
+              if (yytoken == Token_EQUAL)
+                {
+                  if (yytoken != Token_EQUAL)
+                    return yy_expected_token(yytoken, Token_EQUAL, "EQUAL");
 
-              (*yynode)->op = token_stream->index() - 1;
+                  (*yynode)->op = token_stream->index() - 1;
 
-              yylex();
+                  yylex();
+                }
+
+              else if (yytoken == Token_LESS_EQUAL)
+                {
+                  if (yytoken != Token_LESS_EQUAL)
+                    return yy_expected_token(yytoken, Token_LESS_EQUAL, "LESS_EQUAL");
+
+                  (*yynode)->op = token_stream->index() - 1;
+
+                  yylex();
+                }
+
+              else if (yytoken == Token_LESS)
+                {
+                  if (yytoken != Token_LESS)
+                    return yy_expected_token(yytoken, Token_LESS, "LESS");
+
+                  (*yynode)->op = token_stream->index() - 1;
+
+                  yylex();
+                }
+
+              additive_expression_ast *__node_37 = 0;
+
+              if (!parse_additive_expression(&__node_37))
+                {
+                  return yy_expected_symbol(cool_ast_node::Kind_additive_expression, "additive_expression");
+                }
+
+              (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_37, memory_pool);
             }
-
-          else if (yytoken == Token_LESS_EQUAL)
-            {
-              if (yytoken != Token_LESS_EQUAL)
-                return yy_expected_token(yytoken, Token_LESS_EQUAL, "LESS_EQUAL");
-
-              (*yynode)->op = token_stream->index() - 1;
-
-              yylex();
-            }
-
-          else if (yytoken == Token_LESS)
-            {
-              if (yytoken != Token_LESS)
-                return yy_expected_token(yytoken, Token_LESS, "LESS");
-
-              (*yynode)->op = token_stream->index() - 1;
-
-              yylex();
-            }
-
-          additive_expression_ast *__node_37 = 0;
-
-          if (!parse_additive_expression(&__node_37))
-            {
-              return yy_expected_symbol(cool_ast_node::Kind_additive_expression, "additive_expression");
-            }
-
-          (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_37, memory_pool);
         }
-    }
 
+      else if (true /*epsilon*/)
+      {}
+
+    }
   else
     {
       return false;

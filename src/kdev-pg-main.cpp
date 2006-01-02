@@ -64,16 +64,20 @@ struct debug_rule
   {
     model::evolve_item *e = node_cast<model::evolve_item*>(node);
 
+    out << std::endl;
     pretty_printer p(out);
     p(e);
+
+    out << std::endl;
     out << " FIRST:[";
-    std::for_each(_G_system.FIRST(e).begin(), 
-		  _G_system.FIRST(e).end(), p);
+    std::for_each(_G_system.FIRST(e).begin(),
+                  _G_system.FIRST(e).end(), p);
     out << "]";
 
+    out << std::endl;
     out << " FOLLOW:[";
-    std::for_each(_G_system.FOLLOW(e->_M_symbol).begin(), 
-		  _G_system.FOLLOW(e->_M_symbol).end(), p);
+    std::for_each(_G_system.FOLLOW(e->_M_symbol).begin(),
+                  _G_system.FOLLOW(e->_M_symbol).end(), p);
     out << "]";
     out << std::endl;
   }
@@ -83,6 +87,7 @@ int main(int, char *argv[])
 {
   bool dump_terminals = false;
   bool dump_symbols = false;
+  bool debug_rules = false;
   char const *parser = 0;
 
   file = stdin;
@@ -108,6 +113,10 @@ int main(int, char *argv[])
       else if (!strcmp("--symbols", arg))
 	{
 	  dump_symbols = true;
+	}
+      else if (!strcmp("--rules", arg))
+	{
+	  debug_rules = true;
 	}
       else if (file == stdin)
 	{
@@ -167,15 +176,15 @@ int main(int, char *argv[])
 	}
       return EXIT_SUCCESS;
     }
+  else if (debug_rules)
+    {
+      std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
+                    debug_rule(std::cout));
+    }
   else if (!parser)
     {
       usage();
     }
-
-#if 0
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-		debug_rule(std::cout));
-#endif
 
   { // generate the decls
     std::stringstream s;
@@ -199,7 +208,7 @@ int main(int, char *argv[])
 	  << "#include \"kdev-pg-allocator.h\"" << std::endl
 	  << "#include \"kdev-pg-list.h\"" << std::endl;
       }
-   
+
     if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
       s << "#include \"kdev-pg-token-stream.h\"" << std::endl;
 

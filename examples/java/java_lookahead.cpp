@@ -212,6 +212,10 @@ bool java_lookahead::is_cast_expression_start()
 
           fetch_next_token();
         }
+      else
+        {
+          return false;
+        }
     }
 
   else

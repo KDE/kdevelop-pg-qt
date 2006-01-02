@@ -911,36 +911,6 @@ bool lookahead_is_cast_expression(java* parser);
    (#for_update_expression=expression @ COMMA | 0)             -- "i++"
 -> for_clause_traditional_rest ;;
 
--- Legacy version with a problematic conflict more
---  (
---    -- The traditional version, part of a so-called "basic for statement".
---    -- ?[: LA( for_clause_lookahead ) :] -- not supported by kdev-pg
---    for_clause=for_clause
---  |
---    -- The for-each version, part of a so-called "enhanced for statement".
---    -- It looks for example like for( int i : myList.values() ) {...}.
---    for_each_parameter=parameter_declaration
---    COLON iterable_expression=expression
---  )
--- -> for_control ;;
---
--- --    (for_init | 0) SEMICOLON
--- -- -> for_clause_lookahead ;;  -- only use for lookaheads!
---
---    (for_init=for_init                         | 0) SEMICOLON   -- "int i = 0;"
---    (for_condition=expression                  | 0) SEMICOLON   -- "i < size;"
---    (#for_update_expression=expression @ COMMA | 0)             -- "i++"
--- -> for_clause ;;
---
--- -- Here is the for statement's second problematic conflict:
--- -- Can't decide between variable_declaration and expression.
--- -- Only solvable with LL(k), too.
---
---    -- ?[: LA( variable_declaration ) :] -- not supported by kdev-pg
---    local_variable_declaration=variable_declaration
---  | #expression=expression @ COMMA
--- -> for_init ;;
-
 
 
 
@@ -1080,7 +1050,7 @@ bool lookahead_is_cast_expression(java* parser);
    TILDE bitwise_not_expression=unary_expression
  | BANG  logical_not_expression=unary_expression
  | ?[: lookahead_is_cast_expression(this) == true :]
-   cast_expression  -- conflict, only solvable with LL(k).
+   cast_expression
  | primary_expression=primary_expression ( !(#postfix_operator=postfix_operator) | 0 )
 -> unary_expression_not_plusminus ;;
 
@@ -1175,7 +1145,9 @@ bool lookahead_is_cast_expression(java* parser);
    -- type names (normal) - either pure, as method or like bla[][].class
    identifier_untyped=qualified_identifier  -- without type arguments
    (  LPAREN method_arguments=argument_list RPAREN
-    | declarator_brackets=optional_declarator_brackets
+    | ?[: (yytoken == Token_LBRACKET && LA(2).kind == Token_RBRACKET)
+          || yytoken == Token_DOT :]
+      declarator_brackets=optional_declarator_brackets
       DOT array_dotclass=CLASS
     | 0
    )

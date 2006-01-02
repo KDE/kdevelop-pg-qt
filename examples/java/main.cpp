@@ -18,18 +18,24 @@ int yylex();
 
 
 // custom error recovery
-bool java::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+bool java::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
 {
+    java::token_type* token = &(token_stream->token(token_stream->index() - 1));
+    char* current_token_text = new char[ token->end - token->begin + 2 ];
+    snprintf( current_token_text, token->end - token->begin + 1, token->text + token->begin );
+    current_token_text[ token->end - token->begin + 1 ] = '\0';
+
     std::cerr << "** ERROR expected token ``" << name
-              //<< "'' instead of ``" << current_token
+              << "'' instead of ``" << current_token_text
               << "''" << std::endl;
+
+    delete[] current_token_text;
     return false;
 }
 
 bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 {
     std::cerr << "** ERROR expected symbol ``" << name
-              //<< "'' instead of ``" << current_token
               << "''" << std::endl;
     return false;
 }

@@ -1,3 +1,3 @@
-SUBDIRS = fact cool
+SUBDIRS = fact cool java
 
 

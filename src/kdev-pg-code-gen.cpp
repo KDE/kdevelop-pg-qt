@@ -112,7 +112,7 @@ void code_generator::visit_terminal(model::terminal_item *node)
 void code_generator::visit_bang(model::bang_item *node)
 {
   out << "while (";
-  gen_test_condition(node->_M_item, out);
+  gen_test_condition(node, out);
   out << ") {" << std::endl;
   visit_node(node->_M_item);
   out << "}" << std::endl;

@@ -175,6 +175,12 @@ void code_generator::visit_alternative(model::alternative_item *node)
 
       if (it != top_level_nodes.end())
         out << "else ";
+      else
+        {
+          out << "else {" << std::endl
+              << "  return false;" << std::endl
+              << "}" << std::endl;
+        }
     }
 }
 

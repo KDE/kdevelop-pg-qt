@@ -124,8 +124,8 @@
 [:
 // ltCounter stores the amount of currently open type arguments rules,
 // all of which are beginning with a less than ("<") character.
-// This way, also RSIGNEDSHIFT (">>") and RUNSIGNEDSHIFT (">>>") can be used
-// to close type arguments rules, in addition to GREATERTHAN (">").
+// This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
+// to close type arguments rules, in addition to GREATER_THAN (">").
 static int  ltCounter = 0;
 
 // tripleDotOccurred is used as a means of communication between
@@ -492,7 +492,7 @@ bool lookahead_is_cast_expression(java* parser);
 
    parameter_modifiers=optional_parameter_modifiers
    type_specification=type_specification
-   ( triple_dot=TRIPLEDOT [: tripleDotOccurred = true; :] | 0 )
+   ( triple_dot=TRIPLE_DOT [: tripleDotOccurred = true; :] | 0 )
    variable_identifier=identifier
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration_tripledot ;;
@@ -543,7 +543,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- TYPE PARAMETERS are used in class, interface etc. declarations to
 -- determine the generic types allowed as type argument.
 
-   LESSTHAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
    #type_parameter=type_parameter @ COMMA
    (
       type_arguments_or_parameters_end
@@ -566,7 +566,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- TYPE ARGUMENTS are used in initializers, invocations, etc. to
 -- specify the exact types for this generic class/method instance.
 
-   LESSTHAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
    #type_argument=type_argument
    @ ( 0 [: if( ltCounter != currentLtLevel + 1 ) { break; } :]
        COMMA
@@ -584,7 +584,7 @@ bool lookahead_is_cast_expression(java* parser);
    )
 -> type_arguments ;;
 
-   LESSTHAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
    #type_argument_specification=type_argument_specification
    @ ( 0 [: if( ltCounter != currentLtLevel + 1 ) { break; } :]
        COMMA
@@ -621,9 +621,9 @@ bool lookahead_is_cast_expression(java* parser);
 -> wildcard_type_bounds ;;
 
 
-   GREATERTHAN    [: ltCounter -= 1; :]  -- ">"
- | RSIGNEDSHIFT   [: ltCounter -= 2; :]  -- ">>"
- | RUNSIGNEDSHIFT [: ltCounter -= 3; :]  -- ">>>"
+   GREATER_THAN    [: ltCounter -= 1; :]  -- ">"
+ | SIGNED_RSHIFT   [: ltCounter -= 2; :]  -- ">>"
+ | UNSIGNED_RSHIFT [: ltCounter -= 3; :]  -- ">>>"
 -> type_arguments_or_parameters_end ;;
 
 
@@ -683,6 +683,13 @@ bool lookahead_is_cast_expression(java* parser);
 
    #name=identifier @ DOT
 -> qualified_identifier ;;
+
+   #name=identifier
+   ( !( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
+        DOT #name=identifier )
+     | 0
+   )
+-> qualified_identifier_safe ;; -- lookahead version of the above
 
    #name=identifier
    (  !( DOT (  #name=identifier
@@ -810,7 +817,14 @@ bool lookahead_is_cast_expression(java* parser);
 -> variable_initializer ;;
 
    LBRACE
-   (  (#variable_initializer=variable_initializer @ COMMA (COMMA | 0))
+   (  ( #variable_initializer=variable_initializer
+        (  !( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
+              COMMA #variable_initializer=variable_initializer
+           )
+         | 0
+        )
+        ( COMMA | 0 )
+      )
     | 0
    )
    RBRACE
@@ -877,7 +891,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- labels followed by a list of statements.
 
    #case=switch_case ( !(#case=switch_case) | 0 )
-   ( !(#statement=statement) | 0 )
+   ( !(#statement=block_statement) | 0 )
 -> switch_statements_group ;;
 
    ( token=CASE expression=expression | token=DEFAULT ) COLON
@@ -900,6 +914,8 @@ bool lookahead_is_cast_expression(java* parser);
       -- foreach: int i : intList.values()
       COLON iterable_expression=expression
    )
+ |
+   traditional_for_rest=for_clause_traditional_rest  -- only starting with ";"
  |
    #expression=expression @ COMMA
    traditional_for_rest=for_clause_traditional_rest
@@ -945,17 +961,17 @@ bool lookahead_is_cast_expression(java* parser);
    conditional_expression=conditional_expression
    (
       (  op_assign=ASSIGN
-       | op_plus_assign=PLUSASSIGN
-       | op_minus_assign=MINUSASSIGN
-       | op_star_assign=STARASSIGN
-       | op_slash_assign=SLASHASSIGN
-       | op_and_assign=ANDASSIGN
-       | op_or_assign=ORASSIGN
-       | op_xor_assign=XORASSIGN
-       | op_remainder_assign=REMAINDERASSIGN
-       | op_lshift_assign=LSHIFTASSIGN
-       | op_rsignedshift_assign=RSIGNEDSHIFTASSIGN
-       | op_runsignedshift_assign=RUNSIGNEDSHIFTASSIGN
+       | op_plus_assign=PLUS_ASSIGN
+       | op_minus_assign=MINUS_ASSIGN
+       | op_star_assign=STAR_ASSIGN
+       | op_slash_assign=SLASH_ASSIGN
+       | op_and_assign=BIT_AND_ASSIGN
+       | op_or_assign=BIT_OR_ASSIGN
+       | op_xor_assign=BIT_XOR_ASSIGN
+       | op_remainder_assign=REMAINDER_ASSIGN
+       | op_lshift_assign=LSHIFT_ASSIGN
+       | op_rsignedshift_assign=SIGNED_RSHIFT_ASSIGN
+       | op_runsignedshift_assign=UNSIGNED_RSHIFT_ASSIGN
       )
       assignment_expression=expression
     |
@@ -980,7 +996,7 @@ bool lookahead_is_cast_expression(java* parser);
    #expression=bit_xor_expression @ BIT_OR
 -> bit_or_expression ;;
 
-   #expression=bit_and_expression @ XOR
+   #expression=bit_and_expression @ BIT_XOR
 -> bit_xor_expression ;;
 
    #expression=equality_expression @ BIT_AND
@@ -990,7 +1006,7 @@ bool lookahead_is_cast_expression(java* parser);
    ( !(#additional_expression=equality_expression_rest) | 0 )
 -> equality_expression ;;
 
-   ( op_equal=EQUAL | op_notequal=NOTEQUAL )
+   ( op_equal=EQUAL | op_notequal=NOT_EQUAL )
    expression=relational_expression
 -> equality_expression_rest ;;
 
@@ -1001,8 +1017,8 @@ bool lookahead_is_cast_expression(java* parser);
    )
 -> relational_expression ;;
 
-   (  op_lessthan=LESSTHAN | op_greaterthan=GREATERTHAN
-    | op_lessequal=LESSEQUAL | op_greaterequal=GREATEREQUAL )
+   (  op_lessthan=LESS_THAN | op_greaterthan=GREATER_THAN
+    | op_lessequal=LESS_EQUAL | op_greaterequal=GREATER_EQUAL )
    expression=shift_expression
 -> relational_expression_rest ;;
 
@@ -1010,8 +1026,8 @@ bool lookahead_is_cast_expression(java* parser);
    ( !(#additional_expression=shift_expression_rest) | 0 )
 -> shift_expression ;;
 
-   (  op_lshift=LSHIFT | op_rsignedshift=RSIGNEDSHIFT
-    | op_runsignedshift=RUNSIGNEDSHIFT )
+   (  op_lshift=LSHIFT | op_rsignedshift=SIGNED_RSHIFT
+    | op_runsignedshift=UNSIGNED_RSHIFT )
    expression=additive_expression
 -> shift_expression_rest ;;
 
@@ -1143,11 +1159,10 @@ bool lookahead_is_cast_expression(java* parser);
    SUPER super_suffix_untyped=super_suffix
  |
    -- type names (normal) - either pure, as method or like bla[][].class
-   identifier_untyped=qualified_identifier  -- without type arguments
+   identifier_untyped=qualified_identifier_safe  -- without type arguments
    (  LPAREN method_arguments=argument_list RPAREN
-    | ?[: (yytoken == Token_LBRACKET && LA(2).kind == Token_RBRACKET)
-          || yytoken == Token_DOT :]
-      declarator_brackets=optional_declarator_brackets
+    | ?[: LA(2).kind == Token_RBRACKET :]
+      declarator_brackets=mandatory_declarator_brackets
       DOT array_dotclass=CLASS
     | 0
    )
@@ -1157,7 +1172,7 @@ bool lookahead_is_cast_expression(java* parser);
    (  SUPER super_suffix_typed=super_suffix
     | this_call_typed=THIS
       LPAREN this_constructor_arguments=argument_list RPAREN
-    | method_name_typed=qualified_identifier
+    | method_name_typed=identifier
       LPAREN method_arguments=argument_list RPAREN
    )
  )
@@ -1259,7 +1274,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- Appendix: token list
 --
 
-   ( keyword | seperator | operator | literal | identifier )
+   ( keyword | seperator | operator | literal | identifier | INVALID )
 -> token ;;
 
    (  ABSTRACT | ASSERT | BOOLEAN | BREAK | BYTE | CASE | CATCH | CHAR | CLASS | CONST | CONTINUE
@@ -1272,10 +1287,10 @@ bool lookahead_is_cast_expression(java* parser);
    ( LPAREN | RPAREN | LBRACE | RBRACE | LBRACKET | RBRACKET | SEMICOLON | COMMA | DOT | AT )
 -> seperator ;;
 
-   (  ASSIGN | LESSTHAN | BANG | TILDE | QUESTION | COLON | EQUAL | LESSEQUAL | GREATEREQUAL
-    | NOTEQUAL | LOG_AND | LOG_OR | INCREMENT | DECREMENT | PLUS | MINUS | STAR | SLASH | BIT_AND
-    | BIT_OR | XOR | REMAINDER | LSHIFT | PLUSASSIGN | MINUSASSIGN | STARASSIGN | SLASHASSIGN
-    | ANDASSIGN | ORASSIGN | XORASSIGN | REMAINDERASSIGN | LSHIFTASSIGN | RSIGNEDSHIFTASSIGN
-    | RUNSIGNEDSHIFTASSIGN | GREATERTHAN | RSIGNEDSHIFT | RUNSIGNEDSHIFT | TRIPLEDOT )
+   (  ASSIGN | LESS_THAN | BANG | TILDE | QUESTION | COLON | EQUAL | LESS_EQUAL | GREATER_EQUAL
+    | NOT_EQUAL | LOG_AND | LOG_OR | INCREMENT | DECREMENT | PLUS | MINUS | STAR | SLASH | BIT_AND
+    | BIT_OR | BIT_XOR | REMAINDER | LSHIFT | PLUS_ASSIGN | MINUS_ASSIGN | STAR_ASSIGN | SLASH_ASSIGN
+    | BIT_AND_ASSIGN | BIT_OR_ASSIGN | BIT_XOR_ASSIGN | REMAINDER_ASSIGN | LSHIFT_ASSIGN | SIGNED_RSHIFT_ASSIGN
+    | UNSIGNED_RSHIFT_ASSIGN | GREATER_THAN | SIGNED_RSHIFT | UNSIGNED_RSHIFT | TRIPLE_DOT )
 -> operator ;;
 

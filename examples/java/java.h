@@ -150,6 +150,8 @@ struct primary_selector_ast;
 
 struct qualified_identifier_ast;
 
+struct qualified_identifier_safe_ast;
+
 struct qualified_identifier_with_optional_star_ast;
 
 struct relational_expression_ast;
@@ -285,37 +287,38 @@ struct java_ast_node
       Kind_primary_expression = 1067,
       Kind_primary_selector = 1068,
       Kind_qualified_identifier = 1069,
-      Kind_qualified_identifier_with_optional_star = 1070,
-      Kind_relational_expression = 1071,
-      Kind_relational_expression_rest = 1072,
-      Kind_seperator = 1073,
-      Kind_shift_expression = 1074,
-      Kind_shift_expression_rest = 1075,
-      Kind_statement = 1076,
-      Kind_super_suffix = 1077,
-      Kind_switch_case = 1078,
-      Kind_switch_statements_group = 1079,
-      Kind_throws_clause = 1080,
-      Kind_token = 1081,
-      Kind_try_handler = 1082,
-      Kind_type_argument = 1083,
-      Kind_type_argument_specification = 1084,
-      Kind_type_arguments = 1085,
-      Kind_type_arguments_or_parameters_end = 1086,
-      Kind_type_declaration = 1087,
-      Kind_type_parameter = 1088,
-      Kind_type_parameters = 1089,
-      Kind_type_specification = 1090,
-      Kind_type_specification_noarray = 1091,
-      Kind_unary_expression = 1092,
-      Kind_unary_expression_not_plusminus = 1093,
-      Kind_variable_array_initializer = 1094,
-      Kind_variable_declaration = 1095,
-      Kind_variable_declaration_rest = 1096,
-      Kind_variable_declarator = 1097,
-      Kind_variable_initializer = 1098,
-      Kind_wildcard_type = 1099,
-      Kind_wildcard_type_bounds = 1100,
+      Kind_qualified_identifier_safe = 1070,
+      Kind_qualified_identifier_with_optional_star = 1071,
+      Kind_relational_expression = 1072,
+      Kind_relational_expression_rest = 1073,
+      Kind_seperator = 1074,
+      Kind_shift_expression = 1075,
+      Kind_shift_expression_rest = 1076,
+      Kind_statement = 1077,
+      Kind_super_suffix = 1078,
+      Kind_switch_case = 1079,
+      Kind_switch_statements_group = 1080,
+      Kind_throws_clause = 1081,
+      Kind_token = 1082,
+      Kind_try_handler = 1083,
+      Kind_type_argument = 1084,
+      Kind_type_argument_specification = 1085,
+      Kind_type_arguments = 1086,
+      Kind_type_arguments_or_parameters_end = 1087,
+      Kind_type_declaration = 1088,
+      Kind_type_parameter = 1089,
+      Kind_type_parameters = 1090,
+      Kind_type_specification = 1091,
+      Kind_type_specification_noarray = 1092,
+      Kind_unary_expression = 1093,
+      Kind_unary_expression_not_plusminus = 1094,
+      Kind_variable_array_initializer = 1095,
+      Kind_variable_declaration = 1096,
+      Kind_variable_declaration_rest = 1097,
+      Kind_variable_declarator = 1098,
+      Kind_variable_initializer = 1099,
+      Kind_wildcard_type = 1100,
+      Kind_wildcard_type_bounds = 1101,
       AST_NODE_KIND_COUNT
     };
 
@@ -1214,14 +1217,14 @@ struct primary_atom_ast: public java_ast_node
     std::size_t this_call_untyped;
     argument_list_ast *this_constructor_arguments;
     super_suffix_ast *super_suffix_untyped;
-    qualified_identifier_ast *identifier_untyped;
+    qualified_identifier_safe_ast *identifier_untyped;
     argument_list_ast *method_arguments;
-    optional_declarator_brackets_ast *declarator_brackets;
+    mandatory_declarator_brackets_ast *declarator_brackets;
     std::size_t array_dotclass;
     non_wildcard_type_arguments_ast *type_arguments;
     super_suffix_ast *super_suffix_typed;
     std::size_t this_call_typed;
-    qualified_identifier_ast *method_name_typed;
+    identifier_ast *method_name_typed;
 
   };
 
@@ -1261,6 +1264,17 @@ struct qualified_identifier_ast: public java_ast_node
     enum
     {
       KIND = Kind_qualified_identifier
+    };
+
+    const list_node<identifier_ast *> *name_sequence;
+
+  };
+
+struct qualified_identifier_safe_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_qualified_identifier_safe
     };
 
     const list_node<identifier_ast *> *name_sequence;
@@ -1417,7 +1431,7 @@ struct switch_statements_group_ast: public java_ast_node
     };
 
     const list_node<switch_case_ast *> *case_sequence;
-    const list_node<statement_ast *> *statement_sequence;
+    const list_node<block_statement_ast *> *statement_sequence;
 
   };
 
@@ -1677,8 +1691,8 @@ struct wildcard_type_bounds_ast: public java_ast_node
 
 // ltCounter stores the amount of currently open type arguments rules,
 // all of which are beginning with a less than ("<") character.
-// This way, also RSIGNEDSHIFT (">>") and RUNSIGNEDSHIFT (">>>") can be used
-// to close type arguments rules, in addition to GREATERTHAN (">").
+// This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
+// to close type arguments rules, in addition to GREATER_THAN (">").
 static int ltCounter = 0;
 
 // tripleDotOccurred is used as a means of communication between
@@ -1744,112 +1758,113 @@ class java
     enum token_type_enum
     {
       Token_ABSTRACT = 1000,
-      Token_ANDASSIGN = 1001,
-      Token_ASSERT = 1002,
-      Token_ASSIGN = 1003,
-      Token_AT = 1004,
-      Token_BANG = 1005,
-      Token_BIT_AND = 1006,
+      Token_ASSERT = 1001,
+      Token_ASSIGN = 1002,
+      Token_AT = 1003,
+      Token_BANG = 1004,
+      Token_BIT_AND = 1005,
+      Token_BIT_AND_ASSIGN = 1006,
       Token_BIT_OR = 1007,
-      Token_BOOLEAN = 1008,
-      Token_BREAK = 1009,
-      Token_BYTE = 1010,
-      Token_CASE = 1011,
-      Token_CATCH = 1012,
-      Token_CHAR = 1013,
-      Token_CHARACTER_LITERAL = 1014,
-      Token_CLASS = 1015,
-      Token_COLON = 1016,
-      Token_COMMA = 1017,
-      Token_CONST = 1018,
-      Token_CONTINUE = 1019,
-      Token_DECREMENT = 1020,
-      Token_DEFAULT = 1021,
-      Token_DO = 1022,
-      Token_DOT = 1023,
-      Token_DOUBLE = 1024,
-      Token_ELSE = 1025,
-      Token_ENUM = 1026,
-      Token_EOF = 1027,
-      Token_EQUAL = 1028,
-      Token_EXTENDS = 1029,
-      Token_FALSE = 1030,
-      Token_FINAL = 1031,
-      Token_FINALLY = 1032,
-      Token_FLOAT = 1033,
-      Token_FLOATING_POINT_LITERAL = 1034,
-      Token_FOR = 1035,
-      Token_GOTO = 1036,
-      Token_GREATEREQUAL = 1037,
-      Token_GREATERTHAN = 1038,
-      Token_IDENTIFIER = 1039,
-      Token_IF = 1040,
-      Token_IMPLEMENTS = 1041,
-      Token_IMPORT = 1042,
-      Token_INCREMENT = 1043,
-      Token_INSTANCEOF = 1044,
-      Token_INT = 1045,
-      Token_INTEGER_LITERAL = 1046,
-      Token_INTERFACE = 1047,
-      Token_LBRACE = 1048,
-      Token_LBRACKET = 1049,
-      Token_LESSEQUAL = 1050,
-      Token_LESSTHAN = 1051,
-      Token_LOG_AND = 1052,
-      Token_LOG_OR = 1053,
-      Token_LONG = 1054,
-      Token_LPAREN = 1055,
-      Token_LSHIFT = 1056,
-      Token_LSHIFTASSIGN = 1057,
-      Token_MINUS = 1058,
-      Token_MINUSASSIGN = 1059,
-      Token_NATIVE = 1060,
-      Token_NEW = 1061,
-      Token_NOTEQUAL = 1062,
-      Token_NULL = 1063,
-      Token_ORASSIGN = 1064,
-      Token_PACKAGE = 1065,
-      Token_PLUS = 1066,
-      Token_PLUSASSIGN = 1067,
-      Token_PRIVATE = 1068,
-      Token_PROTECTED = 1069,
-      Token_PUBLIC = 1070,
-      Token_QUESTION = 1071,
-      Token_RBRACE = 1072,
-      Token_RBRACKET = 1073,
-      Token_REMAINDER = 1074,
-      Token_REMAINDERASSIGN = 1075,
-      Token_RETURN = 1076,
-      Token_RPAREN = 1077,
-      Token_RSIGNEDSHIFT = 1078,
-      Token_RSIGNEDSHIFTASSIGN = 1079,
-      Token_RUNSIGNEDSHIFT = 1080,
-      Token_RUNSIGNEDSHIFTASSIGN = 1081,
-      Token_SEMICOLON = 1082,
-      Token_SHORT = 1083,
-      Token_SLASH = 1084,
-      Token_SLASHASSIGN = 1085,
-      Token_STAR = 1086,
-      Token_STARASSIGN = 1087,
-      Token_STATIC = 1088,
-      Token_STRICTFP = 1089,
-      Token_STRING_LITERAL = 1090,
-      Token_SUPER = 1091,
-      Token_SWITCH = 1092,
-      Token_SYNCHRONIZED = 1093,
-      Token_THIS = 1094,
-      Token_THROW = 1095,
-      Token_THROWS = 1096,
-      Token_TILDE = 1097,
-      Token_TRANSIENT = 1098,
-      Token_TRIPLEDOT = 1099,
-      Token_TRUE = 1100,
-      Token_TRY = 1101,
-      Token_VOID = 1102,
-      Token_VOLATILE = 1103,
-      Token_WHILE = 1104,
-      Token_XOR = 1105,
-      Token_XORASSIGN = 1106,
+      Token_BIT_OR_ASSIGN = 1008,
+      Token_BIT_XOR = 1009,
+      Token_BIT_XOR_ASSIGN = 1010,
+      Token_BOOLEAN = 1011,
+      Token_BREAK = 1012,
+      Token_BYTE = 1013,
+      Token_CASE = 1014,
+      Token_CATCH = 1015,
+      Token_CHAR = 1016,
+      Token_CHARACTER_LITERAL = 1017,
+      Token_CLASS = 1018,
+      Token_COLON = 1019,
+      Token_COMMA = 1020,
+      Token_CONST = 1021,
+      Token_CONTINUE = 1022,
+      Token_DECREMENT = 1023,
+      Token_DEFAULT = 1024,
+      Token_DO = 1025,
+      Token_DOT = 1026,
+      Token_DOUBLE = 1027,
+      Token_ELSE = 1028,
+      Token_ENUM = 1029,
+      Token_EOF = 1030,
+      Token_EQUAL = 1031,
+      Token_EXTENDS = 1032,
+      Token_FALSE = 1033,
+      Token_FINAL = 1034,
+      Token_FINALLY = 1035,
+      Token_FLOAT = 1036,
+      Token_FLOATING_POINT_LITERAL = 1037,
+      Token_FOR = 1038,
+      Token_GOTO = 1039,
+      Token_GREATER_EQUAL = 1040,
+      Token_GREATER_THAN = 1041,
+      Token_IDENTIFIER = 1042,
+      Token_IF = 1043,
+      Token_IMPLEMENTS = 1044,
+      Token_IMPORT = 1045,
+      Token_INCREMENT = 1046,
+      Token_INSTANCEOF = 1047,
+      Token_INT = 1048,
+      Token_INTEGER_LITERAL = 1049,
+      Token_INTERFACE = 1050,
+      Token_INVALID = 1051,
+      Token_LBRACE = 1052,
+      Token_LBRACKET = 1053,
+      Token_LESS_EQUAL = 1054,
+      Token_LESS_THAN = 1055,
+      Token_LOG_AND = 1056,
+      Token_LOG_OR = 1057,
+      Token_LONG = 1058,
+      Token_LPAREN = 1059,
+      Token_LSHIFT = 1060,
+      Token_LSHIFT_ASSIGN = 1061,
+      Token_MINUS = 1062,
+      Token_MINUS_ASSIGN = 1063,
+      Token_NATIVE = 1064,
+      Token_NEW = 1065,
+      Token_NOT_EQUAL = 1066,
+      Token_NULL = 1067,
+      Token_PACKAGE = 1068,
+      Token_PLUS = 1069,
+      Token_PLUS_ASSIGN = 1070,
+      Token_PRIVATE = 1071,
+      Token_PROTECTED = 1072,
+      Token_PUBLIC = 1073,
+      Token_QUESTION = 1074,
+      Token_RBRACE = 1075,
+      Token_RBRACKET = 1076,
+      Token_REMAINDER = 1077,
+      Token_REMAINDER_ASSIGN = 1078,
+      Token_RETURN = 1079,
+      Token_RPAREN = 1080,
+      Token_SEMICOLON = 1081,
+      Token_SHORT = 1082,
+      Token_SIGNED_RSHIFT = 1083,
+      Token_SIGNED_RSHIFT_ASSIGN = 1084,
+      Token_SLASH = 1085,
+      Token_SLASH_ASSIGN = 1086,
+      Token_STAR = 1087,
+      Token_STAR_ASSIGN = 1088,
+      Token_STATIC = 1089,
+      Token_STRICTFP = 1090,
+      Token_STRING_LITERAL = 1091,
+      Token_SUPER = 1092,
+      Token_SWITCH = 1093,
+      Token_SYNCHRONIZED = 1094,
+      Token_THIS = 1095,
+      Token_THROW = 1096,
+      Token_THROWS = 1097,
+      Token_TILDE = 1098,
+      Token_TRANSIENT = 1099,
+      Token_TRIPLE_DOT = 1100,
+      Token_TRUE = 1101,
+      Token_TRY = 1102,
+      Token_UNSIGNED_RSHIFT = 1103,
+      Token_UNSIGNED_RSHIFT_ASSIGN = 1104,
+      Token_VOID = 1105,
+      Token_VOLATILE = 1106,
+      Token_WHILE = 1107,
       token_type_size
     }; // token_type_enum
 
@@ -1930,6 +1945,7 @@ class java
     bool parse_primary_expression(primary_expression_ast **yynode);
     bool parse_primary_selector(primary_selector_ast **yynode);
     bool parse_qualified_identifier(qualified_identifier_ast **yynode);
+    bool parse_qualified_identifier_safe(qualified_identifier_safe_ast **yynode);
     bool parse_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast **yynode);
     bool parse_relational_expression(relational_expression_ast **yynode);
     bool parse_relational_expression_rest(relational_expression_rest_ast **yynode);
@@ -2186,6 +2202,9 @@ class java_visitor
     {}
 
     virtual void visit_qualified_identifier(qualified_identifier_ast *)
+    {}
+
+    virtual void visit_qualified_identifier_safe(qualified_identifier_safe_ast *)
     {}
 
     virtual void visit_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast *)
@@ -3189,6 +3208,22 @@ class java_default_visitor: public java_visitor
         }
     }
 
+    virtual void visit_qualified_identifier_safe(qualified_identifier_safe_ast *node)
+    {
+      if (node->name_sequence)
+        {
+          const list_node<identifier_ast*> *__it = node->name_sequence->to_front(), *__end = __it;
+
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+
+          while (__it != __end);
+        }
+    }
+
     virtual void visit_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast *node)
     {
       if (node->name_sequence)
@@ -3343,7 +3378,7 @@ class java_default_visitor: public java_visitor
 
       if (node->statement_sequence)
         {
-          const list_node<statement_ast*> *__it = node->statement_sequence->to_front(), *__end = __it;
+          const list_node<block_statement_ast*> *__it = node->statement_sequence->to_front(), *__end = __it;
 
           do
             {

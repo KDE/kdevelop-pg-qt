@@ -1,4 +1,3 @@
-
 %{
 #include "java.h"
 
@@ -7,65 +6,186 @@ extern char *_G_contents;
 extern std::size_t _G_current_offset;
 
 #define YY_INPUT(buf, result, max_size) \
- do \
-   { \
-     int c = _G_contents[_G_current_offset++]; \
-     result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
-   } \
- while (0)
+do \
+{ \
+int c = _G_contents[_G_current_offset++]; \
+result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
+} \
+while (0)
 
 #define YY_USER_INIT \
-  _M_token_begin = _M_token_end = 0; \
-  _G_current_offset = 0;
+_M_token_begin = _M_token_end = 0; \
+_G_current_offset = 0;
 
 #define YY_USER_ACTION \
-  _M_token_begin = _M_token_end; \
-  _M_token_end += yyleng;
+_M_token_begin = _M_token_end; \
+_M_token_end += yyleng;
 
+/*
+#include <stdio>
 
+#define MAX_STRING_BUF 1024
+char string_buf[MAX_STRING_BUF];
+char* string_buf_ptr = 0;
+ */
 
- /* TODO: return the string value instead of only the last found part (") */
- // "\""                               BEGIN(IN_STRING);
- // <IN_STRING>"\""                      BEGIN(INITIAL); return java::Token_STRING_LITERAL;
- // <IN_STRING><<EOF>>                   printf("Unclosed string at the end of the file.\n"); assert(0);
- // <IN_STRING>\n                        printf("Line break in an open string.\n"); assert(0);
- // <IN_STRING>{ESCAPE_SEQUENCE}         /*advance*/ ;
- // <IN_STRING>\\.                       printf("Invalid string escape: %s\n", yytext); assert(0);
- // <IN_STRING>.                         /*advance*/ ;
 %}
 
-%x IN_STRING
+HexDigit        [0-9a-fA-F]
+Digit           [0-9]
+OctalDigit      [0-7]
+NonZeroDigit    [1-9]
+
+Unicode         [\\][u]+{HexDigit}{HexDigit}{HexDigit}{HexDigit}
+Octal           [\\]{OctalDigit}({Digit}({Digit})?)?
+Escape          [\\]([r]|[n]|[b]|[f]|[t]|[\\]|[']|["])|{Unicode}|{Octal}
+
+IntSuffix       ([l]|[L])
+DecimalNum      ([0]|{NonZeroDigit}{Digit}*){IntSuffix}?
+OctalNum        [0]{OctalDigit}+{IntSuffix}?
+HexNum          [0]([x]|[X]){HexDigit}+{IntSuffix}?
+IntegerLiteral  ({DecimalNum}|{OctalNum}|{HexNum})
+
+Sign            ([\+]|[\-])
+FloatSuffix     ([f]|[F]|[d]|[D])
+SignedInt       {Sign}?{Digit}+
+DecimalExpSign  ([e]|[E])
+BinaryExpSign   ([p]|[P])
+DecimalExponent {DecimalExpSign}{SignedInt}?
+BinaryExponent  {BinaryExpSign}{SignedInt}?
+Float1          {Digit}+[\.]{Digit}*{DecimalExponent}?{FloatSuffix}?
+Float2          [\.]{Digit}+{DecimalExponent}?{FloatSuffix}?
+Float3          {Digit}+{DecimalExponent}{FloatSuffix}?
+Float4          {Digit}+{DecimalExponent}?{FloatSuffix}
+HexFloatNum     [0]([x]|[X]){HexDigit}*[\.]{HexDigit}+
+HexFloat1       {HexNum}[\.]?{BinaryExponent}{FloatSuffix}?
+HexFloat2       {HexFloatNum}{BinaryExponent}{FloatSuffix}?
+FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
+
+
+ // %x IN_STRING  // for the ANTLR version, not used at the moment
 %x IN_BLOCKCOMMENT
-
-/* TODO: preprocess file so that unicode escapes
-         are converted before the file is lexed.
-         UNICODE_VALUE can then be removed from ESCAPE_VALUE. */
-UNICODE_VALUE     u+([0-9a-fA-f]{4,4})
-
-OCTAL_VALUE       ([0-7]{1,2}|[0-3][0-7][0-7])
-ESCAPE_SEQUENCE   \\([btnfr]|\'|\"|\\|{OCTAL_VALUE}|{UNICODE_VALUE})
-
-HEX_NUMERAL       0[xX][0-9a-fA-F]+
-HEX_FLOAT_NUMERAL 0[xX][0-9a-fA-F]*\.[0-9a-fA-F]+
-
-EXPONENT          [eE][\+\-]?[0-9]+
-BINARY_EXPONENT   [pP][\+\-]?[0-9]+
 
 %%
 
-[ \t\f\r\n]+  /* skip */ ;
+ /* seperators */
+
+"("             return java::Token_LPAREN;
+")"             return java::Token_RPAREN;
+"{"             return java::Token_LBRACE;
+"}"             return java::Token_RBRACE;
+"["             return java::Token_LBRACKET;
+"]"             return java::Token_RBRACKET;
+","             return java::Token_COMMA;
+";"             return java::Token_SEMICOLON;
+"."             return java::Token_DOT;
+"@"             return java::Token_AT;
 
 
- /* comments */
+ /* operators */
 
-"//".*                      /* line comments, skip */ ;
+"?"             return java::Token_QUESTION;
+":"             return java::Token_COLON;
+"!"             return java::Token_BANG;
+"~"             return java::Token_TILDE;
+"=="            return java::Token_EQUAL;
+"<"             return java::Token_LESS_THAN;
+"<="            return java::Token_LESS_EQUAL;
+">"             return java::Token_GREATER_THAN;
+">="            return java::Token_GREATER_EQUAL;
+"!="            return java::Token_NOT_EQUAL;
+"&&"            return java::Token_LOG_AND;
+"||"            return java::Token_LOG_OR;
+"++"            return java::Token_INCREMENT;
+"--"            return java::Token_DECREMENT;
+"="             return java::Token_ASSIGN;
+"+"             return java::Token_PLUS;
+"+="            return java::Token_PLUS_ASSIGN;
+"-"             return java::Token_MINUS;
+"-="            return java::Token_MINUS_ASSIGN;
+"*"             return java::Token_STAR;
+"*="            return java::Token_STAR_ASSIGN;
+"/"             return java::Token_SLASH;
+"/="            return java::Token_SLASH_ASSIGN;
+"&"             return java::Token_BIT_AND;
+"&="            return java::Token_BIT_AND_ASSIGN;
+"|"             return java::Token_BIT_OR;
+"|="            return java::Token_BIT_OR_ASSIGN;
+"^"             return java::Token_BIT_XOR;
+"^="            return java::Token_BIT_XOR_ASSIGN;
+"%"             return java::Token_REMAINDER;
+"%="            return java::Token_REMAINDER_ASSIGN;
+"<<"            return java::Token_LSHIFT;
+"<<="           return java::Token_LSHIFT_ASSIGN;
+">>"            return java::Token_SIGNED_RSHIFT;
+">>="           return java::Token_SIGNED_RSHIFT_ASSIGN;
+">>>"           return java::Token_UNSIGNED_RSHIFT;
+">>>="          return java::Token_UNSIGNED_RSHIFT_ASSIGN;
+"..."           return java::Token_TRIPLE_DOT;
 
-"/*"                        BEGIN(IN_BLOCKCOMMENT);
-<IN_BLOCKCOMMENT>"*/"         BEGIN(INITIAL);
-<IN_BLOCKCOMMENT><<EOF>>      printf("Unclosed block comment at the end of the file.\n"); assert(0);
-<IN_BLOCKCOMMENT>\n           /*advance*/ ;
-<IN_BLOCKCOMMENT>.            /*advance*/ ;
+[ \f\t]         /* skip */ ;
+"\r\n"|\r|\n    /* { newLine(); } */ ;
 
+"//"[^\r\n]*          /* line comments, skip */ ;
+
+[\']({Escape}|[^\r\n\'])[\']    return java::Token_CHARACTER_LITERAL;
+
+"/*"            BEGIN(IN_BLOCKCOMMENT);
+<IN_BLOCKCOMMENT>{
+[^*\r\n]*       /* eat anything that's not a '*' */ ;
+"*"+[^*/\r\n]*  /* eat up '*'s not followed by '/'s */ ;
+"\r\n"|\r|\n    /* { newLine(); } */ ;
+"*"+"/"         BEGIN(INITIAL);
+}
+
+
+ /* strings */
+
+\"([\\][\"]|[^\r\n\"])*\"  return java::Token_STRING_LITERAL;
+
+ /* This would be the more correct version. But I think it's better
+  * to match more than specified, as this parser is for class stores
+  * and code completion, not for absolutely conformant compilers.
+  * \"({Escape}|[^\r\n\"])*\"  return java::Token_STRING_LITERAL;
+  */
+
+
+ /* This is the ANTLR version, counting newlines and storing
+  * string values in a seperate buffer.
+[\"] {
+    BEGIN(IN_STRING);
+    string_buf_ptr = string_buf;
+}
+<string>{
+\" {
+    BEGIN(INITIAL);
+    *string_buf_ptr = '\0';
+    return java::Token_STRING_LITERAL;
+}
+{Octal} {
+    int result;
+    sscanf( yytext + 1, "%o", &result );
+    *string_buf_ptr++ = result;
+}
+{Unicode} {
+    int result;
+    sscanf( yytext + 1, "%x", &result );
+    *string_buf_ptr++ = result;
+}
+\\n         *string_buf_ptr++ = '\n';
+\\t         *string_buf_ptr++ = '\t';
+\\r         *string_buf_ptr++ = '\r';
+\\b         *string_buf_ptr++ = '\b';
+\\f         *string_buf_ptr++ = '\f';
+\\(.|\n)    *string_buf_ptr++ = yytext[1];
+[^\\\n\"]+ {
+    char *yptr = yytext;
+
+    while ( *yptr )
+        *string_buf_ptr++ = *yptr++;
+    }
+}	// end string states
+ */
 
  /* reserved words */
 
@@ -124,99 +244,15 @@ BINARY_EXPONENT   [pP][\+\-]?[0-9]+
 "while"         return java::Token_WHILE;
 
 
- /* seperators */
-
-"("             return java::Token_LPAREN;
-")"             return java::Token_RPAREN;
-"{"             return java::Token_LBRACE;
-"}"             return java::Token_RBRACE;
-"["             return java::Token_LBRACKET;
-"]"             return java::Token_RBRACKET;
-";"             return java::Token_SEMICOLON;
-","             return java::Token_COMMA;
-"."             return java::Token_DOT;
-"@"             return java::Token_AT;
-
-
- /* operators */
-
-"="             return java::Token_ASSIGN;
-"<"             return java::Token_LESSTHAN;
-"!"             return java::Token_BANG;
-"~"             return java::Token_TILDE;
-"?"             return java::Token_QUESTION;
-":"             return java::Token_COLON;
-"=="            return java::Token_EQUAL;
-"<="            return java::Token_LESSEQUAL;
-">="            return java::Token_GREATEREQUAL;
-"!="            return java::Token_NOTEQUAL;
-"&&"            return java::Token_LOG_AND;
-"||"            return java::Token_LOG_OR;
-"++"            return java::Token_INCREMENT;
-"--"            return java::Token_DECREMENT;
-"+"             return java::Token_PLUS;
-"-"             return java::Token_MINUS;
-"*"             return java::Token_STAR;
-"/"             return java::Token_SLASH;
-"&"             return java::Token_BIT_AND;
-"|"             return java::Token_BIT_OR;
-"^"             return java::Token_XOR;
-"%"             return java::Token_REMAINDER;
-"<<"            return java::Token_LSHIFT;
-"+="            return java::Token_PLUSASSIGN;
-"-="            return java::Token_MINUSASSIGN;
-"*="            return java::Token_STARASSIGN;
-"/="            return java::Token_SLASHASSIGN;
-"&="            return java::Token_ANDASSIGN;
-"|="            return java::Token_ORASSIGN;
-"^="            return java::Token_XORASSIGN;
-"%="            return java::Token_REMAINDERASSIGN;
-"<<="           return java::Token_LSHIFTASSIGN;
-">>="           return java::Token_RSIGNEDSHIFTASSIGN;
-">>>="          return java::Token_RUNSIGNEDSHIFTASSIGN;
-"..."           return java::Token_TRIPLEDOT;
-
-
- /* generics deserve special handling for ">", ">>" and ">>>" */
-
-">"             return java::Token_GREATERTHAN;
-">>"            return java::Token_RSIGNEDSHIFT;
-">>>"           return java::Token_RUNSIGNEDSHIFT;
-
 
  /* identifiers: lame implementation, missing unicode and non-latin-letter support */
 
-[a-zA-Z_$][0-9a-zA-Z_$]*  return java::Token_IDENTIFIER;
+[a-zA-Z_$#][0-9a-zA-Z_$#]*  return java::Token_IDENTIFIER;
 
+{IntegerLiteral}   return java::Token_INTEGER_LITERAL;
+{FloatingPoint}    return java::Token_FLOATING_POINT_LITERAL;
 
- /* literals */
-
- /* integers: decimal, hexadecimal and octal */
-([1-9][0-9]*|0)[lL]?               return java::Token_INTEGER_LITERAL;
-{HEX_NUMERAL}[lL]?                 return java::Token_INTEGER_LITERAL;
-0[0-7]+[lL]?                       return java::Token_INTEGER_LITERAL;
-
- /* decimal floats */
-[0-9]+\.[0-9]*{EXPONENT}?[fFdD]?   return java::Token_FLOATING_POINT_LITERAL;
-\.[0-9]+{EXPONENT}?[fFdD]?          return java::Token_FLOATING_POINT_LITERAL;
-[0-9]+{EXPONENT}[fFdD]?             return java::Token_FLOATING_POINT_LITERAL;
-[0-9]+{EXPONENT}?[fFdD]             return java::Token_FLOATING_POINT_LITERAL;
-
- /* hexadecimal floats */
-{HEX_NUMERAL}\.?{BINARY_EXPONENT}[fFdD]?     return java::Token_FLOATING_POINT_LITERAL;
-{HEX_FLOAT_NUMERAL}{BINARY_EXPONENT}[fFdD]?  return java::Token_FLOATING_POINT_LITERAL;
-
- /* characters */
-\'(.|\"|{ESCAPE_SEQUENCE})\'       return java::Token_CHARACTER_LITERAL;
-("''"|\'..+\')                     printf("Invalid character escape: %s\n", yytext); assert(0);
- /* as flex can't handle unicode, the last one also dismisses many special characters,
-    because it believes they consist of two characters (which isn't correct). */
-
- /* strings */
-\"({ESCAPE_SEQUENCE}|[^\\\n])*\"   return java::Token_STRING_LITERAL;
-
-
-. return yytext[0];
+.               return java::Token_INVALID;
 
 %%
 

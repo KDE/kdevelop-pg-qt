@@ -181,7 +181,9 @@ bool java_lookahead::is_package_declaration_start()
 }
 
 
-// modified to require only "(type)", but not the casted expression itself
+// modified to require only "(type)" and the first token of the casted
+// expression. The expression itself is not parsed. Whoever wants to
+// do it will have great fun duplicating all expression rule children.
 bool java_lookahead::is_cast_expression_start()
 {
   if (_M_token == java::Token_LPAREN)
@@ -199,10 +201,9 @@ bool java_lookahead::is_cast_expression_start()
           || _M_token == java::Token_INT
           || _M_token == java::Token_FLOAT
           || _M_token == java::Token_LONG
-          || _M_token == java::Token_DOUBLE
-          || _M_token == java::Token_IDENTIFIER)
+          || _M_token == java::Token_DOUBLE)
         {
-          if (!is_type_specification())
+          if (!is_builtin_type_specification())
             {
               return false;
             }
@@ -212,7 +213,56 @@ bool java_lookahead::is_cast_expression_start()
 
           fetch_next_token();
         }
-      else
+
+      else if (_M_token == java::Token_IDENTIFIER)
+        {
+          if (!is_class_type_specification())
+          {
+            return false;
+          }
+
+          if (_M_token != java::Token_RPAREN)
+            return false;
+
+          fetch_next_token();
+
+          if (_M_token == java::Token_LPAREN
+              || _M_token == java::Token_LESS_THAN
+              || _M_token == java::Token_SUPER
+              || _M_token == java::Token_VOID
+              || _M_token == java::Token_BOOLEAN
+              || _M_token == java::Token_BYTE
+              || _M_token == java::Token_CHAR
+              || _M_token == java::Token_SHORT
+              || _M_token == java::Token_INT
+              || _M_token == java::Token_FLOAT
+              || _M_token == java::Token_LONG
+              || _M_token == java::Token_DOUBLE
+                //|| _M_token == java::Token_PLUS  // I think the probability of normal
+                //|| _M_token == java::Token_MINUS // expressions is higher in this case
+              || _M_token == java::Token_INCREMENT
+              || _M_token == java::Token_DECREMENT
+              || _M_token == java::Token_TILDE
+              || _M_token == java::Token_BANG
+              || _M_token == java::Token_THIS
+              || _M_token == java::Token_NEW
+              || _M_token == java::Token_IDENTIFIER
+              || _M_token == java::Token_TRUE
+              || _M_token == java::Token_FALSE
+              || _M_token == java::Token_NULL
+              || _M_token == java::Token_INTEGER_LITERAL
+              || _M_token == java::Token_FLOATING_POINT_LITERAL
+              || _M_token == java::Token_CHARACTER_LITERAL
+              || _M_token == java::Token_STRING_LITERAL)
+            {
+              return true;
+            }
+          else
+            {
+              return false;
+            }
+        }
+      else // not identifier or builtin typespec
         {
           return false;
         }
@@ -310,63 +360,52 @@ bool java_lookahead::is_annotation()
 // modified to accept almost anything within <...>
 bool java_lookahead::is_type_arguments()
 {
-  if (_M_token == java::Token_LESSTHAN)
+  if (_M_token == java::Token_LESS_THAN)
     {
-      if (_M_token != java::Token_LESSTHAN)
+      if (_M_token != java::Token_LESS_THAN)
         return false;
+
+      int ltCount = 1;
 
       fetch_next_token();
 
-      int ltCount = 0;
-
       while (true)
         {
-          if (_M_token == java::Token_LESSTHAN)
+          if (_M_token == java::Token_LESS_THAN)
             {
-              if (_M_token != java::Token_LESSTHAN)
-                return false;
-
-              ltCounter += 1;
+              ltCount += 1;
             }
 
-          else if (_M_token == java::Token_GREATERTHAN)
+          else if (_M_token == java::Token_GREATER_THAN)
             {
-              if (_M_token != java::Token_GREATERTHAN)
-                return false;
-
-              ltCounter -= 1;
+              ltCount -= 1;
             }
 
-          else if (_M_token == java::Token_RSIGNEDSHIFT)
+          else if (_M_token == java::Token_SIGNED_RSHIFT)
             {
-              if (_M_token != java::Token_RSIGNEDSHIFT)
-                return false;
-
-              ltCounter -= 2;
+              ltCount -= 2;
             }
 
-          else if (_M_token == java::Token_RUNSIGNEDSHIFT)
+          else if (_M_token == java::Token_UNSIGNED_RSHIFT)
             {
-              if (_M_token != java::Token_RUNSIGNEDSHIFT)
-                return false;
-
-              ltCounter -= 3;
+              ltCount -= 3;
             }
 
           else if (_M_token == java::Token_SEMICOLON
                    || _M_token == java::Token_EOF)
             {
               return false;
-              // for performance reasons - otherwise an unclosed LESSTHAN
-              // can cause the whole file to be read.
+              // for performance reasons - otherwise an unclosed LESS_THAN
+              // can cause the whole file to be read. As neither of them
+              // can occur in type arguments, this is also correct.
             }
+
+          fetch_next_token();
 
           if ( ltCount <= 0 )
             {
               break;
             }
-
-          fetch_next_token();
 
         } // end while loop
 
@@ -457,7 +496,7 @@ bool java_lookahead::is_optional_modifiers()
       || _M_token == java::Token_INTERFACE
       || _M_token == java::Token_ENUM
       || _M_token == java::Token_AT
-      || _M_token == java::Token_LESSTHAN
+      || _M_token == java::Token_LESS_THAN
       || _M_token == java::Token_VOID
       || _M_token == java::Token_BOOLEAN
       || _M_token == java::Token_BYTE
@@ -700,13 +739,13 @@ bool java_lookahead::is_optional_declarator_brackets()
       || _M_token == java::Token_EXTENDS
       || _M_token == java::Token_IMPLEMENTS
       || _M_token == java::Token_THROWS
-      || _M_token == java::Token_TRIPLEDOT
+      || _M_token == java::Token_TRIPLE_DOT
       || _M_token == java::Token_BIT_AND
       || _M_token == java::Token_QUESTION
       || _M_token == java::Token_SUPER
-      || _M_token == java::Token_GREATERTHAN
-      || _M_token == java::Token_RSIGNEDSHIFT
-      || _M_token == java::Token_RUNSIGNEDSHIFT
+      || _M_token == java::Token_GREATER_THAN
+      || _M_token == java::Token_SIGNED_RSHIFT
+      || _M_token == java::Token_UNSIGNED_RSHIFT
       || _M_token == java::Token_VOID
       || _M_token == java::Token_BOOLEAN
       || _M_token == java::Token_BYTE
@@ -722,27 +761,27 @@ bool java_lookahead::is_optional_declarator_brackets()
       || _M_token == java::Token_RBRACKET
       || _M_token == java::Token_ASSIGN
       || _M_token == java::Token_COLON
-      || _M_token == java::Token_PLUSASSIGN
-      || _M_token == java::Token_MINUSASSIGN
-      || _M_token == java::Token_STARASSIGN
-      || _M_token == java::Token_SLASHASSIGN
-      || _M_token == java::Token_ANDASSIGN
-      || _M_token == java::Token_ORASSIGN
-      || _M_token == java::Token_XORASSIGN
-      || _M_token == java::Token_REMAINDERASSIGN
-      || _M_token == java::Token_LSHIFTASSIGN
-      || _M_token == java::Token_RSIGNEDSHIFTASSIGN
-      || _M_token == java::Token_RUNSIGNEDSHIFTASSIGN
+      || _M_token == java::Token_PLUS_ASSIGN
+      || _M_token == java::Token_MINUS_ASSIGN
+      || _M_token == java::Token_STAR_ASSIGN
+      || _M_token == java::Token_SLASH_ASSIGN
+      || _M_token == java::Token_BIT_AND_ASSIGN
+      || _M_token == java::Token_BIT_OR_ASSIGN
+      || _M_token == java::Token_BIT_XOR_ASSIGN
+      || _M_token == java::Token_REMAINDER_ASSIGN
+      || _M_token == java::Token_LSHIFT_ASSIGN
+      || _M_token == java::Token_SIGNED_RSHIFT_ASSIGN
+      || _M_token == java::Token_UNSIGNED_RSHIFT_ASSIGN
       || _M_token == java::Token_LOG_OR
       || _M_token == java::Token_LOG_AND
       || _M_token == java::Token_BIT_OR
-      || _M_token == java::Token_XOR
+      || _M_token == java::Token_BIT_XOR
       || _M_token == java::Token_EQUAL
-      || _M_token == java::Token_NOTEQUAL
+      || _M_token == java::Token_NOT_EQUAL
       || _M_token == java::Token_INSTANCEOF
-      || _M_token == java::Token_LESSTHAN
-      || _M_token == java::Token_LESSEQUAL
-      || _M_token == java::Token_GREATEREQUAL
+      || _M_token == java::Token_LESS_THAN
+      || _M_token == java::Token_LESS_EQUAL
+      || _M_token == java::Token_GREATER_EQUAL
       || _M_token == java::Token_LSHIFT
       || _M_token == java::Token_PLUS
       || _M_token == java::Token_MINUS
@@ -853,7 +892,7 @@ bool java_lookahead::is_class_or_interface_type_part()
           return false;
         }
 
-      if (_M_token == java::Token_LESSTHAN)
+      if (_M_token == java::Token_LESS_THAN)
         {
           if (!is_type_arguments())
             {

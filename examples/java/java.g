@@ -122,6 +122,24 @@
 -- I'd rather have these as members of the java class,
 -- but at the time of writing this doesn't seem to be possible.
 [:
+// The compatibility_mode status variable tells which version of Java
+// should be checked against.
+enum java_compatibility_mode {
+  java13_compatibility = 130,
+  java14_compatibility = 140,
+  java15_compatibility = 150,
+};
+
+static java_compatibility_mode _M_compatibility_mode = java15_compatibility;
+
+static java_compatibility_mode compatibility_mode() {
+  return _M_compatibility_mode;
+}
+static void set_compatibility_mode( java_compatibility_mode mode ) {
+  _M_compatibility_mode = mode;
+}
+
+
 // ltCounter stores the amount of currently open type arguments rules,
 // all of which are beginning with a less than ("<") character.
 // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
@@ -133,6 +151,7 @@ static int  ltCounter = 0;
 // if a triple dot was already in the list (then no more declarations
 // may follow).
 static bool tripleDotOccurred;
+
 
 class java; // this code block is put before the class declaration
 
@@ -516,8 +535,6 @@ bool lookahead_is_cast_expression(java* parser);
 -- it's possible to have a constructor call like this(...) or super(...)
 -- at the beginning of the block. This causes a conflict which is difficult
 -- to resolve, so class_field uses block instead of constructor_body.
--- TODO: make sure that the THIS and SUPER stuff is in statement too,
---       as this commented stuff can't provide it.
 --
 --    LBRACE
 --    ( explicit_constructor_invocation=explicit_constructor_invocation | 0 )
@@ -527,7 +544,10 @@ bool lookahead_is_cast_expression(java* parser);
 --
 -- -- Catches obvious constructor calls, but not the expr.super(...) calls:
 --
---    (type_arguments=type_arguments | 0)
+--    (  ?[: _M_compatibility_mode >= java15_compatibility :]
+--       type_arguments=type_arguments
+--     | 0
+--    )
 --    (invocated_constructor=THIS | invocated_constructor=SUPER)
 --    LPAREN arguments=argument_list RPAREN SEMICOLON
 -- -> explicit_constructor_invocation ;;
@@ -674,7 +694,11 @@ bool lookahead_is_cast_expression(java* parser);
    #part=class_or_interface_type_part @ DOT
 -> class_or_interface_type ;;
 
-   identifier=identifier (type_arguments=type_arguments | 0)
+   identifier=identifier
+   (  ?[: _M_compatibility_mode >= java15_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
 -> class_or_interface_type_part ;;
 
 
@@ -1108,7 +1132,10 @@ bool lookahead_is_cast_expression(java* parser);
       variable_name=identifier           -- (no method call)
     |
       -- method calls (including the "super" ones) may have type arguments
-      (type_arguments=non_wildcard_type_arguments | 0)
+      (  ?[: _M_compatibility_mode >= java15_compatibility :]
+         type_arguments=non_wildcard_type_arguments
+       | 0
+      )
       (  SUPER super_suffix=super_suffix
        | method_name=identifier
          LPAREN method_arguments=argument_list RPAREN
@@ -1131,7 +1158,10 @@ bool lookahead_is_cast_expression(java* parser);
       variable_name=identifier
     |
       -- method access (looks like super.methodName(...) in the end)
-      (type_arguments=non_wildcard_type_arguments | 0)
+      (  ?[: _M_compatibility_mode >= java15_compatibility :]
+         type_arguments=non_wildcard_type_arguments
+       | 0
+      )
       method_name=identifier
       (LPAREN method_arguments=argument_list RPAREN | 0)
    )
@@ -1158,15 +1188,7 @@ bool lookahead_is_cast_expression(java* parser);
  |
    SUPER super_suffix_untyped=super_suffix
  |
-   -- type names (normal) - either pure, as method or like bla[][].class
-   identifier_untyped=qualified_identifier_safe  -- without type arguments
-   (  LPAREN method_arguments=argument_list RPAREN
-    | ?[: LA(2).kind == Token_RBRACKET :]
-      declarator_brackets=mandatory_declarator_brackets
-      DOT array_dotclass=CLASS
-    | 0
-   )
- |
+   ?[: _M_compatibility_mode >= java15_compatibility :]
    -- generic method invocation with type arguments:
    type_arguments=non_wildcard_type_arguments
    (  SUPER super_suffix_typed=super_suffix
@@ -1175,6 +1197,15 @@ bool lookahead_is_cast_expression(java* parser);
     | method_name_typed=identifier
       LPAREN method_arguments=argument_list RPAREN
    )
+ |
+   -- type names (normal) - either pure, as method or like bla[][].class
+   identifier_untyped=qualified_identifier_safe  -- without type arguments
+   (  LPAREN method_arguments=argument_list RPAREN
+    | ?[: LA(2).kind == Token_RBRACKET :]
+      declarator_brackets=mandatory_declarator_brackets
+      DOT array_dotclass=CLASS
+    | 0
+   )
  )
 -> primary_atom ;;
 
@@ -1182,7 +1213,10 @@ bool lookahead_is_cast_expression(java* parser);
 -- NEW EXPRESSIONs are allocations of new types or arrays.
 
    NEW
-   (type_arguments=non_wildcard_type_arguments | 0)
+   (  ?[: _M_compatibility_mode >= java15_compatibility :]
+      type_arguments=non_wildcard_type_arguments
+    | 0
+   )
    type=type_specification_noarray
    (  LPAREN class_constructor_arguments=argument_list RPAREN
       (class_body=class_body | 0)

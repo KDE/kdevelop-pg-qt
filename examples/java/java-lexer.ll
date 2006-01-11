@@ -1,4 +1,5 @@
 %{
+#include <iostream>
 #include "java.h"
 
 extern std::size_t _M_token_begin, _M_token_end;
@@ -21,9 +22,12 @@ _G_current_offset = 0;
 _M_token_begin = _M_token_end; \
 _M_token_end += yyleng;
 
-/*
-#include <stdio>
+void reportProblem (const char* message)
+{
+  std::cerr << "Warning: " << message << std::endl;
+}
 
+/*
 #define MAX_STRING_BUF 1024
 char string_buf[MAX_STRING_BUF];
 char* string_buf_ptr = 0;
@@ -128,8 +132,6 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
 "//"[^\r\n]*          /* line comments, skip */ ;
 
-[\']({Escape}|[^\r\n\'])[\']    return java::Token_CHARACTER_LITERAL;
-
 "/*"            BEGIN(IN_BLOCKCOMMENT);
 <IN_BLOCKCOMMENT>{
 [^*\r\n]*       /* eat anything that's not a '*' */ ;
@@ -139,15 +141,21 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 }
 
 
- /* strings */
+ /* characters and strings */
 
-\"([\\][\"]|[^\r\n\"])*\"  return java::Token_STRING_LITERAL;
+[\']({Escape}|[^\r\n\'])[\']    return java::Token_CHARACTER_LITERAL;
+[\']({Escape}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?([\r]|[\n]))|[\']) {
+    reportProblem("Invalid character literal...");
+    std::cerr << yytext << std::endl;
+    return java::Token_CHARACTER_LITERAL;
+}
 
- /* This would be the more correct version. But I think it's better
-  * to match more than specified, as this parser is for class stores
-  * and code completion, not for absolutely conformant compilers.
-  * \"({Escape}|[^\r\n\"])*\"  return java::Token_STRING_LITERAL;
-  */
+[\"]({Escape}|[^\\\r\n\"])*\"  return java::Token_STRING_LITERAL;
+[\"]({Escape}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?([\r]|[\n]))|[\"]) {
+    reportProblem("Invalid string literal...");
+    std::cerr << yytext << std::endl;
+    return java::Token_STRING_LITERAL;
+}
 
 
  /* This is the ANTLR version, counting newlines and storing
@@ -190,7 +198,12 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
  /* reserved words */
 
 "abstract"      return java::Token_ABSTRACT;
-"assert"        return java::Token_ASSERT;
+"assert"        {
+    if (compatibility_mode() >= java14_compatibility)
+      return java::Token_ASSERT;
+    else
+      return java::Token_IDENTIFIER;
+}
 "boolean"       return java::Token_BOOLEAN;
 "break"         return java::Token_BREAK;
 "byte"          return java::Token_BYTE;
@@ -204,7 +217,12 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "do"            return java::Token_DO;
 "double"        return java::Token_DOUBLE;
 "else"          return java::Token_ELSE;
-"enum"          return java::Token_ENUM;
+"enum"          {
+    if (compatibility_mode() >= java15_compatibility)
+      return java::Token_ENUM;
+    else
+      return java::Token_IDENTIFIER;
+}
 "extends"       return java::Token_EXTENDS;
 "false"         return java::Token_FALSE;
 "final"         return java::Token_FINAL;

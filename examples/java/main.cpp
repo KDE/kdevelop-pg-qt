@@ -14,6 +14,8 @@ std::size_t _G_current_offset;
 extern char* yytext;
 
 static void tokenize(java &m);
+static void usage(char const* argv0);
+static bool parse_file(char const* filename);
 int yylex();
 
 
@@ -71,23 +73,58 @@ bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 }
 
 
-int main(int, char *argv[])
+int main(int argc, char *argv[])
 {
-  if (!*++argv)
+  if (argc == 1)
     {
-      std::cerr << "usage: java file.f" << std::endl;
+      usage(argv[0]);
       exit(EXIT_FAILURE);
     }
+  while (char const *arg = *++argv)
+    {
+      if (!strncmp(arg, "--compatibility=", 16))
+        {
+          char const* version = arg + 16;
 
-  if (FILE *fp = fopen(*argv, "r"))
+          if (!strcmp("1.5", version)) {
+            set_compatibility_mode (java15_compatibility);
+          }
+          else if (!strcmp("1.4", version)) {
+            set_compatibility_mode (java14_compatibility);
+          }
+          else if (!strcmp("1.3", version)) {
+            set_compatibility_mode (java13_compatibility);
+          }
+          else {
+            std::cerr << "Unsupported Java version: " << version << std::endl;
+            usage(argv[0]);
+            exit(EXIT_FAILURE);
+          }
+        }
+      else if (!strncmp(arg, "--", 2))
+        {
+          std::cerr << "Unknown option: " << arg << std::endl;
+          usage(argv[0]);
+          exit(EXIT_FAILURE);
+        }
+      else if(!parse_file(arg))
+        {
+          exit(EXIT_FAILURE);
+        }
+    }
+}
+
+bool parse_file(char const *filename)
+{
+  if (FILE *fp = fopen(filename, "r"))
     {
       fread(_G_contents = new char[MAX_BUFF], 1, MAX_BUFF, fp);
       fclose(fp);
     }
   else
     {
-      std::cerr << "file not found" << std::endl;
-      exit(EXIT_FAILURE);
+      std::cerr << filename << ": file not found" << std::endl;
+      return false;
     }
 
   java::token_stream_type token_stream;
@@ -111,12 +148,12 @@ int main(int, char *argv[])
   else
     {
       parser.yy_expected_symbol(java_ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
-      return EXIT_FAILURE;
+      return false;
     }
 
   delete[] _G_contents;
 
-  return EXIT_SUCCESS;
+  return true;
 }
 
 static void tokenize(java &m)
@@ -139,4 +176,14 @@ static void tokenize(java &m)
   while (kind != java::Token_EOF);
 
   m.yylex(); // produce the look ahead token
+}
+
+static void usage(char const* argv0)
+{
+  std::cerr << "usage: " << argv0 << " [options] file.java [file2.java ...]"
+     << std::endl << std::endl
+     << "Options:" << std::endl
+     << "  --compatibility=VERSION: Accept files of the given Java version. " << std::endl
+     << "                           VERSION is one of 1.3, 1.4 or 1.5, "
+     <<                            "default is 1.5." << std::endl;
 }

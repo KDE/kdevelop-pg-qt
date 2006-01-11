@@ -1217,14 +1217,14 @@ struct primary_atom_ast: public java_ast_node
     std::size_t this_call_untyped;
     argument_list_ast *this_constructor_arguments;
     super_suffix_ast *super_suffix_untyped;
-    qualified_identifier_safe_ast *identifier_untyped;
-    argument_list_ast *method_arguments;
-    mandatory_declarator_brackets_ast *declarator_brackets;
-    std::size_t array_dotclass;
     non_wildcard_type_arguments_ast *type_arguments;
     super_suffix_ast *super_suffix_typed;
     std::size_t this_call_typed;
     identifier_ast *method_name_typed;
+    argument_list_ast *method_arguments;
+    qualified_identifier_safe_ast *identifier_untyped;
+    mandatory_declarator_brackets_ast *declarator_brackets;
+    std::size_t array_dotclass;
 
   };
 
@@ -1689,6 +1689,27 @@ struct wildcard_type_bounds_ast: public java_ast_node
 
 
 
+// The compatibility_mode status variable tells which version of Java
+// should be checked against.
+enum java_compatibility_mode {
+  java13_compatibility = 130,
+  java14_compatibility = 140,
+  java15_compatibility = 150,
+};
+
+static java_compatibility_mode _M_compatibility_mode = java15_compatibility;
+
+static java_compatibility_mode compatibility_mode()
+{
+  return _M_compatibility_mode;
+}
+
+static void set_compatibility_mode( java_compatibility_mode mode )
+{
+  _M_compatibility_mode = mode;
+}
+
+
 // ltCounter stores the amount of currently open type arguments rules,
 // all of which are beginning with a less than ("<") character.
 // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
@@ -1700,6 +1721,7 @@ static int ltCounter = 0;
 // if a triple dot was already in the list (then no more declarations
 // may follow).
 static bool tripleDotOccurred;
+
 
 class java; // this code block is put before the class declaration
 
@@ -3155,12 +3177,12 @@ class java_default_visitor: public java_visitor
       visit_node(node->parenthesis_expression);
       visit_node(node->this_constructor_arguments);
       visit_node(node->super_suffix_untyped);
-      visit_node(node->identifier_untyped);
-      visit_node(node->method_arguments);
-      visit_node(node->declarator_brackets);
       visit_node(node->type_arguments);
       visit_node(node->super_suffix_typed);
       visit_node(node->method_name_typed);
+      visit_node(node->method_arguments);
+      visit_node(node->identifier_untyped);
+      visit_node(node->declarator_brackets);
     }
 
     virtual void visit_primary_expression(primary_expression_ast *node)

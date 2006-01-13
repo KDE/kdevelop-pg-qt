@@ -4669,43 +4669,43 @@ bool java::parse_for_control(for_control_ast **yynode)
 
           (*yynode)->vardecl_start_or_foreach_parameter = __node_132;
 
-          if (yytoken == Token_SEMICOLON
-              || yytoken == Token_COMMA
-              || yytoken == Token_ASSIGN)
-            {
-              variable_declaration_rest_ast *__node_133 = 0;
-
-              if (!parse_variable_declaration_rest(&__node_133))
-                {
-                  return yy_expected_symbol(java_ast_node::Kind_variable_declaration_rest, "variable_declaration_rest");
-                }
-
-              (*yynode)->variable_declaration_rest = __node_133;
-              for_clause_traditional_rest_ast *__node_134 = 0;
-
-              if (!parse_for_clause_traditional_rest(&__node_134))
-                {
-                  return yy_expected_symbol(java_ast_node::Kind_for_clause_traditional_rest, "for_clause_traditional_rest");
-                }
-
-              (*yynode)->traditional_for_rest = __node_134;
-            }
-
-          else if (yytoken == Token_COLON)
+          if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_COLON))
             {
               if (yytoken != Token_COLON)
                 return yy_expected_token(yytoken, Token_COLON, "COLON");
 
               yylex();
 
-              expression_ast *__node_135 = 0;
+              expression_ast *__node_133 = 0;
 
-              if (!parse_expression(&__node_135))
+              if (!parse_expression(&__node_133))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_expression, "expression");
                 }
 
-              (*yynode)->iterable_expression = __node_135;
+              (*yynode)->iterable_expression = __node_133;
+            }
+
+          else if (yytoken == Token_SEMICOLON
+                   || yytoken == Token_COMMA
+                   || yytoken == Token_ASSIGN)
+            {
+              variable_declaration_rest_ast *__node_134 = 0;
+
+              if (!parse_variable_declaration_rest(&__node_134))
+                {
+                  return yy_expected_symbol(java_ast_node::Kind_variable_declaration_rest, "variable_declaration_rest");
+                }
+
+              (*yynode)->variable_declaration_rest = __node_134;
+              for_clause_traditional_rest_ast *__node_135 = 0;
+
+              if (!parse_for_clause_traditional_rest(&__node_135))
+                {
+                  return yy_expected_symbol(java_ast_node::Kind_for_clause_traditional_rest, "for_clause_traditional_rest");
+                }
+
+              (*yynode)->traditional_for_rest = __node_135;
             }
 
           else

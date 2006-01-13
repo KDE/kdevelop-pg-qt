@@ -931,12 +931,13 @@ bool lookahead_is_cast_expression(java* parser);
  ( ?[: lookahead_is_parameter_declaration(this) == true :]
    vardecl_start_or_foreach_parameter=parameter_declaration  -- "int i"
    (
+      -- foreach: int i : intList.values()
+      ?[: _M_compatibility_mode >= java15_compatibility :]
+      COLON iterable_expression=expression
+    |
       -- traditional: int i = 0; i < size; i++
       variable_declaration_rest=variable_declaration_rest -- "= 0"
       traditional_for_rest=for_clause_traditional_rest    -- "; i < size; i++"
-    |
-      -- foreach: int i : intList.values()
-      COLON iterable_expression=expression
    )
  |
    traditional_for_rest=for_clause_traditional_rest  -- only starting with ";"

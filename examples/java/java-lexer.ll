@@ -83,7 +83,14 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 ","             return java::Token_COMMA;
 ";"             return java::Token_SEMICOLON;
 "."             return java::Token_DOT;
-"@"             return java::Token_AT;
+"@"             {
+    if (compatibility_mode() >= java15_compatibility)
+      return java::Token_AT;
+    else {
+      reportProblem("Annotations are not supported by Java 1.4 or earlier.");
+      return java::Token_INVALID;
+    }
+}
 
 
  /* operators */
@@ -125,7 +132,15 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 ">>="           return java::Token_SIGNED_RSHIFT_ASSIGN;
 ">>>"           return java::Token_UNSIGNED_RSHIFT;
 ">>>="          return java::Token_UNSIGNED_RSHIFT_ASSIGN;
-"..."           return java::Token_TRIPLE_DOT;
+"..."           {
+    if (compatibility_mode() >= java15_compatibility)
+      return java::Token_TRIPLE_DOT;
+    else {
+      reportProblem("Variable-length argument lists are not supported "
+                    "by Java 1.4 or earlier.");
+      return java::Token_INVALID;
+    }
+}
 
 [ \f\t]         /* skip */ ;
 "\r\n"|\r|\n    /* { newLine(); } */ ;

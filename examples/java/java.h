@@ -872,9 +872,9 @@ struct for_control_ast: public java_ast_node
     };
 
     parameter_declaration_ast *vardecl_start_or_foreach_parameter;
+    expression_ast *iterable_expression;
     variable_declaration_rest_ast *variable_declaration_rest;
     for_clause_traditional_rest_ast *traditional_for_rest;
-    expression_ast *iterable_expression;
     const list_node<expression_ast *> *expression_sequence;
 
   };
@@ -2879,9 +2879,9 @@ class java_default_visitor: public java_visitor
     virtual void visit_for_control(for_control_ast *node)
     {
       visit_node(node->vardecl_start_or_foreach_parameter);
+      visit_node(node->iterable_expression);
       visit_node(node->variable_declaration_rest);
       visit_node(node->traditional_for_rest);
-      visit_node(node->iterable_expression);
 
       if (node->expression_sequence)
         {

@@ -35,8 +35,64 @@ char* string_buf_ptr = 0;
 
 %}
 
+
+ /* UTF-8 sequences, generated with the Unicode.hs script from
+  * http://lists.gnu.org/archive/html/help-flex/2005-01/msg00043.html */
+
+ /* \u0024, \u0041-\u005a, \u005f, \u0061-\u007a: one byte in UTF-8 */
+Letter1         [$A-Z_a-z]
+ /* \u00c0-\u00d6, \u00d8-\u00f6, \u00f8-\u00ff */
+Letter2         [\xC3]([\x80-\x96]|[\x98-\xB6]|[\xB8-\xBF])
+ /* \u0100-\u1fff */
+Letter3         [\xC4-\xDF][\x80-\xBF]|([\xE0][\xA0-\xBF]|[\xE1][\x80-\xBF])[\x80-\xBF]
+ /* \u3040-\u318f */
+Letter4         [\xE3]([\x86][\x80-\x8F]|[\x81-\x85][\x80-\xBF])
+ /* \u3300-\u337f */
+Letter5         [\xE3][\x8C-\x8D][\x80-\xBF]
+ /* \u3400-\u3d2d */
+Letter6         [\xE3](\xB4[\x80-\xAD]|[\x90-\xB3][\x80-\xBF])
+ /* \u4e00-\u9fff */
+Letter7         ([\xE4][\xB8-\xBF]|[\xE5-\xE9][\x80-\xBF])[\x80-\xBF]
+ /* \uf900-\ufaff */
+Letter8         [\xEF][\xA4-\xAB][\x80-\xBF]
+
+Letter          {Letter1}|{Letter2}|{Letter3}|{Letter4}|{Letter5}|{Letter6}|{Letter7}|{Letter8}
+
+ /* \u0030-\u0039: ISO-LATIN-1 digits */
+Digit1          [0-9]
+ /* \u0660-\u0669, \u06f0-\u06f9: Arabic-Indic and extended Ar.-Indic digits */
+Digit2          [\xD9][\xA0-\xA9]|[\xDB][\xB0-\xB9]
+ /* \u0966-\u096f, \u09e6-\u09ef: Devanagari digits */
+Digit3          [\xE0]([\xA5]|[\xA7])[\xA6-\xAF]
+ /* \u0a66-\u0a6f, \u0ae6-\u0aef */
+Digit4          [\xE0]([\xA9]|[\xAB])[\xA6-\xAF]
+ /* \u0b66-\u0b6f, \u0be7-\u0bef */
+Digit5          [\xE0]([\xAD][\xA6-\xAF]|[\xAF][\xA7-\xAF])
+ /* \u0c66-\u0c6f, \u0ce6-\u0cef, \u0d66-\u0d6f */
+Digit6          [\xE0]([\xB1]|[\xB3]|[\xB5])[\xA6-\xAF]
+ /* \u0e50-\u0e59, \u0ed0-\u0ed9 */
+Digit7          [\xE0]([\xB9]|[\xBB])[\x90-\x99]
+ /* \u1040-\u1049 */
+Digit8          [\xE1][\x81][\x80-\x89]
+ /* \uff10-\uff19: Fullwidth digits */
+Digit9          [\xEF][\xBC][\x90-\x99]
+
+ /* \u0080-\uffff */
+Multibyte1      ([\xC2-\xDF]|[\xE0][\xA0-\xBF]|[\xE1-\xEF][\x80-\xBF])[\x80-\xBF]
+ /* \u10000-\u1fffff */
+Multibyte2      ([\xF0][\x90-\xBF]|[\xF1-\xF7][\x80-\xBF])[\x80-\xBF][\x80-\xBF]
+ /* \u200000-\u3ffffff */
+Multibyte3      ([\xF8][\x88-\xBF]|[\xF9-\xFB][\x80-\xBF])[\x80-\xBF][\x80-\xBF][\x80-\xBF]
+ /* \u4000000-\u7fffffff */
+Multibyte4      ([\xFC][\x84-\xBF]|[\xFD][\x80-\xBF])[\x80-\xBF][\x80-\xBF][\x80-\xBF]
+ /* Any multi-byte Unicode character. Single-byte ones are just . in lex. */
+Multibyte       {Multibyte1}|{Multibyte2}|{Multibyte3}|{Multibyte4}
+
+
+ /* non-Unicode stuff */
+
 HexDigit        [0-9a-fA-F]
-Digit           [0-9]
+Digit           {Digit1}|{Digit2}|{Digit3}|{Digit4}|{Digit5}|{Digit6}|{Digit7}|{Digit8}|{Digit9}
 OctalDigit      [0-7]
 NonZeroDigit    [1-9]
 
@@ -158,15 +214,15 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
  /* characters and strings */
 
-[\']({Escape}|[^\r\n\'])[\']    return java::Token_CHARACTER_LITERAL;
-[\']({Escape}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?([\r]|[\n]))|[\']) {
+[\']({Escape}|{Multibyte}|[^\r\n\'])[\']  return java::Token_CHARACTER_LITERAL;
+[\']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?([\r]|[\n]))|[\']) {
     reportProblem("Invalid character literal...");
     std::cerr << yytext << std::endl;
     return java::Token_CHARACTER_LITERAL;
 }
 
-[\"]({Escape}|[^\\\r\n\"])*\"  return java::Token_STRING_LITERAL;
-[\"]({Escape}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?([\r]|[\n]))|[\"]) {
+[\"]({Escape}|{Multibyte}|[^\\\r\n\"])*[\"]  return java::Token_STRING_LITERAL;
+[\"]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?([\r]|[\n]))|[\"]) {
     reportProblem("Invalid string literal...");
     std::cerr << yytext << std::endl;
     return java::Token_STRING_LITERAL;
@@ -226,7 +282,10 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "catch"         return java::Token_CATCH;
 "char"          return java::Token_CHAR;
 "class"         return java::Token_CLASS;
-"const"         return java::Token_CONST;
+"const"         {
+    reportProblem("\"const\": reserved but unused (invalid) keyword");
+    return java::Token_CONST;
+}
 "continue"      return java::Token_CONTINUE;
 "default"       return java::Token_DEFAULT;
 "do"            return java::Token_DO;
@@ -244,7 +303,10 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "finally"       return java::Token_FINALLY;
 "float"         return java::Token_FLOAT;
 "for"           return java::Token_FOR;
-"goto"          return java::Token_GOTO;
+"goto"          {
+    reportProblem("\"goto\": reserved but unused (invalid) keyword");
+    return java::Token_GOTO;
+}
 "if"            return java::Token_IF;
 "implements"    return java::Token_IMPLEMENTS;
 "import"        return java::Token_IMPORT;
@@ -277,10 +339,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "while"         return java::Token_WHILE;
 
 
-
- /* identifiers: lame implementation, missing unicode and non-latin-letter support */
-
-[a-zA-Z_$#][0-9a-zA-Z_$#]*  return java::Token_IDENTIFIER;
+{Letter}({Letter}|{Digit})*  return java::Token_IDENTIFIER;
 
 {IntegerLiteral}   return java::Token_INTEGER_LITERAL;
 {FloatingPoint}    return java::Token_FLOATING_POINT_LITERAL;

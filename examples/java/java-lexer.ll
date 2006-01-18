@@ -201,7 +201,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 [ \f\t]         /* skip */ ;
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 
-"//"[^\r\n]*          /* line comments, skip */ ;
+"//"[^\r\n]*    /* line comments, skip */ ;
 
 "/*"            BEGIN(IN_BLOCKCOMMENT);
 <IN_BLOCKCOMMENT>{
@@ -209,6 +209,10 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "*"+[^*/\r\n]*  /* eat up '*'s not followed by '/'s */ ;
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
+<<EOF>> {
+    reportProblem("Encountered end of file in an unclosed block comment...");
+    return java::Token_EOF;
+}
 }
 
 

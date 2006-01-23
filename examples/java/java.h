@@ -1714,7 +1714,7 @@ static void set_compatibility_mode( java_compatibility_mode mode )
 // all of which are beginning with a less than ("<") character.
 // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
 // to close type arguments rules, in addition to GREATER_THAN (">").
-static int ltCounter = 0;
+static int ltCounter;
 
 // tripleDotOccurred is used as a means of communication between
 // parameter_declaration_list and parameter_declaration_tripledot to determine

@@ -1,5 +1,6 @@
 
 #include "java.h"
+#include "decoder.h"
 
 #include <cstdlib>
 #include <cstdio>
@@ -17,13 +18,16 @@ static void tokenize(java &m);
 static void usage(char const* argv0);
 static bool parse_file(char const* filename);
 int yylex();
+void lexer_restart();
 
 
 void print_token_environment(java* parser)
 {
     static bool done = false;
     if (done)
-      return;
+      return; // don't print with each call when going up the error path
+
+    decoder dec(parser->token_stream);
 
     int current_index = parser->token_stream->index() - 1;
     for (int i = current_index - 5; i < current_index + 5; i++)
@@ -31,22 +35,15 @@ void print_token_environment(java* parser)
         if (i < 0 || i >= parser->token_stream->size())
           continue;
 
-        java::token_type* token = &(parser->token_stream->token(i));
-        char* current_token_text = new char[ token->end - token->begin + 2 ];
-
-        snprintf( current_token_text, token->end - token->begin + 1, token->text + token->begin );
-        current_token_text[ token->end - token->begin + 1 ] = '\0';
-
         if (i == current_index)
           std::cerr << ">>";
 
-        std::cerr << current_token_text;
+        std::cerr << dec.decode_id(i); // print out currently processed token
 
         if (i == current_index)
           std::cerr << "<<";
 
         std::cerr << " ";
-        delete[] current_token_text;
       }
     std::cerr << std::endl;
 
@@ -140,7 +137,8 @@ bool parse_file(char const *filename)
 
   // 2) parse
   compilation_unit_ast *ast = 0;
-  if (parser.parse_compilation_unit(&ast))
+  bool matched = parser.parse_compilation_unit(&ast);
+  if (matched)
     {
       java_default_visitor v;
       v.visit_node(ast);
@@ -148,17 +146,16 @@ bool parse_file(char const *filename)
   else
     {
       parser.yy_expected_symbol(java_ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
-      return false;
     }
 
   delete[] _G_contents;
 
-  return true;
+  return matched;
 }
 
 static void tokenize(java &m)
 {
-  // tokenize
+  ::lexer_restart();
   int kind = java::Token_EOF;
   do
     {

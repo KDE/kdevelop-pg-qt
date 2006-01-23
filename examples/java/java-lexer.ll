@@ -22,6 +22,11 @@ _G_current_offset = 0;
 _M_token_begin = _M_token_end; \
 _M_token_end += yyleng;
 
+void lexer_restart(void) {
+  yyrestart(NULL);
+  YY_USER_INIT
+}
+
 void reportProblem (const char* message)
 {
   std::cerr << "Warning: " << message << std::endl;
@@ -211,6 +216,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
     reportProblem("Encountered end of file in an unclosed block comment...");
+    BEGIN(INITIAL); // is not set automatically by yyrestart()
     return java::Token_EOF;
 }
 }

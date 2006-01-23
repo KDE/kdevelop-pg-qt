@@ -3139,6 +3139,8 @@ bool java::parse_compilation_unit(compilation_unit_ast **yynode)
       || yytoken == Token_VOLATILE
       || yytoken == Token_STRICTFP || yytoken == Token_EOF)
     {
+      ltCounter = 0;
+
       if (( lookahead_is_package_declaration(this) == true ) && (yytoken == Token_PACKAGE
           || yytoken == Token_AT))
         {

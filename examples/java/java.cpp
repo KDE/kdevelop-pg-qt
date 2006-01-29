@@ -11331,6 +11331,8 @@ bool java::parse_unary_expression_not_plusminus(unary_expression_not_plusminus_a
             {
               return yy_expected_symbol(java_ast_node::Kind_cast_expression, "cast_expression");
             }
+
+          (*yynode)->cast_expression = __node_301;
         }
 
       else if (yytoken == Token_LPAREN

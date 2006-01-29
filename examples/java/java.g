@@ -354,7 +354,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- A CLASS FIELD, representing the various things
 -- that can be defined inside a class.
 
- ( ?[: yytoken != Token_STATIC || LA(2).kind != Token_LBRACE :]
+ ( ?[: !(yytoken == Token_STATIC && LA(2).kind == Token_LBRACE) :]
     -- resolves the 'static' conflict, see further down
    modifiers=optional_modifiers
    (  class_declaration=class_declaration
@@ -1092,7 +1092,7 @@ bool lookahead_is_cast_expression(java* parser);
    TILDE bitwise_not_expression=unary_expression
  | BANG  logical_not_expression=unary_expression
  | ?[: lookahead_is_cast_expression(this) == true :]
-   cast_expression
+   cast_expression=cast_expression
  | primary_expression=primary_expression ( !(#postfix_operator=postfix_operator) | 0 )
 -> unary_expression_not_plusminus ;;
 

@@ -1599,6 +1599,7 @@ struct unary_expression_not_plusminus_ast: public java_ast_node
 
     unary_expression_ast *bitwise_not_expression;
     unary_expression_ast *logical_not_expression;
+    cast_expression_ast *cast_expression;
     primary_expression_ast *primary_expression;
     const list_node<postfix_operator_ast *> *postfix_operator_sequence;
 
@@ -3536,6 +3537,7 @@ class java_default_visitor: public java_visitor
     {
       visit_node(node->bitwise_not_expression);
       visit_node(node->logical_not_expression);
+      visit_node(node->cast_expression);
       visit_node(node->primary_expression);
 
       if (node->postfix_operator_sequence)

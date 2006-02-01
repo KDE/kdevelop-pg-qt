@@ -130,13 +130,16 @@ enum java_compatibility_mode {
   java15_compatibility = 150,
 };
 
-static java_compatibility_mode _M_compatibility_mode = java15_compatibility;
+class java_settings {
+  public:
+    static java_compatibility_mode _M_compatibility_mode;
+};
 
 static java_compatibility_mode compatibility_mode() {
-  return _M_compatibility_mode;
+  return java_settings::_M_compatibility_mode;
 }
 static void set_compatibility_mode( java_compatibility_mode mode ) {
-  _M_compatibility_mode = mode;
+  java_settings::_M_compatibility_mode = mode;
 }
 
 
@@ -545,7 +548,7 @@ bool lookahead_is_cast_expression(java* parser);
 --
 -- -- Catches obvious constructor calls, but not the expr.super(...) calls:
 --
---    (  ?[: _M_compatibility_mode >= java15_compatibility :]
+--    (  ?[: compatibility_mode() >= java15_compatibility :]
 --       type_arguments=type_arguments
 --     | 0
 --    )
@@ -638,7 +641,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> wildcard_type ;;
 
    (extends_or_super=EXTENDS | extends_or_super=SUPER)
-   type=class_or_interface_type
+   type=class_type_specification
 -> wildcard_type_bounds ;;
 
 
@@ -696,7 +699,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> class_or_interface_type ;;
 
    identifier=identifier
-   (  ?[: _M_compatibility_mode >= java15_compatibility :]
+   (  ?[: compatibility_mode() >= java15_compatibility :]
       type_arguments=type_arguments
     | 0
    )
@@ -933,7 +936,7 @@ bool lookahead_is_cast_expression(java* parser);
    vardecl_start_or_foreach_parameter=parameter_declaration  -- "int i"
    (
       -- foreach: int i : intList.values()
-      ?[: _M_compatibility_mode >= java15_compatibility :]
+      ?[: compatibility_mode() >= java15_compatibility :]
       COLON iterable_expression=expression
     |
       -- traditional: int i = 0; i < size; i++
@@ -1134,7 +1137,7 @@ bool lookahead_is_cast_expression(java* parser);
       variable_name=identifier           -- (no method call)
     |
       -- method calls (including the "super" ones) may have type arguments
-      (  ?[: _M_compatibility_mode >= java15_compatibility :]
+      (  ?[: compatibility_mode() >= java15_compatibility :]
          type_arguments=non_wildcard_type_arguments
        | 0
       )
@@ -1160,7 +1163,7 @@ bool lookahead_is_cast_expression(java* parser);
       variable_name=identifier
     |
       -- method access (looks like super.methodName(...) in the end)
-      (  ?[: _M_compatibility_mode >= java15_compatibility :]
+      (  ?[: compatibility_mode() >= java15_compatibility :]
          type_arguments=non_wildcard_type_arguments
        | 0
       )
@@ -1190,7 +1193,7 @@ bool lookahead_is_cast_expression(java* parser);
  |
    SUPER super_suffix_untyped=super_suffix
  |
-   ?[: _M_compatibility_mode >= java15_compatibility :]
+   ?[: compatibility_mode() >= java15_compatibility :]
    -- generic method invocation with type arguments:
    type_arguments=non_wildcard_type_arguments
    (  SUPER super_suffix_typed=super_suffix
@@ -1215,7 +1218,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- NEW EXPRESSIONs are allocations of new types or arrays.
 
    NEW
-   (  ?[: _M_compatibility_mode >= java15_compatibility :]
+   (  ?[: compatibility_mode() >= java15_compatibility :]
       type_arguments=non_wildcard_type_arguments
     | 0
    )

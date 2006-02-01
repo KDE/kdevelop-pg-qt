@@ -2606,7 +2606,7 @@ bool java::parse_class_field(class_field_ast **yynode)
       || yytoken == Token_STRICTFP
       || yytoken == Token_IDENTIFIER)
     {
-      if (( yytoken != Token_STATIC || LA(2).kind != Token_LBRACE ) && (yytoken == Token_STATIC
+      if (( !(yytoken == Token_STATIC && LA(2).kind == Token_LBRACE) ) && (yytoken == Token_STATIC
           || yytoken == Token_CLASS
           || yytoken == Token_INTERFACE
           || yytoken == Token_ENUM
@@ -3048,7 +3048,7 @@ bool java::parse_class_or_interface_type_part(class_or_interface_type_part_ast *
 
       (*yynode)->identifier = __node_88;
 
-      if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
+      if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
         {
           type_arguments_ast *__node_89 = 0;
 
@@ -4671,7 +4671,7 @@ bool java::parse_for_control(for_control_ast **yynode)
 
           (*yynode)->vardecl_start_or_foreach_parameter = __node_132;
 
-          if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_COLON))
+          if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_COLON))
             {
               if (yytoken != Token_COLON)
                 return yy_expected_token(yytoken, Token_COLON, "COLON");
@@ -6423,7 +6423,7 @@ bool java::parse_new_expression(new_expression_ast **yynode)
 
       yylex();
 
-      if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
+      if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
         {
           non_wildcard_type_arguments_ast *__node_170 = 0;
 
@@ -7878,7 +7878,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
           (*yynode)->super_suffix_untyped = __node_197;
         }
 
-      else if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
+      else if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
         {
           non_wildcard_type_arguments_ast *__node_198 = 0;
 
@@ -8190,7 +8190,7 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
                    || yytoken == Token_SUPER
                    || yytoken == Token_IDENTIFIER)
             {
-              if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
+              if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
                 {
                   non_wildcard_type_arguments_ast *__node_210 = 0;
 
@@ -9675,7 +9675,7 @@ bool java::parse_super_suffix(super_suffix_ast **yynode)
           else if (yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
-              if (( _M_compatibility_mode >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
+              if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
                 {
                   non_wildcard_type_arguments_ast *__node_256 = 0;
 
@@ -11890,11 +11890,11 @@ bool java::parse_wildcard_type_bounds(wildcard_type_bounds_ast **yynode)
           return false;
         }
 
-      class_or_interface_type_ast *__node_316 = 0;
+      class_type_specification_ast *__node_316 = 0;
 
-      if (!parse_class_or_interface_type(&__node_316))
+      if (!parse_class_type_specification(&__node_316))
         {
-          return yy_expected_symbol(java_ast_node::Kind_class_or_interface_type, "class_or_interface_type");
+          return yy_expected_symbol(java_ast_node::Kind_class_type_specification, "class_type_specification");
         }
 
       (*yynode)->type = __node_316;

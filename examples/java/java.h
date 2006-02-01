@@ -1684,7 +1684,7 @@ struct wildcard_type_bounds_ast: public java_ast_node
     };
 
     std::size_t extends_or_super;
-    class_or_interface_type_ast *type;
+    class_type_specification_ast *type;
 
   };
 
@@ -1698,16 +1698,21 @@ enum java_compatibility_mode {
   java15_compatibility = 150,
 };
 
-static java_compatibility_mode _M_compatibility_mode = java15_compatibility;
+class java_settings
+  {
+
+  public:
+    static java_compatibility_mode _M_compatibility_mode;
+  };
 
 static java_compatibility_mode compatibility_mode()
 {
-  return _M_compatibility_mode;
+  return java_settings::_M_compatibility_mode;
 }
 
 static void set_compatibility_mode( java_compatibility_mode mode )
 {
-  _M_compatibility_mode = mode;
+  java_settings::_M_compatibility_mode = mode;
 }
 
 

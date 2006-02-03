@@ -134,6 +134,9 @@ void FIRST_FOLLOW_conflict_checker::visit_alternative(model::alternative_item *n
 {
   default_visitor::visit_alternative(node);
 
+  if (node->_M_right->kind == model::node_kind_zero)
+    return;
+
   if (reduce_to_epsilon(node))
     check(node);
 }

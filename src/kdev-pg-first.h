@@ -50,6 +50,7 @@ struct next_FIRST: protected default_visitor
 
 protected:
   bool block_merge(bool block);
+  bool block_zero_merge(bool block);
   void merge(model::node *__dest, model::node *__source, int K = 1);
 
   virtual void visit_node(model::node *node);
@@ -68,6 +69,7 @@ protected:
 private:
   model::node *_M_item;
   bool _M_merge_blocked;
+  bool _M_merge_zero_blocked;
   bool &_M_changed;
 };
 

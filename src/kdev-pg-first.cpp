@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -97,6 +98,7 @@ void next_FIRST::operator ()(model::node *node)
 {
   assert(node_cast<model::evolve_item*>(node));
   _M_merge_blocked = false;
+  _M_merge_zero_blocked = false;
   _M_item = node;
   visit_node(node);
 }
@@ -108,6 +110,13 @@ bool next_FIRST::block_merge(bool block)
   return old;
 }
 
+bool next_FIRST::block_zero_merge(bool block)
+{
+  bool old = _M_merge_zero_blocked;
+  _M_merge_zero_blocked = block;
+  return old;
+}
+
 void next_FIRST::merge(model::node *__dest, model::node *__source, int K)
 {
   world::node_set &dest = _G_system.FIRST(__dest, K);
@@ -115,6 +124,11 @@ void next_FIRST::merge(model::node *__dest, model::node *__source, int K)
 
   for (world::node_set::iterator it = source.begin(); it != source.end(); ++it)
     {
+      if (_M_merge_zero_blocked == true && node_cast<model::zero_item*>(*it))
+        {
+          continue;
+        }
+
       _M_changed |= dest.insert(*it).second;
     }
 }
@@ -165,18 +179,26 @@ void next_FIRST::visit_alternative(model::alternative_item *node)
 
 void next_FIRST::visit_cons(model::cons_item *node)
 {
-  visit_node(node->_M_left);
-  merge(node, node->_M_left);
-
   bool blocked = block_merge(true);
   visit_node(node->_M_right);
   block_merge(blocked);
+
+  bool zero_blocked;
+  if (!reduce_to_epsilon(node->_M_right))
+    zero_blocked = block_zero_merge(true);
+  else
+    zero_blocked = block_zero_merge(false);
+
+  visit_node(node->_M_left);
+  merge(node, node->_M_left);
 
   if (reduce_to_epsilon(node->_M_left))
     {
       visit_node(node->_M_right);
       merge(node, node->_M_right);
     }
+
+  block_zero_merge(zero_blocked);
 }
 
 void next_FIRST::visit_evolve(model::evolve_item *node)

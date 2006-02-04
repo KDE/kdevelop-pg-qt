@@ -61,6 +61,11 @@ bool cool::parse_additive_expression(additive_expression_ast **yynode)
                   yylex();
                 }
 
+              else
+                {
+                  return false;
+                }
+
               multiplicative_expression_ast *__node_1 = 0;
 
               if (!parse_multiplicative_expression(&__node_1))
@@ -74,8 +79,12 @@ bool cool::parse_additive_expression(additive_expression_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
-
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -295,6 +304,10 @@ bool cool::parse_class(class_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
+      else
+        {
+          return false;
+        }
 
       if (yytoken != Token_LBRACE)
         return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
@@ -431,10 +444,18 @@ bool cool::parse_feature(feature_ast **yynode)
 
               else if (true /*epsilon*/)
               {}
-
+              else
+                {
+                  return false;
+                }
             }
+
           else if (true /*epsilon*/)
           {}
+          else
+            {
+              return false;
+            }
 
           if (yytoken != Token_RPAREN)
             return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
@@ -513,10 +534,18 @@ bool cool::parse_feature(feature_ast **yynode)
 
           else if (true /*epsilon*/)
           {}
-
+          else
+            {
+              return false;
+            }
         }
 
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -677,8 +706,12 @@ bool cool::parse_let_declaration(let_declaration_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
-
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -733,6 +766,10 @@ bool cool::parse_let_expression(let_expression_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
+      else
+        {
+          return false;
+        }
 
       if (yytoken != Token_IN)
         return yy_expected_token(yytoken, Token_IN, "IN");
@@ -816,6 +853,11 @@ bool cool::parse_multiplicative_expression(multiplicative_expression_ast **yynod
                   yylex();
                 }
 
+              else
+                {
+                  return false;
+                }
+
               postfix_expression_ast *__node_20 = 0;
 
               if (!parse_postfix_expression(&__node_20))
@@ -829,8 +871,12 @@ bool cool::parse_multiplicative_expression(multiplicative_expression_ast **yynod
 
       else if (true /*epsilon*/)
       {}
-
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -953,10 +999,18 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
                   else if (true /*epsilon*/)
                   {}
-
+                  else
+                    {
+                      return false;
+                    }
                 }
+
               else if (true /*epsilon*/)
               {}
+              else
+                {
+                  return false;
+                }
 
               if (yytoken != Token_RPAREN)
                 return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
@@ -1030,15 +1084,28 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
                   else if (true /*epsilon*/)
                   {}
-
+                  else
+                    {
+                      return false;
+                    }
                 }
+
               else if (true /*epsilon*/)
               {}
+              else
+                {
+                  return false;
+                }
 
               if (yytoken != Token_RPAREN)
                 return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
 
               yylex();
+            }
+
+          else
+            {
+              return false;
             }
         }
     }
@@ -1157,10 +1224,18 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
 
               else if (true /*epsilon*/)
               {}
-
+              else
+                {
+                  return false;
+                }
             }
+
           else if (true /*epsilon*/)
           {}
+          else
+            {
+              return false;
+            }
 
           if (yytoken != Token_RPAREN)
             return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
@@ -1314,6 +1389,11 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
 
           (*yynode)->case_expression = __node_34;
         }
+
+      else
+        {
+          return false;
+        }
     }
 
   else
@@ -1436,6 +1516,11 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
                   yylex();
                 }
 
+              else
+                {
+                  return false;
+                }
+
               additive_expression_ast *__node_37 = 0;
 
               if (!parse_additive_expression(&__node_37))
@@ -1449,8 +1534,12 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
-
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -1561,6 +1650,11 @@ bool cool::parse_unary_expression(unary_expression_ast **yynode)
             }
 
           (*yynode)->expression = __node_41;
+        }
+
+      else
+        {
+          return false;
         }
     }
 

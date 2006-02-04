@@ -238,6 +238,10 @@ bool fact::parse_declaration(declaration_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
+      else
+        {
+          return false;
+        }
 
       if (yytoken != Token_SEMICOLON)
         return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
@@ -357,10 +361,18 @@ bool fact::parse_function_definition(function_definition_ast **yynode)
 
           else if (true /*epsilon*/)
           {}
-
+          else
+            {
+              return false;
+            }
         }
+
       else if (true /*epsilon*/)
       {}
+      else
+        {
+          return false;
+        }
 
       if (yytoken != Token_RPAREN)
         return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
@@ -447,8 +459,12 @@ bool fact::parse_if_statement(if_statement_ast **yynode)
 
       else if (true /*epsilon*/)
       {}
-
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -573,6 +589,10 @@ bool fact::parse_primary(primary_ast **yynode)
 
               else if (true /*epsilon*/)
               {}
+              else
+                {
+                  return false;
+                }
 
               if (yytoken != Token_RPAREN)
                 return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
@@ -582,10 +602,18 @@ bool fact::parse_primary(primary_ast **yynode)
 
           else if (true /*epsilon*/)
           {}
-
+          else
+            {
+              return false;
+            }
         }
 
+      else
+        {
+          return false;
+        }
     }
+
   else
     {
       return false;
@@ -727,6 +755,11 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                                    }
 
                                  (*yynode)->ret_stmt = __node_23;
+                               }
+
+                             else
+                               {
+                                 return false;
                                }
                            }
 

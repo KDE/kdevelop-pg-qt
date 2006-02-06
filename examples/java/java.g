@@ -50,7 +50,7 @@
 --    Solved by lookahead_is_cast_expression().
 --    (1 conflict)
 
--- Known harmless or resolved conflicts (22 conflicts):
+-- Known harmless or resolved conflicts (16 conflicts):
 --  - The first/follow IMPORT, AT conflict in compilation_unit
 --    (done right by default, 1 conflict)
 --  - Part of the first/follow SEMICOLON, IMPORT, STATIC, CLASS etc. conflict
@@ -58,9 +58,8 @@
 --    by default. (already counted in the problematic conflicts section)
 --  - The first/follow LBRACKET conflict in optional_declarator_brackets
 --    (done right by default, 1 conflict)
---  - The first/follow COMMA, ASSIGN conflict in variable_declaration,
---    and the COMMA conflict in variable_declaration_rest: greedy is ok
---    (done right by default, 2 conflicts)
+--  - The first/follow COMMA conflict in variable_declaration_rest: greedy is ok
+--    (done right by default, 1 conflict)
 --  - The first/follow AT conflict in optional_modifiers: greedy is ok
 --    (done right by default, 1 conflict)
 --  - The first/first IDENTIFIER conflicts in *_field,
@@ -70,11 +69,6 @@
 --    (manually resolved, 1 conflict)
 --  - The first/first STATIC conflict in class_field
 --    (manually resolved, 1 conflict)
---  - The first/first "0" conflicts in parameter_declaration_list
---    (done right by default, 2 conflicts)
---  - The first/first "0" conflicts in [non_wildcard_]type_arguments, which is
---    the same kind of conflict like in parameter_declaration_list above
---    (done right by default, 2 conflicts)
 --  - The first/first IDENTIFIER conflict in annotation_arguments
 --    (manually resolved, 1 conflict)
 --  - The first/first AT, FINAL, SYNCHRONIZED conflict in block_statement,
@@ -90,30 +84,8 @@
 --  - The first/follow LBRACKET conflict in array_creator_rest.
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
---  - The first/first "0" contlict in optional_modifiers.
---    Seems to originate in (0 annotation | 0) (which is by design),
---    so it should be harmless.
---    (done right by default, 1 conflict)
 
--- Conflicts of unknown consequence (13 conflicts):
---  - The first/follow COMMA conflicts in enum_body
---    (2 conflicts)
---  - The first/first "0" conflicts in compilation_unit.
---    Should be harmless, but who knows?
---    (2 conflicts)
---  - The first/first "0" conflict in class_body, interface_body,
---    annotation_type_body and enum_body (3x for the latter one),
---    seemingly similar to the compilation_unit conflict above
---    (6 conflicts)
---  - The first/first "0" conflict in enum_constant_body, also the same
---    (1 conflict)
---  - The first/first "0" conflict in block, again the same thing
---    (1 conflict)
---  - The first/first "0" conflict in primary_atom. Don't ask me what it
---    means and why it's present.
---    (1 conflict)
-
--- Total amount of conflicts: 39
+-- Total amount of conflicts: 20
 
 
 
@@ -189,11 +161,11 @@ bool lookahead_is_cast_expression(java* parser);
       package_declaration=package_declaration
     | 0
    )
-   ( !(#import_declaration=import_declaration) | 0 )
-   ( !(#type_declaration=type_declaration) | 0 )
+   (#import_declaration=import_declaration)*
+   (#type_declaration=type_declaration)*
 -> compilation_unit ;;
 
---    ( !(#annotation=annotation) | 0 ) PACKAGE
+--    (#annotation=annotation)* PACKAGE
 -- -> package_declaration_lookahead ;;  -- only use for lookaheads!
 
 
@@ -204,7 +176,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- inside of compilation_unit may both be 0. The ANTLR grammar
 -- checks on ?[:annotations "package":] to do a package_declaration.
 
-   ( !(#annotation=annotation) | 0 )
+   (#annotation=annotation)*
    PACKAGE package_name=qualified_identifier SEMICOLON
 -> package_declaration ;;
 
@@ -264,13 +236,13 @@ bool lookahead_is_cast_expression(java* parser);
 
 -- BODIES of classes, interfaces, annotation types and enums.
 
-   LBRACE ( !(#declaration=class_field) | 0 ) RBRACE
+   LBRACE (#declaration=class_field)* RBRACE
 -> class_body ;;
 
-   LBRACE ( !(#declaration=interface_field) | 0 ) RBRACE
+   LBRACE (#declaration=interface_field)* RBRACE
 -> interface_body ;;
 
-   LBRACE ( !(#annotation_type_field=annotation_type_field) | 0 ) RBRACE
+   LBRACE (#annotation_type_field=annotation_type_field)* RBRACE
 -> annotation_type_body ;;
 
 -- In an enum body, you can have zero or more enum constants
@@ -286,18 +258,18 @@ bool lookahead_is_cast_expression(java* parser);
    | 0
    )
    ( COMMA | 0 )
-   ( SEMICOLON ( !(#class_field=class_field) | 0 ) | 0 )
+   ( SEMICOLON (#class_field=class_field)* | 0 )
    RBRACE
 -> enum_body ;;
 
 -- An enum constant may have optional parameters and may have a class body
 
-   ( !( #annotation=annotation ) | 0 ) identifier=identifier
+   ( #annotation=annotation )* identifier=identifier
    ( LPAREN arguments=argument_list RPAREN | 0 )
    ( body=enum_constant_body | 0 )
 -> enum_constant ;;
 
-   LBRACE ( !(#declaration=enum_constant_field) | 0 ) RBRACE
+   LBRACE (#declaration=enum_constant_field)* RBRACE
 -> enum_constant_body ;;
 
 
@@ -530,7 +502,7 @@ bool lookahead_is_cast_expression(java* parser);
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration ;;
 
-   ( !( mod_final=FINAL | #mod_annotation=annotation ) | 0 )
+   ( mod_final=FINAL | #mod_annotation=annotation )*
 -> optional_parameter_modifiers ;;
 
 
@@ -541,8 +513,8 @@ bool lookahead_is_cast_expression(java* parser);
 -- to resolve, so class_field uses block instead of constructor_body.
 --
 --    LBRACE
---    ( explicit_constructor_invocation=explicit_constructor_invocation | 0 )
---    ( !(#statement=statement) | 0 )
+--    (explicit_constructor_invocation=explicit_constructor_invocation | 0)
+--    (#statement=statement)*
 --    RBRACE
 -- -> constructor_body ;;
 --
@@ -713,29 +685,26 @@ bool lookahead_is_cast_expression(java* parser);
 -> qualified_identifier ;;
 
    #name=identifier
-   ( !( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
-        DOT #name=identifier )
-     | 0
-   )
+   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
+     DOT #name=identifier
+   )*
 -> qualified_identifier_safe ;; -- lookahead version of the above
 
    #name=identifier
-   (  !( DOT (  #name=identifier
-              | star=STAR [: break; :] -- no more identifiers after the star
-             )
-      )
-    | 0
-   )
+   ( DOT (  #name=identifier
+          | star=STAR [: break; :] -- no more identifiers after the star
+         )
+   )*
 -> qualified_identifier_with_optional_star ;;
 
 -- Declarator brackets are part of a type specification, like String[][]
 -- They are always empty, only have to be counted.
 
-   ( !( #lbracket=LBRACKET RBRACKET ) | 0 )
+   ( #lbracket=LBRACKET RBRACKET )*
 -> optional_declarator_brackets ;;
 -- TODO: make a counter instead of filling the sequence array with lbrackets
 
-   !( #lbracket=LBRACKET RBRACKET )
+   ( #lbracket=LBRACKET RBRACKET )+
 -> mandatory_declarator_brackets ;;
 -- TODO: make a counter instead of filling the sequence array with lbrackets
 
@@ -790,7 +759,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- As a completely independent braced block of code inside a method,
 --  starting a new scope for variable definitions
 
-   LBRACE ( !(#statement=block_statement) | 0 ) RBRACE
+   LBRACE (#statement=block_statement)* RBRACE
 -> block ;;
 
 -- A BLOCK STATEMENT is either a normal statement, a variable declaration
@@ -831,7 +800,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> variable_declaration ;;
 
    ( ASSIGN first_initializer=variable_initializer | 0 )
-   ( !( COMMA #variable_declarator=variable_declarator ) | 0 )
+   ( COMMA #variable_declarator=variable_declarator )*
 -> variable_declaration_rest ;;
 
 -- A VARIABLE DECLARATOR, as used in a variable_declaration or *_field
@@ -846,11 +815,9 @@ bool lookahead_is_cast_expression(java* parser);
 
    LBRACE
    (  ( #variable_initializer=variable_initializer
-        (  !( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
-              COMMA #variable_initializer=variable_initializer
-           )
-         | 0
-        )
+        ( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
+          COMMA #variable_initializer=variable_initializer
+        )*
         ( COMMA | 0 )
       )
     | 0
@@ -881,11 +848,11 @@ bool lookahead_is_cast_expression(java* parser);
    DO do_while_statement=statement
    WHILE LPAREN do_while_condition=expression RPAREN SEMICOLON
  |
-   TRY try_block=block ( !(#handler=try_handler) | 0 )
+   TRY try_block=block (#handler=try_handler)*
    (FINALLY finally_block=block | 0)
  |
    SWITCH LPAREN switch_expression=expression RPAREN
-   LBRACE ( !(#switch_cases=switch_statements_group) | 0 ) RBRACE
+   LBRACE (#switch_cases=switch_statements_group)* RBRACE
  |
    SYNCHRONIZED LPAREN synchronized_locked_type=expression RPAREN
    synchronized_block=block
@@ -918,8 +885,8 @@ bool lookahead_is_cast_expression(java* parser);
 -- A group of SWITCH STATEMENTS are any number of "case x:" or "default:"
 -- labels followed by a list of statements.
 
-   #case=switch_case ( !(#case=switch_case) | 0 )
-   ( !(#statement=block_statement) | 0 )
+   #case=switch_case (#case=switch_case)*
+   (#statement=block_statement)*
 -> switch_statements_group ;;
 
    ( token=CASE expression=expression | token=DEFAULT ) COLON
@@ -1032,7 +999,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> bit_and_expression ;;
 
    expression=relational_expression
-   ( !(#additional_expression=equality_expression_rest) | 0 )
+   (#additional_expression=equality_expression_rest)*
 -> equality_expression ;;
 
    ( op_equal=EQUAL | op_notequal=NOT_EQUAL )
@@ -1040,7 +1007,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> equality_expression_rest ;;
 
    expression=shift_expression
-   (  !(#additional_expression=relational_expression_rest)
+   (  (#additional_expression=relational_expression_rest)+
     | INSTANCEOF instanceof_type=type_specification
     | 0
    )
@@ -1052,7 +1019,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> relational_expression_rest ;;
 
    expression=additive_expression
-   ( !(#additional_expression=shift_expression_rest) | 0 )
+   (#additional_expression=shift_expression_rest)*
 -> shift_expression ;;
 
    (  op_lshift=LSHIFT | op_rsignedshift=SIGNED_RSHIFT
@@ -1061,7 +1028,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> shift_expression_rest ;;
 
    expression=multiplicative_expression
-   ( !(#additional_expression=additive_expression_rest) | 0 )
+   (#additional_expression=additive_expression_rest)*
 -> additive_expression ;;
 
    ( op_plus=PLUS | op_minus=MINUS )
@@ -1069,7 +1036,7 @@ bool lookahead_is_cast_expression(java* parser);
 -> additive_expression_rest ;;
 
    expression=unary_expression
-   ( !(#additional_expression=multiplicative_expression_rest) | 0 )
+   (#additional_expression=multiplicative_expression_rest)*
 -> multiplicative_expression ;;
 
    ( op_star=STAR | op_slash=SLASH | op_remainder=REMAINDER )
@@ -1096,7 +1063,7 @@ bool lookahead_is_cast_expression(java* parser);
  | BANG  logical_not_expression=unary_expression
  | ?[: lookahead_is_cast_expression(this) == true :]
    cast_expression=cast_expression
- | primary_expression=primary_expression ( !(#postfix_operator=postfix_operator) | 0 )
+ | primary_expression=primary_expression (#postfix_operator=postfix_operator)*
 -> unary_expression_not_plusminus ;;
 
 
@@ -1120,7 +1087,7 @@ bool lookahead_is_cast_expression(java* parser);
 -- PRIMARY EXPRESSIONs: qualified names, array expressions,
 --                      method invocation, post increment/decrement
 
-   primary_atom=primary_atom ( !(#selector=primary_selector) | 0 )
+   primary_atom=primary_atom (#selector=primary_selector)*
 -> primary_expression ;;
 
 -- SELECTORs appended to a primary atom can provide access to ".this" or
@@ -1240,10 +1207,10 @@ bool lookahead_is_cast_expression(java* parser);
    array_initializer=variable_array_initializer
  |
    LBRACKET #index_expression=expression RBRACKET
-   !( 0 [: if (LA(2).kind == Token_RBRACKET) { break; } :]
-         -- exit the loop when noticing declarator brackets
-      LBRACKET #index_expression=expression RBRACKET
-   )
+   ( 0 [: if (LA(2).kind == Token_RBRACKET) { break; } :]
+        -- exit the loop when noticing declarator brackets
+     LBRACKET #index_expression=expression RBRACKET
+   )*
    optional_declarator_brackets=optional_declarator_brackets
  )
 -> array_creator_rest ;;
@@ -1267,26 +1234,24 @@ bool lookahead_is_cast_expression(java* parser);
  -- A modifier may be any annotation (e.g. @bla), but not @interface.
  -- This condition resolves the conflict between modifiers
  -- and annotation type declarations:
- ( !(
-      mod_private=PRIVATE
-    | mod_public=PUBLIC
-    | mod_protected=PROTECTED
-    | mod_static=STATIC
-    | mod_transient=TRANSIENT
-    | mod_final=FINAL
-    | mod_abstract=ABSTRACT
-    | mod_native=NATIVE
-    -- Neither in the Java spec nor in the JavaCC grammar, just in the ANTLR one:
-    -- | mod_threadsafe=THREADSAFE
-    | mod_synchronized=SYNCHRONIZED
-    | mod_volatile=VOLATILE
-    | mod_strictfp=STRICTFP
-    |
-      0 [: if (yytoken == Token_AT && LA(2).kind == Token_INTERFACE) { break; } :]
-      #mod_annotation=annotation
-   )
- | 0
- )
+ (
+   mod_private=PRIVATE
+ | mod_public=PUBLIC
+ | mod_protected=PROTECTED
+ | mod_static=STATIC
+ | mod_transient=TRANSIENT
+ | mod_final=FINAL
+ | mod_abstract=ABSTRACT
+ | mod_native=NATIVE
+ -- Neither in the Java spec nor in the JavaCC grammar, just in the ANTLR one:
+ -- | mod_threadsafe=THREADSAFE
+ | mod_synchronized=SYNCHRONIZED
+ | mod_volatile=VOLATILE
+ | mod_strictfp=STRICTFP
+ |
+   0 [: if (yytoken == Token_AT && LA(2).kind == Token_INTERFACE) { break; } :]
+   #mod_annotation=annotation
+ )*
 -> optional_modifiers ;;
 
 

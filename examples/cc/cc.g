@@ -19,10 +19,10 @@
 -- E X T E R N A L    D E C L A R A T I O N S
 ------------------------------------------------------------
 
-   !external_declaration
+   external_declaration*
 -> translation_unit ;;
 
-   declaration_specifier !declaration_specifier
+   declaration_specifier declaration_specifier*
 -> declaration_header ;;
 
    declaration_header variable_or_function
@@ -30,8 +30,8 @@
 
    declarator (COMMA init_declarator @ COMMA SEMICOLON
                | SEMICOLON
-               | ?[:is_fun_definition:] !declaration compound_statement
-               | initializer !(COMMA init_declarator) SEMICOLON)
+               | ?[:is_fun_definition:] declaration* compound_statement
+               | initializer (COMMA init_declarator)* SEMICOLON)
 -> variable_or_function ;;
 
 ------------------------------------------------------------
@@ -44,11 +44,11 @@
  | LPAREN expression RPAREN
 -> primary_expression ;;
 
-   primary_expression !postfix_expression_rest
+   primary_expression postfix_expression_rest*
 -> postfix_expression ;;
 
    (DOT | ARROW) IDENTIFIER
- | PLUS_PLUS 
+ | PLUS_PLUS
  | MINUS_MINUS
  | LPAREN (argument_expression_list | 0) RPAREN
  | LBRACKET expression RBRACKET
@@ -151,7 +151,7 @@
  | DEFAULT COLON statement
 -> labeled_statement ;;
 
-   LBRACE !declaration !statement RBRACE
+   LBRACE declaration* statement* RBRACE
 -> compound_statement ;;
 
    expression SEMICOLON
@@ -176,11 +176,11 @@
 -- D E C L A R A T I O N S
 ------------------------------------------------------------
 
-   declaration_specifier !declaration_specifier (init_declarator @ COMMA | 0) SEMICOLON
+   declaration_specifier declaration_specifier* (init_declarator @ COMMA | 0) SEMICOLON
 -> declaration ;;
 
-   storage_class_specifier 
- | type_specifier 
+   storage_class_specifier
+ | type_specifier
  | type_qualifier
 -> declaration_specifier ;;
 
@@ -208,14 +208,14 @@
  | TYPEDEF_NAME
 -> type_specifier ;;
 
-   (STRUCT | UNION) (IDENTIFIER LBRACE !struct_declaration RBRACE
-                     | LBRACE !struct_declaration RBRACE)
+   (STRUCT | UNION) (IDENTIFIER LBRACE struct_declaration* RBRACE
+                     | LBRACE struct_declaration* RBRACE)
 -> struct_or_union_specifier ;;
 
-   specifier_qualifier specifier_qualifier !specifier_qualifier !struct_declarator SEMICOLON
+   specifier_qualifier specifier_qualifier specifier_qualifier* struct_declarator* SEMICOLON
 -> struct_declaration ;;
 
-   type_specifier 
+   type_specifier
  | type_qualifier
 -> specifier_qualifier ;;
 
@@ -233,7 +233,7 @@
  | VOLATILE
 -> type_qualifier ;;
 
-   (pointer direct_declarator | direct_declarator) !direct_declarator_rest
+   (pointer direct_declarator | direct_declarator) direct_declarator_rest*
 -> declarator ;;
 
    IDENTIFIER
@@ -244,19 +244,19 @@
  | LPAREN (IDENTIFIER @ COMMA | parameter_type_list) RPAREN
 -> direct_declarator_rest ;;
 
-   STAR !(type_qualifier | STAR)
+   STAR (type_qualifier | STAR)*
 -> pointer ;;
 
    (parameter_declaration | ELIPSIS) @ COMMA
 -> parameter_type_list ;;
 
-   declaration_specifier !declaration_specifier (?(declarator) declarator | abstract_declarator | 0)
+   declaration_specifier declaration_specifier* (?(declarator) declarator | abstract_declarator | 0)
 -> parameter_declaration ;;
 
-   specifier_qualifier !specifier_qualifier (abstract_declarator | 0)
+   specifier_qualifier specifier_qualifier* (abstract_declarator | 0)
 -> type_name ;;
 
-   (pointer direct_abstract_declarator | direct_abstract_declarator) !direct_abstract_declarator
+   (pointer direct_abstract_declarator | direct_abstract_declarator) direct_abstract_declarator*
 -> abstract_declarator ;;
 
    LPAREN (abstract_declarator | parameter_type_list) RPAREN
@@ -264,6 +264,6 @@
 -> direct_abstract_declarator ;;
 
    assignment_expression
- | LBRACE initializer !(COMMA (initializer | 0)) RBRACE
+ | LBRACE initializer (COMMA (initializer | 0))* RBRACE
 -> initializer ;;
 

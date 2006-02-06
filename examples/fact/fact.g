@@ -1,13 +1,13 @@
 ------------------------------------------------------------
 -- D E C L A R A T I O N
 ------------------------------------------------------------
-   !#fun=function_definition
+   (#fun=function_definition)*
 -> program ;;
 
    FUNCTION id=ID LPAREN (#param=ID @ COMMA | 0) RPAREN body=body
 -> function_definition ;;
 
-   LBRACE !#decl=declaration !#stmt=statement RBRACE 
+   LBRACE (#decl=declaration)* (#stmt=statement)* RBRACE
 -> body ;;
 
    VAR var=variable @ COMMA SEMICOLON
@@ -26,7 +26,7 @@
       (ELSE else_stmt=statement | 0)
 -> if_statement ;;
 
-   LBRACE !#stmt=statement RBRACE
+   LBRACE (#stmt=statement)* RBRACE
 -> block_statement ;;
 
    RETURN expr=expression SEMICOLON
@@ -41,14 +41,14 @@
 ------------------------------------------------------------
 -- E X P R E S S I O N
 ------------------------------------------------------------
-   num=NUMBER 
+   num=NUMBER
  | id=ID (LPAREN #arg=expression @ COMMA RPAREN | 0)
 -> primary ;;
 
-   left_expr=primary !(op=STAR right_expr=primary)
+   left_expr=primary (op=STAR right_expr=primary)*
 -> mult_expression ;;
 
-   left_expr=mult_expression !(op=MINUS right_expr=mult_expression)
+   left_expr=mult_expression (op=MINUS right_expr=mult_expression)*
 -> expression ;;
 
    left_expr=expression op=EQUAL_EQUAL right_expr=expression

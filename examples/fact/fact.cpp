@@ -216,31 +216,21 @@ bool fact::parse_declaration(declaration_ast **yynode)
 
       (*yynode)->var = __node_6;
 
-      if (yytoken == Token_COMMA)
+      while (yytoken == Token_COMMA)
         {
-          while (yytoken == Token_COMMA)
+          if (yytoken != Token_COMMA)
+            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+
+          yylex();
+
+          variable_ast *__node_7 = 0;
+
+          if (!parse_variable(&__node_7))
             {
-              if (yytoken != Token_COMMA)
-                return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-              yylex();
-
-              variable_ast *__node_7 = 0;
-
-              if (!parse_variable(&__node_7))
-                {
-                  return yy_expected_symbol(fact_ast_node::Kind_variable, "variable");
-                }
-
-              (*yynode)->var = __node_7;
+              return yy_expected_symbol(fact_ast_node::Kind_variable, "variable");
             }
-        }
 
-      else if (true /*epsilon*/)
-      {}
-      else
-        {
-          return false;
+          (*yynode)->var = __node_7;
         }
 
       if (yytoken != Token_SEMICOLON)
@@ -341,29 +331,19 @@ bool fact::parse_function_definition(function_definition_ast **yynode)
 
           yylex();
 
-          if (yytoken == Token_COMMA)
+          while (yytoken == Token_COMMA)
             {
-              while (yytoken == Token_COMMA)
-                {
-                  if (yytoken != Token_COMMA)
-                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+              if (yytoken != Token_COMMA)
+                return yy_expected_token(yytoken, Token_COMMA, "COMMA");
 
-                  yylex();
+              yylex();
 
-                  if (yytoken != Token_ID)
-                    return yy_expected_token(yytoken, Token_ID, "ID");
+              if (yytoken != Token_ID)
+                return yy_expected_token(yytoken, Token_ID, "ID");
 
-                  (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
+              (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
 
-                  yylex();
-                }
-            }
-
-          else if (true /*epsilon*/)
-          {}
-          else
-            {
-              return false;
+              yylex();
             }
         }
 
@@ -567,31 +547,21 @@ bool fact::parse_primary(primary_ast **yynode)
 
               (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_16, memory_pool);
 
-              if (yytoken == Token_COMMA)
+              while (yytoken == Token_COMMA)
                 {
-                  while (yytoken == Token_COMMA)
+                  if (yytoken != Token_COMMA)
+                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+
+                  yylex();
+
+                  expression_ast *__node_17 = 0;
+
+                  if (!parse_expression(&__node_17))
                     {
-                      if (yytoken != Token_COMMA)
-                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-                      yylex();
-
-                      expression_ast *__node_17 = 0;
-
-                      if (!parse_expression(&__node_17))
-                        {
-                          return yy_expected_symbol(fact_ast_node::Kind_expression, "expression");
-                        }
-
-                      (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_17, memory_pool);
+                      return yy_expected_symbol(fact_ast_node::Kind_expression, "expression");
                     }
-                }
 
-              else if (true /*epsilon*/)
-              {}
-              else
-                {
-                  return false;
+                  (*yynode)->arg_sequence = snoc((*yynode)->arg_sequence, __node_17, memory_pool);
                 }
 
               if (yytoken != Token_RPAREN)
@@ -630,7 +600,7 @@ bool fact::parse_program(program_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_FUNCTION)
+  if (yytoken == Token_FUNCTION || yytoken == Token_EOF)
     {
       while (yytoken == Token_FUNCTION)
         {

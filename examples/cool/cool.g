@@ -1,8 +1,8 @@
 
-   !(#klass=class SEMICOLON)
+   (#klass=class SEMICOLON)*
 -> program ;;
 
-   CLASS type=TYPE (INHERITS base_type=TYPE | 0) LBRACE !(#feature=feature SEMICOLON) RBRACE
+   CLASS type=TYPE (INHERITS base_type=TYPE | 0) LBRACE (#feature=feature SEMICOLON)* RBRACE
 -> class ;;
 
    name=ID COLON type=TYPE
@@ -10,7 +10,7 @@
 
    ?[: LA(2).kind == Token_LPAREN :] name=ID LPAREN (#formal=formal @ COMMA | 0) RPAREN
                                      COLON type=TYPE LBRACE expression=expression RBRACE
- | ?[: LA(2).kind == Token_COLON :] name=ID COLON type=TYPE (LEFT_ARROW expression=expression | 0)
+ | name=ID COLON type=TYPE (LEFT_ARROW expression=expression | 0)
 -> feature ;;
 
    ?[: LA(2).kind == Token_LEFT_ARROW :] name=ID LEFT_ARROW expression=expression                  -- assignment
@@ -35,8 +35,8 @@
  |           expression=primary_expression
 -> unary_expression ;;
 
-   base_expression=unary_expression !(AT at_type=TYPE DOT name=ID LPAREN (#arguments=expression @ COMMA | 0) RPAREN
-                                     |                DOT name=ID LPAREN (#arguments=expression @ COMMA | 0) RPAREN)
+   base_expression=unary_expression (AT at_type=TYPE DOT name=ID LPAREN (#arguments=expression @ COMMA | 0) RPAREN
+                                    |                DOT name=ID LPAREN (#arguments=expression @ COMMA | 0) RPAREN)*
 -> postfix_expression ;;
 
    #expression=postfix_expression @ (op=STAR | op=DIVIDE)
@@ -54,13 +54,13 @@
    WHILE condition=expression LOOP loop_expression=expression POOL
 -> while_expression ;;
 
-   LBRACE !(#expression=expression SEMICOLON) RBRACE
+   LBRACE (#expression=expression SEMICOLON)* RBRACE
 -> block_expression ;;
 
    LET #declaration=let_declaration @ COMMA IN body_expression=expression
 -> let_expression ;;
 
-   CASE expression=expression OF !(#condition=case_condition SEMICOLON) ESAC
+   CASE expression=expression OF (#condition=case_condition SEMICOLON)* ESAC
 -> case_expression ;;
 
    expression=relational_expression

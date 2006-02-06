@@ -26,10 +26,16 @@ void pretty_printer::visit_zero(model::zero_item *node)
   out << "0";
 }
 
-void pretty_printer::visit_bang(model::bang_item *node)
+void pretty_printer::visit_plus(model::plus_item *node)
 {
-  out << "!";
   visit_node(node->_M_item);
+  out << "+";
+}
+
+void pretty_printer::visit_star(model::star_item *node)
+{
+  visit_node(node->_M_item);
+  out << "*";
 }
 
 void pretty_printer::visit_symbol(model::symbol_item *node)

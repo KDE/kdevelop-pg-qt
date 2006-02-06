@@ -36,7 +36,8 @@ struct pretty_printer: protected default_visitor
 
 protected:
   virtual void visit_zero(model::zero_item *node);
-  virtual void visit_bang(model::bang_item *node);
+  virtual void visit_plus(model::plus_item *node);
+  virtual void visit_star(model::star_item *node);
   virtual void visit_symbol(model::symbol_item *node);
   virtual void visit_action(model::action_item *node);
   virtual void visit_alternative(model::alternative_item *node);

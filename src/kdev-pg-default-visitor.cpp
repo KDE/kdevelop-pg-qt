@@ -28,7 +28,12 @@ void default_visitor::visit_symbol(model::symbol_item *node)
 void default_visitor::visit_terminal(model::terminal_item *node)
 {}
 
-void default_visitor::visit_bang(model::bang_item *node)
+void default_visitor::visit_plus(model::plus_item *node)
+{
+  visit_node(node->_M_item);
+}
+
+void default_visitor::visit_star(model::star_item *node)
 {
   visit_node(node->_M_item);
 }

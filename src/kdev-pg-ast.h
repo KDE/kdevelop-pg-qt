@@ -32,16 +32,17 @@ namespace model
   enum node_kind_enum {
     node_kind_item = 0,
     node_kind_zero = 1,
-    node_kind_bang = 2,
-    node_kind_symbol = 3,
-    node_kind_action = 4,
-    node_kind_alternative = 5,
-    node_kind_cons = 6,
-    node_kind_evolve = 7,
-    node_kind_alias = 8,
-    node_kind_terminal = 9,
-    node_kind_annotation = 10,
-    node_kind_condition = 11,
+    node_kind_plus = 2,
+    node_kind_star = 3,
+    node_kind_symbol = 4,
+    node_kind_action = 5,
+    node_kind_alternative = 6,
+    node_kind_cons = 7,
+    node_kind_evolve = 8,
+    node_kind_alias = 9,
+    node_kind_terminal = 10,
+    node_kind_annotation = 11,
+    node_kind_condition = 12,
 
     node_kind_LAST
   };
@@ -58,9 +59,16 @@ namespace model
     PG_NODE(zero)
   };
 
-  struct bang_item: public node
+  struct plus_item: public node
   {
-    PG_NODE(bang)
+    PG_NODE(plus)
+
+    node *_M_item;
+  };
+
+  struct star_item: public node
+  {
+    PG_NODE(star)
 
     node *_M_item;
   };

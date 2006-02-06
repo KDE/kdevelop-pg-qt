@@ -22,7 +22,8 @@
 visitor::visitor_fun_ptr visitor::_S_table[model::node_kind_LAST] = {
   0,
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_zero),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_bang),
+  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_plus),
+  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_star),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_symbol),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_action),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_alternative),

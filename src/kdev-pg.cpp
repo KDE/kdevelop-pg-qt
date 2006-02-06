@@ -29,9 +29,16 @@ model::zero_item *pg::zero()
   return node;
 }
 
-model::bang_item *pg::bang(model::node *item)
+model::plus_item *pg::plus(model::node *item)
 {
-  model::bang_item *node = create_node<model::bang_item>();
+  model::plus_item *node = create_node<model::plus_item>();
+  node->_M_item = item;
+  return node;
+}
+
+model::star_item *pg::star(model::node *item)
+{
+  model::star_item *node = create_node<model::star_item>();
   node->_M_item = item;
   return node;
 }
@@ -158,9 +165,13 @@ bool reduce_to_epsilon(model::node *node)
     {
       return _G_system.FIRST(s).find(_G_system.zero()) != _G_system.FIRST(s).end(); // hmm
     }
-  else if (model::bang_item *b = node_cast<model::bang_item*>(node))
+  else if (model::plus_item *b = node_cast<model::plus_item*>(node))
     {
       return reduce_to_epsilon(b->_M_item);
+    }
+  else if (model::star_item *b = node_cast<model::star_item*>(node))
+    {
+      return true;
     }
   else if (model::zero_item *z = node_cast<model::zero_item*>(node))
     {

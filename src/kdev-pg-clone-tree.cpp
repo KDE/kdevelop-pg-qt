@@ -35,14 +35,24 @@ void clone_tree::visit_terminal(model::terminal_item *node)
   _M_temps.push(node);
 }
 
-void clone_tree::visit_bang(model::bang_item *node)
+void clone_tree::visit_plus(model::plus_item *node)
 {
   visit_node(node->_M_item);
 
   model::node *item = _M_temps.top();
   _M_temps.pop();
 
-  _M_temps.push(pg::bang(item));
+  _M_temps.push(pg::plus(item));
+}
+
+void clone_tree::visit_star(model::star_item *node)
+{
+  visit_node(node->_M_item);
+
+  model::node *item = _M_temps.top();
+  _M_temps.pop();
+
+  _M_temps.push(pg::star(item));
 }
 
 void clone_tree::visit_action(model::action_item *node)

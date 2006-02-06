@@ -109,7 +109,16 @@ void code_generator::visit_terminal(model::terminal_item *node)
       << "yylex();" << std::endl;
 }
 
-void code_generator::visit_bang(model::bang_item *node)
+void code_generator::visit_plus(model::plus_item *node)
+{
+  out << "do {" << std::endl;
+  visit_node(node->_M_item);
+  out << "} while (";
+  gen_test_condition(node, out);
+  out << ");" << std::endl;
+}
+
+void code_generator::visit_star(model::star_item *node)
 {
   out << "while (";
   gen_test_condition(node, out);

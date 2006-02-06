@@ -31,7 +31,8 @@
 namespace pg
 {
   model::zero_item *zero();
-  model::bang_item *bang(model::node *item);
+  model::plus_item *plus(model::node *item);
+  model::star_item *star(model::node *item);
   model::symbol_item *symbol(char const *name);
   model::action_item *action(model::node *item, char const *code);
   model::alternative_item *alternative(model::node *left, model::node *right);

@@ -67,9 +67,10 @@ scope
     ;
 
 unary_item
-    : primary_item                      { $$ = $1; }
+    : primary_item '+'                  { $$ = pg::plus($1); }
+    | primary_item '*'                  { $$ = pg::star($1); }
+    | primary_item                      { $$ = $1; }
 /*    | '?' primary_item                  { $$ = pg::alternative($2, _G_system.zero()); } */
-    | '!' primary_item                  { $$ = pg::bang($2); }
     ;
 
 question
@@ -87,7 +88,7 @@ postfix_item
     | postfix_item '@' primary_item
 	{
 	  clone_tree cl;
-	  $$ = pg::cons($1, pg::alternative (pg::bang(pg::cons(cl.clone($3), cl.clone($1))), _G_system.zero()));
+	  $$ = pg::cons($1, pg::star(pg::cons(cl.clone($3), cl.clone($1))));
 	}
     | postfix_item T_CONDITION               { $$ = pg::action($1, $2); }
     ;

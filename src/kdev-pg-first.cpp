@@ -55,9 +55,14 @@ void initialize_FIRST::visit_symbol(model::symbol_item *node)
   default_visitor::visit_symbol(node);
 }
 
-void initialize_FIRST::visit_bang(model::bang_item *node)
+void initialize_FIRST::visit_plus(model::plus_item *node)
 {
-  default_visitor::visit_bang(node);
+  default_visitor::visit_plus(node);
+}
+
+void initialize_FIRST::visit_star(model::star_item *node)
+{
+  default_visitor::visit_star(node);
 }
 
 void initialize_FIRST::visit_action(model::action_item *node)
@@ -155,9 +160,19 @@ void next_FIRST::visit_symbol(model::symbol_item *)
 {
 }
 
-void next_FIRST::visit_bang(model::bang_item *node)
+void next_FIRST::visit_plus(model::plus_item *node)
 {
-  default_visitor::visit_bang(node);
+  default_visitor::visit_plus(node);
+
+  merge(node, node->_M_item);
+}
+
+void next_FIRST::visit_star(model::star_item *node)
+{
+  default_visitor::visit_star(node);
+
+  if (_G_system.FIRST(node).insert(_G_system.zero()).second)
+    _M_changed = true;
 
   merge(node, node->_M_item);
 }

@@ -21,12 +21,6 @@
 #include "java_lookahead.h"
 
 
-//FIXME: remove this once kdevelop-pg can have the compatibility_mode
-//       as a member of the parser class. It's only in here because I don't
-//       want to create a seperate file for just this statement.
-java_compatibility_mode java_settings::_M_compatibility_mode = java15_compatibility;
-
-
 /**
  * This function checks if the next following tokens of the given parser class
  * match the beginning of a package declaration. If true is returned then it

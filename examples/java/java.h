@@ -1698,35 +1698,10 @@ enum java_compatibility_mode {
   java15_compatibility = 150,
 };
 
-class java_settings
-  {
-
-  public:
-    static java_compatibility_mode _M_compatibility_mode;
-  };
-
-static java_compatibility_mode compatibility_mode()
-{
-  return java_settings::_M_compatibility_mode;
-}
-
-static void set_compatibility_mode( java_compatibility_mode mode )
-{
-  java_settings::_M_compatibility_mode = mode;
-}
-
-
-// ltCounter stores the amount of currently open type arguments rules,
-// all of which are beginning with a less than ("<") character.
-// This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
-// to close type arguments rules, in addition to GREATER_THAN (">").
-static int ltCounter;
-
-// tripleDotOccurred is used as a means of communication between
-// parameter_declaration_list and parameter_declaration_tripledot to determine
-// if a triple dot was already in the list (then no more declarations
-// may follow).
-static bool tripleDotOccurred;
+// I'd rather have these as members of the java class,
+// but at the time of writing this doesn't seem to be possible.
+static java_compatibility_mode compatibility_mode();
+static void set_compatibility_mode( java_compatibility_mode mode );
 
 
 class java; // this code block is put before the class declaration

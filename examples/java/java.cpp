@@ -4,6 +4,46 @@
 #include "java.h"
 
 
+// To hold a non-local static variable, C++ needs it to be encapsulated
+// inside a class and initialized outside of it.
+
+class java_settings
+  {
+
+  public:
+    static java_compatibility_mode _M_compatibility_mode;
+  };
+
+java_compatibility_mode java_settings::_M_compatibility_mode = java15_compatibility;
+
+
+java_compatibility_mode compatibility_mode()
+{
+  return java_settings::_M_compatibility_mode;
+}
+
+void set_compatibility_mode( java_compatibility_mode mode )
+{
+  java_settings::_M_compatibility_mode = mode;
+}
+
+
+namespace
+  {
+  // ltCounter stores the amount of currently open type arguments rules,
+  // all of which are beginning with a less than ("<") character.
+  // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
+  // to close type arguments rules, in addition to GREATER_THAN (">").
+  int ltCounter;
+
+  // tripleDotOccurred is used as a means of communication between
+  // parameter_declaration_list and parameter_declaration_tripledot to determine
+  // if a triple dot was already in the list (then no more declarations
+  // may follow).
+  bool tripleDotOccurred;
+}
+
+
 bool java::parse_additive_expression(additive_expression_ast **yynode)
 {
   *yynode = create<additive_expression_ast>();

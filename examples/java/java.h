@@ -1698,19 +1698,10 @@ enum java_compatibility_mode {
   java15_compatibility = 150,
 };
 
-// I'd rather have these as members of the java class,
+// I'd rather have these as members of the parser class,
 // but at the time of writing this doesn't seem to be possible.
-static java_compatibility_mode compatibility_mode();
-static void set_compatibility_mode( java_compatibility_mode mode );
-
-
-class java; // this code block is put before the class declaration
-
-// lookahead hacks to make up for backtracking or LL(k)
-// which are not yet implemented
-bool lookahead_is_package_declaration(java* parser);
-bool lookahead_is_parameter_declaration(java* parser);
-bool lookahead_is_cast_expression(java* parser);
+java_compatibility_mode compatibility_mode();
+void set_compatibility_mode( java_compatibility_mode mode );
 
 class java
   {

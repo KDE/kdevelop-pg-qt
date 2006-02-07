@@ -21,60 +21,6 @@
 #include "java_lookahead.h"
 
 
-/**
- * This function checks if the next following tokens of the given parser class
- * match the beginning of a package declaration. If true is returned then it
- * looks like a package declaration is coming up. It doesn't have to match the
- * full package_declaration rule (because annotation contents are only checked
- * rudimentarily), but it is guaranteed that the upcoming tokens are
- * not a type specification.
- * The function returns false if the upcoming tokens are (for sure) not
- * the beginning of a package declaration.
- */
-bool lookahead_is_package_declaration(java* parser)
-{
-	java_lookahead* la = new java_lookahead(parser);
-	bool result = la->is_package_declaration_start();
-	delete la;
-	return result;
-}
-
-/**
- * This function checks if the next following tokens of the given parser class
- * match the beginning of a variable declaration. If true is returned then it
- * looks like a variable declaration is coming up. It doesn't have to match the
- * full variable_declaration rule (as only the first few tokens are checked),
- * but it is guaranteed that the upcoming tokens are not an expression.
- * The function returns false if the upcoming tokens are (for sure) not
- * the beginning of a variable declaration.
- */
-bool lookahead_is_parameter_declaration(java* parser)
-{
-	java_lookahead* la = new java_lookahead(parser);
-	bool result = la->is_parameter_declaration_start();
-	delete la;
-	return result;
-}
-
-/**
- * This function checks if the next following tokens of the given parser class
- * match the beginning of a cast expression. If true is returned then it
- * looks like a cast expression is coming up. It doesn't have to match the
- * full cast_expression rule (because type arguments are only checked
- * rudimentarily), but it is guaranteed that the upcoming tokens are
- * not a primary expression.
- * The function returns false if the upcoming tokens are (for sure) not
- * the beginning of a cast expression.
- */
-bool lookahead_is_cast_expression(java* parser)
-{
-	java_lookahead* la = new java_lookahead(parser);
-	bool result = la->is_cast_expression_start();
-	delete la;
-	return result;
-}
-
-
 java_lookahead::java_lookahead(java* parser)
 : _M_parser(parser), _M_count(1)
 {

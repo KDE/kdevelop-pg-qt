@@ -103,17 +103,8 @@ enum java_compatibility_mode {
 
 // I'd rather have these as members of the parser class,
 // but at the time of writing this doesn't seem to be possible.
-static java_compatibility_mode compatibility_mode();
-static void set_compatibility_mode( java_compatibility_mode mode );
-
-
-class java; // this code block is put before the class declaration
-
-// lookahead hacks to make up for backtracking or LL(k)
-// which are not yet implemented
-bool lookahead_is_package_declaration(java* parser);
-bool lookahead_is_parameter_declaration(java* parser);
-bool lookahead_is_cast_expression(java* parser);
+java_compatibility_mode compatibility_mode();
+void set_compatibility_mode( java_compatibility_mode mode );
 :]
 
 
@@ -1286,6 +1277,8 @@ bool lookahead_is_cast_expression(java* parser);
 --
 
 [:
+#include "java_lookahead.h"
+
 // To hold a non-local static variable, C++ needs it to be encapsulated
 // inside a class and initialized outside of it.
 class java_settings {
@@ -1302,8 +1295,8 @@ void set_compatibility_mode( java_compatibility_mode mode ) {
   java_settings::_M_compatibility_mode = mode;
 }
 
-
 namespace {
+
   // ltCounter stores the amount of currently open type arguments rules,
   // all of which are beginning with a less than ("<") character.
   // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
@@ -1315,6 +1308,64 @@ namespace {
   // if a triple dot was already in the list (then no more declarations
   // may follow).
   bool tripleDotOccurred;
+
+
+
+  // lookahead hacks to make up for backtracking or LL(k)
+  // which are not yet implemented
+
+  /**
+  * This function checks if the next following tokens of the given parser class
+  * match the beginning of a package declaration. If true is returned then it
+  * looks like a package declaration is coming up. It doesn't have to match the
+  * full package_declaration rule (because annotation contents are only checked
+  * rudimentarily), but it is guaranteed that the upcoming tokens are
+  * not a type specification.
+  * The function returns false if the upcoming tokens are (for sure) not
+  * the beginning of a package declaration.
+  */
+  bool lookahead_is_package_declaration(java* parser)
+  {
+      java_lookahead* la = new java_lookahead(parser);
+      bool result = la->is_package_declaration_start();
+      delete la;
+      return result;
+  }
+
+  /**
+  * This function checks if the next following tokens of the given parser class
+  * match the beginning of a variable declaration. If true is returned then it
+  * looks like a variable declaration is coming up. It doesn't have to match the
+  * full variable_declaration rule (as only the first few tokens are checked),
+  * but it is guaranteed that the upcoming tokens are not an expression.
+  * The function returns false if the upcoming tokens are (for sure) not
+  * the beginning of a variable declaration.
+  */
+  bool lookahead_is_parameter_declaration(java* parser)
+  {
+      java_lookahead* la = new java_lookahead(parser);
+      bool result = la->is_parameter_declaration_start();
+      delete la;
+      return result;
+  }
+
+  /**
+  * This function checks if the next following tokens of the given parser class
+  * match the beginning of a cast expression. If true is returned then it
+  * looks like a cast expression is coming up. It doesn't have to match the
+  * full cast_expression rule (because type arguments are only checked
+  * rudimentarily), but it is guaranteed that the upcoming tokens are
+  * not a primary expression.
+  * The function returns false if the upcoming tokens are (for sure) not
+  * the beginning of a cast expression.
+  */
+  bool lookahead_is_cast_expression(java* parser)
+  {
+      java_lookahead* la = new java_lookahead(parser);
+      bool result = la->is_cast_expression_start();
+      delete la;
+      return result;
+  }
 }
 
 :]

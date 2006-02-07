@@ -37,7 +37,7 @@ rules
 
 rule
     : item ';'                          { _G_system.push_rule($1); }
-    | T_TOKEN_STREAM T_IDENTIFIER ';'	{ _G_system.token_stream = $2; }
+    | T_TOKEN_STREAM T_IDENTIFIER ';'   { _G_system.token_stream = $2; }
     ;
 
 primary_item
@@ -54,11 +54,11 @@ primary_item
 name
     : T_IDENTIFIER                      { $$ = $1; }
     | T_IDENTIFIER '.' T_IDENTIFIER
-	{
-	  $$ = $3;
-	  fprintf(stderr, "** WARNING support for scoped name"
-	                  " ``%s.%s'' not implemented\n", $1, $3);
-	}
+        {
+          $$ = $3;
+          fprintf(stderr, "** WARNING support for scoped name"
+                          " ``%s.%s'' not implemented\n", $1, $3);
+        }
     ;
 
 scope
@@ -74,23 +74,23 @@ unary_item
     ;
 
 question
-    : question_item			{ $$ = $1; }
-    | question question_item		{ $$ = pg::cons($1, $2); }
+    : question_item                     { $$ = $1; }
+    | question question_item            { $$ = pg::cons($1, $2); }
     ;
 
 question_item
-    : T_IDENTIFIER			{ $$ = _G_system.push_symbol($1); }
-    | T_TERMINAL			{ $$ = _G_system.push_terminal($1); }
+    : T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
+    | T_TERMINAL                        { $$ = _G_system.push_terminal($1); }
     ;
 
 postfix_item
     : unary_item
     | postfix_item '@' primary_item
-	{
-	  clone_tree cl;
-	  $$ = pg::cons($1, pg::star(pg::cons(cl.clone($3), cl.clone($1))));
-	}
-    | postfix_item T_CONDITION               { $$ = pg::action($1, $2); }
+        {
+          clone_tree cl;
+          $$ = pg::cons($1, pg::star(pg::cons(cl.clone($3), cl.clone($1))));
+        }
+    | postfix_item T_CONDITION          { $$ = pg::action($1, $2); }
     ;
 
 item_sequence
@@ -99,12 +99,13 @@ item_sequence
     ;
 
 conditional_item
-    : item_sequence			{ $$ = $1; }
-    | '?' T_CONDITION item_sequence	{ $$ = pg::condition($2, $3); }
-    | '?' '(' question ')' item_sequence{
-					  $$ = $5;
-					  fprintf(stderr, "** WARNING ``question'' not implemented!!\n");
-					}
+    : item_sequence                     { $$ = $1; }
+    | '?' T_CONDITION item_sequence     { $$ = pg::condition($2, $3); }
+    | '?' '(' question ')' item_sequence
+        {
+          $$ = $5;
+          fprintf(stderr, "** WARNING ``question'' not implemented!!\n");
+        }
     ;
 
 option_item
@@ -114,14 +115,14 @@ option_item
 
 item
     : option_item T_ARROW T_IDENTIFIER code_opt
-	{
-	  $$ = pg::evolve($1, _G_system.push_symbol($3), $4);
-	}
+        {
+          $$ = pg::evolve($1, _G_system.push_symbol($3), $4);
+        }
     ;
 
 code_opt
-    :                                        { $$ = ""; }
-    | T_CONDITION                            { $$ = $1; }
+    :                                   { $$ = ""; }
+    | T_CONDITION                       { $$ = $1; }
     ;
 
 %%
@@ -168,9 +169,9 @@ again:
         yylval.str = yytext;
         do { *yyptr++ = ch; inp(); } while (isid());
         *yyptr++ = '\0';
-	char const *p = yytext;
-	while (unsigned char c = *p++)
-	  if (c != '_' && (c < 'A' || c > 'Z'))
+        char const *p = yytext;
+        while (unsigned char c = *p++)
+          if (c != '_' && (c < 'A' || c > 'Z'))
             return (yytoken = T_IDENTIFIER);
         return (yytoken = T_TERMINAL);
     }
@@ -182,10 +183,10 @@ again:
         yylval.str = yytext;
         do { *yyptr++ = ch; inp(); } while (isid());
         *yyptr++ = '\0';
-	if (!strcmp(yytext, "token_stream"))
-	  return T_TOKEN_STREAM;
-	assert(0);
-	return '%';
+        if (!strcmp(yytext, "token_stream"))
+          return T_TOKEN_STREAM;
+        assert(0);
+        return '%';
     } else if (yytoken == ';' && ch == ';') {
         inp();
         return ';';

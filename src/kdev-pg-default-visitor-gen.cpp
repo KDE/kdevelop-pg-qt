@@ -28,13 +28,13 @@ void generate_default_visitor::operator()()
       << "public:" << std::endl;
 
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
-		gen_default_visitor_rule(out));
+                gen_default_visitor_rule(out));
 
   out << "};" << std::endl;
 }
 
 void gen_default_visitor_rule::operator()(std::pair<std::string,
-					  model::symbol_item*> const &__it)
+                                          model::symbol_item*> const &__it)
 {
   _M_names.clear();
   _M_annotations.clear();

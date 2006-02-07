@@ -99,41 +99,41 @@ int main(int, char *argv[])
           parser = arg + 9;
         }
       else if (!strcmp("--no-ast", arg))
-	{
-	  _G_system.generate_ast = false;
-	}
+        {
+          _G_system.generate_ast = false;
+        }
       else if (!strcmp("--help", arg))
-	{
-	  usage();
-	}
+        {
+          usage();
+        }
       else if (!strcmp("--terminals", arg))
-	{
-	  dump_terminals = true;
-	}
+        {
+          dump_terminals = true;
+        }
       else if (!strcmp("--symbols", arg))
-	{
-	  dump_symbols = true;
-	}
+        {
+          dump_symbols = true;
+        }
       else if (!strcmp("--rules", arg))
-	{
-	  debug_rules = true;
-	}
+        {
+          debug_rules = true;
+        }
       else if (file == stdin)
-	{
-	  file = fopen(arg, "r");
+        {
+          file = fopen(arg, "r");
 
-	  if (!file)
-	    {
-	      std::cerr << "kdev-pg: file ``" << arg
-			<< "'' not found!" << std::endl;
-	      file = stdin;
-	    }
-	}
+          if (!file)
+            {
+              std::cerr << "kdev-pg: file ``" << arg
+                        << "'' not found!" << std::endl;
+              file = stdin;
+            }
+        }
       else
-	{
-	  std::cerr << "kdev-pg: unknown option ``" << arg << "''"
-		    << std::endl;
-	}
+        {
+          std::cerr << "kdev-pg: unknown option ``" << arg << "''"
+                    << std::endl;
+        }
     }
 
   yyparse();
@@ -141,39 +141,39 @@ int main(int, char *argv[])
   fclose(file);
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-		initialize_environment());
+                initialize_environment());
 
   compute_FIRST();
   compute_FOLLOW();
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-		undefined_symbol_checker());
+                undefined_symbol_checker());
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-		empty_FIRST_checker());
+                empty_FIRST_checker());
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-		FIRST_FOLLOW_conflict_checker());
+                FIRST_FOLLOW_conflict_checker());
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-		FIRST_FIRST_conflict_checker());
+                FIRST_FIRST_conflict_checker());
 
   if (dump_terminals)
     {
       for (world::terminal_set::iterator it = _G_system.terminals.begin();
-	   it != _G_system.terminals.end(); ++it)
-	{
-	  std::cout << (*it).first << std::endl;
-	}
+           it != _G_system.terminals.end(); ++it)
+        {
+          std::cout << (*it).first << std::endl;
+        }
       return EXIT_SUCCESS;
     }
   else if (dump_symbols)
     {
       for (world::symbol_set::iterator it = _G_system.symbols.begin();
-	   it != _G_system.symbols.end(); ++it)
-	{
-	  std::cout << (*it).first << std::endl;
-	}
+           it != _G_system.symbols.end(); ++it)
+        {
+          std::cout << (*it).first << std::endl;
+        }
       return EXIT_SUCCESS;
     }
   else if (debug_rules)
@@ -204,9 +204,9 @@ int main(int, char *argv[])
 
     if (_G_system.generate_ast)
       {
-	s << "#include \"kdev-pg-memory-pool.h\"" << std::endl
-	  << "#include \"kdev-pg-allocator.h\"" << std::endl
-	  << "#include \"kdev-pg-list.h\"" << std::endl;
+        s << "#include \"kdev-pg-memory-pool.h\"" << std::endl
+          << "#include \"kdev-pg-allocator.h\"" << std::endl
+          << "#include \"kdev-pg-list.h\"" << std::endl;
       }
 
     if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
@@ -217,15 +217,15 @@ int main(int, char *argv[])
 
     if (_G_system.generate_ast)
       {
-	__ast();
+        __ast();
       }
 
     __decls();
 
     if (_G_system.generate_ast)
       {
-	__visitor();
-	__default_visitor();
+        __visitor();
+        __default_visitor();
       }
 
     s << "#endif" << std::endl << std::endl;
@@ -255,7 +255,7 @@ int main(int, char *argv[])
 
     if (_G_system.generate_ast)
       {
-	__visitor_bits();
+        __visitor_bits();
       }
 
     std::string oname = parser;

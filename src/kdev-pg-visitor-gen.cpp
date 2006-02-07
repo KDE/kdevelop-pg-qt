@@ -37,7 +37,7 @@ void generate_visitor::operator()()
     {
       model::symbol_item *sym = (*it).second;
       out << "virtual void visit_" << sym->_M_name
-	  << "(" << sym->_M_name << "_ast *) {}" << std::endl;
+          << "(" << sym->_M_name << "_ast *) {}" << std::endl;
     }
 
   out << "};" << std::endl;

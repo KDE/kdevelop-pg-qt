@@ -17,38 +17,53 @@ void yyerror(char const *msg);
     int ival;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CONDITION T_TOKEN_STREAM
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CONDITION
+%token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CONDITION T_TOKEN_STREAM name code_opt
-%type<item> rule item primary_item unary_item question question_item
+%type<str> T_IDENTIFIER T_TERMINAL T_CONDITION name code_opt
+%type<str> T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION
+%type<item> item primary_item unary_item question question_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<ival> scope
 
 %%
 
 system
-    : code_opt { _G_system.decl = $1; } rules code_opt {_G_system.bits = $4; }
+    : code_opt { _G_system.decl = $1; }
+      declarations
+      rules
+      code_opt {_G_system.bits = $5; }
+    ;
+
+declarations
+    : declaration
+    | declarations declaration
+    ;
+
+declaration
+    : T_TOKEN_DECLARATION declared_tokens ';'
+    | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';' { _G_system.token_stream = $2; }
+    ;
+
+declared_tokens
+    : T_TERMINAL                        { _G_system.push_terminal($1); }
+    | declared_tokens ',' T_TERMINAL    { _G_system.push_terminal($3); }
     ;
 
 rules
-    : rule
-    | rules rule
-    ;
-
-rule
     : item ';'                          { _G_system.push_rule($1); }
-    | T_TOKEN_STREAM T_IDENTIFIER ';'   { _G_system.token_stream = $2; }
+    | rules item ';'                    { _G_system.push_rule($2); }
     ;
 
 primary_item
     : '0'                               { $$ = _G_system.zero(); }
     | '(' option_item ')'               { $$ = $2; }
     | T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
-    | T_TERMINAL                        { $$ = _G_system.push_terminal($1); }
+    | T_TERMINAL                        { $$ = _G_system.terminal($1); }
     | name scope T_IDENTIFIER           { $$ = pg::annotation($1, _G_system.push_symbol($3), false, ($2 == ':')); }
-    | name scope T_TERMINAL             { $$ = pg::annotation($1, _G_system.push_terminal($3), false, ($2 == ':')); }
+    | name scope T_TERMINAL             { $$ = pg::annotation($1, _G_system.terminal($3), false, ($2 == ':')); }
     | '#' name scope T_IDENTIFIER       { $$ = pg::annotation($2, _G_system.push_symbol($4), true, ($3 == ':')); }
-    | '#' name scope T_TERMINAL         { $$ = pg::annotation($2, _G_system.push_terminal($4), true, ($3 == ':')); }
+    | '#' name scope T_TERMINAL         { $$ = pg::annotation($2, _G_system.terminal($4), true, ($3 == ':')); }
     ;
 
 name
@@ -80,7 +95,7 @@ question
 
 question_item
     : T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
-    | T_TERMINAL                        { $$ = _G_system.push_terminal($1); }
+    | T_TERMINAL                        { $$ = _G_system.terminal($1); }
     ;
 
 postfix_item
@@ -183,8 +198,10 @@ again:
         yylval.str = yytext;
         do { *yyptr++ = ch; inp(); } while (isid());
         *yyptr++ = '\0';
-        if (!strcmp(yytext, "token_stream"))
-          return T_TOKEN_STREAM;
+        if (!strcmp(yytext, "token"))
+          return T_TOKEN_DECLARATION;
+        else if (!strcmp(yytext, "token_stream"))
+          return T_TOKEN_STREAM_DECLARATION;
         assert(0);
         return '%';
     } else if (yytoken == ';' && ch == ';') {

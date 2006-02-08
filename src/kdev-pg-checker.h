@@ -65,5 +65,13 @@ protected:
   virtual void visit_symbol(model::symbol_item *node);
 };
 
+struct undefined_token_checker: protected default_visitor
+{
+  void operator()(model::node *node);
+
+protected:
+  virtual void visit_terminal(model::terminal_item *node);
+};
+
 #endif // KDEV_PG_CHECKER_H
 

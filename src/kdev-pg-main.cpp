@@ -150,6 +150,9 @@ int main(int, char *argv[])
                 undefined_symbol_checker());
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
+                undefined_token_checker());
+
+  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
                 empty_FIRST_checker());
 
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),

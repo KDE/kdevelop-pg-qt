@@ -72,6 +72,16 @@ struct world
     return _M_zero;
   }
 
+  model::terminal_item *terminal(char const *__name)
+  {
+    std::string name = __name;
+    terminal_set::iterator it = terminals.find(name);
+    if (it == terminals.end())
+      return pg::terminal(__name);
+
+    return (*it).second;
+  }
+
   void push_rule(model::node *rule)
   {
     model::evolve_item *e = node_cast<model::evolve_item*>(rule);

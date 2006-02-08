@@ -166,7 +166,24 @@ void undefined_symbol_checker::visit_symbol(model::symbol_item *node)
 {
   if (_G_system.env.count(node) == 0)
     {
-      std::cerr << "** WARNING Undefined symbol ``" << node->_M_name << "''" << std::endl;
+      std::cerr << "** ERROR Undefined symbol ``" << node->_M_name << "''"
+                << std::endl;
+      exit(EXIT_FAILURE);
+    }
+}
+
+void undefined_token_checker::operator()(model::node *node)
+{
+  visit_node(node);
+}
+
+void undefined_token_checker::visit_terminal(model::terminal_item *node)
+{
+  std::string name = node->_M_name;
+  if (_G_system.terminals.find(name) == _G_system.terminals.end())
+    {
+      std::cerr << "** ERROR Undefined token ``" << node->_M_name << "''"
+                << std::endl;
       exit(EXIT_FAILURE);
     }
 }

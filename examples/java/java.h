@@ -106,8 +106,6 @@ struct interface_extends_clause_ast;
 
 struct interface_field_ast;
 
-struct keyword_ast;
-
 struct literal_ast;
 
 struct logical_and_expression_ast;
@@ -123,8 +121,6 @@ struct multiplicative_expression_rest_ast;
 struct new_expression_ast;
 
 struct non_wildcard_type_arguments_ast;
-
-struct operator_ast;
 
 struct optional_declarator_brackets_ast;
 
@@ -158,8 +154,6 @@ struct relational_expression_ast;
 
 struct relational_expression_rest_ast;
 
-struct seperator_ast;
-
 struct shift_expression_ast;
 
 struct shift_expression_rest_ast;
@@ -173,8 +167,6 @@ struct switch_case_ast;
 struct switch_statements_group_ast;
 
 struct throws_clause_ast;
-
-struct token_ast;
 
 struct try_handler_ast;
 
@@ -265,60 +257,56 @@ struct java_ast_node
       Kind_interface_declaration = 1045,
       Kind_interface_extends_clause = 1046,
       Kind_interface_field = 1047,
-      Kind_keyword = 1048,
-      Kind_literal = 1049,
-      Kind_logical_and_expression = 1050,
-      Kind_logical_or_expression = 1051,
-      Kind_mandatory_declarator_brackets = 1052,
-      Kind_multiplicative_expression = 1053,
-      Kind_multiplicative_expression_rest = 1054,
-      Kind_new_expression = 1055,
-      Kind_non_wildcard_type_arguments = 1056,
-      Kind_operator = 1057,
-      Kind_optional_declarator_brackets = 1058,
-      Kind_optional_modifiers = 1059,
-      Kind_optional_parameter_modifiers = 1060,
-      Kind_package_declaration = 1061,
-      Kind_parameter_declaration = 1062,
-      Kind_parameter_declaration_list = 1063,
-      Kind_parameter_declaration_tripledot = 1064,
-      Kind_postfix_operator = 1065,
-      Kind_primary_atom = 1066,
-      Kind_primary_expression = 1067,
-      Kind_primary_selector = 1068,
-      Kind_qualified_identifier = 1069,
-      Kind_qualified_identifier_safe = 1070,
-      Kind_qualified_identifier_with_optional_star = 1071,
-      Kind_relational_expression = 1072,
-      Kind_relational_expression_rest = 1073,
-      Kind_seperator = 1074,
-      Kind_shift_expression = 1075,
-      Kind_shift_expression_rest = 1076,
-      Kind_statement = 1077,
-      Kind_super_suffix = 1078,
-      Kind_switch_case = 1079,
-      Kind_switch_statements_group = 1080,
-      Kind_throws_clause = 1081,
-      Kind_token = 1082,
-      Kind_try_handler = 1083,
-      Kind_type_argument = 1084,
-      Kind_type_argument_specification = 1085,
-      Kind_type_arguments = 1086,
-      Kind_type_arguments_or_parameters_end = 1087,
-      Kind_type_declaration = 1088,
-      Kind_type_parameter = 1089,
-      Kind_type_parameters = 1090,
-      Kind_type_specification = 1091,
-      Kind_type_specification_noarray = 1092,
-      Kind_unary_expression = 1093,
-      Kind_unary_expression_not_plusminus = 1094,
-      Kind_variable_array_initializer = 1095,
-      Kind_variable_declaration = 1096,
-      Kind_variable_declaration_rest = 1097,
-      Kind_variable_declarator = 1098,
-      Kind_variable_initializer = 1099,
-      Kind_wildcard_type = 1100,
-      Kind_wildcard_type_bounds = 1101,
+      Kind_literal = 1048,
+      Kind_logical_and_expression = 1049,
+      Kind_logical_or_expression = 1050,
+      Kind_mandatory_declarator_brackets = 1051,
+      Kind_multiplicative_expression = 1052,
+      Kind_multiplicative_expression_rest = 1053,
+      Kind_new_expression = 1054,
+      Kind_non_wildcard_type_arguments = 1055,
+      Kind_optional_declarator_brackets = 1056,
+      Kind_optional_modifiers = 1057,
+      Kind_optional_parameter_modifiers = 1058,
+      Kind_package_declaration = 1059,
+      Kind_parameter_declaration = 1060,
+      Kind_parameter_declaration_list = 1061,
+      Kind_parameter_declaration_tripledot = 1062,
+      Kind_postfix_operator = 1063,
+      Kind_primary_atom = 1064,
+      Kind_primary_expression = 1065,
+      Kind_primary_selector = 1066,
+      Kind_qualified_identifier = 1067,
+      Kind_qualified_identifier_safe = 1068,
+      Kind_qualified_identifier_with_optional_star = 1069,
+      Kind_relational_expression = 1070,
+      Kind_relational_expression_rest = 1071,
+      Kind_shift_expression = 1072,
+      Kind_shift_expression_rest = 1073,
+      Kind_statement = 1074,
+      Kind_super_suffix = 1075,
+      Kind_switch_case = 1076,
+      Kind_switch_statements_group = 1077,
+      Kind_throws_clause = 1078,
+      Kind_try_handler = 1079,
+      Kind_type_argument = 1080,
+      Kind_type_argument_specification = 1081,
+      Kind_type_arguments = 1082,
+      Kind_type_arguments_or_parameters_end = 1083,
+      Kind_type_declaration = 1084,
+      Kind_type_parameter = 1085,
+      Kind_type_parameters = 1086,
+      Kind_type_specification = 1087,
+      Kind_type_specification_noarray = 1088,
+      Kind_unary_expression = 1089,
+      Kind_unary_expression_not_plusminus = 1090,
+      Kind_variable_array_initializer = 1091,
+      Kind_variable_declaration = 1092,
+      Kind_variable_declaration_rest = 1093,
+      Kind_variable_declarator = 1094,
+      Kind_variable_initializer = 1095,
+      Kind_wildcard_type = 1096,
+      Kind_wildcard_type_bounds = 1097,
       AST_NODE_KIND_COUNT
     };
 
@@ -971,16 +959,6 @@ struct interface_field_ast: public java_ast_node
 
   };
 
-struct keyword_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_keyword
-    };
-
-
-  };
-
 struct literal_ast: public java_ast_node
   {
     enum
@@ -1080,16 +1058,6 @@ struct non_wildcard_type_arguments_ast: public java_ast_node
     };
 
     const list_node<type_argument_specification_ast *> *type_argument_specification_sequence;
-
-  };
-
-struct operator_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_operator
-    };
-
 
   };
 
@@ -1321,16 +1289,6 @@ struct relational_expression_rest_ast: public java_ast_node
 
   };
 
-struct seperator_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_seperator
-    };
-
-
-  };
-
 struct shift_expression_ast: public java_ast_node
   {
     enum
@@ -1443,16 +1401,6 @@ struct throws_clause_ast: public java_ast_node
     };
 
     const list_node<qualified_identifier_ast *> *identifier_sequence;
-
-  };
-
-struct token_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_token
-    };
-
 
   };
 
@@ -1917,7 +1865,6 @@ class java
     bool parse_interface_declaration(interface_declaration_ast **yynode);
     bool parse_interface_extends_clause(interface_extends_clause_ast **yynode);
     bool parse_interface_field(interface_field_ast **yynode);
-    bool parse_keyword(keyword_ast **yynode);
     bool parse_literal(literal_ast **yynode);
     bool parse_logical_and_expression(logical_and_expression_ast **yynode);
     bool parse_logical_or_expression(logical_or_expression_ast **yynode);
@@ -1926,7 +1873,6 @@ class java
     bool parse_multiplicative_expression_rest(multiplicative_expression_rest_ast **yynode);
     bool parse_new_expression(new_expression_ast **yynode);
     bool parse_non_wildcard_type_arguments(non_wildcard_type_arguments_ast **yynode);
-    bool parse_operator(operator_ast **yynode);
     bool parse_optional_declarator_brackets(optional_declarator_brackets_ast **yynode);
     bool parse_optional_modifiers(optional_modifiers_ast **yynode);
     bool parse_optional_parameter_modifiers(optional_parameter_modifiers_ast **yynode);
@@ -1943,7 +1889,6 @@ class java
     bool parse_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast **yynode);
     bool parse_relational_expression(relational_expression_ast **yynode);
     bool parse_relational_expression_rest(relational_expression_rest_ast **yynode);
-    bool parse_seperator(seperator_ast **yynode);
     bool parse_shift_expression(shift_expression_ast **yynode);
     bool parse_shift_expression_rest(shift_expression_rest_ast **yynode);
     bool parse_statement(statement_ast **yynode);
@@ -1951,7 +1896,6 @@ class java
     bool parse_switch_case(switch_case_ast **yynode);
     bool parse_switch_statements_group(switch_statements_group_ast **yynode);
     bool parse_throws_clause(throws_clause_ast **yynode);
-    bool parse_token(token_ast **yynode);
     bool parse_try_handler(try_handler_ast **yynode);
     bool parse_type_argument(type_argument_ast **yynode);
     bool parse_type_argument_specification(type_argument_specification_ast **yynode);
@@ -2132,9 +2076,6 @@ class java_visitor
     virtual void visit_interface_field(interface_field_ast *)
     {}
 
-    virtual void visit_keyword(keyword_ast *)
-    {}
-
     virtual void visit_literal(literal_ast *)
     {}
 
@@ -2157,9 +2098,6 @@ class java_visitor
     {}
 
     virtual void visit_non_wildcard_type_arguments(non_wildcard_type_arguments_ast *)
-    {}
-
-    virtual void visit_operator(operator_ast *)
     {}
 
     virtual void visit_optional_declarator_brackets(optional_declarator_brackets_ast *)
@@ -2210,9 +2148,6 @@ class java_visitor
     virtual void visit_relational_expression_rest(relational_expression_rest_ast *)
     {}
 
-    virtual void visit_seperator(seperator_ast *)
-    {}
-
     virtual void visit_shift_expression(shift_expression_ast *)
     {}
 
@@ -2232,9 +2167,6 @@ class java_visitor
     {}
 
     virtual void visit_throws_clause(throws_clause_ast *)
-    {}
-
-    virtual void visit_token(token_ast *)
     {}
 
     virtual void visit_try_handler(try_handler_ast *)
@@ -2961,11 +2893,8 @@ class java_default_visitor: public java_visitor
         }
     }
 
-    virtual void visit_keyword(keyword_ast *node)
-  {}
-
     virtual void visit_literal(literal_ast *node)
-    {}
+  {}
 
     virtual void visit_logical_and_expression(logical_and_expression_ast *node)
     {
@@ -3050,11 +2979,8 @@ class java_default_visitor: public java_visitor
         }
     }
 
-    virtual void visit_operator(operator_ast *node)
-  {}
-
     virtual void visit_optional_declarator_brackets(optional_declarator_brackets_ast *node)
-    {}
+  {}
 
     virtual void visit_optional_modifiers(optional_modifiers_ast *node)
     {
@@ -3259,9 +3185,6 @@ class java_default_visitor: public java_visitor
       visit_node(node->expression);
     }
 
-    virtual void visit_seperator(seperator_ast *node)
-    {}
-
     virtual void visit_shift_expression(shift_expression_ast *node)
     {
       visit_node(node->expression);
@@ -3399,9 +3322,6 @@ class java_default_visitor: public java_visitor
           while (__it != __end);
         }
     }
-
-    virtual void visit_token(token_ast *node)
-  {}
 
     virtual void visit_try_handler(try_handler_ast *node)
     {

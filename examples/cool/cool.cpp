@@ -10,21 +10,21 @@ bool cool::parse_additive_expression(additive_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
-      || yytoken == Token_TILDE
-      || yytoken == Token_NOT
-      || yytoken == Token_ISVOID
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_TILDE
+      || yytoken == Token_NOT
+      || yytoken == Token_ISVOID
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       multiplicative_expression_ast *__node_0 = 0;
 
@@ -97,21 +97,21 @@ bool cool::parse_block_expression(block_expression_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_LBRACE
-             || yytoken == Token_ID
-             || yytoken == Token_LPAREN
-             || yytoken == Token_INTEGER
-             || yytoken == Token_STRING
-             || yytoken == Token_TRUE
-             || yytoken == Token_FALSE
-             || yytoken == Token_NEW
-             || yytoken == Token_TILDE
-             || yytoken == Token_NOT
-             || yytoken == Token_ISVOID
+      while (yytoken == Token_NEW
              || yytoken == Token_IF
              || yytoken == Token_WHILE
              || yytoken == Token_LET
-             || yytoken == Token_CASE)
+             || yytoken == Token_CASE
+             || yytoken == Token_LPAREN
+             || yytoken == Token_LBRACE
+             || yytoken == Token_TILDE
+             || yytoken == Token_NOT
+             || yytoken == Token_ISVOID
+             || yytoken == Token_ID
+             || yytoken == Token_INTEGER
+             || yytoken == Token_STRING
+             || yytoken == Token_TRUE
+             || yytoken == Token_FALSE)
         {
           expression_ast *__node_2 = 0;
 
@@ -342,21 +342,21 @@ bool cool::parse_expression(expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
-      || yytoken == Token_TILDE
-      || yytoken == Token_NOT
-      || yytoken == Token_ISVOID
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_TILDE
+      || yytoken == Token_NOT
+      || yytoken == Token_ISVOID
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       relational_expression_ast *__node_7 = 0;
 
@@ -771,21 +771,21 @@ bool cool::parse_multiplicative_expression(multiplicative_expression_ast **yynod
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
-      || yytoken == Token_TILDE
-      || yytoken == Token_NOT
-      || yytoken == Token_ISVOID
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_TILDE
+      || yytoken == Token_NOT
+      || yytoken == Token_ISVOID
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       postfix_expression_ast *__node_19 = 0;
 
@@ -851,21 +851,21 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
-      || yytoken == Token_TILDE
-      || yytoken == Token_NOT
-      || yytoken == Token_ISVOID
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_TILDE
+      || yytoken == Token_NOT
+      || yytoken == Token_ISVOID
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       unary_expression_ast *__node_21 = 0;
 
@@ -876,8 +876,8 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
       (*yynode)->base_expression = __node_21;
 
-      while (yytoken == Token_AT
-             || yytoken == Token_DOT)
+      while (yytoken == Token_DOT
+             || yytoken == Token_AT)
         {
           if (yytoken == Token_AT)
             {
@@ -910,21 +910,21 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
               yylex();
 
-              if (yytoken == Token_LBRACE
-                  || yytoken == Token_ID
-                  || yytoken == Token_LPAREN
-                  || yytoken == Token_INTEGER
-                  || yytoken == Token_STRING
-                  || yytoken == Token_TRUE
-                  || yytoken == Token_FALSE
-                  || yytoken == Token_NEW
-                  || yytoken == Token_TILDE
-                  || yytoken == Token_NOT
-                  || yytoken == Token_ISVOID
+              if (yytoken == Token_NEW
                   || yytoken == Token_IF
                   || yytoken == Token_WHILE
                   || yytoken == Token_LET
-                  || yytoken == Token_CASE)
+                  || yytoken == Token_CASE
+                  || yytoken == Token_LPAREN
+                  || yytoken == Token_LBRACE
+                  || yytoken == Token_TILDE
+                  || yytoken == Token_NOT
+                  || yytoken == Token_ISVOID
+                  || yytoken == Token_ID
+                  || yytoken == Token_INTEGER
+                  || yytoken == Token_STRING
+                  || yytoken == Token_TRUE
+                  || yytoken == Token_FALSE)
                 {
                   expression_ast *__node_22 = 0;
 
@@ -985,21 +985,21 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
 
               yylex();
 
-              if (yytoken == Token_LBRACE
-                  || yytoken == Token_ID
-                  || yytoken == Token_LPAREN
-                  || yytoken == Token_INTEGER
-                  || yytoken == Token_STRING
-                  || yytoken == Token_TRUE
-                  || yytoken == Token_FALSE
-                  || yytoken == Token_NEW
-                  || yytoken == Token_TILDE
-                  || yytoken == Token_NOT
-                  || yytoken == Token_ISVOID
+              if (yytoken == Token_NEW
                   || yytoken == Token_IF
                   || yytoken == Token_WHILE
                   || yytoken == Token_LET
-                  || yytoken == Token_CASE)
+                  || yytoken == Token_CASE
+                  || yytoken == Token_LPAREN
+                  || yytoken == Token_LBRACE
+                  || yytoken == Token_TILDE
+                  || yytoken == Token_NOT
+                  || yytoken == Token_ISVOID
+                  || yytoken == Token_ID
+                  || yytoken == Token_INTEGER
+                  || yytoken == Token_STRING
+                  || yytoken == Token_TRUE
+                  || yytoken == Token_FALSE)
                 {
                   expression_ast *__node_24 = 0;
 
@@ -1064,18 +1064,18 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       if (( LA(2).kind == Token_LEFT_ARROW ) && (yytoken == Token_ID))
         {
@@ -1115,21 +1115,21 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
 
           yylex();
 
-          if (yytoken == Token_LBRACE
-              || yytoken == Token_ID
-              || yytoken == Token_LPAREN
-              || yytoken == Token_INTEGER
-              || yytoken == Token_STRING
-              || yytoken == Token_TRUE
-              || yytoken == Token_FALSE
-              || yytoken == Token_NEW
-              || yytoken == Token_TILDE
-              || yytoken == Token_NOT
-              || yytoken == Token_ISVOID
+          if (yytoken == Token_NEW
               || yytoken == Token_IF
               || yytoken == Token_WHILE
               || yytoken == Token_LET
-              || yytoken == Token_CASE)
+              || yytoken == Token_CASE
+              || yytoken == Token_LPAREN
+              || yytoken == Token_LBRACE
+              || yytoken == Token_TILDE
+              || yytoken == Token_NOT
+              || yytoken == Token_ISVOID
+              || yytoken == Token_ID
+              || yytoken == Token_INTEGER
+              || yytoken == Token_STRING
+              || yytoken == Token_TRUE
+              || yytoken == Token_FALSE)
             {
               expression_ast *__node_27 = 0;
 
@@ -1381,21 +1381,21 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
-      || yytoken == Token_TILDE
-      || yytoken == Token_NOT
-      || yytoken == Token_ISVOID
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_TILDE
+      || yytoken == Token_NOT
+      || yytoken == Token_ISVOID
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       additive_expression_ast *__node_36 = 0;
 
@@ -1472,21 +1472,21 @@ bool cool::parse_unary_expression(unary_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_ID
-      || yytoken == Token_LPAREN
-      || yytoken == Token_INTEGER
-      || yytoken == Token_STRING
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NEW
-      || yytoken == Token_TILDE
-      || yytoken == Token_NOT
-      || yytoken == Token_ISVOID
+  if (yytoken == Token_NEW
       || yytoken == Token_IF
       || yytoken == Token_WHILE
       || yytoken == Token_LET
-      || yytoken == Token_CASE)
+      || yytoken == Token_CASE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_TILDE
+      || yytoken == Token_NOT
+      || yytoken == Token_ISVOID
+      || yytoken == Token_ID
+      || yytoken == Token_INTEGER
+      || yytoken == Token_STRING
+      || yytoken == Token_TRUE
+      || yytoken == Token_FALSE)
     {
       if (yytoken == Token_TILDE)
         {
@@ -1545,18 +1545,18 @@ bool cool::parse_unary_expression(unary_expression_ast **yynode)
           (*yynode)->expression = __node_40;
         }
 
-      else if (yytoken == Token_LBRACE
-               || yytoken == Token_ID
-               || yytoken == Token_LPAREN
-               || yytoken == Token_INTEGER
-               || yytoken == Token_STRING
-               || yytoken == Token_TRUE
-               || yytoken == Token_FALSE
-               || yytoken == Token_NEW
+      else if (yytoken == Token_NEW
                || yytoken == Token_IF
                || yytoken == Token_WHILE
                || yytoken == Token_LET
-               || yytoken == Token_CASE)
+               || yytoken == Token_CASE
+               || yytoken == Token_LPAREN
+               || yytoken == Token_LBRACE
+               || yytoken == Token_ID
+               || yytoken == Token_INTEGER
+               || yytoken == Token_STRING
+               || yytoken == Token_TRUE
+               || yytoken == Token_FALSE)
         {
           primary_expression_ast *__node_41 = 0;
 

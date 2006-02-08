@@ -110,34 +110,34 @@ bool java::parse_additive_expression(additive_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       multiplicative_expression_ast *__node_0 = 0;
 
@@ -257,36 +257,36 @@ bool java::parse_annotation(annotation_ast **yynode)
 
           yylex();
 
-          if (yytoken == Token_AT
-              || yytoken == Token_LBRACE
-              || yytoken == Token_LPAREN
-              || yytoken == Token_LESS_THAN
-              || yytoken == Token_SUPER
-              || yytoken == Token_VOID
-              || yytoken == Token_BOOLEAN
+          if (yytoken == Token_BOOLEAN
               || yytoken == Token_BYTE
               || yytoken == Token_CHAR
-              || yytoken == Token_SHORT
-              || yytoken == Token_INT
-              || yytoken == Token_FLOAT
-              || yytoken == Token_LONG
               || yytoken == Token_DOUBLE
-              || yytoken == Token_PLUS
-              || yytoken == Token_MINUS
+              || yytoken == Token_FLOAT
+              || yytoken == Token_INT
+              || yytoken == Token_LONG
+              || yytoken == Token_NEW
+              || yytoken == Token_SHORT
+              || yytoken == Token_SUPER
+              || yytoken == Token_THIS
+              || yytoken == Token_VOID
+              || yytoken == Token_LPAREN
+              || yytoken == Token_LBRACE
+              || yytoken == Token_AT
+              || yytoken == Token_LESS_THAN
+              || yytoken == Token_BANG
+              || yytoken == Token_TILDE
               || yytoken == Token_INCREMENT
               || yytoken == Token_DECREMENT
-              || yytoken == Token_TILDE
-              || yytoken == Token_BANG
-              || yytoken == Token_THIS
-              || yytoken == Token_NEW
-              || yytoken == Token_IDENTIFIER
+              || yytoken == Token_PLUS
+              || yytoken == Token_MINUS
               || yytoken == Token_TRUE
               || yytoken == Token_FALSE
               || yytoken == Token_NULL
               || yytoken == Token_INTEGER_LITERAL
               || yytoken == Token_FLOATING_POINT_LITERAL
               || yytoken == Token_CHARACTER_LITERAL
-              || yytoken == Token_STRING_LITERAL)
+              || yytoken == Token_STRING_LITERAL
+              || yytoken == Token_IDENTIFIER)
             {
               annotation_arguments_ast *__node_4 = 0;
 
@@ -335,36 +335,36 @@ bool java::parse_annotation_arguments(annotation_arguments_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       if (( LA(2).kind == Token_ASSIGN ) && (yytoken == Token_IDENTIFIER))
         {
@@ -395,36 +395,36 @@ bool java::parse_annotation_arguments(annotation_arguments_ast **yynode)
             }
         }
 
-      else if (yytoken == Token_AT
-               || yytoken == Token_LBRACE
-               || yytoken == Token_LPAREN
-               || yytoken == Token_LESS_THAN
-               || yytoken == Token_SUPER
-               || yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
-               || yytoken == Token_FLOAT
-               || yytoken == Token_LONG
                || yytoken == Token_DOUBLE
-               || yytoken == Token_PLUS
-               || yytoken == Token_MINUS
+               || yytoken == Token_FLOAT
+               || yytoken == Token_INT
+               || yytoken == Token_LONG
+               || yytoken == Token_NEW
+               || yytoken == Token_SHORT
+               || yytoken == Token_SUPER
+               || yytoken == Token_THIS
+               || yytoken == Token_VOID
+               || yytoken == Token_LPAREN
+               || yytoken == Token_LBRACE
+               || yytoken == Token_AT
+               || yytoken == Token_LESS_THAN
+               || yytoken == Token_BANG
+               || yytoken == Token_TILDE
                || yytoken == Token_INCREMENT
                || yytoken == Token_DECREMENT
-               || yytoken == Token_TILDE
-               || yytoken == Token_BANG
-               || yytoken == Token_THIS
-               || yytoken == Token_NEW
-               || yytoken == Token_IDENTIFIER
+               || yytoken == Token_PLUS
+               || yytoken == Token_MINUS
                || yytoken == Token_TRUE
                || yytoken == Token_FALSE
                || yytoken == Token_NULL
                || yytoken == Token_INTEGER_LITERAL
                || yytoken == Token_FLOATING_POINT_LITERAL
                || yytoken == Token_CHARACTER_LITERAL
-               || yytoken == Token_STRING_LITERAL)
+               || yytoken == Token_STRING_LITERAL
+               || yytoken == Token_IDENTIFIER)
         {
           annotation_element_value_ast *__node_7 = 0;
 
@@ -465,35 +465,35 @@ bool java::parse_annotation_element_array_initializer(annotation_element_array_i
 
       yylex();
 
-      if (yytoken == Token_AT
-          || yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_AT
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
           annotation_element_array_value_ast *__node_8 = 0;
 
@@ -566,64 +566,64 @@ bool java::parse_annotation_element_array_value(annotation_element_array_value_a
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
           conditional_expression_ast *__node_10 = 0;
 
@@ -669,65 +669,65 @@ bool java::parse_annotation_element_value(annotation_element_value_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
           conditional_expression_ast *__node_12 = 0;
 
@@ -834,31 +834,31 @@ bool java::parse_annotation_type_body(annotation_type_body_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
-             || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
-             || yytoken == Token_ENUM
-             || yytoken == Token_AT
-             || yytoken == Token_FINAL
-             || yytoken == Token_VOID
+      while (yytoken == Token_ABSTRACT
              || yytoken == Token_BOOLEAN
              || yytoken == Token_BYTE
              || yytoken == Token_CHAR
-             || yytoken == Token_SHORT
-             || yytoken == Token_INT
-             || yytoken == Token_FLOAT
-             || yytoken == Token_LONG
+             || yytoken == Token_CLASS
              || yytoken == Token_DOUBLE
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
-             || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
+             || yytoken == Token_ENUM
+             || yytoken == Token_FINAL
+             || yytoken == Token_FLOAT
+             || yytoken == Token_INT
+             || yytoken == Token_INTERFACE
+             || yytoken == Token_LONG
              || yytoken == Token_NATIVE
-             || yytoken == Token_VOLATILE
+             || yytoken == Token_PRIVATE
+             || yytoken == Token_PROTECTED
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_SHORT
+             || yytoken == Token_STATIC
              || yytoken == Token_STRICTFP
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_TRANSIENT
+             || yytoken == Token_VOID
+             || yytoken == Token_VOLATILE
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT
              || yytoken == Token_IDENTIFIER)
         {
           annotation_type_field_ast *__node_17 = 0;
@@ -939,57 +939,57 @@ bool java::parse_annotation_type_field(annotation_type_field_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_FINAL
-      || yytoken == Token_VOID
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
+      || yytoken == Token_CLASS
       || yytoken == Token_DOUBLE
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
+      || yytoken == Token_ENUM
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_INTERFACE
+      || yytoken == Token_LONG
       || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_SHORT
+      || yytoken == Token_STATIC
       || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
+      || yytoken == Token_VOID
+      || yytoken == Token_VOLATILE
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT
       || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_STATIC
-          || yytoken == Token_CLASS
-          || yytoken == Token_INTERFACE
-          || yytoken == Token_ENUM
-          || yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_VOID
+      if (yytoken == Token_ABSTRACT
           || yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
+          || yytoken == Token_CLASS
           || yytoken == Token_DOUBLE
-          || yytoken == Token_SYNCHRONIZED
-          || yytoken == Token_PRIVATE
-          || yytoken == Token_PUBLIC
-          || yytoken == Token_PROTECTED
-          || yytoken == Token_TRANSIENT
-          || yytoken == Token_ABSTRACT
+          || yytoken == Token_ENUM
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_INTERFACE
+          || yytoken == Token_LONG
           || yytoken == Token_NATIVE
-          || yytoken == Token_VOLATILE
+          || yytoken == Token_PRIVATE
+          || yytoken == Token_PROTECTED
+          || yytoken == Token_PUBLIC
+          || yytoken == Token_SHORT
+          || yytoken == Token_STATIC
           || yytoken == Token_STRICTFP
+          || yytoken == Token_SYNCHRONIZED
+          || yytoken == Token_TRANSIENT
+          || yytoken == Token_VOID
+          || yytoken == Token_VOLATILE
+          || yytoken == Token_AT
           || yytoken == Token_IDENTIFIER)
         {
           optional_modifiers_ast *__node_20 = 0;
@@ -1049,15 +1049,15 @@ bool java::parse_annotation_type_field(annotation_type_field_ast **yynode)
               (*yynode)->annotation_type_declaration = __node_24;
             }
 
-          else if (yytoken == Token_VOID
-                   || yytoken == Token_BOOLEAN
+          else if (yytoken == Token_BOOLEAN
                    || yytoken == Token_BYTE
                    || yytoken == Token_CHAR
-                   || yytoken == Token_SHORT
-                   || yytoken == Token_INT
-                   || yytoken == Token_FLOAT
-                   || yytoken == Token_LONG
                    || yytoken == Token_DOUBLE
+                   || yytoken == Token_FLOAT
+                   || yytoken == Token_INT
+                   || yytoken == Token_LONG
+                   || yytoken == Token_SHORT
+                   || yytoken == Token_VOID
                    || yytoken == Token_IDENTIFIER)
             {
               type_specification_ast *__node_25 = 0;
@@ -1196,63 +1196,63 @@ bool java::parse_argument_list(argument_list_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL || yytoken == Token_RPAREN)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER || yytoken == Token_RPAREN)
     {
-      if (yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
           expression_ast *__node_30 = 0;
 
@@ -1407,34 +1407,34 @@ bool java::parse_bit_and_expression(bit_and_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       equality_expression_ast *__node_37 = 0;
 
@@ -1479,34 +1479,34 @@ bool java::parse_bit_or_expression(bit_or_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       bit_xor_expression_ast *__node_39 = 0;
 
@@ -1551,34 +1551,34 @@ bool java::parse_bit_xor_expression(bit_xor_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       bit_and_expression_ast *__node_41 = 0;
 
@@ -1630,62 +1630,62 @@ bool java::parse_block(block_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
-             || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
-             || yytoken == Token_ENUM
-             || yytoken == Token_AT
-             || yytoken == Token_LBRACE
-             || yytoken == Token_LPAREN
-             || yytoken == Token_FINAL
-             || yytoken == Token_LESS_THAN
-             || yytoken == Token_SUPER
-             || yytoken == Token_VOID
+      while (yytoken == Token_ABSTRACT
+             || yytoken == Token_ASSERT
              || yytoken == Token_BOOLEAN
+             || yytoken == Token_BREAK
              || yytoken == Token_BYTE
              || yytoken == Token_CHAR
-             || yytoken == Token_SHORT
-             || yytoken == Token_INT
-             || yytoken == Token_FLOAT
-             || yytoken == Token_LONG
-             || yytoken == Token_DOUBLE
-             || yytoken == Token_ASSERT
-             || yytoken == Token_IF
-             || yytoken == Token_FOR
-             || yytoken == Token_WHILE
-             || yytoken == Token_DO
-             || yytoken == Token_TRY
-             || yytoken == Token_SWITCH
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_RETURN
-             || yytoken == Token_THROW
-             || yytoken == Token_BREAK
+             || yytoken == Token_CLASS
              || yytoken == Token_CONTINUE
-             || yytoken == Token_PLUS
-             || yytoken == Token_MINUS
-             || yytoken == Token_INCREMENT
-             || yytoken == Token_DECREMENT
-             || yytoken == Token_TILDE
-             || yytoken == Token_BANG
-             || yytoken == Token_THIS
+             || yytoken == Token_DO
+             || yytoken == Token_DOUBLE
+             || yytoken == Token_ENUM
+             || yytoken == Token_FINAL
+             || yytoken == Token_FLOAT
+             || yytoken == Token_FOR
+             || yytoken == Token_IF
+             || yytoken == Token_INT
+             || yytoken == Token_INTERFACE
+             || yytoken == Token_LONG
+             || yytoken == Token_NATIVE
              || yytoken == Token_NEW
              || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
              || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
-             || yytoken == Token_NATIVE
-             || yytoken == Token_VOLATILE
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_RETURN
+             || yytoken == Token_SHORT
+             || yytoken == Token_STATIC
              || yytoken == Token_STRICTFP
-             || yytoken == Token_IDENTIFIER
+             || yytoken == Token_SUPER
+             || yytoken == Token_SWITCH
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_THIS
+             || yytoken == Token_THROW
+             || yytoken == Token_TRANSIENT
+             || yytoken == Token_TRY
+             || yytoken == Token_VOID
+             || yytoken == Token_VOLATILE
+             || yytoken == Token_WHILE
+             || yytoken == Token_LPAREN
+             || yytoken == Token_LBRACE
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT
+             || yytoken == Token_LESS_THAN
+             || yytoken == Token_BANG
+             || yytoken == Token_TILDE
+             || yytoken == Token_INCREMENT
+             || yytoken == Token_DECREMENT
+             || yytoken == Token_PLUS
+             || yytoken == Token_MINUS
              || yytoken == Token_TRUE
              || yytoken == Token_FALSE
              || yytoken == Token_NULL
              || yytoken == Token_INTEGER_LITERAL
              || yytoken == Token_FLOATING_POINT_LITERAL
              || yytoken == Token_CHARACTER_LITERAL
-             || yytoken == Token_STRING_LITERAL)
+             || yytoken == Token_STRING_LITERAL
+             || yytoken == Token_IDENTIFIER)
         {
           block_statement_ast *__node_43 = 0;
 
@@ -1719,74 +1719,74 @@ bool java::parse_block_statement(block_statement_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_LPAREN
-      || yytoken == Token_FINAL
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
+  if (yytoken == Token_ABSTRACT
+      || yytoken == Token_ASSERT
       || yytoken == Token_BOOLEAN
+      || yytoken == Token_BREAK
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE
-      || yytoken == Token_ASSERT
-      || yytoken == Token_IF
-      || yytoken == Token_FOR
-      || yytoken == Token_WHILE
-      || yytoken == Token_DO
-      || yytoken == Token_TRY
-      || yytoken == Token_SWITCH
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_RETURN
-      || yytoken == Token_THROW
-      || yytoken == Token_BREAK
+      || yytoken == Token_CLASS
       || yytoken == Token_CONTINUE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
-      || yytoken == Token_INCREMENT
-      || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
+      || yytoken == Token_DO
+      || yytoken == Token_DOUBLE
+      || yytoken == Token_ENUM
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_FOR
+      || yytoken == Token_IF
+      || yytoken == Token_INT
+      || yytoken == Token_INTERFACE
+      || yytoken == Token_LONG
+      || yytoken == Token_NATIVE
       || yytoken == Token_NEW
       || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
       || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
-      || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_RETURN
+      || yytoken == Token_SHORT
+      || yytoken == Token_STATIC
       || yytoken == Token_STRICTFP
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_SUPER
+      || yytoken == Token_SWITCH
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_THIS
+      || yytoken == Token_THROW
+      || yytoken == Token_TRANSIENT
+      || yytoken == Token_TRY
+      || yytoken == Token_VOID
+      || yytoken == Token_VOLATILE
+      || yytoken == Token_WHILE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
+      || yytoken == Token_INCREMENT
+      || yytoken == Token_DECREMENT
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
-      if (( lookahead_is_parameter_declaration(this) == true ) && (yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (( lookahead_is_parameter_declaration(this) == true ) && (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_SHORT
+          || yytoken == Token_VOID
+          || yytoken == Token_AT
           || yytoken == Token_IDENTIFIER))
         {
           variable_declaration_ast *__node_44 = 0;
@@ -1806,48 +1806,48 @@ bool java::parse_block_statement(block_statement_ast **yynode)
 
       else if (( (yytoken != Token_SYNCHRONIZED) ||
                  (yytoken == Token_SYNCHRONIZED && LA(2).kind == Token_LPAREN)
-               ) && (yytoken == Token_SEMICOLON
-                     || yytoken == Token_LBRACE
-                     || yytoken == Token_LPAREN
-                     || yytoken == Token_LESS_THAN
-                     || yytoken == Token_SUPER
-                     || yytoken == Token_VOID
+               ) && (yytoken == Token_ASSERT
                      || yytoken == Token_BOOLEAN
+                     || yytoken == Token_BREAK
                      || yytoken == Token_BYTE
                      || yytoken == Token_CHAR
-                     || yytoken == Token_SHORT
-                     || yytoken == Token_INT
-                     || yytoken == Token_FLOAT
-                     || yytoken == Token_LONG
-                     || yytoken == Token_DOUBLE
-                     || yytoken == Token_ASSERT
-                     || yytoken == Token_IF
-                     || yytoken == Token_FOR
-                     || yytoken == Token_WHILE
+                     || yytoken == Token_CONTINUE
                      || yytoken == Token_DO
-                     || yytoken == Token_TRY
+                     || yytoken == Token_DOUBLE
+                     || yytoken == Token_FLOAT
+                     || yytoken == Token_FOR
+                     || yytoken == Token_IF
+                     || yytoken == Token_INT
+                     || yytoken == Token_LONG
+                     || yytoken == Token_NEW
+                     || yytoken == Token_RETURN
+                     || yytoken == Token_SHORT
+                     || yytoken == Token_SUPER
                      || yytoken == Token_SWITCH
                      || yytoken == Token_SYNCHRONIZED
-                     || yytoken == Token_RETURN
+                     || yytoken == Token_THIS
                      || yytoken == Token_THROW
-                     || yytoken == Token_BREAK
-                     || yytoken == Token_CONTINUE
-                     || yytoken == Token_PLUS
-                     || yytoken == Token_MINUS
+                     || yytoken == Token_TRY
+                     || yytoken == Token_VOID
+                     || yytoken == Token_WHILE
+                     || yytoken == Token_LPAREN
+                     || yytoken == Token_LBRACE
+                     || yytoken == Token_SEMICOLON
+                     || yytoken == Token_LESS_THAN
+                     || yytoken == Token_BANG
+                     || yytoken == Token_TILDE
                      || yytoken == Token_INCREMENT
                      || yytoken == Token_DECREMENT
-                     || yytoken == Token_TILDE
-                     || yytoken == Token_BANG
-                     || yytoken == Token_THIS
-                     || yytoken == Token_NEW
-                     || yytoken == Token_IDENTIFIER
+                     || yytoken == Token_PLUS
+                     || yytoken == Token_MINUS
                      || yytoken == Token_TRUE
                      || yytoken == Token_FALSE
                      || yytoken == Token_NULL
                      || yytoken == Token_INTEGER_LITERAL
                      || yytoken == Token_FLOATING_POINT_LITERAL
                      || yytoken == Token_CHARACTER_LITERAL
-                     || yytoken == Token_STRING_LITERAL))
+                     || yytoken == Token_STRING_LITERAL
+                     || yytoken == Token_IDENTIFIER))
         {
           statement_ast *__node_45 = 0;
 
@@ -1859,21 +1859,21 @@ bool java::parse_block_statement(block_statement_ast **yynode)
           (*yynode)->statement = __node_45;
         }
 
-      else if (yytoken == Token_STATIC
+      else if (yytoken == Token_ABSTRACT
                || yytoken == Token_CLASS
-               || yytoken == Token_INTERFACE
                || yytoken == Token_ENUM
-               || yytoken == Token_AT
                || yytoken == Token_FINAL
-               || yytoken == Token_SYNCHRONIZED
-               || yytoken == Token_PRIVATE
-               || yytoken == Token_PUBLIC
-               || yytoken == Token_PROTECTED
-               || yytoken == Token_TRANSIENT
-               || yytoken == Token_ABSTRACT
+               || yytoken == Token_INTERFACE
                || yytoken == Token_NATIVE
+               || yytoken == Token_PRIVATE
+               || yytoken == Token_PROTECTED
+               || yytoken == Token_PUBLIC
+               || yytoken == Token_STATIC
+               || yytoken == Token_STRICTFP
+               || yytoken == Token_SYNCHRONIZED
+               || yytoken == Token_TRANSIENT
                || yytoken == Token_VOLATILE
-               || yytoken == Token_STRICTFP)
+               || yytoken == Token_AT)
         {
           optional_modifiers_ast *__node_46 = 0;
 
@@ -1960,15 +1960,15 @@ bool java::parse_builtin_type(builtin_type_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
+      || yytoken == Token_DOUBLE
       || yytoken == Token_FLOAT
+      || yytoken == Token_INT
       || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE)
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID)
     {
       if (yytoken == Token_VOID)
         {
@@ -2082,15 +2082,15 @@ bool java::parse_builtin_type_array_specification(builtin_type_array_specificati
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
+      || yytoken == Token_DOUBLE
       || yytoken == Token_FLOAT
+      || yytoken == Token_INT
       || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE)
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID)
     {
       builtin_type_ast *__node_51 = 0;
 
@@ -2126,15 +2126,15 @@ bool java::parse_builtin_type_specification(builtin_type_specification_ast **yyn
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
+      || yytoken == Token_DOUBLE
       || yytoken == Token_FLOAT
+      || yytoken == Token_INT
       || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE)
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID)
     {
       builtin_type_ast *__node_53 = 0;
 
@@ -2177,15 +2177,15 @@ bool java::parse_cast_expression(cast_expression_ast **yynode)
 
       yylex();
 
-      if (yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
+          || yytoken == Token_DOUBLE
           || yytoken == Token_FLOAT
+          || yytoken == Token_INT
           || yytoken == Token_LONG
-          || yytoken == Token_DOUBLE)
+          || yytoken == Token_SHORT
+          || yytoken == Token_VOID)
         {
           builtin_type_specification_ast *__node_55 = 0;
 
@@ -2266,33 +2266,33 @@ bool java::parse_class_body(class_body_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
-             || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
-             || yytoken == Token_ENUM
-             || yytoken == Token_AT
-             || yytoken == Token_LBRACE
-             || yytoken == Token_FINAL
-             || yytoken == Token_LESS_THAN
-             || yytoken == Token_VOID
+      while (yytoken == Token_ABSTRACT
              || yytoken == Token_BOOLEAN
              || yytoken == Token_BYTE
              || yytoken == Token_CHAR
-             || yytoken == Token_SHORT
-             || yytoken == Token_INT
-             || yytoken == Token_FLOAT
-             || yytoken == Token_LONG
+             || yytoken == Token_CLASS
              || yytoken == Token_DOUBLE
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
-             || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
+             || yytoken == Token_ENUM
+             || yytoken == Token_FINAL
+             || yytoken == Token_FLOAT
+             || yytoken == Token_INT
+             || yytoken == Token_INTERFACE
+             || yytoken == Token_LONG
              || yytoken == Token_NATIVE
-             || yytoken == Token_VOLATILE
+             || yytoken == Token_PRIVATE
+             || yytoken == Token_PROTECTED
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_SHORT
+             || yytoken == Token_STATIC
              || yytoken == Token_STRICTFP
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_TRANSIENT
+             || yytoken == Token_VOID
+             || yytoken == Token_VOLATILE
+             || yytoken == Token_LBRACE
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT
+             || yytoken == Token_LESS_THAN
              || yytoken == Token_IDENTIFIER)
         {
           class_field_ast *__node_59 = 0;
@@ -2459,60 +2459,60 @@ bool java::parse_class_field(class_field_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_FINAL
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_VOID
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
+      || yytoken == Token_CLASS
       || yytoken == Token_DOUBLE
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
+      || yytoken == Token_ENUM
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_INTERFACE
+      || yytoken == Token_LONG
       || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_SHORT
+      || yytoken == Token_STATIC
       || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
+      || yytoken == Token_VOID
+      || yytoken == Token_VOLATILE
+      || yytoken == Token_LBRACE
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_IDENTIFIER)
     {
-      if (( !(yytoken == Token_STATIC && LA(2).kind == Token_LBRACE) ) && (yytoken == Token_STATIC
-          || yytoken == Token_CLASS
-          || yytoken == Token_INTERFACE
-          || yytoken == Token_ENUM
-          || yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_VOID
+      if (( !(yytoken == Token_STATIC && LA(2).kind == Token_LBRACE) ) && (yytoken == Token_ABSTRACT
           || yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
+          || yytoken == Token_CLASS
           || yytoken == Token_DOUBLE
-          || yytoken == Token_SYNCHRONIZED
-          || yytoken == Token_PRIVATE
-          || yytoken == Token_PUBLIC
-          || yytoken == Token_PROTECTED
-          || yytoken == Token_TRANSIENT
-          || yytoken == Token_ABSTRACT
+          || yytoken == Token_ENUM
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_INTERFACE
+          || yytoken == Token_LONG
           || yytoken == Token_NATIVE
-          || yytoken == Token_VOLATILE
+          || yytoken == Token_PRIVATE
+          || yytoken == Token_PROTECTED
+          || yytoken == Token_PUBLIC
+          || yytoken == Token_SHORT
+          || yytoken == Token_STATIC
           || yytoken == Token_STRICTFP
+          || yytoken == Token_SYNCHRONIZED
+          || yytoken == Token_TRANSIENT
+          || yytoken == Token_VOID
+          || yytoken == Token_VOLATILE
+          || yytoken == Token_AT
+          || yytoken == Token_LESS_THAN
           || yytoken == Token_IDENTIFIER))
         {
           optional_modifiers_ast *__node_66 = 0;
@@ -2572,16 +2572,16 @@ bool java::parse_class_field(class_field_ast **yynode)
               (*yynode)->annotation_type_declaration = __node_70;
             }
 
-          else if (yytoken == Token_LESS_THAN
-                   || yytoken == Token_VOID
-                   || yytoken == Token_BOOLEAN
+          else if (yytoken == Token_BOOLEAN
                    || yytoken == Token_BYTE
                    || yytoken == Token_CHAR
-                   || yytoken == Token_SHORT
-                   || yytoken == Token_INT
-                   || yytoken == Token_FLOAT
-                   || yytoken == Token_LONG
                    || yytoken == Token_DOUBLE
+                   || yytoken == Token_FLOAT
+                   || yytoken == Token_INT
+                   || yytoken == Token_LONG
+                   || yytoken == Token_SHORT
+                   || yytoken == Token_VOID
+                   || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
               if (yytoken == Token_LESS_THAN)
@@ -2651,15 +2651,15 @@ bool java::parse_class_field(class_field_ast **yynode)
                   (*yynode)->constructor_body = __node_75;
                 }
 
-              else if (yytoken == Token_VOID
-                       || yytoken == Token_BOOLEAN
+              else if (yytoken == Token_BOOLEAN
                        || yytoken == Token_BYTE
                        || yytoken == Token_CHAR
-                       || yytoken == Token_SHORT
-                       || yytoken == Token_INT
-                       || yytoken == Token_FLOAT
-                       || yytoken == Token_LONG
                        || yytoken == Token_DOUBLE
+                       || yytoken == Token_FLOAT
+                       || yytoken == Token_INT
+                       || yytoken == Token_LONG
+                       || yytoken == Token_SHORT
+                       || yytoken == Token_VOID
                        || yytoken == Token_IDENTIFIER)
                 {
                   type_specification_ast *__node_76 = 0;
@@ -2982,24 +2982,24 @@ bool java::parse_compilation_unit(compilation_unit_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_PACKAGE
-      || yytoken == Token_SEMICOLON
-      || yytoken == Token_IMPORT
-      || yytoken == Token_STATIC
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
       || yytoken == Token_ENUM
-      || yytoken == Token_AT
       || yytoken == Token_FINAL
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
+      || yytoken == Token_IMPORT
+      || yytoken == Token_INTERFACE
       || yytoken == Token_NATIVE
+      || yytoken == Token_PACKAGE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_STATIC
+      || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
       || yytoken == Token_VOLATILE
-      || yytoken == Token_STRICTFP || yytoken == Token_EOF)
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT || yytoken == Token_EOF)
     {
       ltCounter = 0;
 
@@ -3035,22 +3035,22 @@ bool java::parse_compilation_unit(compilation_unit_ast **yynode)
           (*yynode)->import_declaration_sequence = snoc((*yynode)->import_declaration_sequence, __node_93, memory_pool);
         }
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
+      while (yytoken == Token_ABSTRACT
              || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
              || yytoken == Token_ENUM
-             || yytoken == Token_AT
              || yytoken == Token_FINAL
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
-             || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
+             || yytoken == Token_INTERFACE
              || yytoken == Token_NATIVE
+             || yytoken == Token_PRIVATE
+             || yytoken == Token_PROTECTED
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_STATIC
+             || yytoken == Token_STRICTFP
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_TRANSIENT
              || yytoken == Token_VOLATILE
-             || yytoken == Token_STRICTFP)
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT)
         {
           type_declaration_ast *__node_94 = 0;
 
@@ -3084,34 +3084,34 @@ bool java::parse_conditional_expression(conditional_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       logical_or_expression_ast *__node_95 = 0;
 
@@ -3249,33 +3249,33 @@ bool java::parse_enum_body(enum_body_ast **yynode)
 
           yylex();
 
-          while (yytoken == Token_SEMICOLON
-                 || yytoken == Token_STATIC
-                 || yytoken == Token_CLASS
-                 || yytoken == Token_INTERFACE
-                 || yytoken == Token_ENUM
-                 || yytoken == Token_AT
-                 || yytoken == Token_LBRACE
-                 || yytoken == Token_FINAL
-                 || yytoken == Token_LESS_THAN
-                 || yytoken == Token_VOID
+          while (yytoken == Token_ABSTRACT
                  || yytoken == Token_BOOLEAN
                  || yytoken == Token_BYTE
                  || yytoken == Token_CHAR
-                 || yytoken == Token_SHORT
-                 || yytoken == Token_INT
-                 || yytoken == Token_FLOAT
-                 || yytoken == Token_LONG
+                 || yytoken == Token_CLASS
                  || yytoken == Token_DOUBLE
-                 || yytoken == Token_SYNCHRONIZED
-                 || yytoken == Token_PRIVATE
-                 || yytoken == Token_PUBLIC
-                 || yytoken == Token_PROTECTED
-                 || yytoken == Token_TRANSIENT
-                 || yytoken == Token_ABSTRACT
+                 || yytoken == Token_ENUM
+                 || yytoken == Token_FINAL
+                 || yytoken == Token_FLOAT
+                 || yytoken == Token_INT
+                 || yytoken == Token_INTERFACE
+                 || yytoken == Token_LONG
                  || yytoken == Token_NATIVE
-                 || yytoken == Token_VOLATILE
+                 || yytoken == Token_PRIVATE
+                 || yytoken == Token_PROTECTED
+                 || yytoken == Token_PUBLIC
+                 || yytoken == Token_SHORT
+                 || yytoken == Token_STATIC
                  || yytoken == Token_STRICTFP
+                 || yytoken == Token_SYNCHRONIZED
+                 || yytoken == Token_TRANSIENT
+                 || yytoken == Token_VOID
+                 || yytoken == Token_VOLATILE
+                 || yytoken == Token_LBRACE
+                 || yytoken == Token_SEMICOLON
+                 || yytoken == Token_AT
+                 || yytoken == Token_LESS_THAN
                  || yytoken == Token_IDENTIFIER)
             {
               class_field_ast *__node_100 = 0;
@@ -3414,33 +3414,33 @@ bool java::parse_enum_constant_body(enum_constant_body_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
-             || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
-             || yytoken == Token_ENUM
-             || yytoken == Token_AT
-             || yytoken == Token_LBRACE
-             || yytoken == Token_FINAL
-             || yytoken == Token_LESS_THAN
-             || yytoken == Token_VOID
+      while (yytoken == Token_ABSTRACT
              || yytoken == Token_BOOLEAN
              || yytoken == Token_BYTE
              || yytoken == Token_CHAR
-             || yytoken == Token_SHORT
-             || yytoken == Token_INT
-             || yytoken == Token_FLOAT
-             || yytoken == Token_LONG
+             || yytoken == Token_CLASS
              || yytoken == Token_DOUBLE
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
-             || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
+             || yytoken == Token_ENUM
+             || yytoken == Token_FINAL
+             || yytoken == Token_FLOAT
+             || yytoken == Token_INT
+             || yytoken == Token_INTERFACE
+             || yytoken == Token_LONG
              || yytoken == Token_NATIVE
-             || yytoken == Token_VOLATILE
+             || yytoken == Token_PRIVATE
+             || yytoken == Token_PROTECTED
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_SHORT
+             || yytoken == Token_STATIC
              || yytoken == Token_STRICTFP
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_TRANSIENT
+             || yytoken == Token_VOID
+             || yytoken == Token_VOLATILE
+             || yytoken == Token_LBRACE
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT
+             || yytoken == Token_LESS_THAN
              || yytoken == Token_IDENTIFIER)
         {
           enum_constant_field_ast *__node_105 = 0;
@@ -3475,60 +3475,60 @@ bool java::parse_enum_constant_field(enum_constant_field_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_FINAL
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_VOID
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
+      || yytoken == Token_CLASS
       || yytoken == Token_DOUBLE
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
+      || yytoken == Token_ENUM
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_INTERFACE
+      || yytoken == Token_LONG
       || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_SHORT
+      || yytoken == Token_STATIC
       || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
+      || yytoken == Token_VOID
+      || yytoken == Token_VOLATILE
+      || yytoken == Token_LBRACE
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_STATIC
-          || yytoken == Token_CLASS
-          || yytoken == Token_INTERFACE
-          || yytoken == Token_ENUM
-          || yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_VOID
+      if (yytoken == Token_ABSTRACT
           || yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
+          || yytoken == Token_CLASS
           || yytoken == Token_DOUBLE
-          || yytoken == Token_SYNCHRONIZED
-          || yytoken == Token_PRIVATE
-          || yytoken == Token_PUBLIC
-          || yytoken == Token_PROTECTED
-          || yytoken == Token_TRANSIENT
-          || yytoken == Token_ABSTRACT
+          || yytoken == Token_ENUM
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_INTERFACE
+          || yytoken == Token_LONG
           || yytoken == Token_NATIVE
-          || yytoken == Token_VOLATILE
+          || yytoken == Token_PRIVATE
+          || yytoken == Token_PROTECTED
+          || yytoken == Token_PUBLIC
+          || yytoken == Token_SHORT
+          || yytoken == Token_STATIC
           || yytoken == Token_STRICTFP
+          || yytoken == Token_SYNCHRONIZED
+          || yytoken == Token_TRANSIENT
+          || yytoken == Token_VOID
+          || yytoken == Token_VOLATILE
+          || yytoken == Token_AT
+          || yytoken == Token_LESS_THAN
           || yytoken == Token_IDENTIFIER)
         {
           optional_modifiers_ast *__node_106 = 0;
@@ -3588,16 +3588,16 @@ bool java::parse_enum_constant_field(enum_constant_field_ast **yynode)
               (*yynode)->annotation_type_declaration = __node_110;
             }
 
-          else if (yytoken == Token_LESS_THAN
-                   || yytoken == Token_VOID
-                   || yytoken == Token_BOOLEAN
+          else if (yytoken == Token_BOOLEAN
                    || yytoken == Token_BYTE
                    || yytoken == Token_CHAR
-                   || yytoken == Token_SHORT
-                   || yytoken == Token_INT
-                   || yytoken == Token_FLOAT
-                   || yytoken == Token_LONG
                    || yytoken == Token_DOUBLE
+                   || yytoken == Token_FLOAT
+                   || yytoken == Token_INT
+                   || yytoken == Token_LONG
+                   || yytoken == Token_SHORT
+                   || yytoken == Token_VOID
+                   || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
               if (yytoken == Token_LESS_THAN)
@@ -3849,34 +3849,34 @@ bool java::parse_equality_expression(equality_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       relational_expression_ast *__node_124 = 0;
 
@@ -3971,34 +3971,34 @@ bool java::parse_expression(expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       conditional_expression_ast *__node_127 = 0;
 
@@ -4188,34 +4188,34 @@ bool java::parse_for_clause_traditional_rest(for_clause_traditional_rest_ast **y
 
       yylex();
 
-      if (yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
           expression_ast *__node_129 = 0;
 
@@ -4239,34 +4239,34 @@ bool java::parse_for_clause_traditional_rest(for_clause_traditional_rest_ast **y
 
       yylex();
 
-      if (yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
           expression_ast *__node_130 = 0;
 
@@ -4319,49 +4319,49 @@ bool java::parse_for_control(for_control_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_AT
-      || yytoken == Token_LPAREN
-      || yytoken == Token_FINAL
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
-      if (( lookahead_is_parameter_declaration(this) == true ) && (yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (( lookahead_is_parameter_declaration(this) == true ) && (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_SHORT
+          || yytoken == Token_VOID
+          || yytoken == Token_AT
           || yytoken == Token_IDENTIFIER))
         {
           parameter_declaration_ast *__node_132 = 0;
@@ -4430,34 +4430,34 @@ bool java::parse_for_control(for_control_ast **yynode)
           (*yynode)->traditional_for_rest = __node_136;
         }
 
-      else if (yytoken == Token_LPAREN
-               || yytoken == Token_LESS_THAN
-               || yytoken == Token_SUPER
-               || yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
-               || yytoken == Token_FLOAT
-               || yytoken == Token_LONG
                || yytoken == Token_DOUBLE
-               || yytoken == Token_PLUS
-               || yytoken == Token_MINUS
+               || yytoken == Token_FLOAT
+               || yytoken == Token_INT
+               || yytoken == Token_LONG
+               || yytoken == Token_NEW
+               || yytoken == Token_SHORT
+               || yytoken == Token_SUPER
+               || yytoken == Token_THIS
+               || yytoken == Token_VOID
+               || yytoken == Token_LPAREN
+               || yytoken == Token_LESS_THAN
+               || yytoken == Token_BANG
+               || yytoken == Token_TILDE
                || yytoken == Token_INCREMENT
                || yytoken == Token_DECREMENT
-               || yytoken == Token_TILDE
-               || yytoken == Token_BANG
-               || yytoken == Token_THIS
-               || yytoken == Token_NEW
-               || yytoken == Token_IDENTIFIER
+               || yytoken == Token_PLUS
+               || yytoken == Token_MINUS
                || yytoken == Token_TRUE
                || yytoken == Token_FALSE
                || yytoken == Token_NULL
                || yytoken == Token_INTEGER_LITERAL
                || yytoken == Token_FLOATING_POINT_LITERAL
                || yytoken == Token_CHARACTER_LITERAL
-               || yytoken == Token_STRING_LITERAL)
+               || yytoken == Token_STRING_LITERAL
+               || yytoken == Token_IDENTIFIER)
         {
           expression_ast *__node_137 = 0;
 
@@ -4655,32 +4655,32 @@ bool java::parse_interface_body(interface_body_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
-             || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
-             || yytoken == Token_ENUM
-             || yytoken == Token_AT
-             || yytoken == Token_FINAL
-             || yytoken == Token_LESS_THAN
-             || yytoken == Token_VOID
+      while (yytoken == Token_ABSTRACT
              || yytoken == Token_BOOLEAN
              || yytoken == Token_BYTE
              || yytoken == Token_CHAR
-             || yytoken == Token_SHORT
-             || yytoken == Token_INT
-             || yytoken == Token_FLOAT
-             || yytoken == Token_LONG
+             || yytoken == Token_CLASS
              || yytoken == Token_DOUBLE
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
-             || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
+             || yytoken == Token_ENUM
+             || yytoken == Token_FINAL
+             || yytoken == Token_FLOAT
+             || yytoken == Token_INT
+             || yytoken == Token_INTERFACE
+             || yytoken == Token_LONG
              || yytoken == Token_NATIVE
-             || yytoken == Token_VOLATILE
+             || yytoken == Token_PRIVATE
+             || yytoken == Token_PROTECTED
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_SHORT
+             || yytoken == Token_STATIC
              || yytoken == Token_STRICTFP
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_TRANSIENT
+             || yytoken == Token_VOID
+             || yytoken == Token_VOLATILE
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT
+             || yytoken == Token_LESS_THAN
              || yytoken == Token_IDENTIFIER)
         {
           interface_field_ast *__node_143 = 0;
@@ -4845,59 +4845,59 @@ bool java::parse_interface_field(interface_field_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_FINAL
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_VOID
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
+      || yytoken == Token_CLASS
       || yytoken == Token_DOUBLE
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
+      || yytoken == Token_ENUM
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_INTERFACE
+      || yytoken == Token_LONG
       || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_SHORT
+      || yytoken == Token_STATIC
       || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
+      || yytoken == Token_VOID
+      || yytoken == Token_VOLATILE
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_STATIC
-          || yytoken == Token_CLASS
-          || yytoken == Token_INTERFACE
-          || yytoken == Token_ENUM
-          || yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_VOID
+      if (yytoken == Token_ABSTRACT
           || yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
+          || yytoken == Token_CLASS
           || yytoken == Token_DOUBLE
-          || yytoken == Token_SYNCHRONIZED
-          || yytoken == Token_PRIVATE
-          || yytoken == Token_PUBLIC
-          || yytoken == Token_PROTECTED
-          || yytoken == Token_TRANSIENT
-          || yytoken == Token_ABSTRACT
+          || yytoken == Token_ENUM
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_INTERFACE
+          || yytoken == Token_LONG
           || yytoken == Token_NATIVE
-          || yytoken == Token_VOLATILE
+          || yytoken == Token_PRIVATE
+          || yytoken == Token_PROTECTED
+          || yytoken == Token_PUBLIC
+          || yytoken == Token_SHORT
+          || yytoken == Token_STATIC
           || yytoken == Token_STRICTFP
+          || yytoken == Token_SYNCHRONIZED
+          || yytoken == Token_TRANSIENT
+          || yytoken == Token_VOID
+          || yytoken == Token_VOLATILE
+          || yytoken == Token_AT
+          || yytoken == Token_LESS_THAN
           || yytoken == Token_IDENTIFIER)
         {
           optional_modifiers_ast *__node_150 = 0;
@@ -4957,16 +4957,16 @@ bool java::parse_interface_field(interface_field_ast **yynode)
               (*yynode)->annotation_type_declaration = __node_154;
             }
 
-          else if (yytoken == Token_LESS_THAN
-                   || yytoken == Token_VOID
-                   || yytoken == Token_BOOLEAN
+          else if (yytoken == Token_BOOLEAN
                    || yytoken == Token_BYTE
                    || yytoken == Token_CHAR
-                   || yytoken == Token_SHORT
-                   || yytoken == Token_INT
-                   || yytoken == Token_FLOAT
-                   || yytoken == Token_LONG
                    || yytoken == Token_DOUBLE
+                   || yytoken == Token_FLOAT
+                   || yytoken == Token_INT
+                   || yytoken == Token_LONG
+                   || yytoken == Token_SHORT
+                   || yytoken == Token_VOID
+                   || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
               if (yytoken == Token_LESS_THAN)
@@ -5119,479 +5119,6 @@ bool java::parse_interface_field(interface_field_ast **yynode)
   return true;
 }
 
-bool java::parse_keyword(keyword_ast **yynode)
-{
-  *yynode = create<keyword_ast>();
-
-  (*yynode)->start_token = token_stream->index() - 1;
-
-  if (yytoken == Token_PACKAGE
-      || yytoken == Token_IMPORT
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_EXTENDS
-      || yytoken == Token_IMPLEMENTS
-      || yytoken == Token_THROWS
-      || yytoken == Token_DEFAULT
-      || yytoken == Token_FINAL
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
-      || yytoken == Token_BYTE
-      || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE
-      || yytoken == Token_ASSERT
-      || yytoken == Token_IF
-      || yytoken == Token_ELSE
-      || yytoken == Token_FOR
-      || yytoken == Token_WHILE
-      || yytoken == Token_DO
-      || yytoken == Token_TRY
-      || yytoken == Token_FINALLY
-      || yytoken == Token_SWITCH
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_RETURN
-      || yytoken == Token_THROW
-      || yytoken == Token_BREAK
-      || yytoken == Token_CONTINUE
-      || yytoken == Token_CATCH
-      || yytoken == Token_CASE
-      || yytoken == Token_INSTANCEOF
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
-      || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
-      || yytoken == Token_STRICTFP
-      || yytoken == Token_CONST
-      || yytoken == Token_GOTO)
-    {
-      if (yytoken == Token_ABSTRACT)
-        {
-          if (yytoken != Token_ABSTRACT)
-            return yy_expected_token(yytoken, Token_ABSTRACT, "ABSTRACT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_ASSERT)
-        {
-          if (yytoken != Token_ASSERT)
-            return yy_expected_token(yytoken, Token_ASSERT, "ASSERT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BOOLEAN)
-        {
-          if (yytoken != Token_BOOLEAN)
-            return yy_expected_token(yytoken, Token_BOOLEAN, "BOOLEAN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BREAK)
-        {
-          if (yytoken != Token_BREAK)
-            return yy_expected_token(yytoken, Token_BREAK, "BREAK");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BYTE)
-        {
-          if (yytoken != Token_BYTE)
-            return yy_expected_token(yytoken, Token_BYTE, "BYTE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_CASE)
-        {
-          if (yytoken != Token_CASE)
-            return yy_expected_token(yytoken, Token_CASE, "CASE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_CATCH)
-        {
-          if (yytoken != Token_CATCH)
-            return yy_expected_token(yytoken, Token_CATCH, "CATCH");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_CHAR)
-        {
-          if (yytoken != Token_CHAR)
-            return yy_expected_token(yytoken, Token_CHAR, "CHAR");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_CLASS)
-        {
-          if (yytoken != Token_CLASS)
-            return yy_expected_token(yytoken, Token_CLASS, "CLASS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_CONST)
-        {
-          if (yytoken != Token_CONST)
-            return yy_expected_token(yytoken, Token_CONST, "CONST");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_CONTINUE)
-        {
-          if (yytoken != Token_CONTINUE)
-            return yy_expected_token(yytoken, Token_CONTINUE, "CONTINUE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_DEFAULT)
-        {
-          if (yytoken != Token_DEFAULT)
-            return yy_expected_token(yytoken, Token_DEFAULT, "DEFAULT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_DO)
-        {
-          if (yytoken != Token_DO)
-            return yy_expected_token(yytoken, Token_DO, "DO");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_DOUBLE)
-        {
-          if (yytoken != Token_DOUBLE)
-            return yy_expected_token(yytoken, Token_DOUBLE, "DOUBLE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_ELSE)
-        {
-          if (yytoken != Token_ELSE)
-            return yy_expected_token(yytoken, Token_ELSE, "ELSE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_ENUM)
-        {
-          if (yytoken != Token_ENUM)
-            return yy_expected_token(yytoken, Token_ENUM, "ENUM");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_EXTENDS)
-        {
-          if (yytoken != Token_EXTENDS)
-            return yy_expected_token(yytoken, Token_EXTENDS, "EXTENDS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_FINAL)
-        {
-          if (yytoken != Token_FINAL)
-            return yy_expected_token(yytoken, Token_FINAL, "FINAL");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_FINALLY)
-        {
-          if (yytoken != Token_FINALLY)
-            return yy_expected_token(yytoken, Token_FINALLY, "FINALLY");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_FLOAT)
-        {
-          if (yytoken != Token_FLOAT)
-            return yy_expected_token(yytoken, Token_FLOAT, "FLOAT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_FOR)
-        {
-          if (yytoken != Token_FOR)
-            return yy_expected_token(yytoken, Token_FOR, "FOR");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_GOTO)
-        {
-          if (yytoken != Token_GOTO)
-            return yy_expected_token(yytoken, Token_GOTO, "GOTO");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_IF)
-        {
-          if (yytoken != Token_IF)
-            return yy_expected_token(yytoken, Token_IF, "IF");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_IMPLEMENTS)
-        {
-          if (yytoken != Token_IMPLEMENTS)
-            return yy_expected_token(yytoken, Token_IMPLEMENTS, "IMPLEMENTS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_IMPORT)
-        {
-          if (yytoken != Token_IMPORT)
-            return yy_expected_token(yytoken, Token_IMPORT, "IMPORT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_INSTANCEOF)
-        {
-          if (yytoken != Token_INSTANCEOF)
-            return yy_expected_token(yytoken, Token_INSTANCEOF, "INSTANCEOF");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_INT)
-        {
-          if (yytoken != Token_INT)
-            return yy_expected_token(yytoken, Token_INT, "INT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_INTERFACE)
-        {
-          if (yytoken != Token_INTERFACE)
-            return yy_expected_token(yytoken, Token_INTERFACE, "INTERFACE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LONG)
-        {
-          if (yytoken != Token_LONG)
-            return yy_expected_token(yytoken, Token_LONG, "LONG");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_NATIVE)
-        {
-          if (yytoken != Token_NATIVE)
-            return yy_expected_token(yytoken, Token_NATIVE, "NATIVE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_NEW)
-        {
-          if (yytoken != Token_NEW)
-            return yy_expected_token(yytoken, Token_NEW, "NEW");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_PACKAGE)
-        {
-          if (yytoken != Token_PACKAGE)
-            return yy_expected_token(yytoken, Token_PACKAGE, "PACKAGE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_PRIVATE)
-        {
-          if (yytoken != Token_PRIVATE)
-            return yy_expected_token(yytoken, Token_PRIVATE, "PRIVATE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_PROTECTED)
-        {
-          if (yytoken != Token_PROTECTED)
-            return yy_expected_token(yytoken, Token_PROTECTED, "PROTECTED");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_PUBLIC)
-        {
-          if (yytoken != Token_PUBLIC)
-            return yy_expected_token(yytoken, Token_PUBLIC, "PUBLIC");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_RETURN)
-        {
-          if (yytoken != Token_RETURN)
-            return yy_expected_token(yytoken, Token_RETURN, "RETURN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SHORT)
-        {
-          if (yytoken != Token_SHORT)
-            return yy_expected_token(yytoken, Token_SHORT, "SHORT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_STATIC)
-        {
-          if (yytoken != Token_STATIC)
-            return yy_expected_token(yytoken, Token_STATIC, "STATIC");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_STRICTFP)
-        {
-          if (yytoken != Token_STRICTFP)
-            return yy_expected_token(yytoken, Token_STRICTFP, "STRICTFP");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SUPER)
-        {
-          if (yytoken != Token_SUPER)
-            return yy_expected_token(yytoken, Token_SUPER, "SUPER");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SWITCH)
-        {
-          if (yytoken != Token_SWITCH)
-            return yy_expected_token(yytoken, Token_SWITCH, "SWITCH");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SYNCHRONIZED)
-        {
-          if (yytoken != Token_SYNCHRONIZED)
-            return yy_expected_token(yytoken, Token_SYNCHRONIZED, "SYNCHRONIZED");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_THIS)
-        {
-          if (yytoken != Token_THIS)
-            return yy_expected_token(yytoken, Token_THIS, "THIS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_THROW)
-        {
-          if (yytoken != Token_THROW)
-            return yy_expected_token(yytoken, Token_THROW, "THROW");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_THROWS)
-        {
-          if (yytoken != Token_THROWS)
-            return yy_expected_token(yytoken, Token_THROWS, "THROWS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_TRANSIENT)
-        {
-          if (yytoken != Token_TRANSIENT)
-            return yy_expected_token(yytoken, Token_TRANSIENT, "TRANSIENT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_TRY)
-        {
-          if (yytoken != Token_TRY)
-            return yy_expected_token(yytoken, Token_TRY, "TRY");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_VOID)
-        {
-          if (yytoken != Token_VOID)
-            return yy_expected_token(yytoken, Token_VOID, "VOID");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_VOLATILE)
-        {
-          if (yytoken != Token_VOLATILE)
-            return yy_expected_token(yytoken, Token_VOLATILE, "VOLATILE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_WHILE)
-        {
-          if (yytoken != Token_WHILE)
-            return yy_expected_token(yytoken, Token_WHILE, "WHILE");
-
-          yylex();
-        }
-
-      else
-        {
-          return false;
-        }
-    }
-
-  else
-    {
-      return false;
-    }
-
-  (*yynode)->end_token = token_stream->index() - 1;
-
-  return true;
-}
-
 bool java::parse_literal(literal_ast **yynode)
 {
   *yynode = create<literal_ast>();
@@ -5698,34 +5225,34 @@ bool java::parse_logical_and_expression(logical_and_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       bit_or_expression_ast *__node_163 = 0;
 
@@ -5770,34 +5297,34 @@ bool java::parse_logical_or_expression(logical_or_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       logical_and_expression_ast *__node_165 = 0;
 
@@ -5878,34 +5405,34 @@ bool java::parse_multiplicative_expression(multiplicative_expression_ast **yynod
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       unary_expression_ast *__node_167 = 0;
 
@@ -6199,409 +5726,57 @@ bool java::parse_non_wildcard_type_arguments(non_wildcard_type_arguments_ast **y
   return true;
 }
 
-bool java::parse_operator(operator_ast **yynode)
-{
-  *yynode = create<operator_ast>();
-
-  (*yynode)->start_token = token_stream->index() - 1;
-
-  if (yytoken == Token_TRIPLE_DOT
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_BIT_AND
-      || yytoken == Token_QUESTION
-      || yytoken == Token_GREATER_THAN
-      || yytoken == Token_SIGNED_RSHIFT
-      || yytoken == Token_UNSIGNED_RSHIFT
-      || yytoken == Token_STAR
-      || yytoken == Token_ASSIGN
-      || yytoken == Token_COLON
-      || yytoken == Token_PLUS_ASSIGN
-      || yytoken == Token_MINUS_ASSIGN
-      || yytoken == Token_STAR_ASSIGN
-      || yytoken == Token_SLASH_ASSIGN
-      || yytoken == Token_BIT_AND_ASSIGN
-      || yytoken == Token_BIT_OR_ASSIGN
-      || yytoken == Token_BIT_XOR_ASSIGN
-      || yytoken == Token_REMAINDER_ASSIGN
-      || yytoken == Token_LSHIFT_ASSIGN
-      || yytoken == Token_SIGNED_RSHIFT_ASSIGN
-      || yytoken == Token_UNSIGNED_RSHIFT_ASSIGN
-      || yytoken == Token_LOG_OR
-      || yytoken == Token_LOG_AND
-      || yytoken == Token_BIT_OR
-      || yytoken == Token_BIT_XOR
-      || yytoken == Token_EQUAL
-      || yytoken == Token_NOT_EQUAL
-      || yytoken == Token_LESS_EQUAL
-      || yytoken == Token_GREATER_EQUAL
-      || yytoken == Token_LSHIFT
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
-      || yytoken == Token_SLASH
-      || yytoken == Token_REMAINDER
-      || yytoken == Token_INCREMENT
-      || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG)
-    {
-      if (yytoken == Token_ASSIGN)
-        {
-          if (yytoken != Token_ASSIGN)
-            return yy_expected_token(yytoken, Token_ASSIGN, "ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LESS_THAN)
-        {
-          if (yytoken != Token_LESS_THAN)
-            return yy_expected_token(yytoken, Token_LESS_THAN, "LESS_THAN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BANG)
-        {
-          if (yytoken != Token_BANG)
-            return yy_expected_token(yytoken, Token_BANG, "BANG");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_TILDE)
-        {
-          if (yytoken != Token_TILDE)
-            return yy_expected_token(yytoken, Token_TILDE, "TILDE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_QUESTION)
-        {
-          if (yytoken != Token_QUESTION)
-            return yy_expected_token(yytoken, Token_QUESTION, "QUESTION");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_COLON)
-        {
-          if (yytoken != Token_COLON)
-            return yy_expected_token(yytoken, Token_COLON, "COLON");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_EQUAL)
-        {
-          if (yytoken != Token_EQUAL)
-            return yy_expected_token(yytoken, Token_EQUAL, "EQUAL");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LESS_EQUAL)
-        {
-          if (yytoken != Token_LESS_EQUAL)
-            return yy_expected_token(yytoken, Token_LESS_EQUAL, "LESS_EQUAL");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_GREATER_EQUAL)
-        {
-          if (yytoken != Token_GREATER_EQUAL)
-            return yy_expected_token(yytoken, Token_GREATER_EQUAL, "GREATER_EQUAL");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_NOT_EQUAL)
-        {
-          if (yytoken != Token_NOT_EQUAL)
-            return yy_expected_token(yytoken, Token_NOT_EQUAL, "NOT_EQUAL");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LOG_AND)
-        {
-          if (yytoken != Token_LOG_AND)
-            return yy_expected_token(yytoken, Token_LOG_AND, "LOG_AND");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LOG_OR)
-        {
-          if (yytoken != Token_LOG_OR)
-            return yy_expected_token(yytoken, Token_LOG_OR, "LOG_OR");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_INCREMENT)
-        {
-          if (yytoken != Token_INCREMENT)
-            return yy_expected_token(yytoken, Token_INCREMENT, "INCREMENT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_DECREMENT)
-        {
-          if (yytoken != Token_DECREMENT)
-            return yy_expected_token(yytoken, Token_DECREMENT, "DECREMENT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_PLUS)
-        {
-          if (yytoken != Token_PLUS)
-            return yy_expected_token(yytoken, Token_PLUS, "PLUS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_MINUS)
-        {
-          if (yytoken != Token_MINUS)
-            return yy_expected_token(yytoken, Token_MINUS, "MINUS");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_STAR)
-        {
-          if (yytoken != Token_STAR)
-            return yy_expected_token(yytoken, Token_STAR, "STAR");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SLASH)
-        {
-          if (yytoken != Token_SLASH)
-            return yy_expected_token(yytoken, Token_SLASH, "SLASH");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BIT_AND)
-        {
-          if (yytoken != Token_BIT_AND)
-            return yy_expected_token(yytoken, Token_BIT_AND, "BIT_AND");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BIT_OR)
-        {
-          if (yytoken != Token_BIT_OR)
-            return yy_expected_token(yytoken, Token_BIT_OR, "BIT_OR");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BIT_XOR)
-        {
-          if (yytoken != Token_BIT_XOR)
-            return yy_expected_token(yytoken, Token_BIT_XOR, "BIT_XOR");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_REMAINDER)
-        {
-          if (yytoken != Token_REMAINDER)
-            return yy_expected_token(yytoken, Token_REMAINDER, "REMAINDER");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LSHIFT)
-        {
-          if (yytoken != Token_LSHIFT)
-            return yy_expected_token(yytoken, Token_LSHIFT, "LSHIFT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_PLUS_ASSIGN)
-        {
-          if (yytoken != Token_PLUS_ASSIGN)
-            return yy_expected_token(yytoken, Token_PLUS_ASSIGN, "PLUS_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_MINUS_ASSIGN)
-        {
-          if (yytoken != Token_MINUS_ASSIGN)
-            return yy_expected_token(yytoken, Token_MINUS_ASSIGN, "MINUS_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_STAR_ASSIGN)
-        {
-          if (yytoken != Token_STAR_ASSIGN)
-            return yy_expected_token(yytoken, Token_STAR_ASSIGN, "STAR_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SLASH_ASSIGN)
-        {
-          if (yytoken != Token_SLASH_ASSIGN)
-            return yy_expected_token(yytoken, Token_SLASH_ASSIGN, "SLASH_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BIT_AND_ASSIGN)
-        {
-          if (yytoken != Token_BIT_AND_ASSIGN)
-            return yy_expected_token(yytoken, Token_BIT_AND_ASSIGN, "BIT_AND_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BIT_OR_ASSIGN)
-        {
-          if (yytoken != Token_BIT_OR_ASSIGN)
-            return yy_expected_token(yytoken, Token_BIT_OR_ASSIGN, "BIT_OR_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_BIT_XOR_ASSIGN)
-        {
-          if (yytoken != Token_BIT_XOR_ASSIGN)
-            return yy_expected_token(yytoken, Token_BIT_XOR_ASSIGN, "BIT_XOR_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_REMAINDER_ASSIGN)
-        {
-          if (yytoken != Token_REMAINDER_ASSIGN)
-            return yy_expected_token(yytoken, Token_REMAINDER_ASSIGN, "REMAINDER_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LSHIFT_ASSIGN)
-        {
-          if (yytoken != Token_LSHIFT_ASSIGN)
-            return yy_expected_token(yytoken, Token_LSHIFT_ASSIGN, "LSHIFT_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SIGNED_RSHIFT_ASSIGN)
-        {
-          if (yytoken != Token_SIGNED_RSHIFT_ASSIGN)
-            return yy_expected_token(yytoken, Token_SIGNED_RSHIFT_ASSIGN, "SIGNED_RSHIFT_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_UNSIGNED_RSHIFT_ASSIGN)
-        {
-          if (yytoken != Token_UNSIGNED_RSHIFT_ASSIGN)
-            return yy_expected_token(yytoken, Token_UNSIGNED_RSHIFT_ASSIGN, "UNSIGNED_RSHIFT_ASSIGN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_GREATER_THAN)
-        {
-          if (yytoken != Token_GREATER_THAN)
-            return yy_expected_token(yytoken, Token_GREATER_THAN, "GREATER_THAN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SIGNED_RSHIFT)
-        {
-          if (yytoken != Token_SIGNED_RSHIFT)
-            return yy_expected_token(yytoken, Token_SIGNED_RSHIFT, "SIGNED_RSHIFT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_UNSIGNED_RSHIFT)
-        {
-          if (yytoken != Token_UNSIGNED_RSHIFT)
-            return yy_expected_token(yytoken, Token_UNSIGNED_RSHIFT, "UNSIGNED_RSHIFT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_TRIPLE_DOT)
-        {
-          if (yytoken != Token_TRIPLE_DOT)
-            return yy_expected_token(yytoken, Token_TRIPLE_DOT, "TRIPLE_DOT");
-
-          yylex();
-        }
-
-      else
-        {
-          return false;
-        }
-    }
-
-  else
-    {
-      return false;
-    }
-
-  (*yynode)->end_token = token_stream->index() - 1;
-
-  return true;
-}
-
 bool java::parse_optional_declarator_brackets(optional_declarator_brackets_ast **yynode)
 {
   *yynode = create<optional_declarator_brackets_ast>();
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACKET || yytoken == Token_SEMICOLON
-      || yytoken == Token_LBRACE
-      || yytoken == Token_RBRACE
-      || yytoken == Token_COMMA
-      || yytoken == Token_LPAREN
-      || yytoken == Token_RPAREN
-      || yytoken == Token_EXTENDS
-      || yytoken == Token_IMPLEMENTS
-      || yytoken == Token_THROWS
-      || yytoken == Token_TRIPLE_DOT
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_BIT_AND
-      || yytoken == Token_QUESTION
-      || yytoken == Token_SUPER
-      || yytoken == Token_GREATER_THAN
-      || yytoken == Token_SIGNED_RSHIFT
-      || yytoken == Token_UNSIGNED_RSHIFT
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_LBRACKET || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_DOT
-      || yytoken == Token_STAR
+      || yytoken == Token_EXTENDS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_IMPLEMENTS
+      || yytoken == Token_INSTANCEOF
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_THROWS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_RPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_RBRACE
       || yytoken == Token_LBRACKET
       || yytoken == Token_RBRACKET
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_COMMA
+      || yytoken == Token_DOT
       || yytoken == Token_ASSIGN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_QUESTION
       || yytoken == Token_COLON
+      || yytoken == Token_EQUAL
+      || yytoken == Token_LESS_EQUAL
+      || yytoken == Token_GREATER_EQUAL
+      || yytoken == Token_NOT_EQUAL
+      || yytoken == Token_LOG_AND
+      || yytoken == Token_LOG_OR
+      || yytoken == Token_INCREMENT
+      || yytoken == Token_DECREMENT
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
+      || yytoken == Token_STAR
+      || yytoken == Token_SLASH
+      || yytoken == Token_BIT_AND
+      || yytoken == Token_BIT_OR
+      || yytoken == Token_BIT_XOR
+      || yytoken == Token_REMAINDER
+      || yytoken == Token_LSHIFT
       || yytoken == Token_PLUS_ASSIGN
       || yytoken == Token_MINUS_ASSIGN
       || yytoken == Token_STAR_ASSIGN
@@ -6613,23 +5788,10 @@ bool java::parse_optional_declarator_brackets(optional_declarator_brackets_ast *
       || yytoken == Token_LSHIFT_ASSIGN
       || yytoken == Token_SIGNED_RSHIFT_ASSIGN
       || yytoken == Token_UNSIGNED_RSHIFT_ASSIGN
-      || yytoken == Token_LOG_OR
-      || yytoken == Token_LOG_AND
-      || yytoken == Token_BIT_OR
-      || yytoken == Token_BIT_XOR
-      || yytoken == Token_EQUAL
-      || yytoken == Token_NOT_EQUAL
-      || yytoken == Token_INSTANCEOF
-      || yytoken == Token_LESS_EQUAL
-      || yytoken == Token_GREATER_EQUAL
-      || yytoken == Token_LSHIFT
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
-      || yytoken == Token_SLASH
-      || yytoken == Token_REMAINDER
-      || yytoken == Token_INCREMENT
-      || yytoken == Token_DECREMENT
-      || yytoken == Token_THIS
+      || yytoken == Token_GREATER_THAN
+      || yytoken == Token_SIGNED_RSHIFT
+      || yytoken == Token_UNSIGNED_RSHIFT
+      || yytoken == Token_TRIPLE_DOT
       || yytoken == Token_IDENTIFIER)
     {
       while (yytoken == Token_LBRACKET)
@@ -6664,45 +5826,45 @@ bool java::parse_optional_modifiers(optional_modifiers_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_STATIC
-      || yytoken == Token_AT
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_FINAL
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
       || yytoken == Token_NATIVE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_STATIC
+      || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
       || yytoken == Token_VOLATILE
-      || yytoken == Token_STRICTFP || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+      || yytoken == Token_AT || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
+      || yytoken == Token_CLASS
       || yytoken == Token_DOUBLE
+      || yytoken == Token_ENUM
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_INTERFACE
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
+      || yytoken == Token_AT
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_IDENTIFIER)
     {
-      while (yytoken == Token_STATIC
-             || yytoken == Token_AT
+      while (yytoken == Token_ABSTRACT
              || yytoken == Token_FINAL
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
-             || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
              || yytoken == Token_NATIVE
+             || yytoken == Token_PRIVATE
+             || yytoken == Token_PROTECTED
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_STATIC
+             || yytoken == Token_STRICTFP
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_TRANSIENT
              || yytoken == Token_VOLATILE
-             || yytoken == Token_STRICTFP)
+             || yytoken == Token_AT)
         {
           if (yytoken == Token_PRIVATE)
             {
@@ -6854,20 +6016,20 @@ bool java::parse_optional_parameter_modifiers(optional_parameter_modifiers_ast *
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_FINAL || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_FINAL
+      || yytoken == Token_AT || yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
       || yytoken == Token_IDENTIFIER)
     {
-      while (yytoken == Token_AT
-             || yytoken == Token_FINAL)
+      while (yytoken == Token_FINAL
+             || yytoken == Token_AT)
         {
           if (yytoken == Token_FINAL)
             {
@@ -6965,17 +6127,17 @@ bool java::parse_parameter_declaration(parameter_declaration_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_FINAL
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
+      || yytoken == Token_AT
       || yytoken == Token_IDENTIFIER)
     {
       optional_parameter_modifiers_ast *__node_182 = 0;
@@ -7037,17 +6199,17 @@ bool java::parse_parameter_declaration_list(parameter_declaration_list_ast **yyn
 
       tripleDotOccurred = false;
 
-      if (yytoken == Token_AT
-          || yytoken == Token_FINAL
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
+          || yytoken == Token_FINAL
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_SHORT
+          || yytoken == Token_VOID
+          || yytoken == Token_AT
           || yytoken == Token_IDENTIFIER)
         {
           parameter_declaration_tripledot_ast *__node_186 = 0;
@@ -7111,17 +6273,17 @@ bool java::parse_parameter_declaration_tripledot(parameter_declaration_tripledot
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_FINAL
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
+      || yytoken == Token_AT
       || yytoken == Token_IDENTIFIER)
     {
       optional_parameter_modifiers_ast *__node_188 = 0;
@@ -7239,38 +6401,38 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_THIS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
       || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
+          || yytoken == Token_DOUBLE
           || yytoken == Token_FLOAT
+          || yytoken == Token_INT
           || yytoken == Token_LONG
-          || yytoken == Token_DOUBLE)
+          || yytoken == Token_SHORT
+          || yytoken == Token_VOID)
         {
           builtin_type_specification_ast *__node_192 = 0;
 
@@ -7583,28 +6745,28 @@ bool java::parse_primary_expression(primary_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_THIS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
       || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       primary_atom_ast *__node_206 = 0;
 
@@ -7615,8 +6777,8 @@ bool java::parse_primary_expression(primary_expression_ast **yynode)
 
       (*yynode)->primary_atom = __node_206;
 
-      while (yytoken == Token_DOT
-             || yytoken == Token_LBRACKET)
+      while (yytoken == Token_LBRACKET
+             || yytoken == Token_DOT)
         {
           primary_selector_ast *__node_207 = 0;
 
@@ -7645,8 +6807,8 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_DOT
-      || yytoken == Token_LBRACKET)
+  if (yytoken == Token_LBRACKET
+      || yytoken == Token_DOT)
     {
       if (yytoken == Token_DOT)
         {
@@ -7699,8 +6861,8 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
               (*yynode)->variable_name = __node_209;
             }
 
-          else if (yytoken == Token_LESS_THAN
-                   || yytoken == Token_SUPER
+          else if (yytoken == Token_SUPER
+                   || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
               if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
@@ -7986,34 +7148,34 @@ bool java::parse_relational_expression(relational_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       shift_expression_ast *__node_221 = 0;
 
@@ -8025,9 +7187,9 @@ bool java::parse_relational_expression(relational_expression_ast **yynode)
       (*yynode)->expression = __node_221;
 
       if (yytoken == Token_LESS_THAN
-          || yytoken == Token_GREATER_THAN
           || yytoken == Token_LESS_EQUAL
-          || yytoken == Token_GREATER_EQUAL)
+          || yytoken == Token_GREATER_EQUAL
+          || yytoken == Token_GREATER_THAN)
         {
           do
             {
@@ -8042,9 +7204,9 @@ bool java::parse_relational_expression(relational_expression_ast **yynode)
             }
 
           while (yytoken == Token_LESS_THAN
-                 || yytoken == Token_GREATER_THAN
                  || yytoken == Token_LESS_EQUAL
-                 || yytoken == Token_GREATER_EQUAL);
+                 || yytoken == Token_GREATER_EQUAL
+                 || yytoken == Token_GREATER_THAN);
         }
 
       else if (yytoken == Token_INSTANCEOF)
@@ -8089,9 +7251,9 @@ bool java::parse_relational_expression_rest(relational_expression_rest_ast **yyn
   (*yynode)->start_token = token_stream->index() - 1;
 
   if (yytoken == Token_LESS_THAN
-      || yytoken == Token_GREATER_THAN
       || yytoken == Token_LESS_EQUAL
-      || yytoken == Token_GREATER_EQUAL)
+      || yytoken == Token_GREATER_EQUAL
+      || yytoken == Token_GREATER_THAN)
     {
       if (yytoken == Token_LESS_THAN)
         {
@@ -8158,153 +7320,40 @@ bool java::parse_relational_expression_rest(relational_expression_rest_ast **yyn
   return true;
 }
 
-bool java::parse_seperator(seperator_ast **yynode)
-{
-  *yynode = create<seperator_ast>();
-
-  (*yynode)->start_token = token_stream->index() - 1;
-
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_RBRACE
-      || yytoken == Token_COMMA
-      || yytoken == Token_LPAREN
-      || yytoken == Token_RPAREN
-      || yytoken == Token_DOT
-      || yytoken == Token_LBRACKET
-      || yytoken == Token_RBRACKET)
-    {
-      if (yytoken == Token_LPAREN)
-        {
-          if (yytoken != Token_LPAREN)
-            return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_RPAREN)
-        {
-          if (yytoken != Token_RPAREN)
-            return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LBRACE)
-        {
-          if (yytoken != Token_LBRACE)
-            return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_RBRACE)
-        {
-          if (yytoken != Token_RBRACE)
-            return yy_expected_token(yytoken, Token_RBRACE, "RBRACE");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_LBRACKET)
-        {
-          if (yytoken != Token_LBRACKET)
-            return yy_expected_token(yytoken, Token_LBRACKET, "LBRACKET");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_RBRACKET)
-        {
-          if (yytoken != Token_RBRACKET)
-            return yy_expected_token(yytoken, Token_RBRACKET, "RBRACKET");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_SEMICOLON)
-        {
-          if (yytoken != Token_SEMICOLON)
-            return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_COMMA)
-        {
-          if (yytoken != Token_COMMA)
-            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_DOT)
-        {
-          if (yytoken != Token_DOT)
-            return yy_expected_token(yytoken, Token_DOT, "DOT");
-
-          yylex();
-        }
-
-      else if (yytoken == Token_AT)
-        {
-          if (yytoken != Token_AT)
-            return yy_expected_token(yytoken, Token_AT, "AT");
-
-          yylex();
-        }
-
-      else
-        {
-          return false;
-        }
-    }
-
-  else
-    {
-      return false;
-    }
-
-  (*yynode)->end_token = token_stream->index() - 1;
-
-  return true;
-}
-
 bool java::parse_shift_expression(shift_expression_ast **yynode)
 {
   *yynode = create<shift_expression_ast>();
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       additive_expression_ast *__node_225 = 0;
 
@@ -8315,9 +7364,9 @@ bool java::parse_shift_expression(shift_expression_ast **yynode)
 
       (*yynode)->expression = __node_225;
 
-      while (yytoken == Token_SIGNED_RSHIFT
-             || yytoken == Token_UNSIGNED_RSHIFT
-             || yytoken == Token_LSHIFT)
+      while (yytoken == Token_LSHIFT
+             || yytoken == Token_SIGNED_RSHIFT
+             || yytoken == Token_UNSIGNED_RSHIFT)
         {
           shift_expression_rest_ast *__node_226 = 0;
 
@@ -8346,9 +7395,9 @@ bool java::parse_shift_expression_rest(shift_expression_rest_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SIGNED_RSHIFT
-      || yytoken == Token_UNSIGNED_RSHIFT
-      || yytoken == Token_LSHIFT)
+  if (yytoken == Token_LSHIFT
+      || yytoken == Token_SIGNED_RSHIFT
+      || yytoken == Token_UNSIGNED_RSHIFT)
     {
       if (yytoken == Token_LSHIFT)
         {
@@ -8411,48 +7460,48 @@ bool java::parse_statement(statement_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_LBRACE
-      || yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
+  if (yytoken == Token_ASSERT
       || yytoken == Token_BOOLEAN
+      || yytoken == Token_BREAK
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE
-      || yytoken == Token_ASSERT
-      || yytoken == Token_IF
-      || yytoken == Token_FOR
-      || yytoken == Token_WHILE
+      || yytoken == Token_CONTINUE
       || yytoken == Token_DO
-      || yytoken == Token_TRY
+      || yytoken == Token_DOUBLE
+      || yytoken == Token_FLOAT
+      || yytoken == Token_FOR
+      || yytoken == Token_IF
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_RETURN
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
       || yytoken == Token_SWITCH
       || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_RETURN
+      || yytoken == Token_THIS
       || yytoken == Token_THROW
-      || yytoken == Token_BREAK
-      || yytoken == Token_CONTINUE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_TRY
+      || yytoken == Token_VOID
+      || yytoken == Token_WHILE
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       if (yytoken == Token_LBRACE)
         {
@@ -8774,8 +7823,8 @@ bool java::parse_statement(statement_ast **yynode)
 
           yylex();
 
-          while (yytoken == Token_DEFAULT
-                 || yytoken == Token_CASE)
+          while (yytoken == Token_CASE
+                 || yytoken == Token_DEFAULT)
             {
               switch_statements_group_ast *__node_244 = 0;
 
@@ -8838,34 +7887,34 @@ bool java::parse_statement(statement_ast **yynode)
 
           yylex();
 
-          if (yytoken == Token_LPAREN
-              || yytoken == Token_LESS_THAN
-              || yytoken == Token_SUPER
-              || yytoken == Token_VOID
-              || yytoken == Token_BOOLEAN
+          if (yytoken == Token_BOOLEAN
               || yytoken == Token_BYTE
               || yytoken == Token_CHAR
-              || yytoken == Token_SHORT
-              || yytoken == Token_INT
-              || yytoken == Token_FLOAT
-              || yytoken == Token_LONG
               || yytoken == Token_DOUBLE
-              || yytoken == Token_PLUS
-              || yytoken == Token_MINUS
+              || yytoken == Token_FLOAT
+              || yytoken == Token_INT
+              || yytoken == Token_LONG
+              || yytoken == Token_NEW
+              || yytoken == Token_SHORT
+              || yytoken == Token_SUPER
+              || yytoken == Token_THIS
+              || yytoken == Token_VOID
+              || yytoken == Token_LPAREN
+              || yytoken == Token_LESS_THAN
+              || yytoken == Token_BANG
+              || yytoken == Token_TILDE
               || yytoken == Token_INCREMENT
               || yytoken == Token_DECREMENT
-              || yytoken == Token_TILDE
-              || yytoken == Token_BANG
-              || yytoken == Token_THIS
-              || yytoken == Token_NEW
-              || yytoken == Token_IDENTIFIER
+              || yytoken == Token_PLUS
+              || yytoken == Token_MINUS
               || yytoken == Token_TRUE
               || yytoken == Token_FALSE
               || yytoken == Token_NULL
               || yytoken == Token_INTEGER_LITERAL
               || yytoken == Token_FLOATING_POINT_LITERAL
               || yytoken == Token_CHARACTER_LITERAL
-              || yytoken == Token_STRING_LITERAL)
+              || yytoken == Token_STRING_LITERAL
+              || yytoken == Token_IDENTIFIER)
             {
               expression_ast *__node_247 = 0;
 
@@ -9014,34 +8063,34 @@ bool java::parse_statement(statement_ast **yynode)
           (*yynode)->labeled_statement = __node_252;
         }
 
-      else if (yytoken == Token_LPAREN
-               || yytoken == Token_LESS_THAN
-               || yytoken == Token_SUPER
-               || yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
-               || yytoken == Token_FLOAT
-               || yytoken == Token_LONG
                || yytoken == Token_DOUBLE
-               || yytoken == Token_PLUS
-               || yytoken == Token_MINUS
+               || yytoken == Token_FLOAT
+               || yytoken == Token_INT
+               || yytoken == Token_LONG
+               || yytoken == Token_NEW
+               || yytoken == Token_SHORT
+               || yytoken == Token_SUPER
+               || yytoken == Token_THIS
+               || yytoken == Token_VOID
+               || yytoken == Token_LPAREN
+               || yytoken == Token_LESS_THAN
+               || yytoken == Token_BANG
+               || yytoken == Token_TILDE
                || yytoken == Token_INCREMENT
                || yytoken == Token_DECREMENT
-               || yytoken == Token_TILDE
-               || yytoken == Token_BANG
-               || yytoken == Token_THIS
-               || yytoken == Token_NEW
-               || yytoken == Token_IDENTIFIER
+               || yytoken == Token_PLUS
+               || yytoken == Token_MINUS
                || yytoken == Token_TRUE
                || yytoken == Token_FALSE
                || yytoken == Token_NULL
                || yytoken == Token_INTEGER_LITERAL
                || yytoken == Token_FLOATING_POINT_LITERAL
                || yytoken == Token_CHARACTER_LITERAL
-               || yytoken == Token_STRING_LITERAL)
+               || yytoken == Token_STRING_LITERAL
+               || yytoken == Token_IDENTIFIER)
         {
           expression_ast *__node_253 = 0;
 
@@ -9213,8 +8262,8 @@ bool java::parse_switch_case(switch_case_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_DEFAULT
-      || yytoken == Token_CASE)
+  if (yytoken == Token_CASE
+      || yytoken == Token_DEFAULT)
     {
       if (yytoken == Token_CASE)
         {
@@ -9272,8 +8321,8 @@ bool java::parse_switch_statements_group(switch_statements_group_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_DEFAULT
-      || yytoken == Token_CASE)
+  if (yytoken == Token_CASE
+      || yytoken == Token_DEFAULT)
     {
       switch_case_ast *__node_260 = 0;
 
@@ -9284,8 +8333,8 @@ bool java::parse_switch_statements_group(switch_statements_group_ast **yynode)
 
       (*yynode)->case_sequence = snoc((*yynode)->case_sequence, __node_260, memory_pool);
 
-      while (yytoken == Token_DEFAULT
-             || yytoken == Token_CASE)
+      while (yytoken == Token_CASE
+             || yytoken == Token_DEFAULT)
         {
           switch_case_ast *__node_261 = 0;
 
@@ -9297,62 +8346,62 @@ bool java::parse_switch_statements_group(switch_statements_group_ast **yynode)
           (*yynode)->case_sequence = snoc((*yynode)->case_sequence, __node_261, memory_pool);
         }
 
-      while (yytoken == Token_SEMICOLON
-             || yytoken == Token_STATIC
-             || yytoken == Token_CLASS
-             || yytoken == Token_INTERFACE
-             || yytoken == Token_ENUM
-             || yytoken == Token_AT
-             || yytoken == Token_LBRACE
-             || yytoken == Token_LPAREN
-             || yytoken == Token_FINAL
-             || yytoken == Token_LESS_THAN
-             || yytoken == Token_SUPER
-             || yytoken == Token_VOID
+      while (yytoken == Token_ABSTRACT
+             || yytoken == Token_ASSERT
              || yytoken == Token_BOOLEAN
+             || yytoken == Token_BREAK
              || yytoken == Token_BYTE
              || yytoken == Token_CHAR
-             || yytoken == Token_SHORT
-             || yytoken == Token_INT
-             || yytoken == Token_FLOAT
-             || yytoken == Token_LONG
-             || yytoken == Token_DOUBLE
-             || yytoken == Token_ASSERT
-             || yytoken == Token_IF
-             || yytoken == Token_FOR
-             || yytoken == Token_WHILE
-             || yytoken == Token_DO
-             || yytoken == Token_TRY
-             || yytoken == Token_SWITCH
-             || yytoken == Token_SYNCHRONIZED
-             || yytoken == Token_RETURN
-             || yytoken == Token_THROW
-             || yytoken == Token_BREAK
+             || yytoken == Token_CLASS
              || yytoken == Token_CONTINUE
-             || yytoken == Token_PLUS
-             || yytoken == Token_MINUS
-             || yytoken == Token_INCREMENT
-             || yytoken == Token_DECREMENT
-             || yytoken == Token_TILDE
-             || yytoken == Token_BANG
-             || yytoken == Token_THIS
+             || yytoken == Token_DO
+             || yytoken == Token_DOUBLE
+             || yytoken == Token_ENUM
+             || yytoken == Token_FINAL
+             || yytoken == Token_FLOAT
+             || yytoken == Token_FOR
+             || yytoken == Token_IF
+             || yytoken == Token_INT
+             || yytoken == Token_INTERFACE
+             || yytoken == Token_LONG
+             || yytoken == Token_NATIVE
              || yytoken == Token_NEW
              || yytoken == Token_PRIVATE
-             || yytoken == Token_PUBLIC
              || yytoken == Token_PROTECTED
-             || yytoken == Token_TRANSIENT
-             || yytoken == Token_ABSTRACT
-             || yytoken == Token_NATIVE
-             || yytoken == Token_VOLATILE
+             || yytoken == Token_PUBLIC
+             || yytoken == Token_RETURN
+             || yytoken == Token_SHORT
+             || yytoken == Token_STATIC
              || yytoken == Token_STRICTFP
-             || yytoken == Token_IDENTIFIER
+             || yytoken == Token_SUPER
+             || yytoken == Token_SWITCH
+             || yytoken == Token_SYNCHRONIZED
+             || yytoken == Token_THIS
+             || yytoken == Token_THROW
+             || yytoken == Token_TRANSIENT
+             || yytoken == Token_TRY
+             || yytoken == Token_VOID
+             || yytoken == Token_VOLATILE
+             || yytoken == Token_WHILE
+             || yytoken == Token_LPAREN
+             || yytoken == Token_LBRACE
+             || yytoken == Token_SEMICOLON
+             || yytoken == Token_AT
+             || yytoken == Token_LESS_THAN
+             || yytoken == Token_BANG
+             || yytoken == Token_TILDE
+             || yytoken == Token_INCREMENT
+             || yytoken == Token_DECREMENT
+             || yytoken == Token_PLUS
+             || yytoken == Token_MINUS
              || yytoken == Token_TRUE
              || yytoken == Token_FALSE
              || yytoken == Token_NULL
              || yytoken == Token_INTEGER_LITERAL
              || yytoken == Token_FLOATING_POINT_LITERAL
              || yytoken == Token_CHARACTER_LITERAL
-             || yytoken == Token_STRING_LITERAL)
+             || yytoken == Token_STRING_LITERAL
+             || yytoken == Token_IDENTIFIER)
         {
           block_statement_ast *__node_262 = 0;
 
@@ -9425,295 +8474,6 @@ bool java::parse_throws_clause(throws_clause_ast **yynode)
   return true;
 }
 
-bool java::parse_token(token_ast **yynode)
-{
-  *yynode = create<token_ast>();
-
-  (*yynode)->start_token = token_stream->index() - 1;
-
-  if (yytoken == Token_PACKAGE
-      || yytoken == Token_SEMICOLON
-      || yytoken == Token_IMPORT
-      || yytoken == Token_STATIC
-      || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
-      || yytoken == Token_ENUM
-      || yytoken == Token_AT
-      || yytoken == Token_LBRACE
-      || yytoken == Token_RBRACE
-      || yytoken == Token_COMMA
-      || yytoken == Token_LPAREN
-      || yytoken == Token_RPAREN
-      || yytoken == Token_EXTENDS
-      || yytoken == Token_IMPLEMENTS
-      || yytoken == Token_THROWS
-      || yytoken == Token_DEFAULT
-      || yytoken == Token_TRIPLE_DOT
-      || yytoken == Token_FINAL
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_BIT_AND
-      || yytoken == Token_QUESTION
-      || yytoken == Token_SUPER
-      || yytoken == Token_GREATER_THAN
-      || yytoken == Token_SIGNED_RSHIFT
-      || yytoken == Token_UNSIGNED_RSHIFT
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
-      || yytoken == Token_BYTE
-      || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
-      || yytoken == Token_DOUBLE
-      || yytoken == Token_DOT
-      || yytoken == Token_STAR
-      || yytoken == Token_LBRACKET
-      || yytoken == Token_RBRACKET
-      || yytoken == Token_ASSIGN
-      || yytoken == Token_ASSERT
-      || yytoken == Token_COLON
-      || yytoken == Token_IF
-      || yytoken == Token_ELSE
-      || yytoken == Token_FOR
-      || yytoken == Token_WHILE
-      || yytoken == Token_DO
-      || yytoken == Token_TRY
-      || yytoken == Token_FINALLY
-      || yytoken == Token_SWITCH
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_RETURN
-      || yytoken == Token_THROW
-      || yytoken == Token_BREAK
-      || yytoken == Token_CONTINUE
-      || yytoken == Token_CATCH
-      || yytoken == Token_CASE
-      || yytoken == Token_PLUS_ASSIGN
-      || yytoken == Token_MINUS_ASSIGN
-      || yytoken == Token_STAR_ASSIGN
-      || yytoken == Token_SLASH_ASSIGN
-      || yytoken == Token_BIT_AND_ASSIGN
-      || yytoken == Token_BIT_OR_ASSIGN
-      || yytoken == Token_BIT_XOR_ASSIGN
-      || yytoken == Token_REMAINDER_ASSIGN
-      || yytoken == Token_LSHIFT_ASSIGN
-      || yytoken == Token_SIGNED_RSHIFT_ASSIGN
-      || yytoken == Token_UNSIGNED_RSHIFT_ASSIGN
-      || yytoken == Token_LOG_OR
-      || yytoken == Token_LOG_AND
-      || yytoken == Token_BIT_OR
-      || yytoken == Token_BIT_XOR
-      || yytoken == Token_EQUAL
-      || yytoken == Token_NOT_EQUAL
-      || yytoken == Token_INSTANCEOF
-      || yytoken == Token_LESS_EQUAL
-      || yytoken == Token_GREATER_EQUAL
-      || yytoken == Token_LSHIFT
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
-      || yytoken == Token_SLASH
-      || yytoken == Token_REMAINDER
-      || yytoken == Token_INCREMENT
-      || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
-      || yytoken == Token_NATIVE
-      || yytoken == Token_VOLATILE
-      || yytoken == Token_STRICTFP
-      || yytoken == Token_IDENTIFIER
-      || yytoken == Token_TRUE
-      || yytoken == Token_FALSE
-      || yytoken == Token_NULL
-      || yytoken == Token_INTEGER_LITERAL
-      || yytoken == Token_FLOATING_POINT_LITERAL
-      || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL
-      || yytoken == Token_INVALID
-      || yytoken == Token_CONST
-      || yytoken == Token_GOTO)
-    {
-      if (yytoken == Token_PACKAGE
-          || yytoken == Token_IMPORT
-          || yytoken == Token_STATIC
-          || yytoken == Token_CLASS
-          || yytoken == Token_INTERFACE
-          || yytoken == Token_ENUM
-          || yytoken == Token_EXTENDS
-          || yytoken == Token_IMPLEMENTS
-          || yytoken == Token_THROWS
-          || yytoken == Token_DEFAULT
-          || yytoken == Token_FINAL
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
-          || yytoken == Token_BYTE
-          || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
-          || yytoken == Token_DOUBLE
-          || yytoken == Token_ASSERT
-          || yytoken == Token_IF
-          || yytoken == Token_ELSE
-          || yytoken == Token_FOR
-          || yytoken == Token_WHILE
-          || yytoken == Token_DO
-          || yytoken == Token_TRY
-          || yytoken == Token_FINALLY
-          || yytoken == Token_SWITCH
-          || yytoken == Token_SYNCHRONIZED
-          || yytoken == Token_RETURN
-          || yytoken == Token_THROW
-          || yytoken == Token_BREAK
-          || yytoken == Token_CONTINUE
-          || yytoken == Token_CATCH
-          || yytoken == Token_CASE
-          || yytoken == Token_INSTANCEOF
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_PRIVATE
-          || yytoken == Token_PUBLIC
-          || yytoken == Token_PROTECTED
-          || yytoken == Token_TRANSIENT
-          || yytoken == Token_ABSTRACT
-          || yytoken == Token_NATIVE
-          || yytoken == Token_VOLATILE
-          || yytoken == Token_STRICTFP
-          || yytoken == Token_CONST
-          || yytoken == Token_GOTO)
-        {
-          keyword_ast *__node_265 = 0;
-
-          if (!parse_keyword(&__node_265))
-            {
-              return yy_expected_symbol(java_ast_node::Kind_keyword, "keyword");
-            }
-        }
-
-      else if (yytoken == Token_SEMICOLON
-               || yytoken == Token_AT
-               || yytoken == Token_LBRACE
-               || yytoken == Token_RBRACE
-               || yytoken == Token_COMMA
-               || yytoken == Token_LPAREN
-               || yytoken == Token_RPAREN
-               || yytoken == Token_DOT
-               || yytoken == Token_LBRACKET
-               || yytoken == Token_RBRACKET)
-        {
-          seperator_ast *__node_266 = 0;
-
-          if (!parse_seperator(&__node_266))
-            {
-              return yy_expected_symbol(java_ast_node::Kind_seperator, "seperator");
-            }
-        }
-
-      else if (yytoken == Token_TRIPLE_DOT
-               || yytoken == Token_LESS_THAN
-               || yytoken == Token_BIT_AND
-               || yytoken == Token_QUESTION
-               || yytoken == Token_GREATER_THAN
-               || yytoken == Token_SIGNED_RSHIFT
-               || yytoken == Token_UNSIGNED_RSHIFT
-               || yytoken == Token_STAR
-               || yytoken == Token_ASSIGN
-               || yytoken == Token_COLON
-               || yytoken == Token_PLUS_ASSIGN
-               || yytoken == Token_MINUS_ASSIGN
-               || yytoken == Token_STAR_ASSIGN
-               || yytoken == Token_SLASH_ASSIGN
-               || yytoken == Token_BIT_AND_ASSIGN
-               || yytoken == Token_BIT_OR_ASSIGN
-               || yytoken == Token_BIT_XOR_ASSIGN
-               || yytoken == Token_REMAINDER_ASSIGN
-               || yytoken == Token_LSHIFT_ASSIGN
-               || yytoken == Token_SIGNED_RSHIFT_ASSIGN
-               || yytoken == Token_UNSIGNED_RSHIFT_ASSIGN
-               || yytoken == Token_LOG_OR
-               || yytoken == Token_LOG_AND
-               || yytoken == Token_BIT_OR
-               || yytoken == Token_BIT_XOR
-               || yytoken == Token_EQUAL
-               || yytoken == Token_NOT_EQUAL
-               || yytoken == Token_LESS_EQUAL
-               || yytoken == Token_GREATER_EQUAL
-               || yytoken == Token_LSHIFT
-               || yytoken == Token_PLUS
-               || yytoken == Token_MINUS
-               || yytoken == Token_SLASH
-               || yytoken == Token_REMAINDER
-               || yytoken == Token_INCREMENT
-               || yytoken == Token_DECREMENT
-               || yytoken == Token_TILDE
-               || yytoken == Token_BANG)
-        {
-          operator_ast *__node_267 = 0;
-
-          if (!parse_operator(&__node_267))
-            {
-              return yy_expected_symbol(java_ast_node::Kind_operator, "operator");
-            }
-        }
-
-      else if (yytoken == Token_TRUE
-               || yytoken == Token_FALSE
-               || yytoken == Token_NULL
-               || yytoken == Token_INTEGER_LITERAL
-               || yytoken == Token_FLOATING_POINT_LITERAL
-               || yytoken == Token_CHARACTER_LITERAL
-               || yytoken == Token_STRING_LITERAL)
-        {
-          literal_ast *__node_268 = 0;
-
-          if (!parse_literal(&__node_268))
-            {
-              return yy_expected_symbol(java_ast_node::Kind_literal, "literal");
-            }
-        }
-
-      else if (yytoken == Token_IDENTIFIER)
-        {
-          identifier_ast *__node_269 = 0;
-
-          if (!parse_identifier(&__node_269))
-            {
-              return yy_expected_symbol(java_ast_node::Kind_identifier, "identifier");
-            }
-        }
-
-      else if (yytoken == Token_INVALID)
-        {
-          if (yytoken != Token_INVALID)
-            return yy_expected_token(yytoken, Token_INVALID, "INVALID");
-
-          yylex();
-        }
-
-      else
-        {
-          return false;
-        }
-    }
-
-  else
-    {
-      return false;
-    }
-
-  (*yynode)->end_token = token_stream->index() - 1;
-
-  return true;
-}
-
 bool java::parse_try_handler(try_handler_ast **yynode)
 {
   *yynode = create<try_handler_ast>();
@@ -9732,28 +8492,28 @@ bool java::parse_try_handler(try_handler_ast **yynode)
 
       yylex();
 
-      parameter_declaration_ast *__node_270 = 0;
+      parameter_declaration_ast *__node_265 = 0;
 
-      if (!parse_parameter_declaration(&__node_270))
+      if (!parse_parameter_declaration(&__node_265))
         {
           return yy_expected_symbol(java_ast_node::Kind_parameter_declaration, "parameter_declaration");
         }
 
-      (*yynode)->exception_parameter = __node_270;
+      (*yynode)->exception_parameter = __node_265;
 
       if (yytoken != Token_RPAREN)
         return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
 
       yylex();
 
-      block_ast *__node_271 = 0;
+      block_ast *__node_266 = 0;
 
-      if (!parse_block(&__node_271))
+      if (!parse_block(&__node_266))
         {
           return yy_expected_symbol(java_ast_node::Kind_block, "block");
         }
 
-      (*yynode)->catch_block = __node_271;
+      (*yynode)->catch_block = __node_266;
     }
 
   else
@@ -9772,49 +8532,49 @@ bool java::parse_type_argument(type_argument_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_QUESTION
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
+      || yytoken == Token_QUESTION
       || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_SHORT
+          || yytoken == Token_VOID
           || yytoken == Token_IDENTIFIER)
         {
-          type_argument_specification_ast *__node_272 = 0;
+          type_argument_specification_ast *__node_267 = 0;
 
-          if (!parse_type_argument_specification(&__node_272))
+          if (!parse_type_argument_specification(&__node_267))
             {
               return yy_expected_symbol(java_ast_node::Kind_type_argument_specification, "type_argument_specification");
             }
 
-          (*yynode)->type_argument_specification = __node_272;
+          (*yynode)->type_argument_specification = __node_267;
         }
 
       else if (yytoken == Token_QUESTION)
         {
-          wildcard_type_ast *__node_273 = 0;
+          wildcard_type_ast *__node_268 = 0;
 
-          if (!parse_wildcard_type(&__node_273))
+          if (!parse_wildcard_type(&__node_268))
             {
               return yy_expected_symbol(java_ast_node::Kind_wildcard_type, "wildcard_type");
             }
 
-          (*yynode)->wildcard_type = __node_273;
+          (*yynode)->wildcard_type = __node_268;
         }
 
       else
@@ -9839,47 +8599,47 @@ bool java::parse_type_argument_specification(type_argument_specification_ast **y
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
       || yytoken == Token_IDENTIFIER)
     {
       if (yytoken == Token_IDENTIFIER)
         {
-          class_type_specification_ast *__node_274 = 0;
+          class_type_specification_ast *__node_269 = 0;
 
-          if (!parse_class_type_specification(&__node_274))
+          if (!parse_class_type_specification(&__node_269))
             {
               return yy_expected_symbol(java_ast_node::Kind_class_type_specification, "class_type_specification");
             }
 
-          (*yynode)->class_type = __node_274;
+          (*yynode)->class_type = __node_269;
         }
 
-      else if (yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
+               || yytoken == Token_DOUBLE
                || yytoken == Token_FLOAT
+               || yytoken == Token_INT
                || yytoken == Token_LONG
-               || yytoken == Token_DOUBLE)
+               || yytoken == Token_SHORT
+               || yytoken == Token_VOID)
         {
-          builtin_type_array_specification_ast *__node_275 = 0;
+          builtin_type_array_specification_ast *__node_270 = 0;
 
-          if (!parse_builtin_type_array_specification(&__node_275))
+          if (!parse_builtin_type_array_specification(&__node_270))
             {
               return yy_expected_symbol(java_ast_node::Kind_builtin_type_array_specification, "builtin_type_array_specification");
             }
 
-          (*yynode)->builtin_type_array = __node_275;
+          (*yynode)->builtin_type_array = __node_270;
         }
 
       else
@@ -9915,14 +8675,14 @@ bool java::parse_type_arguments(type_arguments_ast **yynode)
 
       ltCounter++;
 
-      type_argument_ast *__node_276 = 0;
+      type_argument_ast *__node_271 = 0;
 
-      if (!parse_type_argument(&__node_276))
+      if (!parse_type_argument(&__node_271))
         {
           return yy_expected_symbol(java_ast_node::Kind_type_argument, "type_argument");
         }
 
-      (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_276, memory_pool);
+      (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_271, memory_pool);
 
       while (yytoken == Token_COMMA)
         {
@@ -9936,23 +8696,23 @@ bool java::parse_type_arguments(type_arguments_ast **yynode)
 
           yylex();
 
-          type_argument_ast *__node_277 = 0;
+          type_argument_ast *__node_272 = 0;
 
-          if (!parse_type_argument(&__node_277))
+          if (!parse_type_argument(&__node_272))
             {
               return yy_expected_symbol(java_ast_node::Kind_type_argument, "type_argument");
             }
 
-          (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_277, memory_pool);
+          (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_272, memory_pool);
         }
 
       if (yytoken == Token_GREATER_THAN
           || yytoken == Token_SIGNED_RSHIFT
           || yytoken == Token_UNSIGNED_RSHIFT)
         {
-          type_arguments_or_parameters_end_ast *__node_278 = 0;
+          type_arguments_or_parameters_end_ast *__node_273 = 0;
 
-          if (!parse_type_arguments_or_parameters_end(&__node_278))
+          if (!parse_type_arguments_or_parameters_end(&__node_273))
             {
               return yy_expected_symbol(java_ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
             }
@@ -10043,94 +8803,94 @@ bool java::parse_type_declaration(type_declaration_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_SEMICOLON
-      || yytoken == Token_STATIC
+  if (yytoken == Token_ABSTRACT
       || yytoken == Token_CLASS
-      || yytoken == Token_INTERFACE
       || yytoken == Token_ENUM
-      || yytoken == Token_AT
       || yytoken == Token_FINAL
-      || yytoken == Token_SYNCHRONIZED
-      || yytoken == Token_PRIVATE
-      || yytoken == Token_PUBLIC
-      || yytoken == Token_PROTECTED
-      || yytoken == Token_TRANSIENT
-      || yytoken == Token_ABSTRACT
+      || yytoken == Token_INTERFACE
       || yytoken == Token_NATIVE
+      || yytoken == Token_PRIVATE
+      || yytoken == Token_PROTECTED
+      || yytoken == Token_PUBLIC
+      || yytoken == Token_STATIC
+      || yytoken == Token_STRICTFP
+      || yytoken == Token_SYNCHRONIZED
+      || yytoken == Token_TRANSIENT
       || yytoken == Token_VOLATILE
-      || yytoken == Token_STRICTFP)
+      || yytoken == Token_SEMICOLON
+      || yytoken == Token_AT)
     {
-      if (yytoken == Token_STATIC
+      if (yytoken == Token_ABSTRACT
           || yytoken == Token_CLASS
-          || yytoken == Token_INTERFACE
           || yytoken == Token_ENUM
-          || yytoken == Token_AT
           || yytoken == Token_FINAL
-          || yytoken == Token_SYNCHRONIZED
-          || yytoken == Token_PRIVATE
-          || yytoken == Token_PUBLIC
-          || yytoken == Token_PROTECTED
-          || yytoken == Token_TRANSIENT
-          || yytoken == Token_ABSTRACT
+          || yytoken == Token_INTERFACE
           || yytoken == Token_NATIVE
+          || yytoken == Token_PRIVATE
+          || yytoken == Token_PROTECTED
+          || yytoken == Token_PUBLIC
+          || yytoken == Token_STATIC
+          || yytoken == Token_STRICTFP
+          || yytoken == Token_SYNCHRONIZED
+          || yytoken == Token_TRANSIENT
           || yytoken == Token_VOLATILE
-          || yytoken == Token_STRICTFP)
+          || yytoken == Token_AT)
         {
-          optional_modifiers_ast *__node_279 = 0;
+          optional_modifiers_ast *__node_274 = 0;
 
-          if (!parse_optional_modifiers(&__node_279))
+          if (!parse_optional_modifiers(&__node_274))
             {
               return yy_expected_symbol(java_ast_node::Kind_optional_modifiers, "optional_modifiers");
             }
 
-          (*yynode)->modifiers = __node_279;
+          (*yynode)->modifiers = __node_274;
 
           if (yytoken == Token_CLASS)
             {
-              class_declaration_ast *__node_280 = 0;
+              class_declaration_ast *__node_275 = 0;
 
-              if (!parse_class_declaration(&__node_280))
+              if (!parse_class_declaration(&__node_275))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_class_declaration, "class_declaration");
                 }
 
-              (*yynode)->class_declaration = __node_280;
+              (*yynode)->class_declaration = __node_275;
             }
 
           else if (yytoken == Token_ENUM)
             {
-              enum_declaration_ast *__node_281 = 0;
+              enum_declaration_ast *__node_276 = 0;
 
-              if (!parse_enum_declaration(&__node_281))
+              if (!parse_enum_declaration(&__node_276))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_enum_declaration, "enum_declaration");
                 }
 
-              (*yynode)->enum_declaration = __node_281;
+              (*yynode)->enum_declaration = __node_276;
             }
 
           else if (yytoken == Token_INTERFACE)
             {
-              interface_declaration_ast *__node_282 = 0;
+              interface_declaration_ast *__node_277 = 0;
 
-              if (!parse_interface_declaration(&__node_282))
+              if (!parse_interface_declaration(&__node_277))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_interface_declaration, "interface_declaration");
                 }
 
-              (*yynode)->interface_declaration = __node_282;
+              (*yynode)->interface_declaration = __node_277;
             }
 
           else if (yytoken == Token_AT)
             {
-              annotation_type_declaration_ast *__node_283 = 0;
+              annotation_type_declaration_ast *__node_278 = 0;
 
-              if (!parse_annotation_type_declaration(&__node_283))
+              if (!parse_annotation_type_declaration(&__node_278))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_annotation_type_declaration, "annotation_type_declaration");
                 }
 
-              (*yynode)->annotation_type_declaration = __node_283;
+              (*yynode)->annotation_type_declaration = __node_278;
             }
 
           else
@@ -10171,14 +8931,14 @@ bool java::parse_type_parameter(type_parameter_ast **yynode)
 
   if (yytoken == Token_IDENTIFIER)
     {
-      identifier_ast *__node_284 = 0;
+      identifier_ast *__node_279 = 0;
 
-      if (!parse_identifier(&__node_284))
+      if (!parse_identifier(&__node_279))
         {
           return yy_expected_symbol(java_ast_node::Kind_identifier, "identifier");
         }
 
-      (*yynode)->identifier = __node_284;
+      (*yynode)->identifier = __node_279;
 
       if (yytoken == Token_EXTENDS)
         {
@@ -10187,14 +8947,14 @@ bool java::parse_type_parameter(type_parameter_ast **yynode)
 
           yylex();
 
-          class_or_interface_type_ast *__node_285 = 0;
+          class_or_interface_type_ast *__node_280 = 0;
 
-          if (!parse_class_or_interface_type(&__node_285))
+          if (!parse_class_or_interface_type(&__node_280))
             {
               return yy_expected_symbol(java_ast_node::Kind_class_or_interface_type, "class_or_interface_type");
             }
 
-          (*yynode)->type_sequence = snoc((*yynode)->type_sequence, __node_285, memory_pool);
+          (*yynode)->type_sequence = snoc((*yynode)->type_sequence, __node_280, memory_pool);
 
           while (yytoken == Token_BIT_AND)
             {
@@ -10203,14 +8963,14 @@ bool java::parse_type_parameter(type_parameter_ast **yynode)
 
               yylex();
 
-              class_or_interface_type_ast *__node_286 = 0;
+              class_or_interface_type_ast *__node_281 = 0;
 
-              if (!parse_class_or_interface_type(&__node_286))
+              if (!parse_class_or_interface_type(&__node_281))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_class_or_interface_type, "class_or_interface_type");
                 }
 
-              (*yynode)->type_sequence = snoc((*yynode)->type_sequence, __node_286, memory_pool);
+              (*yynode)->type_sequence = snoc((*yynode)->type_sequence, __node_281, memory_pool);
             }
         }
 
@@ -10249,14 +9009,14 @@ bool java::parse_type_parameters(type_parameters_ast **yynode)
 
       ltCounter++;
 
-      type_parameter_ast *__node_287 = 0;
+      type_parameter_ast *__node_282 = 0;
 
-      if (!parse_type_parameter(&__node_287))
+      if (!parse_type_parameter(&__node_282))
         {
           return yy_expected_symbol(java_ast_node::Kind_type_parameter, "type_parameter");
         }
 
-      (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_287, memory_pool);
+      (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_282, memory_pool);
 
       while (yytoken == Token_COMMA)
         {
@@ -10265,23 +9025,23 @@ bool java::parse_type_parameters(type_parameters_ast **yynode)
 
           yylex();
 
-          type_parameter_ast *__node_288 = 0;
+          type_parameter_ast *__node_283 = 0;
 
-          if (!parse_type_parameter(&__node_288))
+          if (!parse_type_parameter(&__node_283))
             {
               return yy_expected_symbol(java_ast_node::Kind_type_parameter, "type_parameter");
             }
 
-          (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_288, memory_pool);
+          (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_283, memory_pool);
         }
 
       if (yytoken == Token_GREATER_THAN
           || yytoken == Token_SIGNED_RSHIFT
           || yytoken == Token_UNSIGNED_RSHIFT)
         {
-          type_arguments_or_parameters_end_ast *__node_289 = 0;
+          type_arguments_or_parameters_end_ast *__node_284 = 0;
 
-          if (!parse_type_arguments_or_parameters_end(&__node_289))
+          if (!parse_type_arguments_or_parameters_end(&__node_284))
             {
               return yy_expected_symbol(java_ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
             }
@@ -10316,47 +9076,47 @@ bool java::parse_type_specification(type_specification_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
       || yytoken == Token_IDENTIFIER)
     {
       if (yytoken == Token_IDENTIFIER)
         {
-          class_type_specification_ast *__node_290 = 0;
+          class_type_specification_ast *__node_285 = 0;
 
-          if (!parse_class_type_specification(&__node_290))
+          if (!parse_class_type_specification(&__node_285))
             {
               return yy_expected_symbol(java_ast_node::Kind_class_type_specification, "class_type_specification");
             }
 
-          (*yynode)->class_type_spec = __node_290;
+          (*yynode)->class_type_spec = __node_285;
         }
 
-      else if (yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
+               || yytoken == Token_DOUBLE
                || yytoken == Token_FLOAT
+               || yytoken == Token_INT
                || yytoken == Token_LONG
-               || yytoken == Token_DOUBLE)
+               || yytoken == Token_SHORT
+               || yytoken == Token_VOID)
         {
-          builtin_type_specification_ast *__node_291 = 0;
+          builtin_type_specification_ast *__node_286 = 0;
 
-          if (!parse_builtin_type_specification(&__node_291))
+          if (!parse_builtin_type_specification(&__node_286))
             {
               return yy_expected_symbol(java_ast_node::Kind_builtin_type_specification, "builtin_type_specification");
             }
 
-          (*yynode)->builtin_type_spec = __node_291;
+          (*yynode)->builtin_type_spec = __node_286;
         }
 
       else
@@ -10381,47 +9141,47 @@ bool java::parse_type_specification_noarray(type_specification_noarray_ast **yyn
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
       || yytoken == Token_IDENTIFIER)
     {
       if (yytoken == Token_IDENTIFIER)
         {
-          class_or_interface_type_ast *__node_292 = 0;
+          class_or_interface_type_ast *__node_287 = 0;
 
-          if (!parse_class_or_interface_type(&__node_292))
+          if (!parse_class_or_interface_type(&__node_287))
             {
               return yy_expected_symbol(java_ast_node::Kind_class_or_interface_type, "class_or_interface_type");
             }
 
-          (*yynode)->class_or_interface_type = __node_292;
+          (*yynode)->class_or_interface_type = __node_287;
         }
 
-      else if (yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
+               || yytoken == Token_DOUBLE
                || yytoken == Token_FLOAT
+               || yytoken == Token_INT
                || yytoken == Token_LONG
-               || yytoken == Token_DOUBLE)
+               || yytoken == Token_SHORT
+               || yytoken == Token_VOID)
         {
-          builtin_type_ast *__node_293 = 0;
+          builtin_type_ast *__node_288 = 0;
 
-          if (!parse_builtin_type(&__node_293))
+          if (!parse_builtin_type(&__node_288))
             {
               return yy_expected_symbol(java_ast_node::Kind_builtin_type, "builtin_type");
             }
 
-          (*yynode)->builtin_type = __node_293;
+          (*yynode)->builtin_type = __node_288;
         }
 
       else
@@ -10446,34 +9206,34 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       if (yytoken == Token_INCREMENT)
         {
@@ -10482,14 +9242,14 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
 
           yylex();
 
-          unary_expression_ast *__node_294 = 0;
+          unary_expression_ast *__node_289 = 0;
 
-          if (!parse_unary_expression(&__node_294))
+          if (!parse_unary_expression(&__node_289))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
 
-          (*yynode)->incremented_expression = __node_294;
+          (*yynode)->incremented_expression = __node_289;
         }
 
       else if (yytoken == Token_DECREMENT)
@@ -10499,14 +9259,14 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
 
           yylex();
 
-          unary_expression_ast *__node_295 = 0;
+          unary_expression_ast *__node_290 = 0;
 
-          if (!parse_unary_expression(&__node_295))
+          if (!parse_unary_expression(&__node_290))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
 
-          (*yynode)->decremented_expression = __node_295;
+          (*yynode)->decremented_expression = __node_290;
         }
 
       else if (yytoken == Token_MINUS)
@@ -10516,14 +9276,14 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
 
           yylex();
 
-          unary_expression_ast *__node_296 = 0;
+          unary_expression_ast *__node_291 = 0;
 
-          if (!parse_unary_expression(&__node_296))
+          if (!parse_unary_expression(&__node_291))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
 
-          (*yynode)->unary_minus_expression = __node_296;
+          (*yynode)->unary_minus_expression = __node_291;
         }
 
       else if (yytoken == Token_PLUS)
@@ -10533,49 +9293,49 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
 
           yylex();
 
-          unary_expression_ast *__node_297 = 0;
+          unary_expression_ast *__node_292 = 0;
 
-          if (!parse_unary_expression(&__node_297))
+          if (!parse_unary_expression(&__node_292))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
 
-          (*yynode)->unary_plus_expression = __node_297;
+          (*yynode)->unary_plus_expression = __node_292;
         }
 
-      else if (yytoken == Token_LPAREN
-               || yytoken == Token_LESS_THAN
-               || yytoken == Token_SUPER
-               || yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
-               || yytoken == Token_FLOAT
-               || yytoken == Token_LONG
                || yytoken == Token_DOUBLE
-               || yytoken == Token_TILDE
-               || yytoken == Token_BANG
-               || yytoken == Token_THIS
+               || yytoken == Token_FLOAT
+               || yytoken == Token_INT
+               || yytoken == Token_LONG
                || yytoken == Token_NEW
-               || yytoken == Token_IDENTIFIER
+               || yytoken == Token_SHORT
+               || yytoken == Token_SUPER
+               || yytoken == Token_THIS
+               || yytoken == Token_VOID
+               || yytoken == Token_LPAREN
+               || yytoken == Token_LESS_THAN
+               || yytoken == Token_BANG
+               || yytoken == Token_TILDE
                || yytoken == Token_TRUE
                || yytoken == Token_FALSE
                || yytoken == Token_NULL
                || yytoken == Token_INTEGER_LITERAL
                || yytoken == Token_FLOATING_POINT_LITERAL
                || yytoken == Token_CHARACTER_LITERAL
-               || yytoken == Token_STRING_LITERAL)
+               || yytoken == Token_STRING_LITERAL
+               || yytoken == Token_IDENTIFIER)
         {
-          unary_expression_not_plusminus_ast *__node_298 = 0;
+          unary_expression_not_plusminus_ast *__node_293 = 0;
 
-          if (!parse_unary_expression_not_plusminus(&__node_298))
+          if (!parse_unary_expression_not_plusminus(&__node_293))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression_not_plusminus, "unary_expression_not_plusminus");
             }
 
-          (*yynode)->other_expression = __node_298;
+          (*yynode)->other_expression = __node_293;
         }
 
       else
@@ -10600,30 +9360,30 @@ bool java::parse_unary_expression_not_plusminus(unary_expression_not_plusminus_a
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
       || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
       if (yytoken == Token_TILDE)
         {
@@ -10632,14 +9392,14 @@ bool java::parse_unary_expression_not_plusminus(unary_expression_not_plusminus_a
 
           yylex();
 
-          unary_expression_ast *__node_299 = 0;
+          unary_expression_ast *__node_294 = 0;
 
-          if (!parse_unary_expression(&__node_299))
+          if (!parse_unary_expression(&__node_294))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
 
-          (*yynode)->bitwise_not_expression = __node_299;
+          (*yynode)->bitwise_not_expression = __node_294;
         }
 
       else if (yytoken == Token_BANG)
@@ -10649,71 +9409,71 @@ bool java::parse_unary_expression_not_plusminus(unary_expression_not_plusminus_a
 
           yylex();
 
-          unary_expression_ast *__node_300 = 0;
+          unary_expression_ast *__node_295 = 0;
 
-          if (!parse_unary_expression(&__node_300))
+          if (!parse_unary_expression(&__node_295))
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
 
-          (*yynode)->logical_not_expression = __node_300;
+          (*yynode)->logical_not_expression = __node_295;
         }
 
       else if (( lookahead_is_cast_expression(this) == true ) && (yytoken == Token_LPAREN))
         {
-          cast_expression_ast *__node_301 = 0;
+          cast_expression_ast *__node_296 = 0;
 
-          if (!parse_cast_expression(&__node_301))
+          if (!parse_cast_expression(&__node_296))
             {
               return yy_expected_symbol(java_ast_node::Kind_cast_expression, "cast_expression");
             }
 
-          (*yynode)->cast_expression = __node_301;
+          (*yynode)->cast_expression = __node_296;
         }
 
-      else if (yytoken == Token_LPAREN
-               || yytoken == Token_LESS_THAN
-               || yytoken == Token_SUPER
-               || yytoken == Token_VOID
-               || yytoken == Token_BOOLEAN
+      else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
-               || yytoken == Token_SHORT
-               || yytoken == Token_INT
-               || yytoken == Token_FLOAT
-               || yytoken == Token_LONG
                || yytoken == Token_DOUBLE
-               || yytoken == Token_THIS
+               || yytoken == Token_FLOAT
+               || yytoken == Token_INT
+               || yytoken == Token_LONG
                || yytoken == Token_NEW
-               || yytoken == Token_IDENTIFIER
+               || yytoken == Token_SHORT
+               || yytoken == Token_SUPER
+               || yytoken == Token_THIS
+               || yytoken == Token_VOID
+               || yytoken == Token_LPAREN
+               || yytoken == Token_LESS_THAN
                || yytoken == Token_TRUE
                || yytoken == Token_FALSE
                || yytoken == Token_NULL
                || yytoken == Token_INTEGER_LITERAL
                || yytoken == Token_FLOATING_POINT_LITERAL
                || yytoken == Token_CHARACTER_LITERAL
-               || yytoken == Token_STRING_LITERAL)
+               || yytoken == Token_STRING_LITERAL
+               || yytoken == Token_IDENTIFIER)
         {
-          primary_expression_ast *__node_302 = 0;
+          primary_expression_ast *__node_297 = 0;
 
-          if (!parse_primary_expression(&__node_302))
+          if (!parse_primary_expression(&__node_297))
             {
               return yy_expected_symbol(java_ast_node::Kind_primary_expression, "primary_expression");
             }
 
-          (*yynode)->primary_expression = __node_302;
+          (*yynode)->primary_expression = __node_297;
 
           while (yytoken == Token_INCREMENT
                  || yytoken == Token_DECREMENT)
             {
-              postfix_operator_ast *__node_303 = 0;
+              postfix_operator_ast *__node_298 = 0;
 
-              if (!parse_postfix_operator(&__node_303))
+              if (!parse_postfix_operator(&__node_298))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_postfix_operator, "postfix_operator");
                 }
 
-              (*yynode)->postfix_operator_sequence = snoc((*yynode)->postfix_operator_sequence, __node_303, memory_pool);
+              (*yynode)->postfix_operator_sequence = snoc((*yynode)->postfix_operator_sequence, __node_298, memory_pool);
             }
         }
 
@@ -10746,44 +9506,44 @@ bool java::parse_variable_array_initializer(variable_array_initializer_ast **yyn
 
       yylex();
 
-      if (yytoken == Token_LBRACE
-          || yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LBRACE
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
-          variable_initializer_ast *__node_304 = 0;
+          variable_initializer_ast *__node_299 = 0;
 
-          if (!parse_variable_initializer(&__node_304))
+          if (!parse_variable_initializer(&__node_299))
             {
               return yy_expected_symbol(java_ast_node::Kind_variable_initializer, "variable_initializer");
             }
 
-          (*yynode)->variable_initializer_sequence = snoc((*yynode)->variable_initializer_sequence, __node_304, memory_pool);
+          (*yynode)->variable_initializer_sequence = snoc((*yynode)->variable_initializer_sequence, __node_299, memory_pool);
 
           while (yytoken == Token_COMMA)
             {
@@ -10797,14 +9557,14 @@ bool java::parse_variable_array_initializer(variable_array_initializer_ast **yyn
 
               yylex();
 
-              variable_initializer_ast *__node_305 = 0;
+              variable_initializer_ast *__node_300 = 0;
 
-              if (!parse_variable_initializer(&__node_305))
+              if (!parse_variable_initializer(&__node_300))
                 {
                   return yy_expected_symbol(java_ast_node::Kind_variable_initializer, "variable_initializer");
                 }
 
-              (*yynode)->variable_initializer_sequence = snoc((*yynode)->variable_initializer_sequence, __node_305, memory_pool);
+              (*yynode)->variable_initializer_sequence = snoc((*yynode)->variable_initializer_sequence, __node_300, memory_pool);
             }
 
           if (yytoken == Token_COMMA)
@@ -10852,35 +9612,35 @@ bool java::parse_variable_declaration(variable_declaration_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_AT
-      || yytoken == Token_FINAL
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
+      || yytoken == Token_FINAL
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_SHORT
+      || yytoken == Token_VOID
+      || yytoken == Token_AT
       || yytoken == Token_IDENTIFIER)
     {
-      parameter_declaration_ast *__node_306 = 0;
+      parameter_declaration_ast *__node_301 = 0;
 
-      if (!parse_parameter_declaration(&__node_306))
+      if (!parse_parameter_declaration(&__node_301))
         {
           return yy_expected_symbol(java_ast_node::Kind_parameter_declaration, "parameter_declaration");
         }
 
-      (*yynode)->initial_declaration = __node_306;
-      variable_declaration_rest_ast *__node_307 = 0;
+      (*yynode)->initial_declaration = __node_301;
+      variable_declaration_rest_ast *__node_302 = 0;
 
-      if (!parse_variable_declaration_rest(&__node_307))
+      if (!parse_variable_declaration_rest(&__node_302))
         {
           return yy_expected_symbol(java_ast_node::Kind_variable_declaration_rest, "variable_declaration_rest");
         }
 
-      (*yynode)->rest = __node_307;
+      (*yynode)->rest = __node_302;
     }
 
   else
@@ -10909,14 +9669,14 @@ bool java::parse_variable_declaration_rest(variable_declaration_rest_ast **yynod
 
           yylex();
 
-          variable_initializer_ast *__node_308 = 0;
+          variable_initializer_ast *__node_303 = 0;
 
-          if (!parse_variable_initializer(&__node_308))
+          if (!parse_variable_initializer(&__node_303))
             {
               return yy_expected_symbol(java_ast_node::Kind_variable_initializer, "variable_initializer");
             }
 
-          (*yynode)->first_initializer = __node_308;
+          (*yynode)->first_initializer = __node_303;
         }
 
       else if (true /*epsilon*/)
@@ -10933,14 +9693,14 @@ bool java::parse_variable_declaration_rest(variable_declaration_rest_ast **yynod
 
           yylex();
 
-          variable_declarator_ast *__node_309 = 0;
+          variable_declarator_ast *__node_304 = 0;
 
-          if (!parse_variable_declarator(&__node_309))
+          if (!parse_variable_declarator(&__node_304))
             {
               return yy_expected_symbol(java_ast_node::Kind_variable_declarator, "variable_declarator");
             }
 
-          (*yynode)->variable_declarator_sequence = snoc((*yynode)->variable_declarator_sequence, __node_309, memory_pool);
+          (*yynode)->variable_declarator_sequence = snoc((*yynode)->variable_declarator_sequence, __node_304, memory_pool);
         }
     }
 
@@ -10962,22 +9722,22 @@ bool java::parse_variable_declarator(variable_declarator_ast **yynode)
 
   if (yytoken == Token_IDENTIFIER)
     {
-      identifier_ast *__node_310 = 0;
+      identifier_ast *__node_305 = 0;
 
-      if (!parse_identifier(&__node_310))
+      if (!parse_identifier(&__node_305))
         {
           return yy_expected_symbol(java_ast_node::Kind_identifier, "identifier");
         }
 
-      (*yynode)->variable_name = __node_310;
-      optional_declarator_brackets_ast *__node_311 = 0;
+      (*yynode)->variable_name = __node_305;
+      optional_declarator_brackets_ast *__node_306 = 0;
 
-      if (!parse_optional_declarator_brackets(&__node_311))
+      if (!parse_optional_declarator_brackets(&__node_306))
         {
           return yy_expected_symbol(java_ast_node::Kind_optional_declarator_brackets, "optional_declarator_brackets");
         }
 
-      (*yynode)->declarator_brackets = __node_311;
+      (*yynode)->declarator_brackets = __node_306;
 
       if (yytoken == Token_ASSIGN)
         {
@@ -10986,14 +9746,14 @@ bool java::parse_variable_declarator(variable_declarator_ast **yynode)
 
           yylex();
 
-          variable_initializer_ast *__node_312 = 0;
+          variable_initializer_ast *__node_307 = 0;
 
-          if (!parse_variable_initializer(&__node_312))
+          if (!parse_variable_initializer(&__node_307))
             {
               return yy_expected_symbol(java_ast_node::Kind_variable_initializer, "variable_initializer");
             }
 
-          (*yynode)->initializer = __node_312;
+          (*yynode)->initializer = __node_307;
         }
 
       else if (true /*epsilon*/)
@@ -11020,85 +9780,85 @@ bool java::parse_variable_initializer(variable_initializer_ast **yynode)
 
   (*yynode)->start_token = token_stream->index() - 1;
 
-  if (yytoken == Token_LBRACE
-      || yytoken == Token_LPAREN
-      || yytoken == Token_LESS_THAN
-      || yytoken == Token_SUPER
-      || yytoken == Token_VOID
-      || yytoken == Token_BOOLEAN
+  if (yytoken == Token_BOOLEAN
       || yytoken == Token_BYTE
       || yytoken == Token_CHAR
-      || yytoken == Token_SHORT
-      || yytoken == Token_INT
-      || yytoken == Token_FLOAT
-      || yytoken == Token_LONG
       || yytoken == Token_DOUBLE
-      || yytoken == Token_PLUS
-      || yytoken == Token_MINUS
+      || yytoken == Token_FLOAT
+      || yytoken == Token_INT
+      || yytoken == Token_LONG
+      || yytoken == Token_NEW
+      || yytoken == Token_SHORT
+      || yytoken == Token_SUPER
+      || yytoken == Token_THIS
+      || yytoken == Token_VOID
+      || yytoken == Token_LPAREN
+      || yytoken == Token_LBRACE
+      || yytoken == Token_LESS_THAN
+      || yytoken == Token_BANG
+      || yytoken == Token_TILDE
       || yytoken == Token_INCREMENT
       || yytoken == Token_DECREMENT
-      || yytoken == Token_TILDE
-      || yytoken == Token_BANG
-      || yytoken == Token_THIS
-      || yytoken == Token_NEW
-      || yytoken == Token_IDENTIFIER
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
       || yytoken == Token_TRUE
       || yytoken == Token_FALSE
       || yytoken == Token_NULL
       || yytoken == Token_INTEGER_LITERAL
       || yytoken == Token_FLOATING_POINT_LITERAL
       || yytoken == Token_CHARACTER_LITERAL
-      || yytoken == Token_STRING_LITERAL)
+      || yytoken == Token_STRING_LITERAL
+      || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_LPAREN
-          || yytoken == Token_LESS_THAN
-          || yytoken == Token_SUPER
-          || yytoken == Token_VOID
-          || yytoken == Token_BOOLEAN
+      if (yytoken == Token_BOOLEAN
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
-          || yytoken == Token_SHORT
-          || yytoken == Token_INT
-          || yytoken == Token_FLOAT
-          || yytoken == Token_LONG
           || yytoken == Token_DOUBLE
-          || yytoken == Token_PLUS
-          || yytoken == Token_MINUS
+          || yytoken == Token_FLOAT
+          || yytoken == Token_INT
+          || yytoken == Token_LONG
+          || yytoken == Token_NEW
+          || yytoken == Token_SHORT
+          || yytoken == Token_SUPER
+          || yytoken == Token_THIS
+          || yytoken == Token_VOID
+          || yytoken == Token_LPAREN
+          || yytoken == Token_LESS_THAN
+          || yytoken == Token_BANG
+          || yytoken == Token_TILDE
           || yytoken == Token_INCREMENT
           || yytoken == Token_DECREMENT
-          || yytoken == Token_TILDE
-          || yytoken == Token_BANG
-          || yytoken == Token_THIS
-          || yytoken == Token_NEW
-          || yytoken == Token_IDENTIFIER
+          || yytoken == Token_PLUS
+          || yytoken == Token_MINUS
           || yytoken == Token_TRUE
           || yytoken == Token_FALSE
           || yytoken == Token_NULL
           || yytoken == Token_INTEGER_LITERAL
           || yytoken == Token_FLOATING_POINT_LITERAL
           || yytoken == Token_CHARACTER_LITERAL
-          || yytoken == Token_STRING_LITERAL)
+          || yytoken == Token_STRING_LITERAL
+          || yytoken == Token_IDENTIFIER)
         {
-          expression_ast *__node_313 = 0;
+          expression_ast *__node_308 = 0;
 
-          if (!parse_expression(&__node_313))
+          if (!parse_expression(&__node_308))
             {
               return yy_expected_symbol(java_ast_node::Kind_expression, "expression");
             }
 
-          (*yynode)->expression = __node_313;
+          (*yynode)->expression = __node_308;
         }
 
       else if (yytoken == Token_LBRACE)
         {
-          variable_array_initializer_ast *__node_314 = 0;
+          variable_array_initializer_ast *__node_309 = 0;
 
-          if (!parse_variable_array_initializer(&__node_314))
+          if (!parse_variable_array_initializer(&__node_309))
             {
               return yy_expected_symbol(java_ast_node::Kind_variable_array_initializer, "variable_array_initializer");
             }
 
-          (*yynode)->array_initializer = __node_314;
+          (*yynode)->array_initializer = __node_309;
         }
 
       else
@@ -11133,14 +9893,14 @@ bool java::parse_wildcard_type(wildcard_type_ast **yynode)
       if (yytoken == Token_EXTENDS
           || yytoken == Token_SUPER)
         {
-          wildcard_type_bounds_ast *__node_315 = 0;
+          wildcard_type_bounds_ast *__node_310 = 0;
 
-          if (!parse_wildcard_type_bounds(&__node_315))
+          if (!parse_wildcard_type_bounds(&__node_310))
             {
               return yy_expected_symbol(java_ast_node::Kind_wildcard_type_bounds, "wildcard_type_bounds");
             }
 
-          (*yynode)->bounds = __node_315;
+          (*yynode)->bounds = __node_310;
         }
 
       else if (true /*epsilon*/)
@@ -11195,14 +9955,14 @@ bool java::parse_wildcard_type_bounds(wildcard_type_bounds_ast **yynode)
           return false;
         }
 
-      class_type_specification_ast *__node_316 = 0;
+      class_type_specification_ast *__node_311 = 0;
 
-      if (!parse_class_type_specification(&__node_316))
+      if (!parse_class_type_specification(&__node_311))
         {
           return yy_expected_symbol(java_ast_node::Kind_class_type_specification, "class_type_specification");
         }
 
-      (*yynode)->type = __node_316;
+      (*yynode)->type = __node_311;
     }
 
   else
@@ -11264,7 +10024,6 @@ java_visitor::parser_fun_t java_visitor::_S_parser_table[] = {
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_interface_declaration),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_interface_extends_clause),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_interface_field),
-      reinterpret_cast<parser_fun_t>(&java_visitor::visit_keyword),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_literal),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_logical_and_expression),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_logical_or_expression),
@@ -11273,7 +10032,6 @@ java_visitor::parser_fun_t java_visitor::_S_parser_table[] = {
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_multiplicative_expression_rest),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_new_expression),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_non_wildcard_type_arguments),
-      reinterpret_cast<parser_fun_t>(&java_visitor::visit_operator),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_optional_declarator_brackets),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_optional_modifiers),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_optional_parameter_modifiers),
@@ -11290,7 +10048,6 @@ java_visitor::parser_fun_t java_visitor::_S_parser_table[] = {
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_qualified_identifier_with_optional_star),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_relational_expression),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_relational_expression_rest),
-      reinterpret_cast<parser_fun_t>(&java_visitor::visit_seperator),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_shift_expression),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_shift_expression_rest),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_statement),
@@ -11298,7 +10055,6 @@ java_visitor::parser_fun_t java_visitor::_S_parser_table[] = {
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_switch_case),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_switch_statements_group),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_throws_clause),
-      reinterpret_cast<parser_fun_t>(&java_visitor::visit_token),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_try_handler),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_type_argument),
       reinterpret_cast<parser_fun_t>(&java_visitor::visit_type_argument_specification),

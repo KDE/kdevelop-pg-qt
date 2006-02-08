@@ -16,6 +16,30 @@
 --   Boston, MA 02111-1307, USA.
 
 ------------------------------------------------------------
+-- T O K E N   L I S T
+------------------------------------------------------------
+
+-- keywords:
+%token CASE, DEFAULT, IF, ELSE, SWITCH, WHILE, DO, FOR, BREAK, CONTINUE, GOTO,
+       RETURN, TYPEDEF, EXTERN, STATIC, AUTO, REGISTER, VOID, CHAR, SHORT, INT,
+       LONG, FLOAT, DOUBLE, SIGNED, UNSIGNED, TYPEDEF_NAME, STRUCT, UNION,
+       ENUM, CONST, VOLATILE, ELLIPSIS ;;
+
+-- seperators:
+%token LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, DOT, ARROW, COLON,
+       COMMA, SEMICOLON ;;
+
+-- operators:
+%token PLUS, MINUS, STAR, DIVIDE, REMAINDER, TILDE, AND, OR, XOR, NOT, SIZEOF,
+       PLUS_PLUS, MINUS_MINUS, LSHIFT, RSHIFT, AND_AND, OR_OR, QUESTION, EQUAL,
+       PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, DIVIDE_EQUAL, REMAINDER_EQUAL,
+       AND_EQUAL, OR_EQUAL, XOR_EQUAL, LSHIFT_EQUAL, RSHIFT_EQUAL,
+       EQUAL_EQUAL, NOT_EQUAL, LESS, GREATER, LESS_EQUAL, GREATER_EQUAL ;;
+
+-- identifiers and literals:
+%token IDENTIFIER, STRING_LITERAL, X_CONSTANT ;;
+
+------------------------------------------------------------
 -- E X T E R N A L    D E C L A R A T I O N S
 ------------------------------------------------------------
 
@@ -247,7 +271,7 @@
    STAR (type_qualifier | STAR)*
 -> pointer ;;
 
-   (parameter_declaration | ELIPSIS) @ COMMA
+   (parameter_declaration | ELLIPSIS) @ COMMA
 -> parameter_type_list ;;
 
    declaration_specifier declaration_specifier* (?(declarator) declarator | abstract_declarator | 0)

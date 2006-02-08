@@ -62,10 +62,10 @@ bool fact::parse_block_statement(block_statement_ast **yynode)
 
       yylex();
 
-      while (yytoken == Token_ID
+      while (yytoken == Token_IF
+             || yytoken == Token_RETURN
              || yytoken == Token_LBRACE
-             || yytoken == Token_IF
-             || yytoken == Token_RETURN)
+             || yytoken == Token_ID)
         {
           statement_ast *__node_1 = 0;
 
@@ -118,10 +118,10 @@ bool fact::parse_body(body_ast **yynode)
           (*yynode)->decl_sequence = snoc((*yynode)->decl_sequence, __node_2, memory_pool);
         }
 
-      while (yytoken == Token_ID
+      while (yytoken == Token_IF
+             || yytoken == Token_RETURN
              || yytoken == Token_LBRACE
-             || yytoken == Token_IF
-             || yytoken == Token_RETURN)
+             || yytoken == Token_ID)
         {
           statement_ast *__node_3 = 0;
 
@@ -674,10 +674,10 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
 
                          (*yynode)->start_token = token_stream->index() - 1;
 
-                         if (yytoken == Token_ID
+                         if (yytoken == Token_IF
+                             || yytoken == Token_RETURN
                              || yytoken == Token_LBRACE
-                             || yytoken == Token_IF
-                             || yytoken == Token_RETURN)
+                             || yytoken == Token_ID)
                            {
                              if (yytoken == Token_ID)
                                {

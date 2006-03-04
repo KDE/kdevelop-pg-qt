@@ -132,9 +132,9 @@ struct package_declaration_ast;
 
 struct parameter_declaration_ast;
 
-struct parameter_declaration_list_ast;
+struct parameter_declaration_ellipsis_ast;
 
-struct parameter_declaration_tripledot_ast;
+struct parameter_declaration_list_ast;
 
 struct postfix_operator_ast;
 
@@ -270,8 +270,8 @@ struct java_ast_node
       Kind_optional_parameter_modifiers = 1058,
       Kind_package_declaration = 1059,
       Kind_parameter_declaration = 1060,
-      Kind_parameter_declaration_list = 1061,
-      Kind_parameter_declaration_tripledot = 1062,
+      Kind_parameter_declaration_ellipsis = 1061,
+      Kind_parameter_declaration_list = 1062,
       Kind_postfix_operator = 1063,
       Kind_primary_atom = 1064,
       Kind_primary_expression = 1065,
@@ -1132,6 +1132,21 @@ struct parameter_declaration_ast: public java_ast_node
 
   };
 
+struct parameter_declaration_ellipsis_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_parameter_declaration_ellipsis
+    };
+
+    optional_parameter_modifiers_ast *parameter_modifiers;
+    type_specification_ast *type_specification;
+    std::size_t ellipsis;
+    identifier_ast *variable_identifier;
+    optional_declarator_brackets_ast *declarator_brackets;
+
+  };
+
 struct parameter_declaration_list_ast: public java_ast_node
   {
     enum
@@ -1139,22 +1154,7 @@ struct parameter_declaration_list_ast: public java_ast_node
       KIND = Kind_parameter_declaration_list
     };
 
-    const list_node<parameter_declaration_tripledot_ast *> *parameter_declaration_sequence;
-
-  };
-
-struct parameter_declaration_tripledot_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_parameter_declaration_tripledot
-    };
-
-    optional_parameter_modifiers_ast *parameter_modifiers;
-    type_specification_ast *type_specification;
-    std::size_t triple_dot;
-    identifier_ast *variable_identifier;
-    optional_declarator_brackets_ast *declarator_brackets;
+    const list_node<parameter_declaration_ellipsis_ast *> *parameter_declaration_sequence;
 
   };
 
@@ -1727,79 +1727,79 @@ class java
       Token_DO = 1025,
       Token_DOT = 1026,
       Token_DOUBLE = 1027,
-      Token_ELSE = 1028,
-      Token_ENUM = 1029,
-      Token_EOF = 1030,
-      Token_EQUAL = 1031,
-      Token_EXTENDS = 1032,
-      Token_FALSE = 1033,
-      Token_FINAL = 1034,
-      Token_FINALLY = 1035,
-      Token_FLOAT = 1036,
-      Token_FLOATING_POINT_LITERAL = 1037,
-      Token_FOR = 1038,
-      Token_GOTO = 1039,
-      Token_GREATER_EQUAL = 1040,
-      Token_GREATER_THAN = 1041,
-      Token_IDENTIFIER = 1042,
-      Token_IF = 1043,
-      Token_IMPLEMENTS = 1044,
-      Token_IMPORT = 1045,
-      Token_INCREMENT = 1046,
-      Token_INSTANCEOF = 1047,
-      Token_INT = 1048,
-      Token_INTEGER_LITERAL = 1049,
-      Token_INTERFACE = 1050,
-      Token_INVALID = 1051,
-      Token_LBRACE = 1052,
-      Token_LBRACKET = 1053,
-      Token_LESS_EQUAL = 1054,
-      Token_LESS_THAN = 1055,
-      Token_LOG_AND = 1056,
-      Token_LOG_OR = 1057,
-      Token_LONG = 1058,
-      Token_LPAREN = 1059,
-      Token_LSHIFT = 1060,
-      Token_LSHIFT_ASSIGN = 1061,
-      Token_MINUS = 1062,
-      Token_MINUS_ASSIGN = 1063,
-      Token_NATIVE = 1064,
-      Token_NEW = 1065,
-      Token_NOT_EQUAL = 1066,
-      Token_NULL = 1067,
-      Token_PACKAGE = 1068,
-      Token_PLUS = 1069,
-      Token_PLUS_ASSIGN = 1070,
-      Token_PRIVATE = 1071,
-      Token_PROTECTED = 1072,
-      Token_PUBLIC = 1073,
-      Token_QUESTION = 1074,
-      Token_RBRACE = 1075,
-      Token_RBRACKET = 1076,
-      Token_REMAINDER = 1077,
-      Token_REMAINDER_ASSIGN = 1078,
-      Token_RETURN = 1079,
-      Token_RPAREN = 1080,
-      Token_SEMICOLON = 1081,
-      Token_SHORT = 1082,
-      Token_SIGNED_RSHIFT = 1083,
-      Token_SIGNED_RSHIFT_ASSIGN = 1084,
-      Token_SLASH = 1085,
-      Token_SLASH_ASSIGN = 1086,
-      Token_STAR = 1087,
-      Token_STAR_ASSIGN = 1088,
-      Token_STATIC = 1089,
-      Token_STRICTFP = 1090,
-      Token_STRING_LITERAL = 1091,
-      Token_SUPER = 1092,
-      Token_SWITCH = 1093,
-      Token_SYNCHRONIZED = 1094,
-      Token_THIS = 1095,
-      Token_THROW = 1096,
-      Token_THROWS = 1097,
-      Token_TILDE = 1098,
-      Token_TRANSIENT = 1099,
-      Token_TRIPLE_DOT = 1100,
+      Token_ELLIPSIS = 1028,
+      Token_ELSE = 1029,
+      Token_ENUM = 1030,
+      Token_EOF = 1031,
+      Token_EQUAL = 1032,
+      Token_EXTENDS = 1033,
+      Token_FALSE = 1034,
+      Token_FINAL = 1035,
+      Token_FINALLY = 1036,
+      Token_FLOAT = 1037,
+      Token_FLOATING_POINT_LITERAL = 1038,
+      Token_FOR = 1039,
+      Token_GOTO = 1040,
+      Token_GREATER_EQUAL = 1041,
+      Token_GREATER_THAN = 1042,
+      Token_IDENTIFIER = 1043,
+      Token_IF = 1044,
+      Token_IMPLEMENTS = 1045,
+      Token_IMPORT = 1046,
+      Token_INCREMENT = 1047,
+      Token_INSTANCEOF = 1048,
+      Token_INT = 1049,
+      Token_INTEGER_LITERAL = 1050,
+      Token_INTERFACE = 1051,
+      Token_INVALID = 1052,
+      Token_LBRACE = 1053,
+      Token_LBRACKET = 1054,
+      Token_LESS_EQUAL = 1055,
+      Token_LESS_THAN = 1056,
+      Token_LOG_AND = 1057,
+      Token_LOG_OR = 1058,
+      Token_LONG = 1059,
+      Token_LPAREN = 1060,
+      Token_LSHIFT = 1061,
+      Token_LSHIFT_ASSIGN = 1062,
+      Token_MINUS = 1063,
+      Token_MINUS_ASSIGN = 1064,
+      Token_NATIVE = 1065,
+      Token_NEW = 1066,
+      Token_NOT_EQUAL = 1067,
+      Token_NULL = 1068,
+      Token_PACKAGE = 1069,
+      Token_PLUS = 1070,
+      Token_PLUS_ASSIGN = 1071,
+      Token_PRIVATE = 1072,
+      Token_PROTECTED = 1073,
+      Token_PUBLIC = 1074,
+      Token_QUESTION = 1075,
+      Token_RBRACE = 1076,
+      Token_RBRACKET = 1077,
+      Token_REMAINDER = 1078,
+      Token_REMAINDER_ASSIGN = 1079,
+      Token_RETURN = 1080,
+      Token_RPAREN = 1081,
+      Token_SEMICOLON = 1082,
+      Token_SHORT = 1083,
+      Token_SIGNED_RSHIFT = 1084,
+      Token_SIGNED_RSHIFT_ASSIGN = 1085,
+      Token_SLASH = 1086,
+      Token_SLASH_ASSIGN = 1087,
+      Token_STAR = 1088,
+      Token_STAR_ASSIGN = 1089,
+      Token_STATIC = 1090,
+      Token_STRICTFP = 1091,
+      Token_STRING_LITERAL = 1092,
+      Token_SUPER = 1093,
+      Token_SWITCH = 1094,
+      Token_SYNCHRONIZED = 1095,
+      Token_THIS = 1096,
+      Token_THROW = 1097,
+      Token_THROWS = 1098,
+      Token_TILDE = 1099,
+      Token_TRANSIENT = 1100,
       Token_TRUE = 1101,
       Token_TRY = 1102,
       Token_UNSIGNED_RSHIFT = 1103,
@@ -1878,8 +1878,8 @@ class java
     bool parse_optional_parameter_modifiers(optional_parameter_modifiers_ast **yynode);
     bool parse_package_declaration(package_declaration_ast **yynode);
     bool parse_parameter_declaration(parameter_declaration_ast **yynode);
+    bool parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast **yynode);
     bool parse_parameter_declaration_list(parameter_declaration_list_ast **yynode);
-    bool parse_parameter_declaration_tripledot(parameter_declaration_tripledot_ast **yynode);
     bool parse_postfix_operator(postfix_operator_ast **yynode);
     bool parse_primary_atom(primary_atom_ast **yynode);
     bool parse_primary_expression(primary_expression_ast **yynode);
@@ -2115,10 +2115,10 @@ class java_visitor
     virtual void visit_parameter_declaration(parameter_declaration_ast *)
     {}
 
-    virtual void visit_parameter_declaration_list(parameter_declaration_list_ast *)
+    virtual void visit_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast *)
     {}
 
-    virtual void visit_parameter_declaration_tripledot(parameter_declaration_tripledot_ast *)
+    virtual void visit_parameter_declaration_list(parameter_declaration_list_ast *)
     {}
 
     virtual void visit_postfix_operator(postfix_operator_ast *)
@@ -3040,11 +3040,19 @@ class java_default_visitor: public java_visitor
       visit_node(node->declarator_brackets);
     }
 
+    virtual void visit_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast *node)
+    {
+      visit_node(node->parameter_modifiers);
+      visit_node(node->type_specification);
+      visit_node(node->variable_identifier);
+      visit_node(node->declarator_brackets);
+    }
+
     virtual void visit_parameter_declaration_list(parameter_declaration_list_ast *node)
     {
       if (node->parameter_declaration_sequence)
         {
-          const list_node<parameter_declaration_tripledot_ast*> *__it = node->parameter_declaration_sequence->to_front(), *__end = __it;
+          const list_node<parameter_declaration_ellipsis_ast*> *__it = node->parameter_declaration_sequence->to_front(), *__end = __it;
 
           do
             {
@@ -3056,16 +3064,8 @@ class java_default_visitor: public java_visitor
         }
     }
 
-    virtual void visit_parameter_declaration_tripledot(parameter_declaration_tripledot_ast *node)
-    {
-      visit_node(node->parameter_modifiers);
-      visit_node(node->type_specification);
-      visit_node(node->variable_identifier);
-      visit_node(node->declarator_brackets);
-    }
-
     virtual void visit_postfix_operator(postfix_operator_ast *node)
-    {}
+  {}
 
     virtual void visit_primary_atom(primary_atom_ast *node)
     {

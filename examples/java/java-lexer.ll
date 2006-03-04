@@ -195,7 +195,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 ">>>="          return java::Token_UNSIGNED_RSHIFT_ASSIGN;
 "..."           {
     if (compatibility_mode() >= java15_compatibility)
-      return java::Token_TRIPLE_DOT;
+      return java::Token_ELLIPSIS;
     else {
       reportProblem("Variable-length argument lists are not supported "
                     "by Java 1.4 or earlier.");

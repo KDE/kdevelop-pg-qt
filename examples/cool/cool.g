@@ -1,16 +1,22 @@
 -- keywords:
-%token CLASS, INHERITS, NEW, IF, THEN, ELSE, FI, WHILE, LOOP, POOL, LET, IN,
-       CASE, OF, ESAC ;;
+%token CLASS ("class"), INHERITS ("inherits"), NEW ("new"),
+       IF ("if"), THEN ("then"), ELSE ("else"), FI ("fi"), WHILE ("while"),
+       LOOP ("loop"), POOL ("pool"), LET ("let"), IN ("in"),
+       CASE ("case"), OF ("of"), ESAC ("esac") ;;
 
 -- seperators:
-%token LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON, COMMA, DOT, AT ;;
+%token LPAREN ("("), RPAREN (")"), LBRACE ("{"), RBRACE ("}"), SEMICOLON (";"),
+       COMMA (","), DOT ("."), AT ("@") ;;
 
 -- operators:
-%token PLUS, MINUS, STAR, DIVIDE, EQUAL, LESS_EQUAL, LESS,
-       COLON, LEFT_ARROW, RIGHT_ARROW, TILDE, NOT, ISVOID ;;
+%token PLUS ("+"), MINUS ("-"), STAR ("*"), DIVIDE ("/"), EQUAL ("="),
+       LESS_EQUAL ("<="), LESS ("<"), COLON (":"), LEFT_ARROW ("<-"),
+       RIGHT_ARROW ("=>"), TILDE ("~"), NOT ("not"), ISVOID ("isvoid") ;;
 
 -- literals and identifiers:
-%token ID, TYPE, INTEGER, STRING, TRUE, FALSE ;;
+%token ID ("identifier"), TYPE ("type specification"),
+       INTEGER ("integer literal"), STRING ("string literal"),
+       TRUE ("true"), FALSE ("false") ;;
 
 
 

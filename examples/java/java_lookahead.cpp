@@ -685,7 +685,7 @@ bool java_lookahead::is_optional_declarator_brackets()
       || _M_token == java::Token_EXTENDS
       || _M_token == java::Token_IMPLEMENTS
       || _M_token == java::Token_THROWS
-      || _M_token == java::Token_TRIPLE_DOT
+      || _M_token == java::Token_ELLIPSIS
       || _M_token == java::Token_BIT_AND
       || _M_token == java::Token_QUESTION
       || _M_token == java::Token_SUPER

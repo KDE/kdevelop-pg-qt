@@ -1,10 +1,15 @@
 ------------------------------------------------------------
 -- T O K E N   L I S T
 ------------------------------------------------------------
-%token FUNCTION, VAR, IF, ELSE, RETURN ;;
-%token LPAREN, RPAREN, LBRACE, RBRACE, COMMA, SEMICOLON ;;
-%token EQUAL, EQUAL_EQUAL, STAR, MINUS ;;
-%token ID, NUMBER ;;
+%token FUNCTION ("function"), VAR ("var"), IF ("if"), ELSE ("else"),
+       RETURN ("return") ;;
+
+%token LPAREN ("("), RPAREN (")"), LBRACE ("{"), RBRACE ("}"),
+       COMMA (","), SEMICOLON (";") ;;
+
+%token EQUAL ("="), EQUAL_EQUAL ("=="), STAR ("*"), MINUS ("-") ;;
+
+%token ID ("identifier"), NUMBER ("integer literal") ;;
 
 ------------------------------------------------------------
 -- D E C L A R A T I O N

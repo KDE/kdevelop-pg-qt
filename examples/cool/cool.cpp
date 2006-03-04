@@ -41,7 +41,7 @@ bool cool::parse_additive_expression(additive_expression_ast **yynode)
           if (yytoken == Token_PLUS)
             {
               if (yytoken != Token_PLUS)
-                return yy_expected_token(yytoken, Token_PLUS, "PLUS");
+                return yy_expected_token(yytoken, Token_PLUS, "+");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -51,7 +51,7 @@ bool cool::parse_additive_expression(additive_expression_ast **yynode)
           else if (yytoken == Token_MINUS)
             {
               if (yytoken != Token_MINUS)
-                return yy_expected_token(yytoken, Token_MINUS, "MINUS");
+                return yy_expected_token(yytoken, Token_MINUS, "-");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -93,7 +93,7 @@ bool cool::parse_block_expression(block_expression_ast **yynode)
   if (yytoken == Token_LBRACE)
     {
       if (yytoken != Token_LBRACE)
-        return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
+        return yy_expected_token(yytoken, Token_LBRACE, "{");
 
       yylex();
 
@@ -123,13 +123,13 @@ bool cool::parse_block_expression(block_expression_ast **yynode)
           (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_2, memory_pool);
 
           if (yytoken != Token_SEMICOLON)
-            return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+            return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
           yylex();
         }
 
       if (yytoken != Token_RBRACE)
-        return yy_expected_token(yytoken, Token_RBRACE, "RBRACE");
+        return yy_expected_token(yytoken, Token_RBRACE, "}");
 
       yylex();
     }
@@ -153,26 +153,26 @@ bool cool::parse_case_condition(case_condition_ast **yynode)
   if (yytoken == Token_ID)
     {
       if (yytoken != Token_ID)
-        return yy_expected_token(yytoken, Token_ID, "ID");
+        return yy_expected_token(yytoken, Token_ID, "identifier");
 
       (*yynode)->name = token_stream->index() - 1;
 
       yylex();
 
       if (yytoken != Token_COLON)
-        return yy_expected_token(yytoken, Token_COLON, "COLON");
+        return yy_expected_token(yytoken, Token_COLON, ":");
 
       yylex();
 
       if (yytoken != Token_TYPE)
-        return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+        return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
       (*yynode)->type = token_stream->index() - 1;
 
       yylex();
 
       if (yytoken != Token_RIGHT_ARROW)
-        return yy_expected_token(yytoken, Token_RIGHT_ARROW, "RIGHT_ARROW");
+        return yy_expected_token(yytoken, Token_RIGHT_ARROW, "=>");
 
       yylex();
 
@@ -205,7 +205,7 @@ bool cool::parse_case_expression(case_expression_ast **yynode)
   if (yytoken == Token_CASE)
     {
       if (yytoken != Token_CASE)
-        return yy_expected_token(yytoken, Token_CASE, "CASE");
+        return yy_expected_token(yytoken, Token_CASE, "case");
 
       yylex();
 
@@ -219,7 +219,7 @@ bool cool::parse_case_expression(case_expression_ast **yynode)
       (*yynode)->expression = __node_4;
 
       if (yytoken != Token_OF)
-        return yy_expected_token(yytoken, Token_OF, "OF");
+        return yy_expected_token(yytoken, Token_OF, "of");
 
       yylex();
 
@@ -235,13 +235,13 @@ bool cool::parse_case_expression(case_expression_ast **yynode)
           (*yynode)->condition_sequence = snoc((*yynode)->condition_sequence, __node_5, memory_pool);
 
           if (yytoken != Token_SEMICOLON)
-            return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+            return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
           yylex();
         }
 
       if (yytoken != Token_ESAC)
-        return yy_expected_token(yytoken, Token_ESAC, "ESAC");
+        return yy_expected_token(yytoken, Token_ESAC, "esac");
 
       yylex();
     }
@@ -265,12 +265,12 @@ bool cool::parse_class(class_ast **yynode)
   if (yytoken == Token_CLASS)
     {
       if (yytoken != Token_CLASS)
-        return yy_expected_token(yytoken, Token_CLASS, "CLASS");
+        return yy_expected_token(yytoken, Token_CLASS, "class");
 
       yylex();
 
       if (yytoken != Token_TYPE)
-        return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+        return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
       (*yynode)->type = token_stream->index() - 1;
 
@@ -279,12 +279,12 @@ bool cool::parse_class(class_ast **yynode)
       if (yytoken == Token_INHERITS)
         {
           if (yytoken != Token_INHERITS)
-            return yy_expected_token(yytoken, Token_INHERITS, "INHERITS");
+            return yy_expected_token(yytoken, Token_INHERITS, "inherits");
 
           yylex();
 
           if (yytoken != Token_TYPE)
-            return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+            return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
           (*yynode)->base_type = token_stream->index() - 1;
 
@@ -299,7 +299,7 @@ bool cool::parse_class(class_ast **yynode)
         }
 
       if (yytoken != Token_LBRACE)
-        return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
+        return yy_expected_token(yytoken, Token_LBRACE, "{");
 
       yylex();
 
@@ -315,13 +315,13 @@ bool cool::parse_class(class_ast **yynode)
           (*yynode)->feature_sequence = snoc((*yynode)->feature_sequence, __node_6, memory_pool);
 
           if (yytoken != Token_SEMICOLON)
-            return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+            return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
           yylex();
         }
 
       if (yytoken != Token_RBRACE)
-        return yy_expected_token(yytoken, Token_RBRACE, "RBRACE");
+        return yy_expected_token(yytoken, Token_RBRACE, "}");
 
       yylex();
     }
@@ -389,14 +389,14 @@ bool cool::parse_feature(feature_ast **yynode)
       if (( LA(2).kind == Token_LPAREN ) && (yytoken == Token_ID))
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->name = token_stream->index() - 1;
 
           yylex();
 
           if (yytoken != Token_LPAREN)
-            return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+            return yy_expected_token(yytoken, Token_LPAREN, "(");
 
           yylex();
 
@@ -414,7 +414,7 @@ bool cool::parse_feature(feature_ast **yynode)
               while (yytoken == Token_COMMA)
                 {
                   if (yytoken != Token_COMMA)
-                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+                    return yy_expected_token(yytoken, Token_COMMA, ",");
 
                   yylex();
 
@@ -437,24 +437,24 @@ bool cool::parse_feature(feature_ast **yynode)
             }
 
           if (yytoken != Token_RPAREN)
-            return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+            return yy_expected_token(yytoken, Token_RPAREN, ")");
 
           yylex();
 
           if (yytoken != Token_COLON)
-            return yy_expected_token(yytoken, Token_COLON, "COLON");
+            return yy_expected_token(yytoken, Token_COLON, ":");
 
           yylex();
 
           if (yytoken != Token_TYPE)
-            return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+            return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
           (*yynode)->type = token_stream->index() - 1;
 
           yylex();
 
           if (yytoken != Token_LBRACE)
-            return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
+            return yy_expected_token(yytoken, Token_LBRACE, "{");
 
           yylex();
 
@@ -468,7 +468,7 @@ bool cool::parse_feature(feature_ast **yynode)
           (*yynode)->expression = __node_10;
 
           if (yytoken != Token_RBRACE)
-            return yy_expected_token(yytoken, Token_RBRACE, "RBRACE");
+            return yy_expected_token(yytoken, Token_RBRACE, "}");
 
           yylex();
         }
@@ -476,19 +476,19 @@ bool cool::parse_feature(feature_ast **yynode)
       else if (yytoken == Token_ID)
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->name = token_stream->index() - 1;
 
           yylex();
 
           if (yytoken != Token_COLON)
-            return yy_expected_token(yytoken, Token_COLON, "COLON");
+            return yy_expected_token(yytoken, Token_COLON, ":");
 
           yylex();
 
           if (yytoken != Token_TYPE)
-            return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+            return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
           (*yynode)->type = token_stream->index() - 1;
 
@@ -497,7 +497,7 @@ bool cool::parse_feature(feature_ast **yynode)
           if (yytoken == Token_LEFT_ARROW)
             {
               if (yytoken != Token_LEFT_ARROW)
-                return yy_expected_token(yytoken, Token_LEFT_ARROW, "LEFT_ARROW");
+                return yy_expected_token(yytoken, Token_LEFT_ARROW, "<-");
 
               yylex();
 
@@ -544,19 +544,19 @@ bool cool::parse_formal(formal_ast **yynode)
   if (yytoken == Token_ID)
     {
       if (yytoken != Token_ID)
-        return yy_expected_token(yytoken, Token_ID, "ID");
+        return yy_expected_token(yytoken, Token_ID, "identifier");
 
       (*yynode)->name = token_stream->index() - 1;
 
       yylex();
 
       if (yytoken != Token_COLON)
-        return yy_expected_token(yytoken, Token_COLON, "COLON");
+        return yy_expected_token(yytoken, Token_COLON, ":");
 
       yylex();
 
       if (yytoken != Token_TYPE)
-        return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+        return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
       (*yynode)->type = token_stream->index() - 1;
 
@@ -582,7 +582,7 @@ bool cool::parse_if_expression(if_expression_ast **yynode)
   if (yytoken == Token_IF)
     {
       if (yytoken != Token_IF)
-        return yy_expected_token(yytoken, Token_IF, "IF");
+        return yy_expected_token(yytoken, Token_IF, "if");
 
       yylex();
 
@@ -596,7 +596,7 @@ bool cool::parse_if_expression(if_expression_ast **yynode)
       (*yynode)->condition = __node_12;
 
       if (yytoken != Token_THEN)
-        return yy_expected_token(yytoken, Token_THEN, "THEN");
+        return yy_expected_token(yytoken, Token_THEN, "then");
 
       yylex();
 
@@ -610,7 +610,7 @@ bool cool::parse_if_expression(if_expression_ast **yynode)
       (*yynode)->true_expression = __node_13;
 
       if (yytoken != Token_ELSE)
-        return yy_expected_token(yytoken, Token_ELSE, "ELSE");
+        return yy_expected_token(yytoken, Token_ELSE, "else");
 
       yylex();
 
@@ -624,7 +624,7 @@ bool cool::parse_if_expression(if_expression_ast **yynode)
       (*yynode)->false_expression = __node_14;
 
       if (yytoken != Token_FI)
-        return yy_expected_token(yytoken, Token_FI, "FI");
+        return yy_expected_token(yytoken, Token_FI, "fi");
 
       yylex();
     }
@@ -648,19 +648,19 @@ bool cool::parse_let_declaration(let_declaration_ast **yynode)
   if (yytoken == Token_ID)
     {
       if (yytoken != Token_ID)
-        return yy_expected_token(yytoken, Token_ID, "ID");
+        return yy_expected_token(yytoken, Token_ID, "identifier");
 
       (*yynode)->name = token_stream->index() - 1;
 
       yylex();
 
       if (yytoken != Token_COLON)
-        return yy_expected_token(yytoken, Token_COLON, "COLON");
+        return yy_expected_token(yytoken, Token_COLON, ":");
 
       yylex();
 
       if (yytoken != Token_TYPE)
-        return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+        return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
       (*yynode)->type = token_stream->index() - 1;
 
@@ -669,7 +669,7 @@ bool cool::parse_let_declaration(let_declaration_ast **yynode)
       if (yytoken == Token_LEFT_ARROW)
         {
           if (yytoken != Token_LEFT_ARROW)
-            return yy_expected_token(yytoken, Token_LEFT_ARROW, "LEFT_ARROW");
+            return yy_expected_token(yytoken, Token_LEFT_ARROW, "<-");
 
           yylex();
 
@@ -710,7 +710,7 @@ bool cool::parse_let_expression(let_expression_ast **yynode)
   if (yytoken == Token_LET)
     {
       if (yytoken != Token_LET)
-        return yy_expected_token(yytoken, Token_LET, "LET");
+        return yy_expected_token(yytoken, Token_LET, "let");
 
       yylex();
 
@@ -726,7 +726,7 @@ bool cool::parse_let_expression(let_expression_ast **yynode)
       while (yytoken == Token_COMMA)
         {
           if (yytoken != Token_COMMA)
-            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+            return yy_expected_token(yytoken, Token_COMMA, ",");
 
           yylex();
 
@@ -741,7 +741,7 @@ bool cool::parse_let_expression(let_expression_ast **yynode)
         }
 
       if (yytoken != Token_IN)
-        return yy_expected_token(yytoken, Token_IN, "IN");
+        return yy_expected_token(yytoken, Token_IN, "in");
 
       yylex();
 
@@ -802,7 +802,7 @@ bool cool::parse_multiplicative_expression(multiplicative_expression_ast **yynod
           if (yytoken == Token_STAR)
             {
               if (yytoken != Token_STAR)
-                return yy_expected_token(yytoken, Token_STAR, "STAR");
+                return yy_expected_token(yytoken, Token_STAR, "*");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -812,7 +812,7 @@ bool cool::parse_multiplicative_expression(multiplicative_expression_ast **yynod
           else if (yytoken == Token_DIVIDE)
             {
               if (yytoken != Token_DIVIDE)
-                return yy_expected_token(yytoken, Token_DIVIDE, "DIVIDE");
+                return yy_expected_token(yytoken, Token_DIVIDE, "/");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -882,31 +882,31 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
           if (yytoken == Token_AT)
             {
               if (yytoken != Token_AT)
-                return yy_expected_token(yytoken, Token_AT, "AT");
+                return yy_expected_token(yytoken, Token_AT, "@");
 
               yylex();
 
               if (yytoken != Token_TYPE)
-                return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+                return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
               (*yynode)->at_type = token_stream->index() - 1;
 
               yylex();
 
               if (yytoken != Token_DOT)
-                return yy_expected_token(yytoken, Token_DOT, "DOT");
+                return yy_expected_token(yytoken, Token_DOT, ".");
 
               yylex();
 
               if (yytoken != Token_ID)
-                return yy_expected_token(yytoken, Token_ID, "ID");
+                return yy_expected_token(yytoken, Token_ID, "identifier");
 
               (*yynode)->name = token_stream->index() - 1;
 
               yylex();
 
               if (yytoken != Token_LPAREN)
-                return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+                return yy_expected_token(yytoken, Token_LPAREN, "(");
 
               yylex();
 
@@ -938,7 +938,7 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
                   while (yytoken == Token_COMMA)
                     {
                       if (yytoken != Token_COMMA)
-                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+                        return yy_expected_token(yytoken, Token_COMMA, ",");
 
                       yylex();
 
@@ -961,7 +961,7 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
                 }
 
               if (yytoken != Token_RPAREN)
-                return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+                return yy_expected_token(yytoken, Token_RPAREN, ")");
 
               yylex();
             }
@@ -969,19 +969,19 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
           else if (yytoken == Token_DOT)
             {
               if (yytoken != Token_DOT)
-                return yy_expected_token(yytoken, Token_DOT, "DOT");
+                return yy_expected_token(yytoken, Token_DOT, ".");
 
               yylex();
 
               if (yytoken != Token_ID)
-                return yy_expected_token(yytoken, Token_ID, "ID");
+                return yy_expected_token(yytoken, Token_ID, "identifier");
 
               (*yynode)->name = token_stream->index() - 1;
 
               yylex();
 
               if (yytoken != Token_LPAREN)
-                return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+                return yy_expected_token(yytoken, Token_LPAREN, "(");
 
               yylex();
 
@@ -1013,7 +1013,7 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
                   while (yytoken == Token_COMMA)
                     {
                       if (yytoken != Token_COMMA)
-                        return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+                        return yy_expected_token(yytoken, Token_COMMA, ",");
 
                       yylex();
 
@@ -1036,7 +1036,7 @@ bool cool::parse_postfix_expression(postfix_expression_ast **yynode)
                 }
 
               if (yytoken != Token_RPAREN)
-                return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+                return yy_expected_token(yytoken, Token_RPAREN, ")");
 
               yylex();
             }
@@ -1080,14 +1080,14 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       if (( LA(2).kind == Token_LEFT_ARROW ) && (yytoken == Token_ID))
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->name = token_stream->index() - 1;
 
           yylex();
 
           if (yytoken != Token_LEFT_ARROW)
-            return yy_expected_token(yytoken, Token_LEFT_ARROW, "LEFT_ARROW");
+            return yy_expected_token(yytoken, Token_LEFT_ARROW, "<-");
 
           yylex();
 
@@ -1104,14 +1104,14 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (( LA(2).kind == Token_LPAREN ) && (yytoken == Token_ID))
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->name = token_stream->index() - 1;
 
           yylex();
 
           if (yytoken != Token_LPAREN)
-            return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+            return yy_expected_token(yytoken, Token_LPAREN, "(");
 
           yylex();
 
@@ -1143,7 +1143,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
               while (yytoken == Token_COMMA)
                 {
                   if (yytoken != Token_COMMA)
-                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+                    return yy_expected_token(yytoken, Token_COMMA, ",");
 
                   yylex();
 
@@ -1166,7 +1166,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
             }
 
           if (yytoken != Token_RPAREN)
-            return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+            return yy_expected_token(yytoken, Token_RPAREN, ")");
 
           yylex();
         }
@@ -1174,7 +1174,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_ID)
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->variable = token_stream->index() - 1;
 
@@ -1184,7 +1184,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_INTEGER)
         {
           if (yytoken != Token_INTEGER)
-            return yy_expected_token(yytoken, Token_INTEGER, "INTEGER");
+            return yy_expected_token(yytoken, Token_INTEGER, "integer literal");
 
           (*yynode)->integer_literal = token_stream->index() - 1;
 
@@ -1194,7 +1194,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_STRING)
         {
           if (yytoken != Token_STRING)
-            return yy_expected_token(yytoken, Token_STRING, "STRING");
+            return yy_expected_token(yytoken, Token_STRING, "string literal");
 
           (*yynode)->string_literal = token_stream->index() - 1;
 
@@ -1204,7 +1204,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_TRUE)
         {
           if (yytoken != Token_TRUE)
-            return yy_expected_token(yytoken, Token_TRUE, "TRUE");
+            return yy_expected_token(yytoken, Token_TRUE, "true");
 
           (*yynode)->true_literal = token_stream->index() - 1;
 
@@ -1214,7 +1214,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_FALSE)
         {
           if (yytoken != Token_FALSE)
-            return yy_expected_token(yytoken, Token_FALSE, "FALSE");
+            return yy_expected_token(yytoken, Token_FALSE, "false");
 
           (*yynode)->false_literal = token_stream->index() - 1;
 
@@ -1224,12 +1224,12 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_NEW)
         {
           if (yytoken != Token_NEW)
-            return yy_expected_token(yytoken, Token_NEW, "NEW");
+            return yy_expected_token(yytoken, Token_NEW, "new");
 
           yylex();
 
           if (yytoken != Token_TYPE)
-            return yy_expected_token(yytoken, Token_TYPE, "TYPE");
+            return yy_expected_token(yytoken, Token_TYPE, "type specification");
 
           (*yynode)->new_type = token_stream->index() - 1;
 
@@ -1239,7 +1239,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
       else if (yytoken == Token_LPAREN)
         {
           if (yytoken != Token_LPAREN)
-            return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+            return yy_expected_token(yytoken, Token_LPAREN, "(");
 
           yylex();
 
@@ -1253,7 +1253,7 @@ bool cool::parse_primary_expression(primary_expression_ast **yynode)
           (*yynode)->expression = __node_29;
 
           if (yytoken != Token_RPAREN)
-            return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+            return yy_expected_token(yytoken, Token_RPAREN, ")");
 
           yylex();
         }
@@ -1354,7 +1354,7 @@ bool cool::parse_program(program_ast **yynode)
           (*yynode)->klass_sequence = snoc((*yynode)->klass_sequence, __node_35, memory_pool);
 
           if (yytoken != Token_SEMICOLON)
-            return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+            return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
           yylex();
         }
@@ -1413,7 +1413,7 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
           if (yytoken == Token_EQUAL)
             {
               if (yytoken != Token_EQUAL)
-                return yy_expected_token(yytoken, Token_EQUAL, "EQUAL");
+                return yy_expected_token(yytoken, Token_EQUAL, "=");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -1423,7 +1423,7 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
           else if (yytoken == Token_LESS_EQUAL)
             {
               if (yytoken != Token_LESS_EQUAL)
-                return yy_expected_token(yytoken, Token_LESS_EQUAL, "LESS_EQUAL");
+                return yy_expected_token(yytoken, Token_LESS_EQUAL, "<=");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -1433,7 +1433,7 @@ bool cool::parse_relational_expression(relational_expression_ast **yynode)
           else if (yytoken == Token_LESS)
             {
               if (yytoken != Token_LESS)
-                return yy_expected_token(yytoken, Token_LESS, "LESS");
+                return yy_expected_token(yytoken, Token_LESS, "<");
 
               (*yynode)->op = token_stream->index() - 1;
 
@@ -1491,7 +1491,7 @@ bool cool::parse_unary_expression(unary_expression_ast **yynode)
       if (yytoken == Token_TILDE)
         {
           if (yytoken != Token_TILDE)
-            return yy_expected_token(yytoken, Token_TILDE, "TILDE");
+            return yy_expected_token(yytoken, Token_TILDE, "~");
 
           (*yynode)->op = token_stream->index() - 1;
 
@@ -1510,7 +1510,7 @@ bool cool::parse_unary_expression(unary_expression_ast **yynode)
       else if (yytoken == Token_NOT)
         {
           if (yytoken != Token_NOT)
-            return yy_expected_token(yytoken, Token_NOT, "NOT");
+            return yy_expected_token(yytoken, Token_NOT, "not");
 
           (*yynode)->op = token_stream->index() - 1;
 
@@ -1529,7 +1529,7 @@ bool cool::parse_unary_expression(unary_expression_ast **yynode)
       else if (yytoken == Token_ISVOID)
         {
           if (yytoken != Token_ISVOID)
-            return yy_expected_token(yytoken, Token_ISVOID, "ISVOID");
+            return yy_expected_token(yytoken, Token_ISVOID, "isvoid");
 
           (*yynode)->op = token_stream->index() - 1;
 
@@ -1593,7 +1593,7 @@ bool cool::parse_while_expression(while_expression_ast **yynode)
   if (yytoken == Token_WHILE)
     {
       if (yytoken != Token_WHILE)
-        return yy_expected_token(yytoken, Token_WHILE, "WHILE");
+        return yy_expected_token(yytoken, Token_WHILE, "while");
 
       yylex();
 
@@ -1607,7 +1607,7 @@ bool cool::parse_while_expression(while_expression_ast **yynode)
       (*yynode)->condition = __node_42;
 
       if (yytoken != Token_LOOP)
-        return yy_expected_token(yytoken, Token_LOOP, "LOOP");
+        return yy_expected_token(yytoken, Token_LOOP, "loop");
 
       yylex();
 
@@ -1621,7 +1621,7 @@ bool cool::parse_while_expression(while_expression_ast **yynode)
       (*yynode)->loop_expression = __node_43;
 
       if (yytoken != Token_POOL)
-        return yy_expected_token(yytoken, Token_POOL, "POOL");
+        return yy_expected_token(yytoken, Token_POOL, "pool");
 
       yylex();
     }

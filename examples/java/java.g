@@ -121,32 +121,49 @@ void set_compatibility_mode( java_compatibility_mode mode );
 --
 
 -- keywords:
-%token ABSTRACT, ASSERT, BOOLEAN, BREAK, BYTE, CASE, CATCH, CHAR, CLASS, CONST,
-       CONTINUE, DEFAULT, DO, DOUBLE, ELSE, ENUM, EXTENDS, FINAL, FINALLY,
-       FLOAT, FOR, GOTO, IF, IMPLEMENTS, IMPORT, INSTANCEOF, INT, INTERFACE,
-       LONG, NATIVE, NEW, PACKAGE, PRIVATE, PROTECTED, PUBLIC, RETURN, SHORT,
-       STATIC, STRICTFP, SUPER, SWITCH, SYNCHRONIZED, THIS, THROW, THROWS,
-       TRANSIENT, TRY, VOID, VOLATILE, WHILE ;;
+%token ABSTRACT ("abstract"), ASSERT ("assert"), BOOLEAN ("boolean"),
+       BREAK ("break"), BYTE ("byte"), CASE ("case"), CATCH ("catch"),
+       CHAR ("char"), CLASS ("class"), CONST ("const"), CONTINUE ("continue"),
+       DEFAULT ("default"), DO ("do"), DOUBLE ("double"), ELSE ("else"),
+       ENUM ("enum"), EXTENDS ("extends"), FINAL ("final"),
+       FINALLY ("finally"), FLOAT ("float"), FOR ("for"), GOTO ("goto"),
+       IF ("if"), IMPLEMENTS ("implements"), IMPORT ("import"),
+       INSTANCEOF ("instanceof"), INT ("int"), INTERFACE ("interface"),
+       LONG ("long"), NATIVE ("native"), NEW ("new"), PACKAGE ("package"),
+       PRIVATE ("private"), PROTECTED ("protected"), PUBLIC ("public"),
+       RETURN ("return"), SHORT ("short"), STATIC ("static"),
+       STRICTFP ("strictfp"), SUPER ("super"), SWITCH ("switch"),
+       SYNCHRONIZED ("synchronized"), THIS ("this"), THROW ("throw"),
+       THROWS ("throws"), TRANSIENT ("transient"), TRY ("try"), VOID ("void"),
+       VOLATILE ("volatile"), WHILE ("while") ;;
 
 -- seperators:
-%token LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA,
-       DOT, AT ;;
+%token LPAREN ("("), RPAREN (")"), LBRACE ("{"), RBRACE ("}"), LBRACKET ("["),
+       RBRACKET ("]"), SEMICOLON (";"), COMMA (","), DOT ("."), AT ("@") ;;
 
 -- operators:
-%token ASSIGN, LESS_THAN, BANG, TILDE, QUESTION, COLON, EQUAL, LESS_EQUAL,
-       GREATER_EQUAL, NOT_EQUAL, LOG_AND, LOG_OR, INCREMENT, DECREMENT, PLUS,
-       MINUS, STAR, SLASH, BIT_AND, BIT_OR, BIT_XOR, REMAINDER, LSHIFT,
-       PLUS_ASSIGN, MINUS_ASSIGN, STAR_ASSIGN, SLASH_ASSIGN, BIT_AND_ASSIGN,
-       BIT_OR_ASSIGN, BIT_XOR_ASSIGN, REMAINDER_ASSIGN, LSHIFT_ASSIGN,
-       SIGNED_RSHIFT_ASSIGN, UNSIGNED_RSHIFT_ASSIGN, GREATER_THAN,
-       SIGNED_RSHIFT, UNSIGNED_RSHIFT, TRIPLE_DOT ;;
+%token ASSIGN ("="), LESS_THAN ("<"), GREATER_THAN (">"), BANG ("!"),
+       TILDE ("~"), QUESTION ("?"), COLON (":"), EQUAL ("=="),
+       LESS_EQUAL ("<="), GREATER_EQUAL (">="), NOT_EQUAL ("!="),
+       LOG_AND ("&&"), LOG_OR ("||"), INCREMENT ("++"), DECREMENT ("--"),
+       PLUS ("+"), MINUS ("-"), STAR ("*"), SLASH ("/"), BIT_AND ("&"),
+       BIT_OR ("|"), BIT_XOR ("^"), REMAINDER ("%"), LSHIFT ("<<"),
+       SIGNED_RSHIFT (">>"), UNSIGNED_RSHIFT (">>>"), PLUS_ASSIGN ("+="),
+       MINUS_ASSIGN ("-="), STAR_ASSIGN ("*="), SLASH_ASSIGN ("/="),
+       BIT_AND_ASSIGN ("&="), BIT_OR_ASSIGN ("|="), BIT_XOR_ASSIGN ("^="),
+       REMAINDER_ASSIGN ("%="), LSHIFT_ASSIGN ("<<="),
+       SIGNED_RSHIFT_ASSIGN (">>="), UNSIGNED_RSHIFT_ASSIGN (">>>="),
+       ELLIPSIS ("...") ;;
 
 -- literals and identifiers:
-%token TRUE, FALSE, NULL, INTEGER_LITERAL, FLOATING_POINT_LITERAL,
-       CHARACTER_LITERAL, STRING_LITERAL, IDENTIFIER ;;
+%token TRUE ("true"), FALSE ("false"), NULL ("null"),
+       INTEGER_LITERAL ("integer literal"),
+       FLOATING_POINT_LITERAL ("floating point literal"),
+       CHARACTER_LITERAL ("character literal"),
+       STRING_LITERAL ("string literal"), IDENTIFIER ("identifier") ;;
 
 -- token that makes the parser fail in any case:
-%token INVALID ;;
+%token INVALID ("invalid token") ;;
 
 
 
@@ -461,12 +478,12 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- zero or more parameters, optionally ending with a variable-length parameter.
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
 
-   LPAREN [: tripleDotOccurred = false; :]
+   LPAREN [: ellipsisOccurred = false; :]
    (
-      #parameter_declaration=parameter_declaration_tripledot
-      @ ( 0 [: if( tripleDotOccurred == true ) { break; } :]
-            -- Don't proceed after the triple dot. If there's a cleaner way
-            -- to exit the loop when tripleDotOccurred == true,
+      #parameter_declaration=parameter_declaration_ellipsis
+      @ ( 0 [: if( ellipsisOccurred == true ) { break; } :]
+            -- Don't proceed after the ellipsis. If there's a cleaner way
+            -- to exit the loop when ellipsisOccurred == true,
             -- please use that instead of this construct (see below).
           COMMA
         )
@@ -478,10 +495,10 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
 -- How it _should_ look:
 --
---    LPAREN [: tripleDotOccurred = false; :]
+--    LPAREN [: ellipsisOccurred = false; :]
 --    (
---       #parameter_declaration=parameter_declaration_tripledot
---       @ ( ?[: tripleDotOccurred == false :] COMMA )
+--       #parameter_declaration=parameter_declaration_ellipsis
+--       @ ( ?[: ellipsisOccurred == false :] COMMA )
 --           -- kdev-pg dismisses this condition!
 --     |
 --       0
@@ -491,13 +508,13 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
    parameter_modifiers=optional_parameter_modifiers
    type_specification=type_specification
-   ( triple_dot=TRIPLE_DOT [: tripleDotOccurred = true; :] | 0 )
+   ( ellipsis=ELLIPSIS [: ellipsisOccurred = true; :] | 0 )
    variable_identifier=identifier
    declarator_brackets=optional_declarator_brackets
--> parameter_declaration_tripledot ;;
+-> parameter_declaration_ellipsis ;;
 
 -- This PARAMETER DECLARATION rule is not used in parameter_declaration_list,
--- and lacks the tripledot possibility & handling. It's used in try_handler
+-- and lacks the ellipsis possibility & handling. It's used in try_handler
 -- and in for_control.
 
    parameter_modifiers=optional_parameter_modifiers
@@ -1311,11 +1328,11 @@ namespace {
   // to close type arguments rules, in addition to GREATER_THAN (">").
   int ltCounter;
 
-  // tripleDotOccurred is used as a means of communication between
-  // parameter_declaration_list and parameter_declaration_tripledot to determine
-  // if a triple dot was already in the list (then no more declarations
+  // ellipsisOccurred is used as a means of communication between
+  // parameter_declaration_list and parameter_declaration_ellipsis to determine
+  // if an ellipsis was already in the list (then no more declarations
   // may follow).
-  bool tripleDotOccurred;
+  bool ellipsisOccurred;
 
 
 

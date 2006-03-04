@@ -13,14 +13,14 @@ bool fact::parse_assignment_statement(assignment_statement_ast **yynode)
   if (yytoken == Token_ID)
     {
       if (yytoken != Token_ID)
-        return yy_expected_token(yytoken, Token_ID, "ID");
+        return yy_expected_token(yytoken, Token_ID, "identifier");
 
       (*yynode)->id = token_stream->index() - 1;
 
       yylex();
 
       if (yytoken != Token_EQUAL)
-        return yy_expected_token(yytoken, Token_EQUAL, "EQUAL");
+        return yy_expected_token(yytoken, Token_EQUAL, "=");
 
       yylex();
 
@@ -34,7 +34,7 @@ bool fact::parse_assignment_statement(assignment_statement_ast **yynode)
       (*yynode)->expr = __node_0;
 
       if (yytoken != Token_SEMICOLON)
-        return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+        return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
       yylex();
     }
@@ -58,7 +58,7 @@ bool fact::parse_block_statement(block_statement_ast **yynode)
   if (yytoken == Token_LBRACE)
     {
       if (yytoken != Token_LBRACE)
-        return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
+        return yy_expected_token(yytoken, Token_LBRACE, "{");
 
       yylex();
 
@@ -78,7 +78,7 @@ bool fact::parse_block_statement(block_statement_ast **yynode)
         }
 
       if (yytoken != Token_RBRACE)
-        return yy_expected_token(yytoken, Token_RBRACE, "RBRACE");
+        return yy_expected_token(yytoken, Token_RBRACE, "}");
 
       yylex();
     }
@@ -102,7 +102,7 @@ bool fact::parse_body(body_ast **yynode)
   if (yytoken == Token_LBRACE)
     {
       if (yytoken != Token_LBRACE)
-        return yy_expected_token(yytoken, Token_LBRACE, "LBRACE");
+        return yy_expected_token(yytoken, Token_LBRACE, "{");
 
       yylex();
 
@@ -134,7 +134,7 @@ bool fact::parse_body(body_ast **yynode)
         }
 
       if (yytoken != Token_RBRACE)
-        return yy_expected_token(yytoken, Token_RBRACE, "RBRACE");
+        return yy_expected_token(yytoken, Token_RBRACE, "}");
 
       yylex();
     }
@@ -168,7 +168,7 @@ bool fact::parse_condition(condition_ast **yynode)
       (*yynode)->left_expr = __node_4;
 
       if (yytoken != Token_EQUAL_EQUAL)
-        return yy_expected_token(yytoken, Token_EQUAL_EQUAL, "EQUAL_EQUAL");
+        return yy_expected_token(yytoken, Token_EQUAL_EQUAL, "==");
 
       (*yynode)->op = token_stream->index() - 1;
 
@@ -203,7 +203,7 @@ bool fact::parse_declaration(declaration_ast **yynode)
   if (yytoken == Token_VAR)
     {
       if (yytoken != Token_VAR)
-        return yy_expected_token(yytoken, Token_VAR, "VAR");
+        return yy_expected_token(yytoken, Token_VAR, "var");
 
       yylex();
 
@@ -219,7 +219,7 @@ bool fact::parse_declaration(declaration_ast **yynode)
       while (yytoken == Token_COMMA)
         {
           if (yytoken != Token_COMMA)
-            return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+            return yy_expected_token(yytoken, Token_COMMA, ",");
 
           yylex();
 
@@ -234,7 +234,7 @@ bool fact::parse_declaration(declaration_ast **yynode)
         }
 
       if (yytoken != Token_SEMICOLON)
-        return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+        return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
       yylex();
     }
@@ -270,7 +270,7 @@ bool fact::parse_expression(expression_ast **yynode)
       while (yytoken == Token_MINUS)
         {
           if (yytoken != Token_MINUS)
-            return yy_expected_token(yytoken, Token_MINUS, "MINUS");
+            return yy_expected_token(yytoken, Token_MINUS, "-");
 
           (*yynode)->op = token_stream->index() - 1;
 
@@ -306,26 +306,26 @@ bool fact::parse_function_definition(function_definition_ast **yynode)
   if (yytoken == Token_FUNCTION)
     {
       if (yytoken != Token_FUNCTION)
-        return yy_expected_token(yytoken, Token_FUNCTION, "FUNCTION");
+        return yy_expected_token(yytoken, Token_FUNCTION, "function");
 
       yylex();
 
       if (yytoken != Token_ID)
-        return yy_expected_token(yytoken, Token_ID, "ID");
+        return yy_expected_token(yytoken, Token_ID, "identifier");
 
       (*yynode)->id = token_stream->index() - 1;
 
       yylex();
 
       if (yytoken != Token_LPAREN)
-        return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+        return yy_expected_token(yytoken, Token_LPAREN, "(");
 
       yylex();
 
       if (yytoken == Token_ID)
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
 
@@ -334,12 +334,12 @@ bool fact::parse_function_definition(function_definition_ast **yynode)
           while (yytoken == Token_COMMA)
             {
               if (yytoken != Token_COMMA)
-                return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+                return yy_expected_token(yytoken, Token_COMMA, ",");
 
               yylex();
 
               if (yytoken != Token_ID)
-                return yy_expected_token(yytoken, Token_ID, "ID");
+                return yy_expected_token(yytoken, Token_ID, "identifier");
 
               (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
 
@@ -355,7 +355,7 @@ bool fact::parse_function_definition(function_definition_ast **yynode)
         }
 
       if (yytoken != Token_RPAREN)
-        return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+        return yy_expected_token(yytoken, Token_RPAREN, ")");
 
       yylex();
 
@@ -388,12 +388,12 @@ bool fact::parse_if_statement(if_statement_ast **yynode)
   if (yytoken == Token_IF)
     {
       if (yytoken != Token_IF)
-        return yy_expected_token(yytoken, Token_IF, "IF");
+        return yy_expected_token(yytoken, Token_IF, "if");
 
       yylex();
 
       if (yytoken != Token_LPAREN)
-        return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+        return yy_expected_token(yytoken, Token_LPAREN, "(");
 
       yylex();
 
@@ -407,7 +407,7 @@ bool fact::parse_if_statement(if_statement_ast **yynode)
       (*yynode)->cond = __node_11;
 
       if (yytoken != Token_RPAREN)
-        return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+        return yy_expected_token(yytoken, Token_RPAREN, ")");
 
       yylex();
 
@@ -423,7 +423,7 @@ bool fact::parse_if_statement(if_statement_ast **yynode)
       if (yytoken == Token_ELSE)
         {
           if (yytoken != Token_ELSE)
-            return yy_expected_token(yytoken, Token_ELSE, "ELSE");
+            return yy_expected_token(yytoken, Token_ELSE, "else");
 
           yylex();
 
@@ -476,7 +476,7 @@ bool fact::parse_mult_expression(mult_expression_ast **yynode)
       while (yytoken == Token_STAR)
         {
           if (yytoken != Token_STAR)
-            return yy_expected_token(yytoken, Token_STAR, "STAR");
+            return yy_expected_token(yytoken, Token_STAR, "*");
 
           (*yynode)->op = token_stream->index() - 1;
 
@@ -515,7 +515,7 @@ bool fact::parse_primary(primary_ast **yynode)
       if (yytoken == Token_NUMBER)
         {
           if (yytoken != Token_NUMBER)
-            return yy_expected_token(yytoken, Token_NUMBER, "NUMBER");
+            return yy_expected_token(yytoken, Token_NUMBER, "integer literal");
 
           (*yynode)->num = token_stream->index() - 1;
 
@@ -525,7 +525,7 @@ bool fact::parse_primary(primary_ast **yynode)
       else if (yytoken == Token_ID)
         {
           if (yytoken != Token_ID)
-            return yy_expected_token(yytoken, Token_ID, "ID");
+            return yy_expected_token(yytoken, Token_ID, "identifier");
 
           (*yynode)->id = token_stream->index() - 1;
 
@@ -534,7 +534,7 @@ bool fact::parse_primary(primary_ast **yynode)
           if (yytoken == Token_LPAREN)
             {
               if (yytoken != Token_LPAREN)
-                return yy_expected_token(yytoken, Token_LPAREN, "LPAREN");
+                return yy_expected_token(yytoken, Token_LPAREN, "(");
 
               yylex();
 
@@ -550,7 +550,7 @@ bool fact::parse_primary(primary_ast **yynode)
               while (yytoken == Token_COMMA)
                 {
                   if (yytoken != Token_COMMA)
-                    return yy_expected_token(yytoken, Token_COMMA, "COMMA");
+                    return yy_expected_token(yytoken, Token_COMMA, ",");
 
                   yylex();
 
@@ -565,7 +565,7 @@ bool fact::parse_primary(primary_ast **yynode)
                 }
 
               if (yytoken != Token_RPAREN)
-                return yy_expected_token(yytoken, Token_RPAREN, "RPAREN");
+                return yy_expected_token(yytoken, Token_RPAREN, ")");
 
               yylex();
             }
@@ -639,7 +639,7 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                          if (yytoken == Token_RETURN)
                            {
                              if (yytoken != Token_RETURN)
-                               return yy_expected_token(yytoken, Token_RETURN, "RETURN");
+                               return yy_expected_token(yytoken, Token_RETURN, "return");
 
                              yylex();
 
@@ -653,7 +653,7 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                              (*yynode)->expr = __node_19;
 
                              if (yytoken != Token_SEMICOLON)
-                               return yy_expected_token(yytoken, Token_SEMICOLON, "SEMICOLON");
+                               return yy_expected_token(yytoken, Token_SEMICOLON, ";");
 
                              yylex();
                            }
@@ -752,7 +752,7 @@ bool fact::parse_return_statement(return_statement_ast **yynode)
                          if (yytoken == Token_ID)
                            {
                              if (yytoken != Token_ID)
-                               return yy_expected_token(yytoken, Token_ID, "ID");
+                               return yy_expected_token(yytoken, Token_ID, "identifier");
 
                              (*yynode)->id = token_stream->index() - 1;
 

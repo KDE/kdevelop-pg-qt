@@ -20,24 +20,37 @@
 ------------------------------------------------------------
 
 -- keywords:
-%token CASE, DEFAULT, IF, ELSE, SWITCH, WHILE, DO, FOR, BREAK, CONTINUE, GOTO,
-       RETURN, TYPEDEF, EXTERN, STATIC, AUTO, REGISTER, VOID, CHAR, SHORT, INT,
-       LONG, FLOAT, DOUBLE, SIGNED, UNSIGNED, TYPEDEF_NAME, STRUCT, UNION,
-       ENUM, CONST, VOLATILE, ELLIPSIS ;;
+%token CASE ("case"), DEFAULT ("default"), IF ("if"), ELSE ("else"),
+       SWITCH ("switch"), WHILE ("while"), DO ("do"), FOR ("for"),
+       BREAK ("break"), CONTINUE ("continue"), GOTO ("goto"),
+       RETURN ("return"), TYPEDEF ("typedef"), EXTERN ("extern"),
+       STATIC ("static"), AUTO ("auto"), REGISTER ("register"), VOID ("void"),
+       CHAR ("char"), SHORT ("short"), INT ("int"), LONG ("long"),
+       FLOAT ("float"), DOUBLE ("double"), SIGNED ("signed"),
+       UNSIGNED ("unsigned"), TYPEDEF_NAME ("pre-defined type specification"),
+       STRUCT ("struct"), UNION ("union"), ENUM ("enum"), CONST ("const"),
+       VOLATILE ("volatile") ;;
 
 -- seperators:
-%token LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, DOT, ARROW, COLON,
-       COMMA, SEMICOLON ;;
+%token LPAREN ("("), RPAREN (")"), LBRACE ("{"), RBRACE ("}"), LBRACKET ("["),
+       RBRACKET ("]"), DOT ("."), ARROW ("->"), COLON (":"), COMMA (","),
+       SEMICOLON (";") ;;
 
 -- operators:
-%token PLUS, MINUS, STAR, DIVIDE, REMAINDER, TILDE, AND, OR, XOR, NOT, SIZEOF,
-       PLUS_PLUS, MINUS_MINUS, LSHIFT, RSHIFT, AND_AND, OR_OR, QUESTION, EQUAL,
-       PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, DIVIDE_EQUAL, REMAINDER_EQUAL,
-       AND_EQUAL, OR_EQUAL, XOR_EQUAL, LSHIFT_EQUAL, RSHIFT_EQUAL,
-       EQUAL_EQUAL, NOT_EQUAL, LESS, GREATER, LESS_EQUAL, GREATER_EQUAL ;;
+%token PLUS ("+"), MINUS ("-"), STAR ("*"), DIVIDE ("/"), REMAINDER ("%"),
+       TILDE ("~"), AND ("&"), OR ("|"), XOR ("^"), NOT ("!"),
+       SIZEOF ("sizeof"), PLUS_PLUS ("++"), MINUS_MINUS ("--"), LSHIFT ("<<"),
+       RSHIFT (">>"), AND_AND ("&&"), OR_OR ("||"), QUESTION ("?"),
+       EQUAL ("="), PLUS_EQUAL ("+="), MINUS_EQUAL ("-="), STAR_EQUAL ("*="),
+       DIVIDE_EQUAL ("/="), REMAINDER_EQUAL ("%="), AND_EQUAL ("&="),
+       OR_EQUAL ("|="), XOR_EQUAL ("^="), LSHIFT_EQUAL ("<<="),
+       RSHIFT_EQUAL (">>="), EQUAL_EQUAL ("=="), NOT_EQUAL ("!="),
+       LESS ("<"), GREATER (">"), LESS_EQUAL ("<="), GREATER_EQUAL (">="),
+       ELLIPSIS ("...") ;;
 
 -- identifiers and literals:
-%token IDENTIFIER, STRING_LITERAL, X_CONSTANT ;;
+%token IDENTIFIER ("identifier"), STRING_LITERAL ("string literal"),
+       X_CONSTANT ;;
 
 ------------------------------------------------------------
 -- E X T E R N A L    D E C L A R A T I O N S

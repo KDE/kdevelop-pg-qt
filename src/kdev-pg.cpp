@@ -91,10 +91,11 @@ model::alias_item *pg::alias(char const *code, model::symbol_item *symbol)
   return node;
 }
 
-model::terminal_item *pg::terminal(char const *name)
+model::terminal_item *pg::terminal(char const *name, char const *description)
 {
   model::terminal_item *node = create_node<model::terminal_item>();
   node->_M_name = name;
+  node->_M_description = description;
   return node;
 }
 

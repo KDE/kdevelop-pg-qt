@@ -39,7 +39,7 @@ namespace pg
   model::cons_item *cons(model::node *left, model::node *right);
   model::evolve_item *evolve(model::node *item, model::symbol_item *symbol, char const *code);
   model::alias_item *alias(char const *code, model::symbol_item *symbol);
-  model::terminal_item *terminal(char const *name);
+  model::terminal_item *terminal(char const *name, char const *description);
   model::annotation_item *annotation(char const *name, model::node *item, bool sequence, bool local);
   model::condition_item *condition(char const *code, model::node *item);
 } // namespace pg
@@ -77,7 +77,7 @@ struct world
     std::string name = __name;
     terminal_set::iterator it = terminals.find(name);
     if (it == terminals.end())
-      return pg::terminal(__name);
+      return pg::terminal(__name, __name);
 
     return (*it).second;
   }
@@ -92,12 +92,12 @@ struct world
     rules.push_back(e);
   }
 
-  model::terminal_item *push_terminal(char const *__name)
+  model::terminal_item *push_terminal(char const *__name, char const *__description)
   {
     std::string name = __name;
     terminal_set::iterator it = terminals.find(name);
     if (it == terminals.end())
-      it = terminals.insert(std::make_pair(name, pg::terminal(__name))).first;
+      it = terminals.insert(std::make_pair(name, pg::terminal(__name, __description))).first;
 
     return (*it).second;
   }

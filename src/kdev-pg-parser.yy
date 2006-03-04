@@ -17,10 +17,10 @@ void yyerror(char const *msg);
     int ival;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CONDITION
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CONDITION T_STRING
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CONDITION name code_opt
+%type<str> T_IDENTIFIER T_TERMINAL T_CONDITION T_STRING name code_opt
 %type<str> T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION
 %type<item> item primary_item unary_item question question_item
 %type<item> postfix_item option_item item_sequence conditional_item
@@ -46,8 +46,10 @@ declaration
     ;
 
 declared_tokens
-    : T_TERMINAL                        { _G_system.push_terminal($1); }
-    | declared_tokens ',' T_TERMINAL    { _G_system.push_terminal($3); }
+    : T_TERMINAL                        { _G_system.push_terminal($1,$1); }
+    | T_TERMINAL '(' T_STRING ')'       { _G_system.push_terminal($1,$3); }
+    | declared_tokens ',' T_TERMINAL    { _G_system.push_terminal($3,$3); }
+    | declared_tokens ',' T_TERMINAL '(' T_STRING ')'  { _G_system.push_terminal($3,$5); }
     ;
 
 rules
@@ -204,6 +206,15 @@ again:
           return T_TOKEN_STREAM_DECLARATION;
         assert(0);
         return '%';
+    } else if (yytoken == '"') {
+        yytext = yyptr;
+        yylval.str = yytext;
+        do {
+          if (ch == '\\') { *yyptr++ = ch; inp(); }
+          *yyptr++ = ch; inp();
+        } while (ch != '"' && ch != EOF && ch != '\n');
+        *yyptr++ = '\0'; inp();
+        return (yytoken = T_STRING);
     } else if (yytoken == ';' && ch == ';') {
         inp();
         return ';';

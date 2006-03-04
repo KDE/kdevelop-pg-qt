@@ -104,7 +104,7 @@ void next_FOLLOW::visit_evolve(model::evolve_item *node)
 {
   default_visitor::visit_evolve(node);
 
-  model::terminal_item *teof = _G_system.push_terminal("EOF");
+  model::terminal_item *teof = _G_system.push_terminal("EOF", "end of file");
   if (node == _G_system.start && _G_system.FOLLOW(node->_M_symbol).insert(teof).second)
     _M_changed = true;
 

@@ -104,7 +104,7 @@ void code_generator::visit_symbol(model::symbol_item *node)
 void code_generator::visit_terminal(model::terminal_item *node)
 {
   out << "if (yytoken != Token_" << node->_M_name << ")"
-      << "return yy_expected_token(yytoken, Token_" << node->_M_name << ", \"" << node->_M_name << "\");"
+      << "return yy_expected_token(yytoken, Token_" << node->_M_name << ", \"" << node->_M_description << "\");"
       << std::endl
       << "yylex();" << std::endl;
 }
@@ -247,7 +247,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
   if (model::terminal_item *t = node_cast<model::terminal_item*>(node->_M_item))
     {
       out << "if (yytoken != Token_" << t->_M_name << ") "
-          << "return yy_expected_token(yytoken, Token_" << t->_M_name << ", \"" << t->_M_name << "\");"
+          << "return yy_expected_token(yytoken, Token_" << t->_M_name << ", \"" << t->_M_description << "\");"
           << std::endl;
 
       if (node->_M_sequence)

@@ -126,6 +126,7 @@ namespace model
     PG_NODE(terminal)
 
     char const *_M_name;
+    char const *_M_description;
   };
 
   struct annotation_item: public node

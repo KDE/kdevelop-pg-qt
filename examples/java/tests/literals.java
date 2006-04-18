@@ -8,6 +8,7 @@ class Literals
         // decimal
         int x = 0;
         x = 1;
+        x = -1;
         x = 101;
         x = 230;
         x = 459;
@@ -42,6 +43,7 @@ class Literals
         // decimal
         float y = 0f;
         y = 0.;
+        y = -1.;
         y = 9.f;
         y = 1.e10;
         y = 029.;
@@ -76,9 +78,6 @@ class Literals
         c = '\n';
         c = '\'';
         c = '%';
-
-        // (f)lex bug: this file is unicode, so the lexer thinks it's 2 characters.
-        // Of course, 2 characters are not allowed in a character value.
-        //c = 'Ö';
+        c = 'Ö';
     }
 }

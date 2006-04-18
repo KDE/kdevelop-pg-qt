@@ -3,11 +3,8 @@
 #include "decoder.h"
 
 #include <cstdlib>
-#include <cstdio>
 #include <iostream>
 #include <fstream>
-
-#define MAX_BUFF (500 * 1024)
 
 char *_G_contents;
 std::size_t _M_token_begin, _M_token_end;
@@ -113,10 +110,27 @@ int main(int argc, char *argv[])
 
 bool parse_file(char const *filename)
 {
-  if (FILE *fp = fopen(filename, "r"))
+  std::ifstream filestr(filename);
+
+  if (filestr.is_open())
     {
-      fread(_G_contents = new char[MAX_BUFF], 1, MAX_BUFF, fp);
-      fclose(fp);
+      std::filebuf *pbuf;
+      long size;
+
+      // get pointer to associated buffer object
+      pbuf=filestr.rdbuf();
+
+      // get file size using buffer's members
+      size=pbuf->pubseekoff(0,std::ios::end,std::ios::in);
+      pbuf->pubseekpos(0,std::ios::in);
+
+      // allocate memory to contain file data
+      _G_contents=new char[size];
+
+      // get file data
+      pbuf->sgetn(_G_contents, size);
+
+      filestr.close();
     }
   else
     {

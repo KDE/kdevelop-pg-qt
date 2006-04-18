@@ -8,10 +8,10 @@ extern std::size_t _G_current_offset;
 
 #define YY_INPUT(buf, result, max_size) \
 do \
-{ \
-int c = _G_contents[_G_current_offset++]; \
-result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
-} \
+  { \
+    int c = _G_contents[_G_current_offset++]; \
+    result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
+  } \
 while (0)
 
 #define YY_USER_INIT \
@@ -31,12 +31,6 @@ void reportProblem (const char* message)
 {
   std::cerr << "Warning: " << message << std::endl;
 }
-
-/*
-#define MAX_STRING_BUF 1024
-char string_buf[MAX_STRING_BUF];
-char* string_buf_ptr = 0;
- */
 
 %}
 
@@ -101,9 +95,9 @@ Digit           {Digit1}|{Digit2}|{Digit3}|{Digit4}|{Digit5}|{Digit6}|{Digit7}|{
 OctalDigit      [0-7]
 NonZeroDigit    [1-9]
 
-Unicode         [\\][u]+{HexDigit}{HexDigit}{HexDigit}{HexDigit}
-Octal           [\\]{OctalDigit}({Digit}({Digit})?)?
-Escape          [\\]([r]|[n]|[b]|[f]|[t]|[\\]|[']|["])|{Unicode}|{Octal}
+UnicodeEscape   [\\][u]+{HexDigit}{HexDigit}{HexDigit}{HexDigit}
+OctalEscape     [\\]{OctalDigit}({Digit}({Digit})?)?
+Escape          [\\]([r]|[n]|[b]|[f]|[t]|[\\]|[']|["])|{UnicodeEscape}|{OctalEscape}
 
 IntSuffix       ([l]|[L])
 DecimalNum      ([0]|{NonZeroDigit}{Digit}*){IntSuffix}?
@@ -211,7 +205,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "/*"            BEGIN(IN_BLOCKCOMMENT);
 <IN_BLOCKCOMMENT>{
 [^*\r\n]*       /* eat anything that's not a '*' */ ;
-"*"+[^*/\r\n]*  /* eat up '*'s not followed by '/'s */ ;
+"*"+[^*/\r\n]*  /* eat up '*'s that are not followed by slashes or newlines */;
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {

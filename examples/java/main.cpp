@@ -13,9 +13,9 @@ extern char* yytext;
 
 static void tokenize(java &m);
 static void usage(char const* argv0);
-static bool parse_file(char const* filename);
+static bool parse_file(char const* filename, java::java_compatibility_mode compatibility_mode);
 int yylex();
-void lexer_restart();
+void lexer_restart(java* parser);
 
 
 void print_token_environment(java* parser)
@@ -69,6 +69,8 @@ bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 
 int main(int argc, char *argv[])
 {
+  java::java_compatibility_mode compatibility_mode = java::java15_compatibility;
+
   if (argc == 1)
     {
       usage(argv[0]);
@@ -81,13 +83,13 @@ int main(int argc, char *argv[])
           char const* version = arg + 16;
 
           if (!strcmp("1.5", version)) {
-            set_compatibility_mode (java15_compatibility);
+            compatibility_mode = java::java15_compatibility;
           }
           else if (!strcmp("1.4", version)) {
-            set_compatibility_mode (java14_compatibility);
+            compatibility_mode = java::java14_compatibility;
           }
           else if (!strcmp("1.3", version)) {
-            set_compatibility_mode (java13_compatibility);
+            compatibility_mode = java::java13_compatibility;
           }
           else {
             std::cerr << "Unsupported Java version: " << version << std::endl;
@@ -101,14 +103,14 @@ int main(int argc, char *argv[])
           usage(argv[0]);
           exit(EXIT_FAILURE);
         }
-      else if(!parse_file(arg))
+      else if(!parse_file(arg, compatibility_mode))
         {
           exit(EXIT_FAILURE);
         }
     }
 }
 
-bool parse_file(char const *filename)
+bool parse_file(char const *filename, java::java_compatibility_mode compatibility_mode)
 {
   std::ifstream filestr(filename);
 
@@ -145,6 +147,7 @@ bool parse_file(char const *filename)
 
   // 0) setup
   java parser;
+  parser.set_compatibility_mode(compatibility_mode);
   parser.set_token_stream(&token_stream);
   parser.set_memory_pool(&memory_pool);
 
@@ -171,7 +174,7 @@ bool parse_file(char const *filename)
 
 static void tokenize(java &m)
 {
-  ::lexer_restart();
+  ::lexer_restart(&m);
   int kind = java::Token_EOF;
   do
     {

@@ -89,30 +89,258 @@
 
 
 --
--- Global variables and initializations
+-- Parser class members
 --
 
+%member (parserclass: public declaration)
 [:
-// The compatibility_mode status variable tells which version of Java
-// should be checked against.
-enum java_compatibility_mode {
-  java13_compatibility = 130,
-  java14_compatibility = 140,
-  java15_compatibility = 150,
-};
+  // The compatibility_mode status variable tells which version of Java
+  // should be checked against.
+  enum java_compatibility_mode {
+    java13_compatibility = 130,
+    java14_compatibility = 140,
+    java15_compatibility = 150,
+  };
 
-// I'd rather have these as members of the parser class,
-// but at the time of writing this doesn't seem to be possible.
-java_compatibility_mode compatibility_mode();
-void set_compatibility_mode( java_compatibility_mode mode );
+  java::java_compatibility_mode compatibility_mode();
+  void set_compatibility_mode( java::java_compatibility_mode mode );
+:]
+
+%member (parserclass: private declaration)
+  [: java::java_compatibility_mode _M_compatibility_mode; :]
+%member (parserclass: constructor)
+  [: _M_compatibility_mode = java15_compatibility; :]
+
+%member (parserclass: private declaration)
+[:
+  // ltCounter stores the amount of currently open type arguments rules,
+  // all of which are beginning with a less than ("<") character.
+  // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
+  // to close type arguments rules, in addition to GREATER_THAN (">").
+  int ltCounter;
+
+  // ellipsisOccurred is used as a means of communication between
+  // parameter_declaration_list and parameter_declaration_ellipsis to determine
+  // if an ellipsis was already in the list (then no more declarations
+  // may follow).
+  bool ellipsisOccurred;
+
+  // Lookahead hacks
+  bool lookahead_is_package_declaration();
+  bool lookahead_is_parameter_declaration();
+  bool lookahead_is_cast_expression();
 :]
 
 
--- TODO: when there is an "ast node member" code insertion syntax available,
--- re-simplify the operators, literals and modifiers to be just "op_token",
--- "literal_token" and "mod_token", and make an additional ast node member
--- for each, having the type of an enum that should be defined in the class,
--- which tells the type. Less memory consumption that way.
+--
+-- Additional AST members
+--
+
+%member (import_declaration: public declaration)
+  [: bool static_import; :]
+
+%member (parameter_declaration_ellipsis: public declaration)
+  [: bool has_ellipsis; :]
+
+%member (optional_parameter_modifiers: public declaration)
+  [: bool mod_final; :]
+
+%member (wildcard_type_bounds: public declaration)
+[:
+  enum extends_or_super_enum {
+    extends,
+    super
+  };
+  extends_or_super_enum extends_or_super;
+:]
+
+%member (builtin_type: public declaration)
+[:
+  enum builtin_type_enum {
+    type_void,
+    type_boolean,
+    type_byte,
+    type_char,
+    type_short,
+    type_int,
+    type_float,
+    type_long,
+    type_double
+  };
+  builtin_type_enum type;
+:]
+
+%member (qualified_identifier_with_optional_star: public declaration)
+  [: bool has_star; :]
+
+%member (optional_declarator_brackets: public declaration)
+  [: int bracket_count; :]
+%member (mandatory_declarator_brackets: public declaration)
+  [: int bracket_count; :]
+
+%member (annotation: public declaration)
+  [: bool has_parentheses; :]
+
+%member (statement: public declaration)
+[:
+  enum statement_kind_enum {
+    kind_empty_statement,
+    kind_block_statement,
+    kind_assert_statement,
+    kind_if_statement,
+    kind_for_statement,
+    kind_while_statement,
+    kind_do_while_statement,
+    kind_try_statement,
+    kind_switch_statement,
+    kind_synchronized_statement,
+    kind_return_statement,
+    kind_throw_statement,
+    kind_break_statement,
+    kind_continue_statement,
+    kind_labeled_statement,
+    kind_expression_statement
+  };
+  statement_kind_enum statement_kind;
+:]
+
+%member (switch_case: public declaration)
+[:
+  enum branch_type_enum {
+    case_branch,
+    default_branch
+  };
+  branch_type_enum branch_type;
+:]
+
+%member (expression: public declaration)
+[:
+  enum assignment_operator_enum {
+    no_assignment,
+    op_assign,
+    op_plus_assign,
+    op_minus_assign,
+    op_star_assign,
+    op_slash_assign,
+    op_bit_and_assign,
+    op_bit_or_assign,
+    op_bit_xor_assign,
+    op_remainder_assign,
+    op_lshift_assign,
+    op_signed_rshift_assign,
+    op_unsigned_rshift_assign
+  };
+  assignment_operator_enum assignment_operator;
+:]
+
+%member (equality_expression_rest: public declaration)
+[:
+  enum equality_operator_enum {
+    op_equal,
+    op_not_equal
+  };
+  equality_operator_enum equality_operator;
+:]
+
+%member (relational_expression_rest: public declaration)
+[:
+  enum relational_operator_enum {
+    op_less_than,
+    op_greater_than,
+    op_less_equal,
+    op_greater_equal
+  };
+  relational_operator_enum relational_operator;
+:]
+
+%member (shift_expression_rest: public declaration)
+[:
+  enum shift_operator_enum {
+    op_lshift,
+    op_signed_rshift,
+    op_unsigned_rshift
+  };
+  shift_operator_enum shift_operator;
+:]
+
+%member (additive_expression_rest: public declaration)
+[:
+  enum additive_operator_enum {
+    op_plus,
+    op_minus
+  };
+  additive_operator_enum additive_operator;
+:]
+
+%member (multiplicative_expression_rest: public declaration)
+[:
+  enum multiplicative_operator_enum {
+    op_star,
+    op_slash,
+    op_remainder
+  };
+  multiplicative_operator_enum multiplicative_operator;
+:]
+
+%member (postfix_operator: public declaration)
+[:
+  enum postfix_operator_enum {
+    op_increment,
+    op_decrement
+  };
+  postfix_operator_enum postfix_operator;
+:]
+
+%member (primary_atom: public declaration)
+[:
+  enum primary_atom_kind_enum {
+    kind_literal,
+    kind_new_expression,
+    kind_parenthesis_expression,
+    kind_builtin_type_dot_class,
+    kind_array_type_dot_class,
+    kind_type_name,
+    kind_this_call_no_type_arguments,
+    kind_this_call_with_type_arguments,
+    kind_super_call_no_type_arguments,
+    kind_super_call_with_type_arguments,
+    kind_method_call_no_type_arguments,
+    kind_method_call_with_type_arguments,
+  };
+  primary_atom_kind_enum primary_atom_kind;
+:]
+
+%member (optional_modifiers: public declaration)
+[:
+  enum modifier_enum {
+    mod_private      = 1,
+    mod_public       = 2,
+    mod_protected    = 4,
+    mod_static       = 8,
+    mod_transient    = 16,
+    mod_final        = 32,
+    mod_abstract     = 64,
+    mod_native       = 128,
+    mod_synchronized = 256,
+    mod_volatile     = 512,
+    mod_strictfp     = 1024
+  };
+  int modifiers;
+:]
+
+%member (literal: public declaration)
+[:
+  enum literal_type_enum {
+    type_true,
+    type_false,
+    type_null,
+    type_integer,
+    type_floating_point,
+    type_character,
+    type_string
+  };
+  literal_type_enum literal_type;
+:]
 
 
 
@@ -178,7 +406,7 @@ void set_compatibility_mode( java_compatibility_mode mode );
      -- implemented with a workaround hack until backtracking or real
      -- LL(k) is available. When this is available, you can also say:
      -- ?( package_declararation_lookahead ) instead of the current one:
-     ?[: lookahead_is_package_declaration(this) == true :]
+     ?[: lookahead_is_package_declaration() == true :]
       package_declaration=package_declaration
     | 0
    )
@@ -204,7 +432,11 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
 -- An IMPORT DECLARATION is "import" followed by a package or type (=class) name.
 
-   IMPORT (token_static=STATIC | 0)
+   IMPORT [: (*yynode)->static_import = false; :]
+   (  STATIC [: (*yynode)->static_import = true;  :]
+    | 0      -- [: (*yynode)->static_import = false; :]
+             -- doesn't compile, probably a kdev-pg bug. TODO: fix
+   )
    identifier_name=qualified_identifier_with_optional_star SEMICOLON
 -> import_declaration ;;
 
@@ -477,6 +709,8 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- A PARAMETER DECLARATION LIST is part of a method header and can contain
 -- zero or more parameters, optionally ending with a variable-length parameter.
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
+-- TODO: Maybe some fine day rule parameters will be implemented.
+--       In that case, please make ellipsisOccurred totally local here.
 
    LPAREN [: ellipsisOccurred = false; :]
    (
@@ -507,8 +741,11 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- -> parameter_declaration_list ;;
 
    parameter_modifiers=optional_parameter_modifiers
-   type_specification=type_specification
-   ( ellipsis=ELLIPSIS [: ellipsisOccurred = true; :] | 0 )
+   type_specification=type_specification [: (*yynode)->has_ellipsis = false; :]
+   (  ELLIPSIS [: (*yynode)->has_ellipsis = true; ellipsisOccurred = true; :]
+    | 0        -- [: (*yynode)->has_ellipsis = false; :]
+               -- doesn't compile, probably a kdev-pg bug. TODO: fix
+   )
    variable_identifier=identifier
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration_ellipsis ;;
@@ -523,7 +760,10 @@ void set_compatibility_mode( java_compatibility_mode mode );
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration ;;
 
-   ( mod_final=FINAL | #mod_annotation=annotation )*
+   0 [: (*yynode)->mod_final = false; :]
+   (  FINAL [: (*yynode)->mod_final = true; :]
+    | #mod_annotation=annotation
+   )*
 -> optional_parameter_modifiers ;;
 
 
@@ -576,7 +816,7 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -> type_parameters ;;
 
    identifier=identifier
-   (EXTENDS (#type=class_or_interface_type @ BIT_AND) | 0)
+   (EXTENDS (#extends_type=class_or_interface_type @ BIT_AND) | 0)
 -> type_parameter ;;
 
 
@@ -633,7 +873,9 @@ void set_compatibility_mode( java_compatibility_mode mode );
    QUESTION (bounds=wildcard_type_bounds | 0)
 -> wildcard_type ;;
 
-   (extends_or_super=EXTENDS | extends_or_super=SUPER)
+   (  EXTENDS [: (*yynode)->extends_or_super = wildcard_type_bounds_ast::extends; :]
+    | SUPER   [: (*yynode)->extends_or_super = wildcard_type_bounds_ast::super; :]
+   )
    type=class_type_specification
 -> wildcard_type_bounds ;;
 
@@ -674,18 +916,17 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -> type_specification_noarray ;;
 
 -- The primitive types. The Java specification doesn't include void here,
--- but the ANTLR grammar works that way.
--- TODO: rename type to type_[specifictype]
+-- but the ANTLR grammar works that way, and so does this one.
 
-   type=VOID
- | type=BOOLEAN
- | type=BYTE
- | type=CHAR
- | type=SHORT
- | type=INT
- | type=FLOAT
- | type=LONG
- | type=DOUBLE
+   VOID    [: (*yynode)->type = builtin_type_ast::type_void;    :]
+ | BOOLEAN [: (*yynode)->type = builtin_type_ast::type_boolean; :]
+ | BYTE    [: (*yynode)->type = builtin_type_ast::type_byte;    :]
+ | CHAR    [: (*yynode)->type = builtin_type_ast::type_char;    :]
+ | SHORT   [: (*yynode)->type = builtin_type_ast::type_short;   :]
+ | INT     [: (*yynode)->type = builtin_type_ast::type_int;     :]
+ | FLOAT   [: (*yynode)->type = builtin_type_ast::type_float;   :]
+ | LONG    [: (*yynode)->type = builtin_type_ast::type_long;    :]
+ | DOUBLE  [: (*yynode)->type = builtin_type_ast::type_double;  :]
 -> builtin_type ;;
 
    #part=class_or_interface_type_part @ DOT
@@ -711,9 +952,10 @@ void set_compatibility_mode( java_compatibility_mode mode );
    )*
 -> qualified_identifier_safe ;; -- lookahead version of the above
 
-   #name=identifier
+   #name=identifier [: (*yynode)->has_star = false; :]
    ( DOT (  #name=identifier
-          | star=STAR [: break; :] -- no more identifiers after the star
+          | STAR    [: (*yynode)->has_star = true; break; :]
+                       -- break -> no more identifiers after the star
          )
    )*
 -> qualified_identifier_with_optional_star ;;
@@ -721,13 +963,11 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- Declarator brackets are part of a type specification, like String[][]
 -- They are always empty, only have to be counted.
 
-   ( #lbracket=LBRACKET RBRACKET )*
+   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )*
 -> optional_declarator_brackets ;;
--- TODO: make a counter instead of filling the sequence array with lbrackets
 
-   ( #lbracket=LBRACKET RBRACKET )+
+   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
 -> mandatory_declarator_brackets ;;
--- TODO: make a counter instead of filling the sequence array with lbrackets
 
 
 
@@ -737,7 +977,10 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- @Info is equivalent to @Info().
 
    AT type_name=qualified_identifier
-   ( lparen=LPAREN (args=annotation_arguments | 0) RPAREN  | 0 )
+   (  LPAREN (args=annotation_arguments | 0) RPAREN
+        [: (*yynode)->has_parentheses = true; :]
+    | 0 [: (*yynode)->has_parentheses = false; :]
+   )
 -> annotation ;;
 
  ( ( ?[: LA(2).kind == Token_ASSIGN :]
@@ -794,7 +1037,7 @@ void set_compatibility_mode( java_compatibility_mode mode );
    -- needed here is the following hack lookahead function, until backtracking
    -- or real LL(k) is implemented. Note that a variable declaration starts
    -- just like a mere parameter declaration.
-   ?[: lookahead_is_parameter_declaration(this) == true :]
+   ?[: lookahead_is_parameter_declaration() == true :]
    variable_declaration=variable_declaration SEMICOLON
  |
    ?[: (yytoken != Token_SYNCHRONIZED) ||
@@ -853,45 +1096,61 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
  (
    block=block  -- more statements within {} braces
+   [: (*yynode)->statement_kind = statement_ast::kind_block_statement; :]
  |
    ASSERT assert_condition=expression
    (COLON assert_message=expression | 0) SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_assert_statement; :]
  |
    IF LPAREN if_condition=expression RPAREN if_statement=statement
    (ELSE else_statement=statement | 0)
    -- conflict: the old "dangling-else" problem...
-   -- kdevelop-pg generates proper code matching as soon as possible.
+   -- kdevelop-pg generates proper code, matching as soon as possible.
+   [: (*yynode)->statement_kind = statement_ast::kind_if_statement; :]
  |
    FOR LPAREN for_control=for_control RPAREN for_statement=statement
+   [: (*yynode)->statement_kind = statement_ast::kind_for_statement; :]
  |
    WHILE LPAREN while_condition=expression RPAREN while_statement=statement
+   [: (*yynode)->statement_kind = statement_ast::kind_while_statement; :]
  |
    DO do_while_statement=statement
    WHILE LPAREN do_while_condition=expression RPAREN SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_do_while_statement; :]
  |
    TRY try_block=block (#handler=try_handler)*
    (FINALLY finally_block=block | 0)
+   [: (*yynode)->statement_kind = statement_ast::kind_try_statement; :]
  |
    SWITCH LPAREN switch_expression=expression RPAREN
    LBRACE (#switch_cases=switch_statements_group)* RBRACE
+   [: (*yynode)->statement_kind = statement_ast::kind_switch_statement; :]
  |
    SYNCHRONIZED LPAREN synchronized_locked_type=expression RPAREN
    synchronized_block=block
+   [: (*yynode)->statement_kind = statement_ast::kind_synchronized_statement; :]
  |
-   return_token=RETURN (return_expression=expression | 0) SEMICOLON
+   RETURN (return_expression=expression | 0) SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_return_statement; :]
  |
    THROW throw_exception=expression SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_throw_statement; :]
  |
-   break_token=BREAK (break_label=identifier | 0) SEMICOLON
+   BREAK (break_label=identifier | 0) SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_break_statement; :]
  |
-   continue_token=CONTINUE (continue_label=identifier | 0) SEMICOLON
+   CONTINUE (continue_label=identifier | 0) SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_continue_statement; :]
  |
    SEMICOLON
+   [: (*yynode)->statement_kind = statement_ast::kind_empty_statement; :]
  |
    ?[: LA(2).kind == Token_COLON :]
    labeled_statement_identifier=identifier COLON labeled_statement=statement
+   [: (*yynode)->statement_kind = statement_ast::kind_labeled_statement; :]
  |
    expression_statement=expression SEMICOLON  -- method call, assignment, etc.
+   [: (*yynode)->statement_kind = statement_ast::kind_expression_statement; :]
  )
 -> statement ;;
 
@@ -906,11 +1165,15 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- A group of SWITCH STATEMENTS are any number of "case x:" or "default:"
 -- labels followed by a list of statements.
 
-   #case=switch_case (#case=switch_case)*
+   (#case=switch_case)+
    (#statement=block_statement)*
 -> switch_statements_group ;;
 
-   ( token=CASE expression=expression | token=DEFAULT ) COLON
+   (  CASE expression=expression
+      [: (*yynode)->branch_type = switch_case_ast::case_branch;    :]
+    | DEFAULT
+      [: (*yynode)->branch_type = switch_case_ast::default_branch; :]
+   ) COLON
 -> switch_case ;;
 
 
@@ -920,7 +1183,7 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- and which is only solvable with LL(k). Until backtracking or real LL(k) is
 -- implemented, we have to workaround with a lookahead hack function.
 
- ( ?[: lookahead_is_parameter_declaration(this) == true :]
+ ( ?[: lookahead_is_parameter_declaration() == true :]
    vardecl_start_or_foreach_parameter=parameter_declaration  -- "int i"
    (
       -- foreach: int i : intList.values()
@@ -977,22 +1240,34 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
    conditional_expression=conditional_expression
    (
-      (  op_assign=ASSIGN
-       | op_plus_assign=PLUS_ASSIGN
-       | op_minus_assign=MINUS_ASSIGN
-       | op_star_assign=STAR_ASSIGN
-       | op_slash_assign=SLASH_ASSIGN
-       | op_and_assign=BIT_AND_ASSIGN
-       | op_or_assign=BIT_OR_ASSIGN
-       | op_xor_assign=BIT_XOR_ASSIGN
-       | op_remainder_assign=REMAINDER_ASSIGN
-       | op_lshift_assign=LSHIFT_ASSIGN
-       | op_rsignedshift_assign=SIGNED_RSHIFT_ASSIGN
-       | op_runsignedshift_assign=UNSIGNED_RSHIFT_ASSIGN
+      (  ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_assign;                :]
+       | PLUS_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_plus_assign;           :]
+       | MINUS_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_minus_assign;          :]
+       | STAR_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_star_assign;           :]
+       | SLASH_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_slash_assign;          :]
+       | BIT_AND_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_bit_and_assign;        :]
+       | BIT_OR_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_bit_or_assign;         :]
+       | BIT_XOR_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_bit_xor_assign;        :]
+       | REMAINDER_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_remainder_assign;      :]
+       | LSHIFT_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_lshift_assign;         :]
+       | SIGNED_RSHIFT_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_signed_rshift_assign;   :]
+       | UNSIGNED_RSHIFT_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_unsigned_rshift_assign; :]
       )
       assignment_expression=expression
     |
-      0
+      0 [: (*yynode)->assignment_operator = expression_ast::no_assignment; :]
    )
 -> expression ;;
 
@@ -1023,7 +1298,9 @@ void set_compatibility_mode( java_compatibility_mode mode );
    (#additional_expression=equality_expression_rest)*
 -> equality_expression ;;
 
-   ( op_equal=EQUAL | op_notequal=NOT_EQUAL )
+   (  EQUAL     [: (*yynode)->equality_operator = equality_expression_rest_ast::op_equal;     :]
+    | NOT_EQUAL [: (*yynode)->equality_operator = equality_expression_rest_ast::op_not_equal; :]
+   )
    expression=relational_expression
 -> equality_expression_rest ;;
 
@@ -1034,8 +1311,11 @@ void set_compatibility_mode( java_compatibility_mode mode );
    )
 -> relational_expression ;;
 
-   (  op_lessthan=LESS_THAN | op_greaterthan=GREATER_THAN
-    | op_lessequal=LESS_EQUAL | op_greaterequal=GREATER_EQUAL )
+   (  LESS_THAN     [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_than;     :]
+    | GREATER_THAN  [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_than;  :]
+    | LESS_EQUAL    [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_equal;    :]
+    | GREATER_EQUAL [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_equal; :]
+   )
    expression=shift_expression
 -> relational_expression_rest ;;
 
@@ -1043,8 +1323,10 @@ void set_compatibility_mode( java_compatibility_mode mode );
    (#additional_expression=shift_expression_rest)*
 -> shift_expression ;;
 
-   (  op_lshift=LSHIFT | op_rsignedshift=SIGNED_RSHIFT
-    | op_runsignedshift=UNSIGNED_RSHIFT )
+   (  LSHIFT          [: (*yynode)->shift_operator = shift_expression_rest_ast::op_lshift;          :]
+    | SIGNED_RSHIFT   [: (*yynode)->shift_operator = shift_expression_rest_ast::op_signed_rshift;   :]
+    | UNSIGNED_RSHIFT [: (*yynode)->shift_operator = shift_expression_rest_ast::op_unsigned_rshift; :]
+   )
    expression=additive_expression
 -> shift_expression_rest ;;
 
@@ -1052,7 +1334,9 @@ void set_compatibility_mode( java_compatibility_mode mode );
    (#additional_expression=additive_expression_rest)*
 -> additive_expression ;;
 
-   ( op_plus=PLUS | op_minus=MINUS )
+   (  PLUS  [: (*yynode)->additive_operator = additive_expression_rest_ast::op_plus;  :]
+    | MINUS [: (*yynode)->additive_operator = additive_expression_rest_ast::op_minus; :]
+   )
    expression=multiplicative_expression
 -> additive_expression_rest ;;
 
@@ -1060,7 +1344,10 @@ void set_compatibility_mode( java_compatibility_mode mode );
    (#additional_expression=multiplicative_expression_rest)*
 -> multiplicative_expression ;;
 
-   ( op_star=STAR | op_slash=SLASH | op_remainder=REMAINDER )
+   (  STAR      [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_star;      :]
+    | SLASH     [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_slash;     :]
+    | REMAINDER [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_remainder; :]
+   )
    expression=unary_expression
 -> multiplicative_expression_rest ;;
 
@@ -1082,7 +1369,7 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
    TILDE bitwise_not_expression=unary_expression
  | BANG  logical_not_expression=unary_expression
- | ?[: lookahead_is_cast_expression(this) == true :]
+ | ?[: lookahead_is_cast_expression() == true :]
    cast_expression=cast_expression
  | primary_expression=primary_expression (#postfix_operator=postfix_operator)*
 -> unary_expression_not_plusminus ;;
@@ -1100,8 +1387,8 @@ void set_compatibility_mode( java_compatibility_mode mode );
    )
 -> cast_expression ;;
 
-   op_increment=INCREMENT
- | op_decrement=DECREMENT
+   INCREMENT [: (*yynode)->postfix_operator = postfix_operator_ast::op_increment; :]
+ | DECREMENT [: (*yynode)->postfix_operator = postfix_operator_ast::op_decrement; :]
 -> postfix_operator ;;
 
 
@@ -1168,36 +1455,46 @@ void set_compatibility_mode( java_compatibility_mode mode );
 
  (
    builtin_type=builtin_type_specification
-   DOT builtin_dotclass=CLASS   -- things like int.class or int[].class
+   DOT CLASS   -- things like int.class or int[].class
+   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_builtin_type_dot_class;             :]
  |
    literal=literal
+   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_literal;                            :]
  |
    new_expression=new_expression
+   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_new_expression;                     :]
  |
    LPAREN parenthesis_expression=expression RPAREN
+   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_parenthesis_expression;             :]
  |
-   this_call_untyped=THIS
-   (LPAREN this_constructor_arguments=argument_list RPAREN | 0)
+   THIS (LPAREN this_constructor_arguments=argument_list RPAREN | 0)
+   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_this_call_no_type_arguments;        :]
  |
-   SUPER super_suffix_untyped=super_suffix
+   SUPER super_suffix=super_suffix
+   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_super_call_no_type_arguments;       :]
  |
    ?[: compatibility_mode() >= java15_compatibility :]
    -- generic method invocation with type arguments:
    type_arguments=non_wildcard_type_arguments
-   (  SUPER super_suffix_typed=super_suffix
-    | this_call_typed=THIS
-      LPAREN this_constructor_arguments=argument_list RPAREN
+   (  SUPER super_suffix=super_suffix
+      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_super_call_with_type_arguments;  :]
+    | THIS LPAREN this_constructor_arguments=argument_list RPAREN
+      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_this_call_with_type_arguments;   :]
     | method_name_typed=identifier
       LPAREN method_arguments=argument_list RPAREN
+      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_method_call_with_type_arguments; :]
    )
  |
    -- type names (normal) - either pure, as method or like bla[][].class
-   identifier_untyped=qualified_identifier_safe  -- without type arguments
+   identifier=qualified_identifier_safe  -- without type arguments
    (  LPAREN method_arguments=argument_list RPAREN
+      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_method_call_no_type_arguments;   :]
     | ?[: LA(2).kind == Token_RBRACKET :]
       declarator_brackets=mandatory_declarator_brackets
       DOT array_dotclass=CLASS
+      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_array_type_dot_class;            :]
     | 0
+      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_type_name;                       :]
    )
  )
 -> primary_atom ;;
@@ -1251,25 +1548,27 @@ void set_compatibility_mode( java_compatibility_mode mode );
 -- MODIFIERs for Java classes, interfaces, class/instance vars and methods.
 -- Sometimes not all of them are valid, but that has to be checked manually
 -- after running the parser. The ANTLR grammar also does it this way.
+-- All the occurring modifiers are stored together in the "modifiers"
+-- AST node member as flags, except for the annotations who get their own list.
 
+ (
+   PRIVATE      [: (*yynode)->modifiers |= optional_modifiers_ast::mod_private;   :]
+ | PUBLIC       [: (*yynode)->modifiers |= optional_modifiers_ast::mod_public;    :]
+ | PROTECTED    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_protected; :]
+ | STATIC       [: (*yynode)->modifiers |= optional_modifiers_ast::mod_static;    :]
+ | TRANSIENT    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_transient; :]
+ | FINAL        [: (*yynode)->modifiers |= optional_modifiers_ast::mod_final;     :]
+ | ABSTRACT     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;  :]
+ | NATIVE       [: (*yynode)->modifiers |= optional_modifiers_ast::mod_native;    :]
+ -- Neither in the Java spec nor in the JavaCC grammar, just in the ANTLR one:
+ -- | mod_threadsafe=THREADSAFE
+ | SYNCHRONIZED [: (*yynode)->modifiers |= optional_modifiers_ast::mod_synchronized; :]
+ | VOLATILE     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_volatile;  :]
+ | STRICTFP     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_strictfp;  :]
+ |
  -- A modifier may be any annotation (e.g. @bla), but not @interface.
  -- This condition resolves the conflict between modifiers
  -- and annotation type declarations:
- (
-   mod_private=PRIVATE
- | mod_public=PUBLIC
- | mod_protected=PROTECTED
- | mod_static=STATIC
- | mod_transient=TRANSIENT
- | mod_final=FINAL
- | mod_abstract=ABSTRACT
- | mod_native=NATIVE
- -- Neither in the Java spec nor in the JavaCC grammar, just in the ANTLR one:
- -- | mod_threadsafe=THREADSAFE
- | mod_synchronized=SYNCHRONIZED
- | mod_volatile=VOLATILE
- | mod_strictfp=STRICTFP
- |
    0 [: if (yytoken == Token_AT && LA(2).kind == Token_INTERFACE) { break; } :]
    #mod_annotation=annotation
  )*
@@ -1280,13 +1579,23 @@ void set_compatibility_mode( java_compatibility_mode mode );
    ident=IDENTIFIER
 -> identifier ;;
 
-   true_literal=TRUE
- | false_literal=FALSE
- | null_literal=NULL
- | integer_literal=INTEGER_LITERAL
- | floating_point_literal=FLOATING_POINT_LITERAL
- | character_literal=CHARACTER_LITERAL
- | string_literal=STRING_LITERAL
+ (
+   TRUE   [: (*yynode)->literal_type = literal_ast::type_true;  :]
+ | FALSE  [: (*yynode)->literal_type = literal_ast::type_false; :]
+ | NULL   [: (*yynode)->literal_type = literal_ast::type_null;  :]
+ |
+   integer_literal=INTEGER_LITERAL
+   [: (*yynode)->literal_type = literal_ast::type_integer;  :]
+ |
+   floating_point_literal=FLOATING_POINT_LITERAL
+   [: (*yynode)->literal_type = literal_ast::type_floating_point;  :]
+ |
+   character_literal=CHARACTER_LITERAL
+   [: (*yynode)->literal_type = literal_ast::type_character;  :]
+ |
+   string_literal=STRING_LITERAL
+   [: (*yynode)->literal_type = literal_ast::type_string;  :]
+ )
 -> literal ;;
 
 
@@ -1304,93 +1613,69 @@ void set_compatibility_mode( java_compatibility_mode mode );
 [:
 #include "java_lookahead.h"
 
-// To hold a non-local static variable, C++ needs it to be encapsulated
-// inside a class and initialized outside of it.
-class java_settings {
-  public:
-    static java_compatibility_mode _M_compatibility_mode;
-};
-java_compatibility_mode java_settings::_M_compatibility_mode = java15_compatibility;
 
-
-java_compatibility_mode compatibility_mode() {
-  return java_settings::_M_compatibility_mode;
+java::java_compatibility_mode java::compatibility_mode() {
+  return _M_compatibility_mode;
 }
-void set_compatibility_mode( java_compatibility_mode mode ) {
-  java_settings::_M_compatibility_mode = mode;
+void java::set_compatibility_mode( java::java_compatibility_mode mode ) {
+  _M_compatibility_mode = mode;
 }
 
-namespace {
 
-  // ltCounter stores the amount of currently open type arguments rules,
-  // all of which are beginning with a less than ("<") character.
-  // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
-  // to close type arguments rules, in addition to GREATER_THAN (">").
-  int ltCounter;
+// lookahead hacks to make up for backtracking or LL(k)
+// which are not yet implemented
 
-  // ellipsisOccurred is used as a means of communication between
-  // parameter_declaration_list and parameter_declaration_ellipsis to determine
-  // if an ellipsis was already in the list (then no more declarations
-  // may follow).
-  bool ellipsisOccurred;
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a package declaration. If true is returned then it
+* looks like a package declaration is coming up. It doesn't have to match the
+* full package_declaration rule (because annotation contents are only checked
+* rudimentarily), but it is guaranteed that the upcoming tokens are
+* not a type specification.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a package declaration.
+*/
+bool java::lookahead_is_package_declaration()
+{
+    java_lookahead* la = new java_lookahead(this);
+    bool result = la->is_package_declaration_start();
+    delete la;
+    return result;
+}
 
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a variable declaration. If true is returned then it
+* looks like a variable declaration is coming up. It doesn't have to match the
+* full variable_declaration rule (as only the first few tokens are checked),
+* but it is guaranteed that the upcoming tokens are not an expression.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a variable declaration.
+*/
+bool java::lookahead_is_parameter_declaration()
+{
+    java_lookahead* la = new java_lookahead(this);
+    bool result = la->is_parameter_declaration_start();
+    delete la;
+    return result;
+}
 
-
-  // lookahead hacks to make up for backtracking or LL(k)
-  // which are not yet implemented
-
-  /**
-  * This function checks if the next following tokens of the given parser class
-  * match the beginning of a package declaration. If true is returned then it
-  * looks like a package declaration is coming up. It doesn't have to match the
-  * full package_declaration rule (because annotation contents are only checked
-  * rudimentarily), but it is guaranteed that the upcoming tokens are
-  * not a type specification.
-  * The function returns false if the upcoming tokens are (for sure) not
-  * the beginning of a package declaration.
-  */
-  bool lookahead_is_package_declaration(java* parser)
-  {
-      java_lookahead* la = new java_lookahead(parser);
-      bool result = la->is_package_declaration_start();
-      delete la;
-      return result;
-  }
-
-  /**
-  * This function checks if the next following tokens of the given parser class
-  * match the beginning of a variable declaration. If true is returned then it
-  * looks like a variable declaration is coming up. It doesn't have to match the
-  * full variable_declaration rule (as only the first few tokens are checked),
-  * but it is guaranteed that the upcoming tokens are not an expression.
-  * The function returns false if the upcoming tokens are (for sure) not
-  * the beginning of a variable declaration.
-  */
-  bool lookahead_is_parameter_declaration(java* parser)
-  {
-      java_lookahead* la = new java_lookahead(parser);
-      bool result = la->is_parameter_declaration_start();
-      delete la;
-      return result;
-  }
-
-  /**
-  * This function checks if the next following tokens of the given parser class
-  * match the beginning of a cast expression. If true is returned then it
-  * looks like a cast expression is coming up. It doesn't have to match the
-  * full cast_expression rule (because type arguments are only checked
-  * rudimentarily), but it is guaranteed that the upcoming tokens are
-  * not a primary expression.
-  * The function returns false if the upcoming tokens are (for sure) not
-  * the beginning of a cast expression.
-  */
-  bool lookahead_is_cast_expression(java* parser)
-  {
-      java_lookahead* la = new java_lookahead(parser);
-      bool result = la->is_cast_expression_start();
-      delete la;
-      return result;
-  }
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a cast expression. If true is returned then it
+* looks like a cast expression is coming up. It doesn't have to match the
+* full cast_expression rule (because type arguments are only checked
+* rudimentarily), but it is guaranteed that the upcoming tokens are
+* not a primary expression.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a cast expression.
+*/
+bool java::lookahead_is_cast_expression()
+{
+    java_lookahead* la = new java_lookahead(this);
+    bool result = la->is_cast_expression_start();
+    delete la;
+    return result;
 }
 
 :]

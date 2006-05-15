@@ -7,12 +7,10 @@ extern char *_G_contents;
 extern std::size_t _G_current_offset;
 
 #define YY_INPUT(buf, result, max_size) \
-do \
   { \
     int c = _G_contents[_G_current_offset++]; \
     result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
-  } \
-while (0)
+  }
 
 #define YY_USER_INIT \
 _M_token_begin = _M_token_end = 0; \
@@ -22,7 +20,10 @@ _G_current_offset = 0;
 _M_token_begin = _M_token_end; \
 _M_token_end += yyleng;
 
-void lexer_restart(void) {
+java* parser;
+
+void lexer_restart(java* _parser) {
+  parser = _parser;
   yyrestart(NULL);
   YY_USER_INIT
 }
@@ -139,7 +140,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 ";"             return java::Token_SEMICOLON;
 "."             return java::Token_DOT;
 "@"             {
-    if (compatibility_mode() >= java15_compatibility)
+    if (parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_AT;
     else {
       reportProblem("Annotations are not supported by Java 1.4 or earlier.");
@@ -188,7 +189,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 ">>>"           return java::Token_UNSIGNED_RSHIFT;
 ">>>="          return java::Token_UNSIGNED_RSHIFT_ASSIGN;
 "..."           {
-    if (compatibility_mode() >= java15_compatibility)
+    if (parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_ELLIPSIS;
     else {
       reportProblem("Variable-length argument lists are not supported "
@@ -274,7 +275,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
 "abstract"      return java::Token_ABSTRACT;
 "assert"        {
-    if (compatibility_mode() >= java14_compatibility)
+    if (parser->compatibility_mode() >= java::java14_compatibility)
       return java::Token_ASSERT;
     else
       return java::Token_IDENTIFIER;
@@ -296,7 +297,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "double"        return java::Token_DOUBLE;
 "else"          return java::Token_ELSE;
 "enum"          {
-    if (compatibility_mode() >= java15_compatibility)
+    if (parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_ENUM;
     else
       return java::Token_IDENTIFIER;

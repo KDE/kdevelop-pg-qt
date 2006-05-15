@@ -83,6 +83,19 @@ public:
   void operator()(std::pair<std::string, model::terminal_item*> const &__it);
 };
 
+class gen_member_code
+{
+  std::ostream &out;
+  settings::member_item::member_kind_enum kind;
+
+public:
+  gen_member_code(std::ostream &o, settings::member_item::member_kind_enum k)
+  : out(o), kind(k)
+  {}
+
+  void operator()(settings::member_item* m);
+};
+
 class generate_parser_decls
 {
   std::ostream &out;

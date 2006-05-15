@@ -57,6 +57,24 @@ Newline     "\r\n"|\r|\n
 
 "%token"                return T_TOKEN_DECLARATION;
 "%token_stream"         return T_TOKEN_STREAM_DECLARATION;
+"%member"               BEGIN(MEMBER); return T_MEMBER_DECLARATION;
+
+
+<MEMBER>{
+{Whitespace}*           /* skip */ ;
+{Newline}               newline();
+"("                     return '(';
+":"                     return ':';
+"public"                return T_PUBLIC;
+"private"               return T_PRIVATE;
+"protected"             return T_PROTECTED;
+"declaration"           return T_DECLARATION;
+"constructor"           return T_CONSTRUCTOR;
+"destructor"            return T_DESTRUCTOR;
+[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+")"                     BEGIN(INITIAL); return ')';
+.                       BEGIN(INITIAL); REJECT; /* everything else */
+}
 
 
 "[:"                    BEGIN(CODE);

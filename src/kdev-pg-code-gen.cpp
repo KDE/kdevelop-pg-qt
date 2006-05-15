@@ -371,6 +371,12 @@ void gen_token::operator()(std::pair<std::string, model::terminal_item*> const &
   out << "Token_" << t->_M_name << " = " << _M_token_value++ << "," << std::endl;
 }
 
+void gen_member_code::operator()(settings::member_item* m)
+{
+  if (m->_M_member_kind == kind)
+      out << m->_M_code << std::endl;
+}
+
 void generate_parser_decls::operator()()
 {
   if (_G_system.decl)
@@ -425,6 +431,28 @@ void generate_parser_decls::operator()()
       << "}; // token_type_enum" << std::endl
       << std::endl;
 
+
+  world::member_set::iterator member_it = _G_system.members.find("parserclass");
+
+  if (member_it != _G_system.members.end()
+      && (*member_it).second->declarations.empty() == false)
+    {
+      out << "// user defined declarations:" << std::endl;
+      out << "public:" << std::endl;
+      std::for_each((*member_it).second->declarations.begin(),
+                    (*member_it).second->declarations.end(),
+                    gen_member_code(out, settings::member_item::public_declaration));
+      out << "protected:" << std::endl;
+      std::for_each((*member_it).second->declarations.begin(),
+                    (*member_it).second->declarations.end(),
+                    gen_member_code(out, settings::member_item::protected_declaration));
+      out << "private:" << std::endl;
+      std::for_each((*member_it).second->declarations.begin(),
+                    (*member_it).second->declarations.end(),
+                    gen_member_code(out, settings::member_item::private_declaration));
+      out << std::endl << "public:" << std::endl;
+    }
+
   out << parser << "()" << "{" << std::endl;
   if (_G_system.generate_ast)
     {
@@ -432,10 +460,32 @@ void generate_parser_decls::operator()()
     }
 
   out << "token_stream = 0;" << std::endl
-      << "yytoken = Token_EOF;" << std::endl
-      << "}" << std::endl << std::endl;
+      << "yytoken = Token_EOF;" << std::endl;
+
+  if (member_it != _G_system.members.end()
+      && (*member_it).second->constructor_code.empty() == false)
+    {
+      out << std::endl << "// user defined constructor code:" << std::endl;
+      std::for_each((*member_it).second->constructor_code.begin(),
+                    (*member_it).second->constructor_code.end(),
+                    gen_member_code(out, settings::member_item::constructor_code));
+    }
+
+  out << "}" << std::endl << std::endl;
+
+  if (member_it != _G_system.members.end()
+      && (*member_it).second->destructor_code.empty() == false)
+    {
+      out << "virtual ~" << parser << "()" << "{" << std::endl
+          << "// user defined destructor code:" << std::endl;
+      std::for_each((*member_it).second->destructor_code.begin(),
+                    (*member_it).second->destructor_code.end(),
+                    gen_member_code(out, settings::member_item::destructor_code));
+      out << "}" << std::endl << std::endl;
+    }
 
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_forward_parser_rule(out));
+
   out << "};" << std::endl;
 }
 

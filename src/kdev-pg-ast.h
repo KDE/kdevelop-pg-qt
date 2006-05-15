@@ -149,6 +149,36 @@ namespace model
 
 } // namespace model
 
+
+// configuration stuff outside the model
+namespace settings
+{
+
+  enum node_kind_enum {
+    node_kind_member = 30,
+
+    node_kind_LAST
+  };
+
+  struct member_item: public model::node
+  {
+    PG_NODE(member)
+
+    enum member_kind_enum {
+      public_declaration,
+      protected_declaration,
+      private_declaration,
+      constructor_code,
+      destructor_code
+    };
+
+    member_kind_enum _M_member_kind;
+    char const *_M_code;
+  };
+
+} // namespace settings
+
+
 template <class _Tp>
 _Tp node_cast(model::node *item)
 {

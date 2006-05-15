@@ -42,14 +42,21 @@ namespace pg
   model::terminal_item *terminal(char const *name, char const *description);
   model::annotation_item *annotation(char const *name, model::node *item, bool sequence, bool local);
   model::condition_item *condition(char const *code, model::node *item);
+  settings::member_item *member(settings::member_item::member_kind_enum kind, char const *code);
 } // namespace pg
 
 struct world
 {
+  typedef struct member_code {
+    std::set<settings::member_item*> declarations;
+    std::set<settings::member_item*> constructor_code;
+    std::set<settings::member_item*> destructor_code;
+  };
   typedef std::set<model::node*> node_set;
   typedef std::map<std::string, model::symbol_item*> symbol_set;
   typedef std::map<std::string, model::terminal_item*> terminal_set;
-  typedef std::multimap<model::symbol_item*, model::evolve_item *> environment;
+  typedef std::map<std::string, member_code*> member_set;
+  typedef std::multimap<model::symbol_item*, model::evolve_item*> environment;
 
   typedef std::map<std::pair<model::node*, int>, node_set> first_set;
   typedef std::map<std::pair<model::node*, int>, node_set> follow_set;
@@ -90,6 +97,24 @@ struct world
     if (rules.empty())
       start = e;
     rules.push_back(e);
+  }
+
+  void *push_member(char const *__whose, model::node *member)
+  {
+    settings::member_item *m = node_cast<settings::member_item*>(member);
+    assert(m != 0);
+
+    std::string whose = __whose;
+    member_set::iterator it = members.find(whose);
+    if (it == members.end())
+      it = members.insert(std::make_pair(whose, new member_code())).first;
+
+    if (m->_M_member_kind == settings::member_item::constructor_code)
+      (*it).second->constructor_code.insert(m);
+    else if (m->_M_member_kind == settings::member_item::destructor_code)
+      (*it).second->destructor_code.insert(m);
+    else // public, protected or private declaration
+      (*it).second->declarations.insert(m);
   }
 
   model::terminal_item *push_terminal(char const *__name, char const *__description)
@@ -136,6 +161,7 @@ struct world
   symbol_set symbols;
   terminal_set terminals;
   std::deque<model::node*> rules;
+  member_set members;
 
   environment env;
 

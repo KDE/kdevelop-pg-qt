@@ -117,6 +117,13 @@ model::condition_item *pg::condition(char const *code, model::node *item)
   return node;
 }
 
+settings::member_item *pg::member(settings::member_item::member_kind_enum kind, char const *code)
+{
+  settings::member_item *node = create_node<settings::member_item>();
+  node->_M_member_kind = kind;
+  node->_M_code = code;
+}
+
 std::ostream &operator << (std::ostream &out, model::node const *__node)
 {
   model::node *node = const_cast<model::node*>(__node);

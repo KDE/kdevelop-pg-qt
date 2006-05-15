@@ -18,6 +18,7 @@
 */
 
 #include "kdev-pg-ast-gen.h"
+#include "kdev-pg-code-gen.h"
 #include "kdev-pg.h"
 #include <iostream>
 
@@ -76,6 +77,49 @@ void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const 
       ++it;
 
       visit_node(e);
+    }
+
+
+  std::string name = sym->_M_name;
+  world::member_set::iterator member_it = _G_system.members.find(name);
+
+  if (member_it != _G_system.members.end())
+    {
+      if ((*member_it).second->declarations.empty() == false)
+        {
+          out << std::endl << "// user defined declarations:" << std::endl;
+          out << "public:" << std::endl;
+          std::for_each((*member_it).second->declarations.begin(),
+                        (*member_it).second->declarations.end(),
+                        gen_member_code(out, settings::member_item::public_declaration));
+          out << "protected:" << std::endl;
+          std::for_each((*member_it).second->declarations.begin(),
+                        (*member_it).second->declarations.end(),
+                        gen_member_code(out, settings::member_item::protected_declaration));
+          out << "private:" << std::endl;
+          std::for_each((*member_it).second->declarations.begin(),
+                        (*member_it).second->declarations.end(),
+                        gen_member_code(out, settings::member_item::private_declaration));
+          out << std::endl << "public:" << std::endl;
+        }
+      if ((*member_it).second->constructor_code.empty() == false)
+        {
+          out << sym->_M_name << "_ast()" << "{" << std::endl;
+          out << "// user defined constructor code:" << std::endl;
+          std::for_each((*member_it).second->constructor_code.begin(),
+                        (*member_it).second->constructor_code.end(),
+                        gen_member_code(out, settings::member_item::constructor_code));
+          out << "}" << std::endl << std::endl;
+        }
+      if ((*member_it).second->destructor_code.empty() == false)
+        {
+          out << "~" << sym->_M_name << "_ast()" << "{" << std::endl;
+          out << "// user defined destructor code:" << std::endl;
+          std::for_each((*member_it).second->destructor_code.begin(),
+                        (*member_it).second->destructor_code.end(),
+                        gen_member_code(out, settings::member_item::destructor_code));
+          out << "}" << std::endl << std::endl;
+        }
     }
 
   out << std::endl

@@ -17,11 +17,13 @@ extern void yyerror(char const *msg);
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
-%token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION
+%token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_MEMBER_DECLARATION
+%token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_CONSTRUCTOR T_DESTRUCTOR
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING name code_opt
 %type<item> item primary_item unary_item question question_item
 %type<item> postfix_item option_item item_sequence conditional_item
+%type<item> member_declaration_rest
 %type<ival> scope
 
 %%
@@ -39,8 +41,22 @@ declarations
     ;
 
 declaration
-    : T_TOKEN_DECLARATION declared_tokens ';'
+    : T_MEMBER_DECLARATION '(' T_IDENTIFIER ':' member_declaration_rest { _G_system.push_member($3,$5); }
+    | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';' { _G_system.token_stream = $2; }
+    ;
+
+member_declaration_rest
+    :  T_PUBLIC T_DECLARATION ')' T_CODE
+        { $$ = pg::member(settings::member_item::public_declaration, $4); }
+    |  T_PROTECTED T_DECLARATION ')' T_CODE
+        { $$ = pg::member(settings::member_item::protected_declaration, $4); }
+    |  T_PRIVATE T_DECLARATION ')' T_CODE
+        { $$ = pg::member(settings::member_item::private_declaration, $4); }
+    |  T_CONSTRUCTOR ')' T_CODE
+        { $$ = pg::member(settings::member_item::constructor_code, $3); }
+    |  T_DESTRUCTOR ')' T_CODE
+        { $$ = pg::member(settings::member_item::destructor_code, $3); }
     ;
 
 declared_tokens

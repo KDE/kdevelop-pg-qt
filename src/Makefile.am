@@ -21,7 +21,8 @@ kdev_pg_SOURCES = \
 	kdev-pg-first.cpp \
 	kdev-pg-follow.cpp \
 	kdev-pg-clone-tree.cpp \
-	kdev-pg-parser.yy
+	kdev-pg-parser.yy \
+	kdev-pg-lexer.ll
 
 # set the include path found by configure
 INCLUDES= -I$(top_srcdir)/include $(all_includes)
@@ -29,3 +30,5 @@ INCLUDES= -I$(top_srcdir)/include $(all_includes)
 # the library search path.
 kdev_pg_LDFLAGS = $(all_libraries)
 
+# let yacc create a header file
+AM_YFLAGS = -d

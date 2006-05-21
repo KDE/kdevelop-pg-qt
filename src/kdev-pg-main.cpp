@@ -161,6 +161,9 @@ int main(int, char *argv[])
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
                 FIRST_FIRST_conflict_checker());
 
+  std::for_each(_G_system.members.begin(), _G_system.members.end(),
+                undefined_memberstruct_checker());
+
   if (dump_terminals)
     {
       for (world::terminal_set::iterator it = _G_system.terminals.begin();

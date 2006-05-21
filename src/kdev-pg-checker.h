@@ -73,5 +73,10 @@ protected:
   virtual void visit_terminal(model::terminal_item *node);
 };
 
+struct undefined_memberstruct_checker: protected default_visitor
+{
+  void operator()(std::pair<const std::string, world::member_code*> &item);
+};
+
 #endif // KDEV_PG_CHECKER_H
 

@@ -188,6 +188,18 @@ void undefined_token_checker::visit_terminal(model::terminal_item *node)
     }
 }
 
+void undefined_memberstruct_checker::operator()(std::pair<const std::string,
+                                                world::member_code*> &item)
+{
+  if (item.first != "parserclass"
+      && _G_system.symbols.find(item.first) == _G_system.symbols.end())
+    {
+      std::cerr << "** ERROR Undefined structure for member code ``"
+                << item.first << "''" << std::endl;
+      exit(EXIT_FAILURE);
+    }
+}
+
 void empty_FIRST_checker::operator()(model::node *node)
 {
   visit_node(node);
@@ -197,7 +209,8 @@ void empty_FIRST_checker::visit_symbol(model::symbol_item *node)
 {
   if (_G_system.FIRST(node).empty())
     {
-      std::cerr << "** WARNING Empty FIRST set for ``" << node->_M_name << "''" << std::endl;
+      std::cerr << "** ERROR Empty FIRST set for ``" << node->_M_name
+                << "''" << std::endl;
       exit(EXIT_FAILURE);
     }
 }

@@ -50,7 +50,7 @@
 --    Solved by lookahead_is_cast_expression().
 --    (1 conflict)
 
--- Known harmless or resolved conflicts (16 conflicts):
+-- Known harmless or resolved conflicts (17 conflicts):
 --  - The first/follow IMPORT, AT conflict in compilation_unit
 --    (done right by default, 1 conflict)
 --  - Part of the first/follow SEMICOLON, IMPORT, STATIC, CLASS etc. conflict
@@ -60,6 +60,8 @@
 --    (done right by default, 1 conflict)
 --  - The first/follow COMMA conflict in variable_declaration_rest: greedy is ok
 --    (done right by default, 1 conflict)
+--  - The first/follow LBRACKET conflict in primary_atom
+--    (manually resolved, 1 conflict)
 --  - The first/follow AT conflict in optional_modifiers: greedy is ok
 --    (done right by default, 1 conflict)
 --  - The first/first IDENTIFIER conflicts in *_field,
@@ -85,7 +87,7 @@
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 20
+-- Total amount of conflicts: 21
 
 
 --

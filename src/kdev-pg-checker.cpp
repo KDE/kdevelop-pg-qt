@@ -26,6 +26,10 @@
 #include <iterator>
 #include <algorithm>
 
+int problem_summary_printer::_M_first_first_conflict_count = 0;
+int problem_summary_printer::_M_first_follow_conflict_count = 0;
+int problem_summary_printer::_M_error_count = 0;
+
 void FIRST_FIRST_conflict_checker::operator()(model::node *node)
 {
   _M_toplevel = node;
@@ -67,7 +71,7 @@ void FIRST_FIRST_conflict_checker::check(model::node *left, model::node *right)
             std::cerr << ", ";
         }
       std::cerr << "]" << std::endl << std::endl;
-      // ### exit(EXIT_FAILURE);
+      problem_summary_printer::report_first_first_conflict();
     }
 }
 
@@ -127,7 +131,7 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
             std::cerr << ", ";
         }
       std::cerr << "]" << std::endl << std::endl;
-      // ### exit(EXIT_FAILURE);
+      problem_summary_printer::report_first_follow_conflict();
     }
 }
 
@@ -169,7 +173,7 @@ void undefined_symbol_checker::visit_symbol(model::symbol_item *node)
     {
       std::cerr << "** ERROR Undefined symbol ``" << node->_M_name << "''"
                 << std::endl;
-      exit(EXIT_FAILURE);
+      problem_summary_printer::report_error();
     }
 }
 
@@ -185,7 +189,7 @@ void undefined_token_checker::visit_terminal(model::terminal_item *node)
     {
       std::cerr << "** ERROR Undefined token ``" << node->_M_name << "''"
                 << std::endl;
-      exit(EXIT_FAILURE);
+      problem_summary_printer::report_error();
     }
 }
 
@@ -195,9 +199,9 @@ void undefined_memberstruct_checker::operator()(std::pair<const std::string,
   if (item.first != "parserclass"
       && _G_system.symbols.find(item.first) == _G_system.symbols.end())
     {
-      std::cerr << "** ERROR Undefined structure for member code ``"
+      std::cerr << "** ERROR Undefined rule for member code ``"
                 << item.first << "''" << std::endl;
-      exit(EXIT_FAILURE);
+      problem_summary_printer::report_error();
     }
 }
 
@@ -212,6 +216,36 @@ void empty_FIRST_checker::visit_symbol(model::symbol_item *node)
     {
       std::cerr << "** ERROR Empty FIRST set for ``" << node->_M_name
                 << "''" << std::endl;
+      problem_summary_printer::report_error();
+    }
+}
+
+void problem_summary_printer::operator()()
+{
+  std::cerr << (_M_first_first_conflict_count + _M_first_follow_conflict_count)
+            << " conflicts total: " << _M_first_first_conflict_count
+            << " FIRST/FIRST conflicts, " << _M_first_follow_conflict_count
+            << " FIRST/FOLLOW conflicts." << std::endl;
+
+  if (_M_error_count > 0)
+    {
+      std::cerr << _M_error_count << " fatal errors found, exiting."
+                << std::endl;
       exit(EXIT_FAILURE);
     }
+}
+
+void problem_summary_printer::report_first_first_conflict()
+{
+  _M_first_first_conflict_count++;
+}
+
+void problem_summary_printer::report_first_follow_conflict()
+{
+  _M_first_follow_conflict_count++;
+}
+
+void problem_summary_printer::report_error()
+{
+  _M_error_count++;
 }

@@ -79,5 +79,19 @@ struct undefined_memberstruct_checker: protected default_visitor
   void operator()(std::pair<const std::string, world::member_code*> &item);
 };
 
+struct problem_summary_printer
+{
+  void operator()();
+
+  static void report_first_first_conflict();
+  static void report_first_follow_conflict();
+  static void report_error();
+
+private:
+  static int _M_first_first_conflict_count;
+  static int _M_first_follow_conflict_count;
+  static int _M_error_count;
+};
+
 #endif // KDEV_PG_CHECKER_H
 

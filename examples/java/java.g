@@ -17,7 +17,7 @@
 -- Boston, MA 02110-1301, USA.
 
 
--- Grammar for Java 1.5
+-- Grammar for Java 1.3, 1.4 or 1.5
 -- Modelled after the public domain ANTLR Java 1.5 grammar at
 -- http://www.antlr.org/grammar/1090713067533/index.html
 -- (Version 1.22.5 from January 03, 2005)

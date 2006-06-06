@@ -1,4 +1,25 @@
 %{
+/*****************************************************************************
+ * This file is part of KDevelop.                                            *
+ * Copyright (c) 2005, 2006 Jakob Petsovits <jpetso@gmx.at>                  *
+ *                                                                           *
+ * This program is free software; you can redistribute it and/or             *
+ * modify it under the terms of the GNU Library General Public               *
+ * License as published by the Free Software Foundation; either              *
+ * version 2 of the License, or (at your option) any later version.          *
+ *                                                                           *
+ * This grammar is distributed in the hope that it will be useful,           *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         *
+ * Lesser General Public License for more details.                           *
+ *                                                                           *
+ * You should have received a copy of the GNU Library General Public License *
+ * along with this library; see the file COPYING.LIB.  If not, write to      *
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,      *
+ * Boston, MA 02110-1301, USA.                                               *
+ *****************************************************************************/
+
+
 #include <iostream>
 #include "java.h"
 
@@ -98,7 +119,8 @@ NonZeroDigit    [1-9]
 
 UnicodeEscape   [\\][u]+{HexDigit}{HexDigit}{HexDigit}{HexDigit}
 OctalEscape     [\\]{OctalDigit}({Digit}({Digit})?)?
-Escape          [\\]([r]|[n]|[b]|[f]|[t]|[\\]|[']|["])|{UnicodeEscape}|{OctalEscape}
+SimpleEscape    [\\]([']|["]|[\\]|[rnbft])
+Escape          {SimpleEscape}|{UnicodeEscape}|{OctalEscape}
 
 IntSuffix       ([l]|[L])
 DecimalNum      ([0]|{NonZeroDigit}{Digit}*){IntSuffix}?
@@ -123,7 +145,6 @@ HexFloat2       {HexFloatNum}{BinaryExponent}{FloatSuffix}?
 FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
 
- // %x IN_STRING  // for the ANTLR version, not used at the moment
 %x IN_BLOCKCOMMENT
 
 %%
@@ -198,7 +219,10 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
     }
 }
 
-[ \f\t]         /* skip */ ;
+
+ /* whitespace, newlines and comments */
+
+[ \f\t\v]       /* skip */ ;
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 
 "//"[^\r\n]*    /* line comments, skip */ ;
@@ -219,7 +243,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
  /* characters and strings */
 
-[\']({Escape}|{Multibyte}|[^\r\n\'])[\']  return java::Token_CHARACTER_LITERAL;
+[\']({Escape}|{Multibyte}|[^\\\r\n\'])[\']   return java::Token_CHARACTER_LITERAL;
 [\']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?([\r]|[\n]))|[\']) {
     reportProblem("Invalid character literal...");
     std::cerr << yytext << std::endl;
@@ -233,43 +257,6 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
     return java::Token_STRING_LITERAL;
 }
 
-
- /* This is the ANTLR version, counting newlines and storing
-  * string values in a seperate buffer.
-[\"] {
-    BEGIN(IN_STRING);
-    string_buf_ptr = string_buf;
-}
-<string>{
-\" {
-    BEGIN(INITIAL);
-    *string_buf_ptr = '\0';
-    return java::Token_STRING_LITERAL;
-}
-{Octal} {
-    int result;
-    sscanf( yytext + 1, "%o", &result );
-    *string_buf_ptr++ = result;
-}
-{Unicode} {
-    int result;
-    sscanf( yytext + 1, "%x", &result );
-    *string_buf_ptr++ = result;
-}
-\\n         *string_buf_ptr++ = '\n';
-\\t         *string_buf_ptr++ = '\t';
-\\r         *string_buf_ptr++ = '\r';
-\\b         *string_buf_ptr++ = '\b';
-\\f         *string_buf_ptr++ = '\f';
-\\(.|\n)    *string_buf_ptr++ = yytext[1];
-[^\\\n\"]+ {
-    char *yptr = yytext;
-
-    while ( *yptr )
-        *string_buf_ptr++ = *yptr++;
-    }
-}	// end string states
- */
 
  /* reserved words */
 
@@ -343,6 +330,8 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "volatile"      return java::Token_VOLATILE;
 "while"         return java::Token_WHILE;
 
+
+ /* identifiers and number literals */
 
 {Letter}({Letter}|{Digit})*  return java::Token_IDENTIFIER;
 

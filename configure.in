@@ -13,4 +13,5 @@ AC_OUTPUT(Makefile
   examples/Makefile
   examples/fact/Makefile
   examples/cool/Makefile
-  examples/java/Makefile)
+  examples/java/Makefile
+  examples/csharp/Makefile)

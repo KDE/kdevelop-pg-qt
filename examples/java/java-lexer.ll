@@ -164,7 +164,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
     if (parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_AT;
     else {
-      reportProblem("Annotations are not supported by Java 1.4 or earlier.");
+      reportProblem("Annotations are not supported by Java 1.4 or earlier");
       return java::Token_INVALID;
     }
 }
@@ -214,7 +214,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
       return java::Token_ELLIPSIS;
     else {
       reportProblem("Variable-length argument lists are not supported "
-                    "by Java 1.4 or earlier.");
+                    "by Java 1.4 or earlier");
       return java::Token_INVALID;
     }
 }
@@ -222,7 +222,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
  /* whitespace, newlines and comments */
 
-[ \f\t\v]       /* skip */ ;
+[ \f\t]+        /* skip */ ;
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 
 "//"[^\r\n]*    /* line comments, skip */ ;
@@ -234,7 +234,7 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    reportProblem("Encountered end of file in an unclosed block comment...");
+    reportProblem("Encountered end of file in an unclosed block comment");
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     return java::Token_EOF;
 }
@@ -245,14 +245,14 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
 [\']({Escape}|{Multibyte}|[^\\\r\n\'])[\']   return java::Token_CHARACTER_LITERAL;
 [\']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?([\r]|[\n]))|[\']) {
-    reportProblem("Invalid character literal...");
+    reportProblem("Invalid character literal");
     std::cerr << yytext << std::endl;
     return java::Token_CHARACTER_LITERAL;
 }
 
 [\"]({Escape}|{Multibyte}|[^\\\r\n\"])*[\"]  return java::Token_STRING_LITERAL;
 [\"]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?([\r]|[\n]))|[\"]) {
-    reportProblem("Invalid string literal...");
+    reportProblem("Invalid string literal");
     std::cerr << yytext << std::endl;
     return java::Token_STRING_LITERAL;
 }

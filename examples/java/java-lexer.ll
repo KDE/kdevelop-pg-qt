@@ -122,27 +122,25 @@ OctalEscape     [\\]{OctalDigit}({Digit}({Digit})?)?
 SimpleEscape    [\\]([']|["]|[\\]|[rnbft])
 Escape          {SimpleEscape}|{UnicodeEscape}|{OctalEscape}
 
-IntSuffix       ([l]|[L])
+IntSuffix       [Ll]
 DecimalNum      ([0]|{NonZeroDigit}{Digit}*){IntSuffix}?
 OctalNum        [0]{OctalDigit}+{IntSuffix}?
-HexNum          [0]([x]|[X]){HexDigit}+{IntSuffix}?
-IntegerLiteral  ({DecimalNum}|{OctalNum}|{HexNum})
+HexNum          [0][xX]{HexDigit}+{IntSuffix}?
+IntegerLiteral  {DecimalNum}|{OctalNum}|{HexNum}
 
-Sign            ([\+]|[\-])
-FloatSuffix     ([f]|[F]|[d]|[D])
+Sign            [+-]
+FloatSuffix     [fF]|[dD]
 SignedInt       {Sign}?{Digit}+
-DecimalExpSign  ([e]|[E])
-BinaryExpSign   ([p]|[P])
-DecimalExponent {DecimalExpSign}{SignedInt}?
-BinaryExponent  {BinaryExpSign}{SignedInt}?
+DecimalExponent [eE]{SignedInt}?
+BinaryExponent  [pP]{SignedInt}?
 Float1          {Digit}+[\.]{Digit}*{DecimalExponent}?{FloatSuffix}?
 Float2          [\.]{Digit}+{DecimalExponent}?{FloatSuffix}?
 Float3          {Digit}+{DecimalExponent}{FloatSuffix}?
 Float4          {Digit}+{DecimalExponent}?{FloatSuffix}
-HexFloatNum     [0]([x]|[X]){HexDigit}*[\.]{HexDigit}+
+HexFloatNum     [0][xX]{HexDigit}*[\.]{HexDigit}+
 HexFloat1       {HexNum}[\.]?{BinaryExponent}{FloatSuffix}?
 HexFloat2       {HexFloatNum}{BinaryExponent}{FloatSuffix}?
-FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
+FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 
 
 %x IN_BLOCKCOMMENT
@@ -243,15 +241,15 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
  /* characters and strings */
 
-[\']({Escape}|{Multibyte}|[^\\\r\n\'])[\']   return java::Token_CHARACTER_LITERAL;
-[\']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?([\r]|[\n]))|[\']) {
+[']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return java::Token_CHARACTER_LITERAL;
+[']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*([\\]?[\r\n]|[']) {
     reportProblem("Invalid character literal");
     std::cerr << yytext << std::endl;
     return java::Token_CHARACTER_LITERAL;
 }
 
-[\"]({Escape}|{Multibyte}|[^\\\r\n\"])*[\"]  return java::Token_STRING_LITERAL;
-[\"]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?([\r]|[\n]))|[\"]) {
+["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return java::Token_STRING_LITERAL;
+["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*([\\]?[\r\n]|["]) {
     reportProblem("Invalid string literal");
     std::cerr << yytext << std::endl;
     return java::Token_STRING_LITERAL;
@@ -337,6 +335,9 @@ FloatingPoint   ({Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2})
 
 {IntegerLiteral}   return java::Token_INTEGER_LITERAL;
 {FloatingPoint}    return java::Token_FLOATING_POINT_LITERAL;
+
+
+ /* everything else is not a valid lexeme */
 
 .               return java::Token_INVALID;
 

@@ -20,12 +20,15 @@
  *****************************************************************************/
 
 
-#include <iostream>
 #include "csharp.h"
+#include "csharp_pp.h"
+
+#include <iostream>
 
 extern std::size_t _M_token_begin, _M_token_end;
 extern char *_G_contents;
-extern std::size_t _G_current_offset;
+std::size_t _G_current_offset;
+bool _M_used_preprocessor;
 
 #define YY_INPUT(buf, result, max_size) \
   { \
@@ -35,11 +38,41 @@ extern std::size_t _G_current_offset;
 
 #define YY_USER_INIT \
 _M_token_begin = _M_token_end = 0; \
-_G_current_offset = 0;
+_G_current_offset = 0; \
+_M_used_preprocessor = false;
 
 #define YY_USER_ACTION \
 _M_token_begin = _M_token_end; \
 _M_token_end += yyleng;
+
+// This is meant to be called with the first token in a pre-processor line.
+// Pre-processing completely bypasses the normal tokenizing process.
+#define PP_PROCESS_TOKEN(t) \
+  { \
+    _M_used_preprocessor = true; \
+    \
+    csharp_pp pp_parser; \
+    csharp_pp::pp_parse_result result = \
+      pp_parser.pp_parse_line( csharp_pp::Token_##t, parser->pp_current_scope() ); \
+    \
+    if (result == csharp_pp::result_eof) \
+      { \
+        BEGIN(INITIAL); \
+        return 0; /* end of file */  \
+      } \
+    else if (result == csharp_pp::result_invalid) \
+      { \
+        BEGIN(INITIAL); \
+        return csharp::Token_INVALID; \
+      } \
+    else if (result == csharp_pp::result_ok) \
+      { \
+        if (parser->pp_current_scope()->is_active()) \
+          BEGIN(INITIAL); \
+        else \
+          BEGIN(PP_SKIPPED_SECTION_PART); \
+      } \
+  }
 
 csharp* parser;
 
@@ -47,11 +80,6 @@ void lexer_restart(csharp* _parser) {
   parser = _parser;
   yyrestart(NULL);
   YY_USER_INIT
-}
-
-void reportProblem (const char* message)
-{
-  std::cerr << "Warning: " << message << std::endl;
 }
 
 %}
@@ -133,9 +161,9 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 
 %x IN_BLOCKCOMMENT
+%x PP_EXPECT_NEW_LINE
 %x PP_DECLARATION
 %x PP_IF_CLAUSE
-%x PP_ELSE_CLAUSE
 %x PP_LINE
 %x PP_MESSAGE
 %x PP_PRAGMA
@@ -212,7 +240,8 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 {NewLine}       /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    reportProblem("Encountered end of file in an unclosed block comment");
+    parser->report_problem( csharp::error,
+      "Encountered end of file in an unclosed block comment" );
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     return csharp::Token_EOF;
 }
@@ -223,15 +252,15 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 [']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return csharp::Token_CHARACTER_LITERAL;
 [']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?[\r\n])|[']) {
-    reportProblem("Invalid character literal");
-    std::cerr << yytext << std::endl;
+    parser->report_problem( csharp::warning,
+      std::string("Invalid character literal:\n") + yytext );
     return csharp::Token_CHARACTER_LITERAL;
 }
 
 ["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return csharp::Token_STRING_LITERAL;
 ["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?[\r\n])|["]) {
-    reportProblem("Invalid string literal");
-    std::cerr << yytext << std::endl;
+    parser->report_problem( csharp::warning,
+      std::string("Invalid string literal:\n") + yytext );
     return csharp::Token_STRING_LITERAL;
 }
  /* verbatim strings: */
@@ -333,69 +362,78 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
  */
 
 
+
  /* the pre-processor */
 
 <INITIAL,PP_SKIPPED_SECTION_PART>{
-{ppPrefix}"define"  BEGIN(PP_DECLARATION); return csharp::Token_PP_DEFINE;
-{ppPrefix}"undef"   BEGIN(PP_DECLARATION); return csharp::Token_PP_UNDEF;
-{ppPrefix}"if"      BEGIN(PP_IF_CLAUSE);   return csharp::Token_PP_IF;
-{ppPrefix}"elif"    BEGIN(PP_IF_CLAUSE);   return csharp::Token_PP_ELIF;
-{ppPrefix}"else"    BEGIN(PP_ELSE_CLAUSE); return csharp::Token_PP_ELSE;
-{ppPrefix}"endif"{ppNewLine}               return csharp::Token_PP_ENDIF;
-{ppPrefix}"line"    BEGIN(PP_LINE);        return csharp::Token_PP_LINE;
-{ppPrefix}"error"{Whitespace}?      BEGIN(PP_MESSAGE); return csharp::Token_PP_ERROR;
-{ppPrefix}"warning"{Whitespace}?    BEGIN(PP_MESSAGE); return csharp::Token_PP_WARNING;
-{ppPrefix}"region"{Whitespace}?     BEGIN(PP_MESSAGE); return csharp::Token_PP_REGION;
-{ppPrefix}"endregion"{Whitespace}?  BEGIN(PP_MESSAGE); return csharp::Token_PP_ENDREGION;
+{ppPrefix}"define"  BEGIN(PP_DECLARATION);     PP_PROCESS_TOKEN(PP_DEFINE);
+{ppPrefix}"undef"   BEGIN(PP_DECLARATION);     PP_PROCESS_TOKEN(PP_UNDEF);
+{ppPrefix}"if"      BEGIN(PP_IF_CLAUSE);       PP_PROCESS_TOKEN(PP_IF);
+{ppPrefix}"elif"    BEGIN(PP_IF_CLAUSE);       PP_PROCESS_TOKEN(PP_ELIF);
+{ppPrefix}"else"    BEGIN(PP_EXPECT_NEW_LINE); PP_PROCESS_TOKEN(PP_ELSE);
+{ppPrefix}"endif"   BEGIN(PP_EXPECT_NEW_LINE); PP_PROCESS_TOKEN(PP_ENDIF);
+{ppPrefix}"line"    BEGIN(PP_LINE);            PP_PROCESS_TOKEN(PP_LINE);
+{ppPrefix}"error"{Whitespace}?      BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_ERROR);
+{ppPrefix}"warning"{Whitespace}?    BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_WARNING);
+{ppPrefix}"region"{Whitespace}?     BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_REGION);
+{ppPrefix}"endregion"{Whitespace}?  BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_ENDREGION);
 {ppPrefix}"pragma"{Whitespace}? {
     if( parser->compatibility_mode() >= csharp::csharp20_compatibility ) {
-      BEGIN(PP_PRAGMA); return csharp::Token_PP_PRAGMA;
+      BEGIN(PP_PRAGMA); PP_PROCESS_TOKEN(PP_PRAGMA);
     }
     else {
-      reportProblem("#pragma directives are not supported by C# 1.0");
+      BEGIN(INITIAL);
+      parser->report_problem( csharp::error,
+        "#pragma directives are not supported by C# 1.0" );
       return csharp::Token_INVALID;
     }
 }
 {ppPrefix}{Identifier} {
-    reportProblem("Invalid pre-processor directive");
-    std::cerr << yytext << std::endl;
+    parser->report_problem( csharp::error,
+      std::string("Invalid pre-processor directive:\n") + yytext );
     return csharp::Token_INVALID;
 }
+}
+
+<PP_EXPECT_NEW_LINE,PP_DECLARATION,PP_IF_CLAUSE,PP_LINE,PP_MESSAGE,PP_PRAGMA>{
+<<EOF>>  return csharp_pp::Token_EOF;
+}
+
+
+<PP_EXPECT_NEW_LINE>{
+{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
+.                   return csharp_pp::Token_PP_INVALID;
 }
 
 <PP_DECLARATION>{
 {Whitespace}        /* skip */ ;
 "true"|"false" {
-    reportProblem("You may not define ``true'' or ``false'' with #define or #undef");
-    return csharp::Token_IDENTIFIER;  // we could do Token_INVALID here,
+    parser->report_problem( csharp::error,
+      "You may not define ``true'' or ``false'' with #define or #undef" );
+    return csharp_pp::Token_PP_CONDITIONAL_SYMBOL;  // we could do Token_INVALID here,
     // but this way the error is shown and the parser continues, I prefer this.
 }
-{Identifier}        return csharp::Token_PP_CONDITIONAL_SYMBOL; // ...including keywords
-{ppNewLine}         BEGIN(INITIAL); return csharp::Token_PP_NEW_LINE;
-.                   return csharp::Token_INVALID;
+{Identifier}        return csharp_pp::Token_PP_CONDITIONAL_SYMBOL; // ...including keywords
+{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
+.                   return csharp_pp::Token_PP_INVALID;
 }
 
 <PP_IF_CLAUSE>{
 {Whitespace}        /* skip */ ;
-"=="                return csharp::Token_EQUAL;
-"!="                return csharp::Token_NOT_EQUAL;
-"&&"                return csharp::Token_LOG_AND;
-"||"                return csharp::Token_LOG_OR;
-"!"                 return csharp::Token_BANG;
-"true"              return csharp::Token_TRUE;
-"false"             return csharp::Token_FALSE;
-{Identifier}        return csharp::Token_PP_CONDITIONAL_SYMBOL;
-{ppNewLine}         BEGIN(INITIAL); return csharp::Token_PP_NEW_LINE;
-.                   return csharp::Token_INVALID;
+"=="                return csharp_pp::Token_PP_EQUAL;
+"!="                return csharp_pp::Token_PP_NOT_EQUAL;
+"&&"                return csharp_pp::Token_PP_LOG_AND;
+"||"                return csharp_pp::Token_PP_LOG_OR;
+"!"                 return csharp_pp::Token_PP_BANG;
+"true"              return csharp_pp::Token_PP_TRUE;
+"false"             return csharp_pp::Token_PP_FALSE;
+"("                 return csharp_pp::Token_PP_LPAREN;
+")"                 return csharp_pp::Token_PP_RPAREN;
+{Identifier}        return csharp_pp::Token_PP_CONDITIONAL_SYMBOL;
+{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
+.                   return csharp_pp::Token_PP_INVALID;
 }
 
-<PP_ELSE_CLAUSE>{
-{ppNewLine}         BEGIN(INITIAL); return csharp::Token_PP_NEW_LINE;
-.                   return csharp::Token_INVALID;
-}
-
- /* TODO: not yet used, */
- /* has to be switched on and off in collaboration with the parser */
 <PP_SKIPPED_SECTION_PART>{
 {Whitespace}?([^#\r\n][^\r\n]*)?{NewLine}  /* skip */ ;
 .                   return csharp::Token_INVALID;
@@ -403,22 +441,22 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 <PP_LINE>{
 {Whitespace}        /* skip */ ;
-{ppNewLine}         BEGIN(INITIAL);
-{DecimalDigit}+     return csharp::Token_PP_LINE_NUMBER;
-["][^\"\r\n]["]     return csharp::Token_PP_FILE_NAME;
-"default"           return csharp::Token_DEFAULT;
-{Identifier}        return csharp::Token_PP_IDENTIFIER_OR_KEYWORD;
-.                   return csharp::Token_INVALID;
+{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
+{DecimalDigit}+     return csharp_pp::Token_PP_LINE_NUMBER;
+["][^\"\r\n]+["]    return csharp_pp::Token_PP_FILE_NAME;
+"default"           return csharp_pp::Token_PP_DEFAULT;
+{Identifier}        return csharp_pp::Token_PP_IDENTIFIER_OR_KEYWORD;
+.                   return csharp_pp::Token_PP_INVALID;
 }
 
 <PP_MESSAGE>{
-[^\r\n]             return csharp::Token_PP_MESSAGE;
-{NewLine}           BEGIN(INITIAL); return csharp::Token_PP_NEW_LINE;
+[^\r\n]+            return csharp_pp::Token_PP_MESSAGE;
+{NewLine}           return csharp_pp::Token_PP_NEW_LINE;
 }
 
 <PP_PRAGMA>{
-[^\r\n]             return csharp::Token_PP_PRAGMA_TEXT;
-{NewLine}           BEGIN(INITIAL); return csharp::Token_PP_NEW_LINE;
+[^\r\n]+            return csharp_pp::Token_PP_PRAGMA_TEXT;
+{NewLine}           return csharp_pp::Token_PP_NEW_LINE;
 }
 
 
@@ -429,18 +467,43 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 {IntegerLiteral}    return csharp::Token_INTEGER_LITERAL;
 {RealLiteral}       return csharp::Token_REAL_LITERAL;
 
- /* enable once you know that it doesn't mess up correct programs
-{InvalidReal}       {
-    reportProblem("Invalid real number: Things like ``1.'' are not allowed, it must be ``1.0''");
-    std::cerr << yytext << std::endl;
-    return csharp::Token_REAL_LITERAL;
-}
- */
-
 
  /* everything else is not a valid lexeme */
 
 .                   return csharp::Token_INVALID;
+
+
+ /* some additional checking for unclosed #ifs and #regions at the EOF */
+
+<INITIAL,PP_SKIPPED_SECTION_PART>{
+<<EOF>> {
+  if (_M_used_preprocessor == true)
+    {
+      csharp_pp_scope* current_scope = parser->pp_current_scope();
+      csharp_pp_scope::scope_type scope_type = current_scope->type();
+
+      while (scope_type != csharp_pp_scope::type_root)
+        {
+          if (scope_type == csharp_pp_scope::type_if)
+            {
+              parser->report_problem( csharp::error,
+                "Encountered end of file in an unclosed #if/#elif/#else section" );
+            }
+          else if (scope_type == csharp_pp_scope::type_region)
+            {
+              parser->report_problem( csharp::error,
+                "Encountered end of file in an unclosed #region section" );
+            }
+
+          if ( !current_scope->pop_scope(scope_type, &current_scope) )
+            break;
+
+          scope_type = current_scope->type();
+        }
+    }
+  return 0;
+}
+}
 
 %%
 

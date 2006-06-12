@@ -15,6 +15,56 @@ void csharp::set_compatibility_mode( csharp::csharp_compatibility_mode mode )
   _M_compatibility_mode = mode;
 }
 
+csharp::preprocessor_scope* csharp::pp_current_scope()
+{
+  if (_M_pp_scope == 0)
+    {
+      _M_pp_scope = new csharp::preprocessor_scope(this);
+    }
+  return _M_pp_scope->current_scope();
+}
+
+void csharp::pp_define_symbol( std::string symbol_name )
+{
+  _M_pp_defined_symbols.insert(symbol_name);
+}
+
+void csharp::pp_undefine_symbol( std::string symbol_name )
+{
+  _M_pp_defined_symbols.erase(symbol_name);
+}
+
+bool csharp::pp_is_symbol_defined( std::string symbol_name )
+{
+  return (_M_pp_defined_symbols.find(symbol_name) != _M_pp_defined_symbols.end());
+}
+
+
+// custom error recovery
+bool csharp::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    csharp::error,
+    std::string("Expected token ``") + name
+    //+ "'' instead of ``" + current_token_text
+    + "''"
+  );
+  return false;
+}
+
+bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    csharp::error,
+    std::string("Expected symbol ``") + name
+    //+ "'' instead of ``" + current_token_text
+    + "''"
+  );
+  return false;
+}
+
 
 bool csharp::parse_compilation_unit(compilation_unit_ast **yynode)
 {

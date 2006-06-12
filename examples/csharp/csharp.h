@@ -84,6 +84,12 @@ struct literal_ast: public csharp_ast_node
 
 
 
+#include "csharp_pp_scope.h"
+class csharp_pp_handler_visitor;
+
+#include <string>
+#include <set>
+
 class csharp
   {
   public:
@@ -217,82 +223,70 @@ class csharp
       Token_PARTIAL = 1085,
       Token_PLUS = 1086,
       Token_PLUS_ASSIGN = 1087,
-      Token_PP_CONDITIONAL_SYMBOL = 1088,
-      Token_PP_DEFINE = 1089,
-      Token_PP_ELIF = 1090,
-      Token_PP_ELSE = 1091,
-      Token_PP_ENDIF = 1092,
-      Token_PP_ENDREGION = 1093,
-      Token_PP_ERROR = 1094,
-      Token_PP_FILE_NAME = 1095,
-      Token_PP_IDENTIFIER_OR_KEYWORD = 1096,
-      Token_PP_IF = 1097,
-      Token_PP_LINE = 1098,
-      Token_PP_LINE_NUMBER = 1099,
-      Token_PP_MESSAGE = 1100,
-      Token_PP_NEW_LINE = 1101,
-      Token_PP_PRAGMA = 1102,
-      Token_PP_PRAGMA_TEXT = 1103,
-      Token_PP_REGION = 1104,
-      Token_PP_UNDEF = 1105,
-      Token_PP_WARNING = 1106,
-      Token_PRIVATE = 1107,
-      Token_PROTECTED = 1108,
-      Token_PUBLIC = 1109,
-      Token_QUESTION = 1110,
-      Token_QUESTIONQUESTION = 1111,
-      Token_RBRACE = 1112,
-      Token_RBRACKET = 1113,
-      Token_READONLY = 1114,
-      Token_REAL_LITERAL = 1115,
-      Token_REF = 1116,
-      Token_REMAINDER = 1117,
-      Token_REMAINDER_ASSIGN = 1118,
-      Token_REMOVE = 1119,
-      Token_RETURN = 1120,
-      Token_RPAREN = 1121,
-      Token_RSHIFT = 1122,
-      Token_RSHIFT_ASSIGN = 1123,
-      Token_SBYTE = 1124,
-      Token_SEALED = 1125,
-      Token_SEMICOLON = 1126,
-      Token_SET = 1127,
-      Token_SHORT = 1128,
-      Token_SIZEOF = 1129,
-      Token_SLASH = 1130,
-      Token_SLASH_ASSIGN = 1131,
-      Token_STACKALLOC = 1132,
-      Token_STAR = 1133,
-      Token_STAR_ASSIGN = 1134,
-      Token_STATIC = 1135,
-      Token_STRING = 1136,
-      Token_STRING_LITERAL = 1137,
-      Token_STRUCT = 1138,
-      Token_SWITCH = 1139,
-      Token_THIS = 1140,
-      Token_THROW = 1141,
-      Token_TILDE = 1142,
-      Token_TRUE = 1143,
-      Token_TRY = 1144,
-      Token_TYPEOF = 1145,
-      Token_UINT = 1146,
-      Token_ULONG = 1147,
-      Token_UNCHECKED = 1148,
-      Token_UNSAFE = 1149,
-      Token_USHORT = 1150,
-      Token_USING = 1151,
-      Token_VALUE = 1152,
-      Token_VIRTUAL = 1153,
-      Token_VOID = 1154,
-      Token_VOLATILE = 1155,
-      Token_WHERE = 1156,
-      Token_WHILE = 1157,
-      Token_YIELD = 1158,
+      Token_PRIVATE = 1088,
+      Token_PROTECTED = 1089,
+      Token_PUBLIC = 1090,
+      Token_QUESTION = 1091,
+      Token_QUESTIONQUESTION = 1092,
+      Token_RBRACE = 1093,
+      Token_RBRACKET = 1094,
+      Token_READONLY = 1095,
+      Token_REAL_LITERAL = 1096,
+      Token_REF = 1097,
+      Token_REMAINDER = 1098,
+      Token_REMAINDER_ASSIGN = 1099,
+      Token_REMOVE = 1100,
+      Token_RETURN = 1101,
+      Token_RPAREN = 1102,
+      Token_RSHIFT = 1103,
+      Token_RSHIFT_ASSIGN = 1104,
+      Token_SBYTE = 1105,
+      Token_SEALED = 1106,
+      Token_SEMICOLON = 1107,
+      Token_SET = 1108,
+      Token_SHORT = 1109,
+      Token_SIZEOF = 1110,
+      Token_SLASH = 1111,
+      Token_SLASH_ASSIGN = 1112,
+      Token_STACKALLOC = 1113,
+      Token_STAR = 1114,
+      Token_STAR_ASSIGN = 1115,
+      Token_STATIC = 1116,
+      Token_STRING = 1117,
+      Token_STRING_LITERAL = 1118,
+      Token_STRUCT = 1119,
+      Token_SWITCH = 1120,
+      Token_THIS = 1121,
+      Token_THROW = 1122,
+      Token_TILDE = 1123,
+      Token_TRUE = 1124,
+      Token_TRY = 1125,
+      Token_TYPEOF = 1126,
+      Token_UINT = 1127,
+      Token_ULONG = 1128,
+      Token_UNCHECKED = 1129,
+      Token_UNSAFE = 1130,
+      Token_USHORT = 1131,
+      Token_USING = 1132,
+      Token_VALUE = 1133,
+      Token_VIRTUAL = 1134,
+      Token_VOID = 1135,
+      Token_VOLATILE = 1136,
+      Token_WHERE = 1137,
+      Token_WHILE = 1138,
+      Token_YIELD = 1139,
       token_type_size
     }; // token_type_enum
 
     // user defined declarations:
   public:
+
+    /**
+     * Transform the raw input into tokens.
+     * When this method returns, the parser's token stream has been filled
+     * and any parse_*() method can be called.
+     */
+    void tokenize();
 
     // The compatibility_mode status variable tells which version of Java
     // should be checked against.
@@ -300,13 +294,45 @@ class csharp
       csharp10_compatibility = 100,
       csharp20_compatibility = 200,
     };
-
     csharp::csharp_compatibility_mode compatibility_mode();
     void set_compatibility_mode( csharp::csharp_compatibility_mode mode );
 
+    typedef csharp_pp_scope preprocessor_scope;
+    preprocessor_scope* pp_current_scope();
+
+    void pp_define_symbol( std::string symbol_name );
+
+    enum problem_type {
+      error,
+      warning,
+      info
+    };
+    void report_problem( csharp::problem_type type, const char* message );
+    void report_problem( csharp::problem_type type, std::string message );
+
   protected:
+
+    friend class csharp_pp_handler_visitor;
+
+    /** Called when an #error or #warning directive has been found.
+     *  @param type   Either csharp::error or csharp::warning.
+     *  @param label  The error/warning text.
+     */
+    virtual void pp_diagnostic( csharp::problem_type type, std::string message )
+    {}
+    virtual void pp_diagnostic( csharp::problem_type type )
+    {}
+
   private:
+
+    void pp_undefine_symbol( std::string symbol_name );
+    bool pp_is_symbol_defined( std::string symbol_name );
+
     csharp::csharp_compatibility_mode _M_compatibility_mode;
+    preprocessor_scope* _M_pp_scope;
+    std::set<std::string>
+    _M_pp_defined_symbols;
+
 
   public:
     csharp()
@@ -316,7 +342,19 @@ class csharp
       yytoken = Token_EOF;
 
       // user defined constructor code:
+
       _M_compatibility_mode = csharp20_compatibility;
+      _M_pp_scope = 0;
+
+    }
+
+    virtual ~csharp()
+    {
+      // user defined destructor code:
+
+      if (_M_pp_scope != 0)
+        delete _M_pp_scope;
+
     }
 
     bool parse_compilation_unit(compilation_unit_ast **yynode);

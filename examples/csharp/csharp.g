@@ -41,26 +41,89 @@
 
 
 --
+-- Global declarations
+--
+
+[:
+#include "csharp_pp_scope.h"
+class csharp_pp_handler_visitor;
+
+#include <string>
+#include <set>
+:]
+
+
+
+--
 -- Parser class members
 --
 
 %member (parserclass: public declaration)
 [:
+  /**
+   * Transform the raw input into tokens.
+   * When this method returns, the parser's token stream has been filled
+   * and any parse_*() method can be called.
+   */
+  void tokenize();
+
   // The compatibility_mode status variable tells which version of Java
   // should be checked against.
   enum csharp_compatibility_mode {
     csharp10_compatibility = 100,
     csharp20_compatibility = 200,
   };
-
   csharp::csharp_compatibility_mode compatibility_mode();
   void set_compatibility_mode( csharp::csharp_compatibility_mode mode );
+
+  typedef csharp_pp_scope preprocessor_scope;
+  preprocessor_scope* pp_current_scope();
+
+  void pp_define_symbol( std::string symbol_name );
+
+  enum problem_type {
+    error,
+    warning,
+    info
+  };
+  void report_problem( csharp::problem_type type, const char* message );
+  void report_problem( csharp::problem_type type, std::string message );
+:]
+
+%member (parserclass: protected declaration)
+[:
+  friend class csharp_pp_handler_visitor;
+
+  /** Called when an #error or #warning directive has been found.
+   *  @param type   Either csharp::error or csharp::warning.
+   *  @param label  The error/warning text.
+   */
+  virtual void pp_diagnostic( csharp::problem_type type, std::string message ) {}
+  virtual void pp_diagnostic( csharp::problem_type type ) {}
 :]
 
 %member (parserclass: private declaration)
-  [: csharp::csharp_compatibility_mode _M_compatibility_mode; :]
+[:
+  void pp_undefine_symbol( std::string symbol_name );
+  bool pp_is_symbol_defined( std::string symbol_name );
+
+  csharp::csharp_compatibility_mode _M_compatibility_mode;
+  preprocessor_scope* _M_pp_scope;
+  std::set<std::string> _M_pp_defined_symbols;
+:]
+
 %member (parserclass: constructor)
-  [: _M_compatibility_mode = csharp20_compatibility; :]
+[:
+  _M_compatibility_mode = csharp20_compatibility;
+  _M_pp_scope = 0;
+:]
+
+%member (parserclass: destructor)
+[:
+  if (_M_pp_scope != 0)
+    delete _M_pp_scope;
+:]
+
 
 
 --
@@ -80,6 +143,7 @@
   };
   literal_type_enum literal_type;
 :]
+
 
 
 
@@ -138,17 +202,6 @@
        CHARACTER_LITERAL ("character literal"),
        STRING_LITERAL ("string literal"), IDENTIFIER ("identifier") ;;
 
--- tokens only used in the pre-processor:
-%token PP_DEFINE ("#define"), PP_UNDEF ("#undef"), PP_IF ("#if"),
-       PP_ELIF ("#elif"), PP_ELSE ("#else"), PP_ENDIF ("#endif"),
-       PP_LINE ("#line"), PP_ERROR ("#error"), PP_WARNING ("#warning"),
-       PP_REGION ("#region"), PP_ENDREGION ("#endregion"),
-       PP_PRAGMA ("#pragma"), PP_CONDITIONAL_SYMBOL ("pre-processor symbol"),
-       PP_NEW_LINE ("line break"), PP_LINE_NUMBER ("line number"),
-       PP_FILE_NAME ("file name (in double quotes)"),
-       PP_IDENTIFIER_OR_KEYWORD ("identifier or keyword"),
-       PP_MESSAGE ("single-line text"), PP_PRAGMA_TEXT ("pragma text") ;;
-
 -- token that makes the parser fail in any case:
 %token INVALID ("invalid token") ;;
 
@@ -204,6 +257,56 @@ csharp::csharp_compatibility_mode csharp::compatibility_mode() {
 }
 void csharp::set_compatibility_mode( csharp::csharp_compatibility_mode mode ) {
   _M_compatibility_mode = mode;
+}
+
+csharp::preprocessor_scope* csharp::pp_current_scope()
+{
+  if (_M_pp_scope == 0)
+    {
+      _M_pp_scope = new csharp::preprocessor_scope(this);
+    }
+  return _M_pp_scope->current_scope();
+}
+
+void csharp::pp_define_symbol( std::string symbol_name )
+{
+  _M_pp_defined_symbols.insert(symbol_name);
+}
+
+void csharp::pp_undefine_symbol( std::string symbol_name )
+{
+  _M_pp_defined_symbols.erase(symbol_name);
+}
+
+bool csharp::pp_is_symbol_defined( std::string symbol_name )
+{
+  return (_M_pp_defined_symbols.find(symbol_name) != _M_pp_defined_symbols.end());
+}
+
+
+// custom error recovery
+bool csharp::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    csharp::error,
+    std::string("Expected token ``") + name
+      //+ "'' instead of ``" + current_token_text
+      + "''"
+  );
+  return false;
+}
+
+bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    csharp::error,
+    std::string("Expected symbol ``") + name
+      //+ "'' instead of ``" + current_token_text
+      + "''"
+  );
+  return false;
 }
 
 :]

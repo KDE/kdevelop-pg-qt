@@ -7,15 +7,9 @@
 #include <fstream>
 
 char *_G_contents;
-std::size_t _M_token_begin, _M_token_end;
-std::size_t _G_current_offset;
-extern char* yytext;
 
-static void tokenize(csharp &m);
 static void usage(char const* argv0);
 static bool parse_file(char const* filename, csharp::csharp_compatibility_mode compatibility_mode);
-int yylex();
-void lexer_restart(csharp* parser);
 
 
 void print_token_environment(csharp* parser)
@@ -45,25 +39,6 @@ void print_token_environment(csharp* parser)
     std::cerr << std::endl;
 
     done = true;
-}
-
-// custom error recovery
-bool csharp::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
-{
-    print_token_environment(this);
-    std::cerr << "** ERROR expected token ``" << name
-              //<< "'' instead of ``" << current_token_text
-              << "''" << std::endl;
-
-    return false;
-}
-
-bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
-{
-    print_token_environment(this);
-    std::cerr << "** ERROR expected symbol ``" << name
-              << "''" << std::endl;
-    return false;
 }
 
 
@@ -153,7 +128,7 @@ bool parse_file(char const *filename, csharp::csharp_compatibility_mode compatib
   parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  tokenize(parser);
+  parser.tokenize();
 
   // 2) parse
   bool matched = true; // as long as the part below is commented out
@@ -174,28 +149,6 @@ bool parse_file(char const *filename, csharp::csharp_compatibility_mode compatib
   delete[] _G_contents;
 
   return matched;
-}
-
-static void tokenize(csharp &m)
-{
-  ::lexer_restart(&m);
-  int kind = csharp::Token_EOF;
-  do
-    {
-      kind = ::yylex();
-      std::cerr << yytext << std::endl; //" "; // debug output
-      if (!kind)
-        kind = csharp::Token_EOF;
-
-      csharp::token_type &t = m.token_stream->next();
-      t.kind = kind;
-      t.begin = _M_token_begin;
-      t.end = _M_token_end;
-      t.text = _G_contents;
-    }
-  while (kind != csharp::Token_EOF);
-
-  m.yylex(); // produce the look ahead token
 }
 
 static void usage(char const* argv0)

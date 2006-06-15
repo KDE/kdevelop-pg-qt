@@ -17,6 +17,32 @@ void java::set_compatibility_mode( java::java_compatibility_mode mode )
 }
 
 
+// custom error recovery
+bool java::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    java::error,
+    std::string("Expected token ``") + name
+    //+ "'' instead of ``" + current_token_text
+    + "''"
+  );
+  return false;
+}
+
+bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    java::error,
+    std::string("Expected symbol ``") + name
+    //+ "'' instead of ``" + current_token_text
+    + "''"
+  );
+  return false;
+}
+
+
 // lookahead hacks to make up for backtracking or LL(k)
 // which are not yet implemented
 
@@ -7691,7 +7717,8 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
-          (*yynode)->incremented_expression = __node_288;
+          (*yynode)->unary_expression = __node_288;
+          (*yynode)->type = unary_expression_ast::type_incremented_expression;
         }
       else if (yytoken == Token_DECREMENT)
         {
@@ -7703,7 +7730,8 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
-          (*yynode)->decremented_expression = __node_289;
+          (*yynode)->unary_expression = __node_289;
+          (*yynode)->type = unary_expression_ast::type_decremented_expression;
         }
       else if (yytoken == Token_MINUS)
         {
@@ -7715,7 +7743,8 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
-          (*yynode)->unary_minus_expression = __node_290;
+          (*yynode)->unary_expression = __node_290;
+          (*yynode)->type = unary_expression_ast::type_unary_minus_expression;
         }
       else if (yytoken == Token_PLUS)
         {
@@ -7727,7 +7756,8 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
             }
-          (*yynode)->unary_plus_expression = __node_291;
+          (*yynode)->unary_expression = __node_291;
+          (*yynode)->type = unary_expression_ast::type_unary_plus_expression;
         }
       else if (yytoken == Token_BOOLEAN
                || yytoken == Token_BYTE
@@ -7759,7 +7789,8 @@ bool java::parse_unary_expression(unary_expression_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_unary_expression_not_plusminus, "unary_expression_not_plusminus");
             }
-          (*yynode)->other_expression = __node_292;
+          (*yynode)->unary_expression_not_plusminus = __node_292;
+          (*yynode)->type = unary_expression_ast::type_unary_expression_not_plusminus;
         }
       else
         {

@@ -1673,11 +1673,25 @@ struct unary_expression_ast: public java_ast_node
       KIND = Kind_unary_expression
     };
 
-    unary_expression_ast *incremented_expression;
-    unary_expression_ast *decremented_expression;
-    unary_expression_ast *unary_minus_expression;
-    unary_expression_ast *unary_plus_expression;
-    unary_expression_not_plusminus_ast *other_expression;
+    unary_expression_ast *unary_expression;
+    unary_expression_not_plusminus_ast *unary_expression_not_plusminus;
+
+    // user defined declarations:
+  public:
+
+    enum unary_expression_type_enum {
+      type_incremented_expression,
+      type_decremented_expression,
+      type_unary_minus_expression,
+      type_unary_plus_expression,
+      type_unary_expression_not_plusminus
+    };
+    unary_expression_type_enum type;
+
+  protected:
+  private:
+
+  public:
 
   };
 
@@ -1793,6 +1807,8 @@ struct wildcard_type_bounds_ast: public java_ast_node
   };
 
 
+
+#include <string>
 
 class java
   {
@@ -1953,8 +1969,17 @@ class java
     // user defined declarations:
   public:
 
-    // The compatibility_mode status variable tells which version of Java
-    // should be checked against.
+    /**
+     * Transform the raw input into tokens.
+     * When this method returns, the parser's token stream has been filled
+     * and any parse_*() method can be called.
+     */
+    void tokenize();
+
+    /**
+     * The compatibility_mode status variable tells which version of Java
+     * should be checked against.
+     */
     enum java_compatibility_mode {
       java13_compatibility = 130,
       java14_compatibility = 140,
@@ -1964,8 +1989,17 @@ class java
     java::java_compatibility_mode compatibility_mode();
     void set_compatibility_mode( java::java_compatibility_mode mode );
 
+    enum problem_type {
+      error,
+      warning,
+      info
+    };
+    void report_problem( java::problem_type type, const char* message );
+    void report_problem( java::problem_type type, std::string message );
+
   protected:
   private:
+
     java::java_compatibility_mode _M_compatibility_mode;
 
     // ltCounter stores the amount of currently open type arguments rules,
@@ -3363,11 +3397,8 @@ class java_default_visitor: public java_visitor
 
     virtual void visit_unary_expression(unary_expression_ast *node)
     {
-      visit_node(node->incremented_expression);
-      visit_node(node->decremented_expression);
-      visit_node(node->unary_minus_expression);
-      visit_node(node->unary_plus_expression);
-      visit_node(node->other_expression);
+      visit_node(node->unary_expression);
+      visit_node(node->unary_expression_not_plusminus);
     }
 
     virtual void visit_unary_expression_not_plusminus(unary_expression_not_plusminus_ast *node)

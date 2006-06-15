@@ -91,13 +91,32 @@
 
 
 --
+-- Global declarations
+--
+
+[:
+#include <string>
+:]
+
+
+
+--
 -- Parser class members
 --
 
 %member (parserclass: public declaration)
 [:
-  // The compatibility_mode status variable tells which version of Java
-  // should be checked against.
+  /**
+   * Transform the raw input into tokens.
+   * When this method returns, the parser's token stream has been filled
+   * and any parse_*() method can be called.
+   */
+  void tokenize();
+
+  /**
+   * The compatibility_mode status variable tells which version of Java
+   * should be checked against.
+   */
   enum java_compatibility_mode {
     java13_compatibility = 130,
     java14_compatibility = 140,
@@ -106,15 +125,20 @@
 
   java::java_compatibility_mode compatibility_mode();
   void set_compatibility_mode( java::java_compatibility_mode mode );
+
+  enum problem_type {
+    error,
+    warning,
+    info
+  };
+  void report_problem( java::problem_type type, const char* message );
+  void report_problem( java::problem_type type, std::string message );
 :]
 
 %member (parserclass: private declaration)
-  [: java::java_compatibility_mode _M_compatibility_mode; :]
-%member (parserclass: constructor)
-  [: _M_compatibility_mode = java15_compatibility; :]
-
-%member (parserclass: private declaration)
 [:
+  java::java_compatibility_mode _M_compatibility_mode;
+
   // ltCounter stores the amount of currently open type arguments rules,
   // all of which are beginning with a less than ("<") character.
   // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
@@ -132,6 +156,9 @@
   bool lookahead_is_parameter_declaration();
   bool lookahead_is_cast_expression();
 :]
+
+%member (parserclass: constructor)
+  [: _M_compatibility_mode = java15_compatibility; :]
 
 
 --
@@ -282,6 +309,18 @@
     op_remainder
   };
   multiplicative_operator_enum multiplicative_operator;
+:]
+
+%member (unary_expression: public declaration)
+[:
+  enum unary_expression_type_enum {
+    type_incremented_expression,
+    type_decremented_expression,
+    type_unary_minus_expression,
+    type_unary_plus_expression,
+    type_unary_expression_not_plusminus
+  };
+  unary_expression_type_enum type;
 :]
 
 %member (postfix_operator: public declaration)
@@ -1353,11 +1392,18 @@
    expression=unary_expression
 -> multiplicative_expression_rest ;;
 
-   INCREMENT incremented_expression=unary_expression
- | DECREMENT decremented_expression=unary_expression
- | MINUS unary_minus_expression=unary_expression
- | PLUS  unary_plus_expression=unary_expression
- | other_expression=unary_expression_not_plusminus
+ (
+   INCREMENT unary_expression=unary_expression
+     [: (*yynode)->type = unary_expression_ast::type_incremented_expression; :]
+ | DECREMENT unary_expression=unary_expression
+     [: (*yynode)->type = unary_expression_ast::type_decremented_expression; :]
+ | MINUS unary_expression=unary_expression
+     [: (*yynode)->type = unary_expression_ast::type_unary_minus_expression; :]
+ | PLUS  unary_expression=unary_expression
+     [: (*yynode)->type = unary_expression_ast::type_unary_plus_expression; :]
+ | unary_expression_not_plusminus=unary_expression_not_plusminus
+     [: (*yynode)->type = unary_expression_ast::type_unary_expression_not_plusminus; :]
+ )
 -> unary_expression ;;
 
 
@@ -1621,6 +1667,32 @@ java::java_compatibility_mode java::compatibility_mode() {
 }
 void java::set_compatibility_mode( java::java_compatibility_mode mode ) {
   _M_compatibility_mode = mode;
+}
+
+
+// custom error recovery
+bool java::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    java::error,
+    std::string("Expected token ``") + name
+      //+ "'' instead of ``" + current_token_text
+      + "''"
+  );
+  return false;
+}
+
+bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+  //print_token_environment(this);
+  report_problem(
+    java::error,
+    std::string("Expected symbol ``") + name
+      //+ "'' instead of ``" + current_token_text
+      + "''"
+  );
+  return false;
 }
 
 

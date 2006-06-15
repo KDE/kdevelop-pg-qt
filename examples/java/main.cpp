@@ -7,15 +7,9 @@
 #include <fstream>
 
 char *_G_contents;
-std::size_t _M_token_begin, _M_token_end;
-std::size_t _G_current_offset;
-extern char* yytext;
 
-static void tokenize(java &m);
 static void usage(char const* argv0);
 static bool parse_file(char const* filename, java::java_compatibility_mode compatibility_mode);
-int yylex();
-void lexer_restart(java* parser);
 
 
 void print_token_environment(java* parser)
@@ -45,25 +39,6 @@ void print_token_environment(java* parser)
     std::cerr << std::endl;
 
     done = true;
-}
-
-// custom error recovery
-bool java::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
-{
-    print_token_environment(this);
-    std::cerr << "** ERROR expected token ``" << name
-              //<< "'' instead of ``" << current_token_text
-              << "''" << std::endl;
-
-    return false;
-}
-
-bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
-{
-    print_token_environment(this);
-    std::cerr << "** ERROR expected symbol ``" << name
-              << "''" << std::endl;
-    return false;
 }
 
 
@@ -152,7 +127,7 @@ bool parse_file(char const *filename, java::java_compatibility_mode compatibilit
   parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  tokenize(parser);
+  parser.tokenize();
 
   // 2) parse
   compilation_unit_ast *ast = 0;
@@ -170,28 +145,6 @@ bool parse_file(char const *filename, java::java_compatibility_mode compatibilit
   delete[] _G_contents;
 
   return matched;
-}
-
-static void tokenize(java &m)
-{
-  ::lexer_restart(&m);
-  int kind = java::Token_EOF;
-  do
-    {
-      kind = ::yylex();
-      //std::cerr << yytext << std::endl; //" "; // debug output
-      if (!kind)
-        kind = java::Token_EOF;
-
-      java::token_type &t = m.token_stream->next();
-      t.kind = kind;
-      t.begin = _M_token_begin;
-      t.end = _M_token_end;
-      t.text = _G_contents;
-    }
-  while (kind != java::Token_EOF);
-
-  m.yylex(); // produce the look ahead token
 }
 
 static void usage(char const* argv0)

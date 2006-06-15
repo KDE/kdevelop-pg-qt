@@ -20,12 +20,24 @@
  *****************************************************************************/
 
 
-#include <iostream>
 #include "java.h"
 
-extern std::size_t _M_token_begin, _M_token_end;
+#include <iostream>
+
+/* call this before calling yylex(): */
+void lexer_restart(java* parser);
+
+extern std::size_t _G_token_begin, _G_token_end;
 extern char *_G_contents;
-extern std::size_t _G_current_offset;
+
+
+
+/* the rest of these declarations are internal to the lexer,
+ * don't use them outside of this file. */
+
+std::size_t _G_current_offset;
+java* _G_parser;
+
 
 #define YY_INPUT(buf, result, max_size) \
   { \
@@ -34,25 +46,12 @@ extern std::size_t _G_current_offset;
   }
 
 #define YY_USER_INIT \
-_M_token_begin = _M_token_end = 0; \
+_G_token_begin = _G_token_end = 0; \
 _G_current_offset = 0;
 
 #define YY_USER_ACTION \
-_M_token_begin = _M_token_end; \
-_M_token_end += yyleng;
-
-java* parser;
-
-void lexer_restart(java* _parser) {
-  parser = _parser;
-  yyrestart(NULL);
-  YY_USER_INIT
-}
-
-void reportProblem (const char* message)
-{
-  std::cerr << "Warning: " << message << std::endl;
-}
+_G_token_begin = _G_token_end; \
+_G_token_end += yyleng;
 
 %}
 
@@ -159,10 +158,11 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 ";"             return java::Token_SEMICOLON;
 "."             return java::Token_DOT;
 "@"             {
-    if (parser->compatibility_mode() >= java::java15_compatibility)
+    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_AT;
     else {
-      reportProblem("Annotations are not supported by Java 1.4 or earlier");
+      _G_parser->report_problem( java::error,
+        "Annotations are not supported by Java 1.4 or earlier");
       return java::Token_INVALID;
     }
 }
@@ -208,11 +208,11 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 ">>>"           return java::Token_UNSIGNED_RSHIFT;
 ">>>="          return java::Token_UNSIGNED_RSHIFT_ASSIGN;
 "..."           {
-    if (parser->compatibility_mode() >= java::java15_compatibility)
+    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_ELLIPSIS;
     else {
-      reportProblem("Variable-length argument lists are not supported "
-                    "by Java 1.4 or earlier");
+      _G_parser->report_problem( java::error,
+        "Variable-length argument lists are not supported by Java 1.4 or earlier");
       return java::Token_INVALID;
     }
 }
@@ -232,8 +232,8 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    reportProblem("Encountered end of file in an unclosed block comment");
-    BEGIN(INITIAL); // is not set automatically by yyrestart()
+    _G_parser->report_problem( java::error,
+      "Encountered end of file in an unclosed block comment");
     return java::Token_EOF;
 }
 }
@@ -243,15 +243,15 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 
 [']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return java::Token_CHARACTER_LITERAL;
 [']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*([\\]?[\r\n]|[']) {
-    reportProblem("Invalid character literal");
-    std::cerr << yytext << std::endl;
+    _G_parser->report_problem( java::error,
+      std::string("Invalid character literal: ") + yytext );
     return java::Token_CHARACTER_LITERAL;
 }
 
 ["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return java::Token_STRING_LITERAL;
 ["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*([\\]?[\r\n]|["]) {
-    reportProblem("Invalid string literal");
-    std::cerr << yytext << std::endl;
+    _G_parser->report_problem( java::error,
+      std::string("Invalid string literal: ") + yytext );
     return java::Token_STRING_LITERAL;
 }
 
@@ -260,7 +260,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 
 "abstract"      return java::Token_ABSTRACT;
 "assert"        {
-    if (parser->compatibility_mode() >= java::java14_compatibility)
+    if (_G_parser->compatibility_mode() >= java::java14_compatibility)
       return java::Token_ASSERT;
     else
       return java::Token_IDENTIFIER;
@@ -273,7 +273,8 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "char"          return java::Token_CHAR;
 "class"         return java::Token_CLASS;
 "const"         {
-    reportProblem("\"const\": reserved but unused (invalid) keyword");
+    _G_parser->report_problem( java::error,
+      "\"const\": reserved but unused (invalid) keyword");
     return java::Token_CONST;
 }
 "continue"      return java::Token_CONTINUE;
@@ -282,7 +283,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "double"        return java::Token_DOUBLE;
 "else"          return java::Token_ELSE;
 "enum"          {
-    if (parser->compatibility_mode() >= java::java15_compatibility)
+    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
       return java::Token_ENUM;
     else
       return java::Token_IDENTIFIER;
@@ -294,7 +295,8 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "float"         return java::Token_FLOAT;
 "for"           return java::Token_FOR;
 "goto"          {
-    reportProblem("\"goto\": reserved but unused (invalid) keyword");
+    _G_parser->report_problem( java::error,
+      "\"goto\": reserved but unused (invalid) keyword");
     return java::Token_GOTO;
 }
 "if"            return java::Token_IF;
@@ -342,5 +344,12 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 .               return java::Token_INVALID;
 
 %%
+
+void lexer_restart(java* _parser) {
+  _G_parser = _parser;
+  yyrestart(NULL);
+  BEGIN(INITIAL); // is not set automatically by yyrestart()
+  YY_USER_INIT
+}
 
 int yywrap() { return 1; }

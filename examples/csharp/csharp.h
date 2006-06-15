@@ -84,9 +84,6 @@ struct literal_ast: public csharp_ast_node
 
 
 
-#include "csharp_pp_scope.h"
-class csharp_pp_handler_visitor;
-
 #include <string>
 #include <set>
 
@@ -297,9 +294,6 @@ class csharp
     csharp::csharp_compatibility_mode compatibility_mode();
     void set_compatibility_mode( csharp::csharp_compatibility_mode mode );
 
-    typedef csharp_pp_scope preprocessor_scope;
-    preprocessor_scope* pp_current_scope();
-
     void pp_define_symbol( std::string symbol_name );
 
     enum problem_type {
@@ -312,7 +306,7 @@ class csharp
 
   protected:
 
-    friend class csharp_pp_handler_visitor;
+    friend class csharp_pp_handler_visitor; // calls the pp_*() methods
 
     /** Called when an #error or #warning directive has been found.
      *  @param type   Either csharp::error or csharp::warning.
@@ -329,7 +323,6 @@ class csharp
     bool pp_is_symbol_defined( std::string symbol_name );
 
     csharp::csharp_compatibility_mode _M_compatibility_mode;
-    preprocessor_scope* _M_pp_scope;
     std::set<std::string>
     _M_pp_defined_symbols;
 
@@ -344,16 +337,6 @@ class csharp
       // user defined constructor code:
 
       _M_compatibility_mode = csharp20_compatibility;
-      _M_pp_scope = 0;
-
-    }
-
-    virtual ~csharp()
-    {
-      // user defined destructor code:
-
-      if (_M_pp_scope != 0)
-        delete _M_pp_scope;
 
     }
 

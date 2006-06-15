@@ -45,9 +45,6 @@
 --
 
 [:
-#include "csharp_pp_scope.h"
-class csharp_pp_handler_visitor;
-
 #include <string>
 #include <set>
 :]
@@ -76,9 +73,6 @@ class csharp_pp_handler_visitor;
   csharp::csharp_compatibility_mode compatibility_mode();
   void set_compatibility_mode( csharp::csharp_compatibility_mode mode );
 
-  typedef csharp_pp_scope preprocessor_scope;
-  preprocessor_scope* pp_current_scope();
-
   void pp_define_symbol( std::string symbol_name );
 
   enum problem_type {
@@ -92,7 +86,7 @@ class csharp_pp_handler_visitor;
 
 %member (parserclass: protected declaration)
 [:
-  friend class csharp_pp_handler_visitor;
+  friend class csharp_pp_handler_visitor; // calls the pp_*() methods
 
   /** Called when an #error or #warning directive has been found.
    *  @param type   Either csharp::error or csharp::warning.
@@ -108,20 +102,12 @@ class csharp_pp_handler_visitor;
   bool pp_is_symbol_defined( std::string symbol_name );
 
   csharp::csharp_compatibility_mode _M_compatibility_mode;
-  preprocessor_scope* _M_pp_scope;
   std::set<std::string> _M_pp_defined_symbols;
 :]
 
 %member (parserclass: constructor)
 [:
   _M_compatibility_mode = csharp20_compatibility;
-  _M_pp_scope = 0;
-:]
-
-%member (parserclass: destructor)
-[:
-  if (_M_pp_scope != 0)
-    delete _M_pp_scope;
 :]
 
 
@@ -257,15 +243,6 @@ csharp::csharp_compatibility_mode csharp::compatibility_mode() {
 }
 void csharp::set_compatibility_mode( csharp::csharp_compatibility_mode mode ) {
   _M_compatibility_mode = mode;
-}
-
-csharp::preprocessor_scope* csharp::pp_current_scope()
-{
-  if (_M_pp_scope == 0)
-    {
-      _M_pp_scope = new csharp::preprocessor_scope(this);
-    }
-  return _M_pp_scope->current_scope();
 }
 
 void csharp::pp_define_symbol( std::string symbol_name )

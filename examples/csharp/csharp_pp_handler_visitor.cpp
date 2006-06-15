@@ -79,6 +79,12 @@ void csharp_pp_handler_visitor::visit_pp_elif_clause(pp_elif_clause_ast* node)
   if (_M_scope == 0 || _M_pp_parser == 0)
     return;
 
+  if (_M_scope->type() != csharp_pp_scope::type_if)
+    {
+      _M_scope->parser()->report_problem( csharp::error,
+        "#elif is unexpected here");
+    }
+
   if (_M_scope->is_waiting_for_active_section())
     {
       visit_node(node->expression);
@@ -92,6 +98,12 @@ void csharp_pp_handler_visitor::visit_pp_else_clause(pp_else_clause_ast* node)
 {
   if (_M_scope == 0 || _M_pp_parser == 0)
     return;
+
+  if (_M_scope->type() != csharp_pp_scope::type_if)
+    {
+      _M_scope->parser()->report_problem( csharp::error,
+        "#else is unexpected here");
+    }
 
   if (_M_scope->is_waiting_for_active_section())
     _M_scope->set_activated(true);

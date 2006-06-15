@@ -25,10 +25,27 @@
 
 #include <iostream>
 
-extern std::size_t _M_token_begin, _M_token_end;
+/* call this before calling yylex(): */
+void lexer_restart(csharp* parser);
+
+extern std::size_t _G_token_begin, _G_token_end;
 extern char *_G_contents;
+
+
+
+/* the rest of these declarations are internal to the lexer,
+ * don't use them outside of this file. */
+
 std::size_t _G_current_offset;
-bool _M_used_preprocessor;
+csharp* _G_parser;
+csharp_pp_scope* _G_pp_root_scope;
+
+// retrieves the upper-most pre-processor scope
+csharp_pp_scope* pp_current_scope();
+
+// to be called from within <<EOF>> rules to free memory and report open scopes
+void cleanup();
+
 
 #define YY_INPUT(buf, result, max_size) \
   { \
@@ -37,23 +54,20 @@ bool _M_used_preprocessor;
   }
 
 #define YY_USER_INIT \
-_M_token_begin = _M_token_end = 0; \
-_G_current_offset = 0; \
-_M_used_preprocessor = false;
+_G_token_begin = _G_token_end = 0; \
+_G_current_offset = 0;
 
 #define YY_USER_ACTION \
-_M_token_begin = _M_token_end; \
-_M_token_end += yyleng;
+_G_token_begin = _G_token_end; \
+_G_token_end += yyleng;
 
 // This is meant to be called with the first token in a pre-processor line.
 // Pre-processing completely bypasses the normal tokenizing process.
 #define PP_PROCESS_TOKEN(t) \
   { \
-    _M_used_preprocessor = true; \
-    \
     csharp_pp pp_parser; \
     csharp_pp::pp_parse_result result = \
-      pp_parser.pp_parse_line( csharp_pp::Token_##t, parser->pp_current_scope() ); \
+      pp_parser.pp_parse_line( csharp_pp::Token_##t, pp_current_scope() ); \
     \
     if (result == csharp_pp::result_eof) \
       { \
@@ -67,20 +81,12 @@ _M_token_end += yyleng;
       } \
     else if (result == csharp_pp::result_ok) \
       { \
-        if (parser->pp_current_scope()->is_active()) \
+        if (pp_current_scope()->is_active()) \
           BEGIN(INITIAL); \
         else \
           BEGIN(PP_SKIPPED_SECTION_PART); \
       } \
   }
-
-csharp* parser;
-
-void lexer_restart(csharp* _parser) {
-  parser = _parser;
-  yyrestart(NULL);
-  YY_USER_INIT
-}
 
 %}
 
@@ -240,9 +246,9 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 {NewLine}       /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    parser->report_problem( csharp::error,
+    _G_parser->report_problem( csharp::error,
       "Encountered end of file in an unclosed block comment" );
-    BEGIN(INITIAL); // is not set automatically by yyrestart()
+    cleanup();
     return csharp::Token_EOF;
 }
 }
@@ -252,14 +258,14 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 [']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return csharp::Token_CHARACTER_LITERAL;
 [']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?[\r\n])|[']) {
-    parser->report_problem( csharp::warning,
+    _G_parser->report_problem( csharp::warning,
       std::string("Invalid character literal:\n") + yytext );
     return csharp::Token_CHARACTER_LITERAL;
 }
 
 ["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return csharp::Token_STRING_LITERAL;
 ["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?[\r\n])|["]) {
-    parser->report_problem( csharp::warning,
+    _G_parser->report_problem( csharp::warning,
       std::string("Invalid string literal:\n") + yytext );
     return csharp::Token_STRING_LITERAL;
 }
@@ -378,18 +384,18 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 {ppPrefix}"region"{Whitespace}?     BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_REGION);
 {ppPrefix}"endregion"{Whitespace}?  BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_ENDREGION);
 {ppPrefix}"pragma"{Whitespace}? {
-    if( parser->compatibility_mode() >= csharp::csharp20_compatibility ) {
+    if( _G_parser->compatibility_mode() >= csharp::csharp20_compatibility ) {
       BEGIN(PP_PRAGMA); PP_PROCESS_TOKEN(PP_PRAGMA);
     }
     else {
       BEGIN(INITIAL);
-      parser->report_problem( csharp::error,
+      _G_parser->report_problem( csharp::error,
         "#pragma directives are not supported by C# 1.0" );
       return csharp::Token_INVALID;
     }
 }
 {ppPrefix}{Identifier} {
-    parser->report_problem( csharp::error,
+    _G_parser->report_problem( csharp::error,
       std::string("Invalid pre-processor directive:\n") + yytext );
     return csharp::Token_INVALID;
 }
@@ -408,7 +414,7 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 <PP_DECLARATION>{
 {Whitespace}        /* skip */ ;
 "true"|"false" {
-    parser->report_problem( csharp::error,
+    _G_parser->report_problem( csharp::error,
       "You may not define ``true'' or ``false'' with #define or #undef" );
     return csharp_pp::Token_PP_CONDITIONAL_SYMBOL;  // we could do Token_INVALID here,
     // but this way the error is shown and the parser continues, I prefer this.
@@ -477,21 +483,48 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 <INITIAL,PP_SKIPPED_SECTION_PART>{
 <<EOF>> {
-  if (_M_used_preprocessor == true)
+  cleanup();
+  return 0;
+}
+}
+
+%%
+
+void lexer_restart(csharp* parser) {
+  _G_parser = parser;
+  _G_pp_root_scope = 0;
+  yyrestart(NULL);
+  BEGIN(INITIAL); // is not set automatically by yyrestart()
+  YY_USER_INIT
+}
+
+csharp_pp_scope* pp_current_scope()
+{
+  if (_G_pp_root_scope == 0)
     {
-      csharp_pp_scope* current_scope = parser->pp_current_scope();
+      _G_pp_root_scope = new csharp_pp_scope(_G_parser);
+    }
+  return _G_pp_root_scope->current_scope();
+}
+
+void cleanup()
+{
+  // check for open scopes, and pop them / report errors as needed
+  if (_G_pp_root_scope != 0)
+    {
+      csharp_pp_scope* current_scope = pp_current_scope();
       csharp_pp_scope::scope_type scope_type = current_scope->type();
 
       while (scope_type != csharp_pp_scope::type_root)
         {
           if (scope_type == csharp_pp_scope::type_if)
             {
-              parser->report_problem( csharp::error,
+              _G_parser->report_problem( csharp::error,
                 "Encountered end of file in an unclosed #if/#elif/#else section" );
             }
           else if (scope_type == csharp_pp_scope::type_region)
             {
-              parser->report_problem( csharp::error,
+              _G_parser->report_problem( csharp::error,
                 "Encountered end of file in an unclosed #region section" );
             }
 
@@ -500,11 +533,10 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
           scope_type = current_scope->type();
         }
-    }
-  return 0;
-}
-}
 
-%%
+      delete _G_pp_root_scope;
+      _G_pp_root_scope = 0;
+    }
+}
 
 int yywrap() { return 1; }

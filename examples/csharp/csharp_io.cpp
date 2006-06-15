@@ -30,7 +30,7 @@
 #include <iostream>
 
 extern char *_G_contents;
-std::size_t _M_token_begin, _M_token_end;
+std::size_t _G_token_begin, _G_token_end;
 extern char* yytext;
 
 int yylex();
@@ -52,8 +52,8 @@ void csharp::tokenize()
 
       csharp::token_type &t = this->token_stream->next();
       t.kind = kind;
-      t.begin = _M_token_begin;
-      t.end = _M_token_end;
+      t.begin = _G_token_begin;
+      t.end = _G_token_end;
       t.text = _G_contents;
     }
   while (kind != csharp::Token_EOF);
@@ -88,8 +88,8 @@ bool csharp_pp::tokenize()
 
       csharp_pp::token_type &t = this->token_stream->next();
       t.kind = kind;
-      t.begin = _M_token_begin;
-      t.end = _M_token_end;
+      t.begin = _G_token_begin;
+      t.end = _G_token_end;
       t.text = _G_contents;
 
       if (kind == csharp_pp::Token_EOF)
@@ -99,8 +99,8 @@ bool csharp_pp::tokenize()
 
   csharp::token_type &t = this->token_stream->next();
   t.kind = csharp_pp::Token_EOF;
-  t.begin = _M_token_begin;
-  t.end = _M_token_end;
+  t.begin = _G_token_begin;
+  t.end = _G_token_end;
   t.text = _G_contents;
 
   this->yylex(); // produce the look ahead token
@@ -111,7 +111,7 @@ void csharp_pp::add_token( csharp_pp::token_type_enum token_kind )
   //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
   csharp_pp::token_type &t = this->token_stream->next();
   t.kind = token_kind;
-  t.begin = _M_token_begin;
-  t.end = _M_token_end;
+  t.begin = _G_token_begin;
+  t.end = _G_token_end;
   t.text = _G_contents;
 }

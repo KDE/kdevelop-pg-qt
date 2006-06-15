@@ -258,15 +258,15 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 [']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return csharp::Token_CHARACTER_LITERAL;
 [']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?[\r\n])|[']) {
-    _G_parser->report_problem( csharp::warning,
-      std::string("Invalid character literal:\n") + yytext );
+    _G_parser->report_problem( csharp::error,
+      std::string("Invalid character literal: ") + yytext );
     return csharp::Token_CHARACTER_LITERAL;
 }
 
 ["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return csharp::Token_STRING_LITERAL;
 ["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?[\r\n])|["]) {
-    _G_parser->report_problem( csharp::warning,
-      std::string("Invalid string literal:\n") + yytext );
+    _G_parser->report_problem( csharp::error,
+      std::string("Invalid string literal: ") + yytext );
     return csharp::Token_STRING_LITERAL;
 }
  /* verbatim strings: */
@@ -396,7 +396,7 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 {ppPrefix}{Identifier} {
     _G_parser->report_problem( csharp::error,
-      std::string("Invalid pre-processor directive:\n") + yytext );
+      std::string("Invalid pre-processor directive: ``") + yytext + "''" );
     return csharp::Token_INVALID;
 }
 }
@@ -484,7 +484,7 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 <INITIAL,PP_SKIPPED_SECTION_PART>{
 <<EOF>> {
   cleanup();
-  return 0;
+  return csharp::Token_EOF;
 }
 }
 

@@ -285,8 +285,10 @@ class csharp
      */
     void tokenize();
 
-    // The compatibility_mode status variable tells which version of Java
-    // should be checked against.
+    /**
+     * The compatibility_mode status variable tells which version of C#
+     * should be checked against.
+     */
     enum csharp_compatibility_mode {
       csharp10_compatibility = 100,
       csharp20_compatibility = 200,

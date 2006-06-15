@@ -3804,8 +3804,8 @@ case 57:
 YY_RULE_SETUP
 #line 260 "csharp_lexer.ll"
 {
-    _G_parser->report_problem( csharp::warning,
-      std::string("Invalid character literal:\n") + yytext );
+    _G_parser->report_problem( csharp::error,
+      std::string("Invalid character literal: ") + yytext );
     return csharp::Token_CHARACTER_LITERAL;
 }
 	YY_BREAK
@@ -3819,8 +3819,8 @@ case 59:
 YY_RULE_SETUP
 #line 267 "csharp_lexer.ll"
 {
-    _G_parser->report_problem( csharp::warning,
-      std::string("Invalid string literal:\n") + yytext );
+    _G_parser->report_problem( csharp::error,
+      std::string("Invalid string literal: ") + yytext );
     return csharp::Token_STRING_LITERAL;
 }
 	YY_BREAK
@@ -4538,7 +4538,7 @@ case YY_STATE_EOF(PP_SKIPPED_SECTION_PART):
 #line 485 "csharp_lexer.ll"
 {
   cleanup();
-  return 0;
+  return csharp::Token_EOF;
 }
 	YY_BREAK
 

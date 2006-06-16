@@ -27,11 +27,11 @@
 
 
 -- Known problematic conflicts (4 conflicts), requiring automatic LL(k):
---  - Part of the first/follow SEMICOLON, IMPORT, STATIC, CLASS etc. conflict
+--  - Part of the first/follow ABSTRACT, CLASS, ENUM, FINAL etc. conflict
 --    in compilation_unit (namely: package_declaration vs. type_declaration).
 --    Solved by lookahead_is_package_declaration().
 --    (1 conflict)
---  - The first/first SEMICOLON, VOID, BOOLEAN etc. conflict in
+--  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE, etc. conflict in
 --    block_statement which is essentially an expression statements vs.
 --    variable declarations conflict (ignore the modifier conflicts,
 --    they are there by design and are completely harmless).
@@ -40,7 +40,7 @@
 --    The SYNCHRONIZED conflict in this error message is also
 --    independent and has been resolved too.
 --    (1 conflict)
---  - The first/first VOID, BOOLEAN, BYTE etc. conflict in for_init.
+--  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE etc. conflict in for_control.
 --    This is the same variable/parameter declaration vs. expression issue
 --    that block_statement also suffers from.
 --    Also solved by lookahead_is_parameter_declaration().
@@ -53,7 +53,7 @@
 -- Known harmless or resolved conflicts (17 conflicts):
 --  - The first/follow IMPORT, AT conflict in compilation_unit
 --    (done right by default, 1 conflict)
---  - Part of the first/follow SEMICOLON, IMPORT, STATIC, CLASS etc. conflict
+--  - Part of the first/follow ABSTRACT, CLASS, ENUM, FINAL etc. conflict
 --    in compilation_unit. Everything except AT is harmless and done right
 --    by default. (already counted in the problematic conflicts section)
 --  - The first/follow LBRACKET conflict in optional_declarator_brackets
@@ -73,7 +73,7 @@
 --    (manually resolved, 1 conflict)
 --  - The first/first IDENTIFIER conflict in annotation_arguments
 --    (manually resolved, 1 conflict)
---  - The first/first AT, FINAL, SYNCHRONIZED conflict in block_statement,
+--  - The first/first FINAL, SYNCHRONIZED, AT conflict in block_statement,
 --    which is a side product of the lookahead solution and solved by it
 --    as well. Harmless because lookahead chooses the right one.
 --    (manually resolved, 1 conflict)

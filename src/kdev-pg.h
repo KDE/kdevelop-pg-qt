@@ -171,7 +171,7 @@ private:
   follow_set FOLLOW_K;
 };
 
-bool reduce_to_epsilon(model::node *node);
+bool reduces_to_epsilon(model::node *node);
 bool is_zero(model::node *node);
 std::ostream &operator << (std::ostream &out, model::node const *__node);
 

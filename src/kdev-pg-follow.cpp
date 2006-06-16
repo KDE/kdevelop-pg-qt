@@ -115,7 +115,7 @@ void next_FOLLOW::check_right_tail(model::node *node)
 {
   if (model::cons_item *c = node_cast<model::cons_item*>(node))
     {
-      if (reduce_to_epsilon(c->_M_right))
+      if (reduces_to_epsilon(c->_M_right))
         check_right_tail(c->_M_left);
 
       check_right_tail(c->_M_right);

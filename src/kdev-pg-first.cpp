@@ -199,7 +199,7 @@ void next_FIRST::visit_cons(model::cons_item *node)
   block_merge(blocked);
 
   bool zero_blocked;
-  if (reduce_to_epsilon(node->_M_right))
+  if (reduces_to_epsilon(node->_M_right))
     zero_blocked = block_zero_merge(false || _M_merge_zero_blocked);
   else
     zero_blocked = block_zero_merge(true);
@@ -207,7 +207,7 @@ void next_FIRST::visit_cons(model::cons_item *node)
   visit_node(node->_M_left);
   merge(node, node->_M_left);
 
-  if (reduce_to_epsilon(node->_M_left))
+  if (reduces_to_epsilon(node->_M_left))
     {
       visit_node(node->_M_right);
       merge(node, node->_M_right);

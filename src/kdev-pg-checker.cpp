@@ -142,7 +142,7 @@ void FIRST_FOLLOW_conflict_checker::visit_alternative(model::alternative_item *n
   if (node->_M_right->kind == model::node_kind_zero)
     return;
 
-  if (reduce_to_epsilon(node))
+  if (reduces_to_epsilon(node))
     check(node);
 }
 
@@ -150,7 +150,7 @@ void FIRST_FOLLOW_conflict_checker::visit_cons(model::cons_item *node)
 {
   default_visitor::visit_cons(node);
 
-  if (reduce_to_epsilon(node))
+  if (reduces_to_epsilon(node))
     check(node);
 }
 
@@ -158,7 +158,7 @@ void FIRST_FOLLOW_conflict_checker::visit_evolve(model::evolve_item *node)
 {
   default_visitor::visit_evolve(node);
 
-  if (reduce_to_epsilon(node->_M_item))
+  if (reduces_to_epsilon(node->_M_item))
     check(node->_M_item, node->_M_symbol);
 }
 

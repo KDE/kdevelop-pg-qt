@@ -74,7 +74,7 @@ void right_most_symbols::visit_cons(model::cons_item *node)
 {
   visit_node(node->_M_right);
 
-  if (reduce_to_epsilon(node->_M_right))
+  if (reduces_to_epsilon(node->_M_right))
     visit_node(node->_M_left);
 }
 
@@ -112,7 +112,7 @@ std::list<model::node*> right_tails::operator()(model::node *node)
 
 void right_tails::visit_cons(model::cons_item *node)
 {
-  if (reduce_to_epsilon(node))
+  if (reduces_to_epsilon(node))
     _M_tails.push_back(node);
 
   default_visitor::visit_cons(node);

@@ -200,7 +200,7 @@ void next_FIRST::visit_cons(model::cons_item *node)
 
   bool zero_blocked;
   if (reduces_to_epsilon(node->_M_right))
-    zero_blocked = block_zero_merge(false || _M_merge_zero_blocked);
+    zero_blocked = block_zero_merge(_M_merge_zero_blocked);
   else
     zero_blocked = block_zero_merge(true);
 

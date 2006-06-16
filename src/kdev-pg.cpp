@@ -189,3 +189,43 @@ bool reduce_to_epsilon(model::node *node)
   return false;
 }
 
+bool is_zero(model::node *node)
+{
+  if (model::cons_item *c = node_cast<model::cons_item*>(node))
+    {
+      return false;
+    }
+  else if (model::alternative_item *a = node_cast<model::alternative_item*>(node))
+    {
+      return false;
+    }
+  else if (model::action_item *a = node_cast<model::action_item*>(node))
+    {
+      return is_zero(a->_M_item);
+    }
+  else if (model::condition_item *c = node_cast<model::condition_item*>(node))
+    {
+      return is_zero(c->_M_item);
+    }
+  else if (model::annotation_item *a = node_cast<model::annotation_item*>(node))
+    {
+      return is_zero(a->_M_item);
+    }
+  else if (model::symbol_item *s = node_cast<model::symbol_item*>(node))
+    {
+      return false;
+    }
+  else if (model::plus_item *b = node_cast<model::plus_item*>(node))
+    {
+      return is_zero(b->_M_item);
+    }
+  else if (model::star_item *b = node_cast<model::star_item*>(node))
+    {
+      return is_zero(b->_M_item);
+    }
+  else if (model::zero_item *z = node_cast<model::zero_item*>(node))
+    {
+      return true;
+    }
+}
+

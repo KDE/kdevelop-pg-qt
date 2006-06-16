@@ -31,11 +31,12 @@ namespace
   void gen_condition(world::node_set const &s, std::ostream &out)
   {
     bool initial = true;
+    model::node *item = _G_system.zero();
 
     world::node_set::iterator it = s.begin();
     while (it != s.end())
       {
-        model::node *item = *it++;
+        item = *it++;
 
         if (model::terminal_item *t = node_cast<model::terminal_item*>(item))
           {
@@ -47,7 +48,7 @@ namespace
           }
       }
 
-    if (initial && s.find(_G_system.zero()) != s.end())
+    if (initial && is_zero(item))
       out << "true /*epsilon*/";
   }
 

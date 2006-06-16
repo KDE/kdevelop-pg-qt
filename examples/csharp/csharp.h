@@ -10,22 +10,74 @@
 #include "kdev-pg-token-stream.h"
 #include <cassert>
 
+struct attribute_ast;
+struct attribute_section_ast;
+struct attribute_target_ast;
 struct compilation_unit_ast;
+struct extern_alias_directive_ast;
+struct global_attribute_section_ast;
 struct identifier_ast;
+struct keyword_ast;
 struct literal_ast;
+struct namespace_member_declaration_ast;
+struct namespace_or_type_name_ast;
+struct using_directive_ast;
 
 struct csharp_ast_node
   {
     enum ast_node_kind_enum {
-      Kind_compilation_unit = 1000,
-      Kind_identifier = 1001,
-      Kind_literal = 1002,
+      Kind_attribute = 1000,
+      Kind_attribute_section = 1001,
+      Kind_attribute_target = 1002,
+      Kind_compilation_unit = 1003,
+      Kind_extern_alias_directive = 1004,
+      Kind_global_attribute_section = 1005,
+      Kind_identifier = 1006,
+      Kind_keyword = 1007,
+      Kind_literal = 1008,
+      Kind_namespace_member_declaration = 1009,
+      Kind_namespace_or_type_name = 1010,
+      Kind_using_directive = 1011,
       AST_NODE_KIND_COUNT
     };
 
     int kind;
     std::size_t start_token;
     std::size_t end_token;
+  };
+
+struct attribute_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_attribute
+    };
+
+
+  };
+
+struct attribute_section_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_attribute_section
+    };
+
+    attribute_target_ast *target;
+    const list_node<attribute_ast *> *attribute_sequence;
+
+  };
+
+struct attribute_target_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_attribute_target
+    };
+
+    identifier_ast *identifier;
+    keyword_ast *keyword;
+
   };
 
 struct compilation_unit_ast: public csharp_ast_node
@@ -35,6 +87,33 @@ struct compilation_unit_ast: public csharp_ast_node
       KIND = Kind_compilation_unit
     };
 
+    const list_node<extern_alias_directive_ast *> *extern_alias_sequence;
+    const list_node<using_directive_ast *> *using_sequence;
+    const list_node<global_attribute_section_ast *> *global_attribute_sequence;
+    const list_node<namespace_member_declaration_ast *> *namespace_sequence;
+
+  };
+
+struct extern_alias_directive_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_extern_alias_directive
+    };
+
+    identifier_ast *identifier;
+
+  };
+
+struct global_attribute_section_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_global_attribute_section
+    };
+
+    attribute_target_ast *target;
+    const list_node<attribute_ast *> *attribute_sequence;
 
   };
 
@@ -46,6 +125,16 @@ struct identifier_ast: public csharp_ast_node
     };
 
     std::size_t ident;
+
+  };
+
+struct keyword_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_keyword
+    };
+
 
   };
 
@@ -79,6 +168,39 @@ struct literal_ast: public csharp_ast_node
   private:
 
   public:
+
+  };
+
+struct namespace_member_declaration_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_namespace_member_declaration
+    };
+
+
+  };
+
+struct namespace_or_type_name_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_namespace_or_type_name
+    };
+
+
+  };
+
+struct using_directive_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_using_directive
+    };
+
+    identifier_ast *alias;
+    namespace_or_type_name_ast *namespace_or_type_name;
+    namespace_or_type_name_ast *namespace_name;
 
   };
 
@@ -173,105 +295,122 @@ class csharp
       Token_EQUAL = 1038,
       Token_EVENT = 1039,
       Token_EXPLICIT = 1040,
-      Token_FALSE = 1041,
-      Token_FINALLY = 1042,
-      Token_FIXED = 1043,
-      Token_FLOAT = 1044,
-      Token_FOR = 1045,
-      Token_FOREACH = 1046,
-      Token_GET = 1047,
-      Token_GLOBAL = 1048,
-      Token_GOTO = 1049,
-      Token_GREATER_EQUAL = 1050,
-      Token_GREATER_THAN = 1051,
-      Token_IDENTIFIER = 1052,
-      Token_IF = 1053,
-      Token_IMPLICIT = 1054,
-      Token_IN = 1055,
-      Token_INCREMENT = 1056,
-      Token_INT = 1057,
-      Token_INTEGER_LITERAL = 1058,
-      Token_INTERFACE = 1059,
-      Token_INTERNAL = 1060,
-      Token_INVALID = 1061,
-      Token_IS = 1062,
-      Token_LBRACE = 1063,
-      Token_LBRACKET = 1064,
-      Token_LESS_EQUAL = 1065,
-      Token_LESS_THAN = 1066,
-      Token_LOCK = 1067,
-      Token_LOG_AND = 1068,
-      Token_LOG_OR = 1069,
-      Token_LONG = 1070,
-      Token_LPAREN = 1071,
-      Token_LSHIFT = 1072,
-      Token_LSHIFT_ASSIGN = 1073,
-      Token_MINUS = 1074,
-      Token_MINUS_ASSIGN = 1075,
-      Token_NAMESPACE = 1076,
-      Token_NEW = 1077,
-      Token_NOT_EQUAL = 1078,
-      Token_NULL = 1079,
-      Token_OBJECT = 1080,
-      Token_OPERATOR = 1081,
-      Token_OUT = 1082,
-      Token_OVERRIDE = 1083,
-      Token_PARAMS = 1084,
-      Token_PARTIAL = 1085,
-      Token_PLUS = 1086,
-      Token_PLUS_ASSIGN = 1087,
-      Token_PRIVATE = 1088,
-      Token_PROTECTED = 1089,
-      Token_PUBLIC = 1090,
-      Token_QUESTION = 1091,
-      Token_QUESTIONQUESTION = 1092,
-      Token_RBRACE = 1093,
-      Token_RBRACKET = 1094,
-      Token_READONLY = 1095,
-      Token_REAL_LITERAL = 1096,
-      Token_REF = 1097,
-      Token_REMAINDER = 1098,
-      Token_REMAINDER_ASSIGN = 1099,
-      Token_REMOVE = 1100,
-      Token_RETURN = 1101,
-      Token_RPAREN = 1102,
-      Token_RSHIFT = 1103,
-      Token_RSHIFT_ASSIGN = 1104,
-      Token_SBYTE = 1105,
-      Token_SEALED = 1106,
-      Token_SEMICOLON = 1107,
-      Token_SET = 1108,
-      Token_SHORT = 1109,
-      Token_SIZEOF = 1110,
-      Token_SLASH = 1111,
-      Token_SLASH_ASSIGN = 1112,
-      Token_STACKALLOC = 1113,
-      Token_STAR = 1114,
-      Token_STAR_ASSIGN = 1115,
-      Token_STATIC = 1116,
-      Token_STRING = 1117,
-      Token_STRING_LITERAL = 1118,
-      Token_STRUCT = 1119,
-      Token_SWITCH = 1120,
-      Token_THIS = 1121,
-      Token_THROW = 1122,
-      Token_TILDE = 1123,
-      Token_TRUE = 1124,
-      Token_TRY = 1125,
-      Token_TYPEOF = 1126,
-      Token_UINT = 1127,
-      Token_ULONG = 1128,
-      Token_UNCHECKED = 1129,
-      Token_UNSAFE = 1130,
-      Token_USHORT = 1131,
-      Token_USING = 1132,
-      Token_VALUE = 1133,
-      Token_VIRTUAL = 1134,
-      Token_VOID = 1135,
-      Token_VOLATILE = 1136,
-      Token_WHERE = 1137,
-      Token_WHILE = 1138,
-      Token_YIELD = 1139,
+      Token_EXTERN = 1041,
+      Token_FALSE = 1042,
+      Token_FINALLY = 1043,
+      Token_FIXED = 1044,
+      Token_FLOAT = 1045,
+      Token_FOR = 1046,
+      Token_FOREACH = 1047,
+      Token_GET = 1048,
+      Token_GLOBAL = 1049,
+      Token_GOTO = 1050,
+      Token_GREATER_EQUAL = 1051,
+      Token_GREATER_THAN = 1052,
+      Token_IDENTIFIER = 1053,
+      Token_IF = 1054,
+      Token_IMPLICIT = 1055,
+      Token_IN = 1056,
+      Token_INCREMENT = 1057,
+      Token_INT = 1058,
+      Token_INTEGER_LITERAL = 1059,
+      Token_INTERFACE = 1060,
+      Token_INTERNAL = 1061,
+      Token_INVALID = 1062,
+      Token_IS = 1063,
+      Token_LBRACE = 1064,
+      Token_LBRACKET = 1065,
+      Token_LESS_EQUAL = 1066,
+      Token_LESS_THAN = 1067,
+      Token_LOCK = 1068,
+      Token_LOG_AND = 1069,
+      Token_LOG_OR = 1070,
+      Token_LONG = 1071,
+      Token_LPAREN = 1072,
+      Token_LSHIFT = 1073,
+      Token_LSHIFT_ASSIGN = 1074,
+      Token_MINUS = 1075,
+      Token_MINUS_ASSIGN = 1076,
+      Token_NAMESPACE = 1077,
+      Token_NEW = 1078,
+      Token_NOT_EQUAL = 1079,
+      Token_NULL = 1080,
+      Token_OBJECT = 1081,
+      Token_OPERATOR = 1082,
+      Token_OUT = 1083,
+      Token_OVERRIDE = 1084,
+      Token_PARAMS = 1085,
+      Token_PARTIAL = 1086,
+      Token_PLUS = 1087,
+      Token_PLUS_ASSIGN = 1088,
+      Token_PRIVATE = 1089,
+      Token_PROTECTED = 1090,
+      Token_PUBLIC = 1091,
+      Token_QUESTION = 1092,
+      Token_QUESTIONQUESTION = 1093,
+      Token_RBRACE = 1094,
+      Token_RBRACKET = 1095,
+      Token_READONLY = 1096,
+      Token_REAL_LITERAL = 1097,
+      Token_REF = 1098,
+      Token_REMAINDER = 1099,
+      Token_REMAINDER_ASSIGN = 1100,
+      Token_REMOVE = 1101,
+      Token_RETURN = 1102,
+      Token_RPAREN = 1103,
+      Token_RSHIFT = 1104,
+      Token_RSHIFT_ASSIGN = 1105,
+      Token_SBYTE = 1106,
+      Token_SEALED = 1107,
+      Token_SEMICOLON = 1108,
+      Token_SET = 1109,
+      Token_SHORT = 1110,
+      Token_SIZEOF = 1111,
+      Token_SLASH = 1112,
+      Token_SLASH_ASSIGN = 1113,
+      Token_STACKALLOC = 1114,
+      Token_STAR = 1115,
+      Token_STAR_ASSIGN = 1116,
+      Token_STATIC = 1117,
+      Token_STRING = 1118,
+      Token_STRING_LITERAL = 1119,
+      Token_STRUCT = 1120,
+      Token_STUB_A = 1121,
+      Token_STUB_B = 1122,
+      Token_STUB_C = 1123,
+      Token_STUB_D = 1124,
+      Token_STUB_E = 1125,
+      Token_STUB_F = 1126,
+      Token_STUB_G = 1127,
+      Token_STUB_H = 1128,
+      Token_STUB_I = 1129,
+      Token_STUB_J = 1130,
+      Token_STUB_K = 1131,
+      Token_STUB_L = 1132,
+      Token_STUB_M = 1133,
+      Token_STUB_N = 1134,
+      Token_STUB_O = 1135,
+      Token_STUB_P = 1136,
+      Token_SWITCH = 1137,
+      Token_THIS = 1138,
+      Token_THROW = 1139,
+      Token_TILDE = 1140,
+      Token_TRUE = 1141,
+      Token_TRY = 1142,
+      Token_TYPEOF = 1143,
+      Token_UINT = 1144,
+      Token_ULONG = 1145,
+      Token_UNCHECKED = 1146,
+      Token_UNSAFE = 1147,
+      Token_USHORT = 1148,
+      Token_USING = 1149,
+      Token_VALUE = 1150,
+      Token_VIRTUAL = 1151,
+      Token_VOID = 1152,
+      Token_VOLATILE = 1153,
+      Token_WHERE = 1154,
+      Token_WHILE = 1155,
+      Token_YIELD = 1156,
       token_type_size
     }; // token_type_enum
 
@@ -342,9 +481,18 @@ class csharp
 
     }
 
+    bool parse_attribute(attribute_ast **yynode);
+    bool parse_attribute_section(attribute_section_ast **yynode);
+    bool parse_attribute_target(attribute_target_ast **yynode);
     bool parse_compilation_unit(compilation_unit_ast **yynode);
+    bool parse_extern_alias_directive(extern_alias_directive_ast **yynode);
+    bool parse_global_attribute_section(global_attribute_section_ast **yynode);
     bool parse_identifier(identifier_ast **yynode);
+    bool parse_keyword(keyword_ast **yynode);
     bool parse_literal(literal_ast **yynode);
+    bool parse_namespace_member_declaration(namespace_member_declaration_ast **yynode);
+    bool parse_namespace_or_type_name(namespace_or_type_name_ast **yynode);
+    bool parse_using_directive(using_directive_ast **yynode);
   };
 class csharp_visitor
   {
@@ -359,28 +507,146 @@ class csharp_visitor
       if (node)
         (this->*_S_parser_table[node->kind - 1000])(node);
     }
-    virtual void visit_compilation_unit(compilation_unit_ast *)
+    virtual void visit_attribute(attribute_ast *)
   {}
+    virtual void visit_attribute_section(attribute_section_ast *)
+    {}
+    virtual void visit_attribute_target(attribute_target_ast *)
+    {}
+    virtual void visit_compilation_unit(compilation_unit_ast *)
+    {}
+    virtual void visit_extern_alias_directive(extern_alias_directive_ast *)
+    {}
+    virtual void visit_global_attribute_section(global_attribute_section_ast *)
+    {}
     virtual void visit_identifier(identifier_ast *)
     {}
+    virtual void visit_keyword(keyword_ast *)
+    {}
     virtual void visit_literal(literal_ast *)
+    {}
+    virtual void visit_namespace_member_declaration(namespace_member_declaration_ast *)
+    {}
+    virtual void visit_namespace_or_type_name(namespace_or_type_name_ast *)
+    {}
+    virtual void visit_using_directive(using_directive_ast *)
     {}
   }
 ;
 class csharp_default_visitor: public csharp_visitor
   {
   public:
-    virtual void visit_compilation_unit(compilation_unit_ast *node)
+    virtual void visit_attribute(attribute_ast *node)
     {}
 
+    virtual void visit_attribute_section(attribute_section_ast *node)
+    {
+      visit_node(node->target);
+      if (node->attribute_sequence)
+        {
+          const list_node<attribute_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+    }
+
+    virtual void visit_attribute_target(attribute_target_ast *node)
+    {
+      visit_node(node->identifier);
+      visit_node(node->keyword);
+    }
+
+    virtual void visit_compilation_unit(compilation_unit_ast *node)
+    {
+      if (node->extern_alias_sequence)
+        {
+          const list_node<extern_alias_directive_ast*> *__it = node->extern_alias_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+      if (node->using_sequence)
+        {
+          const list_node<using_directive_ast*> *__it = node->using_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+      if (node->global_attribute_sequence)
+        {
+          const list_node<global_attribute_section_ast*> *__it = node->global_attribute_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+      if (node->namespace_sequence)
+        {
+          const list_node<namespace_member_declaration_ast*> *__it = node->namespace_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+    }
+
+    virtual void visit_extern_alias_directive(extern_alias_directive_ast *node)
+    {
+      visit_node(node->identifier);
+    }
+
+    virtual void visit_global_attribute_section(global_attribute_section_ast *node)
+    {
+      visit_node(node->target);
+      if (node->attribute_sequence)
+        {
+          const list_node<attribute_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+    }
+
     virtual void visit_identifier(identifier_ast *node)
+  {}
+
+    virtual void visit_keyword(keyword_ast *node)
     {}
 
     virtual void visit_literal(literal_ast *node)
     {}
 
-  }
-;
+    virtual void visit_namespace_member_declaration(namespace_member_declaration_ast *node)
+    {}
+
+    virtual void visit_namespace_or_type_name(namespace_or_type_name_ast *node)
+    {}
+
+    virtual void visit_using_directive(using_directive_ast *node)
+    {
+      visit_node(node->alias);
+      visit_node(node->namespace_or_type_name);
+      visit_node(node->namespace_name);
+    }
+
+  };
 #endif
 
 

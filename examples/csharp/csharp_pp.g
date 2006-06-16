@@ -285,7 +285,7 @@ class csharp;
 
 --
 -- Code segments copied to the implementation (.cpp) file.
--- If existant, kdevelop-pg's current syntax requires this block to occur
+-- If existent, kdevelop-pg's current syntax requires this block to occur
 -- at the end of the file.
 --
 

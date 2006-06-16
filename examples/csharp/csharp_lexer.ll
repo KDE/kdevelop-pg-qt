@@ -297,6 +297,7 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 "enum"          return csharp::Token_ENUM;
 "event"         return csharp::Token_EVENT;
 "explicit"      return csharp::Token_EXPLICIT;
+"extern"        return csharp::Token_EXTERN;
 "false"         return csharp::Token_FALSE;
 "finally"       return csharp::Token_FINALLY;
 "fixed"         return csharp::Token_FIXED;
@@ -353,7 +354,8 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 "while"         return csharp::Token_WHILE;
 
 
- /* TODO: what to do with those non-keyword identifiers?
+ /* Non-keyword identifiers. They only have special meaning in
+  * specific contexts and are treated as identifiers otherwise. */
 
 "add"           return csharp::Token_ADD;
 "alias"         return csharp::Token_ALIAS;
@@ -365,7 +367,6 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 "value"         return csharp::Token_VALUE;
 "where"         return csharp::Token_WHERE;
 "yield"         return csharp::Token_YIELD;
- */
 
 
 

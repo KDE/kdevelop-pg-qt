@@ -32,8 +32,13 @@
 --    (0 conflicts)
 
 -- Known harmless or resolved conflicts (0 conflicts):
---  - none
---    (done right by default, 0 conflicts)
+--  - The first/follow USING conflict,
+--    the first/follow USING, LBRACKET (=global_attribute) conflict,
+--    and the first/follow USING, LBRACKET, STUB_C (=namespace_declaration)
+--    conflict in compilation_unit. Seems we must get one such conflict for
+--    each entry in the start rule (C#: 4 entries, 3 conflicts, Java: 3 with 2)
+--    I can't get away from the feeling that this is actually a kdev-pg bug.
+--    (done right by default, 3 conflicts)
 --  - still none
 --    (manually resolved, 0 conflicts)
 
@@ -146,21 +151,22 @@
        CONTINUE ("continue"), DECIMAL ("decimal"), DEFAULT ("default"),
        DELEGATE ("delegate"), DO ("do"), DOUBLE ("double"), ELSE ("else"),
        ENUM ("enum"), EVENT ("event"), EXPLICIT ("explicit"),
-       FINALLY ("finally"), FIXED ("fixed"), FLOAT ("float"),
-       FOREACH ("foreach"), FOR ("for"), GOTO ("goto"), IF ("if"),
-       IMPLICIT ("implicit"), IN ("in"), INT ("int"), INTERFACE ("interface"),
-       INTERNAL ("internal"), IS ("is"), LOCK ("lock"), LONG ("long"),
-       NAMESPACE ("namespace"), NEW ("new"), OBJECT ("object"),
-       OPERATOR ("operator"), OUT ("out"), OVERRIDE ("override"),
-       PARAMS ("params"), PRIVATE ("private"), PROTECTED ("protected"),
-       PUBLIC ("public"), READONLY ("readonly"), REF ("ref"),
-       RETURN ("return"), SBYTE ("sbyte"), SEALED ("sealed"), SHORT ("short"),
-       SIZEOF ("sizeof"), STACKALLOC ("stackalloc"), STATIC ("static"),
-       STRING ("string"), STRUCT ("struct"), SWITCH ("switch"),
-       THIS ("this"), THROW ("throw"), TRY ("try"), TYPEOF ("typeof"),
-       UINT ("uint"), ULONG ("ulong"), UNCHECKED ("unsafe"), UNSAFE ("unsafe"),
-       USHORT ("ushort"), USING ("using"), VIRTUAL ("virtual"), VOID ("void"),
-       VOLATILE ("volatile"), WHILE ("while") ;;
+       EXTERN ("extern"), FINALLY ("finally"), FIXED ("fixed"),
+       FLOAT ("float"), FOREACH ("foreach"), FOR ("for"), GOTO ("goto"),
+       IF ("if"), IMPLICIT ("implicit"), IN ("in"), INT ("int"),
+       INTERFACE ("interface"), INTERNAL ("internal"), IS ("is"),
+       LOCK ("lock"), LONG ("long"), NAMESPACE ("namespace"), NEW ("new"),
+       OBJECT ("object"), OPERATOR ("operator"), OUT ("out"),
+       OVERRIDE ("override"), PARAMS ("params"), PRIVATE ("private"),
+       PROTECTED ("protected"), PUBLIC ("public"), READONLY ("readonly"),
+       REF ("ref"), RETURN ("return"), SBYTE ("sbyte"), SEALED ("sealed"),
+       SHORT ("short"), SIZEOF ("sizeof"), STACKALLOC ("stackalloc"),
+       STATIC ("static"), STRING ("string"), STRUCT ("struct"),
+       SWITCH ("switch"), THIS ("this"), THROW ("throw"), TRY ("try"),
+       TYPEOF ("typeof"), UINT ("uint"), ULONG ("ulong"), UNCHECKED ("unsafe"),
+       UNSAFE ("unsafe"), USHORT ("ushort"), USING ("using"),
+       VIRTUAL ("virtual"), VOID ("void"), VOLATILE ("volatile"),
+       WHILE ("while") ;;
 
 -- non-keyword identifiers with special meaning in the grammar:
 %token ADD ("add"), ALIAS("alias"), GET ("get"), GLOBAL ("global"),
@@ -193,6 +199,9 @@
 -- token that makes the parser fail in any case:
 %token INVALID ("invalid token") ;;
 
+%token STUB_A, STUB_B, STUB_C, STUB_D, STUB_E, STUB_F, STUB_G, STUB_H,
+       STUB_I, STUB_J, STUB_K, STUB_L, STUB_M, STUB_N, STUB_O, STUB_P ;;
+
 
 
 
@@ -200,8 +209,43 @@
 -- Start of the actual grammar
 --
 
-   ( literal | identifier )*
+   (#extern_alias=extern_alias_directive)*  -- research: probably not C# 1.0
+   (#using=using_directive)*
+   (#global_attribute=global_attribute_section)*
+   (#namespace=namespace_member_declaration)*
 -> compilation_unit ;;
+
+   EXTERN ALIAS identifier=identifier SEMICOLON
+-> extern_alias_directive ;;
+
+   USING
+   (  ?[: LA(2).kind == Token_ASSIGN :]      -- "using alias" directive
+      alias=identifier ASSIGN namespace_or_type_name=namespace_or_type_name
+    |
+      namespace_name=namespace_or_type_name  -- "using namespace" directive
+   )
+   SEMICOLON
+-> using_directive ;;
+
+
+-- Attribute sections, global and standard ones
+
+   LBRACKET
+   target=attribute_target COLON
+   (#attribute=attribute @ COMMA) (COMMA | 0)
+   RBRACKET
+-> global_attribute_section ;;
+
+   LBRACKET
+   (target=attribute_target COLON | 0)
+   (#attribute=attribute @ COMMA) (COMMA | 0)
+   RBRACKET
+-> attribute_section ;;
+
+   identifier=identifier | keyword=keyword
+-> attribute_target ;;
+
+
 
    ident=IDENTIFIER
 -> identifier ;;
@@ -227,13 +271,24 @@
 
 
 
+--
+-- Appendix: Rule stubs
+--
+
+STUB_A -> namespace_or_type_name ;;
+STUB_B -> keyword ;;
+STUB_C -> namespace_member_declaration ;;
+STUB_D -> attribute ;;
+
+
+
 
 
 
 
 --
 -- Code segments copied to the implementation (.cpp) file.
--- If existant, kdevelop-pg's current syntax requires this block to occur
+-- If existent, kdevelop-pg's current syntax requires this block to occur
 -- at the end of the file.
 --
 

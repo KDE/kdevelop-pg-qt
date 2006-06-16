@@ -123,7 +123,7 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
       while (it != U.end())
         {
           model::node *n = *it++;
-          if (node_cast<model::zero_item*>(n))
+          if (is_zero(n))
             continue;
 
           std::cerr << n;
@@ -139,7 +139,7 @@ void FIRST_FOLLOW_conflict_checker::visit_alternative(model::alternative_item *n
 {
   default_visitor::visit_alternative(node);
 
-  if (node->_M_right->kind == model::node_kind_zero)
+  if (is_zero(node->_M_right))
     return;
 
   if (reduces_to_epsilon(node))

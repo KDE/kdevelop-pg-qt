@@ -69,16 +69,34 @@ struct debug_rule
     pretty_printer p(out);
     p(e);
 
+    bool initial = true;
+    world::node_set::iterator it;
+
     out << std::endl;
     out << " FIRST:[";
-    std::for_each(_G_system.FIRST(e).begin(),
-                  _G_system.FIRST(e).end(), p);
+    for (it = _G_system.FIRST(e).begin(); it != _G_system.FIRST(e).end(); it++)
+      {
+        if (!initial)
+          out << ",";
+
+        p(*it);
+        initial = false;
+      }
     out << "]";
+
+    initial = true;
 
     out << std::endl;
     out << " FOLLOW:[";
-    std::for_each(_G_system.FOLLOW(e->_M_symbol).begin(),
-                  _G_system.FOLLOW(e->_M_symbol).end(), p);
+    for (it = _G_system.FOLLOW(e->_M_symbol).begin();
+         it != _G_system.FOLLOW(e->_M_symbol).end(); it++)
+      {
+        if (!initial)
+          out << ",";
+
+        p(*it);
+        initial = false;
+      }
     out << "]";
     out << std::endl;
   }
@@ -189,6 +207,7 @@ int main(int, char *argv[])
     {
       std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
                     debug_rule(std::cout));
+      return EXIT_SUCCESS;
     }
   else if (!parser)
     {

@@ -18,6 +18,9 @@
 */
 
 #include "kdev-pg-pretty-printer.h"
+
+#include <list>
+#include <stack>
 #include <iostream>
 #include <cassert>
 
@@ -28,13 +31,17 @@ void pretty_printer::visit_zero(model::zero_item *node)
 
 void pretty_printer::visit_plus(model::plus_item *node)
 {
+  out << "(";
   visit_node(node->_M_item);
+  out << ")";
   out << "+";
 }
 
 void pretty_printer::visit_star(model::star_item *node)
 {
+  out << "(";
   visit_node(node->_M_item);
+  out << ")";
   out << "*";
 }
 
@@ -50,20 +57,49 @@ void pretty_printer::visit_action(model::action_item *node)
 
 void pretty_printer::visit_alternative(model::alternative_item *node)
 {
+  std::list<model::node*> top_level_nodes;
+
+  std::stack<model::node*> working_list;
+  working_list.push(node->_M_right);
+  working_list.push(node->_M_left);
+
+  while (!working_list.empty())
+    {
+      model::node *n = working_list.top();
+      working_list.pop();
+
+      if (model::alternative_item *a = node_cast<model::alternative_item*>(n))
+        {
+          working_list.push(a->_M_right);
+          working_list.push(a->_M_left);
+        }
+      else
+        {
+          top_level_nodes.push_back(n);
+        }
+    }
+
+  bool initial = true;
+
   out << "(";
-  visit_node(node->_M_left);
-  out << " | ";
-  visit_node(node->_M_right);
+  std::list<model::node*>::iterator it = top_level_nodes.begin();
+  while (it != top_level_nodes.end())
+    {
+      if (!initial)
+        out << " | ";
+
+      model::node *n = *it++;
+      visit_node(n);
+      initial = false;
+    }
   out << ")";
 }
 
 void pretty_printer::visit_cons(model::cons_item *node)
 {
-  out << "(";
   visit_node(node->_M_left);
   out << " ";
   visit_node(node->_M_right);
-  out << ")";
 }
 
 void pretty_printer::visit_evolve(model::evolve_item *node)

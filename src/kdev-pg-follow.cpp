@@ -86,7 +86,7 @@ void next_FOLLOW::visit_cons(model::cons_item *node)
   merge(node->_M_left, _G_system.FIRST(node->_M_right));
 
   if (reduces_to_epsilon(node->_M_right))
-    merge(node->_M_left, _G_system.FOLLOW(node->_M_right));
+    merge(node->_M_left, _G_system.FOLLOW(node));
 
   default_visitor::visit_cons(node);
 }

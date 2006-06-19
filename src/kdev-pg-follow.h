@@ -37,14 +37,16 @@ struct next_FOLLOW: protected default_visitor
   void operator()(model::node *node);
 
 protected:
-  void check_right_tail(model::node *node);
   void merge(model::node *__dest, world::node_set const &source);
 
+  virtual void visit_plus(model::plus_item *node);
+  virtual void visit_star(model::star_item *node);
+  virtual void visit_action(model::action_item *node);
   virtual void visit_alternative(model::alternative_item *node);
   virtual void visit_cons(model::cons_item *node);
-  virtual void visit_condition(model::condition_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
   virtual void visit_evolve(model::evolve_item *node);
+  virtual void visit_annotation(model::annotation_item *node);
+  virtual void visit_condition(model::condition_item *node);
 
 private:
   bool &_M_changed;

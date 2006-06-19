@@ -71,11 +71,10 @@ void next_FOLLOW::visit_evolve(model::evolve_item *node)
   model::terminal_item *teof = _G_system.push_terminal("EOF", "end of file");
   if (node == _G_system.start && _G_system.FOLLOW(node->_M_symbol).insert(teof).second)
     {
-      _G_system.FOLLOW(node).insert(teof);
       _M_changed = true;
     }
 
-  merge(node->_M_item, _G_system.FOLLOW(node));
+  merge(node->_M_item, _G_system.FOLLOW(node->_M_symbol));
 
   default_visitor::visit_evolve(node);
 }

@@ -31,15 +31,17 @@ int problem_summary_printer::_M_error_count = 0;
 
 void FIRST_FIRST_conflict_checker::operator()(model::node *node)
 {
-  _M_toplevel = node;
+  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  assert(e != 0);
+  _M_symbol = e->_M_symbol;
   visit_node(node);
-  node = 0;
 }
 
 void FIRST_FIRST_conflict_checker::visit_alternative(model::alternative_item *node)
 {
   default_visitor::visit_alternative(node);
 
+  _M_checked_node = node;
   check(node->_M_left, node->_M_right);
 }
 
@@ -55,8 +57,9 @@ void FIRST_FIRST_conflict_checker::check(model::node *left, model::node *right)
   if (!U.empty())
     {
       pretty_printer p(std::cerr);
-      std::cerr << "** WARNING found FIRST/FIRST conflict in" << std::endl << "\tRule ``";
-      p(_M_toplevel);
+      std::cerr << "** WARNING found FIRST/FIRST conflict in "
+                << _M_symbol->_M_name << ":" << std::endl << "\tRule ``";
+      p(_M_checked_node);
       //      p(left);
       std::cerr << "''" << std::endl << "\tTerminals [";
 
@@ -88,12 +91,16 @@ void FIRST_FIRST_conflict_checker::visit_evolve(model::evolve_item *node)
       if (sym != node->_M_symbol || node == e)
         continue;
 
+      _M_checked_node = node;
       check(e, node);
     }
 }
 
 void FIRST_FOLLOW_conflict_checker::operator()(model::node *node)
 {
+  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  assert(e != 0);
+  _M_symbol = e->_M_symbol;
   visit_node(node);
 }
 
@@ -114,7 +121,8 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
   if (!U.empty())
     {
       pretty_printer p(std::cerr);
-      std::cerr << "** WARNING found FIRST/FOLLOW conflict in" << std::endl << "\tRule ``";
+      std::cerr << "** WARNING found FIRST/FOLLOW conflict in "
+                << _M_symbol->_M_name << ":" << std::endl << "\tRule ``";
       p(node);
       std::cerr << "''" << std::endl << "\tTerminals [";
 
@@ -153,16 +161,26 @@ void FIRST_FOLLOW_conflict_checker::visit_cons(model::cons_item *node)
     check(node);
 }
 
-void FIRST_FOLLOW_conflict_checker::visit_evolve(model::evolve_item *node)
+void FIRST_FOLLOW_conflict_checker::visit_plus(model::plus_item *node)
 {
-  default_visitor::visit_evolve(node);
+  default_visitor::visit_plus(node);
 
-  if (reduces_to_epsilon(node->_M_item))
-    check(node->_M_item, node->_M_symbol);
+  if (reduces_to_epsilon(node))
+    check(node);
+}
+
+void FIRST_FOLLOW_conflict_checker::visit_star(model::star_item *node)
+{
+  default_visitor::visit_star(node);
+
+  check(node);
 }
 
 void undefined_symbol_checker::operator()(model::node *node)
 {
+  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  assert(e != 0);
+  _M_symbol = e->_M_symbol;
   visit_node(node);
 }
 
@@ -170,14 +188,17 @@ void undefined_symbol_checker::visit_symbol(model::symbol_item *node)
 {
   if (_G_system.env.count(node) == 0)
     {
-      std::cerr << "** ERROR Undefined symbol ``" << node->_M_name << "''"
-                << std::endl;
+      std::cerr << "** ERROR Undefined symbol ``" << node->_M_name << "'' in "
+                << _M_symbol->_M_name << std::endl;
       problem_summary_printer::report_error();
     }
 }
 
 void undefined_token_checker::operator()(model::node *node)
 {
+  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  assert(e != 0);
+  _M_symbol = e->_M_symbol;
   visit_node(node);
 }
 
@@ -186,8 +207,8 @@ void undefined_token_checker::visit_terminal(model::terminal_item *node)
   std::string name = node->_M_name;
   if (_G_system.terminals.find(name) == _G_system.terminals.end())
     {
-      std::cerr << "** ERROR Undefined token ``" << node->_M_name << "''"
-                << std::endl;
+      std::cerr << "** ERROR Undefined token ``" << node->_M_name << "'' in "
+                << _M_symbol->_M_name << std::endl;
       problem_summary_printer::report_error();
     }
 }

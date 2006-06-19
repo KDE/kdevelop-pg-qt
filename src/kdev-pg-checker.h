@@ -43,7 +43,8 @@ protected:
   virtual void visit_alternative(model::alternative_item *node);
 
 private:
-  model::node *_M_toplevel;
+  model::symbol_item *_M_symbol;
+  model::node *_M_checked_node;
 };
 
 struct FIRST_FOLLOW_conflict_checker: protected default_visitor
@@ -53,9 +54,13 @@ struct FIRST_FOLLOW_conflict_checker: protected default_visitor
 protected:
   void check(model::node *node, model::node *sym = 0);
 
-  virtual void visit_evolve(model::evolve_item *node);
   virtual void visit_alternative(model::alternative_item *node);
   virtual void visit_cons(model::cons_item *node);
+  virtual void visit_plus(model::plus_item *node);
+  virtual void visit_star(model::star_item *node);
+
+private:
+  model::symbol_item *_M_symbol;
 };
 
 struct undefined_symbol_checker: protected default_visitor
@@ -64,6 +69,9 @@ struct undefined_symbol_checker: protected default_visitor
 
 protected:
   virtual void visit_symbol(model::symbol_item *node);
+
+private:
+  model::symbol_item *_M_symbol;
 };
 
 struct undefined_token_checker: protected default_visitor
@@ -72,6 +80,9 @@ struct undefined_token_checker: protected default_visitor
 
 protected:
   virtual void visit_terminal(model::terminal_item *node);
+
+private:
+  model::symbol_item *_M_symbol;
 };
 
 struct undefined_memberstruct_checker: protected default_visitor

@@ -17,7 +17,6 @@ kdev_pg_SOURCES = \
 	kdev-pg-beautifier.cpp \
 	kdev-pg-checker.cpp \
 	kdev-pg-main.cpp \
-	kdev-pg-utils.cpp \
 	kdev-pg-first.cpp \
 	kdev-pg-follow.cpp \
 	kdev-pg-clone-tree.cpp \

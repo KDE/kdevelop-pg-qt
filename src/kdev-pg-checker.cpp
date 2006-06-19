@@ -19,7 +19,6 @@
 */
 
 #include "kdev-pg-checker.h"
-#include "kdev-pg-utils.h"
 #include "kdev-pg-pretty-printer.h"
 
 #include <iostream>

@@ -26,11 +26,11 @@
 
 
 
--- Known problematic conflicts (4 conflicts), requiring automatic LL(k):
---  - Part of the first/follow ABSTRACT, CLASS, ENUM, FINAL etc. conflict
---    in compilation_unit (namely: package_declaration vs. type_declaration).
+-- Known problematic conflicts (5 conflicts), requiring automatic LL(k):
+--  - The first/follow AT conflict in compilation_unit
+--    (namely: package_declaration vs. type_declaration).
 --    Solved by lookahead_is_package_declaration().
---    (1 conflict)
+--    (2 conflicts, which is actually only one)
 --  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE, etc. conflict in
 --    block_statement which is essentially an expression statements vs.
 --    variable declarations conflict (ignore the modifier conflicts,
@@ -50,18 +50,10 @@
 --    Solved by lookahead_is_cast_expression().
 --    (1 conflict)
 
--- Known harmless or resolved conflicts (17 conflicts):
---  - The first/follow IMPORT, AT conflict in compilation_unit
---    (done right by default, 1 conflict)
---  - Part of the first/follow ABSTRACT, CLASS, ENUM, FINAL etc. conflict
---    in compilation_unit. Everything except AT is harmless and done right
---    by default. (already counted in the problematic conflicts section)
---  - The first/follow LBRACKET conflict in optional_declarator_brackets
---    (done right by default, 1 conflict)
---  - The first/follow COMMA conflict in variable_declaration_rest: greedy is ok
---    (done right by default, 1 conflict)
---  - The first/follow LBRACKET conflict in primary_atom
---    (manually resolved, 1 conflict)
+-- Known harmless or resolved conflicts (13 conflicts):
+--  - There are potentially more first/follow conflicts, as kdev-pg currently
+--    doesn't find things like the COMMA conflict in variable_array_initializer.
+--    Has to be fixed in kdev-pg-checker.cpp.
 --  - The first/follow AT conflict in optional_modifiers: greedy is ok
 --    (done right by default, 1 conflict)
 --  - The first/first IDENTIFIER conflicts in *_field,
@@ -87,7 +79,7 @@
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 21
+-- Total amount of conflicts: 18
 
 
 --

@@ -193,7 +193,7 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
  /* operators */
 
 ":"             return csharp::Token_COLON;
-"::"            return csharp::Token_COLONCOLON; // TODO: naming... new in 2.0?
+"::"            return csharp::Token_SCOPE; // TODO: new in 2.0?
 "?"             return csharp::Token_QUESTION;
 "??"            return csharp::Token_QUESTIONQUESTION; // TODO: naming... new in 2.0?
 "!"             return csharp::Token_BANG;

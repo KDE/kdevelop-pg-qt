@@ -11,33 +11,49 @@
 #include <cassert>
 
 struct attribute_ast;
+struct attribute_arguments_ast;
 struct attribute_section_ast;
 struct attribute_target_ast;
 struct compilation_unit_ast;
+struct expression_ast;
 struct extern_alias_directive_ast;
 struct global_attribute_section_ast;
 struct identifier_ast;
 struct keyword_ast;
 struct literal_ast;
+struct named_argument_ast;
 struct namespace_member_declaration_ast;
+struct namespace_name_ast;
 struct namespace_or_type_name_ast;
+struct namespace_or_type_name_part_ast;
+struct positional_argument_ast;
+struct type_arguments_ast;
+struct type_name_ast;
 struct using_directive_ast;
 
 struct csharp_ast_node
   {
     enum ast_node_kind_enum {
       Kind_attribute = 1000,
-      Kind_attribute_section = 1001,
-      Kind_attribute_target = 1002,
-      Kind_compilation_unit = 1003,
-      Kind_extern_alias_directive = 1004,
-      Kind_global_attribute_section = 1005,
-      Kind_identifier = 1006,
-      Kind_keyword = 1007,
-      Kind_literal = 1008,
-      Kind_namespace_member_declaration = 1009,
-      Kind_namespace_or_type_name = 1010,
-      Kind_using_directive = 1011,
+      Kind_attribute_arguments = 1001,
+      Kind_attribute_section = 1002,
+      Kind_attribute_target = 1003,
+      Kind_compilation_unit = 1004,
+      Kind_expression = 1005,
+      Kind_extern_alias_directive = 1006,
+      Kind_global_attribute_section = 1007,
+      Kind_identifier = 1008,
+      Kind_keyword = 1009,
+      Kind_literal = 1010,
+      Kind_named_argument = 1011,
+      Kind_namespace_member_declaration = 1012,
+      Kind_namespace_name = 1013,
+      Kind_namespace_or_type_name = 1014,
+      Kind_namespace_or_type_name_part = 1015,
+      Kind_positional_argument = 1016,
+      Kind_type_arguments = 1017,
+      Kind_type_name = 1018,
+      Kind_using_directive = 1019,
       AST_NODE_KIND_COUNT
     };
 
@@ -53,6 +69,20 @@ struct attribute_ast: public csharp_ast_node
       KIND = Kind_attribute
     };
 
+    type_name_ast *name;
+    attribute_arguments_ast *arguments;
+
+  };
+
+struct attribute_arguments_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_attribute_arguments
+    };
+
+    const list_node<named_argument_ast *> *named_argument_sequence;
+    const list_node<positional_argument_ast *> *positional_argument_sequence;
 
   };
 
@@ -91,6 +121,16 @@ struct compilation_unit_ast: public csharp_ast_node
     const list_node<using_directive_ast *> *using_sequence;
     const list_node<global_attribute_section_ast *> *global_attribute_sequence;
     const list_node<namespace_member_declaration_ast *> *namespace_sequence;
+
+  };
+
+struct expression_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_expression
+    };
+
 
   };
 
@@ -135,6 +175,7 @@ struct keyword_ast: public csharp_ast_node
       KIND = Kind_keyword
     };
 
+    std::size_t keyword;
 
   };
 
@@ -171,6 +212,18 @@ struct literal_ast: public csharp_ast_node
 
   };
 
+struct named_argument_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_named_argument
+    };
+
+    identifier_ast *argument_name;
+    expression_ast *attribute_argument_expression;
+
+  };
+
 struct namespace_member_declaration_ast: public csharp_ast_node
   {
     enum
@@ -181,11 +234,66 @@ struct namespace_member_declaration_ast: public csharp_ast_node
 
   };
 
+struct namespace_name_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_namespace_name
+    };
+
+
+  };
+
 struct namespace_or_type_name_ast: public csharp_ast_node
   {
     enum
     {
       KIND = Kind_namespace_or_type_name
+    };
+
+    identifier_ast *qualified_alias_label;
+    const list_node<namespace_or_type_name_part_ast *> *name_part_sequence;
+
+  };
+
+struct namespace_or_type_name_part_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_namespace_or_type_name_part
+    };
+
+    identifier_ast *identifier;
+    type_arguments_ast *type_arguments;
+
+  };
+
+struct positional_argument_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_positional_argument
+    };
+
+    expression_ast *attribute_argument_expression;
+
+  };
+
+struct type_arguments_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_type_arguments
+    };
+
+
+  };
+
+struct type_name_ast: public csharp_ast_node
+  {
+    enum
+    {
+      KIND = Kind_type_name
     };
 
 
@@ -278,89 +386,89 @@ class csharp
       Token_CHECKED = 1021,
       Token_CLASS = 1022,
       Token_COLON = 1023,
-      Token_COLONCOLON = 1024,
-      Token_COMMA = 1025,
-      Token_CONST = 1026,
-      Token_CONTINUE = 1027,
-      Token_DECIMAL = 1028,
-      Token_DECREMENT = 1029,
-      Token_DEFAULT = 1030,
-      Token_DELEGATE = 1031,
-      Token_DO = 1032,
-      Token_DOT = 1033,
-      Token_DOUBLE = 1034,
-      Token_ELSE = 1035,
-      Token_ENUM = 1036,
-      Token_EOF = 1037,
-      Token_EQUAL = 1038,
-      Token_EVENT = 1039,
-      Token_EXPLICIT = 1040,
-      Token_EXTERN = 1041,
-      Token_FALSE = 1042,
-      Token_FINALLY = 1043,
-      Token_FIXED = 1044,
-      Token_FLOAT = 1045,
-      Token_FOR = 1046,
-      Token_FOREACH = 1047,
-      Token_GET = 1048,
-      Token_GLOBAL = 1049,
-      Token_GOTO = 1050,
-      Token_GREATER_EQUAL = 1051,
-      Token_GREATER_THAN = 1052,
-      Token_IDENTIFIER = 1053,
-      Token_IF = 1054,
-      Token_IMPLICIT = 1055,
-      Token_IN = 1056,
-      Token_INCREMENT = 1057,
-      Token_INT = 1058,
-      Token_INTEGER_LITERAL = 1059,
-      Token_INTERFACE = 1060,
-      Token_INTERNAL = 1061,
-      Token_INVALID = 1062,
-      Token_IS = 1063,
-      Token_LBRACE = 1064,
-      Token_LBRACKET = 1065,
-      Token_LESS_EQUAL = 1066,
-      Token_LESS_THAN = 1067,
-      Token_LOCK = 1068,
-      Token_LOG_AND = 1069,
-      Token_LOG_OR = 1070,
-      Token_LONG = 1071,
-      Token_LPAREN = 1072,
-      Token_LSHIFT = 1073,
-      Token_LSHIFT_ASSIGN = 1074,
-      Token_MINUS = 1075,
-      Token_MINUS_ASSIGN = 1076,
-      Token_NAMESPACE = 1077,
-      Token_NEW = 1078,
-      Token_NOT_EQUAL = 1079,
-      Token_NULL = 1080,
-      Token_OBJECT = 1081,
-      Token_OPERATOR = 1082,
-      Token_OUT = 1083,
-      Token_OVERRIDE = 1084,
-      Token_PARAMS = 1085,
-      Token_PARTIAL = 1086,
-      Token_PLUS = 1087,
-      Token_PLUS_ASSIGN = 1088,
-      Token_PRIVATE = 1089,
-      Token_PROTECTED = 1090,
-      Token_PUBLIC = 1091,
-      Token_QUESTION = 1092,
-      Token_QUESTIONQUESTION = 1093,
-      Token_RBRACE = 1094,
-      Token_RBRACKET = 1095,
-      Token_READONLY = 1096,
-      Token_REAL_LITERAL = 1097,
-      Token_REF = 1098,
-      Token_REMAINDER = 1099,
-      Token_REMAINDER_ASSIGN = 1100,
-      Token_REMOVE = 1101,
-      Token_RETURN = 1102,
-      Token_RPAREN = 1103,
-      Token_RSHIFT = 1104,
-      Token_RSHIFT_ASSIGN = 1105,
-      Token_SBYTE = 1106,
+      Token_COMMA = 1024,
+      Token_CONST = 1025,
+      Token_CONTINUE = 1026,
+      Token_DECIMAL = 1027,
+      Token_DECREMENT = 1028,
+      Token_DEFAULT = 1029,
+      Token_DELEGATE = 1030,
+      Token_DO = 1031,
+      Token_DOT = 1032,
+      Token_DOUBLE = 1033,
+      Token_ELSE = 1034,
+      Token_ENUM = 1035,
+      Token_EOF = 1036,
+      Token_EQUAL = 1037,
+      Token_EVENT = 1038,
+      Token_EXPLICIT = 1039,
+      Token_EXTERN = 1040,
+      Token_FALSE = 1041,
+      Token_FINALLY = 1042,
+      Token_FIXED = 1043,
+      Token_FLOAT = 1044,
+      Token_FOR = 1045,
+      Token_FOREACH = 1046,
+      Token_GET = 1047,
+      Token_GLOBAL = 1048,
+      Token_GOTO = 1049,
+      Token_GREATER_EQUAL = 1050,
+      Token_GREATER_THAN = 1051,
+      Token_IDENTIFIER = 1052,
+      Token_IF = 1053,
+      Token_IMPLICIT = 1054,
+      Token_IN = 1055,
+      Token_INCREMENT = 1056,
+      Token_INT = 1057,
+      Token_INTEGER_LITERAL = 1058,
+      Token_INTERFACE = 1059,
+      Token_INTERNAL = 1060,
+      Token_INVALID = 1061,
+      Token_IS = 1062,
+      Token_LBRACE = 1063,
+      Token_LBRACKET = 1064,
+      Token_LESS_EQUAL = 1065,
+      Token_LESS_THAN = 1066,
+      Token_LOCK = 1067,
+      Token_LOG_AND = 1068,
+      Token_LOG_OR = 1069,
+      Token_LONG = 1070,
+      Token_LPAREN = 1071,
+      Token_LSHIFT = 1072,
+      Token_LSHIFT_ASSIGN = 1073,
+      Token_MINUS = 1074,
+      Token_MINUS_ASSIGN = 1075,
+      Token_NAMESPACE = 1076,
+      Token_NEW = 1077,
+      Token_NOT_EQUAL = 1078,
+      Token_NULL = 1079,
+      Token_OBJECT = 1080,
+      Token_OPERATOR = 1081,
+      Token_OUT = 1082,
+      Token_OVERRIDE = 1083,
+      Token_PARAMS = 1084,
+      Token_PARTIAL = 1085,
+      Token_PLUS = 1086,
+      Token_PLUS_ASSIGN = 1087,
+      Token_PRIVATE = 1088,
+      Token_PROTECTED = 1089,
+      Token_PUBLIC = 1090,
+      Token_QUESTION = 1091,
+      Token_QUESTIONQUESTION = 1092,
+      Token_RBRACE = 1093,
+      Token_RBRACKET = 1094,
+      Token_READONLY = 1095,
+      Token_REAL_LITERAL = 1096,
+      Token_REF = 1097,
+      Token_REMAINDER = 1098,
+      Token_REMAINDER_ASSIGN = 1099,
+      Token_REMOVE = 1100,
+      Token_RETURN = 1101,
+      Token_RPAREN = 1102,
+      Token_RSHIFT = 1103,
+      Token_RSHIFT_ASSIGN = 1104,
+      Token_SBYTE = 1105,
+      Token_SCOPE = 1106,
       Token_SEALED = 1107,
       Token_SEMICOLON = 1108,
       Token_SET = 1109,
@@ -482,16 +590,24 @@ class csharp
     }
 
     bool parse_attribute(attribute_ast **yynode);
+    bool parse_attribute_arguments(attribute_arguments_ast **yynode);
     bool parse_attribute_section(attribute_section_ast **yynode);
     bool parse_attribute_target(attribute_target_ast **yynode);
     bool parse_compilation_unit(compilation_unit_ast **yynode);
+    bool parse_expression(expression_ast **yynode);
     bool parse_extern_alias_directive(extern_alias_directive_ast **yynode);
     bool parse_global_attribute_section(global_attribute_section_ast **yynode);
     bool parse_identifier(identifier_ast **yynode);
     bool parse_keyword(keyword_ast **yynode);
     bool parse_literal(literal_ast **yynode);
+    bool parse_named_argument(named_argument_ast **yynode);
     bool parse_namespace_member_declaration(namespace_member_declaration_ast **yynode);
+    bool parse_namespace_name(namespace_name_ast **yynode);
     bool parse_namespace_or_type_name(namespace_or_type_name_ast **yynode);
+    bool parse_namespace_or_type_name_part(namespace_or_type_name_part_ast **yynode);
+    bool parse_positional_argument(positional_argument_ast **yynode);
+    bool parse_type_arguments(type_arguments_ast **yynode);
+    bool parse_type_name(type_name_ast **yynode);
     bool parse_using_directive(using_directive_ast **yynode);
   };
 class csharp_visitor
@@ -509,11 +625,15 @@ class csharp_visitor
     }
     virtual void visit_attribute(attribute_ast *)
   {}
+    virtual void visit_attribute_arguments(attribute_arguments_ast *)
+    {}
     virtual void visit_attribute_section(attribute_section_ast *)
     {}
     virtual void visit_attribute_target(attribute_target_ast *)
     {}
     virtual void visit_compilation_unit(compilation_unit_ast *)
+    {}
+    virtual void visit_expression(expression_ast *)
     {}
     virtual void visit_extern_alias_directive(extern_alias_directive_ast *)
     {}
@@ -525,9 +645,21 @@ class csharp_visitor
     {}
     virtual void visit_literal(literal_ast *)
     {}
+    virtual void visit_named_argument(named_argument_ast *)
+    {}
     virtual void visit_namespace_member_declaration(namespace_member_declaration_ast *)
     {}
+    virtual void visit_namespace_name(namespace_name_ast *)
+    {}
     virtual void visit_namespace_or_type_name(namespace_or_type_name_ast *)
+    {}
+    virtual void visit_namespace_or_type_name_part(namespace_or_type_name_part_ast *)
+    {}
+    virtual void visit_positional_argument(positional_argument_ast *)
+    {}
+    virtual void visit_type_arguments(type_arguments_ast *)
+    {}
+    virtual void visit_type_name(type_name_ast *)
     {}
     virtual void visit_using_directive(using_directive_ast *)
     {}
@@ -537,7 +669,34 @@ class csharp_default_visitor: public csharp_visitor
   {
   public:
     virtual void visit_attribute(attribute_ast *node)
-    {}
+    {
+      visit_node(node->name);
+      visit_node(node->arguments);
+    }
+
+    virtual void visit_attribute_arguments(attribute_arguments_ast *node)
+    {
+      if (node->named_argument_sequence)
+        {
+          const list_node<named_argument_ast*> *__it = node->named_argument_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+      if (node->positional_argument_sequence)
+        {
+          const list_node<positional_argument_ast*> *__it = node->positional_argument_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+    }
 
     virtual void visit_attribute_section(attribute_section_ast *node)
     {
@@ -604,6 +763,9 @@ class csharp_default_visitor: public csharp_visitor
         }
     }
 
+    virtual void visit_expression(expression_ast *node)
+  {}
+
     virtual void visit_extern_alias_directive(extern_alias_directive_ast *node)
     {
       visit_node(node->identifier);
@@ -633,10 +795,48 @@ class csharp_default_visitor: public csharp_visitor
     virtual void visit_literal(literal_ast *node)
     {}
 
+    virtual void visit_named_argument(named_argument_ast *node)
+    {
+      visit_node(node->argument_name);
+      visit_node(node->attribute_argument_expression);
+    }
+
     virtual void visit_namespace_member_declaration(namespace_member_declaration_ast *node)
     {}
 
+    virtual void visit_namespace_name(namespace_name_ast *node)
+    {}
+
     virtual void visit_namespace_or_type_name(namespace_or_type_name_ast *node)
+    {
+      visit_node(node->qualified_alias_label);
+      if (node->name_part_sequence)
+        {
+          const list_node<namespace_or_type_name_part_ast*> *__it = node->name_part_sequence->to_front(), *__end = __it;
+          do
+            {
+              visit_node(__it->element);
+              __it = __it->next;
+            }
+          while (__it != __end);
+        }
+    }
+
+    virtual void visit_namespace_or_type_name_part(namespace_or_type_name_part_ast *node)
+    {
+      visit_node(node->identifier);
+      visit_node(node->type_arguments);
+    }
+
+    virtual void visit_positional_argument(positional_argument_ast *node)
+    {
+      visit_node(node->attribute_argument_expression);
+    }
+
+    virtual void visit_type_arguments(type_arguments_ast *node)
+    {}
+
+    virtual void visit_type_name(type_name_ast *node)
     {}
 
     virtual void visit_using_directive(using_directive_ast *node)

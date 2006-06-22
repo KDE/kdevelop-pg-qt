@@ -3588,7 +3588,7 @@ return csharp::Token_COLON;
 case 11:
 YY_RULE_SETUP
 #line 196 "csharp_lexer.ll"
-return csharp::Token_COLONCOLON; // TODO: naming... new in 2.0?
+return csharp::Token_SCOPE; // TODO: new in 2.0?
 	YY_BREAK
 case 12:
 YY_RULE_SETUP

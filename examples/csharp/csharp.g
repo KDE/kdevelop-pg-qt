@@ -28,21 +28,19 @@
 
 
 -- Known problematic conflicts (0 conflicts), requiring automatic LL(k):
---  - The first/follow NOTHING, FORNAUGHT conflict in compilation_unit
+--  - Nothing until now. But I'm sure I'll find some.
 --    (0 conflicts)
 
--- Known harmless or resolved conflicts (0 conflicts):
---  - The first/follow USING conflict,
---    the first/follow USING, LBRACKET (=global_attribute) conflict,
---    and the first/follow USING, LBRACKET, STUB_C (=namespace_declaration)
---    conflict in compilation_unit. Seems we must get one such conflict for
---    each entry in the start rule (C#: 4 entries, 3 conflicts, Java: 3 with 2)
---    I can't get away from the feeling that this is actually a kdev-pg bug.
---    (done right by default, 3 conflicts)
---  - still none
---    (manually resolved, 0 conflicts)
+-- Known harmless or resolved conflicts (5 conflicts):
+--  - The first/follow COMMA conflict in global_attribute_section,
+--    and the same one in attribute_section
+--    (manually resolved, 2 conflicts)
+--  - The first/first IDENTIFIER conflict in using_directive
+--    (manually resolved, 1 conflict)
+--  - The first/first IDENTIFIER conflicts in attribute_arguments, two of them
+--    (manually resolved, 2 conflicts)
 
--- Total amount of conflicts: 0
+-- Total amount of conflicts: 5
 
 
 --
@@ -178,7 +176,7 @@
        RBRACKET ("]"), COMMA (","), SEMICOLON (";"), DOT (".") ;;
 
 -- operators:
-%token COLON (":"), COLONCOLON ("::"), QUESTION ("?"), QUESTIONQUESTION ("??"),
+%token COLON (":"), SCOPE ("::"), QUESTION ("?"), QUESTIONQUESTION ("??"),
        BANG ("!"), TILDE ("~"), EQUAL ("=="), LESS_THAN ("<"),
        LESS_EQUAL ("<="), GREATER_THAN (">"), GREATER_EQUAL (">="),
        NOT_EQUAL ("!="), LOG_AND ("&&"), LOG_OR ("||"), ARROW_RIGHT ("->"),
@@ -209,11 +207,12 @@
 -- Start of the actual grammar
 --
 
-   (#extern_alias=extern_alias_directive)*  -- research: probably not C# 1.0
+   (#extern_alias=extern_alias_directive)*  -- TODO: probably not in C# 1.0
    (#using=using_directive)*
    (#global_attribute=global_attribute_section)*
    (#namespace=namespace_member_declaration)*
 -> compilation_unit ;;
+
 
    EXTERN ALIAS identifier=identifier SEMICOLON
 -> extern_alias_directive ;;
@@ -228,24 +227,119 @@
 -> using_directive ;;
 
 
--- Attribute sections, global and standard ones
+   namespace_or_type_name
+-> namespace_name ;;
+
+   namespace_or_type_name
+-> type_name ;;
+
+
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   #name_part=namespace_or_type_name_part @ DOT
+-> namespace_or_type_name ;;
+
+   identifier=identifier
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+-> namespace_or_type_name_part ;;
+
+
+
+
+-- ATTRIBUTE sections,
+-- global and standard ones
 
    LBRACKET
    target=attribute_target COLON
-   (#attribute=attribute @ COMMA) (COMMA | 0)
+   #attribute=attribute
+   ( 0 [: if (LA(2).kind == Token_RBRACKET) { break; } :]
+     COMMA #attribute=attribute
+   )*
+   ( COMMA | 0 )
    RBRACKET
 -> global_attribute_section ;;
 
    LBRACKET
    (target=attribute_target COLON | 0)
-   (#attribute=attribute @ COMMA) (COMMA | 0)
+   #attribute=attribute
+   ( 0 [: if (LA(2).kind == Token_RBRACKET) { break; } :]
+     COMMA #attribute=attribute
+   )*
+   ( COMMA | 0 )
    RBRACKET
 -> attribute_section ;;
 
    identifier=identifier | keyword=keyword
 -> attribute_target ;;
 
+   name=type_name (arguments=attribute_arguments | 0)
+-> attribute ;;
 
+   LPAREN
+   (
+      -- empty argument list:
+      RPAREN
+    |
+      -- argument list only containing named arguments:
+      ?[: LA(2).kind == Token_ASSIGN :]
+      #named_argument=named_argument @ COMMA
+      RPAREN
+    |
+      -- argument list with positional arguments and
+      -- optionally appended named arguments:
+      #positional_argument=positional_argument
+      ( COMMA
+        (  ?[: (yytoken == Token_IDENTIFIER) && (LA(2).kind == Token_ASSIGN) :]
+           (#named_argument=named_argument @ COMMA)
+           [: break; :] -- go directly to the closing parenthesis
+         |
+           #positional_argument=positional_argument
+        )
+      )*
+      RPAREN
+   )
+-> attribute_arguments ;;
+
+   attribute_argument_expression=expression
+-> positional_argument ;;
+
+   argument_name=identifier ASSIGN attribute_argument_expression=expression
+-> named_argument ;;
+
+
+
+
+
+
+--
+-- MODIFIERs, KEYWORDS, LITERALs, and the IDENTIFIER wrapper
+--
+
+ (
+   keyword=ABSTRACT | keyword=AS | keyword=BASE | keyword=BOOL
+ | keyword=BREAK | keyword=BYTE | keyword=CASE | keyword=CATCH | keyword=CHAR
+ | keyword=CHECKED | keyword=CLASS | keyword=CONST | keyword=CONTINUE
+ | keyword=DECIMAL | keyword=DEFAULT | keyword=DELEGATE | keyword=DO
+ | keyword=DOUBLE | keyword=ELSE | keyword=ENUM | keyword=EVENT
+ | keyword=EXPLICIT | keyword=EXTERN | keyword=FINALLY | keyword=FIXED
+ | keyword=FLOAT | keyword=FOREACH | keyword=FOR | keyword=GOTO | keyword=IF
+ | keyword=IMPLICIT | keyword=IN | keyword=INT | keyword=INTERFACE
+ | keyword=INTERNAL | keyword=IS | keyword=LOCK | keyword=LONG
+ | keyword=NAMESPACE | keyword=NEW | keyword=OBJECT | keyword=OPERATOR
+ | keyword=OUT | keyword=OVERRIDE | keyword=PARAMS | keyword=PRIVATE
+ | keyword=PROTECTED | keyword=PUBLIC | keyword=READONLY | keyword=REF
+ | keyword=RETURN | keyword=SBYTE | keyword=SEALED | keyword=SHORT
+ | keyword=SIZEOF | keyword=STACKALLOC | keyword=STATIC | keyword=STRING
+ | keyword=STRUCT | keyword=SWITCH | keyword=THIS | keyword=THROW | keyword=TRY
+ | keyword=TYPEOF | keyword=UINT | keyword=ULONG | keyword=UNCHECKED
+ | keyword=UNSAFE | keyword=USHORT | keyword=USING | keyword=VIRTUAL
+ | keyword=VOID | keyword=VOLATILE | keyword=WHILE
+ )
+-> keyword ;;
 
    ident=IDENTIFIER
 -> identifier ;;
@@ -275,10 +369,9 @@
 -- Appendix: Rule stubs
 --
 
-STUB_A -> namespace_or_type_name ;;
-STUB_B -> keyword ;;
-STUB_C -> namespace_member_declaration ;;
-STUB_D -> attribute ;;
+STUB_A -> type_arguments ;;
+STUB_B -> namespace_member_declaration ;;
+identifier -> expression ;;
 
 
 

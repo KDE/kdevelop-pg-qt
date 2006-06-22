@@ -55,9 +55,6 @@ namespace
   void gen_test_condition(model::node *node, std::ostream &out)
   {
     world::node_set s = _G_system.FIRST(node);
-    if (reduces_to_epsilon(node))
-      s.insert(_G_system.FOLLOW(node).begin(), _G_system.FOLLOW(node).end());
-
     gen_condition(s, out);
   }
 

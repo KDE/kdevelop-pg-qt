@@ -484,10 +484,9 @@
 
 -- An IMPORT DECLARATION is "import" followed by a package or type (=class) name.
 
-   IMPORT [: (*yynode)->static_import = false; :]
+   IMPORT
    (  STATIC [: (*yynode)->static_import = true;  :]
-    | 0      -- [: (*yynode)->static_import = false; :]
-             -- doesn't compile, probably a kdev-pg bug. TODO: fix
+    | 0      [: (*yynode)->static_import = false; :]
    )
    identifier_name=qualified_identifier_with_optional_star SEMICOLON
 -> import_declaration ;;
@@ -504,6 +503,55 @@
     | SEMICOLON
    )
 -> type_declaration ;;
+
+
+
+
+-- ANNOTATIONS look for example like @Info( name="Jakob", born=1983 ),
+-- or @Info("Jakob"), or just @Info, and are attached to a method,
+-- class, or package. @Info is equivalent to @Info().
+
+   AT type_name=qualified_identifier
+   (  LPAREN (args=annotation_arguments | 0) RPAREN
+        [: (*yynode)->has_parentheses = true; :]
+    | 0 [: (*yynode)->has_parentheses = false; :]
+   )
+-> annotation ;;
+
+ ( ( ?[: LA(2).kind == Token_ASSIGN :]
+     #value_pair=annotation_element_value_pair @ COMMA
+   )
+ | element_value=annotation_element_value  -- element_name is "value" here
+ )
+-> annotation_arguments ;;
+
+   element_name=identifier ASSIGN element_value=annotation_element_value
+-> annotation_element_value_pair ;;
+
+   cond_expression=conditional_expression
+ | annotation=annotation
+ | element_array_initializer=annotation_element_array_initializer
+-> annotation_element_value ;;
+
+-- Same as annotation_element_value, but array_initializer is excluded.
+-- That's because nested annotation array initialisers are not valid.
+-- (The Java specification hides that in a short "discussion" area.)
+   cond_expression=conditional_expression
+ | annotation=annotation
+-> annotation_element_array_value ;;
+
+   LBRACE
+   (  #element_value=annotation_element_array_value
+      ( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
+        COMMA #element_value=annotation_element_array_value
+      )*
+    |
+      0
+   )
+   ( COMMA | 0 )
+   RBRACE
+-> annotation_element_array_initializer ;;
+
 
 
 
@@ -793,10 +841,9 @@
 -- -> parameter_declaration_list ;;
 
    parameter_modifiers=optional_parameter_modifiers
-   type_specification=type_specification [: (*yynode)->has_ellipsis = false; :]
+   type_specification=type_specification
    (  ELLIPSIS [: (*yynode)->has_ellipsis = true; ellipsisOccurred = true; :]
-    | 0        -- [: (*yynode)->has_ellipsis = false; :]
-               -- doesn't compile, probably a kdev-pg bug. TODO: fix
+    | 0        [: (*yynode)->has_ellipsis = false; :]
    )
    variable_identifier=identifier
    declarator_brackets=optional_declarator_brackets
@@ -1020,54 +1067,6 @@
 
    ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
 -> mandatory_declarator_brackets ;;
-
-
-
-
--- ANNOTATIONS look for example like @Info( name="Jakob", born=1983 ),
--- or @Info("Jakob"), or just @Info, and are attached to a method, class or package.
--- @Info is equivalent to @Info().
-
-   AT type_name=qualified_identifier
-   (  LPAREN (args=annotation_arguments | 0) RPAREN
-        [: (*yynode)->has_parentheses = true; :]
-    | 0 [: (*yynode)->has_parentheses = false; :]
-   )
--> annotation ;;
-
- ( ( ?[: LA(2).kind == Token_ASSIGN :]
-     #value_pair=annotation_element_value_pair @ COMMA
-   )
- | element_value=annotation_element_value  -- element_name is "value" here
- )
--> annotation_arguments ;;
-
-   element_name=identifier ASSIGN element_value=annotation_element_value
--> annotation_element_value_pair ;;
-
-   cond_expression=conditional_expression
- | annotation=annotation
- | element_array_initializer=annotation_element_array_initializer
--> annotation_element_value ;;
-
--- Same as annotation_element_value, but array_initializer is excluded.
--- That's because nested annotation array initialisers are not valid.
--- (The Java specification hides that in a short "discussion" area.)
-   cond_expression=conditional_expression
- | annotation=annotation
--> annotation_element_array_value ;;
-
-   LBRACE
-   (  #element_value=annotation_element_array_value
-      ( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
-        COMMA #element_value=annotation_element_array_value
-      )*
-    |
-      0
-   )
-   ( COMMA | 0 )
-   RBRACE
--> annotation_element_array_initializer ;;
 
 
 

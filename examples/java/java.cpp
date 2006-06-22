@@ -3919,7 +3919,6 @@ bool java::parse_import_declaration(import_declaration_ast **yynode)
       if (yytoken != Token_IMPORT)
         return yy_expected_token(yytoken, Token_IMPORT, "import");
       yylex();
-      (*yynode)->static_import = false;
       if (yytoken == Token_STATIC)
         {
           if (yytoken != Token_STATIC)
@@ -3928,7 +3927,9 @@ bool java::parse_import_declaration(import_declaration_ast **yynode)
           (*yynode)->static_import = true;
         }
       else if (true /*epsilon*/)
-      {}
+        {
+          (*yynode)->static_import = false;
+        }
       else
         {
           return false;
@@ -5276,7 +5277,6 @@ bool java::parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_a
           return yy_expected_symbol(java_ast_node::Kind_type_specification, "type_specification");
         }
       (*yynode)->type_specification = __node_187;
-      (*yynode)->has_ellipsis = false;
       if (yytoken == Token_ELLIPSIS)
         {
           if (yytoken != Token_ELLIPSIS)
@@ -5286,7 +5286,9 @@ bool java::parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_a
           ellipsisOccurred = true;
         }
       else if (true /*epsilon*/)
-      {}
+        {
+          (*yynode)->has_ellipsis = false;
+        }
       else
         {
           return false;

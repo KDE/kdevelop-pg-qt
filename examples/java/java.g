@@ -50,12 +50,31 @@
 --    Solved by lookahead_is_cast_expression().
 --    (1 conflict)
 
--- Known harmless or resolved conflicts (13 conflicts):
---  - There are potentially more first/follow conflicts, as kdev-pg currently
---    doesn't find things like the COMMA conflict in variable_array_initializer.
---    Has to be fixed in kdev-pg-checker.cpp.
---  - The first/follow AT conflict in optional_modifiers: greedy is ok
+-- Known harmless or resolved conflicts (21 conflicts):
+--  - The first/follow COMMA conflict in enum_body: greedy is ok
 --    (done right by default, 1 conflict)
+--  - The first/follow COMMA conflict in type_arguments:
+--    the approach for catching ">" signs works this way, and the conflict
+--    is resolved by the trailing condition at the end of the rule.
+--    (manually resolved, 1 conflict)
+--  - The first/follow DOT conflict in class_or_interface_type:
+--    I'm not completely sure, but I consider it harmless for now, and I think
+--    the conflict may be caused by the pg-disturbing type_arguments as well.
+--    (done right by default, 1 conflict)
+--  - The first/follow DOT conflict in qualified_identifier_safe
+--    (manually resolved, 1 conflict)
+--  - The first/follow LBRACKET conflict in optional_declarator_brackets:
+--    No idea, but it should be ok. See the class_or_interface_type
+--    DOT conflict further above.
+--    (done right by default, 1 conflict)
+--  - The first/follow COMMA conflict in annotation_element_array_initializer
+--    (manually resolved, 1 conflict)
+--  - The first/follow COMMA conflict in variable_array_initializer
+--    (manually resolved, 1 conflict)
+--  - The first/follow LBRACKET conflict in array_creator_rest
+--    (manually resolved, 1 conflict)
+--  - The first/follow AT conflict in optional_modifiers
+--    (manually resolved, 1 conflict)
 --  - The first/first IDENTIFIER conflicts in *_field,
 --    between method_name and variable_name
 --    (manually resolved, 4 conflicts)
@@ -79,7 +98,7 @@
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 18
+-- Total amount of conflicts: 26
 
 
 --
@@ -837,15 +856,15 @@
    #type_parameter=type_parameter @ COMMA
    (
       type_arguments_or_parameters_end
-      -- make sure we have gobbled up enough '>' characters
-      -- if we are at the "top level" of nested type_parameters productions
-      [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
-          { return false; }
-       :]
-      -- TODO: error message, saying that the amount of ">" chars is incorrect
-    |
-      0  -- they can also be changed by type_parameter or type_argument
+    | 0  -- they can also be changed by type_parameter or type_argument
    )
+   -- make sure we have gobbled up enough '>' characters
+   -- if we are at the "top level" of nested type_parameters productions
+   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
+      { report_problem(error, "The amount of closing ``>'' characters is incorrect");
+        return false;
+      }
+   :]
 -> type_parameters ;;
 
    identifier=identifier
@@ -863,15 +882,15 @@
      ) -- only proceed when we are at the right nesting level
    (
       type_arguments_or_parameters_end
-      -- make sure we have gobbled up enough '>' characters
-      -- if we are at the "top level" of nested type_argument productions
-      [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
-          { return false; }
-       :]
-      -- TODO: error message, saying that the amount of ">" chars is incorrect
-    |
-      0  -- they can also be changed by type_parameter or type_argument
+    | 0  -- they can also be changed by type_parameter or type_argument
    )
+   -- make sure we have gobbled up enough '>' characters
+   -- if we are at the "top level" of nested type_arguments productions
+   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
+      { report_problem(error, "The amount of closing ``>'' characters is incorrect");
+        return false;
+      }
+   :]
 -> type_arguments ;;
 
    LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
@@ -881,15 +900,15 @@
      ) -- only proceed when we are at the right nesting level
    (
       type_arguments_or_parameters_end
-      -- make sure we have gobbled up enough '>' characters
-      -- if we are at the "top level" of nested type_argument productions
-      [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
-          { return false; }
-       :]
-      -- TODO: error message, saying that the amount of ">" chars is incorrect
-    |
-      0  -- they can also be changed by type_parameter or type_argument
+    | 0  -- they can also be changed by type_parameter or type_argument
    )
+   -- make sure we have gobbled up enough '>' characters
+   -- if we are at the "top level" of nested type_arguments productions
+   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
+      { report_problem(error, "The amount of closing ``>'' characters is incorrect");
+        return false;
+      }
+   :]
 -> non_wildcard_type_arguments ;;
 
    type_argument_specification=type_argument_specification
@@ -1039,7 +1058,13 @@
 -> annotation_element_array_value ;;
 
    LBRACE
-   ( #element_value=annotation_element_array_value @ COMMA | 0 )
+   (  #element_value=annotation_element_array_value
+      ( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
+        COMMA #element_value=annotation_element_array_value
+      )*
+    |
+      0
+   )
    ( COMMA | 0 )
    RBRACE
 -> annotation_element_array_initializer ;;

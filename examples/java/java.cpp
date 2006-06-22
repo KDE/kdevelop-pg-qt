@@ -456,6 +456,10 @@ bool java::parse_annotation_element_array_initializer(annotation_element_array_i
           (*yynode)->element_value_sequence = snoc((*yynode)->element_value_sequence, __node_8, memory_pool);
           while (yytoken == Token_COMMA)
             {
+              if (LA(2).kind == Token_RBRACE)
+                {
+                  break;
+                }
               if (yytoken != Token_COMMA)
                 return yy_expected_token(yytoken, Token_COMMA, ",");
               yylex();
@@ -4828,15 +4832,16 @@ bool java::parse_non_wildcard_type_arguments(non_wildcard_type_arguments_ast **y
             {
               return yy_expected_symbol(java_ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
             }
-          if ( currentLtLevel == 0 && ltCounter != currentLtLevel )
-            {
-              return false;
-            }
         }
       else if (true /*epsilon*/)
       {}
       else
         {
+          return false;
+        }
+      if ( currentLtLevel == 0 && ltCounter != currentLtLevel )
+        {
+          report_problem(error, "The amount of closing ``>'' characters is incorrect");
           return false;
         }
     }
@@ -4863,6 +4868,7 @@ bool java::parse_optional_declarator_brackets(optional_declarator_brackets_ast *
       || yytoken == Token_EXTENDS
       || yytoken == Token_FLOAT
       || yytoken == Token_IMPLEMENTS
+      || yytoken == Token_INSTANCEOF
       || yytoken == Token_INT
       || yytoken == Token_LONG
       || yytoken == Token_SHORT
@@ -4880,16 +4886,27 @@ bool java::parse_optional_declarator_brackets(optional_declarator_brackets_ast *
       || yytoken == Token_COMMA
       || yytoken == Token_DOT
       || yytoken == Token_ASSIGN
+      || yytoken == Token_LESS_THAN
       || yytoken == Token_GREATER_THAN
       || yytoken == Token_QUESTION
       || yytoken == Token_COLON
       || yytoken == Token_EQUAL
+      || yytoken == Token_LESS_EQUAL
+      || yytoken == Token_GREATER_EQUAL
       || yytoken == Token_NOT_EQUAL
       || yytoken == Token_LOG_AND
       || yytoken == Token_LOG_OR
+      || yytoken == Token_INCREMENT
+      || yytoken == Token_DECREMENT
+      || yytoken == Token_PLUS
+      || yytoken == Token_MINUS
+      || yytoken == Token_STAR
+      || yytoken == Token_SLASH
       || yytoken == Token_BIT_AND
       || yytoken == Token_BIT_OR
       || yytoken == Token_BIT_XOR
+      || yytoken == Token_REMAINDER
+      || yytoken == Token_LSHIFT
       || yytoken == Token_SIGNED_RSHIFT
       || yytoken == Token_UNSIGNED_RSHIFT
       || yytoken == Token_PLUS_ASSIGN
@@ -7264,15 +7281,16 @@ bool java::parse_type_arguments(type_arguments_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
             }
-          if ( currentLtLevel == 0 && ltCounter != currentLtLevel )
-            {
-              return false;
-            }
         }
       else if (true /*epsilon*/)
       {}
       else
         {
+          return false;
+        }
+      if ( currentLtLevel == 0 && ltCounter != currentLtLevel )
+        {
+          report_problem(error, "The amount of closing ``>'' characters is incorrect");
           return false;
         }
     }
@@ -7534,15 +7552,16 @@ bool java::parse_type_parameters(type_parameters_ast **yynode)
             {
               return yy_expected_symbol(java_ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
             }
-          if ( currentLtLevel == 0 && ltCounter != currentLtLevel )
-            {
-              return false;
-            }
         }
       else if (true /*epsilon*/)
       {}
       else
         {
+          return false;
+        }
+      if ( currentLtLevel == 0 && ltCounter != currentLtLevel )
+        {
+          report_problem(error, "The amount of closing ``>'' characters is incorrect");
           return false;
         }
     }

@@ -32,6 +32,8 @@
 --    (0 conflicts)
 
 -- Known harmless or resolved conflicts (5 conflicts):
+--  - The first/follow LBRACKET conflict in compilation_unit
+--    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in global_attribute_section,
 --    and the same one in attribute_section
 --    (manually resolved, 2 conflicts)
@@ -121,6 +123,40 @@
 -- Additional AST members
 --
 
+%member (modifier: public declaration)
+[:
+  enum modifier_enum {
+    mod_new          = 1,
+    mod_public       = 2,
+    mod_protected    = 4,
+    mod_internal     = 8,
+    mod_private      = 16,
+    mod_abstract     = 32,
+    mod_sealed       = 64,
+    mod_static       = 128,
+    mod_readonly     = 256,
+    mod_volatile     = 512,
+    mod_virtual      = 1024,
+    mod_override     = 2048,
+    mod_extern       = 4096,
+  };
+  int modifiers;
+:]
+
+%member (optional_type_modifiers: public declaration)
+[:
+  int modifiers; // using modifier_ast's modifier_enum
+:]
+
+%member (parameter_modifier: public declaration)
+[:
+  enum parameter_modifier_enum {
+    mod_ref,
+    mod_out,
+  };
+  parameter_modifier_enum modifier;
+:]
+
 %member (literal: public declaration)
 [:
   enum literal_type_enum {
@@ -169,7 +205,7 @@
 -- non-keyword identifiers with special meaning in the grammar:
 %token ADD ("add"), ALIAS("alias"), GET ("get"), GLOBAL ("global"),
        PARTIAL ("partial"), REMOVE ("remove"), SET ("set"), VALUE ("value"),
-       WHERE ("where"), YIELD ("yield") ;;
+       WHERE ("where"), YIELD ("yield"), ASSEMBLY ("assembly") ;;
 
 -- seperators:
 %token LPAREN ("("), RPAREN (")"), LBRACE ("{"), RBRACE ("}"), LBRACKET ("["),
@@ -209,7 +245,10 @@
 
    (#extern_alias=extern_alias_directive)*  -- TODO: probably not in C# 1.0
    (#using=using_directive)*
-   (#global_attribute=global_attribute_section)*
+   (  ?[: LA(2).kind == Token_ASSEMBLY :]
+      #global_attribute=global_attribute_section
+    | 0
+   )*
    (#namespace=namespace_member_declaration)*
 -> compilation_unit ;;
 
@@ -250,11 +289,14 @@
 
 
 
--- ATTRIBUTE sections,
--- global and standard ones
+-- ATTRIBUTE sections, global and standard ones. They have a slight similarity
+-- with Java's annotations in that they are used as advanced type modifiers.
 
-   LBRACKET
-   target=attribute_target COLON
+-- Strictly seen, the ASSEMBLY here should just be attribute_target.
+-- But for the sake of avoiding an LL(k)-ambiguous conflict
+-- (in compilation_unit), we just allow "assembly".
+
+   LBRACKET ASSEMBLY COLON
    #attribute=attribute
    ( 0 [: if (LA(2).kind == Token_RBRACKET) { break; } :]
      COMMA #attribute=attribute
@@ -313,11 +355,118 @@
 
 
 
+-- NAMESPACES can be nested arbitrarily and contain stuff
+-- like classes, interfaces, or other declarations.
+
+   namespace_declaration=namespace_declaration
+ | type_declaration=type_declaration
+-> namespace_member_declaration ;;
+
+   NAMESPACE name=qualified_identifier body=namespace_body (SEMICOLON | 0)
+-> namespace_declaration ;;
+
+   LBRACE
+   (#extern_alias=extern_alias_directive)*  -- TODO: probably not in C# 1.0
+   (#using=using_directive)*
+   (#namespace=namespace_member_declaration)*
+   RBRACE
+-> namespace_body ;;
+
+   (#attribute=attribute_section)*
+   modifiers=optional_type_modifiers
+   (  class_declaration=class_declaration
+    | struct_declaration=struct_declaration
+    | interface_declaration=interface_declaration
+    | enum_declaration=enum_declaration
+    | delegate_declaration=delegate_declaration
+   )
+-> type_declaration ;;
+
+ (
+   NEW        [: (*yynode)->modifiers |= modifier_ast::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= modifier_ast::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= modifier_ast::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= modifier_ast::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= modifier_ast::mod_private;   :]
+ -- the following three ones only occur in class declarations:
+ | ABSTRACT   [: (*yynode)->modifiers |= modifier_ast::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= modifier_ast::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= modifier_ast::mod_static;    :]
+ )*
+-> optional_type_modifiers ;;
+
+
+
+-- Definition of a C# CLASS
+
+-- TODO:
+-- -> class_declaration ;;
+
+
+-- Definition of a C# STRUCT
+
+-- TODO:
+-- -> struct_declaration ;;
+
+
+-- Definition of a C# INTERFACE
+
+-- TODO:
+-- -> interface_declaration ;;
+
+
+-- Definition of a C# ENUM
+
+-- TODO:
+-- -> enum_declaration ;;
+
+
+-- Definition of a C# DELEGATE
+
+   DELEGATE return_type=return_type delegate_name=identifier
+   (type_parameters=type_parameters | 0)
+   LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+   (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
+   SEMICOLON
+-> delegate_declaration ;;
+
+
+
+-- QUALIFIED identifiers are either qualified ones or raw identifiers.
+
+   #name=identifier @ DOT
+-> qualified_identifier ;;
+
+
 
 
 --
--- MODIFIERs, KEYWORDS, LITERALs, and the IDENTIFIER wrapper
+-- MODIFIERS, KEYWORDS, LITERALS, and the IDENTIFIER wrapper
 --
+
+   REF       [: (*yynode)->modifier = parameter_modifier_ast::mod_ref; :]
+ | OUT       [: (*yynode)->modifier = parameter_modifier_ast::mod_out; :]
+-> parameter_modifier ;;
+
+-- The modifiers here are not used in any rule, but are there to provide
+-- one single pool of modifier enum value definitions.
+
+ (
+   NEW        [: (*yynode)->modifiers |= modifier_ast::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= modifier_ast::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= modifier_ast::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= modifier_ast::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= modifier_ast::mod_private;   :]
+ | ABSTRACT   [: (*yynode)->modifiers |= modifier_ast::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= modifier_ast::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= modifier_ast::mod_static;    :]
+ | READONLY   [: (*yynode)->modifiers |= modifier_ast::mod_readonly;  :]
+ | VOLATILE   [: (*yynode)->modifiers |= modifier_ast::mod_volatile;  :]
+ | VIRTUAL    [: (*yynode)->modifiers |= modifier_ast::mod_virtual;   :]
+ | OVERRIDE   [: (*yynode)->modifiers |= modifier_ast::mod_override;  :]
+ | EXTERN     [: (*yynode)->modifiers |= modifier_ast::mod_extern;    :]
+ )
+-> modifier ;;
 
  (
    keyword=ABSTRACT | keyword=AS | keyword=BASE | keyword=BOOL
@@ -341,8 +490,12 @@
  )
 -> keyword ;;
 
+ (
    ident=IDENTIFIER
+ | ident=ASSEMBLY
+ )
 -> identifier ;;
+-- TODO: incorporate the non-keyword identifiers
 
  (
    TRUE   [: (*yynode)->literal_type = literal_ast::type_true;  :]
@@ -370,7 +523,14 @@
 --
 
 STUB_A -> type_arguments ;;
-STUB_B -> namespace_member_declaration ;;
+STUB_B -> type_parameters ;;
+STUB_C -> type_parameter_constraints_clauses ;;
+STUB_D -> class_declaration ;;
+STUB_E -> struct_declaration ;;
+STUB_F -> interface_declaration ;;
+STUB_G -> enum_declaration ;;
+STUB_H -> return_type ;;
+STUB_I -> formal_parameters ;;
 identifier -> expression ;;
 
 

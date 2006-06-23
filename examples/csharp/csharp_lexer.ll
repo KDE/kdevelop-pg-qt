@@ -368,6 +368,9 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 "where"         return csharp::Token_WHERE;
 "yield"         return csharp::Token_YIELD;
 
+ /* An unspecified one, for global attributes: */
+"assembly"      return csharp::Token_ASSEMBLY;
+
 
 
  /* the pre-processor */

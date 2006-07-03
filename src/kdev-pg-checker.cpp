@@ -243,9 +243,9 @@ void empty_FIRST_checker::visit_symbol(model::symbol_item *node)
 void problem_summary_printer::operator()()
 {
   std::cerr << (_M_first_first_conflict_count + _M_first_follow_conflict_count)
-            << " conflicts total: " << _M_first_first_conflict_count
-            << " FIRST/FIRST conflicts, " << _M_first_follow_conflict_count
-            << " FIRST/FOLLOW conflicts." << std::endl;
+            << " conflicts total: " << _M_first_follow_conflict_count
+            << " FIRST/FOLLOW conflicts, " << _M_first_first_conflict_count
+            << " FIRST/FIRST conflicts." << std::endl;
 
   if (_M_error_count > 0)
     {

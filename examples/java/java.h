@@ -581,7 +581,7 @@ struct class_field_ast: public java_ast_node
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
-    type_parameters_ast *type_params;
+    type_parameters_ast *type_parameters;
     identifier_ast *constructor_name;
     parameter_declaration_list_ast *constructor_parameters;
     throws_clause_ast *constructor_throws_clause;
@@ -708,7 +708,7 @@ struct enum_constant_field_ast: public java_ast_node
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
-    type_parameters_ast *type_params;
+    type_parameters_ast *type_parameters;
     type_specification_ast *type;
     identifier_ast *method_name;
     parameter_declaration_list_ast *method_parameters;
@@ -923,7 +923,7 @@ struct interface_field_ast: public java_ast_node
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
-    type_parameters_ast *type_params;
+    type_parameters_ast *type_parameters;
     type_specification_ast *type;
     identifier_ast *method_name;
     parameter_declaration_list_ast *method_parameters;
@@ -2616,7 +2616,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->enum_declaration);
       visit_node(node->interface_declaration);
       visit_node(node->annotation_type_declaration);
-      visit_node(node->type_params);
+      visit_node(node->type_parameters);
       visit_node(node->constructor_name);
       visit_node(node->constructor_parameters);
       visit_node(node->constructor_throws_clause);
@@ -2761,7 +2761,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->enum_declaration);
       visit_node(node->interface_declaration);
       visit_node(node->annotation_type_declaration);
-      visit_node(node->type_params);
+      visit_node(node->type_parameters);
       visit_node(node->type);
       visit_node(node->method_name);
       visit_node(node->method_parameters);
@@ -2912,7 +2912,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->enum_declaration);
       visit_node(node->interface_declaration);
       visit_node(node->annotation_type_declaration);
-      visit_node(node->type_params);
+      visit_node(node->type_parameters);
       visit_node(node->type);
       visit_node(node->method_name);
       visit_node(node->method_parameters);

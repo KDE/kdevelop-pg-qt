@@ -558,7 +558,10 @@
 -- Definition of a Java CLASS
 
    CLASS class_name=identifier
-   (type_parameters=type_parameters  | 0)  -- it might have type parameters
+   (  ?[: compatibility_mode() >= java15_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )  -- in Java 1.5 or higher, it might have type parameters
    (extends=class_extends_clause     | 0)  -- it might have a super class
    (implements=implements_clause     | 0)  -- it might implement some interfaces
    body=class_body
@@ -568,7 +571,10 @@
 -- Definition of a Java INTERFACE
 
    INTERFACE interface_name=identifier
-   (type_parameters=type_parameters  | 0)  -- it might have type parameters
+   (  ?[: compatibility_mode() >= java15_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )  -- in Java 1.5 or higher, it might have type parameters
    (extends=interface_extends_clause | 0)  -- it might extend other interfaces
    body=interface_body
 -> interface_declaration ;;
@@ -691,10 +697,12 @@
     | annotation_type_declaration=annotation_type_declaration
     |
       -- A generic method/ctor has the type_parameters before the return type.
-      -- This is not allowed for variable definitions, but this production
-      -- allows it, a semantic check could be used if you wanted.
-      -- (Note: kdev-pg does not yet support semantic checks.)
-      (type_params=type_parameters | 0)
+      -- This is not allowed for variable definitions, hence the flag:
+      0 [: bool has_type_parameters = false; :]
+      (  ?[: compatibility_mode() >= java15_compatibility :]
+         type_parameters=type_parameters [: has_type_parameters = true; :]
+       | 0
+      )
       (
          -- constructor declaration (without prepended type_specification)
          ?[: LA(2).kind == Token_LPAREN :]
@@ -717,8 +725,14 @@
             (method_throws_clause=throws_clause | 0)
             (method_body=block | SEMICOLON)
           |
+            ?[: has_type_parameters == false :]
             #variable_declarator=variable_declarator @ COMMA
             SEMICOLON
+          |
+            0 [: report_problem( error,
+                   "Expected method declaration after type parameter list" );
+               :]
+            SEMICOLON -- not really needed, but avoids conflict warnings
          )
       )
    )
@@ -746,10 +760,13 @@
     | annotation_type_declaration=annotation_type_declaration
     |
       -- A generic method/ctor has the type_parameters before the return type.
-      -- This is not allowed for variable definitions, but this production
-      -- allows it, a semantic check could be used if you wanted.
-      -- (Note: kdev-pg does not yet support semantic checks.)
-      (type_params=type_parameters | 0) type=type_specification
+      -- This is not allowed for variable definitions, hence the flag:
+      0 [: bool has_type_parameters = false; :]
+      (  ?[: compatibility_mode() >= java15_compatibility :]
+         type_parameters=type_parameters [: has_type_parameters = true; :]
+       | 0
+      )
+      type=type_specification
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
@@ -759,8 +776,14 @@
          (method_throws_clause=throws_clause | 0)
          (method_body=block | SEMICOLON)
        |
+         ?[: has_type_parameters == false :]
          #variable_declarator=variable_declarator @ COMMA
          SEMICOLON
+       |
+         0 [: report_problem( error,
+                "Expected method declaration after type parameter list" );
+            :]
+         SEMICOLON -- not really needed, but avoids conflict warnings
       )
    )
  | instance_initializer_block=block  -- "{...}" instance initializer
@@ -779,10 +802,13 @@
     | annotation_type_declaration=annotation_type_declaration
     |
       -- A generic method/ctor has the type_parameters before the return type.
-      -- This is not allowed for variable definitions, but this production
-      -- allows it, a semantic check could be used if you wanted.
-      -- (Note: kdev-pg does not yet support semantic checks.)
-      (type_params=type_parameters | 0) type=type_specification
+      -- This is not allowed for variable definitions, hence the flag:
+      0 [: bool has_type_parameters = false; :]
+      (  ?[: compatibility_mode() >= java15_compatibility :]
+         type_parameters=type_parameters [: has_type_parameters = true; :]
+       | 0
+      )
+      type=type_specification
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
@@ -792,8 +818,14 @@
          (method_throws_clause=throws_clause | 0)
          SEMICOLON
        |
+         ?[: has_type_parameters == false :]
          #variable_declarator=variable_declarator @ COMMA
          SEMICOLON
+       |
+         0 [: report_problem( error,
+                "Expected method declaration after type parameter list" );
+            :]
+         SEMICOLON -- not really needed, but avoids conflict warnings
       )
    )
  | SEMICOLON

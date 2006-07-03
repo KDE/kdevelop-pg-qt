@@ -2039,7 +2039,7 @@ bool java::parse_class_declaration(class_declaration_ast **yynode)
           return yy_expected_symbol(java_ast_node::Kind_identifier, "identifier");
         }
       (*yynode)->class_name = __node_60;
-      if (yytoken == Token_LESS_THAN)
+      if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
         {
           type_parameters_ast *__node_61 = 0;
           if (!parse_type_parameters(&__node_61))
@@ -2245,14 +2245,16 @@ bool java::parse_class_field(class_field_ast **yynode)
                    || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
-              if (yytoken == Token_LESS_THAN)
+              bool has_type_parameters = false;
+              if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
                 {
                   type_parameters_ast *__node_71 = 0;
                   if (!parse_type_parameters(&__node_71))
                     {
                       return yy_expected_symbol(java_ast_node::Kind_type_parameters, "type_parameters");
                     }
-                  (*yynode)->type_params = __node_71;
+                  (*yynode)->type_parameters = __node_71;
+                  has_type_parameters = true;
                 }
               else if (true /*epsilon*/)
               {}
@@ -2368,7 +2370,7 @@ bool java::parse_class_field(class_field_ast **yynode)
                           return false;
                         }
                     }
-                  else if (yytoken == Token_IDENTIFIER)
+                  else if (( has_type_parameters == false ) && (yytoken == Token_IDENTIFIER))
                     {
                       variable_declarator_ast *__node_82 = 0;
                       if (!parse_variable_declarator(&__node_82))
@@ -2388,6 +2390,14 @@ bool java::parse_class_field(class_field_ast **yynode)
                             }
                           (*yynode)->variable_declarator_sequence = snoc((*yynode)->variable_declarator_sequence, __node_83, memory_pool);
                         }
+                      if (yytoken != Token_SEMICOLON)
+                        return yy_expected_token(yytoken, Token_SEMICOLON, ";");
+                      yylex();
+                    }
+                  else if (yytoken == Token_SEMICOLON)
+                    {
+                      report_problem( error,
+                                      "Expected method declaration after type parameter list" );
                       if (yytoken != Token_SEMICOLON)
                         return yy_expected_token(yytoken, Token_SEMICOLON, ";");
                       yylex();
@@ -3092,14 +3102,16 @@ bool java::parse_enum_constant_field(enum_constant_field_ast **yynode)
                    || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
-              if (yytoken == Token_LESS_THAN)
+              bool has_type_parameters = false;
+              if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
                 {
                   type_parameters_ast *__node_111 = 0;
                   if (!parse_type_parameters(&__node_111))
                     {
                       return yy_expected_symbol(java_ast_node::Kind_type_parameters, "type_parameters");
                     }
-                  (*yynode)->type_params = __node_111;
+                  (*yynode)->type_parameters = __node_111;
+                  has_type_parameters = true;
                 }
               else if (true /*epsilon*/)
               {}
@@ -3168,7 +3180,7 @@ bool java::parse_enum_constant_field(enum_constant_field_ast **yynode)
                       return false;
                     }
                 }
-              else if (yytoken == Token_IDENTIFIER)
+              else if (( has_type_parameters == false ) && (yytoken == Token_IDENTIFIER))
                 {
                   variable_declarator_ast *__node_118 = 0;
                   if (!parse_variable_declarator(&__node_118))
@@ -3188,6 +3200,14 @@ bool java::parse_enum_constant_field(enum_constant_field_ast **yynode)
                         }
                       (*yynode)->variable_declarator_sequence = snoc((*yynode)->variable_declarator_sequence, __node_119, memory_pool);
                     }
+                  if (yytoken != Token_SEMICOLON)
+                    return yy_expected_token(yytoken, Token_SEMICOLON, ";");
+                  yylex();
+                }
+              else if (yytoken == Token_SEMICOLON)
+                {
+                  report_problem( error,
+                                  "Expected method declaration after type parameter list" );
                   if (yytoken != Token_SEMICOLON)
                     return yy_expected_token(yytoken, Token_SEMICOLON, ";");
                   yylex();
@@ -4031,7 +4051,7 @@ bool java::parse_interface_declaration(interface_declaration_ast **yynode)
           return yy_expected_symbol(java_ast_node::Kind_identifier, "identifier");
         }
       (*yynode)->interface_name = __node_144;
-      if (yytoken == Token_LESS_THAN)
+      if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
         {
           type_parameters_ast *__node_145 = 0;
           if (!parse_type_parameters(&__node_145))
@@ -4233,14 +4253,16 @@ bool java::parse_interface_field(interface_field_ast **yynode)
                    || yytoken == Token_LESS_THAN
                    || yytoken == Token_IDENTIFIER)
             {
-              if (yytoken == Token_LESS_THAN)
+              bool has_type_parameters = false;
+              if (( compatibility_mode() >= java15_compatibility ) && (yytoken == Token_LESS_THAN))
                 {
                   type_parameters_ast *__node_155 = 0;
                   if (!parse_type_parameters(&__node_155))
                     {
                       return yy_expected_symbol(java_ast_node::Kind_type_parameters, "type_parameters");
                     }
-                  (*yynode)->type_params = __node_155;
+                  (*yynode)->type_parameters = __node_155;
+                  has_type_parameters = true;
                 }
               else if (true /*epsilon*/)
               {}
@@ -4293,7 +4315,7 @@ bool java::parse_interface_field(interface_field_ast **yynode)
                     return yy_expected_token(yytoken, Token_SEMICOLON, ";");
                   yylex();
                 }
-              else if (yytoken == Token_IDENTIFIER)
+              else if (( has_type_parameters == false ) && (yytoken == Token_IDENTIFIER))
                 {
                   variable_declarator_ast *__node_161 = 0;
                   if (!parse_variable_declarator(&__node_161))
@@ -4313,6 +4335,14 @@ bool java::parse_interface_field(interface_field_ast **yynode)
                         }
                       (*yynode)->variable_declarator_sequence = snoc((*yynode)->variable_declarator_sequence, __node_162, memory_pool);
                     }
+                  if (yytoken != Token_SEMICOLON)
+                    return yy_expected_token(yytoken, Token_SEMICOLON, ";");
+                  yylex();
+                }
+              else if (yytoken == Token_SEMICOLON)
+                {
+                  report_problem( error,
+                                  "Expected method declaration after type parameter list" );
                   if (yytoken != Token_SEMICOLON)
                     return yy_expected_token(yytoken, Token_SEMICOLON, ";");
                   yylex();

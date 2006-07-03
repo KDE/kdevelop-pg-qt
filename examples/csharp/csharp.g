@@ -37,12 +37,13 @@
 --  - The first/follow COMMA conflict in global_attribute_section,
 --    and the same one in attribute_section
 --    (manually resolved, 2 conflicts)
---  - The first/first IDENTIFIER conflict in using_directive
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
 --    (manually resolved, 1 conflict)
---  - The first/first IDENTIFIER conflicts in attribute_arguments, two of them
+--  - The first/first ADD, ALIAS, etc. (identifier) conflicts
+--    in attribute_arguments, two of them
 --    (manually resolved, 2 conflicts)
 
--- Total amount of conflicts: 5
+-- Total amount of conflicts: 7
 
 
 --
@@ -123,6 +124,88 @@
 -- Additional AST members
 --
 
+%member (type_declaration: public declaration)
+[:
+  bool partial;
+:]
+
+%member (optional_type_modifiers: public declaration)
+[:
+  int modifiers; // using modifier_ast's modifier_enum
+:]
+
+%member (builtin_class_type: public declaration)
+[:
+  enum builtin_class_type_enum {
+    type_object,
+    type_string,
+  };
+  builtin_class_type_enum type;
+:]
+
+%member (rank_specifier: public declaration)
+[:
+  int dimension_seperator_count;
+:]
+
+%member (optionally_nullable_type: public declaration)
+[:
+  bool nullable;
+:]
+
+%member (simple_type: public declaration)
+[:
+  enum simple_type_enum {
+    type_numeric,
+    type_bool,
+  };
+  simple_type_enum type;
+:]
+
+%member (numeric_type: public declaration)
+[:
+  enum numeric_type_enum {
+    type_integral,
+    type_floating_point,
+    type_decimal,
+  };
+  numeric_type_enum type;
+:]
+
+%member (integral_type: public declaration)
+[:
+  enum integral_type_enum {
+    type_sbyte,
+    type_byte,
+    type_short,
+    type_ushort,
+    type_int,
+    type_uint,
+    type_long,
+    type_ulong,
+    type_char,
+  };
+  integral_type_enum type;
+:]
+
+%member (floating_point_type: public declaration)
+[:
+  enum floating_point_type_enum {
+    type_float,
+    type_double,
+  };
+  floating_point_type_enum type;
+:]
+
+%member (parameter_modifier: public declaration)
+[:
+  enum parameter_modifier_enum {
+    mod_ref,
+    mod_out,
+  };
+  parameter_modifier_enum modifier;
+:]
+
 %member (modifier: public declaration)
 [:
   enum modifier_enum {
@@ -141,20 +224,6 @@
     mod_extern       = 4096,
   };
   int modifiers;
-:]
-
-%member (optional_type_modifiers: public declaration)
-[:
-  int modifiers; // using modifier_ast's modifier_enum
-:]
-
-%member (parameter_modifier: public declaration)
-[:
-  enum parameter_modifier_enum {
-    mod_ref,
-    mod_out,
-  };
-  parameter_modifier_enum modifier;
 :]
 
 %member (literal: public declaration)
@@ -266,27 +335,6 @@
 -> using_directive ;;
 
 
-   namespace_or_type_name
--> namespace_name ;;
-
-   namespace_or_type_name
--> type_name ;;
-
-
-   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
-    | 0
-   )
-   #name_part=namespace_or_type_name_part @ DOT
--> namespace_or_type_name ;;
-
-   identifier=identifier
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
-      type_arguments=type_arguments
-    | 0
-   )
--> namespace_or_type_name_part ;;
-
-
 
 
 -- ATTRIBUTE sections, global and standard ones. They have a slight similarity
@@ -374,11 +422,20 @@
 
    (#attribute=attribute_section)*
    modifiers=optional_type_modifiers
-   (  class_declaration=class_declaration
-    | struct_declaration=struct_declaration
-    | interface_declaration=interface_declaration
-    | enum_declaration=enum_declaration
-    | delegate_declaration=delegate_declaration
+   (
+      PARTIAL  [: (*yynode)->partial = true;  :]
+      (  class_declaration=class_declaration
+       | struct_declaration=struct_declaration
+       | interface_declaration=interface_declaration
+      )
+    |
+      0        [: (*yynode)->partial = false; :]
+      (  class_declaration=class_declaration
+       | struct_declaration=struct_declaration
+       | interface_declaration=interface_declaration
+       | enum_declaration=enum_declaration
+       | delegate_declaration=delegate_declaration
+      )
    )
 -> type_declaration ;;
 
@@ -399,36 +456,218 @@
 
 -- Definition of a C# CLASS
 
--- TODO:
--- -> class_declaration ;;
+   CLASS class_name=identifier
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
+   (class_base=class_base | 0)
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
+   body=class_body
+   (SEMICOLON | 0)
+-> class_declaration ;;
 
 
 -- Definition of a C# STRUCT
 
--- TODO:
--- -> struct_declaration ;;
+   STRUCT struct_name=identifier
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
+   (struct_interfaces=struct_interfaces | 0)
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
+   body=struct_body
+   (SEMICOLON | 0)
+-> struct_declaration ;;
 
 
 -- Definition of a C# INTERFACE
 
--- TODO:
--- -> interface_declaration ;;
+   INTERFACE interface_name=identifier
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
+   (interface_base=interface_base | 0)
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
+   body=interface_body
+   (SEMICOLON | 0)
+-> interface_declaration ;;
 
 
 -- Definition of a C# ENUM
 
--- TODO:
--- -> enum_declaration ;;
+   ENUM enum_name=identifier
+   (enum_base=enum_base | 0)
+   body=enum_body
+   (SEMICOLON | 0)
+-> enum_declaration ;;
 
 
 -- Definition of a C# DELEGATE
 
    DELEGATE return_type=return_type delegate_name=identifier
-   (type_parameters=type_parameters | 0)
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
    LPAREN (formal_parameters=formal_parameters | 0) RPAREN
-   (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
    SEMICOLON
 -> delegate_declaration ;;
+
+
+-- BASE CLASSES and INTERFACES
+-- which can be implemented by the types above
+
+-- For class_base, the first type in the list of base types _may_ be a class.
+-- (But it can also be an interface.) In order to avoid ambiguities, only the
+-- first part of the rule has the exact seperation. If the second part of the
+-- rule is chosen, the first element of base_type_list can be the base class.
+
+   COLON
+   (  builtin_class_type=builtin_class_type
+      (COMMA (#interface_type=type_name @ COMMA) | 0)
+    |
+      #base_type=type_name @ COMMA
+   )
+-> class_base ;;
+
+   COLON #interface_type=type_name @ COMMA
+-> struct_interfaces ;;
+
+   COLON #interface_type=type_name @ COMMA
+-> interface_base ;;
+
+   COLON integral_type=integral_type
+-> enum_base ;;
+
+
+
+
+-- All kinds of rules for types here.
+
+   builtin_class_type=builtin_class_type
+ | optional_array_type=optional_array_type
+-> type ;;
+
+   type_name=type_name
+ | builtin_class_type
+-> class_type ;;
+
+   OBJECT [: (*yynode)->type = builtin_class_type_ast::type_object; :]
+ | STRING [: (*yynode)->type = builtin_class_type_ast::type_string; :]
+-> builtin_class_type ;;
+
+   non_array_type=optionally_nullable_type (#rank_specifier=rank_specifier)*
+-> optional_array_type ;;
+
+   LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
+   ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
+   RBRACKET
+-> rank_specifier ;;
+
+-- NULLABLE TYPES are new in C# 2.0 and need to be expressed a little bit
+-- differently than in LALR grammars like in the C# specification.
+
+   non_nullable_type
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      QUESTION [: (*yynode)->nullable = true;  :]
+    |
+      0        [: (*yynode)->nullable = false; :]
+   )
+-> optionally_nullable_type ;;
+
+   type_name=type_name
+ | simple_type=simple_type
+-> non_nullable_type ;;
+
+-- Now for SIMPLE TYPES, this is easier ;)
+
+ (
+   numeric_type=numeric_type
+     [: (*yynode)->type = simple_type_ast::type_numeric; :]
+ | BOOL
+     [: (*yynode)->type = simple_type_ast::type_bool; :]
+ )
+-> simple_type ;;
+
+
+-- NUMERIC TYPES include INTEGRAL TYPES, FLOATING POINT TYPES, and DECIMAL.
+
+ (
+   int_type=integral_type
+     [: (*yynode)->type = numeric_type_ast::type_integral; :]
+ | float_type=floating_point_type
+     [: (*yynode)->type = numeric_type_ast::type_floating_point; :]
+ | DECIMAL
+     [: (*yynode)->type = numeric_type_ast::type_decimal; :]
+ )
+-> numeric_type ;;
+
+ (
+   SBYTE   [: (*yynode)->type = integral_type_ast::type_sbyte;  :]
+ | BYTE    [: (*yynode)->type = integral_type_ast::type_byte;   :]
+ | SHORT   [: (*yynode)->type = integral_type_ast::type_short;  :]
+ | USHORT  [: (*yynode)->type = integral_type_ast::type_ushort; :]
+ | INT     [: (*yynode)->type = integral_type_ast::type_int;    :]
+ | UINT    [: (*yynode)->type = integral_type_ast::type_uint;   :]
+ | LONG    [: (*yynode)->type = integral_type_ast::type_long;   :]
+ | ULONG   [: (*yynode)->type = integral_type_ast::type_ulong;  :]
+ | CHAR    [: (*yynode)->type = integral_type_ast::type_char;   :]
+ )
+-> integral_type ;;
+
+ (
+   FLOAT   [: (*yynode)->type = floating_point_type_ast::type_float;  :]
+ | DOUBLE  [: (*yynode)->type = floating_point_type_ast::type_double; :]
+ )
+-> floating_point_type ;;
+
+
+-- TYPE NAMES and NAMESPACE NAMES are the same thing,
+-- essentially qualified identifiers with optional type arguments.
+
+   namespace_or_type_name
+-> namespace_name ;;
+
+   namespace_or_type_name
+-> type_name ;;
+
+
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   #name_part=namespace_or_type_name_part @ DOT
+-> namespace_or_type_name ;;
+
+   identifier=identifier
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+-> namespace_or_type_name_part ;;
 
 
 
@@ -492,10 +731,19 @@
 
  (
    ident=IDENTIFIER
+ | ident=ADD
+ | ident=ALIAS
+ | ident=GET
+ | ident=GLOBAL
+ | ident=PARTIAL
+ | ident=REMOVE
+ | ident=SET
+ | ident=VALUE
+ | ident=WHERE
+ | ident=YIELD
  | ident=ASSEMBLY
  )
 -> identifier ;;
--- TODO: incorporate the non-keyword identifiers
 
  (
    TRUE   [: (*yynode)->literal_type = literal_ast::type_true;  :]
@@ -525,10 +773,10 @@
 STUB_A -> type_arguments ;;
 STUB_B -> type_parameters ;;
 STUB_C -> type_parameter_constraints_clauses ;;
-STUB_D -> class_declaration ;;
-STUB_E -> struct_declaration ;;
-STUB_F -> interface_declaration ;;
-STUB_G -> enum_declaration ;;
+STUB_D -> class_body ;;
+STUB_E -> struct_body ;;
+STUB_F -> interface_body ;;
+STUB_G -> enum_body ;;
 STUB_H -> return_type ;;
 STUB_I -> formal_parameters ;;
 identifier -> expression ;;

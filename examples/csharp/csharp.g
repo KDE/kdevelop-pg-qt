@@ -31,7 +31,7 @@
 --  - Nothing until now. But I'm sure I'll find some.
 --    (0 conflicts)
 
--- Known harmless or resolved conflicts (9 conflicts):
+-- Known harmless or resolved conflicts (13 conflicts):
 --  - The first/follow LBRACKET conflict in compilation_unit
 --    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in global_attribute_section,
@@ -41,14 +41,27 @@
 --    (manually resolved, 1 conflict)
 --  - The first/follow DOT conflict in namespace_or_type_name_safe,
 --    which actually stems from indexer_declaration
---    (manually resolved, 1 conflict
+--    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
 --    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflicts
 --    in attribute_arguments, two of them
 --    (manually resolved, 2 conflicts)
+--  - The first/first PARTIAL conflict in class_or_struct_member_declaration,
+--    between type_declaration_rest and identifier
+--    (manually resoved, 1 conflict)
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--    in class_or_struct_member_declaration, between constructor_declaration
+--    and the (type ...) part of the rule.
+--    (manually resolved, 1 conflict)
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--    in class_or_struct_member_declaration (another one), between
+--    the field declaration and the (type_name_safe ...) part of the subrule.
+--    (manually resolved, 1 conflict)
+--  - The first/first VOID conflict in return_type
+--    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 9
+-- Total amount of conflicts: 13
 
 
 --
@@ -134,6 +147,24 @@
   bool partial;
 :]
 
+%member (class_or_struct_member_declaration: public declaration)
+[:
+  enum class_or_struct_member_declaration_enum {
+    type_constant_declaration,
+    type_event_declaration,
+    type_operator_declaration_implicit,
+    type_operator_declaration_explicit,
+    type_operator_declaration_typed,
+    type_constructor_declaration,
+    type_type_declaration,
+    type_indexer_declaration,
+    type_field_declaration,
+    type_property_declaration,
+    type_member_declaration,
+  };
+  class_or_struct_member_declaration_enum type;
+:]
+
 %member (constructor_initializer: public declaration)
 [:
   enum constructor_initializer_type_enum {
@@ -203,6 +234,16 @@
     type_void,
   };
   return_type_enum type;
+:]
+
+%member (unmanaged_type: public declaration)
+[:
+  enum unmanaged_type_enum {
+    type_regular,
+    type_void,
+  };
+  unmanaged_type_enum type;
+  int star_count;
 :]
 
 %member (builtin_class_type: public declaration)
@@ -504,16 +545,16 @@
  (
    PARTIAL  [: (*yynode)->partial = true;  :]
    (  class_declaration=class_declaration
-     | struct_declaration=struct_declaration
-     | interface_declaration=interface_declaration
+    | struct_declaration=struct_declaration
+    | interface_declaration=interface_declaration
    )
  |
    0        [: (*yynode)->partial = false; :]
    (  class_declaration=class_declaration
-     | struct_declaration=struct_declaration
-     | interface_declaration=interface_declaration
-     | enum_declaration=enum_declaration
-     | delegate_declaration=delegate_declaration
+    | struct_declaration=struct_declaration
+    | interface_declaration=interface_declaration
+    | enum_declaration=enum_declaration
+    | delegate_declaration=delegate_declaration
    )
  )
 -> type_declaration_rest ;;
@@ -683,56 +724,121 @@
 -- The CLASS MEMBER DECLARATION is one of the most complex rules in here,
 -- and covers everything that can occur inside a class body.
 
---   #(attribute=attribute_section)*
---   modifiers=optional_modifiers
---   (
---      finalizer_declaration=finalizer_declaration
---    |
---      other member declarations
---   )
----> class_member_declaration ;;
-
-
--- The CONSTANT DECLARATION. Declares "const" values.
-
-   CONST type=type (#constant_declarator=constant_declarator @ COMMA) SEMICOLON
--> constant_declaration ;;
-
-   constant_name=identifier ASSIGN expression=constant_expression
--> constant_declarator ;;
-
-
--- The FIELD DECLARATION. Begins with type: will be folded into member_decl.
-
-   type=type (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
--> field_declaration ;;
-
-   variable_name=identifier
-   (ASSIGN variable_initializer=variable_initializer | 0)
--> variable_declarator ;;
-
-   expression=expression
- | array_initializer=array_initializer
--> variable_initializer ;;
-
-
--- The METHOD DECLARATION. Begins with type: will be folded into member_decl.
--- New in C# 2.0: generic methods.
-
-   return_type=return_type method_name=member_name
-   (
-      ?[: compatibility_mode() >= csharp20_compatibility :]
-      type_parameters=type_parameters
-    | 0
+   (#attribute=attribute_section)*
+   modifiers=optional_modifiers
+   (  finalizer_declaration=finalizer_declaration
+    | other_declaration=class_or_struct_member_declaration
    )
-   LPAREN (formal_parameters=formal_parameters | 0) RPAREN
-   (
-      ?[: compatibility_mode() >= csharp20_compatibility :]
-      type_parameter_constraints_clauses=type_parameter_constraints_clauses
-    | 0
+-> class_member_declaration ;;
+
+   (#attribute=attribute_section)*
+   modifiers=optional_modifiers
+   declaration=class_or_struct_member_declaration
+-> struct_member_declaration ;;
+
+-- The first few declarations start with a specific token and don't need
+-- to be refactored. The other declarations must be split to avoid conflicts.
+
+ (
+   constant_declaration=constant_declaration
+     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_constant_declaration; :]
+ |
+   event_declaration=event_declaration
+     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_event_declaration;    :]
+ |
+   -- The OPERATOR DECLARATION, part one. Makes overloaded operators.
+   -- (Part two follows later in this rule.)
+   (  IMPLICIT
+        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_implicit; :]
+    | EXPLICIT
+        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit; :]
    )
-   (method_body=block | SEMICOLON)
--> method_declaration ;;
+   OPERATOR operator_type=type
+   LPAREN arg1_type=type arg1_name=identifier RPAREN
+   (operator_body=block | SEMICOLON)
+ |
+   -- A normal or static CONSTRUCTOR DECLARATION.
+   ?[: LA(2).kind == Token_LPAREN :]
+   constructor_declaration=constructor_declaration
+     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_constructor_declaration; :]
+ |
+   -- The TYPE DECLARATION, buried under condition & action code ;)
+   ?[: (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
+        || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
+        || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) :]
+   type_declaration_rest
+     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_type_declaration; :]
+ |
+   -- for the rest of the declarations, we need to generalize some parts of the
+   -- rules, which allows more productions than the specified ones, but
+   -- at least makes LL(1) parsing feasible.
+   member_type=return_type
+   (
+      -- The OPERATOR DECLARATION rest, part two. Makes overloaded operators.
+      OPERATOR
+        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_typed; :]
+      (
+         unary_only_operator=overloadable_unary_only_operator
+         LPAREN arg1_type=type arg1_name=identifier RPAREN
+       |
+         binary_only_operator=overloadable_binary_only_operator
+         LPAREN arg1_type=type arg1_name=identifier
+         COMMA  arg2_type=type arg2_name=identifier RPAREN
+       |
+         unary_or_binary_operator=overloadable_unary_or_binary_operator
+         LPAREN arg1_type=type arg1_name=identifier
+         (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
+      )
+      (operator_body=block | SEMICOLON)
+    |
+      -- The INDEXER DECLARATION rest, part one.
+      THIS LBRACKET formal_parameters=formal_parameters RBRACKET
+        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
+    |
+      -- The FIELD DECLARATION rest. Declares member variables.
+      ?[: LA(2).kind == Token_ASSIGN || LA(2).kind == Token_COMMA
+          || LA(2).kind == Token_SEMICOLON :]
+      (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
+        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_field_declaration; :]
+    |
+      -- and this is for rules that are still not split up sufficiently:
+      member_name_or_interface_type=type_name_safe
+        -- (interface_type for the indexer declaration, member_name otherwise)
+      (
+         -- The INDEXER DECLARATION rest, part two.
+         DOT THIS LBRACKET formal_parameters=formal_parameters RBRACKET
+           [: (*yynode)->type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
+       |
+         -- The PROPERTY DECLARATION rest.
+         LBRACE accessor_declarations=accessor_declarations RBRACE
+           [: (*yynode)->type = class_or_struct_member_declaration_ast::type_property_declaration; :]
+       |
+         -- The MEMBER DECLARATION rest.
+         (
+             ?[: compatibility_mode() >= csharp20_compatibility :]
+             type_parameters=type_parameters
+           | 0
+         )
+         LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+         (
+             ?[: compatibility_mode() >= csharp20_compatibility :]
+             type_parameter_constraints_clauses=type_parameter_constraints_clauses
+           | 0
+         )
+         (method_body=block | SEMICOLON)
+           [: (*yynode)->type = class_or_struct_member_declaration_ast::type_member_declaration; :]
+      )
+   )
+ )
+-> class_or_struct_member_declaration ;;
+
+
+-- The FINALIZER is what other languages know as deconstructor.
+-- Only allowed inside classes.
+
+   TILDE class_name=identifier LPAREN RPAREN
+   (finalizer_body=block | SEMICOLON)
+-> finalizer_declaration ;;
 
 
 -- The CONSTRUCTOR DECLARATION. Naturally quite similar to the method one.
@@ -751,27 +857,25 @@
    LPAREN (arguments=arguments | 0) RPAREN
 -> constructor_initializer ;;
 
--- The STATIC CONSTRUCTOR DECLARATION is only used if the modifiers
--- contain "static" (and optionally "extern", and nothing else).
+-- There is also a STATIC CONSTRUCTOR DECLARATION which is only used if
+-- the modifiers contain "static" (and optionally "extern", and nothing else).
+-- Apart from the "static" modifier, the static constructor declaration
+-- is a subset of the generic one. In order to keep the parser simple,
+-- we don't check on the modifiers here. This should rather be done in
+-- the visitor, later on.
 
-   class_name=identifier LPAREN RPAREN
-   (static_constructor_body=block | SEMICOLON)
--> static_constructor_declaration ;;
-
-
--- The FINALIZER is what other languages know as deconstructor.
--- Only allowed inside classes.
-
-   TILDE class_name=identifier LPAREN RPAREN
-   (finalizer_body=block | SEMICOLON)
--> finalizer_declaration ;;
+--    class_name=identifier LPAREN RPAREN
+--    (static_constructor_body=block | SEMICOLON)
+-- -> static_constructor_declaration ;;
 
 
--- The PROPERTY DECLARATION. Begins with type: will be folded into member_decl.
+-- The CONSTANT DECLARATION. Declares "const" values.
 
-   type=type property_name=member_name
-   LBRACE accessor_declarations=accessor_declarations RBRACE
--> property_declaration ;;
+   CONST type=type (#constant_declarator=constant_declarator @ COMMA) SEMICOLON
+-> constant_declaration ;;
+
+   constant_name=identifier ASSIGN expression=constant_expression
+-> constant_declarator ;;
 
 
 -- The EVENT DECLARATION.
@@ -789,36 +893,19 @@
    )
 -> event_declaration ;;
 
--- The INDEXER DECLARATION. Begins with type: will be folded into member_decl.
 
-   type=type (interface_type=type_name_safe DOT | 0) THIS
-   LBRACKET formal_parameters=formal_parameters RBRACKET
--> indexer_declaration ;;
+-- The VARIABLE DECLARATOR, for field declarations and other stuff.
+
+   variable_name=identifier
+   (ASSIGN variable_initializer=variable_initializer | 0)
+-> variable_declarator ;;
+
+   expression=expression
+ | array_initializer=array_initializer
+-> variable_initializer ;;
 
 
--- The OPERATOR DECLARATION. Two of the three derivations begin with type,
--- so this will be folded into member_decl. and need a bit of work.
-
-   (
-      type=type OPERATOR
-      (
-         unary_only_operator=overloadable_unary_only_operator
-         LPAREN arg1_type=type arg1_name=identifier RPAREN
-       |
-         binary_only_operator=overloadable_binary_only_operator
-         LPAREN arg1_type=type arg1_name=identifier
-         COMMA  arg2_type=type arg2_name=identifier RPAREN
-       |
-         unary_or_binary_operator=overloadable_unary_or_binary_operator
-         LPAREN arg1_type=type arg1_name=identifier
-         (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
-      )
-    |
-      (IMPLICIT | EXPLICIT) OPERATOR type=type
-      LPAREN arg1_type=type arg1_name=identifier RPAREN
-   )
-   (operator_body=block | SEMICOLON)
--> operator_declaration ;;
+-- OVERLOADABLE OPERATORS for operator declarations.
 
  (
    BANG       [: (*yynode)->op = overloadable_unary_only_operator_ast::op_bang;      :]
@@ -873,19 +960,41 @@
 
 
 
+
+--
 -- All kinds of rules for types here.
+--
 
 -- The RETURN TYPE can only be used as return value, not in a declaration.
 
-   regular_type=type [: (*yynode)->type = return_type_ast::type_regular; :]
+ (
+   ?[: LA(2).kind != Token_STAR :] -- "void*" is a regular type in unsafe code
    VOID              [: (*yynode)->type = return_type_ast::type_void;    :]
+ |
+   regular_type=type [: (*yynode)->type = return_type_ast::type_regular; :]
+ )
 -> return_type ;;
 
 -- The regular TYPE recognizes the same set of tokens as the one in the C#
 -- specification, but had to be refactored quite a bit. Looks different here.
 
-   non_array_type=non_array_type (#rank_specifier=rank_specifier)*
+-- TODO: if we can know whether we are inside an unsafe block,
+--       we can maybe decide whether we want managed_type or unmanaged_type.
+
+   -- ?[: inside_unmanaged_code() :]
+   unmanaged_type=unmanaged_type
+   -- | managed_type=managed_type
 -> type ;;
+
+   0 [: (*yynode)->star_count = 0; :]
+   (  regular_type=managed_type          [: (*yynode)->type = unmanaged_type_ast::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = unmanaged_type_ast::type_void;    :]
+   )
+   ( STAR [: (*yynode)->star_count++; :] )*
+-> unmanaged_type ;;
+
+   non_array_type=non_array_type (#rank_specifier=rank_specifier)*
+-> managed_type ;;
 
    LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
    ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
@@ -1006,6 +1115,7 @@
 
 
 
+
 --
 -- MODIFIERS, KEYWORDS, LITERALS, and the IDENTIFIER wrapper
 --
@@ -1101,8 +1211,8 @@
 STUB_A -> type_arguments ;;
 STUB_B -> type_parameters ;;
 STUB_C -> type_parameter_constraints_clauses ;;
-STUB_D -> class_member_declaration ;;
-STUB_E -> struct_member_declaration ;;
+STUB_D -> accessor_declarations ;;
+STUB_E -> event_accessor_declarations ;;
 STUB_F -> interface_member_declaration ;;
 STUB_G -> constant_expression ;;
 STUB_I -> formal_parameters ;;
@@ -1110,8 +1220,6 @@ STUB_J -> member_name ;;
 STUB_K -> array_initializer ;;
 LBRACE STUB_L RBRACE -> block ;;
 identifier -> expression ;;
-STUB_M -> accessor_declarations ;;
-STUB_N -> event_accessor_declarations ;;
 
 
 

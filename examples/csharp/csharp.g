@@ -31,19 +31,24 @@
 --  - Nothing until now. But I'm sure I'll find some.
 --    (0 conflicts)
 
--- Known harmless or resolved conflicts (5 conflicts):
+-- Known harmless or resolved conflicts (9 conflicts):
 --  - The first/follow LBRACKET conflict in compilation_unit
 --    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in global_attribute_section,
 --    and the same one in attribute_section
 --    (manually resolved, 2 conflicts)
+--  - The first/follow COMMA conflict in enum_body, similar to the above
+--    (manually resolved, 1 conflict)
+--  - The first/follow DOT conflict in namespace_or_type_name_safe,
+--    which actually stems from indexer_declaration
+--    (manually resolved, 1 conflict
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
 --    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflicts
 --    in attribute_arguments, two of them
 --    (manually resolved, 2 conflicts)
 
--- Total amount of conflicts: 7
+-- Total amount of conflicts: 9
 
 
 --
@@ -124,14 +129,80 @@
 -- Additional AST members
 --
 
-%member (type_declaration: public declaration)
+%member (type_declaration_rest: public declaration)
 [:
   bool partial;
 :]
 
-%member (optional_type_modifiers: public declaration)
+%member (constructor_initializer: public declaration)
 [:
-  int modifiers; // using modifier_ast's modifier_enum
+  enum constructor_initializer_type_enum {
+    type_base,
+    type_this,
+  };
+  constructor_initializer_type_enum type;
+:]
+
+%member (overloadable_unary_only_operator: public declaration)
+[:
+  enum overloadable_unary_only_operator_enum {
+    op_bang,
+    op_tilde,
+    op_increment,
+    op_decrement,
+    op_true,
+    op_false,
+  };
+  overloadable_unary_only_operator_enum op;
+:]
+
+%member (overloadable_binary_only_operator: public declaration)
+[:
+  enum overloadable_binary_only_operator_enum {
+    op_star,
+    op_slash,
+    op_remainder,
+    op_bit_and,
+    op_bit_or,
+    op_bit_xor,
+    op_lshift,
+    op_rshift,
+    op_equal,
+    op_not_equal,
+    op_greater_than,
+    op_less_than,
+    op_greater_equal,
+    op_less_equal,
+  };
+  overloadable_binary_only_operator_enum op;
+:]
+
+%member (overloadable_unary_or_binary_operator: public declaration)
+[:
+  enum overloadable_unary_or_binary_operator_enum {
+    op_plus,
+    op_minus,
+  };
+  overloadable_unary_or_binary_operator_enum op;
+:]
+
+%member (argument: public declaration)
+[:
+  enum argument_type_enum {
+    type_value_parameter,
+    type_reference_parameter,
+    type_output_parameter,
+  };
+  argument_type_enum type;
+:]
+
+%member (return_type: public declaration)
+[:
+  enum return_type_enum {
+    type_regular,
+    type_void,
+  };
+  return_type_enum type;
 :]
 
 %member (builtin_class_type: public declaration)
@@ -206,7 +277,7 @@
   parameter_modifier_enum modifier;
 :]
 
-%member (modifier: public declaration)
+%member (optional_modifiers: public declaration)
 [:
   enum modifier_enum {
     mod_new          = 1,
@@ -224,6 +295,11 @@
     mod_extern       = 4096,
   };
   int modifiers;
+:]
+
+%member (optional_type_modifiers: public declaration)
+[:
+  int modifiers; // using the optional_modifier_enum values
 :]
 
 %member (literal: public declaration)
@@ -303,7 +379,8 @@
 %token INVALID ("invalid token") ;;
 
 %token STUB_A, STUB_B, STUB_C, STUB_D, STUB_E, STUB_F, STUB_G, STUB_H,
-       STUB_I, STUB_J, STUB_K, STUB_L, STUB_M, STUB_N, STUB_O, STUB_P ;;
+       STUB_I, STUB_J, STUB_K, STUB_L, STUB_M, STUB_N, STUB_O, STUB_P,
+       STUB_Q, STUB_R, STUB_S, STUB_T, STUB_U, STUB_V, STUB_W, STUB_X ;;
 
 
 
@@ -314,9 +391,8 @@
 
    (#extern_alias=extern_alias_directive)*  -- TODO: probably not in C# 1.0
    (#using=using_directive)*
-   (  ?[: LA(2).kind == Token_ASSEMBLY :]
+   (  0 [: if (LA(2).kind != Token_ASSEMBLY) break; :] -- exit the "star loop"
       #global_attribute=global_attribute_section
-    | 0
    )*
    (#namespace=namespace_member_declaration)*
 -> compilation_unit ;;
@@ -422,33 +498,36 @@
 
    (#attribute=attribute_section)*
    modifiers=optional_type_modifiers
-   (
-      PARTIAL  [: (*yynode)->partial = true;  :]
-      (  class_declaration=class_declaration
-       | struct_declaration=struct_declaration
-       | interface_declaration=interface_declaration
-      )
-    |
-      0        [: (*yynode)->partial = false; :]
-      (  class_declaration=class_declaration
-       | struct_declaration=struct_declaration
-       | interface_declaration=interface_declaration
-       | enum_declaration=enum_declaration
-       | delegate_declaration=delegate_declaration
-      )
-   )
+   rest=type_declaration_rest
 -> type_declaration ;;
 
  (
-   NEW        [: (*yynode)->modifiers |= modifier_ast::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= modifier_ast::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= modifier_ast::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= modifier_ast::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= modifier_ast::mod_private;   :]
+   PARTIAL  [: (*yynode)->partial = true;  :]
+   (  class_declaration=class_declaration
+     | struct_declaration=struct_declaration
+     | interface_declaration=interface_declaration
+   )
+ |
+   0        [: (*yynode)->partial = false; :]
+   (  class_declaration=class_declaration
+     | struct_declaration=struct_declaration
+     | interface_declaration=interface_declaration
+     | enum_declaration=enum_declaration
+     | delegate_declaration=delegate_declaration
+   )
+ )
+-> type_declaration_rest ;;
+
+ (
+   NEW        [: (*yynode)->modifiers |= optional_modifiers_ast::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= optional_modifiers_ast::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_private;   :]
  -- the following three ones only occur in class declarations:
- | ABSTRACT   [: (*yynode)->modifiers |= modifier_ast::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= modifier_ast::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= modifier_ast::mod_static;    :]
+ | ABSTRACT   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_static;    :]
  )*
 -> optional_type_modifiers ;;
 
@@ -544,7 +623,8 @@
 -- For class_base, the first type in the list of base types _may_ be a class.
 -- (But it can also be an interface.) In order to avoid ambiguities, only the
 -- first part of the rule has the exact seperation. If the second part of the
--- rule is chosen, the first element of base_type_list can be the base class.
+-- rule is chosen, then the first element of base_type_sequence can be
+-- the base class.
 
    COLON
    (  builtin_class_type=builtin_class_type
@@ -565,28 +645,264 @@
 
 
 
+-- BODIES of classes, interfaces, and the likes.
+
+   LBRACE (#member_declaration=class_member_declaration)* RBRACE
+-> class_body ;;
+
+   LBRACE (#member_declaration=struct_member_declaration)* RBRACE
+-> struct_body ;;
+
+   LBRACE (#member_declaration=interface_member_declaration)* RBRACE
+-> interface_body ;;
+
+   LBRACE
+   (
+      #member_declaration=enum_member_declaration
+      ( 0 [: if (LA(2).kind == Token_RBRACE) break; :] -- exit the "star loop"
+        COMMA #member_declaration=enum_member_declaration
+      )*
+      (COMMA | 0)
+    |
+      0
+   )
+   RBRACE
+-> enum_body ;;
+
+   (#attribute=attribute_section)*
+   member_name=identifier
+   (ASSIGN constant_expression=constant_expression | 0)
+-> enum_member_declaration ;;
+
+
+
+
+-- Now on to what happens inside the class, interface, etc. bodies:
+
+
+-- The CLASS MEMBER DECLARATION is one of the most complex rules in here,
+-- and covers everything that can occur inside a class body.
+
+--   #(attribute=attribute_section)*
+--   modifiers=optional_modifiers
+--   (
+--      finalizer_declaration=finalizer_declaration
+--    |
+--      other member declarations
+--   )
+---> class_member_declaration ;;
+
+
+-- The CONSTANT DECLARATION. Declares "const" values.
+
+   CONST type=type (#constant_declarator=constant_declarator @ COMMA) SEMICOLON
+-> constant_declaration ;;
+
+   constant_name=identifier ASSIGN expression=constant_expression
+-> constant_declarator ;;
+
+
+-- The FIELD DECLARATION. Begins with type: will be folded into member_decl.
+
+   type=type (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
+-> field_declaration ;;
+
+   variable_name=identifier
+   (ASSIGN variable_initializer=variable_initializer | 0)
+-> variable_declarator ;;
+
+   expression=expression
+ | array_initializer=array_initializer
+-> variable_initializer ;;
+
+
+-- The METHOD DECLARATION. Begins with type: will be folded into member_decl.
+-- New in C# 2.0: generic methods.
+
+   return_type=return_type method_name=member_name
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
+   LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
+   (method_body=block | SEMICOLON)
+-> method_declaration ;;
+
+
+-- The CONSTRUCTOR DECLARATION. Naturally quite similar to the method one.
+-- Will also be folded into the member_declaration.
+
+   class_name=identifier
+   LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+   (constructor_initializer=constructor_initializer | 0)
+   (constructor_body=block | SEMICOLON)
+-> constructor_declaration ;;
+
+   COLON
+   (  BASE [: (*yynode)->type = constructor_initializer_ast::type_base; :]
+    | THIS [: (*yynode)->type = constructor_initializer_ast::type_this; :]
+   )
+   LPAREN (arguments=arguments | 0) RPAREN
+-> constructor_initializer ;;
+
+-- The STATIC CONSTRUCTOR DECLARATION is only used if the modifiers
+-- contain "static" (and optionally "extern", and nothing else).
+
+   class_name=identifier LPAREN RPAREN
+   (static_constructor_body=block | SEMICOLON)
+-> static_constructor_declaration ;;
+
+
+-- The FINALIZER is what other languages know as deconstructor.
+-- Only allowed inside classes.
+
+   TILDE class_name=identifier LPAREN RPAREN
+   (finalizer_body=block | SEMICOLON)
+-> finalizer_declaration ;;
+
+
+-- The PROPERTY DECLARATION. Begins with type: will be folded into member_decl.
+
+   type=type property_name=member_name
+   LBRACE accessor_declarations=accessor_declarations RBRACE
+-> property_declaration ;;
+
+
+-- The EVENT DECLARATION.
+
+   EVENT type=type
+   (
+      -- this condition avoids the LL(k) conflict here:
+      ?[: (LA(2).kind == Token_COMMA) || (LA(2).kind == Token_ASSIGN)
+          || (LA(2).kind == Token_SEMICOLON)
+       :]
+      (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
+    |
+      event_name=member_name
+      LPAREN event_accessor_declarations RPAREN
+   )
+-> event_declaration ;;
+
+-- The INDEXER DECLARATION. Begins with type: will be folded into member_decl.
+
+   type=type (interface_type=type_name_safe DOT | 0) THIS
+   LBRACKET formal_parameters=formal_parameters RBRACKET
+-> indexer_declaration ;;
+
+
+-- The OPERATOR DECLARATION. Two of the three derivations begin with type,
+-- so this will be folded into member_decl. and need a bit of work.
+
+   (
+      type=type OPERATOR
+      (
+         unary_only_operator=overloadable_unary_only_operator
+         LPAREN arg1_type=type arg1_name=identifier RPAREN
+       |
+         binary_only_operator=overloadable_binary_only_operator
+         LPAREN arg1_type=type arg1_name=identifier
+         COMMA  arg2_type=type arg2_name=identifier RPAREN
+       |
+         unary_or_binary_operator=overloadable_unary_or_binary_operator
+         LPAREN arg1_type=type arg1_name=identifier
+         (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
+      )
+    |
+      (IMPLICIT | EXPLICIT) OPERATOR type=type
+      LPAREN arg1_type=type arg1_name=identifier RPAREN
+   )
+   (operator_body=block | SEMICOLON)
+-> operator_declaration ;;
+
+ (
+   BANG       [: (*yynode)->op = overloadable_unary_only_operator_ast::op_bang;      :]
+ | TILDE      [: (*yynode)->op = overloadable_unary_only_operator_ast::op_tilde;     :]
+ | INCREMENT  [: (*yynode)->op = overloadable_unary_only_operator_ast::op_increment; :]
+ | DECREMENT  [: (*yynode)->op = overloadable_unary_only_operator_ast::op_decrement; :]
+ | TRUE       [: (*yynode)->op = overloadable_unary_only_operator_ast::op_true;      :]
+ | FALSE      [: (*yynode)->op = overloadable_unary_only_operator_ast::op_false;     :]
+ )
+-> overloadable_unary_only_operator ;;
+
+ (
+   STAR          [: (*yynode)->op = overloadable_binary_only_operator_ast::op_star;          :]
+ | SLASH         [: (*yynode)->op = overloadable_binary_only_operator_ast::op_slash;         :]
+ | REMAINDER     [: (*yynode)->op = overloadable_binary_only_operator_ast::op_remainder;     :]
+ | BIT_AND       [: (*yynode)->op = overloadable_binary_only_operator_ast::op_bit_and;       :]
+ | BIT_OR        [: (*yynode)->op = overloadable_binary_only_operator_ast::op_bit_or;        :]
+ | BIT_XOR       [: (*yynode)->op = overloadable_binary_only_operator_ast::op_bit_xor;       :]
+ | LSHIFT        [: (*yynode)->op = overloadable_binary_only_operator_ast::op_lshift;        :]
+ | RSHIFT        [: (*yynode)->op = overloadable_binary_only_operator_ast::op_rshift;        :]
+ | EQUAL         [: (*yynode)->op = overloadable_binary_only_operator_ast::op_equal;         :]
+ | NOT_EQUAL     [: (*yynode)->op = overloadable_binary_only_operator_ast::op_not_equal;     :]
+ | GREATER_THAN  [: (*yynode)->op = overloadable_binary_only_operator_ast::op_greater_than;  :]
+ | LESS_THAN     [: (*yynode)->op = overloadable_binary_only_operator_ast::op_less_than;     :]
+ | GREATER_EQUAL [: (*yynode)->op = overloadable_binary_only_operator_ast::op_greater_equal; :]
+ | LESS_EQUAL    [: (*yynode)->op = overloadable_binary_only_operator_ast::op_less_equal;    :]
+ )
+-> overloadable_binary_only_operator ;;
+
+   PLUS   [: (*yynode)->op = overloadable_unary_or_binary_operator_ast::op_plus;   :]
+ | MINUS  [: (*yynode)->op = overloadable_unary_or_binary_operator_ast::op_minus;  :]
+-> overloadable_unary_or_binary_operator ;;
+
+
+
+
+-- An ARGUMENT LIST is used when calling methods
+-- (not for declaring them, that's what parameter lists are for).
+
+   #argument=argument @ COMMA
+-> arguments ;;
+
+ (
+   expression=expression
+     [: (*yynode)->type = argument_ast::type_value_parameter;     :]
+ | REF expression=expression
+     [: (*yynode)->type = argument_ast::type_reference_parameter; :]
+ | OUT expression=expression
+     [: (*yynode)->type = argument_ast::type_output_parameter;    :]
+ )
+-> argument ;;
+
+
 
 -- All kinds of rules for types here.
 
-   builtin_class_type=builtin_class_type
- | optional_array_type=optional_array_type
+-- The RETURN TYPE can only be used as return value, not in a declaration.
+
+   regular_type=type [: (*yynode)->type = return_type_ast::type_regular; :]
+   VOID              [: (*yynode)->type = return_type_ast::type_void;    :]
+-> return_type ;;
+
+-- The regular TYPE recognizes the same set of tokens as the one in the C#
+-- specification, but had to be refactored quite a bit. Looks different here.
+
+   non_array_type=non_array_type (#rank_specifier=rank_specifier)*
 -> type ;;
-
-   type_name=type_name
- | builtin_class_type
--> class_type ;;
-
-   OBJECT [: (*yynode)->type = builtin_class_type_ast::type_object; :]
- | STRING [: (*yynode)->type = builtin_class_type_ast::type_string; :]
--> builtin_class_type ;;
-
-   non_array_type=optionally_nullable_type (#rank_specifier=rank_specifier)*
--> optional_array_type ;;
 
    LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
    ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
    RBRACKET
 -> rank_specifier ;;
+
+   builtin_class_type=builtin_class_type
+ | optionally_nullable_type=optionally_nullable_type
+-> non_array_type ;;
+
+   type_name=type_name
+ | builtin_class_type=builtin_class_type
+-> class_type ;;
+
+   OBJECT [: (*yynode)->type = builtin_class_type_ast::type_object; :]
+ | STRING [: (*yynode)->type = builtin_class_type_ast::type_string; :]
+-> builtin_class_type ;;
 
 -- NULLABLE TYPES are new in C# 2.0 and need to be expressed a little bit
 -- differently than in LALR grammars like in the C# specification.
@@ -602,6 +918,7 @@
    type_name=type_name
  | simple_type=simple_type
 -> non_nullable_type ;;
+
 
 -- Now for SIMPLE TYPES, this is easier ;)
 
@@ -655,7 +972,6 @@
    namespace_or_type_name
 -> type_name ;;
 
-
    (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
     | 0
    )
@@ -669,6 +985,17 @@
    )
 -> namespace_or_type_name_part ;;
 
+   namespace_or_type_name_safe
+-> type_name_safe ;;
+
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   #name_part=namespace_or_type_name_part
+   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) break; :] -- exit the "star loop"
+     DOT #name_part=namespace_or_type_name_part
+   )*
+-> namespace_or_type_name_safe ;;
 
 
 -- QUALIFIED identifiers are either qualified ones or raw identifiers.
@@ -687,25 +1014,26 @@
  | OUT       [: (*yynode)->modifier = parameter_modifier_ast::mod_out; :]
 -> parameter_modifier ;;
 
--- The modifiers here are not used in any rule, but are there to provide
--- one single pool of modifier enum value definitions.
+-- These are all the modifiers that can occur in front of type and type member
+-- declarations. They are not valid in every combination, this has to be
+-- checked seperately after parsing this rule.
 
  (
-   NEW        [: (*yynode)->modifiers |= modifier_ast::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= modifier_ast::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= modifier_ast::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= modifier_ast::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= modifier_ast::mod_private;   :]
- | ABSTRACT   [: (*yynode)->modifiers |= modifier_ast::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= modifier_ast::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= modifier_ast::mod_static;    :]
- | READONLY   [: (*yynode)->modifiers |= modifier_ast::mod_readonly;  :]
- | VOLATILE   [: (*yynode)->modifiers |= modifier_ast::mod_volatile;  :]
- | VIRTUAL    [: (*yynode)->modifiers |= modifier_ast::mod_virtual;   :]
- | OVERRIDE   [: (*yynode)->modifiers |= modifier_ast::mod_override;  :]
- | EXTERN     [: (*yynode)->modifiers |= modifier_ast::mod_extern;    :]
- )
--> modifier ;;
+   NEW        [: (*yynode)->modifiers |= optional_modifiers_ast::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= optional_modifiers_ast::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_private;   :]
+ | ABSTRACT   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_static;    :]
+ | READONLY   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_readonly;  :]
+ | VOLATILE   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_volatile;  :]
+ | VIRTUAL    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_virtual;   :]
+ | OVERRIDE   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_override;  :]
+ | EXTERN     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_extern;    :]
+ )*
+-> optional_modifiers ;;
 
  (
    keyword=ABSTRACT | keyword=AS | keyword=BASE | keyword=BOOL
@@ -773,13 +1101,17 @@
 STUB_A -> type_arguments ;;
 STUB_B -> type_parameters ;;
 STUB_C -> type_parameter_constraints_clauses ;;
-STUB_D -> class_body ;;
-STUB_E -> struct_body ;;
-STUB_F -> interface_body ;;
-STUB_G -> enum_body ;;
-STUB_H -> return_type ;;
+STUB_D -> class_member_declaration ;;
+STUB_E -> struct_member_declaration ;;
+STUB_F -> interface_member_declaration ;;
+STUB_G -> constant_expression ;;
 STUB_I -> formal_parameters ;;
+STUB_J -> member_name ;;
+STUB_K -> array_initializer ;;
+LBRACE STUB_L RBRACE -> block ;;
 identifier -> expression ;;
+STUB_M -> accessor_declarations ;;
+STUB_N -> event_accessor_declarations ;;
 
 
 

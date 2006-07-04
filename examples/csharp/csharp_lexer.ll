@@ -206,7 +206,7 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 "!="            return csharp::Token_NOT_EQUAL;
 "&&"            return csharp::Token_LOG_AND;
 "||"            return csharp::Token_LOG_OR;
-"->"            return csharp::Token_ARROW_RIGHT; // TODO: naming, CSharpParser.g calls it DEREF... new in 2.0 or not?
+"->"            return csharp::Token_ARROW_RIGHT; // TODO: new in 2.0 or not?
 "++"            return csharp::Token_INCREMENT;
 "--"            return csharp::Token_DECREMENT;
 "="             return csharp::Token_ASSIGN;

@@ -2426,7 +2426,7 @@ bool java::parse_class_field(class_field_ast **yynode)
             }
           (*yynode)->instance_initializer_block = __node_84;
         }
-      else if (( LA(2).kind == Token_LBRACE ) && (yytoken == Token_STATIC))
+      else if (yytoken == Token_STATIC)
         {
           if (yytoken != Token_STATIC)
             return yy_expected_token(yytoken, Token_STATIC, "static");

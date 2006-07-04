@@ -742,8 +742,8 @@
    -- The static class initializer block ("static {...}") has a conflict with
    -- the modifiers from above, which can also be static. A block must always
    -- start with "{", so when encountering static, this can be used to resolve
-   -- this conflict.
-   ?[: LA(2).kind == Token_LBRACE :] STATIC static_initializer_block=block
+   -- this conflict. (Lookahead done at the top of the rule.)
+   STATIC static_initializer_block=block
  |
    SEMICOLON
  )

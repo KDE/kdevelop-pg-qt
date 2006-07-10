@@ -48,6 +48,8 @@ public:
     /**
      * Returns @true if the code at the current position is included into
      * the parser's token stream, or @false if it's a skipped section.
+     * This is called by the lexer after each pre-processor line, and
+     * makes him treat the upcoming text either as tokens or like #ifdef'd out.
      */
     bool is_active();
 

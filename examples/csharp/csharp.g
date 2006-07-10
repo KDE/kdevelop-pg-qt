@@ -31,7 +31,7 @@
 --  - Nothing until now. But I'm sure I'll find some.
 --    (0 conflicts)
 
--- Known harmless or resolved conflicts (13 conflicts):
+-- Known harmless or resolved conflicts (15 conflicts):
 --  - The first/follow LBRACKET conflict in compilation_unit
 --    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in global_attribute_section,
@@ -41,6 +41,8 @@
 --    (manually resolved, 1 conflict)
 --  - The first/follow DOT conflict in namespace_or_type_name_safe,
 --    which actually stems from indexer_declaration
+--    (manually resolved, 1 conflict)
+--  - The first/follow COMMA conflict in array_initializer, another of those
 --    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
 --    (manually resolved, 1 conflict)
@@ -58,10 +60,13 @@
 --    in class_or_struct_member_declaration (another one), between
 --    the field declaration and the (type_name_safe ...) part of the subrule.
 --    (manually resolved, 1 conflict)
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--    in event_declarationm, between variable_declarator and type_name.
+--    (manually resolved, 1 conflict)
 --  - The first/first VOID conflict in return_type
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 13
+-- Total amount of conflicts: 15
 
 
 --
@@ -129,6 +134,11 @@
 
   csharp::csharp_compatibility_mode _M_compatibility_mode;
   std::set<std::string> _M_pp_defined_symbols;
+
+  // parameterArrayOccurred is used as a means of communication between
+  // formal_parameter_list and formal_parameter to determine if a parameter
+  // array was already in the list (then, no more parameters may follow).
+  bool parameterArrayOccurred;
 :]
 
 %member (parserclass: constructor)
@@ -141,6 +151,25 @@
 --
 -- Additional AST members
 --
+
+%member (_modifiers: public declaration)
+[:
+  enum modifier_enum {
+    mod_new          = 1,
+    mod_public       = 2,
+    mod_protected    = 4,
+    mod_internal     = 8,
+    mod_private      = 16,
+    mod_abstract     = 32,
+    mod_sealed       = 64,
+    mod_static       = 128,
+    mod_readonly     = 256,
+    mod_volatile     = 512,
+    mod_virtual      = 1024,
+    mod_override     = 2048,
+    mod_extern       = 4096,
+  };
+:]
 
 %member (type_declaration_rest: public declaration)
 [:
@@ -215,6 +244,49 @@
     op_minus,
   };
   overloadable_unary_or_binary_operator_enum op;
+:]
+
+%member (interface_member_declaration: public declaration)
+[:
+  enum interface_member_declaration_enum {
+    type_interface_event_declaration,
+    type_interface_indexer_declaration,
+    type_interface_property_declaration,
+    type_interface_method_declaration,
+  };
+  interface_member_declaration_enum type;
+  bool decl_new; // specifies if the "new" keyword prepends the declaration
+:]
+
+%member (accessor_declarations: public declaration)
+[:
+  enum accessor_declarations_enum {
+    type_get,
+    type_set,
+    type_none, // only possible for the second, optional accessor
+  };
+  accessor_declarations_enum type_accessor1;
+  accessor_declarations_enum type_accessor2;
+:]
+
+%member (accessor_modifier: public declaration)
+[:
+  int modifiers; // using the modifier_enum values
+:]
+
+%member (event_accessor_declarations: public declaration)
+[:
+  enum event_accessor_declarations_enum {
+    order_add_remove,
+    order_remove_add,
+  };
+  event_accessor_declarations_enum order;
+:]
+
+%member (interface_accessors: public declaration)
+[:
+  accessor_declarations_ast::accessor_declarations_enum type_accessor1;
+  accessor_declarations_ast::accessor_declarations_enum type_accessor2;
 :]
 
 %member (argument: public declaration)
@@ -320,27 +392,12 @@
 
 %member (optional_modifiers: public declaration)
 [:
-  enum modifier_enum {
-    mod_new          = 1,
-    mod_public       = 2,
-    mod_protected    = 4,
-    mod_internal     = 8,
-    mod_private      = 16,
-    mod_abstract     = 32,
-    mod_sealed       = 64,
-    mod_static       = 128,
-    mod_readonly     = 256,
-    mod_volatile     = 512,
-    mod_virtual      = 1024,
-    mod_override     = 2048,
-    mod_extern       = 4096,
-  };
-  int modifiers;
+  int modifiers; // using the modifier_enum values
 :]
 
 %member (optional_type_modifiers: public declaration)
 [:
-  int modifiers; // using the optional_modifier_enum values
+  int modifiers; // using the modifier_enum values
 :]
 
 %member (literal: public declaration)
@@ -560,15 +617,15 @@
 -> type_declaration_rest ;;
 
  (
-   NEW        [: (*yynode)->modifiers |= optional_modifiers_ast::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= optional_modifiers_ast::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_private;   :]
+   NEW        [: (*yynode)->modifiers |= _modifiers_ast::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
  -- the following three ones only occur in class declarations:
- | ABSTRACT   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_static;    :]
+ | ABSTRACT   [: (*yynode)->modifiers |= _modifiers_ast::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= _modifiers_ast::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_static;    :]
  )*
 -> optional_type_modifiers ;;
 
@@ -648,7 +705,7 @@
       type_parameters=type_parameters
     | 0
    )
-   LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+   LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
    (
       ?[: compatibility_mode() >= csharp20_compatibility :]
       type_parameter_constraints_clauses=type_parameter_constraints_clauses
@@ -747,17 +804,20 @@
      [: (*yynode)->type = class_or_struct_member_declaration_ast::type_event_declaration;    :]
  |
    -- The OPERATOR DECLARATION, part one. Makes overloaded operators.
-   -- (Part two follows later in this rule.)
-   (  IMPLICIT
-        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_implicit; :]
-    | EXPLICIT
-        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit; :]
-   )
-   OPERATOR operator_type=type
+   IMPLICIT OPERATOR operator_type=type
    LPAREN arg1_type=type arg1_name=identifier RPAREN
    (operator_body=block | SEMICOLON)
+     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_implicit; :]
+ |
+   -- The OPERATOR DECLARATION, part two. Makes overloaded operators.
+   -- (There's also part three, later in this rule.)
+   EXPLICIT OPERATOR operator_type=type
+   LPAREN arg1_type=type arg1_name=identifier RPAREN
+   (operator_body=block | SEMICOLON)
+     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit; :]
  |
    -- A normal or static CONSTRUCTOR DECLARATION.
+   -- For feasability, static_constructor_declaration is not used here.
    ?[: LA(2).kind == Token_LPAREN :]
    constructor_declaration=constructor_declaration
      [: (*yynode)->type = class_or_struct_member_declaration_ast::type_constructor_declaration; :]
@@ -766,7 +826,7 @@
    ?[: (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
         || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
         || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) :]
-   type_declaration_rest
+   type_declaration_rest=type_declaration_rest
      [: (*yynode)->type = class_or_struct_member_declaration_ast::type_type_declaration; :]
  |
    -- for the rest of the declarations, we need to generalize some parts of the
@@ -774,9 +834,8 @@
    -- at least makes LL(1) parsing feasible.
    member_type=return_type
    (
-      -- The OPERATOR DECLARATION rest, part two. Makes overloaded operators.
+      -- The OPERATOR DECLARATION rest, part three. Makes overloaded operators.
       OPERATOR
-        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_typed; :]
       (
          unary_only_operator=overloadable_unary_only_operator
          LPAREN arg1_type=type arg1_name=identifier RPAREN
@@ -790,9 +849,10 @@
          (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
       )
       (operator_body=block | SEMICOLON)
+        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_typed; :]
     |
       -- The INDEXER DECLARATION rest, part one.
-      THIS LBRACKET formal_parameters=formal_parameters RBRACKET
+      THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
         [: (*yynode)->type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
     |
       -- The FIELD DECLARATION rest. Declares member variables.
@@ -806,7 +866,7 @@
         -- (interface_type for the indexer declaration, member_name otherwise)
       (
          -- The INDEXER DECLARATION rest, part two.
-         DOT THIS LBRACKET formal_parameters=formal_parameters RBRACKET
+         DOT THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
            [: (*yynode)->type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
        |
          -- The PROPERTY DECLARATION rest.
@@ -819,7 +879,7 @@
              type_parameters=type_parameters
            | 0
          )
-         LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+         LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
          (
              ?[: compatibility_mode() >= csharp20_compatibility :]
              type_parameter_constraints_clauses=type_parameter_constraints_clauses
@@ -845,7 +905,7 @@
 -- Will also be folded into the member_declaration.
 
    class_name=identifier
-   LPAREN (formal_parameters=formal_parameters | 0) RPAREN
+   LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
    (constructor_initializer=constructor_initializer | 0)
    (constructor_body=block | SEMICOLON)
 -> constructor_declaration ;;
@@ -854,15 +914,16 @@
    (  BASE [: (*yynode)->type = constructor_initializer_ast::type_base; :]
     | THIS [: (*yynode)->type = constructor_initializer_ast::type_this; :]
    )
-   LPAREN (arguments=arguments | 0) RPAREN
+   LPAREN (arguments=argument_list | 0) RPAREN
 -> constructor_initializer ;;
 
 -- There is also a STATIC CONSTRUCTOR DECLARATION which is only used if
 -- the modifiers contain "static" (and optionally "extern", and nothing else).
 -- Apart from the "static" modifier, the static constructor declaration
 -- is a subset of the generic one. In order to keep the parser simple,
--- we don't check on the modifiers here. This should rather be done in
--- the visitor, later on.
+-- we don't check on the modifiers here and thus only use
+-- constructor_declaration, which is a superset of this rule.
+-- Modifier checking should rather be done in the visitor, later on.
 
 --    class_name=identifier LPAREN RPAREN
 --    (static_constructor_body=block | SEMICOLON)
@@ -888,21 +949,53 @@
        :]
       (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
     |
-      event_name=member_name
-      LPAREN event_accessor_declarations RPAREN
+      event_name=type_name
+      LPAREN event_accessor_declarations=event_accessor_declarations RPAREN
    )
 -> event_declaration ;;
 
 
--- The VARIABLE DECLARATOR, for field declarations and other stuff.
 
-   variable_name=identifier
-   (ASSIGN variable_initializer=variable_initializer | 0)
--> variable_declarator ;;
 
-   expression=expression
- | array_initializer=array_initializer
--> variable_initializer ;;
+-- So much for the rough structure, now we get into the details
+
+
+-- A FORMAL PARAMETER LIST is part of a method header and contains one or more
+-- parameters, optionally ending with a variable-length "parameter array".
+-- It's not as hackish as it used to be, nevertheless it could still be nicer.
+-- TODO: Maybe some fine day rule parameters will be implemented.
+--       In that case, please make ellipsisOccurred totally local here.
+
+   0 [: parameterArrayOccurred = false; :]
+   #formal_parameter=formal_parameter
+   @ ( 0 [: if( parameterArrayOccurred == true ) { break; } :]
+         -- Don't proceed after the parameter array. If there's a cleaner way
+         -- to exit the loop when parameterArrayOccurred == true,
+         -- please use that instead of this construct.
+       COMMA
+     )
+-> formal_parameter_list ;;
+
+-- How it _should_ look:
+--
+--    0 [: parameterArrayOccurred = false; :]
+--    #formal_parameter=formal_parameter
+--    @ ( ?[: parameterArrayOccurred == false :] COMMA )
+--        -- kdev-pg dismisses this condition!
+-- -> formal_parameter_list ;;
+
+   (#attribute=attribute_section)*
+   (
+      parameter_array=parameter_array
+        [: parameterArrayOccurred = true; :]
+    |
+      (modifier=parameter_modifier | 0) type=type variable_name=identifier
+   )
+-> formal_parameter ;;
+
+   PARAMS type=array_type variable_name=identifier
+-> parameter_array ;;
+
 
 
 -- OVERLOADABLE OPERATORS for operator declarations.
@@ -941,12 +1034,136 @@
 
 
 
+-- ACCESSOR DECLARATIONS appear inside a property declaration.
+
+   (#attributes_accessor1=attribute_section)*
+   (accessor1_modifier=accessor_modifier | 0)
+   (
+      GET (accessor1_body=block | SEMICOLON)
+        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_get; :]
+      (
+         (#attributes_accessor2=attribute_section)*
+         (accessor2_modifier=accessor_modifier | 0)
+         SET (accessor2_body=block | SEMICOLON)
+           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_set;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+      )
+    |
+      SET (accessor1_body=block | SEMICOLON)
+        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_set; :]
+      (
+         (#attributes_accessor2=attribute_section)*
+         (accessor2_modifier=accessor_modifier | 0)
+         GET (accessor2_body=block | SEMICOLON)
+           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_get;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+      )
+   )
+-> accessor_declarations ;;
+
+   PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
+   (  INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
+    | 0
+   )
+ | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
+   (  PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
+    | 0
+   )
+ | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
+-> accessor_modifier ;;
+
+
+-- EVENT ACCESSOR DECLARATIONS appear inside an event declaration.
+
+   (#attributes_accessor1=attribute_section)*
+   (
+      ADD accessor1_body=block
+      (#attributes_accessor2=attribute_section)*
+      REMOVE accessor2_body=block
+      [: (*yynode)->order = event_accessor_declarations_ast::order_add_remove; :]
+    |
+      REMOVE accessor1_body=block
+      (#attributes_accessor2=attribute_section)*
+      ADD accessor2_body=block
+      [: (*yynode)->order = event_accessor_declarations_ast::order_remove_add; :]
+   )
+-> event_accessor_declarations ;;
+
+
+
+-- Interfaces have their own specific INTERFACE MEMBER DECLARATIONS.
+-- Resembling the class_or_struct_member_declaration, but less complex.
+
+   (#attribute=attribute_section)*
+   (  NEW  [: (*yynode)->decl_new = true;  :]
+    | 0    [: (*yynode)->decl_new = false; :]
+   )
+   (
+       event_declaration=interface_event_declaration
+         [: (*yynode)->type = interface_member_declaration_ast::type_interface_event_declaration; :]
+    |
+       -- the property and indexer declarations are in principle only types,
+       -- not return_types. Generalized for a cleaner grammar, though.
+       -- TODO: Maybe there's some good idea on how to handle this?
+       --       If so, then also for class_or_struct_member_declaration.
+       member_type=return_type
+       (
+          -- The INDEXER DECLARATION rest.
+          THIS
+          LBRACKET formal_parameters=formal_parameter_list RBRACKET
+          LBRACE interface_accessors=interface_accessors RBRACE
+            [: (*yynode)->type = interface_member_declaration_ast::type_interface_indexer_declaration; :]
+        |
+          -- The method and property declarations need to be split further.
+          member_name=identifier
+          (
+             -- The PROPERTY DECLARATION REST.
+             RBRACE interface_accessors=interface_accessors RBRACE
+               [: (*yynode)->type = interface_member_declaration_ast::type_interface_property_declaration; :]
+           |
+             (type_parameters=type_parameters | 0)
+             LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
+             (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
+             SEMICOLON
+               [: (*yynode)->type = interface_member_declaration_ast::type_interface_method_declaration; :]
+          )
+       )
+   )
+-> interface_member_declaration ;;
+
+   EVENT event_type=type event_name=identifier SEMICOLON
+-> interface_event_declaration ;;
+
+-- An INTERFACE ACCESSOR looks like "[attributes] get;" or "[attributes] set;"
+
+   (#attributes_accessor1=attribute_section)*
+   (
+      GET SEMICOLON
+        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_get; :]
+      (
+         (#attributes_accessor2=attribute_section)* SET SEMICOLON
+           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_set;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+      )
+    |
+      SET SEMICOLON
+        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_set; :]
+      (
+         (#attributes_accessor2=attribute_section)* GET SEMICOLON
+           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_get;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+      )
+   )
+-> interface_accessors ;;
+
+
+
 
 -- An ARGUMENT LIST is used when calling methods
 -- (not for declaring them, that's what parameter lists are for).
 
    #argument=argument @ COMMA
--> arguments ;;
+-> argument_list ;;
 
  (
    expression=expression
@@ -995,6 +1212,9 @@
 
    non_array_type=non_array_type (#rank_specifier=rank_specifier)*
 -> managed_type ;;
+
+   non_array_type=non_array_type (#rank_specifier=rank_specifier)+
+-> array_type ;;
 
    LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
    ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
@@ -1114,6 +1334,36 @@
 
 
 
+-- Still types, but more high level: variable declarations, initializers, etc.
+
+-- The VARIABLE DECLARATOR is the part after the type specification for a
+-- variable declaration. There can be more declarators, seperated by commas.
+
+   variable_name=identifier
+   (ASSIGN variable_initializer=variable_initializer | 0)
+-> variable_declarator ;;
+
+-- The INITIALIZERS provide the actual values for the above declarators.
+
+   expression=expression
+ | array_initializer=array_initializer
+-> variable_initializer ;;
+
+   LBRACE
+   (
+      #variable_initializer=variable_initializer
+      ( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
+        COMMA #variable_initializer=variable_initializer
+      )*
+      COMMA
+    |
+      0
+   )
+   RBRACE
+-> array_initializer ;;
+
+
+
 
 
 --
@@ -1129,19 +1379,19 @@
 -- checked seperately after parsing this rule.
 
  (
-   NEW        [: (*yynode)->modifiers |= optional_modifiers_ast::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= optional_modifiers_ast::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_private;   :]
- | ABSTRACT   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_static;    :]
- | READONLY   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_readonly;  :]
- | VOLATILE   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_volatile;  :]
- | VIRTUAL    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_virtual;   :]
- | OVERRIDE   [: (*yynode)->modifiers |= optional_modifiers_ast::mod_override;  :]
- | EXTERN     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_extern;    :]
+   NEW        [: (*yynode)->modifiers |= _modifiers_ast::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
+ | ABSTRACT   [: (*yynode)->modifiers |= _modifiers_ast::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= _modifiers_ast::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_static;    :]
+ | READONLY   [: (*yynode)->modifiers |= _modifiers_ast::mod_readonly;  :]
+ | VOLATILE   [: (*yynode)->modifiers |= _modifiers_ast::mod_volatile;  :]
+ | VIRTUAL    [: (*yynode)->modifiers |= _modifiers_ast::mod_virtual;   :]
+ | OVERRIDE   [: (*yynode)->modifiers |= _modifiers_ast::mod_override;  :]
+ | EXTERN     [: (*yynode)->modifiers |= _modifiers_ast::mod_extern;    :]
  )*
 -> optional_modifiers ;;
 
@@ -1203,22 +1453,23 @@
 -> literal ;;
 
 
+-- Pseudo rules for declaring enums that are used in multiple rules.
+-- TODO: make kdev-pg have a %namespace declaration, making this obsolete.
+
+    0
+-> _modifiers ;;
+
+
 
 --
 -- Appendix: Rule stubs
 --
 
-STUB_A -> type_arguments ;;
-STUB_B -> type_parameters ;;
-STUB_C -> type_parameter_constraints_clauses ;;
-STUB_D -> accessor_declarations ;;
-STUB_E -> event_accessor_declarations ;;
-STUB_F -> interface_member_declaration ;;
-STUB_G -> constant_expression ;;
-STUB_I -> formal_parameters ;;
-STUB_J -> member_name ;;
-STUB_K -> array_initializer ;;
-LBRACE STUB_L RBRACE -> block ;;
+LBRACE STUB_A RBRACE -> block ;;
+STUB_B -> type_arguments ;;
+STUB_C -> type_parameters ;;
+STUB_D -> type_parameter_constraints_clauses ;;
+STUB_E -> constant_expression ;;
 identifier -> expression ;;
 
 

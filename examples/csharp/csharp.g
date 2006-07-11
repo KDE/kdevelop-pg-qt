@@ -27,11 +27,16 @@
 
 
 
--- Known problematic conflicts (0 conflicts), requiring automatic LL(k):
---  - Nothing until now. But I'm sure I'll find some.
---    (0 conflicts)
+-- Known problematic conflicts (1 conflict), requiring automatic LL(k):
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict in
+--    block_statement which is essentially an expression statements vs.
+--    variable declarations conflict. There's also an identifier conflict
+--    between labeled_statement and the other two that's easily resolvable,
+--    this has got nothing to do with the problematic LL(k) one.
+--    Solved by lookahead_is_variable_declaration().
+--    (1 conflict)
 
--- Known harmless or resolved conflicts (15 conflicts):
+-- Known harmless or resolved conflicts (19 conflicts):
 --  - The first/follow LBRACKET conflict in compilation_unit
 --    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in global_attribute_section,
@@ -43,6 +48,9 @@
 --    which actually stems from indexer_declaration
 --    (manually resolved, 1 conflict)
 --  - The first/follow COMMA conflict in array_initializer, another of those
+--    (manually resolved, 1 conflict)
+--  - The first/follow COMMA conflict in secondary_constraints,
+--    battling against constructor_constraints
 --    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
 --    (manually resolved, 1 conflict)
@@ -61,12 +69,30 @@
 --    the field declaration and the (type_name_safe ...) part of the subrule.
 --    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict
---    in event_declarationm, between variable_declarator and type_name.
+--    in event_declaration, between variable_declarator and type_name.
 --    (manually resolved, 1 conflict)
 --  - The first/first VOID conflict in return_type
 --    (manually resolved, 1 conflict)
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--    in type_parameter_constraints, caused by the similarity of
+--    primary_or_secondary_constraint (with class_type) and
+--    secondary_constraints (with type_name). Not resolved, instead,
+--    primary_or_secondary_constraint may be both, as indicated by the name.
+--    (done right by default, 1 conflict)
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict in block_statement
+--    between all three statement types.
+--    labeled_statement vs. the other two is resolved easily, whereas
+--    declaration_statement needs arbitrary-length LL(k), as is described
+--    further above.
+--    (manually resolved, already counted in the problematic conflicts section)
+--  - The first/first YIELD conflict in embedded_statement. This is because
+--    YIELD is not only the start of yield_statement,
+--    but also a non-keyword identifier, and as such needs special treatment.
+--    (manually resolved, 1 conflict)
+--  - The first/first CATCH conflict in catch_clauses
+--    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 15
+-- Total amount of conflicts: 20
 
 
 --
@@ -283,6 +309,16 @@
   event_accessor_declarations_enum order;
 :]
 
+%member (primary_or_secondary_constraint: public declaration)
+[:
+  enum primary_or_secondary_constraint_enum {
+    type_type,
+    type_class,
+    type_struct,
+  };
+  primary_or_secondary_constraint_enum type;
+:]
+
 %member (interface_accessors: public declaration)
 [:
   accessor_declarations_ast::accessor_declarations_enum type_accessor1;
@@ -379,6 +415,34 @@
     type_double,
   };
   floating_point_type_enum type;
+:]
+
+%member (goto_statement: public declaration)
+[:
+  enum goto_statement_enum {
+    type_labeled_statement,
+    type_switch_case,
+    type_switch_default,
+  };
+  goto_statement_enum type;
+:]
+
+%member (yield_statement: public declaration)
+[:
+  enum yield_statement_enum {
+    type_yield_return,
+    type_yield_break,
+  };
+  yield_statement_enum type;
+:]
+
+%member (switch_label: public declaration)
+[:
+  enum branch_type_enum {
+    case_branch,
+    default_branch
+  };
+  branch_type_enum branch_type;
 :]
 
 %member (parameter_modifier: public declaration)
@@ -797,7 +861,7 @@
 -- to be refactored. The other declarations must be split to avoid conflicts.
 
  (
-   constant_declaration=constant_declaration
+   constant_declaration=constant_declaration SEMICOLON
      [: (*yynode)->type = class_or_struct_member_declaration_ast::type_constant_declaration; :]
  |
    event_declaration=event_declaration
@@ -873,7 +937,7 @@
          LBRACE accessor_declarations=accessor_declarations RBRACE
            [: (*yynode)->type = class_or_struct_member_declaration_ast::type_property_declaration; :]
        |
-         -- The MEMBER DECLARATION rest.
+         -- The METHOD DECLARATION rest.
          (
              ?[: compatibility_mode() >= csharp20_compatibility :]
              type_parameters=type_parameters
@@ -928,15 +992,6 @@
 --    class_name=identifier LPAREN RPAREN
 --    (static_constructor_body=block | SEMICOLON)
 -- -> static_constructor_declaration ;;
-
-
--- The CONSTANT DECLARATION. Declares "const" values.
-
-   CONST type=type (#constant_declarator=constant_declarator @ COMMA) SEMICOLON
--> constant_declaration ;;
-
-   constant_name=identifier ASSIGN expression=constant_expression
--> constant_declarator ;;
 
 
 -- The EVENT DECLARATION.
@@ -995,6 +1050,24 @@
 
    PARAMS type=array_type variable_name=identifier
 -> parameter_array ;;
+
+
+-- An ARGUMENT LIST is used when calling methods
+-- (not for declaring them, that's what parameter lists are for).
+
+   #argument=argument @ COMMA
+-> argument_list ;;
+
+ (
+   expression=expression
+     [: (*yynode)->type = argument_ast::type_value_parameter;     :]
+ | REF expression=expression
+     [: (*yynode)->type = argument_ast::type_reference_parameter; :]
+ | OUT expression=expression
+     [: (*yynode)->type = argument_ast::type_output_parameter;    :]
+ )
+-> argument ;;
+
 
 
 
@@ -1159,25 +1232,6 @@
 
 
 
--- An ARGUMENT LIST is used when calling methods
--- (not for declaring them, that's what parameter lists are for).
-
-   #argument=argument @ COMMA
--> argument_list ;;
-
- (
-   expression=expression
-     [: (*yynode)->type = argument_ast::type_value_parameter;     :]
- | REF expression=expression
-     [: (*yynode)->type = argument_ast::type_reference_parameter; :]
- | OUT expression=expression
-     [: (*yynode)->type = argument_ast::type_output_parameter;    :]
- )
--> argument ;;
-
-
-
-
 --
 -- All kinds of rules for types here.
 --
@@ -1334,7 +1388,104 @@
 
 
 
--- Still types, but more high level: variable declarations, initializers, etc.
+
+
+-- Type parameters and type arguments, the two rules responsible for the
+-- greater-than special casing. (This is the generic aspect in Java >= 1.5.)
+
+
+-- Type parameter CONSTRAINTS CLAUSES also belong to C#'s generics,
+-- and can narrow down the allowed types given as type arguments.
+
+   WHERE type_parameter=identifier COLON constraints=type_parameter_constraints
+-> type_parameter_constraints_clauses ;;
+
+ (
+   primary_or_secondary_constraint=primary_or_secondary_constraint
+   (  COMMA
+      (  secondary_constraints=secondary_constraints
+         (COMMA constructor_constraint=constructor_constraint | 0)
+       |
+         constructor_constraint=constructor_constraint
+      )
+    | 0
+   )
+ |
+   secondary_constraints=secondary_constraints
+   (COMMA constructor_constraint=constructor_constraint | 0)
+ |
+   constructor_constraint=constructor_constraint
+ )
+-> type_parameter_constraints ;;
+
+ (
+   class_type_or_secondary_constraint=class_type
+           [: (*yynode)->type = primary_or_secondary_constraint_ast::type_type;   :]
+ | CLASS   [: (*yynode)->type = primary_or_secondary_constraint_ast::type_class;  :]
+ | STRUCT  [: (*yynode)->type = primary_or_secondary_constraint_ast::type_struct; :]
+ )
+-> primary_or_secondary_constraint ;;
+
+   #interface_type_or_type_parameter=type_name
+   (
+     -- don't make constructor constraints unparsable:
+     0 [: if (LA(2).kind == Token_NEW) { break; } :]
+     COMMA #interface_type_or_type_parameter=type_name
+   )*
+-> secondary_constraints ;;
+
+   NEW LPAREN RPAREN
+-> constructor_constraint ;;
+
+
+
+
+
+-- And now for the good stuff: statements, expressions and the likes. Yay!
+
+-- This is a BLOCK, a list of statements. It is used in many contexts:
+--  - As the body of a method, constructor, overloaded operator, ...
+--  - As the body of an accessor
+--  - As a completely independent braced block of code inside a method,
+--    starting a new scope for variable definitions
+
+   LBRACE (#statement=block_statement)* RBRACE
+-> block ;;
+
+-- A BLOCK STATEMENT is either an embedded statement or a variable declaration.
+
+ (
+   ?[: LA(2).kind == Token_COLON :]
+   labeled_statement=labeled_statement
+ |
+   -- Local variable declarations, as well as expression statements, can start
+   -- with class1<xxx>.bla or similar. This is only solvable with LL(k), so
+   -- what's needed here is the following hack lookahead function, until
+   -- backtracking or real LL(k) is implemented.
+   -- ?[: lookahead_is_variable_declaration() == true :]
+   declaration_statement=declaration_statement
+ |
+   statement=embedded_statement
+ )
+-> block_statement ;;
+
+   label=identifier COLON block_statement
+-> labeled_statement ;;
+
+
+
+-- VARIABLE DECLARATIONS, initializers, etc.
+
+   (  local_variable_declaration=variable_declaration
+    | local_constant_declaration=constant_declaration
+   )
+   SEMICOLON
+-> declaration_statement ;;
+
+-- enable this to get your favorite problematic LL(k) conflicts
+--    type=type (#variable_declarator=variable_declarator @ COMMA)
+-- -> variable_declaration ;;
+-- TODO: note: only backtrack (type identifier), it's enough to disambiguate
 
 -- The VARIABLE DECLARATOR is the part after the type specification for a
 -- variable declaration. There can be more declarators, seperated by commas.
@@ -1343,7 +1494,17 @@
    (ASSIGN variable_initializer=variable_initializer | 0)
 -> variable_declarator ;;
 
--- The INITIALIZERS provide the actual values for the above declarators.
+
+-- The CONSTANT DECLARATION. Declares "const" values.
+
+   CONST type=type (#constant_declarator=constant_declarator @ COMMA)
+-> constant_declaration ;;
+
+   constant_name=identifier ASSIGN expression=constant_expression
+-> constant_declarator ;;
+
+
+-- The INITIALIZERS provide the actual values for the variable declarators.
 
    expression=expression
  | array_initializer=array_initializer
@@ -1361,6 +1522,233 @@
    )
    RBRACE
 -> array_initializer ;;
+
+
+
+
+-- The (embedded) STATEMENT is a central point of the grammar,
+-- even if delegating most of the work to its children.
+
+ (
+   block=block  -- more block_statements within {} braces
+ -- selection statements:
+ | if_statement=if_statement
+ | switch_statement=switch_statement
+ -- iteration statements:
+ | while_statement=while_statement
+ | do_while_statement=do_while_statement
+ | for_statement=for_statement
+ | foreach_statement=foreach_statement
+ -- jump statements:
+ | break_statement=break_statement
+ | continue_statement=continue_statement
+ | goto_statement=goto_statement
+ | return_statement=return_statement
+ | throw_statement=throw_statement
+ -- other statements:
+ | try_statement=try_statement
+ | checked_statement=checked_statement
+ | unchecked_statement=unchecked_statement
+ | lock_statement=lock_statement
+ | using_statement=using_statement
+ | SEMICOLON    -- the specification calls it empty_statement
+ |
+   -- YIELD is a non-keyword identifier, so it clashes with expressions
+   ?[: LA(2).kind == Token_RETURN || LA(2).kind == Token_BREAK :]
+   yield_statement=yield_statement
+ |
+   -- method call, assignment, etc.:
+   expression_statement=statement_expression SEMICOLON
+ )
+-> embedded_statement ;;
+
+
+-- Simple one-rule statements:
+
+   IF LPAREN condition=boolean_expression RPAREN if_body=embedded_statement
+   (ELSE else_body=embedded_statement | 0)
+     -- the traditional "dangling-else" conflict:
+     -- kdevelop-pg generates proper code here, matching as soon as possible.
+-> if_statement ;;
+
+   WHILE LPAREN condition=boolean_expression RPAREN body=embedded_statement
+-> while_statement ;;
+
+   DO body=embedded_statement
+   WHILE LPAREN condition=boolean_expression RPAREN SEMICOLON
+-> do_while_statement ;;
+
+   FOREACH LPAREN
+   variable_type=type variable_name=identifier IN collection=expression
+   RPAREN
+   body=embedded_statement
+-> foreach_statement ;;
+
+   BREAK SEMICOLON
+-> break_statement ;;
+
+   CONTINUE SEMICOLON
+-> continue_statement ;;
+
+   GOTO
+   (  label=identifier
+        [: (*yynode)->type = goto_statement_ast::type_labeled_statement; :]
+    | CASE constant_expression=constant_expression
+        [: (*yynode)->type = goto_statement_ast::type_switch_case;       :]
+    | DEFAULT
+        [: (*yynode)->type = goto_statement_ast::type_switch_default;    :]
+   )
+   SEMICOLON
+-> goto_statement ;;
+
+   RETURN (return_expression=expression | 0) SEMICOLON
+-> return_statement ;;
+
+   THROW (exception=expression | 0) SEMICOLON
+-> throw_statement ;;
+
+   CHECKED body=block
+-> checked_statement ;;
+
+   UNCHECKED body=block
+-> unchecked_statement ;;
+
+   LOCK LPAREN lock_expression=expression RPAREN body=embedded_statement
+-> lock_statement ;;
+
+   YIELD
+   (  RETURN return_expression=expression
+        [: (*yynode)->type = yield_statement_ast::type_yield_return; :]
+    | BREAK
+        [: (*yynode)->type = yield_statement_ast::type_yield_break; :]
+   )
+   SEMICOLON
+-> yield_statement ;;
+
+
+-- The SWITCH STATEMENT, consisting of a header and multiple
+-- "case x:" or "default:" switch statement groups.
+
+   SWITCH LPAREN switch_expression=expression RPAREN
+   LBRACE (#switch_section=switch_section)* RBRACE
+-> switch_statement ;;
+
+   (#label=switch_label)+
+   (#statement=block_statement)+
+-> switch_section ;;
+
+   (  CASE case_expression=constant_expression
+      [: (*yynode)->branch_type = switch_label_ast::case_branch;    :]
+    | DEFAULT
+      [: (*yynode)->branch_type = switch_label_ast::default_branch; :]
+   ) COLON
+-> switch_label ;;
+
+
+-- The TRY STATEMENT, also known as try/catch/finally block.
+
+   TRY try_body=block
+   (  catch_clauses=catch_clauses (FINALLY finally_body=block | 0)
+    | FINALLY finally_body=block
+   )
+-> try_statement ;;
+
+   (
+      ?[: LA(2).kind == Token_LPAREN:]
+      general_catch_clause=general_catch_clause
+    |
+      ( -- also let general catch clauses get through:
+        0 [: if (LA(2).kind != Token_LPAREN) { break; } :]
+        #specific_catch_clause=specific_catch_clause
+      )+
+      ( general_catch_clause=general_catch_clause | 0 )
+   )
+-> catch_clauses ;;
+
+   CATCH LPAREN
+   exception_type=class_type (exception_name=identifier | 0)
+   RPAREN
+   body=block
+-> specific_catch_clause ;;
+
+   CATCH body=block
+-> general_catch_clause ;;
+
+
+-- The USING STATEMENT, acquiring and afterwards disposing a System.Disposable.
+
+   USING LPAREN resource_acquisition=resource_acquisition RPAREN
+   body=embedded_statement
+-> using_statement ;;
+
+   local_variable_declaration=variable_declaration
+ | expression = expression
+-> resource_acquisition ;;
+
+
+-- The FOR STATEMENT, including its problematic child for_control.
+
+   FOR LPAREN for_control=for_control RPAREN for_body=embedded_statement
+-> for_statement ;;
+
+-- The FOR CONTROL is the three statements inside the for(...) parentheses,
+-- or the alternative foreach specifier. It has the same problematic conflict
+-- between variable_declaration and expression that block_statement also has
+-- and which is only solvable with LL(k). Until backtracking or real LL(k) is
+-- implemented, we have to workaround with a lookahead hack function.
+
+   (
+      -- ?[: lookahead_is_variable_declaration() == true :] -- TODO: activate when the time comes
+      variable_declaration=variable_declaration                 -- "int i = 0"
+    |
+      #statement_expression=statement_expression @ COMMA
+    |
+      0
+   )
+   SEMICOLON
+   (for_condition=boolean_expression           | 0) SEMICOLON  -- "i < size;"
+   (#for_iterator=statement_expression @ COMMA | 0)            -- "i++"
+-> for_control ;;
+
+
+
+
+-- EXPRESSIONS
+-- Note that most of these expressions follow the pattern
+--   thisLevelExpression :
+--     nextHigherPrecedenceExpression @ OPERATOR
+--
+-- The operators in C# have the following precedences:
+--  lowest  (14)  Assignment                   = *= /= %= += -= <<= >>= &= ^= |=
+--          (13)  Conditional                  ?:
+--          (12)  Conditional OR               ||
+--          (11)  Conditional AND              &&
+--          (10)  Logical OR                   |
+--          ( 9)  Logical XOR                  ^
+--          ( 8)  Logical AND                  &
+--          ( 7)  Equality                     == !=
+--          ( 6)  Relational and type-testing  < > <= >= is as
+--          ( 5)  Shift                        << >>
+--          ( 4)  Additive                     +(binary) -(binary)
+--          ( 3)  Multiplicative               * / %
+--          ( 2)  Unary                        +(unary) -(unary) ! ~ ++x --x (type)x
+--  highest ( 1)  Primary                      x.y f(x) a[x] x++ x-- new
+
+
+-- Both BOOLEAN and CONSTANT EXPRESSIONS ought to return a certain kind of
+-- value, but it's not possible for any parser to check those restrictions.
+
+   expression=expression
+-> constant_expression ;;
+
+   expression=expression
+-> boolean_expression ;;
+
+-- A STATEMENT EXPRESSION may not contain certain subsets of expression,
+-- but it's just not feasible for LL(k) parsers to filter them out.
+
+   expression=expression
+-> statement_expression ;;
 
 
 
@@ -1456,8 +1844,7 @@
 -- Pseudo rules for declaring enums that are used in multiple rules.
 -- TODO: make kdev-pg have a %namespace declaration, making this obsolete.
 
-    0
--> _modifiers ;;
+0 -> _modifiers ;;
 
 
 
@@ -1465,11 +1852,9 @@
 -- Appendix: Rule stubs
 --
 
-LBRACE STUB_A RBRACE -> block ;;
-STUB_B -> type_arguments ;;
-STUB_C -> type_parameters ;;
-STUB_D -> type_parameter_constraints_clauses ;;
-STUB_E -> constant_expression ;;
+STUB_A -> variable_declaration ;; -- already there, but not yet activated
+LESS_THAN STUB_B GREATER_THAN -> type_arguments ;;
+LESS_THAN STUB_C GREATER_THAN -> type_parameters ;;
 identifier -> expression ;;
 
 

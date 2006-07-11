@@ -24,6 +24,16 @@
 class csharp;
 
 
+/**
+ * Pre-processor scopes are managed by the pre-processor parser
+ * and contain information about the current state of how the
+ * pre-processor directives are nested at the moment, and most importantly,
+ * if the current code segment is to be included or excluded by the lexer.
+ *
+ * After each pre-processor directive, the lexer checks the current scope
+ * in order to to know if the upcoming text is to be treated as tokens
+ * or like #ifdef'd out.
+ */
 class csharp_pp_scope
 {
 public:

@@ -88,17 +88,22 @@
 --    which is a side product of the lookahead solution and solved by it
 --    as well. Harmless because lookahead chooses the right one.
 --    (manually resolved, 1 conflict)
---  - The first/first IDENTIFIER conflict (labels) in statement
+--  - The first/first IDENTIFIER conflict (labels) in embedded_statement
 --    (manually resolved, 1 conflict)
 --  - The first/first IDENTIFIER conflicts in primary_selector and
 --    super_suffix. Could be written without conflict, but done on purpose
 --    to tell methods (with possible type arguments) and variables
---    (without these) apart. (2 identical conflicts)
+--    (without these) apart.
+--    (manually resolved, 2 identical conflicts)
 --  - The first/follow LBRACKET conflict in array_creator_rest.
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
 
 -- Total amount of conflicts: 26
+
+
+-- Global TODO:
+--  - Rename type_specification to type, in order to resemble the C# grammar.
 
 
 --
@@ -158,7 +163,7 @@
 
   // ellipsisOccurred is used as a means of communication between
   // parameter_declaration_list and parameter_declaration_ellipsis to determine
-  // if an ellipsis was already in the list (then no more declarations
+  // if an ellipsis was already in the list (then, no more parameters
   // may follow).
   bool ellipsisOccurred;
 
@@ -221,30 +226,7 @@
 %member (annotation: public declaration)
   [: bool has_parentheses; :]
 
-%member (statement: public declaration)
-[:
-  enum statement_kind_enum {
-    kind_empty_statement,
-    kind_block_statement,
-    kind_assert_statement,
-    kind_if_statement,
-    kind_for_statement,
-    kind_while_statement,
-    kind_do_while_statement,
-    kind_try_statement,
-    kind_switch_statement,
-    kind_synchronized_statement,
-    kind_return_statement,
-    kind_throw_statement,
-    kind_break_statement,
-    kind_continue_statement,
-    kind_labeled_statement,
-    kind_expression_statement
-  };
-  statement_kind_enum statement_kind;
-:]
-
-%member (switch_case: public declaration)
+%member (switch_label: public declaration)
 [:
   enum branch_type_enum {
     case_branch,
@@ -324,14 +306,14 @@
 
 %member (unary_expression: public declaration)
 [:
-  enum unary_expression_type_enum {
+  enum unary_expression_enum {
     type_incremented_expression,
     type_decremented_expression,
     type_unary_minus_expression,
     type_unary_plus_expression,
     type_unary_expression_not_plusminus
   };
-  unary_expression_type_enum type;
+  unary_expression_enum rule_type;
 :]
 
 %member (postfix_operator: public declaration)
@@ -343,23 +325,37 @@
   postfix_operator_enum postfix_operator;
 :]
 
+%member (primary_selector: public declaration)
+[:
+  enum primary_selector_enum {
+    type_dotclass,
+    type_dotthis,
+    type_new_expression,
+    type_member_variable,
+    type_method_call,
+    type_super_access,
+    type_array_access,
+  };
+  primary_selector_enum rule_type;
+:]
+
 %member (primary_atom: public declaration)
 [:
-  enum primary_atom_kind_enum {
-    kind_literal,
-    kind_new_expression,
-    kind_parenthesis_expression,
-    kind_builtin_type_dot_class,
-    kind_array_type_dot_class,
-    kind_type_name,
-    kind_this_call_no_type_arguments,
-    kind_this_call_with_type_arguments,
-    kind_super_call_no_type_arguments,
-    kind_super_call_with_type_arguments,
-    kind_method_call_no_type_arguments,
-    kind_method_call_with_type_arguments,
+  enum primary_atom_enum {
+    type_literal,
+    type_new_expression,
+    type_parenthesis_expression,
+    type_builtin_type_dot_class,
+    type_array_type_dot_class,
+    type_type_name,
+    type_this_call_no_type_arguments,
+    type_this_call_with_type_arguments,
+    type_super_call_no_type_arguments,
+    type_super_call_with_type_arguments,
+    type_method_call_no_type_arguments,
+    type_method_call_with_type_arguments,
   };
-  primary_atom_kind_enum primary_atom_kind;
+  primary_atom_enum rule_type;
 :]
 
 %member (optional_modifiers: public declaration)
@@ -835,6 +831,7 @@
 
 
 
+
 -- So much for the rough structure, now we get into the details
 
 
@@ -873,11 +870,11 @@
 -- -> parameter_declaration_list ;;
 
    parameter_modifiers=optional_parameter_modifiers
-   type_specification=type_specification
+   type=type_specification
    (  ELLIPSIS [: (*yynode)->has_ellipsis = true; ellipsisOccurred = true; :]
     | 0        [: (*yynode)->has_ellipsis = false; :]
    )
-   variable_identifier=identifier
+   variable_name=identifier
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration_ellipsis ;;
 
@@ -886,8 +883,8 @@
 -- and in for_control.
 
    parameter_modifiers=optional_parameter_modifiers
-   type_specification=type_specification
-   variable_identifier=identifier
+   type=type_specification
+   variable_name=identifier
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration ;;
 
@@ -906,7 +903,7 @@
 --
 --    LBRACE
 --    (explicit_constructor_invocation=explicit_constructor_invocation | 0)
---    (#statement=statement)*
+--    (#statement=embedded_statement)*
 --    RBRACE
 -- -> constructor_body ;;
 --
@@ -920,6 +917,89 @@
 --    LPAREN arguments=argument_list RPAREN SEMICOLON
 -- -> explicit_constructor_invocation ;;
 
+
+
+
+-- All kinds of rules for types here.
+
+-- A TYPE SPECIFICATION is a type name with possible brackets afterwards
+-- (which would make it an array type). Called "Type" in the Java spec.
+
+   class_type_spec=class_type_specification
+ | builtin_type_spec=builtin_type_specification
+-> type_specification ;;
+
+   type=class_or_interface_type
+   declarator_brackets=optional_declarator_brackets
+-> class_type_specification ;;
+
+   type=builtin_type declarator_brackets=optional_declarator_brackets
+-> builtin_type_specification ;;
+
+   type=builtin_type declarator_brackets=mandatory_declarator_brackets
+-> builtin_type_array_specification ;;
+
+
+-- A SIMPLE TYPE SPECIFICATION is just a type name,
+-- with no possibility of brackets afterwards.
+
+   class_or_interface_type=class_or_interface_type
+ | builtin_type=builtin_type
+-> type_specification_noarray ;;
+
+-- The primitive types. The Java specification doesn't include void here,
+-- but the ANTLR grammar works that way, and so does this one.
+
+   VOID    [: (*yynode)->type = builtin_type_ast::type_void;    :]
+ | BOOLEAN [: (*yynode)->type = builtin_type_ast::type_boolean; :]
+ | BYTE    [: (*yynode)->type = builtin_type_ast::type_byte;    :]
+ | CHAR    [: (*yynode)->type = builtin_type_ast::type_char;    :]
+ | SHORT   [: (*yynode)->type = builtin_type_ast::type_short;   :]
+ | INT     [: (*yynode)->type = builtin_type_ast::type_int;     :]
+ | FLOAT   [: (*yynode)->type = builtin_type_ast::type_float;   :]
+ | LONG    [: (*yynode)->type = builtin_type_ast::type_long;    :]
+ | DOUBLE  [: (*yynode)->type = builtin_type_ast::type_double;  :]
+-> builtin_type ;;
+
+   #part=class_or_interface_type_part @ DOT
+-> class_or_interface_type ;;
+
+   identifier=identifier
+   (  ?[: compatibility_mode() >= java15_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+-> class_or_interface_type_part ;;
+
+
+
+-- QUALIFIED identifiers are either qualified ones or raw identifiers.
+
+   #name=identifier @ DOT
+-> qualified_identifier ;;
+
+   #name=identifier
+   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
+     DOT #name=identifier
+   )*
+-> qualified_identifier_safe ;; -- lookahead version of the above
+
+   #name=identifier [: (*yynode)->has_star = false; :]
+   ( DOT (  #name=identifier
+          | STAR    [: (*yynode)->has_star = true; break; :]
+                       -- break -> no more identifiers after the star
+         )
+   )*
+-> qualified_identifier_with_optional_star ;;
+
+-- Declarator brackets are part of a type specification, like String[][]
+-- They are always empty, only have to be counted.
+
+   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )*
+-> optional_declarator_brackets ;;
+
+   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
+-> mandatory_declarator_brackets ;;
 
 
 
@@ -1019,120 +1099,37 @@
 
 
 
--- All kinds of rules for types here.
-
--- A TYPE SPECIFICATION is a type name with possible brackets afterwards
--- (which would make it an array type). Called "Type" in the Java spec.
-
-   class_type_spec=class_type_specification
- | builtin_type_spec=builtin_type_specification
--> type_specification ;;
-
-   type=class_or_interface_type
-   declarator_brackets=optional_declarator_brackets
--> class_type_specification ;;
-
-   type=builtin_type declarator_brackets=optional_declarator_brackets
--> builtin_type_specification ;;
-
-   type=builtin_type declarator_brackets=mandatory_declarator_brackets
--> builtin_type_array_specification ;;
-
-
--- A SIMPLE TYPE SPECIFICATION is just a type name,
--- with no possibility of brackets afterwards.
-
-   class_or_interface_type=class_or_interface_type
- | builtin_type=builtin_type
--> type_specification_noarray ;;
-
--- The primitive types. The Java specification doesn't include void here,
--- but the ANTLR grammar works that way, and so does this one.
-
-   VOID    [: (*yynode)->type = builtin_type_ast::type_void;    :]
- | BOOLEAN [: (*yynode)->type = builtin_type_ast::type_boolean; :]
- | BYTE    [: (*yynode)->type = builtin_type_ast::type_byte;    :]
- | CHAR    [: (*yynode)->type = builtin_type_ast::type_char;    :]
- | SHORT   [: (*yynode)->type = builtin_type_ast::type_short;   :]
- | INT     [: (*yynode)->type = builtin_type_ast::type_int;     :]
- | FLOAT   [: (*yynode)->type = builtin_type_ast::type_float;   :]
- | LONG    [: (*yynode)->type = builtin_type_ast::type_long;    :]
- | DOUBLE  [: (*yynode)->type = builtin_type_ast::type_double;  :]
--> builtin_type ;;
-
-   #part=class_or_interface_type_part @ DOT
--> class_or_interface_type ;;
-
-   identifier=identifier
-   (  ?[: compatibility_mode() >= java15_compatibility :]
-      type_arguments=type_arguments
-    | 0
-   )
--> class_or_interface_type_part ;;
-
-
-
--- QUALIFIED identifiers are either qualified ones or raw identifiers.
-
-   #name=identifier @ DOT
--> qualified_identifier ;;
-
-   #name=identifier
-   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
-     DOT #name=identifier
-   )*
--> qualified_identifier_safe ;; -- lookahead version of the above
-
-   #name=identifier [: (*yynode)->has_star = false; :]
-   ( DOT (  #name=identifier
-          | STAR    [: (*yynode)->has_star = true; break; :]
-                       -- break -> no more identifiers after the star
-         )
-   )*
--> qualified_identifier_with_optional_star ;;
-
--- Declarator brackets are part of a type specification, like String[][]
--- They are always empty, only have to be counted.
-
-   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )*
--> optional_declarator_brackets ;;
-
-   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
--> mandatory_declarator_brackets ;;
-
-
-
 
 -- And now for the good stuff: statements, expressions and the likes. Yay!
 
 -- This is a BLOCK, a list of statements. It is used in many contexts:
--- Inside a class definition prefixed with "static" as class initializer
--- Inside a class definition without "static" as instance initializer
--- As the body of a method
--- As a completely independent braced block of code inside a method,
---  starting a new scope for variable definitions
+--  - Inside a class definition prefixed with "static" as class initializer
+--  - Inside a class definition without "static" as instance initializer
+--  - As the body of a method
+--  - As a completely independent braced block of code inside a method,
+--    starting a new scope for variable definitions
 
    LBRACE (#statement=block_statement)* RBRACE
 -> block ;;
 
--- A BLOCK STATEMENT is either a normal statement, a variable declaration
+-- A BLOCK STATEMENT is either an embedded statement, a variable declaration
 -- or a type declaration (you know, nested classes and the likes...).
--- To avoid ambiguities, the variable declarations and type declarations
--- are handled together. But that doesn't resolve the other conflict.
 
  (
    -- Variable declarations, as well as expression statements, can start with
-   -- class1<xxx>.bla or similar. This is only soĺvable with LL(k), so what's
+   -- class1<xxx>.bla or similar. This is only solvable with LL(k), so what's
    -- needed here is the following hack lookahead function, until backtracking
    -- or real LL(k) is implemented. Note that a variable declaration starts
    -- just like a mere parameter declaration.
    ?[: lookahead_is_parameter_declaration() == true :]
    variable_declaration=variable_declaration SEMICOLON
  |
+   -- resolves the SYNCHRONIZED conflict between
+   -- synchronized_statement and modifier:
    ?[: (yytoken != Token_SYNCHRONIZED) ||
        (yytoken == Token_SYNCHRONIZED && LA(2).kind == Token_LPAREN)
-     :]  -- resolves the SYNCHRONIZED conflict between statement and modifier.
-   statement=statement
+     :]
+   statement=embedded_statement
  |
    -- Inside a block, our four "complex types" can be declared
    -- (enums, nested classes and the likes...):
@@ -1181,90 +1178,109 @@
 
 
 
--- The STATEMENT is a central point of the grammar.
+-- The (embedded) STATEMENT is a central point of the grammar,
+-- even if delegating most of the work to its children.
 
  (
-   block=block  -- more statements within {} braces
-   [: (*yynode)->statement_kind = statement_ast::kind_block_statement; :]
- |
-   ASSERT assert_condition=expression
-   (COLON assert_message=expression | 0) SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_assert_statement; :]
- |
-   IF LPAREN if_condition=expression RPAREN if_statement=statement
-   (ELSE else_statement=statement | 0)
-   -- conflict: the old "dangling-else" problem...
-   -- kdevelop-pg generates proper code, matching as soon as possible.
-   [: (*yynode)->statement_kind = statement_ast::kind_if_statement; :]
- |
-   FOR LPAREN for_control=for_control RPAREN for_statement=statement
-   [: (*yynode)->statement_kind = statement_ast::kind_for_statement; :]
- |
-   WHILE LPAREN while_condition=expression RPAREN while_statement=statement
-   [: (*yynode)->statement_kind = statement_ast::kind_while_statement; :]
- |
-   DO do_while_statement=statement
-   WHILE LPAREN do_while_condition=expression RPAREN SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_do_while_statement; :]
- |
-   TRY try_block=block (#handler=try_handler)*
-   (FINALLY finally_block=block | 0)
-   [: (*yynode)->statement_kind = statement_ast::kind_try_statement; :]
- |
-   SWITCH LPAREN switch_expression=expression RPAREN
-   LBRACE (#switch_cases=switch_statements_group)* RBRACE
-   [: (*yynode)->statement_kind = statement_ast::kind_switch_statement; :]
- |
-   SYNCHRONIZED LPAREN synchronized_locked_type=expression RPAREN
-   synchronized_block=block
-   [: (*yynode)->statement_kind = statement_ast::kind_synchronized_statement; :]
- |
-   RETURN (return_expression=expression | 0) SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_return_statement; :]
- |
-   THROW throw_exception=expression SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_throw_statement; :]
- |
-   BREAK (break_label=identifier | 0) SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_break_statement; :]
- |
-   CONTINUE (continue_label=identifier | 0) SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_continue_statement; :]
- |
-   SEMICOLON
-   [: (*yynode)->statement_kind = statement_ast::kind_empty_statement; :]
+   block=block  -- more block_statements within {} braces
+ | assert_statement=assert_statement
+ | if_statement=if_statement
+ | for_statement=for_statement
+ | while_statement=while_statement
+ | do_while_statement=do_while_statement
+ | try_statement=try_statement
+ | switch_statement=switch_statement
+ | synchronized_statement=synchronized_statement
+ | return_statement=return_statement
+ | throw_statement=throw_statement
+ | break_statement=break_statement
+ | continue_statement=continue_statement
+ | SEMICOLON
  |
    ?[: LA(2).kind == Token_COLON :]
-   labeled_statement_identifier=identifier COLON labeled_statement=statement
-   [: (*yynode)->statement_kind = statement_ast::kind_labeled_statement; :]
+   labeled_statement=labeled_statement
  |
-   expression_statement=expression SEMICOLON  -- method call, assignment, etc.
-   [: (*yynode)->statement_kind = statement_ast::kind_expression_statement; :]
+   -- method call, assignment, etc.:
+   expression_statement=statement_expression SEMICOLON
  )
--> statement ;;
+-> embedded_statement ;;
 
 
--- TRY HANDLERs are the catch(...) {...} constructs in try/catch blocks.
+-- Simple one-rule statements:
 
-   CATCH LPAREN exception_parameter=parameter_declaration RPAREN
-   catch_block=block
--> try_handler ;;
+   ASSERT condition=expression
+   (COLON message=expression | 0) SEMICOLON
+-> assert_statement ;;
+
+   IF LPAREN condition=expression RPAREN if_body=embedded_statement
+   (ELSE else_body=embedded_statement | 0)
+     -- the traditional "dangling-else" conflict:
+     -- kdevelop-pg generates proper code here, matching as soon as possible.
+-> if_statement ;;
+
+   WHILE LPAREN condition=expression RPAREN body=embedded_statement
+-> while_statement ;;
+
+   DO body=embedded_statement
+   WHILE LPAREN condition=expression RPAREN SEMICOLON
+-> do_while_statement ;;
+
+   SYNCHRONIZED LPAREN locked_type=expression RPAREN
+   synchronized_body=block
+-> synchronized_statement ;;
+
+   RETURN (return_expression=expression | 0) SEMICOLON
+-> return_statement ;;
+
+   THROW exception=expression SEMICOLON
+-> throw_statement ;;
+
+   BREAK (label=identifier | 0) SEMICOLON
+-> break_statement ;;
+
+   CONTINUE (label=identifier | 0) SEMICOLON
+-> continue_statement ;;
+
+   label=identifier COLON statement=embedded_statement
+-> labeled_statement ;;
 
 
--- A group of SWITCH STATEMENTS are any number of "case x:" or "default:"
--- labels followed by a list of statements.
+-- The TRY STATEMENT, also known as try/catch/finally block.
 
-   (#case=switch_case)+
+   TRY try_body=block
+   (  (#catch_clause=catch_clause)+ (FINALLY finally_body=block | 0)
+    | FINALLY finally_body=block
+   )
+-> try_statement ;;
+
+   CATCH LPAREN exception_parameter=parameter_declaration RPAREN body=block
+-> catch_clause ;;
+
+
+-- The SWITCH STATEMENT, consisting of a header and multiple
+-- "case x:" or "default:" switch statement groups.
+
+   SWITCH LPAREN switch_expression=expression RPAREN
+   LBRACE (#switch_section=switch_section)* RBRACE
+-> switch_statement ;;
+
+   (#label=switch_label)+
    (#statement=block_statement)*
--> switch_statements_group ;;
+-> switch_section ;;
 
-   (  CASE expression=expression
-      [: (*yynode)->branch_type = switch_case_ast::case_branch;    :]
+   (  CASE case_expression=expression
+      [: (*yynode)->branch_type = switch_label_ast::case_branch;    :]
     | DEFAULT
-      [: (*yynode)->branch_type = switch_case_ast::default_branch; :]
+      [: (*yynode)->branch_type = switch_label_ast::default_branch; :]
    ) COLON
--> switch_case ;;
+-> switch_label ;;
 
+
+
+-- The FOR STATEMENT, including its problematic child for_control.
+
+   FOR LPAREN for_control=for_control RPAREN for_body=embedded_statement
+-> for_statement ;;
 
 -- The FOR CONTROL is the three statements inside the for(...) parentheses,
 -- or the alternative foreach specifier. It has the same problematic conflict
@@ -1286,46 +1302,55 @@
  |
    traditional_for_rest=for_clause_traditional_rest  -- only starting with ";"
  |
-   #expression=expression @ COMMA
+   #statement_expression=statement_expression @ COMMA
    traditional_for_rest=for_clause_traditional_rest
  )
 -> for_control ;;
 
    SEMICOLON
-   (for_condition=expression                  | 0) SEMICOLON   -- "i < size;"
-   (#for_update_expression=expression @ COMMA | 0)             -- "i++"
+   (for_condition=expression | 0) SEMICOLON                   -- "i < size;"
+   (#for_update_expression=statement_expression @ COMMA | 0)  -- "i++"
 -> for_clause_traditional_rest ;;
 
 
 
 
--- EXPRESSIONs
+-- EXPRESSIONS
 -- Note that most of these expressions follow the pattern
 --   thisLevelExpression :
 --     nextHigherPrecedenceExpression @ OPERATOR
 --
 -- The operators in java have the following precedences:
---  lowest  (13)  = *= /= %= += -= <<= >>= >>>= &= ^= |=
---          (12)  ?:
---          (11)  ||
---          (10)  &&
---          ( 9)  |
---          ( 8)  ^
---          ( 7)  &
---          ( 6)  == !=
---          ( 5)  < <= > >=
---          ( 4)  << >>
---          ( 3)  +(binary) -(binary)
---          ( 2)  * / %
---          ( 1)  ++ -- +(unary) -(unary)  ~  !  (type)
---                []   () (method call)  . (dot -- identifier qualification)
---                new   ()  (explicit parenthesis)
+--  lowest  (13)  Assignment                   = *= /= %= += -= <<= >>= >>>= &= ^= |=
+--          (12)  Conditional                  ?:
+--          (11)  Conditional OR               ||
+--          (10)  Conditional AND              &&
+--          ( 9)  Logical OR                   |
+--          ( 8)  Logical XOR                  ^
+--          ( 7)  Logical AND                  &
+--          ( 6)  Equality                     == !=
+--          ( 5)  Relational and type-testing  < <= > >=
+--          ( 4)  Shift                        << >>
+--          ( 3)  Additive                     +(binary) -(binary)
+--          ( 2)  Multiplicative               * / %
+--          ( 1)  Unary                        ++ -- +(unary) -(unary) ~ ! (type)x
+--                Primary                      f(x) x.y a[x]
+--  highest       new ()  (explicit parenthesis)
 --
 -- the last two are not usually on a precedence chart; they are put in
--- to point out that new has a higher precedence than '.', so you
--- can validy use
+-- to point out that "new" has a higher precedence than ".", so you
+-- can validly use
 --   new Frame().show()
 
+
+-- A STATEMENT EXPRESSION may not contain certain subsets of expression,
+-- but it's just not feasible for LL(k) parsers to filter them out.
+
+   expression=expression
+-> statement_expression ;;
+
+
+-- So this is the actual EXPRESSION, also known as assignment expression.
 
    conditional_expression=conditional_expression
    (
@@ -1442,15 +1467,15 @@
 
  (
    INCREMENT unary_expression=unary_expression
-     [: (*yynode)->type = unary_expression_ast::type_incremented_expression; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
  | DECREMENT unary_expression=unary_expression
-     [: (*yynode)->type = unary_expression_ast::type_decremented_expression; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_decremented_expression; :]
  | MINUS unary_expression=unary_expression
-     [: (*yynode)->type = unary_expression_ast::type_unary_minus_expression; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
  | PLUS  unary_expression=unary_expression
-     [: (*yynode)->type = unary_expression_ast::type_unary_plus_expression; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression; :]
  | unary_expression_not_plusminus=unary_expression_not_plusminus
-     [: (*yynode)->type = unary_expression_ast::type_unary_expression_not_plusminus; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_expression_not_plusminus; :]
  )
 -> unary_expression ;;
 
@@ -1501,11 +1526,16 @@
 
  (
    DOT
-   (  dotclass=CLASS
-    | dotthis=THIS
+   (  CLASS
+        [: (*yynode)->rule_type = primary_selector_ast::type_dotclass;        :]
+    | THIS
+        [: (*yynode)->rule_type = primary_selector_ast::type_dotthis;         :]
     | new_expression=new_expression
-    | ?[: LA(2).kind != Token_LPAREN :]  -- member variable access
+        [: (*yynode)->rule_type = primary_selector_ast::type_new_expression;  :]
+    |
+      ?[: LA(2).kind != Token_LPAREN :]  -- member variable access
       variable_name=identifier           -- (no method call)
+        [: (*yynode)->rule_type = primary_selector_ast::type_member_variable; :]
     |
       -- method calls (including the "super" ones) may have type arguments
       (  ?[: compatibility_mode() >= java15_compatibility :]
@@ -1513,12 +1543,15 @@
        | 0
       )
       (  SUPER super_suffix=super_suffix
+           [: (*yynode)->rule_type = primary_selector_ast::type_super_access; :]
        | method_name=identifier
          LPAREN method_arguments=argument_list RPAREN
+           [: (*yynode)->rule_type = primary_selector_ast::type_method_call;  :]
       )
    )
  |
    LBRACKET array_index_expression=expression RBRACKET
+     [: (*yynode)->rule_type = primary_selector_ast::type_array_access;       :]
  )
 -> primary_selector ;;
 
@@ -1552,45 +1585,45 @@
  (
    builtin_type=builtin_type_specification
    DOT CLASS   -- things like int.class or int[].class
-   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_builtin_type_dot_class;             :]
+   [: (*yynode)->rule_type = primary_atom_ast::type_builtin_type_dot_class;       :]
  |
    literal=literal
-   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_literal;                            :]
+   [: (*yynode)->rule_type = primary_atom_ast::type_literal;                      :]
  |
    new_expression=new_expression
-   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_new_expression;                     :]
+   [: (*yynode)->rule_type = primary_atom_ast::type_new_expression;                     :]
  |
    LPAREN parenthesis_expression=expression RPAREN
-   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_parenthesis_expression;             :]
+   [: (*yynode)->rule_type = primary_atom_ast::type_parenthesis_expression;             :]
  |
    THIS (LPAREN this_constructor_arguments=argument_list RPAREN | 0)
-   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_this_call_no_type_arguments;        :]
+   [: (*yynode)->rule_type = primary_atom_ast::type_this_call_no_type_arguments;        :]
  |
    SUPER super_suffix=super_suffix
-   [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_super_call_no_type_arguments;       :]
+   [: (*yynode)->rule_type = primary_atom_ast::type_super_call_no_type_arguments;       :]
  |
    ?[: compatibility_mode() >= java15_compatibility :]
    -- generic method invocation with type arguments:
    type_arguments=non_wildcard_type_arguments
    (  SUPER super_suffix=super_suffix
-      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_super_call_with_type_arguments;  :]
+      [: (*yynode)->rule_type = primary_atom_ast::type_super_call_with_type_arguments;  :]
     | THIS LPAREN this_constructor_arguments=argument_list RPAREN
-      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_this_call_with_type_arguments;   :]
+      [: (*yynode)->rule_type = primary_atom_ast::type_this_call_with_type_arguments;   :]
     | method_name_typed=identifier
       LPAREN method_arguments=argument_list RPAREN
-      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_method_call_with_type_arguments; :]
+      [: (*yynode)->rule_type = primary_atom_ast::type_method_call_with_type_arguments; :]
    )
  |
    -- type names (normal) - either pure, as method or like bla[][].class
    identifier=qualified_identifier_safe  -- without type arguments
    (  LPAREN method_arguments=argument_list RPAREN
-      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_method_call_no_type_arguments;   :]
+      [: (*yynode)->rule_type = primary_atom_ast::type_method_call_no_type_arguments;   :]
     | ?[: LA(2).kind == Token_RBRACKET :]
       declarator_brackets=mandatory_declarator_brackets
       DOT array_dotclass=CLASS
-      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_array_type_dot_class;            :]
+      [: (*yynode)->rule_type = primary_atom_ast::type_array_type_dot_class;            :]
     | 0
-      [: (*yynode)->primary_atom_kind = primary_atom_ast::kind_type_name;                       :]
+      [: (*yynode)->rule_type = primary_atom_ast::type_type_name;                       :]
    )
  )
 -> primary_atom ;;

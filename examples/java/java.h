@@ -23,15 +23,18 @@ struct annotation_type_declaration_ast;
 struct annotation_type_field_ast;
 struct argument_list_ast;
 struct array_creator_rest_ast;
+struct assert_statement_ast;
 struct bit_and_expression_ast;
 struct bit_or_expression_ast;
 struct bit_xor_expression_ast;
 struct block_ast;
 struct block_statement_ast;
+struct break_statement_ast;
 struct builtin_type_ast;
 struct builtin_type_array_specification_ast;
 struct builtin_type_specification_ast;
 struct cast_expression_ast;
+struct catch_clause_ast;
 struct class_body_ast;
 struct class_declaration_ast;
 struct class_extends_clause_ast;
@@ -41,6 +44,9 @@ struct class_or_interface_type_part_ast;
 struct class_type_specification_ast;
 struct compilation_unit_ast;
 struct conditional_expression_ast;
+struct continue_statement_ast;
+struct do_while_statement_ast;
+struct embedded_statement_ast;
 struct enum_body_ast;
 struct enum_constant_ast;
 struct enum_constant_body_ast;
@@ -51,13 +57,16 @@ struct equality_expression_rest_ast;
 struct expression_ast;
 struct for_clause_traditional_rest_ast;
 struct for_control_ast;
+struct for_statement_ast;
 struct identifier_ast;
+struct if_statement_ast;
 struct implements_clause_ast;
 struct import_declaration_ast;
 struct interface_body_ast;
 struct interface_declaration_ast;
 struct interface_extends_clause_ast;
 struct interface_field_ast;
+struct labeled_statement_ast;
 struct literal_ast;
 struct logical_and_expression_ast;
 struct logical_or_expression_ast;
@@ -82,14 +91,18 @@ struct qualified_identifier_safe_ast;
 struct qualified_identifier_with_optional_star_ast;
 struct relational_expression_ast;
 struct relational_expression_rest_ast;
+struct return_statement_ast;
 struct shift_expression_ast;
 struct shift_expression_rest_ast;
-struct statement_ast;
+struct statement_expression_ast;
 struct super_suffix_ast;
-struct switch_case_ast;
-struct switch_statements_group_ast;
+struct switch_label_ast;
+struct switch_section_ast;
+struct switch_statement_ast;
+struct synchronized_statement_ast;
+struct throw_statement_ast;
 struct throws_clause_ast;
-struct try_handler_ast;
+struct try_statement_ast;
 struct type_argument_ast;
 struct type_argument_specification_ast;
 struct type_arguments_ast;
@@ -106,6 +119,7 @@ struct variable_declaration_ast;
 struct variable_declaration_rest_ast;
 struct variable_declarator_ast;
 struct variable_initializer_ast;
+struct while_statement_ast;
 struct wildcard_type_ast;
 struct wildcard_type_bounds_ast;
 
@@ -125,91 +139,105 @@ struct java_ast_node
       Kind_annotation_type_field = 1010,
       Kind_argument_list = 1011,
       Kind_array_creator_rest = 1012,
-      Kind_bit_and_expression = 1013,
-      Kind_bit_or_expression = 1014,
-      Kind_bit_xor_expression = 1015,
-      Kind_block = 1016,
-      Kind_block_statement = 1017,
-      Kind_builtin_type = 1018,
-      Kind_builtin_type_array_specification = 1019,
-      Kind_builtin_type_specification = 1020,
-      Kind_cast_expression = 1021,
-      Kind_class_body = 1022,
-      Kind_class_declaration = 1023,
-      Kind_class_extends_clause = 1024,
-      Kind_class_field = 1025,
-      Kind_class_or_interface_type = 1026,
-      Kind_class_or_interface_type_part = 1027,
-      Kind_class_type_specification = 1028,
-      Kind_compilation_unit = 1029,
-      Kind_conditional_expression = 1030,
-      Kind_enum_body = 1031,
-      Kind_enum_constant = 1032,
-      Kind_enum_constant_body = 1033,
-      Kind_enum_constant_field = 1034,
-      Kind_enum_declaration = 1035,
-      Kind_equality_expression = 1036,
-      Kind_equality_expression_rest = 1037,
-      Kind_expression = 1038,
-      Kind_for_clause_traditional_rest = 1039,
-      Kind_for_control = 1040,
-      Kind_identifier = 1041,
-      Kind_implements_clause = 1042,
-      Kind_import_declaration = 1043,
-      Kind_interface_body = 1044,
-      Kind_interface_declaration = 1045,
-      Kind_interface_extends_clause = 1046,
-      Kind_interface_field = 1047,
-      Kind_literal = 1048,
-      Kind_logical_and_expression = 1049,
-      Kind_logical_or_expression = 1050,
-      Kind_mandatory_declarator_brackets = 1051,
-      Kind_multiplicative_expression = 1052,
-      Kind_multiplicative_expression_rest = 1053,
-      Kind_new_expression = 1054,
-      Kind_non_wildcard_type_arguments = 1055,
-      Kind_optional_declarator_brackets = 1056,
-      Kind_optional_modifiers = 1057,
-      Kind_optional_parameter_modifiers = 1058,
-      Kind_package_declaration = 1059,
-      Kind_parameter_declaration = 1060,
-      Kind_parameter_declaration_ellipsis = 1061,
-      Kind_parameter_declaration_list = 1062,
-      Kind_postfix_operator = 1063,
-      Kind_primary_atom = 1064,
-      Kind_primary_expression = 1065,
-      Kind_primary_selector = 1066,
-      Kind_qualified_identifier = 1067,
-      Kind_qualified_identifier_safe = 1068,
-      Kind_qualified_identifier_with_optional_star = 1069,
-      Kind_relational_expression = 1070,
-      Kind_relational_expression_rest = 1071,
-      Kind_shift_expression = 1072,
-      Kind_shift_expression_rest = 1073,
-      Kind_statement = 1074,
-      Kind_super_suffix = 1075,
-      Kind_switch_case = 1076,
-      Kind_switch_statements_group = 1077,
-      Kind_throws_clause = 1078,
-      Kind_try_handler = 1079,
-      Kind_type_argument = 1080,
-      Kind_type_argument_specification = 1081,
-      Kind_type_arguments = 1082,
-      Kind_type_arguments_or_parameters_end = 1083,
-      Kind_type_declaration = 1084,
-      Kind_type_parameter = 1085,
-      Kind_type_parameters = 1086,
-      Kind_type_specification = 1087,
-      Kind_type_specification_noarray = 1088,
-      Kind_unary_expression = 1089,
-      Kind_unary_expression_not_plusminus = 1090,
-      Kind_variable_array_initializer = 1091,
-      Kind_variable_declaration = 1092,
-      Kind_variable_declaration_rest = 1093,
-      Kind_variable_declarator = 1094,
-      Kind_variable_initializer = 1095,
-      Kind_wildcard_type = 1096,
-      Kind_wildcard_type_bounds = 1097,
+      Kind_assert_statement = 1013,
+      Kind_bit_and_expression = 1014,
+      Kind_bit_or_expression = 1015,
+      Kind_bit_xor_expression = 1016,
+      Kind_block = 1017,
+      Kind_block_statement = 1018,
+      Kind_break_statement = 1019,
+      Kind_builtin_type = 1020,
+      Kind_builtin_type_array_specification = 1021,
+      Kind_builtin_type_specification = 1022,
+      Kind_cast_expression = 1023,
+      Kind_catch_clause = 1024,
+      Kind_class_body = 1025,
+      Kind_class_declaration = 1026,
+      Kind_class_extends_clause = 1027,
+      Kind_class_field = 1028,
+      Kind_class_or_interface_type = 1029,
+      Kind_class_or_interface_type_part = 1030,
+      Kind_class_type_specification = 1031,
+      Kind_compilation_unit = 1032,
+      Kind_conditional_expression = 1033,
+      Kind_continue_statement = 1034,
+      Kind_do_while_statement = 1035,
+      Kind_embedded_statement = 1036,
+      Kind_enum_body = 1037,
+      Kind_enum_constant = 1038,
+      Kind_enum_constant_body = 1039,
+      Kind_enum_constant_field = 1040,
+      Kind_enum_declaration = 1041,
+      Kind_equality_expression = 1042,
+      Kind_equality_expression_rest = 1043,
+      Kind_expression = 1044,
+      Kind_for_clause_traditional_rest = 1045,
+      Kind_for_control = 1046,
+      Kind_for_statement = 1047,
+      Kind_identifier = 1048,
+      Kind_if_statement = 1049,
+      Kind_implements_clause = 1050,
+      Kind_import_declaration = 1051,
+      Kind_interface_body = 1052,
+      Kind_interface_declaration = 1053,
+      Kind_interface_extends_clause = 1054,
+      Kind_interface_field = 1055,
+      Kind_labeled_statement = 1056,
+      Kind_literal = 1057,
+      Kind_logical_and_expression = 1058,
+      Kind_logical_or_expression = 1059,
+      Kind_mandatory_declarator_brackets = 1060,
+      Kind_multiplicative_expression = 1061,
+      Kind_multiplicative_expression_rest = 1062,
+      Kind_new_expression = 1063,
+      Kind_non_wildcard_type_arguments = 1064,
+      Kind_optional_declarator_brackets = 1065,
+      Kind_optional_modifiers = 1066,
+      Kind_optional_parameter_modifiers = 1067,
+      Kind_package_declaration = 1068,
+      Kind_parameter_declaration = 1069,
+      Kind_parameter_declaration_ellipsis = 1070,
+      Kind_parameter_declaration_list = 1071,
+      Kind_postfix_operator = 1072,
+      Kind_primary_atom = 1073,
+      Kind_primary_expression = 1074,
+      Kind_primary_selector = 1075,
+      Kind_qualified_identifier = 1076,
+      Kind_qualified_identifier_safe = 1077,
+      Kind_qualified_identifier_with_optional_star = 1078,
+      Kind_relational_expression = 1079,
+      Kind_relational_expression_rest = 1080,
+      Kind_return_statement = 1081,
+      Kind_shift_expression = 1082,
+      Kind_shift_expression_rest = 1083,
+      Kind_statement_expression = 1084,
+      Kind_super_suffix = 1085,
+      Kind_switch_label = 1086,
+      Kind_switch_section = 1087,
+      Kind_switch_statement = 1088,
+      Kind_synchronized_statement = 1089,
+      Kind_throw_statement = 1090,
+      Kind_throws_clause = 1091,
+      Kind_try_statement = 1092,
+      Kind_type_argument = 1093,
+      Kind_type_argument_specification = 1094,
+      Kind_type_arguments = 1095,
+      Kind_type_arguments_or_parameters_end = 1096,
+      Kind_type_declaration = 1097,
+      Kind_type_parameter = 1098,
+      Kind_type_parameters = 1099,
+      Kind_type_specification = 1100,
+      Kind_type_specification_noarray = 1101,
+      Kind_unary_expression = 1102,
+      Kind_unary_expression_not_plusminus = 1103,
+      Kind_variable_array_initializer = 1104,
+      Kind_variable_declaration = 1105,
+      Kind_variable_declaration_rest = 1106,
+      Kind_variable_declarator = 1107,
+      Kind_variable_initializer = 1108,
+      Kind_while_statement = 1109,
+      Kind_wildcard_type = 1110,
+      Kind_wildcard_type_bounds = 1111,
       AST_NODE_KIND_COUNT
     };
 
@@ -402,6 +430,18 @@ struct array_creator_rest_ast: public java_ast_node
 
   };
 
+struct assert_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_assert_statement
+    };
+
+    expression_ast *condition;
+    expression_ast *message;
+
+  };
+
 struct bit_and_expression_ast: public java_ast_node
   {
     enum
@@ -454,12 +494,23 @@ struct block_statement_ast: public java_ast_node
     };
 
     variable_declaration_ast *variable_declaration;
-    statement_ast *statement;
+    embedded_statement_ast *statement;
     optional_modifiers_ast *modifiers;
     class_declaration_ast *class_declaration;
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
+
+  };
+
+struct break_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_break_statement
+    };
+
+    identifier_ast *label;
 
   };
 
@@ -529,6 +580,18 @@ struct cast_expression_ast: public java_ast_node
     unary_expression_ast *builtin_casted_expression;
     class_type_specification_ast *class_type_specification;
     unary_expression_not_plusminus_ast *class_casted_expression;
+
+  };
+
+struct catch_clause_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_catch_clause
+    };
+
+    parameter_declaration_ast *exception_parameter;
+    block_ast *body;
 
   };
 
@@ -656,6 +719,54 @@ struct conditional_expression_ast: public java_ast_node
     logical_or_expression_ast *logical_or_expression;
     expression_ast *if_expression;
     conditional_expression_ast *else_expression;
+
+  };
+
+struct continue_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_continue_statement
+    };
+
+    identifier_ast *label;
+
+  };
+
+struct do_while_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_do_while_statement
+    };
+
+    embedded_statement_ast *body;
+    expression_ast *condition;
+
+  };
+
+struct embedded_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_embedded_statement
+    };
+
+    block_ast *block;
+    assert_statement_ast *assert_statement;
+    if_statement_ast *if_statement;
+    for_statement_ast *for_statement;
+    while_statement_ast *while_statement;
+    do_while_statement_ast *do_while_statement;
+    try_statement_ast *try_statement;
+    switch_statement_ast *switch_statement;
+    synchronized_statement_ast *synchronized_statement;
+    return_statement_ast *return_statement;
+    throw_statement_ast *throw_statement;
+    break_statement_ast *break_statement;
+    continue_statement_ast *continue_statement;
+    labeled_statement_ast *labeled_statement;
+    statement_expression_ast *expression_statement;
 
   };
 
@@ -815,7 +926,7 @@ struct for_clause_traditional_rest_ast: public java_ast_node
     };
 
     expression_ast *for_condition;
-    const list_node<expression_ast *> *for_update_expression_sequence;
+    const list_node<statement_expression_ast *> *for_update_expression_sequence;
 
   };
 
@@ -830,7 +941,19 @@ struct for_control_ast: public java_ast_node
     expression_ast *iterable_expression;
     variable_declaration_rest_ast *variable_declaration_rest;
     for_clause_traditional_rest_ast *traditional_for_rest;
-    const list_node<expression_ast *> *expression_sequence;
+    const list_node<statement_expression_ast *> *statement_expression_sequence;
+
+  };
+
+struct for_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_for_statement
+    };
+
+    for_control_ast *for_control;
+    embedded_statement_ast *for_body;
 
   };
 
@@ -842,6 +965,19 @@ struct identifier_ast: public java_ast_node
     };
 
     std::size_t ident;
+
+  };
+
+struct if_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_if_statement
+    };
+
+    expression_ast *condition;
+    embedded_statement_ast *if_body;
+    embedded_statement_ast *else_body;
 
   };
 
@@ -930,6 +1066,18 @@ struct interface_field_ast: public java_ast_node
     optional_declarator_brackets_ast *method_declarator_brackets;
     throws_clause_ast *method_throws_clause;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
+
+  };
+
+struct labeled_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_labeled_statement
+    };
+
+    identifier_ast *label;
+    embedded_statement_ast *statement;
 
   };
 
@@ -1161,8 +1309,8 @@ struct parameter_declaration_ast: public java_ast_node
     };
 
     optional_parameter_modifiers_ast *parameter_modifiers;
-    type_specification_ast *type_specification;
-    identifier_ast *variable_identifier;
+    type_specification_ast *type;
+    identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
 
   };
@@ -1175,8 +1323,8 @@ struct parameter_declaration_ellipsis_ast: public java_ast_node
     };
 
     optional_parameter_modifiers_ast *parameter_modifiers;
-    type_specification_ast *type_specification;
-    identifier_ast *variable_identifier;
+    type_specification_ast *type;
+    identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
 
     // user defined declarations:
@@ -1247,21 +1395,21 @@ struct primary_atom_ast: public java_ast_node
     // user defined declarations:
   public:
 
-    enum primary_atom_kind_enum {
-      kind_literal,
-      kind_new_expression,
-      kind_parenthesis_expression,
-      kind_builtin_type_dot_class,
-      kind_array_type_dot_class,
-      kind_type_name,
-      kind_this_call_no_type_arguments,
-      kind_this_call_with_type_arguments,
-      kind_super_call_no_type_arguments,
-      kind_super_call_with_type_arguments,
-      kind_method_call_no_type_arguments,
-      kind_method_call_with_type_arguments,
+    enum primary_atom_enum {
+      type_literal,
+      type_new_expression,
+      type_parenthesis_expression,
+      type_builtin_type_dot_class,
+      type_array_type_dot_class,
+      type_type_name,
+      type_this_call_no_type_arguments,
+      type_this_call_with_type_arguments,
+      type_super_call_no_type_arguments,
+      type_super_call_with_type_arguments,
+      type_method_call_no_type_arguments,
+      type_method_call_with_type_arguments,
     };
-    primary_atom_kind_enum primary_atom_kind;
+    primary_atom_enum rule_type;
 
   protected:
   private:
@@ -1289,8 +1437,6 @@ struct primary_selector_ast: public java_ast_node
       KIND = Kind_primary_selector
     };
 
-    std::size_t dotclass;
-    std::size_t dotthis;
     new_expression_ast *new_expression;
     identifier_ast *variable_name;
     non_wildcard_type_arguments_ast *type_arguments;
@@ -1298,6 +1444,25 @@ struct primary_selector_ast: public java_ast_node
     identifier_ast *method_name;
     argument_list_ast *method_arguments;
     expression_ast *array_index_expression;
+
+    // user defined declarations:
+  public:
+
+    enum primary_selector_enum {
+      type_dotclass,
+      type_dotthis,
+      type_new_expression,
+      type_member_variable,
+      type_method_call,
+      type_super_access,
+      type_array_access,
+    };
+    primary_selector_enum rule_type;
+
+  protected:
+  private:
+
+  public:
 
   };
 
@@ -1382,6 +1547,17 @@ struct relational_expression_rest_ast: public java_ast_node
 
   };
 
+struct return_statement_ast: public java_ast_node
+               {
+                 enum
+                 {
+                   KIND = Kind_return_statement
+                 };
+
+                 expression_ast *return_expression;
+
+               };
+
 struct shift_expression_ast: public java_ast_node
   {
     enum
@@ -1420,67 +1596,14 @@ struct shift_expression_rest_ast: public java_ast_node
 
   };
 
-struct statement_ast: public java_ast_node
+struct statement_expression_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_statement
+      KIND = Kind_statement_expression
     };
 
-    block_ast *block;
-    expression_ast *assert_condition;
-    expression_ast *assert_message;
-    expression_ast *if_condition;
-    statement_ast *if_statement;
-    statement_ast *else_statement;
-    for_control_ast *for_control;
-    statement_ast *for_statement;
-    expression_ast *while_condition;
-    statement_ast *while_statement;
-    statement_ast *do_while_statement;
-    expression_ast *do_while_condition;
-    block_ast *try_block;
-    const list_node<try_handler_ast *> *handler_sequence;
-    block_ast *finally_block;
-    expression_ast *switch_expression;
-    const list_node<switch_statements_group_ast *> *switch_cases_sequence;
-    expression_ast *synchronized_locked_type;
-    block_ast *synchronized_block;
-    expression_ast *return_expression;
-    expression_ast *throw_exception;
-    identifier_ast *break_label;
-    identifier_ast *continue_label;
-    identifier_ast *labeled_statement_identifier;
-    statement_ast *labeled_statement;
-    expression_ast *expression_statement;
-
-    // user defined declarations:
-  public:
-
-    enum statement_kind_enum {
-      kind_empty_statement,
-      kind_block_statement,
-      kind_assert_statement,
-      kind_if_statement,
-      kind_for_statement,
-      kind_while_statement,
-      kind_do_while_statement,
-      kind_try_statement,
-      kind_switch_statement,
-      kind_synchronized_statement,
-      kind_return_statement,
-      kind_throw_statement,
-      kind_break_statement,
-      kind_continue_statement,
-      kind_labeled_statement,
-      kind_expression_statement
-    };
-    statement_kind_enum statement_kind;
-
-  protected:
-  private:
-
-  public:
+    expression_ast *expression;
 
   };
 
@@ -1499,14 +1622,14 @@ struct super_suffix_ast: public java_ast_node
 
   };
 
-struct switch_case_ast: public java_ast_node
+struct switch_label_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_switch_case
+      KIND = Kind_switch_label
     };
 
-    expression_ast *expression;
+    expression_ast *case_expression;
 
     // user defined declarations:
   public:
@@ -1524,15 +1647,50 @@ struct switch_case_ast: public java_ast_node
 
   };
 
-struct switch_statements_group_ast: public java_ast_node
+struct switch_section_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_switch_statements_group
+      KIND = Kind_switch_section
     };
 
-    const list_node<switch_case_ast *> *case_sequence;
+    const list_node<switch_label_ast *> *label_sequence;
     const list_node<block_statement_ast *> *statement_sequence;
+
+  };
+
+struct switch_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_switch_statement
+    };
+
+    expression_ast *switch_expression;
+    const list_node<switch_section_ast *> *switch_section_sequence;
+
+  };
+
+struct synchronized_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_synchronized_statement
+    };
+
+    expression_ast *locked_type;
+    block_ast *synchronized_body;
+
+  };
+
+struct throw_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_throw_statement
+    };
+
+    expression_ast *exception;
 
   };
 
@@ -1547,15 +1705,16 @@ struct throws_clause_ast: public java_ast_node
 
   };
 
-struct try_handler_ast: public java_ast_node
+struct try_statement_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_try_handler
+      KIND = Kind_try_statement
     };
 
-    parameter_declaration_ast *exception_parameter;
-    block_ast *catch_block;
+    block_ast *try_body;
+    const list_node<catch_clause_ast *> *catch_clause_sequence;
+    block_ast *finally_body;
 
   };
 
@@ -1679,14 +1838,14 @@ struct unary_expression_ast: public java_ast_node
     // user defined declarations:
   public:
 
-    enum unary_expression_type_enum {
+    enum unary_expression_enum {
       type_incremented_expression,
       type_decremented_expression,
       type_unary_minus_expression,
       type_unary_plus_expression,
       type_unary_expression_not_plusminus
     };
-    unary_expression_type_enum type;
+    unary_expression_enum rule_type;
 
   protected:
   private:
@@ -1767,6 +1926,18 @@ struct variable_initializer_ast: public java_ast_node
 
     expression_ast *expression;
     variable_array_initializer_ast *array_initializer;
+
+  };
+
+struct while_statement_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_while_statement
+    };
+
+    expression_ast *condition;
+    embedded_statement_ast *body;
 
   };
 
@@ -2010,7 +2181,7 @@ class java
 
     // ellipsisOccurred is used as a means of communication between
     // parameter_declaration_list and parameter_declaration_ellipsis to determine
-    // if an ellipsis was already in the list (then no more declarations
+    // if an ellipsis was already in the list (then, no more parameters
     // may follow).
     bool ellipsisOccurred;
 
@@ -2044,15 +2215,18 @@ class java
     bool parse_annotation_type_field(annotation_type_field_ast **yynode);
     bool parse_argument_list(argument_list_ast **yynode);
     bool parse_array_creator_rest(array_creator_rest_ast **yynode);
+    bool parse_assert_statement(assert_statement_ast **yynode);
     bool parse_bit_and_expression(bit_and_expression_ast **yynode);
     bool parse_bit_or_expression(bit_or_expression_ast **yynode);
     bool parse_bit_xor_expression(bit_xor_expression_ast **yynode);
     bool parse_block(block_ast **yynode);
     bool parse_block_statement(block_statement_ast **yynode);
+    bool parse_break_statement(break_statement_ast **yynode);
     bool parse_builtin_type(builtin_type_ast **yynode);
     bool parse_builtin_type_array_specification(builtin_type_array_specification_ast **yynode);
     bool parse_builtin_type_specification(builtin_type_specification_ast **yynode);
     bool parse_cast_expression(cast_expression_ast **yynode);
+    bool parse_catch_clause(catch_clause_ast **yynode);
     bool parse_class_body(class_body_ast **yynode);
     bool parse_class_declaration(class_declaration_ast **yynode);
     bool parse_class_extends_clause(class_extends_clause_ast **yynode);
@@ -2062,6 +2236,9 @@ class java
     bool parse_class_type_specification(class_type_specification_ast **yynode);
     bool parse_compilation_unit(compilation_unit_ast **yynode);
     bool parse_conditional_expression(conditional_expression_ast **yynode);
+    bool parse_continue_statement(continue_statement_ast **yynode);
+    bool parse_do_while_statement(do_while_statement_ast **yynode);
+    bool parse_embedded_statement(embedded_statement_ast **yynode);
     bool parse_enum_body(enum_body_ast **yynode);
     bool parse_enum_constant(enum_constant_ast **yynode);
     bool parse_enum_constant_body(enum_constant_body_ast **yynode);
@@ -2072,13 +2249,16 @@ class java
     bool parse_expression(expression_ast **yynode);
     bool parse_for_clause_traditional_rest(for_clause_traditional_rest_ast **yynode);
     bool parse_for_control(for_control_ast **yynode);
+    bool parse_for_statement(for_statement_ast **yynode);
     bool parse_identifier(identifier_ast **yynode);
+    bool parse_if_statement(if_statement_ast **yynode);
     bool parse_implements_clause(implements_clause_ast **yynode);
     bool parse_import_declaration(import_declaration_ast **yynode);
     bool parse_interface_body(interface_body_ast **yynode);
     bool parse_interface_declaration(interface_declaration_ast **yynode);
     bool parse_interface_extends_clause(interface_extends_clause_ast **yynode);
     bool parse_interface_field(interface_field_ast **yynode);
+    bool parse_labeled_statement(labeled_statement_ast **yynode);
     bool parse_literal(literal_ast **yynode);
     bool parse_logical_and_expression(logical_and_expression_ast **yynode);
     bool parse_logical_or_expression(logical_or_expression_ast **yynode);
@@ -2103,14 +2283,18 @@ class java
     bool parse_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast **yynode);
     bool parse_relational_expression(relational_expression_ast **yynode);
     bool parse_relational_expression_rest(relational_expression_rest_ast **yynode);
+    bool parse_return_statement(return_statement_ast **yynode);
     bool parse_shift_expression(shift_expression_ast **yynode);
     bool parse_shift_expression_rest(shift_expression_rest_ast **yynode);
-    bool parse_statement(statement_ast **yynode);
+    bool parse_statement_expression(statement_expression_ast **yynode);
     bool parse_super_suffix(super_suffix_ast **yynode);
-    bool parse_switch_case(switch_case_ast **yynode);
-    bool parse_switch_statements_group(switch_statements_group_ast **yynode);
+    bool parse_switch_label(switch_label_ast **yynode);
+    bool parse_switch_section(switch_section_ast **yynode);
+    bool parse_switch_statement(switch_statement_ast **yynode);
+    bool parse_synchronized_statement(synchronized_statement_ast **yynode);
+    bool parse_throw_statement(throw_statement_ast **yynode);
     bool parse_throws_clause(throws_clause_ast **yynode);
-    bool parse_try_handler(try_handler_ast **yynode);
+    bool parse_try_statement(try_statement_ast **yynode);
     bool parse_type_argument(type_argument_ast **yynode);
     bool parse_type_argument_specification(type_argument_specification_ast **yynode);
     bool parse_type_arguments(type_arguments_ast **yynode);
@@ -2127,6 +2311,7 @@ class java
     bool parse_variable_declaration_rest(variable_declaration_rest_ast **yynode);
     bool parse_variable_declarator(variable_declarator_ast **yynode);
     bool parse_variable_initializer(variable_initializer_ast **yynode);
+    bool parse_while_statement(while_statement_ast **yynode);
     bool parse_wildcard_type(wildcard_type_ast **yynode);
     bool parse_wildcard_type_bounds(wildcard_type_bounds_ast **yynode);
   };
@@ -2169,6 +2354,8 @@ class java_visitor
     {}
     virtual void visit_array_creator_rest(array_creator_rest_ast *)
     {}
+    virtual void visit_assert_statement(assert_statement_ast *)
+    {}
     virtual void visit_bit_and_expression(bit_and_expression_ast *)
     {}
     virtual void visit_bit_or_expression(bit_or_expression_ast *)
@@ -2179,6 +2366,8 @@ class java_visitor
     {}
     virtual void visit_block_statement(block_statement_ast *)
     {}
+    virtual void visit_break_statement(break_statement_ast *)
+    {}
     virtual void visit_builtin_type(builtin_type_ast *)
     {}
     virtual void visit_builtin_type_array_specification(builtin_type_array_specification_ast *)
@@ -2186,6 +2375,8 @@ class java_visitor
     virtual void visit_builtin_type_specification(builtin_type_specification_ast *)
     {}
     virtual void visit_cast_expression(cast_expression_ast *)
+    {}
+    virtual void visit_catch_clause(catch_clause_ast *)
     {}
     virtual void visit_class_body(class_body_ast *)
     {}
@@ -2204,6 +2395,12 @@ class java_visitor
     virtual void visit_compilation_unit(compilation_unit_ast *)
     {}
     virtual void visit_conditional_expression(conditional_expression_ast *)
+    {}
+    virtual void visit_continue_statement(continue_statement_ast *)
+    {}
+    virtual void visit_do_while_statement(do_while_statement_ast *)
+    {}
+    virtual void visit_embedded_statement(embedded_statement_ast *)
     {}
     virtual void visit_enum_body(enum_body_ast *)
     {}
@@ -2225,7 +2422,11 @@ class java_visitor
     {}
     virtual void visit_for_control(for_control_ast *)
     {}
+    virtual void visit_for_statement(for_statement_ast *)
+    {}
     virtual void visit_identifier(identifier_ast *)
+    {}
+    virtual void visit_if_statement(if_statement_ast *)
     {}
     virtual void visit_implements_clause(implements_clause_ast *)
     {}
@@ -2238,6 +2439,8 @@ class java_visitor
     virtual void visit_interface_extends_clause(interface_extends_clause_ast *)
     {}
     virtual void visit_interface_field(interface_field_ast *)
+    {}
+    virtual void visit_labeled_statement(labeled_statement_ast *)
     {}
     virtual void visit_literal(literal_ast *)
     {}
@@ -2287,60 +2490,70 @@ class java_visitor
     {}
     virtual void visit_relational_expression_rest(relational_expression_rest_ast *)
     {}
-    virtual void visit_shift_expression(shift_expression_ast *)
-    {}
-    virtual void visit_shift_expression_rest(shift_expression_rest_ast *)
-    {}
-    virtual void visit_statement(statement_ast *)
-    {}
-    virtual void visit_super_suffix(super_suffix_ast *)
-    {}
-    virtual void visit_switch_case(switch_case_ast *)
-    {}
-    virtual void visit_switch_statements_group(switch_statements_group_ast *)
-    {}
-    virtual void visit_throws_clause(throws_clause_ast *)
-    {}
-    virtual void visit_try_handler(try_handler_ast *)
-    {}
-    virtual void visit_type_argument(type_argument_ast *)
-    {}
-    virtual void visit_type_argument_specification(type_argument_specification_ast *)
-    {}
-    virtual void visit_type_arguments(type_arguments_ast *)
-    {}
-    virtual void visit_type_arguments_or_parameters_end(type_arguments_or_parameters_end_ast *)
-    {}
-    virtual void visit_type_declaration(type_declaration_ast *)
-    {}
-    virtual void visit_type_parameter(type_parameter_ast *)
-    {}
-    virtual void visit_type_parameters(type_parameters_ast *)
-    {}
-    virtual void visit_type_specification(type_specification_ast *)
-    {}
-    virtual void visit_type_specification_noarray(type_specification_noarray_ast *)
-    {}
-    virtual void visit_unary_expression(unary_expression_ast *)
-    {}
-    virtual void visit_unary_expression_not_plusminus(unary_expression_not_plusminus_ast *)
-    {}
-    virtual void visit_variable_array_initializer(variable_array_initializer_ast *)
-    {}
-    virtual void visit_variable_declaration(variable_declaration_ast *)
-    {}
-    virtual void visit_variable_declaration_rest(variable_declaration_rest_ast *)
-    {}
-    virtual void visit_variable_declarator(variable_declarator_ast *)
-    {}
-    virtual void visit_variable_initializer(variable_initializer_ast *)
-    {}
-    virtual void visit_wildcard_type(wildcard_type_ast *)
-    {}
-    virtual void visit_wildcard_type_bounds(wildcard_type_bounds_ast *)
-    {}
-  }
-;
+    virtual void visit_return_statement(return_statement_ast *)
+                             {}
+                             virtual void visit_shift_expression(shift_expression_ast *)
+                             {}
+                             virtual void visit_shift_expression_rest(shift_expression_rest_ast *)
+                             {}
+                             virtual void visit_statement_expression(statement_expression_ast *)
+                             {}
+                             virtual void visit_super_suffix(super_suffix_ast *)
+                             {}
+                             virtual void visit_switch_label(switch_label_ast *)
+                             {}
+                             virtual void visit_switch_section(switch_section_ast *)
+                             {}
+                             virtual void visit_switch_statement(switch_statement_ast *)
+                             {}
+                             virtual void visit_synchronized_statement(synchronized_statement_ast *)
+                             {}
+                             virtual void visit_throw_statement(throw_statement_ast *)
+                             {}
+                             virtual void visit_throws_clause(throws_clause_ast *)
+                             {}
+                             virtual void visit_try_statement(try_statement_ast *)
+                             {}
+                             virtual void visit_type_argument(type_argument_ast *)
+                             {}
+                             virtual void visit_type_argument_specification(type_argument_specification_ast *)
+                             {}
+                             virtual void visit_type_arguments(type_arguments_ast *)
+                             {}
+                             virtual void visit_type_arguments_or_parameters_end(type_arguments_or_parameters_end_ast *)
+                             {}
+                             virtual void visit_type_declaration(type_declaration_ast *)
+                             {}
+                             virtual void visit_type_parameter(type_parameter_ast *)
+                             {}
+                             virtual void visit_type_parameters(type_parameters_ast *)
+                             {}
+                             virtual void visit_type_specification(type_specification_ast *)
+                             {}
+                             virtual void visit_type_specification_noarray(type_specification_noarray_ast *)
+                             {}
+                             virtual void visit_unary_expression(unary_expression_ast *)
+                             {}
+                             virtual void visit_unary_expression_not_plusminus(unary_expression_not_plusminus_ast *)
+                             {}
+                             virtual void visit_variable_array_initializer(variable_array_initializer_ast *)
+                             {}
+                             virtual void visit_variable_declaration(variable_declaration_ast *)
+                             {}
+                             virtual void visit_variable_declaration_rest(variable_declaration_rest_ast *)
+                             {}
+                             virtual void visit_variable_declarator(variable_declarator_ast *)
+                             {}
+                             virtual void visit_variable_initializer(variable_initializer_ast *)
+                             {}
+                             virtual void visit_while_statement(while_statement_ast *)
+                             {}
+                             virtual void visit_wildcard_type(wildcard_type_ast *)
+                             {}
+                             virtual void visit_wildcard_type_bounds(wildcard_type_bounds_ast *)
+                             {}
+                           }
+                         ;
 class java_default_visitor: public java_visitor
   {
   public:
@@ -2491,6 +2704,12 @@ class java_default_visitor: public java_visitor
       visit_node(node->optional_declarator_brackets);
     }
 
+    virtual void visit_assert_statement(assert_statement_ast *node)
+    {
+      visit_node(node->condition);
+      visit_node(node->message);
+    }
+
     virtual void visit_bit_and_expression(bit_and_expression_ast *node)
     {
       if (node->expression_sequence)
@@ -2558,6 +2777,11 @@ class java_default_visitor: public java_visitor
       visit_node(node->annotation_type_declaration);
     }
 
+    virtual void visit_break_statement(break_statement_ast *node)
+    {
+      visit_node(node->label);
+    }
+
     virtual void visit_builtin_type(builtin_type_ast *node)
     {}
 
@@ -2579,6 +2803,12 @@ class java_default_visitor: public java_visitor
       visit_node(node->builtin_casted_expression);
       visit_node(node->class_type_specification);
       visit_node(node->class_casted_expression);
+    }
+
+    virtual void visit_catch_clause(catch_clause_ast *node)
+    {
+      visit_node(node->exception_parameter);
+      visit_node(node->body);
     }
 
     virtual void visit_class_body(class_body_ast *node)
@@ -2697,6 +2927,36 @@ class java_default_visitor: public java_visitor
       visit_node(node->logical_or_expression);
       visit_node(node->if_expression);
       visit_node(node->else_expression);
+    }
+
+    virtual void visit_continue_statement(continue_statement_ast *node)
+    {
+      visit_node(node->label);
+    }
+
+    virtual void visit_do_while_statement(do_while_statement_ast *node)
+    {
+      visit_node(node->body);
+      visit_node(node->condition);
+    }
+
+    virtual void visit_embedded_statement(embedded_statement_ast *node)
+    {
+      visit_node(node->block);
+      visit_node(node->assert_statement);
+      visit_node(node->if_statement);
+      visit_node(node->for_statement);
+      visit_node(node->while_statement);
+      visit_node(node->do_while_statement);
+      visit_node(node->try_statement);
+      visit_node(node->switch_statement);
+      visit_node(node->synchronized_statement);
+      visit_node(node->return_statement);
+      visit_node(node->throw_statement);
+      visit_node(node->break_statement);
+      visit_node(node->continue_statement);
+      visit_node(node->labeled_statement);
+      visit_node(node->expression_statement);
     }
 
     virtual void visit_enum_body(enum_body_ast *node)
@@ -2819,7 +3079,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->for_condition);
       if (node->for_update_expression_sequence)
         {
-          const list_node<expression_ast*> *__it = node->for_update_expression_sequence->to_front(), *__end = __it;
+          const list_node<statement_expression_ast*> *__it = node->for_update_expression_sequence->to_front(), *__end = __it;
           do
             {
               visit_node(__it->element);
@@ -2835,9 +3095,9 @@ class java_default_visitor: public java_visitor
       visit_node(node->iterable_expression);
       visit_node(node->variable_declaration_rest);
       visit_node(node->traditional_for_rest);
-      if (node->expression_sequence)
+      if (node->statement_expression_sequence)
         {
-          const list_node<expression_ast*> *__it = node->expression_sequence->to_front(), *__end = __it;
+          const list_node<statement_expression_ast*> *__it = node->statement_expression_sequence->to_front(), *__end = __it;
           do
             {
               visit_node(__it->element);
@@ -2847,8 +3107,21 @@ class java_default_visitor: public java_visitor
         }
     }
 
+    virtual void visit_for_statement(for_statement_ast *node)
+    {
+      visit_node(node->for_control);
+      visit_node(node->for_body);
+    }
+
     virtual void visit_identifier(identifier_ast *node)
-  {}
+    {}
+
+    virtual void visit_if_statement(if_statement_ast *node)
+    {
+      visit_node(node->condition);
+      visit_node(node->if_body);
+      visit_node(node->else_body);
+    }
 
     virtual void visit_implements_clause(implements_clause_ast *node)
     {
@@ -2930,8 +3203,14 @@ class java_default_visitor: public java_visitor
         }
     }
 
+    virtual void visit_labeled_statement(labeled_statement_ast *node)
+    {
+      visit_node(node->label);
+      visit_node(node->statement);
+    }
+
     virtual void visit_literal(literal_ast *node)
-  {}
+    {}
 
     virtual void visit_logical_and_expression(logical_and_expression_ast *node)
     {
@@ -3056,16 +3335,16 @@ class java_default_visitor: public java_visitor
     virtual void visit_parameter_declaration(parameter_declaration_ast *node)
     {
       visit_node(node->parameter_modifiers);
-      visit_node(node->type_specification);
-      visit_node(node->variable_identifier);
+      visit_node(node->type);
+      visit_node(node->variable_name);
       visit_node(node->declarator_brackets);
     }
 
     virtual void visit_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast *node)
     {
       visit_node(node->parameter_modifiers);
-      visit_node(node->type_specification);
-      visit_node(node->variable_identifier);
+      visit_node(node->type);
+      visit_node(node->variable_name);
       visit_node(node->declarator_brackets);
     }
 
@@ -3190,294 +3469,298 @@ class java_default_visitor: public java_visitor
       visit_node(node->expression);
     }
 
-    virtual void visit_shift_expression(shift_expression_ast *node)
-    {
-      visit_node(node->expression);
-      if (node->additional_expression_sequence)
-        {
-          const list_node<shift_expression_rest_ast*> *__it = node->additional_expression_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+    virtual void visit_return_statement(return_statement_ast *node)
+                             {
+                               visit_node(node->return_expression);
+                             }
 
-    virtual void visit_shift_expression_rest(shift_expression_rest_ast *node)
-    {
-      visit_node(node->expression);
-    }
+                             virtual void visit_shift_expression(shift_expression_ast *node)
+                             {
+                               visit_node(node->expression);
+                               if (node->additional_expression_sequence)
+                                 {
+                                   const list_node<shift_expression_rest_ast*> *__it = node->additional_expression_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_statement(statement_ast *node)
-    {
-      visit_node(node->block);
-      visit_node(node->assert_condition);
-      visit_node(node->assert_message);
-      visit_node(node->if_condition);
-      visit_node(node->if_statement);
-      visit_node(node->else_statement);
-      visit_node(node->for_control);
-      visit_node(node->for_statement);
-      visit_node(node->while_condition);
-      visit_node(node->while_statement);
-      visit_node(node->do_while_statement);
-      visit_node(node->do_while_condition);
-      visit_node(node->try_block);
-      if (node->handler_sequence)
-        {
-          const list_node<try_handler_ast*> *__it = node->handler_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-      visit_node(node->finally_block);
-      visit_node(node->switch_expression);
-      if (node->switch_cases_sequence)
-        {
-          const list_node<switch_statements_group_ast*> *__it = node->switch_cases_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-      visit_node(node->synchronized_locked_type);
-      visit_node(node->synchronized_block);
-      visit_node(node->return_expression);
-      visit_node(node->throw_exception);
-      visit_node(node->break_label);
-      visit_node(node->continue_label);
-      visit_node(node->labeled_statement_identifier);
-      visit_node(node->labeled_statement);
-      visit_node(node->expression_statement);
-    }
+                             virtual void visit_shift_expression_rest(shift_expression_rest_ast *node)
+                             {
+                               visit_node(node->expression);
+                             }
 
-    virtual void visit_super_suffix(super_suffix_ast *node)
-    {
-      visit_node(node->constructor_arguments);
-      visit_node(node->variable_name);
-      visit_node(node->type_arguments);
-      visit_node(node->method_name);
-      visit_node(node->method_arguments);
-    }
+                             virtual void visit_statement_expression(statement_expression_ast *node)
+                             {
+                               visit_node(node->expression);
+                             }
 
-    virtual void visit_switch_case(switch_case_ast *node)
-    {
-      visit_node(node->expression);
-    }
+                             virtual void visit_super_suffix(super_suffix_ast *node)
+                             {
+                               visit_node(node->constructor_arguments);
+                               visit_node(node->variable_name);
+                               visit_node(node->type_arguments);
+                               visit_node(node->method_name);
+                               visit_node(node->method_arguments);
+                             }
 
-    virtual void visit_switch_statements_group(switch_statements_group_ast *node)
-    {
-      if (node->case_sequence)
-        {
-          const list_node<switch_case_ast*> *__it = node->case_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-      if (node->statement_sequence)
-        {
-          const list_node<block_statement_ast*> *__it = node->statement_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_switch_label(switch_label_ast *node)
+                             {
+                               visit_node(node->case_expression);
+                             }
 
-    virtual void visit_throws_clause(throws_clause_ast *node)
-    {
-      if (node->identifier_sequence)
-        {
-          const list_node<qualified_identifier_ast*> *__it = node->identifier_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_switch_section(switch_section_ast *node)
+                             {
+                               if (node->label_sequence)
+                                 {
+                                   const list_node<switch_label_ast*> *__it = node->label_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                               if (node->statement_sequence)
+                                 {
+                                   const list_node<block_statement_ast*> *__it = node->statement_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_try_handler(try_handler_ast *node)
-    {
-      visit_node(node->exception_parameter);
-      visit_node(node->catch_block);
-    }
+                             virtual void visit_switch_statement(switch_statement_ast *node)
+                             {
+                               visit_node(node->switch_expression);
+                               if (node->switch_section_sequence)
+                                 {
+                                   const list_node<switch_section_ast*> *__it = node->switch_section_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_type_argument(type_argument_ast *node)
-    {
-      visit_node(node->type_argument_specification);
-      visit_node(node->wildcard_type);
-    }
+                             virtual void visit_synchronized_statement(synchronized_statement_ast *node)
+                             {
+                               visit_node(node->locked_type);
+                               visit_node(node->synchronized_body);
+                             }
 
-    virtual void visit_type_argument_specification(type_argument_specification_ast *node)
-    {
-      visit_node(node->class_type);
-      visit_node(node->builtin_type_array);
-    }
+                             virtual void visit_throw_statement(throw_statement_ast *node)
+                             {
+                               visit_node(node->exception);
+                             }
 
-    virtual void visit_type_arguments(type_arguments_ast *node)
-    {
-      if (node->type_argument_sequence)
-        {
-          const list_node<type_argument_ast*> *__it = node->type_argument_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_throws_clause(throws_clause_ast *node)
+                             {
+                               if (node->identifier_sequence)
+                                 {
+                                   const list_node<qualified_identifier_ast*> *__it = node->identifier_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_type_arguments_or_parameters_end(type_arguments_or_parameters_end_ast *node)
-  {}
+                             virtual void visit_try_statement(try_statement_ast *node)
+                             {
+                               visit_node(node->try_body);
+                               if (node->catch_clause_sequence)
+                                 {
+                                   const list_node<catch_clause_ast*> *__it = node->catch_clause_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                               visit_node(node->finally_body);
+                             }
 
-    virtual void visit_type_declaration(type_declaration_ast *node)
-    {
-      visit_node(node->modifiers);
-      visit_node(node->class_declaration);
-      visit_node(node->enum_declaration);
-      visit_node(node->interface_declaration);
-      visit_node(node->annotation_type_declaration);
-    }
+                             virtual void visit_type_argument(type_argument_ast *node)
+                             {
+                               visit_node(node->type_argument_specification);
+                               visit_node(node->wildcard_type);
+                             }
 
-    virtual void visit_type_parameter(type_parameter_ast *node)
-    {
-      visit_node(node->identifier);
-      if (node->extends_type_sequence)
-        {
-          const list_node<class_or_interface_type_ast*> *__it = node->extends_type_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_type_argument_specification(type_argument_specification_ast *node)
+                             {
+                               visit_node(node->class_type);
+                               visit_node(node->builtin_type_array);
+                             }
 
-    virtual void visit_type_parameters(type_parameters_ast *node)
-    {
-      if (node->type_parameter_sequence)
-        {
-          const list_node<type_parameter_ast*> *__it = node->type_parameter_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_type_arguments(type_arguments_ast *node)
+                             {
+                               if (node->type_argument_sequence)
+                                 {
+                                   const list_node<type_argument_ast*> *__it = node->type_argument_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_type_specification(type_specification_ast *node)
-    {
-      visit_node(node->class_type_spec);
-      visit_node(node->builtin_type_spec);
-    }
+                             virtual void visit_type_arguments_or_parameters_end(type_arguments_or_parameters_end_ast *node)
+                           {}
 
-    virtual void visit_type_specification_noarray(type_specification_noarray_ast *node)
-    {
-      visit_node(node->class_or_interface_type);
-      visit_node(node->builtin_type);
-    }
+                             virtual void visit_type_declaration(type_declaration_ast *node)
+                             {
+                               visit_node(node->modifiers);
+                               visit_node(node->class_declaration);
+                               visit_node(node->enum_declaration);
+                               visit_node(node->interface_declaration);
+                               visit_node(node->annotation_type_declaration);
+                             }
 
-    virtual void visit_unary_expression(unary_expression_ast *node)
-    {
-      visit_node(node->unary_expression);
-      visit_node(node->unary_expression_not_plusminus);
-    }
+                             virtual void visit_type_parameter(type_parameter_ast *node)
+                             {
+                               visit_node(node->identifier);
+                               if (node->extends_type_sequence)
+                                 {
+                                   const list_node<class_or_interface_type_ast*> *__it = node->extends_type_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_unary_expression_not_plusminus(unary_expression_not_plusminus_ast *node)
-    {
-      visit_node(node->bitwise_not_expression);
-      visit_node(node->logical_not_expression);
-      visit_node(node->cast_expression);
-      visit_node(node->primary_expression);
-      if (node->postfix_operator_sequence)
-        {
-          const list_node<postfix_operator_ast*> *__it = node->postfix_operator_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_type_parameters(type_parameters_ast *node)
+                             {
+                               if (node->type_parameter_sequence)
+                                 {
+                                   const list_node<type_parameter_ast*> *__it = node->type_parameter_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_variable_array_initializer(variable_array_initializer_ast *node)
-    {
-      if (node->variable_initializer_sequence)
-        {
-          const list_node<variable_initializer_ast*> *__it = node->variable_initializer_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_type_specification(type_specification_ast *node)
+                             {
+                               visit_node(node->class_type_spec);
+                               visit_node(node->builtin_type_spec);
+                             }
 
-    virtual void visit_variable_declaration(variable_declaration_ast *node)
-    {
-      visit_node(node->initial_declaration);
-      visit_node(node->rest);
-    }
+                             virtual void visit_type_specification_noarray(type_specification_noarray_ast *node)
+                             {
+                               visit_node(node->class_or_interface_type);
+                               visit_node(node->builtin_type);
+                             }
 
-    virtual void visit_variable_declaration_rest(variable_declaration_rest_ast *node)
-    {
-      visit_node(node->first_initializer);
-      if (node->variable_declarator_sequence)
-        {
-          const list_node<variable_declarator_ast*> *__it = node->variable_declarator_sequence->to_front(), *__end = __it;
-          do
-            {
-              visit_node(__it->element);
-              __it = __it->next;
-            }
-          while (__it != __end);
-        }
-    }
+                             virtual void visit_unary_expression(unary_expression_ast *node)
+                             {
+                               visit_node(node->unary_expression);
+                               visit_node(node->unary_expression_not_plusminus);
+                             }
 
-    virtual void visit_variable_declarator(variable_declarator_ast *node)
-    {
-      visit_node(node->variable_name);
-      visit_node(node->declarator_brackets);
-      visit_node(node->initializer);
-    }
+                             virtual void visit_unary_expression_not_plusminus(unary_expression_not_plusminus_ast *node)
+                             {
+                               visit_node(node->bitwise_not_expression);
+                               visit_node(node->logical_not_expression);
+                               visit_node(node->cast_expression);
+                               visit_node(node->primary_expression);
+                               if (node->postfix_operator_sequence)
+                                 {
+                                   const list_node<postfix_operator_ast*> *__it = node->postfix_operator_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_variable_initializer(variable_initializer_ast *node)
-    {
-      visit_node(node->expression);
-      visit_node(node->array_initializer);
-    }
+                             virtual void visit_variable_array_initializer(variable_array_initializer_ast *node)
+                             {
+                               if (node->variable_initializer_sequence)
+                                 {
+                                   const list_node<variable_initializer_ast*> *__it = node->variable_initializer_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-    virtual void visit_wildcard_type(wildcard_type_ast *node)
-    {
-      visit_node(node->bounds);
-    }
+                             virtual void visit_variable_declaration(variable_declaration_ast *node)
+                             {
+                               visit_node(node->initial_declaration);
+                               visit_node(node->rest);
+                             }
 
-    virtual void visit_wildcard_type_bounds(wildcard_type_bounds_ast *node)
-    {
-      visit_node(node->type);
-    }
+                             virtual void visit_variable_declaration_rest(variable_declaration_rest_ast *node)
+                             {
+                               visit_node(node->first_initializer);
+                               if (node->variable_declarator_sequence)
+                                 {
+                                   const list_node<variable_declarator_ast*> *__it = node->variable_declarator_sequence->to_front(), *__end = __it;
+                                   do
+                                     {
+                                       visit_node(__it->element);
+                                       __it = __it->next;
+                                     }
+                                   while (__it != __end);
+                                 }
+                             }
 
-  };
+                             virtual void visit_variable_declarator(variable_declarator_ast *node)
+                             {
+                               visit_node(node->variable_name);
+                               visit_node(node->declarator_brackets);
+                               visit_node(node->initializer);
+                             }
+
+                             virtual void visit_variable_initializer(variable_initializer_ast *node)
+                             {
+                               visit_node(node->expression);
+                               visit_node(node->array_initializer);
+                             }
+
+                             virtual void visit_while_statement(while_statement_ast *node)
+                             {
+                               visit_node(node->condition);
+                               visit_node(node->body);
+                             }
+
+                             virtual void visit_wildcard_type(wildcard_type_ast *node)
+                             {
+                               visit_node(node->bounds);
+                             }
+
+                             virtual void visit_wildcard_type_bounds(wildcard_type_bounds_ast *node)
+                             {
+                               visit_node(node->type);
+                             }
+
+                           };
 #endif
 
 

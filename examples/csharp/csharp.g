@@ -27,16 +27,26 @@
 
 
 
--- Known problematic conflicts (1 conflict), requiring automatic LL(k):
---  - The first/first ADD, ALIAS, etc. (identifier) conflict in
---    block_statement which is essentially an expression statements vs.
---    variable declarations conflict. There's also an identifier conflict
---    between labeled_statement and the other two that's easily resolvable,
---    this has got nothing to do with the problematic LL(k) one.
+-- Known problematic conflicts (5 conflicts), requiring automatic LL(k):
+--  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE etc. conflicts between
+--    variable_declaration and expression, they appear in:
+--    block_statement, resource_acquisition, and for_control
+--    This is the same variable/parameter declaration vs. expression issue
+--    that block_statement also suffers from.
 --    Solved by lookahead_is_variable_declaration().
+--    (3 conflicts)
+--  - The first/first LPAREN conflict in unary_expression,
+--    which is cast_expression vs. primary_expression.
+--    Solved by lookahead_is_cast_expression().
+--    (1 conflict)
+--  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--    in typeof_expression, between unbound_type_name and type
+--    (both of which can be something like a.b.c.d or longer).
+--    Solved by lookahead_is_unbound_type_name().
 --    (1 conflict)
 
--- Known harmless or resolved conflicts (19 conflicts):
+
+-- Known harmless or resolved conflicts (22 conflicts):
 --  - The first/follow LBRACKET conflict in compilation_unit
 --    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in global_attribute_section,
@@ -44,13 +54,23 @@
 --    (manually resolved, 2 conflicts)
 --  - The first/follow COMMA conflict in enum_body, similar to the above
 --    (manually resolved, 1 conflict)
+--  - The first/follow LBRACKET conflict in managed_type, for which
+--    new_expression with array_creation_expression_rest is to blame.
+--    Caused by the fact that array_creation_expression can't be seperated.
+--    As a consequence, all rank specifiers are checked for safety.
+--    (manually resolved, 1 conflict)
 --  - The first/follow DOT conflict in namespace_or_type_name_safe,
 --    which actually stems from indexer_declaration
 --    (manually resolved, 1 conflict)
---  - The first/follow COMMA conflict in array_initializer, another of those
---    (manually resolved, 1 conflict)
 --  - The first/follow COMMA conflict in secondary_constraints,
 --    battling against constructor_constraints
+--    (manually resolved, 1 conflict)
+--  - The first/follow COMMA conflict in array_initializer, another of those
+--    (manually resolved, 1 conflict)
+--  - The first/follow LBRACKET conflict in array_creation_expression_rest,
+--    which is similar to the one in managed_type, only that it's triggered
+--    by primary_suffix instead.
+--    Caused by the fact that array_creation_expression can't be seperated.
 --    (manually resolved, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
 --    (manually resolved, 1 conflict)
@@ -80,11 +100,10 @@
 --    primary_or_secondary_constraint may be both, as indicated by the name.
 --    (done right by default, 1 conflict)
 --  - The first/first ADD, ALIAS, etc. (identifier) conflict in block_statement
---    between all three statement types.
---    labeled_statement vs. the other two is resolved easily, whereas
---    declaration_statement needs arbitrary-length LL(k), as is described
---    further above.
---    (manually resolved, already counted in the problematic conflicts section)
+--    between all three statement types. labeled_statement vs. the other two
+--    is resolved easily, whereas declaration_statement vs. embedded_statement
+--    needs arbitrary-length LL(k), as is described further above.
+--    (manually resolved, 1 conflict)
 --  - The first/first YIELD conflict in embedded_statement. This is because
 --    YIELD is not only the start of yield_statement,
 --    but also a non-keyword identifier, and as such needs special treatment.
@@ -92,7 +111,7 @@
 --  - The first/first CATCH conflict in catch_clauses
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 20
+-- Total amount of conflicts: 27
 
 
 --
@@ -161,10 +180,10 @@
   csharp::csharp_compatibility_mode _M_compatibility_mode;
   std::set<std::string> _M_pp_defined_symbols;
 
-  // parameterArrayOccurred is used as a means of communication between
+  // parameter_array_occurred is used as a means of communication between
   // formal_parameter_list and formal_parameter to determine if a parameter
   // array was already in the list (then, no more parameters may follow).
-  bool parameterArrayOccurred;
+  bool parameter_array_occurred;
 :]
 
 %member (parserclass: constructor)
@@ -217,7 +236,7 @@
     type_property_declaration,
     type_member_declaration,
   };
-  class_or_struct_member_declaration_enum type;
+  class_or_struct_member_declaration_enum declaration_type;
 :]
 
 %member (constructor_initializer: public declaration)
@@ -226,7 +245,7 @@
     type_base,
     type_this,
   };
-  constructor_initializer_type_enum type;
+  constructor_initializer_type_enum initializer_type;
 :]
 
 %member (overloadable_unary_only_operator: public declaration)
@@ -280,7 +299,7 @@
     type_interface_property_declaration,
     type_interface_method_declaration,
   };
-  interface_member_declaration_enum type;
+  interface_member_declaration_enum declaration_type;
   bool decl_new; // specifies if the "new" keyword prepends the declaration
 :]
 
@@ -316,7 +335,7 @@
     type_class,
     type_struct,
   };
-  primary_or_secondary_constraint_enum type;
+  primary_or_secondary_constraint_enum constraint_type;
 :]
 
 %member (interface_accessors: public declaration)
@@ -332,7 +351,7 @@
     type_reference_parameter,
     type_output_parameter,
   };
-  argument_type_enum type;
+  argument_type_enum argument_type;
 :]
 
 %member (return_type: public declaration)
@@ -424,7 +443,7 @@
     type_switch_case,
     type_switch_default,
   };
-  goto_statement_enum type;
+  goto_statement_enum goto_type;
 :]
 
 %member (yield_statement: public declaration)
@@ -433,7 +452,7 @@
     type_yield_return,
     type_yield_break,
   };
-  yield_statement_enum type;
+  yield_statement_enum yield_type;
 :]
 
 %member (switch_label: public declaration)
@@ -521,21 +540,89 @@
     type_decremented_expression,
     type_unary_minus_expression,
     type_unary_plus_expression,
-    type_unary_expression_not_plusminus,
-  };
-  unary_expression_enum rule_type;
-:]
-
-%member (unary_expression_not_plusminus: public declaration)
-[:
-  enum unary_expression_not_plusminus_enum {
     type_bitwise_not_expression,
     type_logical_not_expression,
     type_cast_expression,
     type_primary_expression,
   };
-  unary_expression_not_plusminus_enum rule_type;
+  unary_expression_enum rule_type;
 :]
+
+%member (primary_suffix: public declaration)
+[:
+  enum primary_suffix_enum {
+    type_member_access,
+    type_pointer_member_access,
+    type_invocation,
+    type_element_access,
+    type_increment,
+    type_decrement,
+  };
+  primary_suffix_enum suffix_type;
+:]
+
+%member (primary_atom: public declaration)
+[:
+  enum primary_atom_enum {
+    type_literal,
+    type_parenthesized_expression,
+    type_member_access,
+    type_this_access,
+    type_base_access,
+    type_new_expression,
+    type_typeof_expression,
+    type_checked_expression,
+    type_unchecked_expression,
+    type_default_expression,
+    type_anonymous_method_expression,
+    type_sizeof_expression,
+  };
+  primary_atom_enum rule_type;
+:]
+
+%member (predefined_type: public declaration)
+[:
+  enum predefined_type_enum {
+    type_bool,
+    type_byte,
+    type_char,
+    type_decimal,
+    type_double,
+    type_float,
+    type_int,
+    type_long,
+    type_object,
+    type_sbyte,
+    type_short,
+    type_string,
+    type_uint,
+    type_ulong,
+    type_ushort,
+  };
+  predefined_type_enum type;
+:]
+
+%member (base_access: public declaration)
+[:
+  enum base_access_enum {
+    type_base_member_access,
+    type_base_indexer_access,
+  };
+  base_access_enum access_type;
+:]
+
+%member (typeof_expression: public declaration)
+[:
+  enum typeof_expression_enum {
+    type_void,
+    type_unbound_type_name,
+    type_type,
+  };
+  typeof_expression_enum typeof_type;
+:]
+
+%member (generic_dimension_specifier: public declaration)
+  [: int comma_count; :]
 
 %member (parameter_modifier: public declaration)
 [:
@@ -596,10 +683,10 @@
        SHORT ("short"), SIZEOF ("sizeof"), STACKALLOC ("stackalloc"),
        STATIC ("static"), STRING ("string"), STRUCT ("struct"),
        SWITCH ("switch"), THIS ("this"), THROW ("throw"), TRY ("try"),
-       TYPEOF ("typeof"), UINT ("uint"), ULONG ("ulong"), UNCHECKED ("unsafe"),
-       UNSAFE ("unsafe"), USHORT ("ushort"), USING ("using"),
-       VIRTUAL ("virtual"), VOID ("void"), VOLATILE ("volatile"),
-       WHILE ("while") ;;
+       TYPEOF ("typeof"), UINT ("uint"), ULONG ("ulong"),
+       UNCHECKED ("unchecked"), UNSAFE ("unsafe"), USHORT ("ushort"),
+       USING ("using"), VIRTUAL ("virtual"), VOID ("void"),
+       VOLATILE ("volatile"), WHILE ("while") ;;
 
 -- non-keyword identifiers with special meaning in the grammar:
 %token ADD ("add"), ALIAS("alias"), GET ("get"), GLOBAL ("global"),
@@ -954,36 +1041,36 @@
 
  (
    constant_declaration=constant_declaration SEMICOLON
-     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_constant_declaration; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_constant_declaration; :]
  |
    event_declaration=event_declaration
-     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_event_declaration;    :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_event_declaration;    :]
  |
    -- The OPERATOR DECLARATION, part one. Makes overloaded operators.
    IMPLICIT OPERATOR operator_type=type
    LPAREN arg1_type=type arg1_name=identifier RPAREN
    (operator_body=block | SEMICOLON)
-     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_implicit; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_implicit; :]
  |
    -- The OPERATOR DECLARATION, part two. Makes overloaded operators.
    -- (There's also part three, later in this rule.)
    EXPLICIT OPERATOR operator_type=type
    LPAREN arg1_type=type arg1_name=identifier RPAREN
    (operator_body=block | SEMICOLON)
-     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit; :]
  |
    -- A normal or static CONSTRUCTOR DECLARATION.
    -- For feasability, static_constructor_declaration is not used here.
    ?[: LA(2).kind == Token_LPAREN :]
    constructor_declaration=constructor_declaration
-     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_constructor_declaration; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_constructor_declaration; :]
  |
    -- The TYPE DECLARATION, buried under condition & action code ;)
    ?[: (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
         || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
         || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) :]
    type_declaration_rest=type_declaration_rest
-     [: (*yynode)->type = class_or_struct_member_declaration_ast::type_type_declaration; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_type_declaration; :]
  |
    -- for the rest of the declarations, we need to generalize some parts of the
    -- rules, which allows more productions than the specified ones, but
@@ -1005,17 +1092,17 @@
          (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
       )
       (operator_body=block | SEMICOLON)
-        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_operator_declaration_typed; :]
+        [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_typed; :]
     |
       -- The INDEXER DECLARATION rest, part one.
       THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
-        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
+        [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
     |
       -- The FIELD DECLARATION rest. Declares member variables.
       ?[: LA(2).kind == Token_ASSIGN || LA(2).kind == Token_COMMA
           || LA(2).kind == Token_SEMICOLON :]
       (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
-        [: (*yynode)->type = class_or_struct_member_declaration_ast::type_field_declaration; :]
+        [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_field_declaration; :]
     |
       -- and this is for rules that are still not split up sufficiently:
       member_name_or_interface_type=type_name_safe
@@ -1023,11 +1110,11 @@
       (
          -- The INDEXER DECLARATION rest, part two.
          DOT THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
-           [: (*yynode)->type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
+           [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
        |
          -- The PROPERTY DECLARATION rest.
          LBRACE accessor_declarations=accessor_declarations RBRACE
-           [: (*yynode)->type = class_or_struct_member_declaration_ast::type_property_declaration; :]
+           [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_property_declaration; :]
        |
          -- The METHOD DECLARATION rest.
          (
@@ -1042,7 +1129,7 @@
            | 0
          )
          (method_body=block | SEMICOLON)
-           [: (*yynode)->type = class_or_struct_member_declaration_ast::type_member_declaration; :]
+           [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_member_declaration; :]
       )
    )
  )
@@ -1067,8 +1154,8 @@
 -> constructor_declaration ;;
 
    COLON
-   (  BASE [: (*yynode)->type = constructor_initializer_ast::type_base; :]
-    | THIS [: (*yynode)->type = constructor_initializer_ast::type_this; :]
+   (  BASE [: (*yynode)->initializer_type = constructor_initializer_ast::type_base; :]
+    | THIS [: (*yynode)->initializer_type = constructor_initializer_ast::type_this; :]
    )
    LPAREN (arguments=argument_list | 0) RPAREN
 -> constructor_initializer ;;
@@ -1113,11 +1200,11 @@
 -- TODO: Maybe some fine day rule parameters will be implemented.
 --       In that case, please make ellipsisOccurred totally local here.
 
-   0 [: parameterArrayOccurred = false; :]
+   0 [: parameter_array_occurred = false; :]
    #formal_parameter=formal_parameter
-   @ ( 0 [: if( parameterArrayOccurred == true ) { break; } :]
+   @ ( 0 [: if( parameter_array_occurred == true ) { break; } :]
          -- Don't proceed after the parameter array. If there's a cleaner way
-         -- to exit the loop when parameterArrayOccurred == true,
+         -- to exit the loop when parameter_array_occurred == true,
          -- please use that instead of this construct.
        COMMA
      )
@@ -1125,16 +1212,16 @@
 
 -- How it _should_ look:
 --
---    0 [: parameterArrayOccurred = false; :]
+--    0 [: parameter_array_occurred = false; :]
 --    #formal_parameter=formal_parameter
---    @ ( ?[: parameterArrayOccurred == false :] COMMA )
+--    @ ( ?[: parameter_array_occurred == false :] COMMA )
 --        -- kdev-pg dismisses this condition!
 -- -> formal_parameter_list ;;
 
    (#attribute=attribute_section)*
    (
       parameter_array=parameter_array
-        [: parameterArrayOccurred = true; :]
+        [: parameter_array_occurred = true; :]
     |
       (modifier=parameter_modifier | 0) type=type variable_name=identifier
    )
@@ -1152,11 +1239,11 @@
 
  (
    expression=expression
-     [: (*yynode)->type = argument_ast::type_value_parameter;     :]
+     [: (*yynode)->argument_type = argument_ast::type_value_parameter;     :]
  | REF expression=expression
-     [: (*yynode)->type = argument_ast::type_reference_parameter; :]
+     [: (*yynode)->argument_type = argument_ast::type_reference_parameter; :]
  | OUT expression=expression
-     [: (*yynode)->type = argument_ast::type_output_parameter;    :]
+     [: (*yynode)->argument_type = argument_ast::type_output_parameter;    :]
  )
 -> argument ;;
 
@@ -1265,7 +1352,7 @@
    )
    (
        event_declaration=interface_event_declaration
-         [: (*yynode)->type = interface_member_declaration_ast::type_interface_event_declaration; :]
+         [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_event_declaration; :]
     |
        -- the property and indexer declarations are in principle only types,
        -- not return_types. Generalized for a cleaner grammar, though.
@@ -1277,20 +1364,20 @@
           THIS
           LBRACKET formal_parameters=formal_parameter_list RBRACKET
           LBRACE interface_accessors=interface_accessors RBRACE
-            [: (*yynode)->type = interface_member_declaration_ast::type_interface_indexer_declaration; :]
+            [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_indexer_declaration; :]
         |
           -- The method and property declarations need to be split further.
           member_name=identifier
           (
              -- The PROPERTY DECLARATION REST.
              RBRACE interface_accessors=interface_accessors RBRACE
-               [: (*yynode)->type = interface_member_declaration_ast::type_interface_property_declaration; :]
+               [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_property_declaration; :]
            |
              (type_parameters=type_parameters | 0)
              LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
              (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
              SEMICOLON
-               [: (*yynode)->type = interface_member_declaration_ast::type_interface_method_declaration; :]
+               [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_method_declaration; :]
           )
        )
    )
@@ -1344,7 +1431,7 @@
 -- TODO: if we can know whether we are inside an unsafe block,
 --       we can maybe decide whether we want managed_type or unmanaged_type.
 
-   -- ?[: inside_unmanaged_code() :]
+   -- ?[: inside_unmanaged_code() == true :]
    unmanaged_type=unmanaged_type
    -- | managed_type=managed_type
 -> type ;;
@@ -1356,7 +1443,13 @@
    ( STAR [: (*yynode)->star_count++; :] )*
 -> unmanaged_type ;;
 
-   non_array_type=non_array_type (#rank_specifier=rank_specifier)*
+   non_array_type=non_array_type
+   ( 0 [: if (LA(2).kind != Token_COMMA || LA(2).kind != Token_RBRACKET)
+            { break; }
+        :] -- avoids swallowing the LBRACKETs in
+           -- new_expression/array_creation_expression_rest.
+     #rank_specifier=rank_specifier
+   )*
 -> managed_type ;;
 
    non_array_type=non_array_type (#rank_specifier=rank_specifier)+
@@ -1382,7 +1475,7 @@
 -- NULLABLE TYPES are new in C# 2.0 and need to be expressed a little bit
 -- differently than in LALR grammars like in the C# specification.
 
-   non_nullable_type
+   non_nullable_type=non_nullable_type
    (  ?[: compatibility_mode() >= csharp20_compatibility :]
       QUESTION [: (*yynode)->nullable = true;  :]
     |
@@ -1512,9 +1605,9 @@
 
  (
    class_type_or_secondary_constraint=class_type
-           [: (*yynode)->type = primary_or_secondary_constraint_ast::type_type;   :]
- | CLASS   [: (*yynode)->type = primary_or_secondary_constraint_ast::type_class;  :]
- | STRUCT  [: (*yynode)->type = primary_or_secondary_constraint_ast::type_struct; :]
+           [: (*yynode)->constraint_type = primary_or_secondary_constraint_ast::type_type;   :]
+ | CLASS   [: (*yynode)->constraint_type = primary_or_secondary_constraint_ast::type_class;  :]
+ | STRUCT  [: (*yynode)->constraint_type = primary_or_secondary_constraint_ast::type_struct; :]
  )
 -> primary_or_secondary_constraint ;;
 
@@ -1574,9 +1667,8 @@
    SEMICOLON
 -> declaration_statement ;;
 
--- enable this to get your favorite problematic LL(k) conflicts
---    type=type (#variable_declarator=variable_declarator @ COMMA)
--- -> variable_declaration ;;
+   type=type (#variable_declarator=variable_declarator @ COMMA)
+-> variable_declaration ;;
 -- TODO: note: only backtrack (type identifier), it's enough to disambiguate
 
 -- The VARIABLE DECLARATOR is the part after the type specification for a
@@ -1684,11 +1776,11 @@
 
    GOTO
    (  label=identifier
-        [: (*yynode)->type = goto_statement_ast::type_labeled_statement; :]
+        [: (*yynode)->goto_type = goto_statement_ast::type_labeled_statement; :]
     | CASE constant_expression=constant_expression
-        [: (*yynode)->type = goto_statement_ast::type_switch_case;       :]
+        [: (*yynode)->goto_type = goto_statement_ast::type_switch_case;       :]
     | DEFAULT
-        [: (*yynode)->type = goto_statement_ast::type_switch_default;    :]
+        [: (*yynode)->goto_type = goto_statement_ast::type_switch_default;    :]
    )
    SEMICOLON
 -> goto_statement ;;
@@ -1710,9 +1802,9 @@
 
    YIELD
    (  RETURN return_expression=expression
-        [: (*yynode)->type = yield_statement_ast::type_yield_return; :]
+        [: (*yynode)->yield_type = yield_statement_ast::type_yield_return; :]
     | BREAK
-        [: (*yynode)->type = yield_statement_ast::type_yield_break; :]
+        [: (*yynode)->yield_type = yield_statement_ast::type_yield_break; :]
    )
    SEMICOLON
 -> yield_statement ;;
@@ -1773,8 +1865,14 @@
    body=embedded_statement
 -> using_statement ;;
 
+-- Hm, we know that LL(k) conflict from somewhere, don't we?
+-- Right, it's the same one as in block_statement and the upcoming for_control.
+
+ (
+   -- ?[: lookahead_is_variable_declaration() == true :] -- TODO: activate when the time comes
    local_variable_declaration=variable_declaration
  | expression = expression
+ )
 -> resource_acquisition ;;
 
 
@@ -1968,23 +2066,6 @@
 -> multiplicative_expression_rest ;;
 
 
--- The UNARY EXPRESSION and the its not-plusminus part are one rule in the
--- specification, but split apart for better cast_expression lookahead results.
-
- (
-   INCREMENT unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
- | DECREMENT unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_decremented_expression; :]
- | MINUS unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
- | PLUS  unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;  :]
- | unary_expression_not_plusminus=unary_expression_not_plusminus
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_expression_not_plusminus; :]
- )
--> unary_expression ;;
-
 
 -- So, up till now this was the easy stuff. Here comes another sincere
 -- conflict in the grammar that can only be solved with LL(k).
@@ -1995,19 +2076,244 @@
 -- is solved with another lookahead hack function.
 
  (
-   TILDE bitwise_not_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_bitwise_not_expression; :]
+   INCREMENT unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
+ | DECREMENT unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_decremented_expression; :]
+ | MINUS unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
+ | PLUS  unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;  :]
+ | TILDE bitwise_not_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_bitwise_not_expression; :]
  | BANG  logical_not_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_logical_not_expression; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_logical_not_expression; :]
  |
    -- ?[: lookahead_is_cast_expression() == true :] -- TODO: activate when the time comes
    cast_expression=cast_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_cast_expression;        :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_cast_expression;        :]
  |
    primary_expression=primary_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_primary_expression;     :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_primary_expression;     :]
  )
--> unary_expression_not_plusminus ;;
+-> unary_expression ;;
+
+   LPAREN type=type RPAREN casted_expression=unary_expression
+-> cast_expression ;;
+
+
+-- PRIMARY EXPRESSIONs: qualified names, array expressions,
+--                      method invocation, post increment/decrement, etc.
+
+   primary_atom=primary_atom (#primary_suffix=primary_suffix)*
+-> primary_expression ;;
+
+ (
+   -- this is the part of member_access that's not in primary_atom
+   DOT member_name=identifier
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+     [: (*yynode)->suffix_type = primary_suffix_ast::type_member_access;   :]
+ |
+   -- the suffix part of invocation_expression
+   LPAREN (arguments=argument_list | 0) RPAREN
+     [: (*yynode)->suffix_type = primary_suffix_ast::type_invocation;      :]
+ |
+   -- element_access (also known as array access)
+   LBRACKET (#expression=expression @ COMMA) RBRACKET
+     [: (*yynode)->suffix_type = primary_suffix_ast::type_element_access;  :]
+ |
+   INCREMENT
+     [: (*yynode)->suffix_type = primary_suffix_ast::type_increment;       :]
+ |
+   DECREMENT
+     [: (*yynode)->suffix_type = primary_suffix_ast::type_decrement;       :]
+ |
+   -- ?[: inside_unmanaged_code() == true :]
+   ARROW_RIGHT member_name=identifier
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+     [: (*yynode)->suffix_type = primary_suffix_ast::type_pointer_member_access; :]
+ )
+-> primary_suffix ;;
+
+
+-- PRIMARY ATOM: the basic element of a primary expression,
+--               and expressions in general
+
+ (
+   literal=literal
+     [: (*yynode)->rule_type = primary_atom_ast::type_literal;               :]
+ |
+   LPAREN expression=expression RPAREN
+     [: (*yynode)->rule_type = primary_atom_ast::type_parenthesized_expression;    :]
+ |
+   simple_name_or_member_access=simple_name_or_member_access
+     [: (*yynode)->rule_type = primary_atom_ast::type_member_access;         :]
+ |
+   THIS
+     [: (*yynode)->rule_type = primary_atom_ast::type_this_access;           :]
+ |
+   base_access=base_access
+     [: (*yynode)->rule_type = primary_atom_ast::type_base_access;           :]
+ |
+   new_expression=new_expression
+     [: (*yynode)->rule_type = primary_atom_ast::type_new_expression;        :]
+ |
+   typeof_expression=typeof_expression
+     [: (*yynode)->rule_type = primary_atom_ast::type_typeof_expression;     :]
+ |
+   CHECKED LPAREN expression=expression RPAREN
+     [: (*yynode)->rule_type = primary_atom_ast::type_checked_expression;    :]
+ |
+   UNCHECKED LPAREN expression=expression RPAREN
+     [: (*yynode)->rule_type = primary_atom_ast::type_unchecked_expression;  :]
+ |
+   DEFAULT LPAREN type=type RPAREN
+     [: (*yynode)->rule_type = primary_atom_ast::type_default_expression;    :]
+ |
+   anonymous_method_expression=anonymous_method_expression
+     [: (*yynode)->rule_type = primary_atom_ast::type_anonymous_method_expression; :]
+ |
+   -- ?[: inside_unmanaged_code() == true :]
+   SIZEOF LPAREN unmanaged_type=unmanaged_type RPAREN
+     [: (*yynode)->rule_type = primary_atom_ast::type_sizeof_expression;    :]
+ )
+-> primary_atom ;;
+
+
+-- Here come the more complex parts of primary_atom that have been split out.
+
+-- This rule covers two rules from the specification, the SIMPLE NAME and
+-- most of MEMBER ACCESS.
+
+ (
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   member_name=identifier
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+ |
+   predefined_type=predefined_type DOT member_name=identifier
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+ )
+-> simple_name_or_member_access ;;
+
+ (
+   BOOL     [: (*yynode)->type = predefined_type_ast::type_bool;    :]
+ | BYTE     [: (*yynode)->type = predefined_type_ast::type_byte;    :]
+ | CHAR     [: (*yynode)->type = predefined_type_ast::type_char;    :]
+ | DECIMAL  [: (*yynode)->type = predefined_type_ast::type_decimal; :]
+ | DOUBLE   [: (*yynode)->type = predefined_type_ast::type_double;  :]
+ | FLOAT    [: (*yynode)->type = predefined_type_ast::type_float;   :]
+ | INT      [: (*yynode)->type = predefined_type_ast::type_int;     :]
+ | LONG     [: (*yynode)->type = predefined_type_ast::type_long;    :]
+ | OBJECT   [: (*yynode)->type = predefined_type_ast::type_object;  :]
+ | SBYTE    [: (*yynode)->type = predefined_type_ast::type_sbyte;   :]
+ | SHORT    [: (*yynode)->type = predefined_type_ast::type_short;   :]
+ | STRING   [: (*yynode)->type = predefined_type_ast::type_string;  :]
+ | UINT     [: (*yynode)->type = predefined_type_ast::type_uint;    :]
+ | ULONG    [: (*yynode)->type = predefined_type_ast::type_ulong;   :]
+ | USHORT   [: (*yynode)->type = predefined_type_ast::type_ushort;  :]
+ )
+-> predefined_type ;;
+
+
+   BASE
+   (  DOT identifier=identifier type_arguments=type_arguments
+        [: (*yynode)->access_type = base_access_ast::type_base_member_access;  :]
+    |
+      LBRACKET (#expression=expression @ COMMA) RBRACKET
+        [: (*yynode)->access_type = base_access_ast::type_base_indexer_access; :]
+   )
+-> base_access ;;
+
+
+   DELEGATE LPAREN
+   (#anonymous_method_parameter=anonymous_method_parameter @ COMMA)
+   RPAREN
+   body=block
+-> anonymous_method_expression ;;
+
+   (modifier=parameter_modifier | 0) type=type variable_name=identifier
+-> anonymous_method_parameter ;;
+
+
+-- NEW EXPRESSION is actually three rules in one: array_creation_expression,
+-- object_creation_expression and delegate_creation_expression.
+-- But as they all contain a "type" rule in the same place, it's not
+-- a good idea to try to tell them apart. Also, object creation and
+-- delegate creation can derive the exact same token sequence.
+
+   NEW type=type
+   (  array_creation_expression_rest=array_creation_expression_rest
+    | LPAREN (expression_or_argument_list=argument_list | 0) RPAREN
+   )
+-> new_expression ;;
+
+ (
+   array_initializer=array_initializer
+ |
+   LBRACKET (#expression=expression)* RBRACKET
+   ( 0 [: if (LA(2).kind != Token_COMMA || LA(2).kind != Token_RBRACKET)
+            { break; }
+        :] -- avoids swallowing the LBRACKETs in
+           -- primary_suffix's element access part.
+     #rank_specifier=rank_specifier
+   )*
+   (array_initializer=array_initializer | 0)
+ )
+-> array_creation_expression_rest ;;
+
+
+-- The TYPEOF EXPRESSION is nasty, because it either needs LL(k) lookahead
+-- or a very ugly duplication of the type system. And when I say _very_ ugly,
+-- I mean it. I tried it, and decided to go with the cleaner lookahead hack.
+
+   TYPEOF LPAREN
+   (
+      ?[: LA(2).kind == Token_RPAREN :]
+      VOID
+        [: (*yynode)->typeof_type = typeof_expression_ast::type_void; :]
+    |
+      ?[: (compatibility_mode() >= csharp20_compatibility)
+          // && (lookahead_is_unbound_type_name() == true)
+        :] -- TODO: activate when the time comes
+      unbound_type_name=unbound_type_name
+        [: (*yynode)->typeof_type = typeof_expression_ast::type_unbound_type_name; :]
+    |
+      other_type=type
+        [: (*yynode)->typeof_type = typeof_expression_ast::type_type; :]
+   )
+   RPAREN
+-> typeof_expression ;;
+
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   #name_part=unbound_type_name_part @ DOT
+-> unbound_type_name ;;
+
+   identifier=identifier
+   (  generic_dimension_specifier=generic_dimension_specifier
+    | 0
+   )
+-> unbound_type_name_part ;;
+
+   LESS_THAN [: (*yynode)->comma_count = 0; :]
+   ( COMMA   [: (*yynode)->comma_count++;   :] )*
+   GREATER_THAN
+-> generic_dimension_specifier ;;
 
 
 
@@ -2111,11 +2417,8 @@
 -- Appendix: Rule stubs
 --
 
-STUB_A -> variable_declaration ;; -- already there, but not yet activated
-LESS_THAN STUB_B GREATER_THAN -> type_arguments ;;
-LESS_THAN STUB_C GREATER_THAN -> type_parameters ;;
-STUB_D -> cast_expression ;;
-identifier -> primary_expression ;;
+LESS_THAN STUB_A GREATER_THAN -> type_arguments ;;
+LESS_THAN STUB_B GREATER_THAN -> type_parameters ;;
 
 
 

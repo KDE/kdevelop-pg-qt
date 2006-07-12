@@ -445,6 +445,98 @@
   branch_type_enum branch_type;
 :]
 
+%member (expression: public declaration)
+[:
+  enum assignment_operator_enum {
+    no_assignment,
+    op_assign,
+    op_plus_assign,
+    op_minus_assign,
+    op_star_assign,
+    op_slash_assign,
+    op_remainder_assign,
+    op_bit_and_assign,
+    op_bit_or_assign,
+    op_bit_xor_assign,
+    op_lshift_assign,
+    op_rshift_assign,
+  };
+  assignment_operator_enum assignment_operator;
+:]
+
+%member (equality_expression_rest: public declaration)
+[:
+  enum equality_operator_enum {
+    op_equal,
+    op_not_equal,
+  };
+  equality_operator_enum equality_operator;
+:]
+
+%member (relational_expression_rest: public declaration)
+[:
+  enum relational_operator_enum {
+    op_less_than,
+    op_greater_than,
+    op_less_equal,
+    op_greater_equal,
+    op_is,
+    op_as,
+  };
+  relational_operator_enum relational_operator;
+:]
+
+%member (shift_expression_rest: public declaration)
+[:
+  enum shift_operator_enum {
+    op_lshift,
+    op_rshift,
+  };
+  shift_operator_enum shift_operator;
+:]
+
+%member (additive_expression_rest: public declaration)
+[:
+  enum additive_operator_enum {
+    op_plus,
+    op_minus
+  };
+  additive_operator_enum additive_operator;
+:]
+
+%member (multiplicative_expression_rest: public declaration)
+[:
+  enum multiplicative_operator_enum {
+    op_star,
+    op_slash,
+    op_remainder
+  };
+  multiplicative_operator_enum multiplicative_operator;
+:]
+
+%member (unary_expression: public declaration)
+[:
+  enum unary_expression_enum {
+    type_incremented_expression,
+    type_decremented_expression,
+    type_unary_minus_expression,
+    type_unary_plus_expression,
+    type_unary_expression_not_plusminus,
+  };
+  unary_expression_enum rule_type;
+:]
+
+%member (unary_expression_not_plusminus: public declaration)
+[:
+  enum unary_expression_not_plusminus_enum {
+    type_bitwise_not_expression,
+    type_logical_not_expression,
+    type_cast_expression,
+    type_primary_expression,
+  };
+  unary_expression_not_plusminus_enum rule_type;
+:]
+
 %member (parameter_modifier: public declaration)
 [:
   enum parameter_modifier_enum {
@@ -1751,6 +1843,173 @@
 -> statement_expression ;;
 
 
+-- So this is the actual EXPRESSION, also known as assignment expression.
+
+   conditional_expression=conditional_expression
+   (
+      (  ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_assign;           :]
+       | PLUS_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_plus_assign;      :]
+       | MINUS_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_minus_assign;     :]
+       | STAR_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_star_assign;      :]
+       | SLASH_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_slash_assign;     :]
+       | REMAINDER_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_remainder_assign; :]
+       | BIT_AND_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_bit_and_assign;   :]
+       | BIT_OR_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_bit_or_assign;    :]
+       | BIT_XOR_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_bit_xor_assign;   :]
+       | LSHIFT_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_lshift_assign;    :]
+       | RSHIFT_ASSIGN
+           [: (*yynode)->assignment_operator = expression_ast::op_rshift_assign;    :]
+      )
+      assignment_expression=expression
+    |
+      0 [: (*yynode)->assignment_operator = expression_ast::no_assignment; :]
+   )
+-> expression ;;
+
+
+   null_coalescing_expression=null_coalescing_expression
+   (  QUESTION if_expression=expression
+      COLON    else_expression=expression
+    | 0
+   )
+-> conditional_expression ;;
+
+-- The NULL COALESCING EXPRESSION is new in C# 2.0 and provides fallback values
+-- for nullable variables. If a is non-null, (a ?? b) returns a,
+-- but if a is null, (a ?? b) returns b.
+-- Version checking is already done by the lexer and not needed here.
+
+   #expression=logical_or_expression @ QUESTIONQUESTION
+-> null_coalescing_expression ;;
+
+   #expression=logical_and_expression @ LOG_OR
+-> logical_or_expression ;;
+
+   #expression=bit_or_expression @ LOG_AND
+-> logical_and_expression ;;
+
+   #expression=bit_xor_expression @ BIT_OR
+-> bit_or_expression ;;
+
+   #expression=bit_and_expression @ BIT_XOR
+-> bit_xor_expression ;;
+
+   #expression=equality_expression @ BIT_AND
+-> bit_and_expression ;;
+
+   expression=relational_expression
+   (#additional_expression=equality_expression_rest)*
+-> equality_expression ;;
+
+   (  EQUAL     [: (*yynode)->equality_operator = equality_expression_rest_ast::op_equal;     :]
+    | NOT_EQUAL [: (*yynode)->equality_operator = equality_expression_rest_ast::op_not_equal; :]
+   )
+   expression=relational_expression
+-> equality_expression_rest ;;
+
+   expression=shift_expression
+   (#additional_expression=relational_expression_rest)*
+-> relational_expression ;;
+
+ (
+   (  LESS_THAN     [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_than;     :]
+    | GREATER_THAN  [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_than;  :]
+    | LESS_EQUAL    [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_equal;    :]
+    | GREATER_EQUAL [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_equal; :]
+   )
+   expression=shift_expression
+ |
+   (  IS [: (*yynode)->relational_operator = relational_expression_rest_ast::op_is; :]
+    | AS [: (*yynode)->relational_operator = relational_expression_rest_ast::op_as; :]
+   )
+   type=type
+ )
+-> relational_expression_rest ;;
+
+   expression=additive_expression
+   (#additional_expression=shift_expression_rest)*
+-> shift_expression ;;
+
+   (  LSHIFT   [: (*yynode)->shift_operator = shift_expression_rest_ast::op_lshift; :]
+    | RSHIFT   [: (*yynode)->shift_operator = shift_expression_rest_ast::op_rshift; :]
+   )
+   expression=additive_expression
+-> shift_expression_rest ;;
+
+   expression=multiplicative_expression
+   (#additional_expression=additive_expression_rest)*
+-> additive_expression ;;
+
+   (  PLUS  [: (*yynode)->additive_operator = additive_expression_rest_ast::op_plus;  :]
+    | MINUS [: (*yynode)->additive_operator = additive_expression_rest_ast::op_minus; :]
+   )
+   expression=multiplicative_expression
+-> additive_expression_rest ;;
+
+   expression=unary_expression
+   (#additional_expression=multiplicative_expression_rest)*
+-> multiplicative_expression ;;
+
+   (  STAR      [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_star;      :]
+    | SLASH     [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_slash;     :]
+    | REMAINDER [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_remainder; :]
+   )
+   expression=unary_expression
+-> multiplicative_expression_rest ;;
+
+
+-- The UNARY EXPRESSION and the its not-plusminus part are one rule in the
+-- specification, but split apart for better cast_expression lookahead results.
+
+ (
+   INCREMENT unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
+ | DECREMENT unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_decremented_expression; :]
+ | MINUS unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
+ | PLUS  unary_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;  :]
+ | unary_expression_not_plusminus=unary_expression_not_plusminus
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_expression_not_plusminus; :]
+ )
+-> unary_expression ;;
+
+
+-- So, up till now this was the easy stuff. Here comes another sincere
+-- conflict in the grammar that can only be solved with LL(k).
+-- The conflict in this rule is the ambiguity between type casts (which
+-- can be arbitrary class names within parentheses) and primary_expressions,
+-- which can also look that way from an LL(1) perspective.
+-- Until real LL(k) or backtracking is implemented in kdev-pg, this problem
+-- is solved with another lookahead hack function.
+
+ (
+   TILDE bitwise_not_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_bitwise_not_expression; :]
+ | BANG  logical_not_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_logical_not_expression; :]
+ |
+   -- ?[: lookahead_is_cast_expression() == true :] -- TODO: activate when the time comes
+   cast_expression=cast_expression
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_cast_expression;        :]
+ |
+   primary_expression=primary_expression
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_primary_expression;     :]
+ )
+-> unary_expression_not_plusminus ;;
+
+
 
 
 
@@ -1855,7 +2114,8 @@
 STUB_A -> variable_declaration ;; -- already there, but not yet activated
 LESS_THAN STUB_B GREATER_THAN -> type_arguments ;;
 LESS_THAN STUB_C GREATER_THAN -> type_parameters ;;
-identifier -> expression ;;
+STUB_D -> cast_expression ;;
+identifier -> primary_expression ;;
 
 
 

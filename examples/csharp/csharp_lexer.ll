@@ -195,7 +195,16 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 ":"             return csharp::Token_COLON;
 "::"            return csharp::Token_SCOPE; // TODO: new in 2.0?
 "?"             return csharp::Token_QUESTION;
-"??"            return csharp::Token_QUESTIONQUESTION; // TODO: naming... new in 2.0?
+"??" {
+    if( _G_parser->compatibility_mode() >= csharp::csharp20_compatibility ) {
+      return csharp::Token_QUESTIONQUESTION;
+    }
+    else {
+      _G_parser->report_problem( csharp::error,
+        "Null coalescing expressions (with \"??\") are not supported by C# 1.0" );
+      return csharp::Token_INVALID;
+    }
+}
 "!"             return csharp::Token_BANG;
 "~"             return csharp::Token_TILDE;
 "=="            return csharp::Token_EQUAL;

@@ -49,13 +49,13 @@ public:
 	bool is_optional_modifiers();
 	bool is_identifier();
 	bool is_qualified_identifier();
-	bool is_type_specification();
-	bool is_builtin_type_specification();
+	bool is_type();
+	bool is_optional_array_builtin_type();
 	bool is_builtin_type();
 	bool is_optional_declarator_brackets();
-	bool is_class_type_specification();
-	bool is_class_or_interface_type();
-	bool is_class_or_interface_type_part();
+	bool is_class_type();
+	bool is_class_or_interface_type_name();
+	bool is_class_or_interface_type_name_part();
 
 private:
 	// Increases _M_count and fetches LA(_M_count) into _M_token

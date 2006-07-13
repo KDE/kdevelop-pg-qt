@@ -31,17 +31,15 @@ struct block_ast;
 struct block_statement_ast;
 struct break_statement_ast;
 struct builtin_type_ast;
-struct builtin_type_array_specification_ast;
-struct builtin_type_specification_ast;
 struct cast_expression_ast;
 struct catch_clause_ast;
 struct class_body_ast;
 struct class_declaration_ast;
 struct class_extends_clause_ast;
 struct class_field_ast;
-struct class_or_interface_type_ast;
-struct class_or_interface_type_part_ast;
-struct class_type_specification_ast;
+struct class_or_interface_type_name_ast;
+struct class_or_interface_type_name_part_ast;
+struct class_type_ast;
 struct compilation_unit_ast;
 struct conditional_expression_ast;
 struct continue_statement_ast;
@@ -70,11 +68,14 @@ struct labeled_statement_ast;
 struct literal_ast;
 struct logical_and_expression_ast;
 struct logical_or_expression_ast;
+struct mandatory_array_builtin_type_ast;
 struct mandatory_declarator_brackets_ast;
 struct multiplicative_expression_ast;
 struct multiplicative_expression_rest_ast;
 struct new_expression_ast;
+struct non_array_type_ast;
 struct non_wildcard_type_arguments_ast;
+struct optional_array_builtin_type_ast;
 struct optional_declarator_brackets_ast;
 struct optional_modifiers_ast;
 struct optional_parameter_modifiers_ast;
@@ -103,15 +104,14 @@ struct synchronized_statement_ast;
 struct throw_statement_ast;
 struct throws_clause_ast;
 struct try_statement_ast;
+struct type_ast;
 struct type_argument_ast;
-struct type_argument_specification_ast;
+struct type_argument_type_ast;
 struct type_arguments_ast;
 struct type_arguments_or_parameters_end_ast;
 struct type_declaration_ast;
 struct type_parameter_ast;
 struct type_parameters_ast;
-struct type_specification_ast;
-struct type_specification_noarray_ast;
 struct unary_expression_ast;
 struct unary_expression_not_plusminus_ast;
 struct variable_array_initializer_ast;
@@ -147,87 +147,87 @@ struct java_ast_node
       Kind_block_statement = 1018,
       Kind_break_statement = 1019,
       Kind_builtin_type = 1020,
-      Kind_builtin_type_array_specification = 1021,
-      Kind_builtin_type_specification = 1022,
-      Kind_cast_expression = 1023,
-      Kind_catch_clause = 1024,
-      Kind_class_body = 1025,
-      Kind_class_declaration = 1026,
-      Kind_class_extends_clause = 1027,
-      Kind_class_field = 1028,
-      Kind_class_or_interface_type = 1029,
-      Kind_class_or_interface_type_part = 1030,
-      Kind_class_type_specification = 1031,
-      Kind_compilation_unit = 1032,
-      Kind_conditional_expression = 1033,
-      Kind_continue_statement = 1034,
-      Kind_do_while_statement = 1035,
-      Kind_embedded_statement = 1036,
-      Kind_enum_body = 1037,
-      Kind_enum_constant = 1038,
-      Kind_enum_constant_body = 1039,
-      Kind_enum_constant_field = 1040,
-      Kind_enum_declaration = 1041,
-      Kind_equality_expression = 1042,
-      Kind_equality_expression_rest = 1043,
-      Kind_expression = 1044,
-      Kind_for_clause_traditional_rest = 1045,
-      Kind_for_control = 1046,
-      Kind_for_statement = 1047,
-      Kind_identifier = 1048,
-      Kind_if_statement = 1049,
-      Kind_implements_clause = 1050,
-      Kind_import_declaration = 1051,
-      Kind_interface_body = 1052,
-      Kind_interface_declaration = 1053,
-      Kind_interface_extends_clause = 1054,
-      Kind_interface_field = 1055,
-      Kind_labeled_statement = 1056,
-      Kind_literal = 1057,
-      Kind_logical_and_expression = 1058,
-      Kind_logical_or_expression = 1059,
-      Kind_mandatory_declarator_brackets = 1060,
-      Kind_multiplicative_expression = 1061,
-      Kind_multiplicative_expression_rest = 1062,
-      Kind_new_expression = 1063,
+      Kind_cast_expression = 1021,
+      Kind_catch_clause = 1022,
+      Kind_class_body = 1023,
+      Kind_class_declaration = 1024,
+      Kind_class_extends_clause = 1025,
+      Kind_class_field = 1026,
+      Kind_class_or_interface_type_name = 1027,
+      Kind_class_or_interface_type_name_part = 1028,
+      Kind_class_type = 1029,
+      Kind_compilation_unit = 1030,
+      Kind_conditional_expression = 1031,
+      Kind_continue_statement = 1032,
+      Kind_do_while_statement = 1033,
+      Kind_embedded_statement = 1034,
+      Kind_enum_body = 1035,
+      Kind_enum_constant = 1036,
+      Kind_enum_constant_body = 1037,
+      Kind_enum_constant_field = 1038,
+      Kind_enum_declaration = 1039,
+      Kind_equality_expression = 1040,
+      Kind_equality_expression_rest = 1041,
+      Kind_expression = 1042,
+      Kind_for_clause_traditional_rest = 1043,
+      Kind_for_control = 1044,
+      Kind_for_statement = 1045,
+      Kind_identifier = 1046,
+      Kind_if_statement = 1047,
+      Kind_implements_clause = 1048,
+      Kind_import_declaration = 1049,
+      Kind_interface_body = 1050,
+      Kind_interface_declaration = 1051,
+      Kind_interface_extends_clause = 1052,
+      Kind_interface_field = 1053,
+      Kind_labeled_statement = 1054,
+      Kind_literal = 1055,
+      Kind_logical_and_expression = 1056,
+      Kind_logical_or_expression = 1057,
+      Kind_mandatory_array_builtin_type = 1058,
+      Kind_mandatory_declarator_brackets = 1059,
+      Kind_multiplicative_expression = 1060,
+      Kind_multiplicative_expression_rest = 1061,
+      Kind_new_expression = 1062,
+      Kind_non_array_type = 1063,
       Kind_non_wildcard_type_arguments = 1064,
-      Kind_optional_declarator_brackets = 1065,
-      Kind_optional_modifiers = 1066,
-      Kind_optional_parameter_modifiers = 1067,
-      Kind_package_declaration = 1068,
-      Kind_parameter_declaration = 1069,
-      Kind_parameter_declaration_ellipsis = 1070,
-      Kind_parameter_declaration_list = 1071,
-      Kind_postfix_operator = 1072,
-      Kind_primary_atom = 1073,
-      Kind_primary_expression = 1074,
-      Kind_primary_selector = 1075,
-      Kind_qualified_identifier = 1076,
-      Kind_qualified_identifier_safe = 1077,
-      Kind_qualified_identifier_with_optional_star = 1078,
-      Kind_relational_expression = 1079,
-      Kind_relational_expression_rest = 1080,
-      Kind_return_statement = 1081,
-      Kind_shift_expression = 1082,
-      Kind_shift_expression_rest = 1083,
-      Kind_statement_expression = 1084,
-      Kind_super_suffix = 1085,
-      Kind_switch_label = 1086,
-      Kind_switch_section = 1087,
-      Kind_switch_statement = 1088,
-      Kind_synchronized_statement = 1089,
-      Kind_throw_statement = 1090,
-      Kind_throws_clause = 1091,
-      Kind_try_statement = 1092,
-      Kind_type_argument = 1093,
-      Kind_type_argument_specification = 1094,
-      Kind_type_arguments = 1095,
-      Kind_type_arguments_or_parameters_end = 1096,
-      Kind_type_declaration = 1097,
-      Kind_type_parameter = 1098,
-      Kind_type_parameters = 1099,
-      Kind_type_specification = 1100,
-      Kind_type_specification_noarray = 1101,
+      Kind_optional_array_builtin_type = 1065,
+      Kind_optional_declarator_brackets = 1066,
+      Kind_optional_modifiers = 1067,
+      Kind_optional_parameter_modifiers = 1068,
+      Kind_package_declaration = 1069,
+      Kind_parameter_declaration = 1070,
+      Kind_parameter_declaration_ellipsis = 1071,
+      Kind_parameter_declaration_list = 1072,
+      Kind_postfix_operator = 1073,
+      Kind_primary_atom = 1074,
+      Kind_primary_expression = 1075,
+      Kind_primary_selector = 1076,
+      Kind_qualified_identifier = 1077,
+      Kind_qualified_identifier_safe = 1078,
+      Kind_qualified_identifier_with_optional_star = 1079,
+      Kind_relational_expression = 1080,
+      Kind_relational_expression_rest = 1081,
+      Kind_return_statement = 1082,
+      Kind_shift_expression = 1083,
+      Kind_shift_expression_rest = 1084,
+      Kind_statement_expression = 1085,
+      Kind_super_suffix = 1086,
+      Kind_switch_label = 1087,
+      Kind_switch_section = 1088,
+      Kind_switch_statement = 1089,
+      Kind_synchronized_statement = 1090,
+      Kind_throw_statement = 1091,
+      Kind_throws_clause = 1092,
+      Kind_try_statement = 1093,
+      Kind_type = 1094,
+      Kind_type_argument = 1095,
+      Kind_type_argument_type = 1096,
+      Kind_type_arguments = 1097,
+      Kind_type_arguments_or_parameters_end = 1098,
+      Kind_type_declaration = 1099,
+      Kind_type_parameter = 1100,
+      Kind_type_parameters = 1101,
       Kind_unary_expression = 1102,
       Kind_unary_expression_not_plusminus = 1103,
       Kind_variable_array_initializer = 1104,
@@ -272,7 +272,7 @@ struct additive_expression_rest_ast: public java_ast_node
 
     enum additive_operator_enum {
       op_plus,
-      op_minus
+      op_minus,
     };
     additive_operator_enum additive_operator;
 
@@ -398,8 +398,8 @@ struct annotation_type_field_ast: public java_ast_node
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
-    type_specification_ast *type;
-    identifier_ast *identifier;
+    type_ast *member_type;
+    identifier_ast *method_name;
     annotation_element_value_ast *annotation_element_value;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
 
@@ -534,7 +534,7 @@ struct builtin_type_ast: public java_ast_node
       type_int,
       type_float,
       type_long,
-      type_double
+      type_double,
     };
     builtin_type_enum type;
 
@@ -545,30 +545,6 @@ struct builtin_type_ast: public java_ast_node
 
   };
 
-struct builtin_type_array_specification_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_builtin_type_array_specification
-    };
-
-    builtin_type_ast *type;
-    mandatory_declarator_brackets_ast *declarator_brackets;
-
-  };
-
-struct builtin_type_specification_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_builtin_type_specification
-    };
-
-    builtin_type_ast *type;
-    optional_declarator_brackets_ast *declarator_brackets;
-
-  };
-
 struct cast_expression_ast: public java_ast_node
   {
     enum
@@ -576,9 +552,9 @@ struct cast_expression_ast: public java_ast_node
       KIND = Kind_cast_expression
     };
 
-    builtin_type_specification_ast *builtin_type_specification;
+    optional_array_builtin_type_ast *builtin_type;
     unary_expression_ast *builtin_casted_expression;
-    class_type_specification_ast *class_type_specification;
+    class_type_ast *class_type;
     unary_expression_not_plusminus_ast *class_casted_expression;
 
   };
@@ -628,7 +604,7 @@ struct class_extends_clause_ast: public java_ast_node
       KIND = Kind_class_extends_clause
     };
 
-    class_or_interface_type_ast *type;
+    class_or_interface_type_name_ast *type;
 
   };
 
@@ -649,7 +625,7 @@ struct class_field_ast: public java_ast_node
     parameter_declaration_list_ast *constructor_parameters;
     throws_clause_ast *constructor_throws_clause;
     block_ast *constructor_body;
-    type_specification_ast *type;
+    type_ast *member_type;
     identifier_ast *method_name;
     parameter_declaration_list_ast *method_parameters;
     optional_declarator_brackets_ast *method_declarator_brackets;
@@ -661,22 +637,22 @@ struct class_field_ast: public java_ast_node
 
   };
 
-struct class_or_interface_type_ast: public java_ast_node
+struct class_or_interface_type_name_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_class_or_interface_type
+      KIND = Kind_class_or_interface_type_name
     };
 
-    const list_node<class_or_interface_type_part_ast *> *part_sequence;
+    const list_node<class_or_interface_type_name_part_ast *> *part_sequence;
 
   };
 
-struct class_or_interface_type_part_ast: public java_ast_node
+struct class_or_interface_type_name_part_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_class_or_interface_type_part
+      KIND = Kind_class_or_interface_type_name_part
     };
 
     identifier_ast *identifier;
@@ -684,14 +660,14 @@ struct class_or_interface_type_part_ast: public java_ast_node
 
   };
 
-struct class_type_specification_ast: public java_ast_node
+struct class_type_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_class_type_specification
+      KIND = Kind_class_type
     };
 
-    class_or_interface_type_ast *type;
+    class_or_interface_type_name_ast *type;
     optional_declarator_brackets_ast *declarator_brackets;
 
   };
@@ -820,7 +796,7 @@ struct enum_constant_field_ast: public java_ast_node
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
     type_parameters_ast *type_parameters;
-    type_specification_ast *type;
+    type_ast *member_type;
     identifier_ast *method_name;
     parameter_declaration_list_ast *method_parameters;
     optional_declarator_brackets_ast *method_declarator_brackets;
@@ -870,7 +846,7 @@ struct equality_expression_rest_ast: public java_ast_node
 
     enum equality_operator_enum {
       op_equal,
-      op_not_equal
+      op_not_equal,
     };
     equality_operator_enum equality_operator;
 
@@ -907,7 +883,7 @@ struct expression_ast: public java_ast_node
       op_remainder_assign,
       op_lshift_assign,
       op_signed_rshift_assign,
-      op_unsigned_rshift_assign
+      op_unsigned_rshift_assign,
     };
     assignment_operator_enum assignment_operator;
 
@@ -988,7 +964,7 @@ struct implements_clause_ast: public java_ast_node
       KIND = Kind_implements_clause
     };
 
-    const list_node<class_or_interface_type_ast *> *type_sequence;
+    const list_node<class_or_interface_type_name_ast *> *type_sequence;
 
   };
 
@@ -1043,7 +1019,7 @@ struct interface_extends_clause_ast: public java_ast_node
       KIND = Kind_interface_extends_clause
     };
 
-    const list_node<class_or_interface_type_ast *> *type_sequence;
+    const list_node<class_or_interface_type_name_ast *> *type_sequence;
 
   };
 
@@ -1060,7 +1036,7 @@ struct interface_field_ast: public java_ast_node
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
     type_parameters_ast *type_parameters;
-    type_specification_ast *type;
+    type_ast *member_type;
     identifier_ast *method_name;
     parameter_declaration_list_ast *method_parameters;
     optional_declarator_brackets_ast *method_declarator_brackets;
@@ -1103,7 +1079,7 @@ struct literal_ast: public java_ast_node
       type_integer,
       type_floating_point,
       type_character,
-      type_string
+      type_string,
     };
     literal_type_enum literal_type;
 
@@ -1133,6 +1109,18 @@ struct logical_or_expression_ast: public java_ast_node
     };
 
     const list_node<logical_and_expression_ast *> *expression_sequence;
+
+  };
+
+struct mandatory_array_builtin_type_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_mandatory_array_builtin_type
+    };
+
+    builtin_type_ast *type;
+    mandatory_declarator_brackets_ast *declarator_brackets;
 
   };
 
@@ -1181,7 +1169,7 @@ struct multiplicative_expression_rest_ast: public java_ast_node
     enum multiplicative_operator_enum {
       op_star,
       op_slash,
-      op_remainder
+      op_remainder,
     };
     multiplicative_operator_enum multiplicative_operator;
 
@@ -1200,10 +1188,22 @@ struct new_expression_ast: public java_ast_node
     };
 
     non_wildcard_type_arguments_ast *type_arguments;
-    type_specification_noarray_ast *type;
+    non_array_type_ast *type;
     argument_list_ast *class_constructor_arguments;
     class_body_ast *class_body;
     array_creator_rest_ast *array_creator_rest;
+
+  };
+
+struct non_array_type_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_non_array_type
+    };
+
+    class_or_interface_type_name_ast *class_or_interface_type;
+    builtin_type_ast *builtin_type;
 
   };
 
@@ -1214,7 +1214,19 @@ struct non_wildcard_type_arguments_ast: public java_ast_node
       KIND = Kind_non_wildcard_type_arguments
     };
 
-    const list_node<type_argument_specification_ast *> *type_argument_specification_sequence;
+    const list_node<type_argument_type_ast *> *type_argument_type_sequence;
+
+  };
+
+struct optional_array_builtin_type_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_optional_array_builtin_type
+    };
+
+    builtin_type_ast *type;
+    optional_declarator_brackets_ast *declarator_brackets;
 
   };
 
@@ -1259,7 +1271,7 @@ struct optional_modifiers_ast: public java_ast_node
       mod_native       = 128,
       mod_synchronized = 256,
       mod_volatile     = 512,
-      mod_strictfp     = 1024
+      mod_strictfp     = 1024,
     };
     int modifiers;
 
@@ -1309,7 +1321,7 @@ struct parameter_declaration_ast: public java_ast_node
     };
 
     optional_parameter_modifiers_ast *parameter_modifiers;
-    type_specification_ast *type;
+    type_ast *type;
     identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
 
@@ -1323,7 +1335,7 @@ struct parameter_declaration_ellipsis_ast: public java_ast_node
     };
 
     optional_parameter_modifiers_ast *parameter_modifiers;
-    type_specification_ast *type;
+    type_ast *type;
     identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
 
@@ -1361,7 +1373,7 @@ struct postfix_operator_ast: public java_ast_node
 
     enum postfix_operator_enum {
       op_increment,
-      op_decrement
+      op_decrement,
     };
     postfix_operator_enum postfix_operator;
 
@@ -1379,7 +1391,7 @@ struct primary_atom_ast: public java_ast_node
       KIND = Kind_primary_atom
     };
 
-    builtin_type_specification_ast *builtin_type;
+    optional_array_builtin_type_ast *builtin_type;
     literal_ast *literal;
     new_expression_ast *new_expression;
     expression_ast *parenthesis_expression;
@@ -1516,7 +1528,7 @@ struct relational_expression_ast: public java_ast_node
 
     shift_expression_ast *expression;
     const list_node<relational_expression_rest_ast *> *additional_expression_sequence;
-    type_specification_ast *instanceof_type;
+    type_ast *instanceof_type;
 
   };
 
@@ -1536,7 +1548,7 @@ struct relational_expression_rest_ast: public java_ast_node
       op_less_than,
       op_greater_than,
       op_less_equal,
-      op_greater_equal
+      op_greater_equal,
     };
     relational_operator_enum relational_operator;
 
@@ -1585,7 +1597,7 @@ struct shift_expression_rest_ast: public java_ast_node
     enum shift_operator_enum {
       op_lshift,
       op_signed_rshift,
-      op_unsigned_rshift
+      op_unsigned_rshift,
     };
     shift_operator_enum shift_operator;
 
@@ -1636,7 +1648,7 @@ struct switch_label_ast: public java_ast_node
 
     enum branch_type_enum {
       case_branch,
-      default_branch
+      default_branch,
     };
     branch_type_enum branch_type;
 
@@ -1718,6 +1730,18 @@ struct try_statement_ast: public java_ast_node
 
   };
 
+struct type_ast: public java_ast_node
+  {
+    enum
+    {
+      KIND = Kind_type
+    };
+
+    class_type_ast *class_type;
+    optional_array_builtin_type_ast *builtin_type;
+
+  };
+
 struct type_argument_ast: public java_ast_node
   {
     enum
@@ -1725,20 +1749,20 @@ struct type_argument_ast: public java_ast_node
       KIND = Kind_type_argument
     };
 
-    type_argument_specification_ast *type_argument_specification;
+    type_argument_type_ast *type_argument_type;
     wildcard_type_ast *wildcard_type;
 
   };
 
-struct type_argument_specification_ast: public java_ast_node
+struct type_argument_type_ast: public java_ast_node
   {
     enum
     {
-      KIND = Kind_type_argument_specification
+      KIND = Kind_type_argument_type
     };
 
-    class_type_specification_ast *class_type;
-    builtin_type_array_specification_ast *builtin_type_array;
+    class_type_ast *class_type;
+    mandatory_array_builtin_type_ast *mandatory_array_builtin_type;
 
   };
 
@@ -1786,7 +1810,7 @@ struct type_parameter_ast: public java_ast_node
     };
 
     identifier_ast *identifier;
-    const list_node<class_or_interface_type_ast *> *extends_type_sequence;
+    const list_node<class_or_interface_type_name_ast *> *extends_type_sequence;
 
   };
 
@@ -1798,30 +1822,6 @@ struct type_parameters_ast: public java_ast_node
     };
 
     const list_node<type_parameter_ast *> *type_parameter_sequence;
-
-  };
-
-struct type_specification_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_type_specification
-    };
-
-    class_type_specification_ast *class_type_spec;
-    builtin_type_specification_ast *builtin_type_spec;
-
-  };
-
-struct type_specification_noarray_ast: public java_ast_node
-  {
-    enum
-    {
-      KIND = Kind_type_specification_noarray
-    };
-
-    class_or_interface_type_ast *class_or_interface_type;
-    builtin_type_ast *builtin_type;
 
   };
 
@@ -1843,7 +1843,7 @@ struct unary_expression_ast: public java_ast_node
       type_decremented_expression,
       type_unary_minus_expression,
       type_unary_plus_expression,
-      type_unary_expression_not_plusminus
+      type_unary_expression_not_plusminus,
     };
     unary_expression_enum rule_type;
 
@@ -1866,6 +1866,22 @@ struct unary_expression_not_plusminus_ast: public java_ast_node
     cast_expression_ast *cast_expression;
     primary_expression_ast *primary_expression;
     const list_node<postfix_operator_ast *> *postfix_operator_sequence;
+
+    // user defined declarations:
+  public:
+
+    enum unary_expression_not_plusminus_enum {
+      type_bitwise_not_expression,
+      type_logical_not_expression,
+      type_cast_expression,
+      type_primary_expression,
+    };
+    unary_expression_not_plusminus_enum rule_type;
+
+  protected:
+  private:
+
+  public:
 
   };
 
@@ -1959,14 +1975,14 @@ struct wildcard_type_bounds_ast: public java_ast_node
       KIND = Kind_wildcard_type_bounds
     };
 
-    class_type_specification_ast *type;
+    class_type_ast *type;
 
     // user defined declarations:
   public:
 
     enum extends_or_super_enum {
       extends,
-      super
+      super,
     };
     extends_or_super_enum extends_or_super;
 
@@ -2163,7 +2179,7 @@ class java
     enum problem_type {
       error,
       warning,
-      info
+      info,
     };
     void report_problem( java::problem_type type, const char* message );
     void report_problem( java::problem_type type, std::string message );
@@ -2179,11 +2195,11 @@ class java
     // to close type arguments rules, in addition to GREATER_THAN (">").
     int ltCounter;
 
-    // ellipsisOccurred is used as a means of communication between
+    // ellipsis_occurred is used as a means of communication between
     // parameter_declaration_list and parameter_declaration_ellipsis to determine
     // if an ellipsis was already in the list (then, no more parameters
     // may follow).
-    bool ellipsisOccurred;
+    bool ellipsis_occurred;
 
     // Lookahead hacks
     bool lookahead_is_package_declaration();
@@ -2223,17 +2239,15 @@ class java
     bool parse_block_statement(block_statement_ast **yynode);
     bool parse_break_statement(break_statement_ast **yynode);
     bool parse_builtin_type(builtin_type_ast **yynode);
-    bool parse_builtin_type_array_specification(builtin_type_array_specification_ast **yynode);
-    bool parse_builtin_type_specification(builtin_type_specification_ast **yynode);
     bool parse_cast_expression(cast_expression_ast **yynode);
     bool parse_catch_clause(catch_clause_ast **yynode);
     bool parse_class_body(class_body_ast **yynode);
     bool parse_class_declaration(class_declaration_ast **yynode);
     bool parse_class_extends_clause(class_extends_clause_ast **yynode);
     bool parse_class_field(class_field_ast **yynode);
-    bool parse_class_or_interface_type(class_or_interface_type_ast **yynode);
-    bool parse_class_or_interface_type_part(class_or_interface_type_part_ast **yynode);
-    bool parse_class_type_specification(class_type_specification_ast **yynode);
+    bool parse_class_or_interface_type_name(class_or_interface_type_name_ast **yynode);
+    bool parse_class_or_interface_type_name_part(class_or_interface_type_name_part_ast **yynode);
+    bool parse_class_type(class_type_ast **yynode);
     bool parse_compilation_unit(compilation_unit_ast **yynode);
     bool parse_conditional_expression(conditional_expression_ast **yynode);
     bool parse_continue_statement(continue_statement_ast **yynode);
@@ -2262,11 +2276,14 @@ class java
     bool parse_literal(literal_ast **yynode);
     bool parse_logical_and_expression(logical_and_expression_ast **yynode);
     bool parse_logical_or_expression(logical_or_expression_ast **yynode);
+    bool parse_mandatory_array_builtin_type(mandatory_array_builtin_type_ast **yynode);
     bool parse_mandatory_declarator_brackets(mandatory_declarator_brackets_ast **yynode);
     bool parse_multiplicative_expression(multiplicative_expression_ast **yynode);
     bool parse_multiplicative_expression_rest(multiplicative_expression_rest_ast **yynode);
     bool parse_new_expression(new_expression_ast **yynode);
+    bool parse_non_array_type(non_array_type_ast **yynode);
     bool parse_non_wildcard_type_arguments(non_wildcard_type_arguments_ast **yynode);
+    bool parse_optional_array_builtin_type(optional_array_builtin_type_ast **yynode);
     bool parse_optional_declarator_brackets(optional_declarator_brackets_ast **yynode);
     bool parse_optional_modifiers(optional_modifiers_ast **yynode);
     bool parse_optional_parameter_modifiers(optional_parameter_modifiers_ast **yynode);
@@ -2295,15 +2312,14 @@ class java
     bool parse_throw_statement(throw_statement_ast **yynode);
     bool parse_throws_clause(throws_clause_ast **yynode);
     bool parse_try_statement(try_statement_ast **yynode);
+    bool parse_type(type_ast **yynode);
     bool parse_type_argument(type_argument_ast **yynode);
-    bool parse_type_argument_specification(type_argument_specification_ast **yynode);
+    bool parse_type_argument_type(type_argument_type_ast **yynode);
     bool parse_type_arguments(type_arguments_ast **yynode);
     bool parse_type_arguments_or_parameters_end(type_arguments_or_parameters_end_ast **yynode);
     bool parse_type_declaration(type_declaration_ast **yynode);
     bool parse_type_parameter(type_parameter_ast **yynode);
     bool parse_type_parameters(type_parameters_ast **yynode);
-    bool parse_type_specification(type_specification_ast **yynode);
-    bool parse_type_specification_noarray(type_specification_noarray_ast **yynode);
     bool parse_unary_expression(unary_expression_ast **yynode);
     bool parse_unary_expression_not_plusminus(unary_expression_not_plusminus_ast **yynode);
     bool parse_variable_array_initializer(variable_array_initializer_ast **yynode);
@@ -2370,10 +2386,6 @@ class java_visitor
     {}
     virtual void visit_builtin_type(builtin_type_ast *)
     {}
-    virtual void visit_builtin_type_array_specification(builtin_type_array_specification_ast *)
-    {}
-    virtual void visit_builtin_type_specification(builtin_type_specification_ast *)
-    {}
     virtual void visit_cast_expression(cast_expression_ast *)
     {}
     virtual void visit_catch_clause(catch_clause_ast *)
@@ -2386,11 +2398,11 @@ class java_visitor
     {}
     virtual void visit_class_field(class_field_ast *)
     {}
-    virtual void visit_class_or_interface_type(class_or_interface_type_ast *)
+    virtual void visit_class_or_interface_type_name(class_or_interface_type_name_ast *)
     {}
-    virtual void visit_class_or_interface_type_part(class_or_interface_type_part_ast *)
+    virtual void visit_class_or_interface_type_name_part(class_or_interface_type_name_part_ast *)
     {}
-    virtual void visit_class_type_specification(class_type_specification_ast *)
+    virtual void visit_class_type(class_type_ast *)
     {}
     virtual void visit_compilation_unit(compilation_unit_ast *)
     {}
@@ -2448,6 +2460,8 @@ class java_visitor
     {}
     virtual void visit_logical_or_expression(logical_or_expression_ast *)
     {}
+    virtual void visit_mandatory_array_builtin_type(mandatory_array_builtin_type_ast *)
+    {}
     virtual void visit_mandatory_declarator_brackets(mandatory_declarator_brackets_ast *)
     {}
     virtual void visit_multiplicative_expression(multiplicative_expression_ast *)
@@ -2456,7 +2470,11 @@ class java_visitor
     {}
     virtual void visit_new_expression(new_expression_ast *)
     {}
+    virtual void visit_non_array_type(non_array_type_ast *)
+    {}
     virtual void visit_non_wildcard_type_arguments(non_wildcard_type_arguments_ast *)
+    {}
+    virtual void visit_optional_array_builtin_type(optional_array_builtin_type_ast *)
     {}
     virtual void visit_optional_declarator_brackets(optional_declarator_brackets_ast *)
     {}
@@ -2514,9 +2532,11 @@ class java_visitor
                              {}
                              virtual void visit_try_statement(try_statement_ast *)
                              {}
+                             virtual void visit_type(type_ast *)
+                             {}
                              virtual void visit_type_argument(type_argument_ast *)
                              {}
-                             virtual void visit_type_argument_specification(type_argument_specification_ast *)
+                             virtual void visit_type_argument_type(type_argument_type_ast *)
                              {}
                              virtual void visit_type_arguments(type_arguments_ast *)
                              {}
@@ -2527,10 +2547,6 @@ class java_visitor
                              virtual void visit_type_parameter(type_parameter_ast *)
                              {}
                              virtual void visit_type_parameters(type_parameters_ast *)
-                             {}
-                             virtual void visit_type_specification(type_specification_ast *)
-                             {}
-                             virtual void visit_type_specification_noarray(type_specification_noarray_ast *)
                              {}
                              virtual void visit_unary_expression(unary_expression_ast *)
                              {}
@@ -2658,8 +2674,8 @@ class java_default_visitor: public java_visitor
       visit_node(node->enum_declaration);
       visit_node(node->interface_declaration);
       visit_node(node->annotation_type_declaration);
-      visit_node(node->type);
-      visit_node(node->identifier);
+      visit_node(node->member_type);
+      visit_node(node->method_name);
       visit_node(node->annotation_element_value);
       if (node->variable_declarator_sequence)
         {
@@ -2785,23 +2801,11 @@ class java_default_visitor: public java_visitor
     virtual void visit_builtin_type(builtin_type_ast *node)
     {}
 
-    virtual void visit_builtin_type_array_specification(builtin_type_array_specification_ast *node)
-    {
-      visit_node(node->type);
-      visit_node(node->declarator_brackets);
-    }
-
-    virtual void visit_builtin_type_specification(builtin_type_specification_ast *node)
-    {
-      visit_node(node->type);
-      visit_node(node->declarator_brackets);
-    }
-
     virtual void visit_cast_expression(cast_expression_ast *node)
     {
-      visit_node(node->builtin_type_specification);
+      visit_node(node->builtin_type);
       visit_node(node->builtin_casted_expression);
-      visit_node(node->class_type_specification);
+      visit_node(node->class_type);
       visit_node(node->class_casted_expression);
     }
 
@@ -2851,7 +2855,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->constructor_parameters);
       visit_node(node->constructor_throws_clause);
       visit_node(node->constructor_body);
-      visit_node(node->type);
+      visit_node(node->member_type);
       visit_node(node->method_name);
       visit_node(node->method_parameters);
       visit_node(node->method_declarator_brackets);
@@ -2871,11 +2875,11 @@ class java_default_visitor: public java_visitor
       visit_node(node->static_initializer_block);
     }
 
-    virtual void visit_class_or_interface_type(class_or_interface_type_ast *node)
+    virtual void visit_class_or_interface_type_name(class_or_interface_type_name_ast *node)
     {
       if (node->part_sequence)
         {
-          const list_node<class_or_interface_type_part_ast*> *__it = node->part_sequence->to_front(), *__end = __it;
+          const list_node<class_or_interface_type_name_part_ast*> *__it = node->part_sequence->to_front(), *__end = __it;
           do
             {
               visit_node(__it->element);
@@ -2885,13 +2889,13 @@ class java_default_visitor: public java_visitor
         }
     }
 
-    virtual void visit_class_or_interface_type_part(class_or_interface_type_part_ast *node)
+    virtual void visit_class_or_interface_type_name_part(class_or_interface_type_name_part_ast *node)
     {
       visit_node(node->identifier);
       visit_node(node->type_arguments);
     }
 
-    virtual void visit_class_type_specification(class_type_specification_ast *node)
+    virtual void visit_class_type(class_type_ast *node)
     {
       visit_node(node->type);
       visit_node(node->declarator_brackets);
@@ -3022,7 +3026,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->interface_declaration);
       visit_node(node->annotation_type_declaration);
       visit_node(node->type_parameters);
-      visit_node(node->type);
+      visit_node(node->member_type);
       visit_node(node->method_name);
       visit_node(node->method_parameters);
       visit_node(node->method_declarator_brackets);
@@ -3127,7 +3131,7 @@ class java_default_visitor: public java_visitor
     {
       if (node->type_sequence)
         {
-          const list_node<class_or_interface_type_ast*> *__it = node->type_sequence->to_front(), *__end = __it;
+          const list_node<class_or_interface_type_name_ast*> *__it = node->type_sequence->to_front(), *__end = __it;
           do
             {
               visit_node(__it->element);
@@ -3168,7 +3172,7 @@ class java_default_visitor: public java_visitor
     {
       if (node->type_sequence)
         {
-          const list_node<class_or_interface_type_ast*> *__it = node->type_sequence->to_front(), *__end = __it;
+          const list_node<class_or_interface_type_name_ast*> *__it = node->type_sequence->to_front(), *__end = __it;
           do
             {
               visit_node(__it->element);
@@ -3186,7 +3190,7 @@ class java_default_visitor: public java_visitor
       visit_node(node->interface_declaration);
       visit_node(node->annotation_type_declaration);
       visit_node(node->type_parameters);
-      visit_node(node->type);
+      visit_node(node->member_type);
       visit_node(node->method_name);
       visit_node(node->method_parameters);
       visit_node(node->method_declarator_brackets);
@@ -3240,8 +3244,14 @@ class java_default_visitor: public java_visitor
         }
     }
 
+    virtual void visit_mandatory_array_builtin_type(mandatory_array_builtin_type_ast *node)
+    {
+      visit_node(node->type);
+      visit_node(node->declarator_brackets);
+    }
+
     virtual void visit_mandatory_declarator_brackets(mandatory_declarator_brackets_ast *node)
-  {}
+    {}
 
     virtual void visit_multiplicative_expression(multiplicative_expression_ast *node)
     {
@@ -3272,11 +3282,17 @@ class java_default_visitor: public java_visitor
       visit_node(node->array_creator_rest);
     }
 
+    virtual void visit_non_array_type(non_array_type_ast *node)
+    {
+      visit_node(node->class_or_interface_type);
+      visit_node(node->builtin_type);
+    }
+
     virtual void visit_non_wildcard_type_arguments(non_wildcard_type_arguments_ast *node)
     {
-      if (node->type_argument_specification_sequence)
+      if (node->type_argument_type_sequence)
         {
-          const list_node<type_argument_specification_ast*> *__it = node->type_argument_specification_sequence->to_front(), *__end = __it;
+          const list_node<type_argument_type_ast*> *__it = node->type_argument_type_sequence->to_front(), *__end = __it;
           do
             {
               visit_node(__it->element);
@@ -3286,8 +3302,14 @@ class java_default_visitor: public java_visitor
         }
     }
 
+    virtual void visit_optional_array_builtin_type(optional_array_builtin_type_ast *node)
+    {
+      visit_node(node->type);
+      visit_node(node->declarator_brackets);
+    }
+
     virtual void visit_optional_declarator_brackets(optional_declarator_brackets_ast *node)
-  {}
+    {}
 
     virtual void visit_optional_modifiers(optional_modifiers_ast *node)
     {
@@ -3593,16 +3615,22 @@ class java_default_visitor: public java_visitor
                                visit_node(node->finally_body);
                              }
 
+                             virtual void visit_type(type_ast *node)
+                             {
+                               visit_node(node->class_type);
+                               visit_node(node->builtin_type);
+                             }
+
                              virtual void visit_type_argument(type_argument_ast *node)
                              {
-                               visit_node(node->type_argument_specification);
+                               visit_node(node->type_argument_type);
                                visit_node(node->wildcard_type);
                              }
 
-                             virtual void visit_type_argument_specification(type_argument_specification_ast *node)
+                             virtual void visit_type_argument_type(type_argument_type_ast *node)
                              {
                                visit_node(node->class_type);
-                               visit_node(node->builtin_type_array);
+                               visit_node(node->mandatory_array_builtin_type);
                              }
 
                              virtual void visit_type_arguments(type_arguments_ast *node)
@@ -3636,7 +3664,7 @@ class java_default_visitor: public java_visitor
                                visit_node(node->identifier);
                                if (node->extends_type_sequence)
                                  {
-                                   const list_node<class_or_interface_type_ast*> *__it = node->extends_type_sequence->to_front(), *__end = __it;
+                                   const list_node<class_or_interface_type_name_ast*> *__it = node->extends_type_sequence->to_front(), *__end = __it;
                                    do
                                      {
                                        visit_node(__it->element);
@@ -3658,18 +3686,6 @@ class java_default_visitor: public java_visitor
                                      }
                                    while (__it != __end);
                                  }
-                             }
-
-                             virtual void visit_type_specification(type_specification_ast *node)
-                             {
-                               visit_node(node->class_type_spec);
-                               visit_node(node->builtin_type_spec);
-                             }
-
-                             virtual void visit_type_specification_noarray(type_specification_noarray_ast *node)
-                             {
-                               visit_node(node->class_or_interface_type);
-                               visit_node(node->builtin_type);
                              }
 
                              virtual void visit_unary_expression(unary_expression_ast *node)

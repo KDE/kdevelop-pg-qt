@@ -26,84 +26,74 @@
 
 
 
--- Known problematic conflicts (5 conflicts), requiring automatic LL(k):
---  - The first/follow AT conflict in compilation_unit
+-- 11 first/follow conflicts:
+--  - The AT conflict in compilation_unit
 --    (namely: package_declaration vs. type_declaration).
---    Solved by lookahead_is_package_declaration().
+--    Needs LL(k), solved by lookahead_is_package_declaration().
 --    (2 conflicts, which is actually only one)
---  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE, etc. conflict in
---    block_statement which is essentially an expression statements vs.
---    variable declarations conflict (ignore the modifier conflicts,
---    they are there by design and are completely harmless).
---    The real conflict is just the IDENTIFIER one.
---    Solved by lookahead_is_parameter_declaration().
---    The SYNCHRONIZED conflict in this error message is also
---    independent and has been resolved too.
---    (1 conflict)
---  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE etc. conflict in for_control.
---    This is the same variable/parameter declaration vs. expression issue
---    that block_statement also suffers from.
---    Also solved by lookahead_is_parameter_declaration().
---    (1 conflict)
---  - The first/first LPAREN conflict in unary_expression_not_plusminus
---    which is cast_expression vs. primary_expression.
---    Solved by lookahead_is_cast_expression().
---    (1 conflict)
-
--- Known harmless or resolved conflicts (21 conflicts):
---  - The first/follow COMMA conflict in enum_body: greedy is ok
+--  - The COMMA conflict in annotation_element_array_initializer.
+--    (manually resolved, 1 conflict)
+--  - The COMMA conflict in enum_body: greedy is ok.
+--    (done right by default, 1 conflict)
+--  - The DOT conflict in class_or_interface_type_name:
+--    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
+--    at all, only kdevelop-pg thinks it does. Code segments...
+--    (done right by default, 1 conflict)
+--  - The DOT conflict in qualified_identifier_safe.
+--    (manually resolved, 1 conflict)
+--  - The LBRACKET conflict in optional_declarator_brackets:
+--    No idea where it stems from, but I think it should be ok.
 --    (done right by default, 1 conflict)
 --  - The first/follow COMMA conflict in type_arguments:
 --    the approach for catching ">" signs works this way, and the conflict
 --    is resolved by the trailing condition at the end of the rule.
 --    (manually resolved, 1 conflict)
---  - The first/follow DOT conflict in class_or_interface_type:
---    I'm not completely sure, but I consider it harmless for now, and I think
---    the conflict may be caused by the pg-disturbing type_arguments as well.
---    (done right by default, 1 conflict)
---  - The first/follow DOT conflict in qualified_identifier_safe
+--  - The COMMA conflict in variable_array_initializer.
 --    (manually resolved, 1 conflict)
---  - The first/follow LBRACKET conflict in optional_declarator_brackets:
---    No idea, but it should be ok. See the class_or_interface_type
---    DOT conflict further above.
---    (done right by default, 1 conflict)
---  - The first/follow COMMA conflict in annotation_element_array_initializer
+--  - The LBRACKET conflict in array_creator_rest.
 --    (manually resolved, 1 conflict)
---  - The first/follow COMMA conflict in variable_array_initializer
+--  - The AT conflict in optional_modifiers.
 --    (manually resolved, 1 conflict)
---  - The first/follow LBRACKET conflict in array_creator_rest
+
+-- 15 first/first conflicts:
+--  - The IDENTIFIER conflict in annotation_arguments
 --    (manually resolved, 1 conflict)
---  - The first/follow AT conflict in optional_modifiers
---    (manually resolved, 1 conflict)
---  - The first/first IDENTIFIER conflicts in *_field,
+--  - The IDENTIFIER conflicts in *_field,
 --    between method_name and variable_name
 --    (manually resolved, 4 conflicts)
---  - The first/first IDENTIFIER conflict in class_field
+--  - The IDENTIFIER conflict in class_field
 --    (manually resolved, 1 conflict)
---  - The first/first STATIC conflict in class_field
+--  - The STATIC conflict in class_field
 --    (manually resolved, 1 conflict)
---  - The first/first IDENTIFIER conflict in annotation_arguments
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE, etc. conflict in block_statement,
+--    which is essentially an variable declarations vs. expression statements
+--    conflict. Needs LL(k), solved by lookahead_is_parameter_declaration().
+--    (1 conflict)
+--  - The FINAL, SYNCHRONIZED, AT conflict in block_statement, which is a
+--    side product of the lookahead solution and solved by it as well.
+--    Harmless because lookahead chooses the right one.
 --    (manually resolved, 1 conflict)
---  - The first/first FINAL, SYNCHRONIZED, AT conflict in block_statement,
---    which is a side product of the lookahead solution and solved by it
---    as well. Harmless because lookahead chooses the right one.
+--  - The IDENTIFIER conflict (labels) in embedded_statement
 --    (manually resolved, 1 conflict)
---  - The first/first IDENTIFIER conflict (labels) in embedded_statement
---    (manually resolved, 1 conflict)
---  - The first/first IDENTIFIER conflicts in primary_selector and
---    super_suffix. Could be written without conflict, but done on purpose
---    to tell methods (with possible type arguments) and variables
---    (without these) apart.
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. conflict in for_control.
+--    This is the same variable declaration vs. expression issue
+--    that block_statement also suffers from.
+--    Needs LL(k), also solved by lookahead_is_parameter_declaration().
+--    (1 conflict)
+--  - The LPAREN conflict in unary_expression_not_plusminus
+--    which is cast_expression vs. primary_expression.
+--    Needs LL(k), solved by lookahead_is_cast_expression().
+--    (1 conflict)
+--  - The IDENTIFIER conflicts in primary_selector and super_suffix.
+--    Could be written without conflict, but done on purpose to tell methods
+--    (with possible type arguments) and variables (without those) apart.
 --    (manually resolved, 2 identical conflicts)
---  - The first/follow LBRACKET conflict in array_creator_rest.
+--  - The LBRACKET conflict in array_creator_rest.
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 26
+-- Total amount of conflicts: 246
 
-
--- Global TODO:
---  - Rename type_specification to type, in order to resemble the C# grammar.
 
 
 --
@@ -145,7 +135,7 @@
   enum problem_type {
     error,
     warning,
-    info
+    info,
   };
   void report_problem( java::problem_type type, const char* message );
   void report_problem( java::problem_type type, std::string message );
@@ -161,11 +151,11 @@
   // to close type arguments rules, in addition to GREATER_THAN (">").
   int ltCounter;
 
-  // ellipsisOccurred is used as a means of communication between
+  // ellipsis_occurred is used as a means of communication between
   // parameter_declaration_list and parameter_declaration_ellipsis to determine
   // if an ellipsis was already in the list (then, no more parameters
   // may follow).
-  bool ellipsisOccurred;
+  bool ellipsis_occurred;
 
   // Lookahead hacks
   bool lookahead_is_package_declaration();
@@ -194,7 +184,7 @@
 [:
   enum extends_or_super_enum {
     extends,
-    super
+    super,
   };
   extends_or_super_enum extends_or_super;
 :]
@@ -210,7 +200,7 @@
     type_int,
     type_float,
     type_long,
-    type_double
+    type_double,
   };
   builtin_type_enum type;
 :]
@@ -230,7 +220,7 @@
 [:
   enum branch_type_enum {
     case_branch,
-    default_branch
+    default_branch,
   };
   branch_type_enum branch_type;
 :]
@@ -250,7 +240,7 @@
     op_remainder_assign,
     op_lshift_assign,
     op_signed_rshift_assign,
-    op_unsigned_rshift_assign
+    op_unsigned_rshift_assign,
   };
   assignment_operator_enum assignment_operator;
 :]
@@ -259,7 +249,7 @@
 [:
   enum equality_operator_enum {
     op_equal,
-    op_not_equal
+    op_not_equal,
   };
   equality_operator_enum equality_operator;
 :]
@@ -270,7 +260,7 @@
     op_less_than,
     op_greater_than,
     op_less_equal,
-    op_greater_equal
+    op_greater_equal,
   };
   relational_operator_enum relational_operator;
 :]
@@ -280,7 +270,7 @@
   enum shift_operator_enum {
     op_lshift,
     op_signed_rshift,
-    op_unsigned_rshift
+    op_unsigned_rshift,
   };
   shift_operator_enum shift_operator;
 :]
@@ -289,7 +279,7 @@
 [:
   enum additive_operator_enum {
     op_plus,
-    op_minus
+    op_minus,
   };
   additive_operator_enum additive_operator;
 :]
@@ -299,7 +289,7 @@
   enum multiplicative_operator_enum {
     op_star,
     op_slash,
-    op_remainder
+    op_remainder,
   };
   multiplicative_operator_enum multiplicative_operator;
 :]
@@ -311,16 +301,27 @@
     type_decremented_expression,
     type_unary_minus_expression,
     type_unary_plus_expression,
-    type_unary_expression_not_plusminus
+    type_unary_expression_not_plusminus,
   };
   unary_expression_enum rule_type;
+:]
+
+%member (unary_expression_not_plusminus: public declaration)
+[:
+  enum unary_expression_not_plusminus_enum {
+    type_bitwise_not_expression,
+    type_logical_not_expression,
+    type_cast_expression,
+    type_primary_expression,
+  };
+  unary_expression_not_plusminus_enum rule_type;
 :]
 
 %member (postfix_operator: public declaration)
 [:
   enum postfix_operator_enum {
     op_increment,
-    op_decrement
+    op_decrement,
   };
   postfix_operator_enum postfix_operator;
 :]
@@ -371,7 +372,7 @@
     mod_native       = 128,
     mod_synchronized = 256,
     mod_volatile     = 512,
-    mod_strictfp     = 1024
+    mod_strictfp     = 1024,
   };
   int modifiers;
 :]
@@ -385,7 +386,7 @@
     type_integer,
     type_floating_point,
     type_character,
-    type_string
+    type_string,
   };
   literal_type_enum literal_type;
 :]
@@ -620,7 +621,7 @@
 -- An enum constant may have optional parameters and may have a class body
 
    ( #annotation=annotation )* identifier=identifier
-   ( LPAREN arguments=argument_list RPAREN | 0 )
+   ( LPAREN arguments=optional_argument_list RPAREN | 0 )
    ( body=enum_constant_body | 0 )
 -> enum_constant ;;
 
@@ -631,13 +632,13 @@
 
 -- Short CLAUSES used in various declarations
 
-   EXTENDS type=class_or_interface_type
+   EXTENDS type=class_or_interface_type_name
 -> class_extends_clause ;;
 
-   EXTENDS #type=class_or_interface_type @ COMMA
+   EXTENDS #type=class_or_interface_type_name @ COMMA
 -> interface_extends_clause ;;
 
-   IMPLEMENTS #type=class_or_interface_type @ COMMA
+   IMPLEMENTS #type=class_or_interface_type_name @ COMMA
 -> implements_clause ;;
 
    THROWS #identifier=qualified_identifier @ COMMA
@@ -660,11 +661,11 @@
     | interface_declaration=interface_declaration
     | annotation_type_declaration=annotation_type_declaration
     |
-      type=type_specification
+      member_type=type
       (                      -- annotation method without arguments:
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
-         identifier=identifier
+         method_name=identifier
          LPAREN RPAREN
          -- declarator_brackets=optional_declarator_brackets -- ANTLR grammar's bug:
          -- It's not in the Java Spec, and obviously has been copied
@@ -700,9 +701,9 @@
        | 0
       )
       (
-         -- constructor declaration (without prepended type_specification)
+         -- constructor declaration (without prepended type specification)
          ?[: LA(2).kind == Token_LPAREN :]
-         -- resolves the identifier conflict with type_specification
+         -- resolves the identifier conflict with type
          constructor_name=identifier
          constructor_parameters=parameter_declaration_list
          (constructor_throws_clause=throws_clause | 0)
@@ -711,7 +712,7 @@
          -- these are just normal statements for the grammar
        |
          -- method or variable declaration
-         type=type_specification
+         member_type=type
          (
             ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier
                           -- conflict between method_name and variable_name
@@ -762,7 +763,7 @@
          type_parameters=type_parameters [: has_type_parameters = true; :]
        | 0
       )
-      type=type_specification
+      member_type=type
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
@@ -804,7 +805,7 @@
          type_parameters=type_parameters [: has_type_parameters = true; :]
        | 0
       )
-      type=type_specification
+      member_type=type
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
@@ -839,14 +840,14 @@
 -- zero or more parameters, optionally ending with a variable-length parameter.
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
 -- TODO: Maybe some fine day rule parameters will be implemented.
---       In that case, please make ellipsisOccurred totally local here.
+--       In that case, please make ellipsis_occurred totally local here.
 
-   LPAREN [: ellipsisOccurred = false; :]
+   LPAREN [: ellipsis_occurred = false; :]
    (
       #parameter_declaration=parameter_declaration_ellipsis
-      @ ( 0 [: if( ellipsisOccurred == true ) { break; } :]
+      @ ( 0 [: if( ellipsis_occurred == true ) { break; } :]
             -- Don't proceed after the ellipsis. If there's a cleaner way
-            -- to exit the loop when ellipsisOccurred == true,
+            -- to exit the loop when ellipsis_occurred == true,
             -- please use that instead of this construct (see below).
           COMMA
         )
@@ -858,10 +859,10 @@
 
 -- How it _should_ look:
 --
---    LPAREN [: ellipsisOccurred = false; :]
+--    LPAREN [: ellipsis_occurred = false; :]
 --    (
 --       #parameter_declaration=parameter_declaration_ellipsis
---       @ ( ?[: ellipsisOccurred == false :] COMMA )
+--       @ ( ?[: ellipsis_occurred == false :] COMMA )
 --           -- kdev-pg dismisses this condition!
 --     |
 --       0
@@ -870,8 +871,8 @@
 -- -> parameter_declaration_list ;;
 
    parameter_modifiers=optional_parameter_modifiers
-   type=type_specification
-   (  ELLIPSIS [: (*yynode)->has_ellipsis = true; ellipsisOccurred = true; :]
+   type=type
+   (  ELLIPSIS [: (*yynode)->has_ellipsis = true; ellipsis_occurred = true; :]
     | 0        [: (*yynode)->has_ellipsis = false; :]
    )
    variable_name=identifier
@@ -883,7 +884,7 @@
 -- and in for_control.
 
    parameter_modifiers=optional_parameter_modifiers
-   type=type_specification
+   type=type
    variable_name=identifier
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration ;;
@@ -893,6 +894,14 @@
     | #mod_annotation=annotation
    )*
 -> optional_parameter_modifiers ;;
+
+
+
+-- An OPTIONAL ARGUMENT LIST is used when calling methods
+-- (not for declaring them, that's what parameter declaration lists are for).
+
+   (#expression=expression @ COMMA | 0)
+-> optional_argument_list ;;
 
 
 
@@ -920,90 +929,6 @@
 
 
 
--- All kinds of rules for types here.
-
--- A TYPE SPECIFICATION is a type name with possible brackets afterwards
--- (which would make it an array type). Called "Type" in the Java spec.
-
-   class_type_spec=class_type_specification
- | builtin_type_spec=builtin_type_specification
--> type_specification ;;
-
-   type=class_or_interface_type
-   declarator_brackets=optional_declarator_brackets
--> class_type_specification ;;
-
-   type=builtin_type declarator_brackets=optional_declarator_brackets
--> builtin_type_specification ;;
-
-   type=builtin_type declarator_brackets=mandatory_declarator_brackets
--> builtin_type_array_specification ;;
-
-
--- A SIMPLE TYPE SPECIFICATION is just a type name,
--- with no possibility of brackets afterwards.
-
-   class_or_interface_type=class_or_interface_type
- | builtin_type=builtin_type
--> type_specification_noarray ;;
-
--- The primitive types. The Java specification doesn't include void here,
--- but the ANTLR grammar works that way, and so does this one.
-
-   VOID    [: (*yynode)->type = builtin_type_ast::type_void;    :]
- | BOOLEAN [: (*yynode)->type = builtin_type_ast::type_boolean; :]
- | BYTE    [: (*yynode)->type = builtin_type_ast::type_byte;    :]
- | CHAR    [: (*yynode)->type = builtin_type_ast::type_char;    :]
- | SHORT   [: (*yynode)->type = builtin_type_ast::type_short;   :]
- | INT     [: (*yynode)->type = builtin_type_ast::type_int;     :]
- | FLOAT   [: (*yynode)->type = builtin_type_ast::type_float;   :]
- | LONG    [: (*yynode)->type = builtin_type_ast::type_long;    :]
- | DOUBLE  [: (*yynode)->type = builtin_type_ast::type_double;  :]
--> builtin_type ;;
-
-   #part=class_or_interface_type_part @ DOT
--> class_or_interface_type ;;
-
-   identifier=identifier
-   (  ?[: compatibility_mode() >= java15_compatibility :]
-      type_arguments=type_arguments
-    | 0
-   )
--> class_or_interface_type_part ;;
-
-
-
--- QUALIFIED identifiers are either qualified ones or raw identifiers.
-
-   #name=identifier @ DOT
--> qualified_identifier ;;
-
-   #name=identifier
-   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
-     DOT #name=identifier
-   )*
--> qualified_identifier_safe ;; -- lookahead version of the above
-
-   #name=identifier [: (*yynode)->has_star = false; :]
-   ( DOT (  #name=identifier
-          | STAR    [: (*yynode)->has_star = true; break; :]
-                       -- break -> no more identifiers after the star
-         )
-   )*
--> qualified_identifier_with_optional_star ;;
-
--- Declarator brackets are part of a type specification, like String[][]
--- They are always empty, only have to be counted.
-
-   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )*
--> optional_declarator_brackets ;;
-
-   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
--> mandatory_declarator_brackets ;;
-
-
-
-
 
 -- Type parameters and type arguments, the two rules responsible for the
 -- greater-than special casing. (This is the generic aspect in Java >= 1.5.)
@@ -1019,15 +944,15 @@
    )
    -- make sure we have gobbled up enough '>' characters
    -- if we are at the "top level" of nested type_parameters productions
-   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
-      { report_problem(error, "The amount of closing ``>'' characters is incorrect");
+   [: if (currentLtLevel == 0 && ltCounter != currentLtLevel) {
+        report_problem(error, "The amount of closing ``>'' characters is incorrect");
         return false;
       }
    :]
 -> type_parameters ;;
 
    identifier=identifier
-   (EXTENDS (#extends_type=class_or_interface_type @ BIT_AND) | 0)
+   (EXTENDS (#extends_type=class_or_interface_type_name @ BIT_AND) | 0)
 -> type_parameter ;;
 
 
@@ -1036,50 +961,52 @@
 
    LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
    #type_argument=type_argument
-   @ ( 0 [: if( ltCounter != currentLtLevel + 1 ) { break; } :]
-       COMMA
-     ) -- only proceed when we are at the right nesting level
+   ( -- only proceed when we are at the right nesting level:
+     0 [: if( ltCounter != currentLtLevel + 1 ) { break; } :]
+     COMMA #type_argument=type_argument
+   )*
    (
       type_arguments_or_parameters_end
     | 0  -- they can also be changed by type_parameter or type_argument
    )
    -- make sure we have gobbled up enough '>' characters
    -- if we are at the "top level" of nested type_arguments productions
-   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
-      { report_problem(error, "The amount of closing ``>'' characters is incorrect");
+   [: if (currentLtLevel == 0 && ltCounter != currentLtLevel) {
+        report_problem(error, "The amount of closing ``>'' characters is incorrect");
         return false;
       }
    :]
 -> type_arguments ;;
 
    LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
-   #type_argument_specification=type_argument_specification
-   @ ( 0 [: if( ltCounter != currentLtLevel + 1 ) { break; } :]
-       COMMA
-     ) -- only proceed when we are at the right nesting level
+   #type_argument_type=type_argument_type
+   ( -- only proceed when we are at the right nesting level:
+     0 [: if( ltCounter != currentLtLevel + 1 ) { break; } :]
+     COMMA #type_argument_type=type_argument_type
+   )*
    (
       type_arguments_or_parameters_end
     | 0  -- they can also be changed by type_parameter or type_argument
    )
    -- make sure we have gobbled up enough '>' characters
    -- if we are at the "top level" of nested type_arguments productions
-   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel )
-      { report_problem(error, "The amount of closing ``>'' characters is incorrect");
+   [: if (currentLtLevel == 0 && ltCounter != currentLtLevel) {
+        report_problem(error, "The amount of closing ``>'' characters is incorrect");
         return false;
       }
    :]
 -> non_wildcard_type_arguments ;;
 
-   type_argument_specification=type_argument_specification
+   type_argument_type=type_argument_type
  | wildcard_type=wildcard_type
 -> type_argument ;;
 
 -- Any type specification except primitive types is allowed as type argument.
 -- Arrays of primitive types are allowed nonetheless.
 
-   class_type=class_type_specification
- | builtin_type_array=builtin_type_array_specification
--> type_argument_specification ;;
+   class_type=class_type
+ | mandatory_array_builtin_type=mandatory_array_builtin_type
+-> type_argument_type ;;
 
    QUESTION (bounds=wildcard_type_bounds | 0)
 -> wildcard_type ;;
@@ -1087,7 +1014,7 @@
    (  EXTENDS [: (*yynode)->extends_or_super = wildcard_type_bounds_ast::extends; :]
     | SUPER   [: (*yynode)->extends_or_super = wildcard_type_bounds_ast::super; :]
    )
-   type=class_type_specification
+   type=class_type
 -> wildcard_type_bounds ;;
 
 
@@ -1420,7 +1347,7 @@
 
    expression=shift_expression
    (  (#additional_expression=relational_expression_rest)+
-    | INSTANCEOF instanceof_type=type_specification
+    | INSTANCEOF instanceof_type=type
     | 0
    )
 -> relational_expression ;;
@@ -1465,6 +1392,10 @@
    expression=unary_expression
 -> multiplicative_expression_rest ;;
 
+
+-- The UNARY EXPRESSION and the its not-plusminus part are one rule in the
+-- specification, but split apart for better cast_expression lookahead results.
+
  (
    INCREMENT unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
@@ -1473,7 +1404,7 @@
  | MINUS unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
  | PLUS  unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression; :]
+     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;  :]
  | unary_expression_not_plusminus=unary_expression_not_plusminus
      [: (*yynode)->rule_type = unary_expression_ast::type_unary_expression_not_plusminus; :]
  )
@@ -1488,22 +1419,33 @@
 -- Until real LL(k) or backtracking is implemented in kdev-pg, this problem
 -- is solved with another lookahead hack function.
 
+ (
    TILDE bitwise_not_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_bitwise_not_expression; :]
  | BANG  logical_not_expression=unary_expression
- | ?[: lookahead_is_cast_expression() == true :]
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_logical_not_expression; :]
+ |
+   ?[: lookahead_is_cast_expression() == true :]
    cast_expression=cast_expression
- | primary_expression=primary_expression (#postfix_operator=postfix_operator)*
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_cast_expression;        :]
+ |
+   primary_expression=primary_expression (#postfix_operator=postfix_operator)*
+     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_primary_expression;     :]
+ )
 -> unary_expression_not_plusminus ;;
 
 
---    LPAREN type_specification RPAREN
+--    LPAREN
+--    (  optional_array_builtin_type RPAREN
+--     | class_type RPAREN unary_expression_not_plusminus
+--    )
 -- -> cast_expression_lookahead ;;  -- only use for lookaheads!
 
    LPAREN
-   (  builtin_type_specification=builtin_type_specification RPAREN
+   (  builtin_type=optional_array_builtin_type RPAREN
       builtin_casted_expression=unary_expression
     |
-      class_type_specification=class_type_specification RPAREN
+      class_type=class_type RPAREN
       class_casted_expression=unary_expression_not_plusminus
    )
 -> cast_expression ;;
@@ -1572,7 +1514,7 @@
        | 0
       )
       method_name=identifier
-      (LPAREN method_arguments=argument_list RPAREN | 0)
+      (LPAREN method_arguments=optional_argument_list RPAREN | 0)
    )
  )
 -> super_suffix ;;
@@ -1583,47 +1525,52 @@
 --               and expressions in general
 
  (
-   builtin_type=builtin_type_specification
+   builtin_type=optional_array_builtin_type
    DOT CLASS   -- things like int.class or int[].class
-   [: (*yynode)->rule_type = primary_atom_ast::type_builtin_type_dot_class;       :]
+     [: (*yynode)->rule_type = primary_atom_ast::type_builtin_type_dot_class;       :]
  |
    literal=literal
-   [: (*yynode)->rule_type = primary_atom_ast::type_literal;                      :]
+     [: (*yynode)->rule_type = primary_atom_ast::type_literal;                      :]
  |
    new_expression=new_expression
-   [: (*yynode)->rule_type = primary_atom_ast::type_new_expression;                     :]
+     [: (*yynode)->rule_type = primary_atom_ast::type_new_expression;                     :]
  |
    LPAREN parenthesis_expression=expression RPAREN
-   [: (*yynode)->rule_type = primary_atom_ast::type_parenthesis_expression;             :]
+     [: (*yynode)->rule_type = primary_atom_ast::type_parenthesis_expression;             :]
  |
-   THIS (LPAREN this_constructor_arguments=argument_list RPAREN | 0)
-   [: (*yynode)->rule_type = primary_atom_ast::type_this_call_no_type_arguments;        :]
+   THIS (LPAREN this_constructor_arguments=optional_argument_list RPAREN | 0)
+     [: (*yynode)->rule_type = primary_atom_ast::type_this_call_no_type_arguments;        :]
  |
    SUPER super_suffix=super_suffix
-   [: (*yynode)->rule_type = primary_atom_ast::type_super_call_no_type_arguments;       :]
+     [: (*yynode)->rule_type = primary_atom_ast::type_super_call_no_type_arguments;       :]
  |
    ?[: compatibility_mode() >= java15_compatibility :]
    -- generic method invocation with type arguments:
    type_arguments=non_wildcard_type_arguments
-   (  SUPER super_suffix=super_suffix
-      [: (*yynode)->rule_type = primary_atom_ast::type_super_call_with_type_arguments;  :]
-    | THIS LPAREN this_constructor_arguments=argument_list RPAREN
-      [: (*yynode)->rule_type = primary_atom_ast::type_this_call_with_type_arguments;   :]
-    | method_name_typed=identifier
-      LPAREN method_arguments=argument_list RPAREN
-      [: (*yynode)->rule_type = primary_atom_ast::type_method_call_with_type_arguments; :]
+   (
+      SUPER super_suffix=super_suffix
+        [: (*yynode)->rule_type = primary_atom_ast::type_super_call_with_type_arguments;  :]
+    |
+      THIS LPAREN this_constructor_arguments=optional_argument_list RPAREN
+        [: (*yynode)->rule_type = primary_atom_ast::type_this_call_with_type_arguments;   :]
+    |
+      method_name_typed=identifier
+      LPAREN method_arguments=optional_argument_list RPAREN
+        [: (*yynode)->rule_type = primary_atom_ast::type_method_call_with_type_arguments; :]
    )
  |
    -- type names (normal) - either pure, as method or like bla[][].class
    identifier=qualified_identifier_safe  -- without type arguments
-   (  LPAREN method_arguments=argument_list RPAREN
-      [: (*yynode)->rule_type = primary_atom_ast::type_method_call_no_type_arguments;   :]
-    | ?[: LA(2).kind == Token_RBRACKET :]
+   (
+      LPAREN method_arguments=optional_argument_list RPAREN
+        [: (*yynode)->rule_type = primary_atom_ast::type_method_call_no_type_arguments;   :]
+    |
+      ?[: LA(2).kind == Token_RBRACKET :]
       declarator_brackets=mandatory_declarator_brackets
       DOT array_dotclass=CLASS
-      [: (*yynode)->rule_type = primary_atom_ast::type_array_type_dot_class;            :]
-    | 0
-      [: (*yynode)->rule_type = primary_atom_ast::type_type_name;                       :]
+        [: (*yynode)->rule_type = primary_atom_ast::type_array_type_dot_class;            :]
+    |
+      0 [: (*yynode)->rule_type = primary_atom_ast::type_type_name;                       :]
    )
  )
 -> primary_atom ;;
@@ -1636,8 +1583,8 @@
       type_arguments=non_wildcard_type_arguments
     | 0
    )
-   type=type_specification_noarray
-   (  LPAREN class_constructor_arguments=argument_list RPAREN
+   type=non_array_type
+   (  LPAREN class_constructor_arguments=optional_argument_list RPAREN
       (class_body=class_body | 0)
     |
       array_creator_rest=array_creator_rest
@@ -1664,12 +1611,87 @@
 
 
 
--- An ARGUMENT LIST mostly occurs in method calls, always between an LPAREN
--- and an RPAREN, to specify the values for the called method/initializer/etc.
 
-   #expression=expression @ COMMA
- | 0
--> argument_list ;;
+
+-- All kinds of rules for types here.
+
+-- A TYPE is a type name with optionally appended brackets
+-- (which would make it an array type).
+
+   class_type=class_type
+ | builtin_type=optional_array_builtin_type
+-> type ;;
+
+   type=class_or_interface_type_name
+   declarator_brackets=optional_declarator_brackets
+-> class_type ;;
+
+   type=builtin_type declarator_brackets=optional_declarator_brackets
+-> optional_array_builtin_type ;;
+
+   type=builtin_type declarator_brackets=mandatory_declarator_brackets
+-> mandatory_array_builtin_type ;;
+
+
+-- A NON-ARRAY TYPE is just a type name, without appended brackets
+
+   class_or_interface_type=class_or_interface_type_name
+ | builtin_type=builtin_type
+-> non_array_type ;;
+
+-- The primitive types. The Java specification doesn't include void here,
+-- but the ANTLR grammar works that way, and so does this one.
+
+   VOID    [: (*yynode)->type = builtin_type_ast::type_void;    :]
+ | BOOLEAN [: (*yynode)->type = builtin_type_ast::type_boolean; :]
+ | BYTE    [: (*yynode)->type = builtin_type_ast::type_byte;    :]
+ | CHAR    [: (*yynode)->type = builtin_type_ast::type_char;    :]
+ | SHORT   [: (*yynode)->type = builtin_type_ast::type_short;   :]
+ | INT     [: (*yynode)->type = builtin_type_ast::type_int;     :]
+ | FLOAT   [: (*yynode)->type = builtin_type_ast::type_float;   :]
+ | LONG    [: (*yynode)->type = builtin_type_ast::type_long;    :]
+ | DOUBLE  [: (*yynode)->type = builtin_type_ast::type_double;  :]
+-> builtin_type ;;
+
+   #part=class_or_interface_type_name_part @ DOT
+-> class_or_interface_type_name ;;
+
+   identifier=identifier
+   (  ?[: compatibility_mode() >= java15_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   )
+-> class_or_interface_type_name_part ;;
+
+
+
+-- QUALIFIED identifiers are either qualified ones or raw identifiers.
+
+   #name=identifier @ DOT
+-> qualified_identifier ;;
+
+   #name=identifier
+   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
+     DOT #name=identifier
+   )*
+-> qualified_identifier_safe ;; -- lookahead version of the above
+
+   #name=identifier [: (*yynode)->has_star = false; :]
+   ( DOT (  #name=identifier
+          | STAR    [: (*yynode)->has_star = true; break; :]
+                       -- break -> no more identifiers after the star
+         )
+   )*
+-> qualified_identifier_with_optional_star ;;
+
+-- Declarator brackets are part of a type specification, like String[][].
+-- They are always empty, only have to be counted.
+
+   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )*
+-> optional_declarator_brackets ;;
+
+   ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
+-> mandatory_declarator_brackets ;;
 
 
 

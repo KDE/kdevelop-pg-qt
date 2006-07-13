@@ -3327,6 +3327,11 @@ class csharp
     // array was already in the list (then, no more parameters may follow).
     bool parameter_array_occurred;
 
+    // Lookahead hacks
+    bool lookahead_is_variable_declaration();
+    bool lookahead_is_cast_expression();
+    bool lookahead_is_unbound_type_name();
+
 
   public:
     csharp()

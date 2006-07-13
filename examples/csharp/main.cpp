@@ -131,8 +131,6 @@ bool parse_file(char const *filename, csharp::csharp_compatibility_mode compatib
   parser.tokenize();
 
   // 2) parse
-  bool matched = true; // as long as the part below is commented out
-  /*
   compilation_unit_ast *ast = 0;
   bool matched = parser.parse_compilation_unit(&ast);
   if (matched)
@@ -144,7 +142,6 @@ bool parse_file(char const *filename, csharp::csharp_compatibility_mode compatib
     {
       parser.yy_expected_symbol(csharp_ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
     }
-  */
 
   delete[] _G_contents;
 

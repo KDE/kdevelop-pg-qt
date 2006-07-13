@@ -45,7 +45,7 @@ void csharp::tokenize()
   do
     {
       kind = ::yylex();
-      std::cerr << yytext << std::endl; //" "; // debug output
+      //std::cerr << yytext << std::endl; //" "; // debug output
 
       if (!kind) // when the lexer returns 0, the end of file is reached
         kind = csharp::Token_EOF;

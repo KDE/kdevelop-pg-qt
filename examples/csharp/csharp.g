@@ -209,6 +209,11 @@
   // formal_parameter_list and formal_parameter to determine if a parameter
   // array was already in the list (then, no more parameters may follow).
   bool parameter_array_occurred;
+
+  // Lookahead hacks
+  bool lookahead_is_variable_declaration();
+  bool lookahead_is_cast_expression();
+  bool lookahead_is_unbound_type_name();
 :]
 
 %member (parserclass: constructor)
@@ -1733,7 +1738,7 @@
    -- with class1<xxx>.bla or similar. This is only solvable with LL(k), so
    -- what's needed here is the following hack lookahead function, until
    -- backtracking or real LL(k) is implemented.
-   -- ?[: lookahead_is_variable_declaration() == true :]
+   ?[: lookahead_is_variable_declaration() == true :]
    declaration_statement=declaration_statement
  |
    statement=embedded_statement
@@ -1989,7 +1994,7 @@
 -- Right, it's the same one as in block_statement and the upcoming for_control.
 
  (
-   -- ?[: lookahead_is_variable_declaration() == true :] -- TODO: activate when the time comes
+   ?[: lookahead_is_variable_declaration() == true :]
    local_variable_declaration=variable_declaration
  | expression = expression
  )
@@ -2008,7 +2013,7 @@
 -- implemented, we have to workaround with a lookahead hack function.
 
    (
-      -- ?[: lookahead_is_variable_declaration() == true :] -- TODO: activate when the time comes
+      ?[: lookahead_is_variable_declaration() == true :]
       variable_declaration=variable_declaration                 -- "int i = 0"
     |
       #statement_expression=statement_expression @ COMMA
@@ -2209,7 +2214,7 @@
  | BANG  logical_not_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression_ast::type_logical_not_expression; :]
  |
-   -- ?[: lookahead_is_cast_expression() == true :] -- TODO: activate when the time comes
+   ?[: lookahead_is_cast_expression() == true :]
    cast_expression=cast_expression
      [: (*yynode)->rule_type = unary_expression_ast::type_cast_expression;        :]
  |
@@ -2415,8 +2420,8 @@
         [: (*yynode)->typeof_type = typeof_expression_ast::type_void; :]
     |
       ?[: (compatibility_mode() >= csharp20_compatibility)
-          // && (lookahead_is_unbound_type_name() == true)
-        :] -- TODO: activate when the time comes
+          && (lookahead_is_unbound_type_name() == true)
+        :]
       unbound_type_name=unbound_type_name
         [: (*yynode)->typeof_type = typeof_expression_ast::type_unbound_type_name; :]
     |
@@ -2553,6 +2558,7 @@
 --
 
 [:
+#include "csharp_lookahead.h"
 
 
 csharp::csharp_compatibility_mode csharp::compatibility_mode() {
@@ -2601,6 +2607,62 @@ bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
       + "''"
   );
   return false;
+}
+
+
+// lookahead hacks to make up for backtracking or LL(k)
+// which are not yet implemented
+
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a variable declaration. If true is returned then it
+* looks like a variable declaration is coming up. It doesn't have to match the
+* full variable_declaration rule (as only the first few tokens are checked),
+* but it is guaranteed that the upcoming tokens are not an expression.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a variable declaration.
+*/
+bool csharp::lookahead_is_variable_declaration()
+{
+    csharp_lookahead* la = new csharp_lookahead(this);
+    bool result = la->is_variable_declaration_start();
+    delete la;
+    return result;
+}
+
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a cast expression. If true is returned then it
+* looks like a cast expression is coming up. It doesn't have to match the
+* full cast_expression rule (because type arguments are only checked
+* rudimentarily, and expressions are not checked at all), but there's a very
+* high chance that the upcoming tokens are not a primary expression.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a cast expression.
+*/
+bool csharp::lookahead_is_cast_expression()
+{
+    csharp_lookahead* la = new csharp_lookahead(this);
+    bool result = la->is_cast_expression_start();
+    delete la;
+    return result;
+}
+
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of an unbound type name. If true is returned then it
+* looks like such a type name is coming up. It doesn't have to match the
+* full unbound_type_name rule, because it returns when it's clear that the
+* upcoming tokens are not a standard type_name.
+* The function returns false if the upcoming tokens are not
+* the beginning of an unbound type name.
+*/
+bool csharp::lookahead_is_unbound_type_name()
+{
+    csharp_lookahead* la = new csharp_lookahead(this);
+    bool result = la->is_unbound_type_name();
+    delete la;
+    return result;
 }
 
 :]

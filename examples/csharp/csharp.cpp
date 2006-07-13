@@ -4,6 +4,7 @@
 #include "csharp.h"
 
 
+#include "csharp_lookahead.h"
 
 
 csharp::csharp_compatibility_mode csharp::compatibility_mode()
@@ -54,6 +55,62 @@ bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
     + "''"
   );
   return false;
+}
+
+
+// lookahead hacks to make up for backtracking or LL(k)
+// which are not yet implemented
+
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a variable declaration. If true is returned then it
+* looks like a variable declaration is coming up. It doesn't have to match the
+* full variable_declaration rule (as only the first few tokens are checked),
+* but it is guaranteed that the upcoming tokens are not an expression.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a variable declaration.
+*/
+bool csharp::lookahead_is_variable_declaration()
+{
+  csharp_lookahead* la = new csharp_lookahead(this);
+  bool result = la->is_variable_declaration_start();
+  delete la;
+  return result;
+}
+
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of a cast expression. If true is returned then it
+* looks like a cast expression is coming up. It doesn't have to match the
+* full cast_expression rule (because type arguments are only checked
+* rudimentarily, and expressions are not checked at all), but there's a very
+* high chance that the upcoming tokens are not a primary expression.
+* The function returns false if the upcoming tokens are (for sure) not
+* the beginning of a cast expression.
+*/
+bool csharp::lookahead_is_cast_expression()
+{
+  csharp_lookahead* la = new csharp_lookahead(this);
+  bool result = la->is_cast_expression_start();
+  delete la;
+  return result;
+}
+
+/**
+* This function checks if the next following tokens of the parser class
+* match the beginning of an unbound type name. If true is returned then it
+* looks like such a type name is coming up. It doesn't have to match the
+* full unbound_type_name rule, because it returns when it's clear that the
+* upcoming tokens are not a standard type_name.
+* The function returns false if the upcoming tokens are not
+* the beginning of an unbound type name.
+*/
+bool csharp::lookahead_is_unbound_type_name()
+{
+  csharp_lookahead* la = new csharp_lookahead(this);
+  bool result = la->is_unbound_type_name();
+  delete la;
+  return result;
 }
 
 
@@ -2302,7 +2359,7 @@ bool csharp::parse_block_statement(block_statement_ast **yynode)
             }
           (*yynode)->labeled_statement = __node_54;
         }
-      else if (yytoken == Token_BOOL
+      else if (( lookahead_is_variable_declaration() == true ) && (yytoken == Token_BOOL
                || yytoken == Token_BYTE
                || yytoken == Token_CHAR
                || yytoken == Token_CONST
@@ -2330,7 +2387,7 @@ bool csharp::parse_block_statement(block_statement_ast **yynode)
                || yytoken == Token_WHERE
                || yytoken == Token_YIELD
                || yytoken == Token_ASSEMBLY
-               || yytoken == Token_IDENTIFIER)
+               || yytoken == Token_IDENTIFIER))
         {
           declaration_statement_ast *__node_55 = 0;
           if (!parse_declaration_statement(&__node_55))
@@ -6072,7 +6129,7 @@ bool csharp::parse_for_control(for_control_ast **yynode)
       || yytoken == Token_STRING_LITERAL
       || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_BOOL
+      if (( lookahead_is_variable_declaration() == true ) && (yytoken == Token_BOOL
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
           || yytoken == Token_DECIMAL
@@ -6099,7 +6156,7 @@ bool csharp::parse_for_control(for_control_ast **yynode)
           || yytoken == Token_WHERE
           || yytoken == Token_YIELD
           || yytoken == Token_ASSEMBLY
-          || yytoken == Token_IDENTIFIER)
+          || yytoken == Token_IDENTIFIER))
         {
           variable_declaration_ast *__node_201 = 0;
           if (!parse_variable_declaration(&__node_201))
@@ -11809,7 +11866,7 @@ bool csharp::parse_resource_acquisition(resource_acquisition_ast **yynode)
       || yytoken == Token_STRING_LITERAL
       || yytoken == Token_IDENTIFIER)
     {
-      if (yytoken == Token_BOOL
+      if (( lookahead_is_variable_declaration() == true ) && (yytoken == Token_BOOL
           || yytoken == Token_BYTE
           || yytoken == Token_CHAR
           || yytoken == Token_DECIMAL
@@ -11836,7 +11893,7 @@ bool csharp::parse_resource_acquisition(resource_acquisition_ast **yynode)
           || yytoken == Token_WHERE
           || yytoken == Token_YIELD
           || yytoken == Token_ASSEMBLY
-          || yytoken == Token_IDENTIFIER)
+          || yytoken == Token_IDENTIFIER))
         {
           variable_declaration_ast *__node_327 = 0;
           if (!parse_variable_declaration(&__node_327))
@@ -14109,7 +14166,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                             (*yynode)->typeof_type = typeof_expression_ast::type_void;
                                                           }
                                                         else if (( (compatibility_mode() >= csharp20_compatibility)
-                                                                   // && (lookahead_is_unbound_type_name() == true)
+                                                                   && (lookahead_is_unbound_type_name() == true)
                                                                  ) && (yytoken == Token_ADD
                                                                        || yytoken == Token_ALIAS
                                                                        || yytoken == Token_GET
@@ -14323,7 +14380,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                             (*yynode)->logical_not_expression = __node_408;
                                                             (*yynode)->rule_type = unary_expression_ast::type_logical_not_expression;
                                                           }
-                                                        else if (yytoken == Token_LPAREN)
+                                                        else if (( lookahead_is_cast_expression() == true ) && (yytoken == Token_LPAREN))
                                                           {
                                                             cast_expression_ast *__node_409 = 0;
                                                             if (!parse_cast_expression(&__node_409))

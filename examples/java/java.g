@@ -44,7 +44,7 @@
 --  - The LBRACKET conflict in optional_declarator_brackets:
 --    No idea where it stems from, but I think it should be ok.
 --    (done right by default, 1 conflict)
---  - The first/follow COMMA conflict in type_arguments:
+--  - The COMMA conflict in type_arguments:
 --    the approach for catching ">" signs works this way, and the conflict
 --    is resolved by the trailing condition at the end of the rule.
 --    (manually resolved, 1 conflict)

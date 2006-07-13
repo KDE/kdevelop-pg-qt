@@ -26,92 +26,111 @@
 -- http://www.ecma-international.org/publications/standards/Ecma-334.htm).
 
 
-
--- Known problematic conflicts (5 conflicts), requiring automatic LL(k):
---  - The first/first BOOLEAN, BYTE, CHAR, DOUBLE etc. conflicts between
---    variable_declaration and expression, they appear in:
---    block_statement, resource_acquisition, and for_control
---    This is the same variable/parameter declaration vs. expression issue
---    that block_statement also suffers from.
---    Solved by lookahead_is_variable_declaration().
---    (3 conflicts)
---  - The first/first LPAREN conflict in unary_expression,
---    which is cast_expression vs. primary_expression.
---    Solved by lookahead_is_cast_expression().
---    (1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict
---    in typeof_expression, between unbound_type_name and type
---    (both of which can be something like a.b.c.d or longer).
---    Solved by lookahead_is_unbound_type_name().
---    (1 conflict)
-
-
--- Known harmless or resolved conflicts (22 conflicts):
---  - The first/follow LBRACKET conflict in compilation_unit
+-- 13 first/follow conflicts:
+--  - The LBRACKET conflict in compilation_unit.
 --    (manually resolved, 2 conflicts)
---  - The first/follow COMMA conflict in global_attribute_section,
---    and the same one in attribute_section
---    (manually resolved, 2 conflicts)
---  - The first/follow COMMA conflict in enum_body, similar to the above
+--  - The COMMA conflict in global_attribute_section. Easy.
 --    (manually resolved, 1 conflict)
---  - The first/follow LBRACKET conflict in managed_type, for which
---    new_expression with array_creation_expression_rest is to blame.
+--  - The COMMA conflict in attribute_section, exactly the same one as above.
+--    (manually resolved, 1 conflict)
+--  - The COMMA conflict in enum_body, also similar to the above.
+--    (manually resolved, 1 conflict)
+--  - The STAR conflict in unmanaged_type:
+--    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
+--    at all, only kdevelop-pg thinks it does. Code segments...
+--    (done right by default, 1 conflict)
+--  - The LBRACKET conflict in managed_type, for which new_expression
+--    with its array_creation_expression_rest part is to blame.
 --    Caused by the fact that array_creation_expression can't be seperated.
---    As a consequence, all rank specifiers are checked for safety.
+--    As a consequence, all rank specifiers are checked for safety, always.
 --    (manually resolved, 1 conflict)
---  - The first/follow DOT conflict in namespace_or_type_name_safe,
---    which actually stems from indexer_declaration
+--  - The DOT conflict in namespace_or_type_name:
+--    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
+--    at all, only kdevelop-pg thinks it does. Code segments...
+--    (done right by default, 1 conflict)
+--  - The DOT conflict in namespace_or_type_name_safe,
+--    which actually stems from indexer_declaration.
 --    (manually resolved, 1 conflict)
---  - The first/follow COMMA conflict in secondary_constraints,
---    battling against constructor_constraints
+--  - The COMMA conflict in type_arguments:
+--    the approach for catching ">" signs works this way, and the conflict
+--    is resolved by the trailing condition at the end of the rule.
 --    (manually resolved, 1 conflict)
---  - The first/follow COMMA conflict in array_initializer, another of those
+--  - The COMMA conflict in secondary_constraints,
+--    battling against constructor_constraints.
 --    (manually resolved, 1 conflict)
---  - The first/follow LBRACKET conflict in array_creation_expression_rest,
---    which is similar to the one in managed_type, only that it's triggered
---    by primary_suffix instead.
+--  - The COMMA conflict in array_initializer, another one of those.
+--    (manually resolved, 1 conflict)
+--  - The LBRACKET conflict in array_creation_expression_rest, similar to the
+--    one in managed_type, only that it's triggered by primary_suffix instead.
 --    Caused by the fact that array_creation_expression can't be seperated.
 --    (manually resolved, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict in using_directive
+
+-- 17 first/first conflicts:
+--  - The ADD, ALIAS, etc. (identifier) conflict in using_directive.
 --    (manually resolved, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflicts
---    in attribute_arguments, two of them
+--  - The ADD, ALIAS, etc. (identifier) conflicts in attribute_arguments,
+--    two similar ones.
 --    (manually resolved, 2 conflicts)
---  - The first/first PARTIAL conflict in class_or_struct_member_declaration,
---    between type_declaration_rest and identifier
---    (manually resoved, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--  - The PARTIAL conflict in class_or_struct_member_declaration,
+--    between type_declaration_rest and identifier.
+--    (manually resolved, 1 conflict)
+--  - The ADD, ALIAS, etc. (identifier) conflict
 --    in class_or_struct_member_declaration, between constructor_declaration
 --    and the (type ...) part of the rule.
 --    (manually resolved, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--  - The ADD, ALIAS, etc. (identifier) conflict
 --    in class_or_struct_member_declaration (another one), between
 --    the field declaration and the (type_name_safe ...) part of the subrule.
 --    (manually resolved, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict
---    in event_declaration, between variable_declarator and type_name.
+--  - The ADD, ALIAS, etc. (identifier) conflict in event_declaration,
+--    between variable_declarator and type_name.
 --    (manually resolved, 1 conflict)
---  - The first/first VOID conflict in return_type
+--  - The VOID conflict in return_type.
 --    (manually resolved, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict
+--  - The ADD, ALIAS, etc. (identifier) conflict
 --    in type_parameter_constraints, caused by the similarity of
 --    primary_or_secondary_constraint (with class_type) and
 --    secondary_constraints (with type_name). Not resolved, instead,
 --    primary_or_secondary_constraint may be both, as indicated by the name.
 --    (done right by default, 1 conflict)
---  - The first/first ADD, ALIAS, etc. (identifier) conflict in block_statement
+--  - The ADD, ALIAS, etc. (identifier) conflict in block_statement
 --    between all three statement types. labeled_statement vs. the other two
 --    is resolved easily, whereas declaration_statement vs. embedded_statement
 --    needs arbitrary-length LL(k), as is described further above.
 --    (manually resolved, 1 conflict)
---  - The first/first YIELD conflict in embedded_statement. This is because
---    YIELD is not only the start of yield_statement,
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in block_statement,
+--    it's the classic conflict between variable_declaration and expression.
+--    Needs LL(k), solved by lookahead_is_variable_declaration().
+--    (1 conflict)
+--  - The CHECKED, UNCHECKED, YIELD conflict in embedded_statement.
+--    For "checked" and "unchecked", this is because there are both blocks
+--    and expression statements starting with "(un)checked". For "yield",
+--    this is because "yield" is not only the start of yield_statement,
 --    but also a non-keyword identifier, and as such needs special treatment.
+--    Seperate LA(2) comparisons for all three of them.
 --    (manually resolved, 1 conflict)
---  - The first/first CATCH conflict in catch_clauses
+--  - The CATCH conflict in catch_clauses.
 --    (manually resolved, 1 conflict)
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in resource_acquisition,
+--    it's the classic conflict between variable_declaration and expression.
+--    Needs LL(k), solved by lookahead_is_variable_declaration().
+--    (1 conflict)
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in for_control,
+--    it's the classic conflict between variable_declaration and expression.
+--    Needs LL(k), solved by lookahead_is_variable_declaration().
+--    (1 conflict)
+--  - The LPAREN conflict in unary_expression,
+--    which is cast_expression vs. primary_expression.
+--    Needs LL(k), solved by lookahead_is_cast_expression().
+--    (1 conflict)
+--  - The ADD, ALIAS, etc. (identifier) conflict in typeof_expression,
+--    between unbound_type_name and type
+--    (both of which can be something like a.b.c.d or longer).
+--    Needs LL(k), solved by lookahead_is_unbound_type_name().
+--    (1 conflict)
 
--- Total amount of conflicts: 27
+-- Total amount of conflicts: 30
+
 
 
 --
@@ -180,6 +199,12 @@
   csharp::csharp_compatibility_mode _M_compatibility_mode;
   std::set<std::string> _M_pp_defined_symbols;
 
+  // ltCounter stores the amount of currently open type arguments rules,
+  // all of which are beginning with a less than ("<") character.
+  // This way, also RSHIFT (">>") can be used to close type arguments rules,
+  // in addition to GREATER_THAN (">").
+  int ltCounter;
+
   // parameter_array_occurred is used as a means of communication between
   // formal_parameter_list and formal_parameter to determine if a parameter
   // array was already in the list (then, no more parameters may follow).
@@ -213,6 +238,7 @@
     mod_virtual      = 1024,
     mod_override     = 2048,
     mod_extern       = 4096,
+    mod_unsafe       = 8192,
   };
 :]
 
@@ -365,11 +391,17 @@
 
 %member (unmanaged_type: public declaration)
 [:
-  enum unmanaged_type_enum {
+  pointer_type_ast::pointer_type_enum type;
+  int star_count;
+:]
+
+%member (pointer_type: public declaration)
+[:
+  enum pointer_type_enum {
     type_regular,
     type_void,
   };
-  unmanaged_type_enum type;
+  pointer_type_enum type;
   int star_count;
 :]
 
@@ -544,6 +576,8 @@
     type_logical_not_expression,
     type_cast_expression,
     type_primary_expression,
+    type_pointer_indirection_expression,
+    type_addressof_expression,
   };
   unary_expression_enum rule_type;
 :]
@@ -865,6 +899,8 @@
  | PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
  | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
  | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
+ -- unsafe grammar extension: "unsafe" modifier
+ | UNSAFE     [: (*yynode)->modifiers |= _modifiers_ast::mod_unsafe;    :]
  -- the following three ones only occur in class declarations:
  | ABSTRACT   [: (*yynode)->modifiers |= _modifiers_ast::mod_abstract;  :]
  | SEALED     [: (*yynode)->modifiers |= _modifiers_ast::mod_sealed;    :]
@@ -1157,7 +1193,7 @@
    (  BASE [: (*yynode)->initializer_type = constructor_initializer_ast::type_base; :]
     | THIS [: (*yynode)->initializer_type = constructor_initializer_ast::type_this; :]
    )
-   LPAREN (arguments=argument_list | 0) RPAREN
+   LPAREN arguments=optional_argument_list RPAREN
 -> constructor_initializer ;;
 
 -- There is also a STATIC CONSTRUCTOR DECLARATION which is only used if
@@ -1231,11 +1267,11 @@
 -> parameter_array ;;
 
 
--- An ARGUMENT LIST is used when calling methods
--- (not for declaring them, that's what parameter lists are for).
+-- An OPTIONAL ARGUMENT LIST is used when calling methods
+-- (not for declaring them, that's what formal parameter lists are for).
 
-   #argument=argument @ COMMA
--> argument_list ;;
+   (#argument=argument @ COMMA | 0)
+-> optional_argument_list ;;
 
  (
    expression=expression
@@ -1428,20 +1464,25 @@
 -- The regular TYPE recognizes the same set of tokens as the one in the C#
 -- specification, but had to be refactored quite a bit. Looks different here.
 
--- TODO: if we can know whether we are inside an unsafe block,
---       we can maybe decide whether we want managed_type or unmanaged_type.
-
-   -- ?[: inside_unmanaged_code() == true :]
-   unmanaged_type=unmanaged_type
-   -- | managed_type=managed_type
+   unmanaged_type=unmanaged_type   -- it's too cumbersome to track "unsafe",
+   -- | managed_type=managed_type  -- so have it on by default for performance
 -> type ;;
 
+   -- unsafe grammar extension: unmanaged type (includes all of the managed one)
    0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = unmanaged_type_ast::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = unmanaged_type_ast::type_void;    :]
+   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
    )
    ( STAR [: (*yynode)->star_count++; :] )*
 -> unmanaged_type ;;
+
+   -- unsafe grammar extension: pointer type
+   0 [: (*yynode)->star_count = 0; :]
+   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
+   )
+   ( STAR [: (*yynode)->star_count++; :] )+
+-> pointer_type ;;
 
    non_array_type=non_array_type
    ( 0 [: if (LA(2).kind != Token_COMMA || LA(2).kind != Token_RBRACKET)
@@ -1575,8 +1616,53 @@
 
 
 
--- Type parameters and type arguments, the two rules responsible for the
--- greater-than special casing. (This is the generic aspect in Java >= 1.5.)
+-- Type parameters, type arguments, and constraints clauses form C#'s support
+-- for generics and are responsible for the greater-than special casing.
+
+-- TYPE PARAMETERS are used in class, interface etc. declarations to
+-- determine the generic types allowed as type argument.
+
+   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   #type_parameter=type_parameter @ COMMA
+   (
+      type_arguments_or_parameters_end
+    | 0  -- they can also be changed by type_parameter or type_argument
+   )
+   -- make sure we have gobbled up enough '>' characters
+   -- if we are at the "top level" of nested type_parameters productions
+   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel ) {
+        report_problem(error, "The amount of closing ``>'' characters is incorrect");
+        return false;
+      }
+   :]
+-> type_parameters ;;
+
+   (#attribute=attribute_section)* parameter_name=identifier
+-> type_parameter ;;
+
+
+-- TYPE ARGUMENTS are used in initializers, invocations, etc. to
+-- specify the exact types for this generic class/method instance.
+
+   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   #type_argument=type @ COMMA
+   (
+      type_arguments_or_parameters_end
+    | 0  -- they can also be changed by type_parameter or type_argument
+   )
+   -- make sure we have gobbled up enough '>' characters
+   -- if we are at the "top level" of nested type_parameters productions
+   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel ) {
+        report_problem(error, "The amount of closing ``>'' characters is incorrect");
+        return false;
+      }
+   :]
+-> type_arguments ;;
+
+
+   GREATER_THAN  [: ltCounter -= 1; :]  -- ">"
+ | RSHIFT        [: ltCounter -= 2; :]  -- ">>"
+-> type_arguments_or_parameters_end ;;
 
 
 -- Type parameter CONSTRAINTS CLAUSES also belong to C#'s generics,
@@ -1692,6 +1778,8 @@
 
    expression=expression
  | array_initializer=array_initializer
+ -- unsafe grammar extension: stackalloc initializer
+ | stackalloc_initializer=stackalloc_initializer
 -> variable_initializer ;;
 
    LBRACE
@@ -1706,6 +1794,10 @@
    )
    RBRACE
 -> array_initializer ;;
+
+-- unsafe grammar extension: stackalloc initializer
+   STACKALLOC unmanaged_type LBRACKET expression=expression RBRACKET
+-> stackalloc_initializer ;;
 
 
 
@@ -1731,11 +1823,17 @@
  | throw_statement=throw_statement
  -- other statements:
  | try_statement=try_statement
- | checked_statement=checked_statement
- | unchecked_statement=unchecked_statement
  | lock_statement=lock_statement
  | using_statement=using_statement
  | SEMICOLON    -- the specification calls it empty_statement
+ |
+   -- CHECKED and UNCHECKED can also be the start of an expression.
+   -- So, manual checking if the second token is the start of a block.
+   ?[: LA(2).kind == Token_LBRACE :]
+   checked_statement=checked_statement
+ |
+   ?[: LA(2).kind == Token_LBRACE :]
+   unchecked_statement=unchecked_statement
  |
    -- YIELD is a non-keyword identifier, so it clashes with expressions
    ?[: LA(2).kind == Token_RETURN || LA(2).kind == Token_BREAK :]
@@ -1743,6 +1841,12 @@
  |
    -- method call, assignment, etc.:
    expression_statement=statement_expression SEMICOLON
+ |
+   -- unsafe grammar extension: "unsafe" statement
+   unsafe_statement=unsafe_statement
+ |
+   -- unsafe grammar extension: "fixed" statement
+   fixed_statement=fixed_statement
  )
 -> embedded_statement ;;
 
@@ -1808,6 +1912,22 @@
    )
    SEMICOLON
 -> yield_statement ;;
+
+
+-- unsafe grammar extension: "unsafe" and "fixed" statements
+
+   UNSAFE body=block
+-> unsafe_statement ;;
+
+   FIXED LPAREN
+   pointer_type=pointer_type
+   (fixed_pointer_declarator=fixed_pointer_declarator @ COMMA)
+   RPAREN
+   body=embedded_statement
+-> fixed_statement ;;
+
+   pointer_name=identifier ASSIGN initializer=expression
+-> fixed_pointer_declarator ;;
 
 
 -- The SWITCH STATEMENT, consisting of a header and multiple
@@ -2095,6 +2215,14 @@
  |
    primary_expression=primary_expression
      [: (*yynode)->rule_type = unary_expression_ast::type_primary_expression;     :]
+ |
+   -- unsafe grammar extension: pointer indirection expression
+   STAR pointer_indirection_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_pointer_indirection_expression; :]
+ |
+   -- unsafe grammar extension: addressof expression
+   BIT_AND addressof_expression=unary_expression
+     [: (*yynode)->rule_type = unary_expression_ast::type_addressof_expression;   :]
  )
 -> unary_expression ;;
 
@@ -2118,7 +2246,7 @@
      [: (*yynode)->suffix_type = primary_suffix_ast::type_member_access;   :]
  |
    -- the suffix part of invocation_expression
-   LPAREN (arguments=argument_list | 0) RPAREN
+   LPAREN arguments=optional_argument_list RPAREN
      [: (*yynode)->suffix_type = primary_suffix_ast::type_invocation;      :]
  |
    -- element_access (also known as array access)
@@ -2131,7 +2259,7 @@
    DECREMENT
      [: (*yynode)->suffix_type = primary_suffix_ast::type_decrement;       :]
  |
-   -- ?[: inside_unmanaged_code() == true :]
+   -- unsafe grammar extension: pointer access
    ARROW_RIGHT member_name=identifier
    (  ?[: compatibility_mode() >= csharp20_compatibility :]
       type_arguments=type_arguments
@@ -2179,7 +2307,7 @@
    anonymous_method_expression=anonymous_method_expression
      [: (*yynode)->rule_type = primary_atom_ast::type_anonymous_method_expression; :]
  |
-   -- ?[: inside_unmanaged_code() == true :]
+   -- unsafe grammar extension: sizeof(type)
    SIZEOF LPAREN unmanaged_type=unmanaged_type RPAREN
      [: (*yynode)->rule_type = primary_atom_ast::type_sizeof_expression;    :]
  )
@@ -2257,7 +2385,7 @@
 
    NEW type=type
    (  array_creation_expression_rest=array_creation_expression_rest
-    | LPAREN (expression_or_argument_list=argument_list | 0) RPAREN
+    | LPAREN expression_or_argument_list=optional_argument_list RPAREN
    )
 -> new_expression ;;
 
@@ -2345,6 +2473,8 @@
  | VIRTUAL    [: (*yynode)->modifiers |= _modifiers_ast::mod_virtual;   :]
  | OVERRIDE   [: (*yynode)->modifiers |= _modifiers_ast::mod_override;  :]
  | EXTERN     [: (*yynode)->modifiers |= _modifiers_ast::mod_extern;    :]
+ -- unsafe grammar extension: "unsafe" keyword
+ | UNSAFE     [: (*yynode)->modifiers |= _modifiers_ast::mod_unsafe;    :]
  )*
 -> optional_modifiers ;;
 
@@ -2410,16 +2540,6 @@
 -- TODO: make kdev-pg have a %namespace declaration, making this obsolete.
 
 0 -> _modifiers ;;
-
-
-
---
--- Appendix: Rule stubs
---
-
-LESS_THAN STUB_A GREATER_THAN -> type_arguments ;;
-LESS_THAN STUB_B GREATER_THAN -> type_parameters ;;
-
 
 
 

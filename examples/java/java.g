@@ -92,7 +92,7 @@
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 246
+-- Total amount of conflicts: 26
 
 
 

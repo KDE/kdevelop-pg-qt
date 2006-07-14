@@ -145,8 +145,9 @@ SimpleEscape    [\\]([']|["]|[\\]|[0abfnrtv])
 Escape          {SimpleEscape}|{UnicodeEscape}|{HexEscape}
 
 IntegerSuffix   ([Ll][Uu]?)|([Uu][Ll]?)
-IntegerLiteral  {DecimalDigit}+{IntegerSuffix}?
-HexNum          [0][xX]{HexDigit}+{IntegerSuffix}?
+DecimalLiteral  {DecimalDigit}+{IntegerSuffix}?
+HexLiteral      [0][xX]{HexDigit}+{IntegerSuffix}?
+IntegerLiteral  {DecimalLiteral}|{HexLiteral}
 
 Sign            [+-]
 RealSuffix      [fF]|[dD]|[mM]

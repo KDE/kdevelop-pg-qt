@@ -1,6 +1,6 @@
 /*****************************************************************************
  * This file is part of KDevelop.                                            *
- * Copyright (c) 2005 Jakob Petsovits <jpetso@gmx.at>                        *
+ * Copyright (c) 2005-2006 Jakob Petsovits <jpetso@gmx.at>                   *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU Library General Public               *
@@ -57,6 +57,7 @@ public:
     bool is_builtin_class_type();
     bool is_rank_specifier();
     bool is_type_arguments();
+    bool is_type_arguments_or_parameters_end();
     bool is_identifier();
 
 private:
@@ -71,6 +72,9 @@ private:
 
     // Counter variable for the currently inspected lookahead token
     int _M_count;
+
+    // Counter variable for type arguments nesting
+    int _M_ltCounter;
 };
 
 #endif  // csharp_lookahead_h_INCLUDED

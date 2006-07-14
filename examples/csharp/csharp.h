@@ -2224,7 +2224,7 @@ struct primary_atom_ast: public csharp_ast_node
       type_typeof_expression,
       type_checked_expression,
       type_unchecked_expression,
-      type_default_expression,
+      type_default_value_expression,
       type_anonymous_method_expression,
       type_sizeof_expression,
     };
@@ -3316,21 +3316,22 @@ class csharp
     std::set<std::string>
     _M_pp_defined_symbols;
 
-    // ltCounter stores the amount of currently open type arguments rules,
+    // _M_ltCounter stores the amount of currently open type arguments rules,
     // all of which are beginning with a less than ("<") character.
     // This way, also RSHIFT (">>") can be used to close type arguments rules,
     // in addition to GREATER_THAN (">").
-    int ltCounter;
+    int _M_ltCounter;
 
-    // parameter_array_occurred is used as a means of communication between
+    // _M_parameter_array_occurred is used as a means of communication between
     // formal_parameter_list and formal_parameter to determine if a parameter
     // array was already in the list (then, no more parameters may follow).
-    bool parameter_array_occurred;
+    bool _M_parameter_array_occurred;
 
     // Lookahead hacks
     bool lookahead_is_variable_declaration();
     bool lookahead_is_cast_expression();
     bool lookahead_is_unbound_type_name();
+    bool lookahead_is_type_arguments();
 
 
   public:

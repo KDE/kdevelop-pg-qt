@@ -199,21 +199,22 @@
   csharp::csharp_compatibility_mode _M_compatibility_mode;
   std::set<std::string> _M_pp_defined_symbols;
 
-  // ltCounter stores the amount of currently open type arguments rules,
+  // _M_ltCounter stores the amount of currently open type arguments rules,
   // all of which are beginning with a less than ("<") character.
   // This way, also RSHIFT (">>") can be used to close type arguments rules,
   // in addition to GREATER_THAN (">").
-  int ltCounter;
+  int _M_ltCounter;
 
-  // parameter_array_occurred is used as a means of communication between
+  // _M_parameter_array_occurred is used as a means of communication between
   // formal_parameter_list and formal_parameter to determine if a parameter
   // array was already in the list (then, no more parameters may follow).
-  bool parameter_array_occurred;
+  bool _M_parameter_array_occurred;
 
   // Lookahead hacks
   bool lookahead_is_variable_declaration();
   bool lookahead_is_cast_expression();
   bool lookahead_is_unbound_type_name();
+  bool lookahead_is_type_arguments();
 :]
 
 %member (parserclass: constructor)
@@ -612,7 +613,7 @@
     type_typeof_expression,
     type_checked_expression,
     type_unchecked_expression,
-    type_default_expression,
+    type_default_value_expression,
     type_anonymous_method_expression,
     type_sizeof_expression,
   };
@@ -810,7 +811,9 @@
 -> global_attribute_section ;;
 
    LBRACKET
-   (target=attribute_target COLON | 0)
+   (  ?[: LA(2).kind == Token_COLON :] target=attribute_target COLON
+    | 0
+   )
    #attribute=attribute
    ( 0 [: if (LA(2).kind == Token_RBRACKET) { break; } :]
      COMMA #attribute=attribute
@@ -1241,11 +1244,11 @@
 -- TODO: Maybe some fine day rule parameters will be implemented.
 --       In that case, please make ellipsisOccurred totally local here.
 
-   0 [: parameter_array_occurred = false; :]
+   0 [: _M_parameter_array_occurred = false; :]
    #formal_parameter=formal_parameter
-   @ ( 0 [: if( parameter_array_occurred == true ) { break; } :]
+   @ ( 0 [: if( _M_parameter_array_occurred == true ) { break; } :]
          -- Don't proceed after the parameter array. If there's a cleaner way
-         -- to exit the loop when parameter_array_occurred == true,
+         -- to exit the loop when _M_parameter_array_occurred == true,
          -- please use that instead of this construct.
        COMMA
      )
@@ -1253,16 +1256,16 @@
 
 -- How it _should_ look:
 --
---    0 [: parameter_array_occurred = false; :]
+--    0 [: _M_parameter_array_occurred = false; :]
 --    #formal_parameter=formal_parameter
---    @ ( ?[: parameter_array_occurred == false :] COMMA )
+--    @ ( ?[: _M_parameter_array_occurred == false :] COMMA )
 --        -- kdev-pg dismisses this condition!
 -- -> formal_parameter_list ;;
 
    (#attribute=attribute_section)*
    (
       parameter_array=parameter_array
-        [: parameter_array_occurred = true; :]
+        [: _M_parameter_array_occurred = true; :]
     |
       (modifier=parameter_modifier | 0) type=type variable_name=identifier
    )
@@ -1414,7 +1417,10 @@
              RBRACE interface_accessors=interface_accessors RBRACE
                [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_property_declaration; :]
            |
-             (type_parameters=type_parameters | 0)
+             (  ?[: compatibility_mode() >= csharp20_compatibility :]
+                type_parameters=type_parameters
+              | 0
+             )
              LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
              (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
              SEMICOLON
@@ -1451,183 +1457,13 @@
 
 
 
-
---
--- All kinds of rules for types here.
---
-
--- The RETURN TYPE can only be used as return value, not in a declaration.
-
- (
-   ?[: LA(2).kind != Token_STAR :] -- "void*" is a regular type in unsafe code
-   VOID              [: (*yynode)->type = return_type_ast::type_void;    :]
- |
-   regular_type=type [: (*yynode)->type = return_type_ast::type_regular; :]
- )
--> return_type ;;
-
--- The regular TYPE recognizes the same set of tokens as the one in the C#
--- specification, but had to be refactored quite a bit. Looks different here.
-
-   unmanaged_type=unmanaged_type   -- it's too cumbersome to track "unsafe",
-   -- | managed_type=managed_type  -- so have it on by default for performance
--> type ;;
-
-   -- unsafe grammar extension: unmanaged type (includes all of the managed one)
-   0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
-   )
-   ( STAR [: (*yynode)->star_count++; :] )*
--> unmanaged_type ;;
-
-   -- unsafe grammar extension: pointer type
-   0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
-   )
-   ( STAR [: (*yynode)->star_count++; :] )+
--> pointer_type ;;
-
-   non_array_type=non_array_type
-   ( 0 [: if (LA(2).kind != Token_COMMA || LA(2).kind != Token_RBRACKET)
-            { break; }
-        :] -- avoids swallowing the LBRACKETs in
-           -- new_expression/array_creation_expression_rest.
-     #rank_specifier=rank_specifier
-   )*
--> managed_type ;;
-
-   non_array_type=non_array_type (#rank_specifier=rank_specifier)+
--> array_type ;;
-
-   LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
-   ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
-   RBRACKET
--> rank_specifier ;;
-
-   builtin_class_type=builtin_class_type
- | optionally_nullable_type=optionally_nullable_type
--> non_array_type ;;
-
-   type_name=type_name
- | builtin_class_type=builtin_class_type
--> class_type ;;
-
-   OBJECT [: (*yynode)->type = builtin_class_type_ast::type_object; :]
- | STRING [: (*yynode)->type = builtin_class_type_ast::type_string; :]
--> builtin_class_type ;;
-
--- NULLABLE TYPES are new in C# 2.0 and need to be expressed a little bit
--- differently than in LALR grammars like in the C# specification.
-
-   non_nullable_type=non_nullable_type
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
-      QUESTION [: (*yynode)->nullable = true;  :]
-    |
-      0        [: (*yynode)->nullable = false; :]
-   )
--> optionally_nullable_type ;;
-
-   type_name=type_name
- | simple_type=simple_type
--> non_nullable_type ;;
-
-
--- Now for SIMPLE TYPES, this is easier ;)
-
- (
-   numeric_type=numeric_type
-     [: (*yynode)->type = simple_type_ast::type_numeric; :]
- | BOOL
-     [: (*yynode)->type = simple_type_ast::type_bool; :]
- )
--> simple_type ;;
-
-
--- NUMERIC TYPES include INTEGRAL TYPES, FLOATING POINT TYPES, and DECIMAL.
-
- (
-   int_type=integral_type
-     [: (*yynode)->type = numeric_type_ast::type_integral; :]
- | float_type=floating_point_type
-     [: (*yynode)->type = numeric_type_ast::type_floating_point; :]
- | DECIMAL
-     [: (*yynode)->type = numeric_type_ast::type_decimal; :]
- )
--> numeric_type ;;
-
- (
-   SBYTE   [: (*yynode)->type = integral_type_ast::type_sbyte;  :]
- | BYTE    [: (*yynode)->type = integral_type_ast::type_byte;   :]
- | SHORT   [: (*yynode)->type = integral_type_ast::type_short;  :]
- | USHORT  [: (*yynode)->type = integral_type_ast::type_ushort; :]
- | INT     [: (*yynode)->type = integral_type_ast::type_int;    :]
- | UINT    [: (*yynode)->type = integral_type_ast::type_uint;   :]
- | LONG    [: (*yynode)->type = integral_type_ast::type_long;   :]
- | ULONG   [: (*yynode)->type = integral_type_ast::type_ulong;  :]
- | CHAR    [: (*yynode)->type = integral_type_ast::type_char;   :]
- )
--> integral_type ;;
-
- (
-   FLOAT   [: (*yynode)->type = floating_point_type_ast::type_float;  :]
- | DOUBLE  [: (*yynode)->type = floating_point_type_ast::type_double; :]
- )
--> floating_point_type ;;
-
-
--- TYPE NAMES and NAMESPACE NAMES are the same thing,
--- essentially qualified identifiers with optional type arguments.
-
-   namespace_or_type_name
--> namespace_name ;;
-
-   namespace_or_type_name
--> type_name ;;
-
-   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
-    | 0
-   )
-   #name_part=namespace_or_type_name_part @ DOT
--> namespace_or_type_name ;;
-
-   identifier=identifier
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
-      type_arguments=type_arguments
-    | 0
-   )
--> namespace_or_type_name_part ;;
-
-   namespace_or_type_name_safe
--> type_name_safe ;;
-
-   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
-    | 0
-   )
-   #name_part=namespace_or_type_name_part
-   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) break; :] -- exit the "star loop"
-     DOT #name_part=namespace_or_type_name_part
-   )*
--> namespace_or_type_name_safe ;;
-
-
--- QUALIFIED identifiers are either qualified ones or raw identifiers.
-
-   #name=identifier @ DOT
--> qualified_identifier ;;
-
-
-
-
-
 -- Type parameters, type arguments, and constraints clauses form C#'s support
 -- for generics and are responsible for the greater-than special casing.
 
 -- TYPE PARAMETERS are used in class, interface etc. declarations to
 -- determine the generic types allowed as type argument.
 
-   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   LESS_THAN [: int currentLtLevel = _M_ltCounter; _M_ltCounter++; :]
    #type_parameter=type_parameter @ COMMA
    (
       type_arguments_or_parameters_end
@@ -1635,7 +1471,7 @@
    )
    -- make sure we have gobbled up enough '>' characters
    -- if we are at the "top level" of nested type_parameters productions
-   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel ) {
+   [: if( currentLtLevel == 0 && _M_ltCounter != currentLtLevel ) {
         report_problem(error, "The amount of closing ``>'' characters is incorrect");
         return false;
       }
@@ -1649,15 +1485,15 @@
 -- TYPE ARGUMENTS are used in initializers, invocations, etc. to
 -- specify the exact types for this generic class/method instance.
 
-   LESS_THAN [: int currentLtLevel = ltCounter; ltCounter++; :]
+   LESS_THAN [: int currentLtLevel = _M_ltCounter; _M_ltCounter++; :]
    #type_argument=type @ COMMA
    (
       type_arguments_or_parameters_end
     | 0  -- they can also be changed by type_parameter or type_argument
    )
    -- make sure we have gobbled up enough '>' characters
-   -- if we are at the "top level" of nested type_parameters productions
-   [: if( currentLtLevel == 0 && ltCounter != currentLtLevel ) {
+   -- if we are at the "top level" of nested type_arguments productions
+   [: if( currentLtLevel == 0 && _M_ltCounter != currentLtLevel ) {
         report_problem(error, "The amount of closing ``>'' characters is incorrect");
         return false;
       }
@@ -1665,8 +1501,8 @@
 -> type_arguments ;;
 
 
-   GREATER_THAN  [: ltCounter -= 1; :]  -- ">"
- | RSHIFT        [: ltCounter -= 2; :]  -- ">>"
+   GREATER_THAN  [: _M_ltCounter -= 1; :]  -- ">"
+ | RSHIFT        [: _M_ltCounter -= 2; :]  -- ">>"
 -> type_arguments_or_parameters_end ;;
 
 
@@ -1793,7 +1629,7 @@
       ( 0 [: if (LA(2).kind == Token_RBRACE) { break; } :]
         COMMA #variable_initializer=variable_initializer
       )*
-      COMMA
+      ( COMMA | 0 )
     |
       0
    )
@@ -1943,7 +1779,11 @@
 -> switch_statement ;;
 
    (#label=switch_label)+
-   (#statement=block_statement)+
+   ( 0 [: if (yytoken == Token_DEFAULT && LA(2).kind != Token_LPAREN)
+            { break; }  // don't give in to default_value_expression
+        :]
+     #statement=block_statement
+   )+
 -> switch_section ;;
 
    (  CASE case_expression=constant_expression
@@ -1963,7 +1803,7 @@
 -> try_statement ;;
 
    (
-      ?[: LA(2).kind == Token_LPAREN:]
+      ?[: LA(2).kind != Token_LPAREN :]
       general_catch_clause=general_catch_clause
     |
       ( -- also let general catch clauses get through:
@@ -2244,7 +2084,7 @@
  (
    -- this is the part of member_access that's not in primary_atom
    DOT member_name=identifier
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+   (  ?[: lookahead_is_type_arguments() == true :]
       type_arguments=type_arguments
     | 0
    )
@@ -2266,7 +2106,7 @@
  |
    -- unsafe grammar extension: pointer access
    ARROW_RIGHT member_name=identifier
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+   (  ?[: lookahead_is_type_arguments() == true :]
       type_arguments=type_arguments
     | 0
    )
@@ -2307,7 +2147,7 @@
      [: (*yynode)->rule_type = primary_atom_ast::type_unchecked_expression;  :]
  |
    DEFAULT LPAREN type=type RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_default_expression;    :]
+     [: (*yynode)->rule_type = primary_atom_ast::type_default_value_expression;    :]
  |
    anonymous_method_expression=anonymous_method_expression
      [: (*yynode)->rule_type = primary_atom_ast::type_anonymous_method_expression; :]
@@ -2329,13 +2169,13 @@
     | 0
    )
    member_name=identifier
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+   (  ?[: lookahead_is_type_arguments() == true :]
       type_arguments=type_arguments
     | 0
    )
  |
    predefined_type=predefined_type DOT member_name=identifier
-   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+   (  ?[: lookahead_is_type_arguments() == true :]
       type_arguments=type_arguments
     | 0
    )
@@ -2363,7 +2203,11 @@
 
 
    BASE
-   (  DOT identifier=identifier type_arguments=type_arguments
+   (  DOT identifier=identifier
+      (  ?[: lookahead_is_type_arguments() == true :]
+          type_arguments=type_arguments
+        | 0
+      )
         [: (*yynode)->access_type = base_access_ast::type_base_member_access;  :]
     |
       LBRACKET (#expression=expression @ COMMA) RBRACKET
@@ -2397,7 +2241,7 @@
  (
    array_initializer=array_initializer
  |
-   LBRACKET (#expression=expression)* RBRACKET
+   LBRACKET (#expression=expression @ COMMA) RBRACKET
    ( 0 [: if (LA(2).kind != Token_COMMA || LA(2).kind != Token_RBRACKET)
             { break; }
         :] -- avoids swallowing the LBRACKETs in
@@ -2448,6 +2292,174 @@
    GREATER_THAN
 -> generic_dimension_specifier ;;
 
+
+
+
+
+--
+-- All kinds of rules for types here.
+--
+
+-- The RETURN TYPE can only be used as return value, not in a declaration.
+
+ (
+   ?[: LA(2).kind != Token_STAR :] -- "void*" is a regular type in unsafe code
+   VOID              [: (*yynode)->type = return_type_ast::type_void;    :]
+ |
+   regular_type=type [: (*yynode)->type = return_type_ast::type_regular; :]
+ )
+-> return_type ;;
+
+-- The regular TYPE recognizes the same set of tokens as the one in the C#
+-- specification, but had to be refactored quite a bit. Looks different here.
+
+   unmanaged_type=unmanaged_type   -- it's too cumbersome to track "unsafe",
+   -- | managed_type=managed_type  -- so have it on by default for performance
+-> type ;;
+
+   -- unsafe grammar extension: unmanaged type (includes all of the managed one)
+   0 [: (*yynode)->star_count = 0; :]
+   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
+   )
+   ( STAR [: (*yynode)->star_count++; :] )*
+-> unmanaged_type ;;
+
+   -- unsafe grammar extension: pointer type
+   0 [: (*yynode)->star_count = 0; :]
+   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
+   )
+   ( STAR [: (*yynode)->star_count++; :] )+
+-> pointer_type ;;
+
+   non_array_type=non_array_type
+   ( 0 [: if (LA(2).kind != Token_COMMA && LA(2).kind != Token_RBRACKET)
+            { break; }
+        :] -- avoids swallowing the LBRACKETs in
+           -- new_expression/array_creation_expression_rest.
+     #rank_specifier=rank_specifier
+   )*
+-> managed_type ;;
+
+   non_array_type=non_array_type (#rank_specifier=rank_specifier)+
+-> array_type ;;
+
+   LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
+   ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
+   RBRACKET
+-> rank_specifier ;;
+
+   builtin_class_type=builtin_class_type
+ | optionally_nullable_type=optionally_nullable_type
+-> non_array_type ;;
+
+   type_name=type_name
+ | builtin_class_type=builtin_class_type
+-> class_type ;;
+
+   OBJECT [: (*yynode)->type = builtin_class_type_ast::type_object; :]
+ | STRING [: (*yynode)->type = builtin_class_type_ast::type_string; :]
+-> builtin_class_type ;;
+
+-- NULLABLE TYPES are new in C# 2.0 and need to be expressed a little bit
+-- differently than in LALR grammars like in the C# specification.
+
+   non_nullable_type=non_nullable_type
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      QUESTION [: (*yynode)->nullable = true;  :]
+    |
+      0        [: (*yynode)->nullable = false; :]
+   )
+-> optionally_nullable_type ;;
+
+   type_name=type_name
+ | simple_type=simple_type
+-> non_nullable_type ;;
+
+
+-- Now for SIMPLE TYPES, this is easier ;)
+
+ (
+   numeric_type=numeric_type
+     [: (*yynode)->type = simple_type_ast::type_numeric; :]
+ | BOOL
+     [: (*yynode)->type = simple_type_ast::type_bool; :]
+ )
+-> simple_type ;;
+
+
+-- NUMERIC TYPES include INTEGRAL TYPES, FLOATING POINT TYPES, and DECIMAL.
+
+ (
+   int_type=integral_type
+     [: (*yynode)->type = numeric_type_ast::type_integral; :]
+ | float_type=floating_point_type
+     [: (*yynode)->type = numeric_type_ast::type_floating_point; :]
+ | DECIMAL
+     [: (*yynode)->type = numeric_type_ast::type_decimal; :]
+ )
+-> numeric_type ;;
+
+ (
+   SBYTE   [: (*yynode)->type = integral_type_ast::type_sbyte;  :]
+ | BYTE    [: (*yynode)->type = integral_type_ast::type_byte;   :]
+ | SHORT   [: (*yynode)->type = integral_type_ast::type_short;  :]
+ | USHORT  [: (*yynode)->type = integral_type_ast::type_ushort; :]
+ | INT     [: (*yynode)->type = integral_type_ast::type_int;    :]
+ | UINT    [: (*yynode)->type = integral_type_ast::type_uint;   :]
+ | LONG    [: (*yynode)->type = integral_type_ast::type_long;   :]
+ | ULONG   [: (*yynode)->type = integral_type_ast::type_ulong;  :]
+ | CHAR    [: (*yynode)->type = integral_type_ast::type_char;   :]
+ )
+-> integral_type ;;
+
+ (
+   FLOAT   [: (*yynode)->type = floating_point_type_ast::type_float;  :]
+ | DOUBLE  [: (*yynode)->type = floating_point_type_ast::type_double; :]
+ )
+-> floating_point_type ;;
+
+
+-- TYPE NAMES and NAMESPACE NAMES are the same thing,
+-- essentially qualified identifiers with optional type arguments.
+
+   namespace_or_type_name
+-> namespace_name ;;
+
+   namespace_or_type_name
+-> type_name ;;
+
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   #name_part=namespace_or_type_name_part @ DOT
+-> namespace_or_type_name ;;
+
+   identifier=identifier
+   (  ?[: lookahead_is_type_arguments() == true :]
+      type_arguments=type_arguments
+    | 0
+   )
+-> namespace_or_type_name_part ;;
+
+   namespace_or_type_name_safe
+-> type_name_safe ;;
+
+   (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
+    | 0
+   )
+   #name_part=namespace_or_type_name_part
+   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) break; :] -- exit the "star loop"
+     DOT #name_part=namespace_or_type_name_part
+   )*
+-> namespace_or_type_name_safe ;;
+
+
+-- QUALIFIED identifiers are either qualified ones or raw identifiers.
+
+   #name=identifier @ DOT
+-> qualified_identifier ;;
 
 
 
@@ -2559,6 +2571,7 @@
 
 [:
 #include "csharp_lookahead.h"
+void print_token_environment(csharp* parser);
 
 
 csharp::csharp_compatibility_mode csharp::compatibility_mode() {
@@ -2587,7 +2600,7 @@ bool csharp::pp_is_symbol_defined( std::string symbol_name )
 // custom error recovery
 bool csharp::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
 {
-  //print_token_environment(this);
+  print_token_environment(this);
   report_problem(
     csharp::error,
     std::string("Expected token ``") + name
@@ -2599,7 +2612,7 @@ bool csharp::yy_expected_token(int /*expected*/, std::size_t where, char const *
 
 bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 {
-  //print_token_environment(this);
+  print_token_environment(this);
   report_problem(
     csharp::error,
     std::string("Expected symbol ``") + name
@@ -2661,6 +2674,17 @@ bool csharp::lookahead_is_unbound_type_name()
 {
     csharp_lookahead* la = new csharp_lookahead(this);
     bool result = la->is_unbound_type_name();
+    delete la;
+    return result;
+}
+
+bool csharp::lookahead_is_type_arguments()
+{
+    if (compatibility_mode() < csharp20_compatibility)
+      return false;
+
+    csharp_lookahead* la = new csharp_lookahead(this);
+    bool result = la->is_type_arguments();
     delete la;
     return result;
 }

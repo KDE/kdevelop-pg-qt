@@ -1,6 +1,6 @@
 /*****************************************************************************
  * This file is part of KDevelop.                                            *
- * Copyright (c) 2005 Jakob Petsovits <jpetso@gmx.at>                        *
+ * Copyright (c) 2005-2006 Jakob Petsovits <jpetso@gmx.at>                   *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU Library General Public               *
@@ -25,6 +25,7 @@ csharp_lookahead::csharp_lookahead(csharp* parser)
 : _M_parser(parser), _M_count(1)
 {
     _M_token = _M_parser->yytoken;
+    _M_ltCounter = 0;
 }
 
 void csharp_lookahead::fetch_next_token()
@@ -419,7 +420,8 @@ bool csharp_lookahead::is_managed_type()
         }
       while (_M_token == csharp::Token_LBRACKET)
         {
-          if (_M_parser->LA(_M_count + 1).kind != csharp::Token_COMMA || _M_parser->LA(_M_count + 1).kind != csharp::Token_RBRACKET)
+          if (_M_parser->LA(_M_count + 1).kind != csharp::Token_COMMA
+              && _M_parser->LA(_M_count + 1).kind != csharp::Token_RBRACKET)
             {
               break;
             }
@@ -1035,48 +1037,70 @@ bool csharp_lookahead::is_type_arguments()
 {
   if (_M_token == csharp::Token_LESS_THAN)
     {
-      if (_M_token != csharp::Token_LESS_THAN)
-        return false;
-
-      int ltCount = 1;
-
       fetch_next_token();
 
-      while (true)
+      int currentLtLevel = _M_ltCounter;
+      _M_ltCounter++;
+
+      if (!is_type())
         {
-          if (_M_token == csharp::Token_LESS_THAN)
-            {
-              ltCount += 1;
-            }
-
-          else if (_M_token == csharp::Token_GREATER_THAN)
-            {
-              ltCount -= 1;
-            }
-
-          else if (_M_token == csharp::Token_RSHIFT)
-            {
-              ltCount -= 2;
-            }
-
-          else if (_M_token == csharp::Token_SEMICOLON
-                   || _M_token == csharp::Token_EOF)
+          return false;
+        }
+      while (_M_token == csharp::Token_COMMA)
+        {
+          fetch_next_token();
+          if (!is_type())
             {
               return false;
-              // for performance reasons - otherwise an unclosed LESS_THAN
-              // can cause the whole file to be read. As neither of them
-              // can occur in type arguments, this is also correct.
             }
-
-          fetch_next_token();
-
-          if ( ltCount <= 0 )
+        }
+      if (_M_token == csharp::Token_GREATER_THAN
+          || _M_token == csharp::Token_RSHIFT)
+        {
+          if (!is_type_arguments_or_parameters_end())
             {
-              break;
+              return false;
             }
+        }
+      else if (true /*epsilon*/)
+      {}
 
-        } // end while loop
+      if ( currentLtLevel == 0 && _M_ltCounter > currentLtLevel )
+        {
+          return false;
+        }
+    }
+  else
+    {
+      return false;
+    }
 
+  return true;
+}
+
+bool csharp_lookahead::is_type_arguments_or_parameters_end()
+{
+  if (_M_token == csharp::Token_GREATER_THAN
+      || _M_token == csharp::Token_RSHIFT)
+    {
+      if (_M_token == csharp::Token_GREATER_THAN)
+        {
+          if (_M_token != csharp::Token_GREATER_THAN)
+            return false;
+          fetch_next_token();
+          _M_ltCounter -= 1;
+        }
+      else if (_M_token == csharp::Token_RSHIFT)
+        {
+          if (_M_token != csharp::Token_RSHIFT)
+            return false;
+          fetch_next_token();
+          _M_ltCounter -= 2;
+        }
+      else
+        {
+          return false;
+        }
     }
   else
     {

@@ -100,13 +100,15 @@ model::terminal_item *pg::terminal(char const *name, char const *description)
   return node;
 }
 
-model::annotation_item *pg::annotation(char const *name, model::node *item, bool sequence, bool local)
+model::annotation_item *pg::annotation(char const *name, model::node *item,
+                                       model::annotation_item::annotation_type_enum type,
+                                       model::annotation_item::scope_type_enum scope)
 {
   model::annotation_item *node = create_node<model::annotation_item>();
   node->_M_name = name;
   node->_M_item = item;
-  node->_M_sequence = sequence;
-  node->_M_local = local;
+  node->_M_type = type;
+  node->_M_scope = scope;
   return node;
 }
 
@@ -136,7 +138,10 @@ std::ostream &operator << (std::ostream &out, model::node const *__node)
   else if (model::terminal_item *t = node_cast<model::terminal_item *>(node))
     return (out << t->_M_name);
   else if (model::annotation_item *a = node_cast<model::annotation_item *>(node))
-    return (out << (a->_M_sequence ? "#" : "") << a->_M_name << (a->_M_local ? ":" : "=") << a->_M_item);
+    return (out << ((a->_M_type == model::annotation_item::type_sequence) ? "#" : "")
+                << a->_M_name
+                << ((a->_M_scope == model::annotation_item::scope_local) ? ":" : "=")
+                << a->_M_item);
 #if 0
 
   else

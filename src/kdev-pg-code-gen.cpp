@@ -249,11 +249,11 @@ void code_generator::visit_annotation(model::annotation_item *node)
           << "return yy_expected_token(yytoken, Token_" << t->_M_name << ", \"" << t->_M_description << "\");"
           << std::endl;
 
-      if (node->_M_sequence)
+      if (node->_M_type == model::annotation_item::type_sequence)
         {
           std::string target;
 
-          if (!node->_M_local)
+          if (node->_M_scope == model::annotation_item::scope_ast_member)
             target += "(*yynode)->";
 
           target += node->_M_name;
@@ -270,12 +270,12 @@ void code_generator::visit_annotation(model::annotation_item *node)
     }
   else if (model::symbol_item *s = node_cast<model::symbol_item*>(node->_M_item))
     {
-      if (node->_M_sequence)
+      if (node->_M_type == model::annotation_item::type_sequence)
         {
           std::string __var = gen_parser_call(s, parser, out);
 
           std::string target;
-          if (!node->_M_local)
+          if (node->_M_scope == model::annotation_item::scope_ast_member)
             target += "(*yynode)->";
 
           target += node->_M_name;
@@ -288,7 +288,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
           std::string __var = gen_parser_call(s, parser, out);
 
           std::string target;
-          if (!node->_M_local)
+          if (node->_M_scope == model::annotation_item::scope_ast_member)
             target += "(*yynode)->";
 
           target += node->_M_name;

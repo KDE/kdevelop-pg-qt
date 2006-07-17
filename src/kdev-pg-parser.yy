@@ -33,7 +33,7 @@ extern void yyerror(char const *msg);
 %union {
     model::node *item;
     char* str;
-    int ival;
+    model::annotation_item::scope_type_enum scope;
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
@@ -41,10 +41,10 @@ extern void yyerror(char const *msg);
 %token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_CONSTRUCTOR T_DESTRUCTOR
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING name code_opt
-%type<item> item primary_item unary_item question question_item
+%type<item> item primary_item primary_atom unary_item question question_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<item> member_declaration_rest
-%type<ival> scope
+%type<scope> scope
 
 %%
 
@@ -67,15 +67,15 @@ declaration
     ;
 
 member_declaration_rest
-    :  T_PUBLIC T_DECLARATION ')' T_CODE
+    : T_PUBLIC T_DECLARATION ')' T_CODE
         { $$ = pg::member(settings::member_item::public_declaration, $4); }
-    |  T_PROTECTED T_DECLARATION ')' T_CODE
+    | T_PROTECTED T_DECLARATION ')' T_CODE
         { $$ = pg::member(settings::member_item::protected_declaration, $4); }
-    |  T_PRIVATE T_DECLARATION ')' T_CODE
+    | T_PRIVATE T_DECLARATION ')' T_CODE
         { $$ = pg::member(settings::member_item::private_declaration, $4); }
-    |  T_CONSTRUCTOR ')' T_CODE
+    | T_CONSTRUCTOR ')' T_CODE
         { $$ = pg::member(settings::member_item::constructor_code, $3); }
-    |  T_DESTRUCTOR ')' T_CODE
+    | T_DESTRUCTOR ')' T_CODE
         { $$ = pg::member(settings::member_item::destructor_code, $3); }
     ;
 
@@ -94,12 +94,16 @@ rules
 primary_item
     : '0'                               { $$ = _G_system.zero(); }
     | '(' option_item ')'               { $$ = $2; }
-    | T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
+    | primary_atom                      { $$ = $1; }
+    | name scope primary_atom
+        { $$ = pg::annotation($1, $3, model::annotation_item::type_node, $2); }
+    | '#' name scope primary_atom
+        { $$ = pg::annotation($2, $4, model::annotation_item::type_sequence, $3); }
+    ;
+
+primary_atom
+    : T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
     | T_TERMINAL                        { $$ = _G_system.terminal($1); }
-    | name scope T_IDENTIFIER           { $$ = pg::annotation($1, _G_system.push_symbol($3), false, ($2 == ':')); }
-    | name scope T_TERMINAL             { $$ = pg::annotation($1, _G_system.terminal($3), false, ($2 == ':')); }
-    | '#' name scope T_IDENTIFIER       { $$ = pg::annotation($2, _G_system.push_symbol($4), true, ($3 == ':')); }
-    | '#' name scope T_TERMINAL         { $$ = pg::annotation($2, _G_system.terminal($4), true, ($3 == ':')); }
     ;
 
 name
@@ -113,8 +117,8 @@ name
     ;
 
 scope
-    : '=' { $$ = '='; }
-    | ':' { $$ = ':'; }
+    : '=' { $$ = model::annotation_item::scope_ast_member; }
+    | ':' { $$ = model::annotation_item::scope_local; }
     ;
 
 unary_item

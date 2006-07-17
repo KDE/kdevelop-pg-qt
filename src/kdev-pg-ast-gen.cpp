@@ -131,13 +131,13 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
 {
   default_visitor::visit_annotation(node);
 
-  if (node->_M_local)
+  if (node->_M_scope == model::annotation_item::scope_local)
     return;
 
   if (_M_names.find(node->_M_name) != _M_names.end())
     return;
 
-  if (node->_M_sequence)
+  if (node->_M_type == model::annotation_item::type_sequence)
     {
       out << "const list_node<";
 
@@ -162,7 +162,7 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
 
   out << node->_M_name;
 
-  if (node->_M_sequence)
+  if (node->_M_type == model::annotation_item::type_sequence)
     out << "_sequence";
 
   out << ";" << std::endl;

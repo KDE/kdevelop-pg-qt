@@ -63,7 +63,7 @@ void gen_default_visitor_rule::visit_annotation(model::annotation_item *node)
 {
   default_visitor::visit_annotation(node);
 
-  if (node->_M_local)
+  if (node->_M_scope == model::annotation_item::scope_local)
     return;
 
   if (_M_names.find(node->_M_name) != _M_names.end())
@@ -76,7 +76,7 @@ void gen_default_visitor_rule::visit_annotation(model::annotation_item *node)
 
   std::string base_type = std::string(sym->_M_name) + "_ast*";
 
-  if (node->_M_sequence)
+  if (node->_M_type == model::annotation_item::type_sequence)
     {
       out << "if (" << "node->" << node->_M_name << "_sequence" << ") {"
           << "const list_node<" << base_type << "> *__it = " << "node->" << node->_M_name << "_sequence" << "->to_front()"

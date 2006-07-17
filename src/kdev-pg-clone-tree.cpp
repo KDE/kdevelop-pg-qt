@@ -117,7 +117,7 @@ void clone_tree::visit_annotation(model::annotation_item *node)
   model::node *item = _M_temps.top();
   _M_temps.pop();
 
-  _M_temps.push(pg::annotation(node->_M_name, item, node->_M_sequence, node->_M_local));
+  _M_temps.push(pg::annotation(node->_M_name, item, node->_M_type, node->_M_scope));
 }
 
 model::node *clone_tree::clone(model::node *node)

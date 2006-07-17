@@ -134,10 +134,20 @@ namespace model
   {
     PG_NODE(annotation)
 
+    enum annotation_type_enum {
+      type_node,
+      type_sequence,
+    };
+
+    enum scope_type_enum {
+      scope_ast_member,
+      scope_local,
+    };
+
     char const *_M_name;
     node *_M_item;
-    bool _M_sequence;
-    bool _M_local;
+    annotation_type_enum _M_type;
+    scope_type_enum _M_scope;
   };
 
   struct condition_item: public node

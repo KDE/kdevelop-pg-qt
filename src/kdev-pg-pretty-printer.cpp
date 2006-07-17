@@ -121,6 +121,8 @@ void pretty_printer::visit_terminal(model::terminal_item *node)
 
 void pretty_printer::visit_annotation(model::annotation_item *node)
 {
-  out << (node->_M_sequence ? "#" : "") << node->_M_name << (node->_M_local ? ":" : "=");
+  out << ((node->_M_type == model::annotation_item::type_sequence) ? "#" : "")
+      << node->_M_name
+      << ((node->_M_scope == model::annotation_item::scope_local) ? ":" : "=");
   visit_node(node->_M_item);
 }

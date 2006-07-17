@@ -170,12 +170,12 @@ void code_generator::visit_alternative(model::alternative_item *node)
       out << "if (";
 
       if (cond)
-        out << "(" << cond->_M_code << ") && (";
+        out << "(";
 
       gen_test_condition(n, out);
 
       if (cond)
-        out << ")";
+        out << ") && (" << cond->_M_code << ")";
 
       out << ") {" << std::endl;
       visit_node(n);
@@ -204,7 +204,7 @@ void code_generator::visit_evolve(model::evolve_item *node)
   model::condition_item *cond = node_cast<model::condition_item*>(node->_M_item);
 
   if (cond)
-    out << "(" << cond->_M_code << " && ";
+    out << "(";
 
   gen_test_condition(node, out);
 
@@ -215,7 +215,7 @@ void code_generator::visit_evolve(model::evolve_item *node)
     }
 
   if (cond)
-    out << ")";
+    out << ") && (" << cond->_M_code << ")";
 
   out << ") {" << std::endl;
 

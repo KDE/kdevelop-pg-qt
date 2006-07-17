@@ -69,12 +69,12 @@ void gen_default_visitor_rule::visit_annotation(model::annotation_item *node)
   if (_M_names.find(node->_M_name) != _M_names.end())
     return;
 
-  model::symbol_item *sym = node_cast<model::symbol_item*>(node->_M_item);
+  model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item);
 
-  if (!sym)
+  if (!nt)
     return; // nothing to do
 
-  std::string base_type = std::string(sym->_M_name) + "_ast*";
+  std::string base_type = std::string(nt->_M_symbol->_M_name) + "_ast*";
 
   if (node->_M_type == model::annotation_item::type_sequence)
     {

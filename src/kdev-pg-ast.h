@@ -42,8 +42,9 @@ namespace model
     node_kind_evolve = 8,
     node_kind_alias = 9,
     node_kind_terminal = 10,
-    node_kind_annotation = 11,
-    node_kind_condition = 12,
+    node_kind_nonterminal = 11,
+    node_kind_annotation = 12,
+    node_kind_condition = 13,
 
     node_kind_LAST
   };
@@ -128,6 +129,13 @@ namespace model
 
     char const *_M_name;
     char const *_M_description;
+  };
+
+  struct nonterminal_item: public node
+  {
+    PG_NODE(nonterminal)
+
+    symbol_item *_M_symbol;
   };
 
   struct annotation_item: public node

@@ -143,8 +143,8 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
 
       if (node_cast<model::terminal_item*>(node->_M_item))
         out << "std::size_t";
-      else if (model::symbol_item *sym = node_cast<model::symbol_item*>(node->_M_item))
-        out << sym->_M_name << "_ast *";
+      else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
+        out << nt->_M_symbol->_M_name << "_ast *";
       else
         assert(0); // ### not supported
 
@@ -154,8 +154,8 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
     {
       if (node_cast<model::terminal_item*>(node->_M_item))
         out << "std::size_t ";
-      else if (model::symbol_item *sym = node_cast<model::symbol_item*>(node->_M_item))
-        out << sym->_M_name << "_ast *";
+      else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
+        out << nt->_M_symbol->_M_name << "_ast *";
       else
         assert(0); // ### not supported
     }

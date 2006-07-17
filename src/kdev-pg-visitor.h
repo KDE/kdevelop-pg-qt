@@ -44,6 +44,7 @@ protected:
   virtual void visit_evolve(model::evolve_item *) {}
   virtual void visit_alias(model::alias_item *) {}
   virtual void visit_terminal(model::terminal_item *) {}
+  virtual void visit_nonterminal(model::nonterminal_item *) {}
   virtual void visit_annotation(model::annotation_item *) {}
   virtual void visit_condition(model::condition_item *) {}
 

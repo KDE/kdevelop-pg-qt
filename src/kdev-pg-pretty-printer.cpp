@@ -119,6 +119,11 @@ void pretty_printer::visit_terminal(model::terminal_item *node)
   out << node->_M_name;
 }
 
+void pretty_printer::visit_nonterminal(model::nonterminal_item *node)
+{
+  visit_node(node->_M_symbol);
+}
+
 void pretty_printer::visit_annotation(model::annotation_item *node)
 {
   out << ((node->_M_type == model::annotation_item::type_sequence) ? "#" : "")

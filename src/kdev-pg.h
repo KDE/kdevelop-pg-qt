@@ -41,6 +41,7 @@ namespace pg
   model::evolve_item *evolve(model::node *item, model::symbol_item *symbol, char const *code);
   model::alias_item *alias(char const *code, model::symbol_item *symbol);
   model::terminal_item *terminal(char const *name, char const *description);
+  model::nonterminal_item *nonterminal(model::symbol_item *symbol);
   model::condition_item *condition(char const *code, model::node *item);
   model::annotation_item *annotation(char const *name, model::node *item,
                                      model::annotation_item::annotation_type_enum type,

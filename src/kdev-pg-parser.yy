@@ -102,7 +102,7 @@ primary_item
     ;
 
 primary_atom
-    : T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
+    : T_IDENTIFIER                      { $$ = pg::nonterminal(_G_system.push_symbol($1)); }
     | T_TERMINAL                        { $$ = _G_system.terminal($1); }
     ;
 
@@ -134,7 +134,7 @@ question
     ;
 
 question_item
-    : T_IDENTIFIER                      { $$ = _G_system.push_symbol($1); }
+    : T_IDENTIFIER                      { $$ = pg::nonterminal(_G_system.push_symbol($1)); }
     | T_TERMINAL                        { $$ = _G_system.terminal($1); }
     ;
 

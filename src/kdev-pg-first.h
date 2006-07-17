@@ -31,6 +31,7 @@ protected:
   virtual void visit_node(model::node *node);
   virtual void visit_zero(model::zero_item *node);
   virtual void visit_terminal(model::terminal_item *node);
+  virtual void visit_nonterminal(model::nonterminal_item *node);
   virtual void visit_symbol(model::symbol_item *node);
   virtual void visit_plus(model::plus_item *node);
   virtual void visit_star(model::star_item *node);
@@ -57,6 +58,7 @@ protected:
   virtual void visit_node(model::node *node);
   virtual void visit_zero(model::zero_item *node);
   virtual void visit_terminal(model::terminal_item *node);
+  virtual void visit_nonterminal(model::nonterminal_item *node);
   virtual void visit_symbol(model::symbol_item *node);
   virtual void visit_plus(model::plus_item *node);
   virtual void visit_star(model::star_item *node);

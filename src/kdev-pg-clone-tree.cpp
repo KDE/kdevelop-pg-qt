@@ -35,6 +35,11 @@ void clone_tree::visit_terminal(model::terminal_item *node)
   _M_temps.push(node);
 }
 
+void clone_tree::visit_nonterminal(model::nonterminal_item *node)
+{
+  _M_temps.push(pg::nonterminal(node->_M_symbol));
+}
+
 void clone_tree::visit_plus(model::plus_item *node)
 {
   visit_node(node->_M_item);

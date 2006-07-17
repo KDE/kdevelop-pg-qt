@@ -58,24 +58,27 @@ namespace
     gen_condition(s, out);
   }
 
-  std::string gen_parser_call(model::symbol_item *node, char const *parser, std::ostream &out)
+  std::string gen_parser_call(model::nonterminal_item *node, char const *parser, std::ostream &out)
   {
     static int __id = 0;
     static char __var[1024];
+    char const *symbol_name = node->_M_symbol->_M_name;
 
     if (_G_system.generate_ast)
       {
         sprintf(__var, "__node_%d", __id++);
 
-        out << node->_M_name << "_ast *" << __var << " = 0;" << std::endl
-            << "if (!parse_" << node->_M_name << "(&" << __var << "))"
-            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_" << node->_M_name << ", \"" << node->_M_name << "\"" << "); }"
+        out << symbol_name << "_ast *" << __var << " = 0;" << std::endl
+            << "if (!parse_" << symbol_name << "(&" << __var << "))"
+            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_"
+            << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
       }
     else
       {
-        out << "if (!parse_" << node->_M_name << "())"
-            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_" << node->_M_name << ", \"" << node->_M_name << "\"" << "); }"
+        out << "if (!parse_" << symbol_name << "())"
+            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_"
+            << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
       }
 
@@ -96,6 +99,11 @@ void code_generator::visit_zero(model::zero_item *node)
 }
 
 void code_generator::visit_symbol(model::symbol_item *node)
+{
+  // out << " /* nothing to do */" << std::endl;
+}
+
+void code_generator::visit_nonterminal(model::nonterminal_item *node)
 {
   gen_parser_call(node, parser, out);
 }
@@ -268,11 +276,11 @@ void code_generator::visit_annotation(model::annotation_item *node)
               << "yylex();" << std::endl;
         }
     }
-  else if (model::symbol_item *s = node_cast<model::symbol_item*>(node->_M_item))
+  else if (model::nonterminal_item *n = node_cast<model::nonterminal_item*>(node->_M_item))
     {
       if (node->_M_type == model::annotation_item::type_sequence)
         {
-          std::string __var = gen_parser_call(s, parser, out);
+          std::string __var = gen_parser_call(n, parser, out);
 
           std::string target;
           if (node->_M_scope == model::annotation_item::scope_ast_member)
@@ -285,7 +293,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
         }
       else
         {
-          std::string __var = gen_parser_call(s, parser, out);
+          std::string __var = gen_parser_call(n, parser, out);
 
           std::string target;
           if (node->_M_scope == model::annotation_item::scope_ast_member)

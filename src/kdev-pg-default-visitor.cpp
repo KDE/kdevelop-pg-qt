@@ -28,6 +28,11 @@ void default_visitor::visit_symbol(model::symbol_item *node)
 void default_visitor::visit_terminal(model::terminal_item *node)
 {}
 
+void default_visitor::visit_nonterminal(model::nonterminal_item *node)
+{
+  visit_node(node->_M_symbol);
+}
+
 void default_visitor::visit_plus(model::plus_item *node)
 {
   visit_node(node->_M_item);

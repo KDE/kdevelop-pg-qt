@@ -100,6 +100,13 @@ model::terminal_item *pg::terminal(char const *name, char const *description)
   return node;
 }
 
+model::nonterminal_item *pg::nonterminal(model::symbol_item *symbol)
+{
+  model::nonterminal_item *node = create_node<model::nonterminal_item>();
+  node->_M_symbol = symbol;
+  return node;
+}
+
 model::annotation_item *pg::annotation(char const *name, model::node *item,
                                        model::annotation_item::annotation_type_enum type,
                                        model::annotation_item::scope_type_enum scope)
@@ -175,15 +182,19 @@ bool reduces_to_epsilon(model::node *node)
     {
       return reduces_to_epsilon(a->_M_item);
     }
+  else if (model::nonterminal_item *n = node_cast<model::nonterminal_item*>(node))
+    {
+      return reduces_to_epsilon(n->_M_symbol);
+    }
   else if (model::symbol_item *s = node_cast<model::symbol_item*>(node))
     {
       return _G_system.FIRST(s).find(_G_system.zero()) != _G_system.FIRST(s).end(); // hmm
     }
-  else if (model::plus_item *b = node_cast<model::plus_item*>(node))
+  else if (model::plus_item *p = node_cast<model::plus_item*>(node))
     {
-      return reduces_to_epsilon(b->_M_item);
+      return reduces_to_epsilon(p->_M_item);
     }
-  else if (model::star_item *b = node_cast<model::star_item*>(node))
+  else if (model::star_item *s = node_cast<model::star_item*>(node))
     {
       return true;
     }
@@ -197,15 +208,7 @@ bool reduces_to_epsilon(model::node *node)
 
 bool is_zero(model::node *node)
 {
-  if (model::cons_item *c = node_cast<model::cons_item*>(node))
-    {
-      return false;
-    }
-  else if (model::alternative_item *a = node_cast<model::alternative_item*>(node))
-    {
-      return false;
-    }
-  else if (model::action_item *a = node_cast<model::action_item*>(node))
+  if (model::action_item *a = node_cast<model::action_item*>(node))
     {
       return is_zero(a->_M_item);
     }
@@ -217,21 +220,19 @@ bool is_zero(model::node *node)
     {
       return is_zero(a->_M_item);
     }
-  else if (model::symbol_item *s = node_cast<model::symbol_item*>(node))
+  else if (model::plus_item *p = node_cast<model::plus_item*>(node))
     {
-      return false;
+      return is_zero(p->_M_item);
     }
-  else if (model::plus_item *b = node_cast<model::plus_item*>(node))
+  else if (model::star_item *s = node_cast<model::star_item*>(node))
     {
-      return is_zero(b->_M_item);
-    }
-  else if (model::star_item *b = node_cast<model::star_item*>(node))
-    {
-      return is_zero(b->_M_item);
+      return is_zero(s->_M_item);
     }
   else if (model::zero_item *z = node_cast<model::zero_item*>(node))
     {
       return true;
     }
+
+  return false;
 }
 

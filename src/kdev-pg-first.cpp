@@ -45,6 +45,11 @@ void initialize_FIRST::visit_terminal(model::terminal_item *node)
   _G_system.FIRST(node).insert(node);
 }
 
+void initialize_FIRST::visit_nonterminal(model::nonterminal_item *node)
+{
+  default_visitor::visit_nonterminal(node);
+}
+
 void initialize_FIRST::visit_condition(model::condition_item *node)
 {
   default_visitor::visit_condition(node);
@@ -154,6 +159,13 @@ void next_FIRST::visit_zero(model::zero_item *)
 
 void next_FIRST::visit_terminal(model::terminal_item *)
 {
+}
+
+void next_FIRST::visit_nonterminal(model::nonterminal_item *node)
+{
+  default_visitor::visit_nonterminal(node);
+
+  merge(node, node->_M_symbol);
 }
 
 void next_FIRST::visit_symbol(model::symbol_item *)

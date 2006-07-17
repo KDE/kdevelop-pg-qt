@@ -48,6 +48,7 @@ protected:
   virtual void visit_evolve(model::evolve_item *node);
   virtual void visit_annotation(model::annotation_item *node);
   virtual void visit_condition(model::condition_item *node);
+  virtual void visit_nonterminal(model::nonterminal_item *node);
 
 private:
   bool &_M_changed;

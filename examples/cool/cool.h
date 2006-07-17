@@ -11,39 +11,22 @@
 #include <cassert>
 
 struct additive_expression_ast;
-
 struct block_expression_ast;
-
 struct case_condition_ast;
-
 struct case_expression_ast;
-
 struct class_ast;
-
 struct expression_ast;
-
 struct feature_ast;
-
 struct formal_ast;
-
 struct if_expression_ast;
-
 struct let_declaration_ast;
-
 struct let_expression_ast;
-
 struct multiplicative_expression_ast;
-
 struct postfix_expression_ast;
-
 struct primary_expression_ast;
-
 struct program_ast;
-
 struct relational_expression_ast;
-
 struct unary_expression_ast;
-
 struct while_expression_ast;
 
 struct cool_ast_node
@@ -312,7 +295,6 @@ struct while_expression_ast: public cool_ast_node
 
 class cool
   {
-
   public:
     typedef kdev_pg_token_stream token_stream_type;
     typedef kdev_pg_token_stream::token_type token_type;
@@ -323,7 +305,6 @@ class cool
       {
         return token_stream->token(token_stream->index() - 1 + k - 1);
       }
-
     inline int yylex()
     {
       return (yytoken = token_stream->next_token());
@@ -347,7 +328,6 @@ class cool
     {
       memory_pool = p;
     }
-
     template <class T>
     inline T *create()
     {
@@ -430,7 +410,6 @@ class cool
     bool parse_unary_expression(unary_expression_ast **yynode);
     bool parse_while_expression(while_expression_ast **yynode);
   };
-
 class cool_visitor
   {
     typedef void (cool_visitor::*parser_fun_t)(cool_ast_node *);
@@ -439,87 +418,62 @@ class cool_visitor
   public:
     virtual ~cool_visitor()
     {}
-
     virtual void visit_node(cool_ast_node *node)
     {
       if (node)
         (this->*_S_parser_table[node->kind - 1000])(node);
     }
-
     virtual void visit_additive_expression(additive_expression_ast *)
   {}
-
     virtual void visit_block_expression(block_expression_ast *)
     {}
-
     virtual void visit_case_condition(case_condition_ast *)
     {}
-
     virtual void visit_case_expression(case_expression_ast *)
     {}
-
     virtual void visit_class(class_ast *)
     {}
-
     virtual void visit_expression(expression_ast *)
     {}
-
     virtual void visit_feature(feature_ast *)
     {}
-
     virtual void visit_formal(formal_ast *)
     {}
-
     virtual void visit_if_expression(if_expression_ast *)
     {}
-
     virtual void visit_let_declaration(let_declaration_ast *)
     {}
-
     virtual void visit_let_expression(let_expression_ast *)
     {}
-
     virtual void visit_multiplicative_expression(multiplicative_expression_ast *)
     {}
-
     virtual void visit_postfix_expression(postfix_expression_ast *)
     {}
-
     virtual void visit_primary_expression(primary_expression_ast *)
     {}
-
     virtual void visit_program(program_ast *)
     {}
-
     virtual void visit_relational_expression(relational_expression_ast *)
     {}
-
     virtual void visit_unary_expression(unary_expression_ast *)
     {}
-
     virtual void visit_while_expression(while_expression_ast *)
     {}
-
   }
-
 ;
-
 class cool_default_visitor: public cool_visitor
   {
-
   public:
     virtual void visit_additive_expression(additive_expression_ast *node)
     {
       if (node->expression_sequence)
         {
           const list_node<multiplicative_expression_ast*> *__it = node->expression_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -529,13 +483,11 @@ class cool_default_visitor: public cool_visitor
       if (node->expression_sequence)
         {
           const list_node<expression_ast*> *__it = node->expression_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -548,17 +500,14 @@ class cool_default_visitor: public cool_visitor
     virtual void visit_case_expression(case_expression_ast *node)
     {
       visit_node(node->expression);
-
       if (node->condition_sequence)
         {
           const list_node<case_condition_ast*> *__it = node->condition_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -568,13 +517,11 @@ class cool_default_visitor: public cool_visitor
       if (node->feature_sequence)
         {
           const list_node<feature_ast*> *__it = node->feature_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -589,16 +536,13 @@ class cool_default_visitor: public cool_visitor
       if (node->formal_sequence)
         {
           const list_node<formal_ast*> *__it = node->formal_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
-
       visit_node(node->expression);
     }
 
@@ -622,16 +566,13 @@ class cool_default_visitor: public cool_visitor
       if (node->declaration_sequence)
         {
           const list_node<let_declaration_ast*> *__it = node->declaration_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
-
       visit_node(node->body_expression);
     }
 
@@ -640,13 +581,11 @@ class cool_default_visitor: public cool_visitor
       if (node->expression_sequence)
         {
           const list_node<postfix_expression_ast*> *__it = node->expression_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -654,17 +593,14 @@ class cool_default_visitor: public cool_visitor
     virtual void visit_postfix_expression(postfix_expression_ast *node)
     {
       visit_node(node->base_expression);
-
       if (node->arguments_sequence)
         {
           const list_node<expression_ast*> *__it = node->arguments_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -672,20 +608,16 @@ class cool_default_visitor: public cool_visitor
     virtual void visit_primary_expression(primary_expression_ast *node)
     {
       visit_node(node->expression);
-
       if (node->argument_sequence)
         {
           const list_node<expression_ast*> *__it = node->argument_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
-
       visit_node(node->if_expression);
       visit_node(node->while_expression);
       visit_node(node->block_expression);
@@ -698,13 +630,11 @@ class cool_default_visitor: public cool_visitor
       if (node->klass_sequence)
         {
           const list_node<class_ast*> *__it = node->klass_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -714,13 +644,11 @@ class cool_default_visitor: public cool_visitor
       if (node->expression_sequence)
         {
           const list_node<additive_expression_ast*> *__it = node->expression_sequence->to_front(), *__end = __it;
-
           do
             {
               visit_node(__it->element);
               __it = __it->next;
             }
-
           while (__it != __end);
         }
     }
@@ -737,7 +665,6 @@ class cool_default_visitor: public cool_visitor
     }
 
   };
-
 #endif
 
 

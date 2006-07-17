@@ -1487,7 +1487,7 @@
       (  SUPER super_suffix=super_suffix
            [: (*yynode)->rule_type = primary_selector_ast::type_super_access; :]
        | method_name=identifier
-         LPAREN method_arguments=argument_list RPAREN
+         LPAREN method_arguments=optional_argument_list RPAREN
            [: (*yynode)->rule_type = primary_selector_ast::type_method_call;  :]
       )
    )
@@ -1502,7 +1502,7 @@
 --               a member variable of the super class.
 
  (
-   LPAREN constructor_arguments=argument_list RPAREN  -- constructor call
+   LPAREN constructor_arguments=optional_argument_list RPAREN  -- constructor call
  |
    DOT  -- member access
    (  ?[: LA(2).kind != Token_LPAREN :]  -- member variable access (no method call)
@@ -1842,8 +1842,8 @@ bool java::lookahead_is_parameter_declaration()
 * match the beginning of a cast expression. If true is returned then it
 * looks like a cast expression is coming up. It doesn't have to match the
 * full cast_expression rule (because type arguments are only checked
-* rudimentarily), but it is guaranteed that the upcoming tokens are
-* not a primary expression.
+* rudimentarily, and expressions are not checked at all), but there's a very
+* high chance that the upcoming tokens are not a primary expression.
 * The function returns false if the upcoming tokens are (for sure) not
 * the beginning of a cast expression.
 */

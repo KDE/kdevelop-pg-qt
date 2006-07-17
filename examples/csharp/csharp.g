@@ -18,12 +18,11 @@
 
 
 -- Grammar for C# 2.0
--- Modelled after the [license] [pg] C# 1.0 grammar at
--- [url]
--- (Version [version] from [January 03, 2005?])
--- and the reference grammar of the C# 2.0 language specification
+-- Modelled after the reference grammar of the C# 2.0 language specification
 -- (ECMA-334, Third Edition from June 2005, available at
--- http://www.ecma-international.org/publications/standards/Ecma-334.htm).
+-- http://www.ecma-international.org/publications/standards/Ecma-334.htm),
+-- and the BSD-licensed ANTLR C# 1.0 grammar "kcsparse" at
+-- http://antlr.org/grammar/list (version from December 01, 2005)
 
 
 -- 13 first/follow conflicts:

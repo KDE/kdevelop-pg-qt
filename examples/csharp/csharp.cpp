@@ -1209,18 +1209,18 @@ bool csharp::parse_attribute_arguments(attribute_arguments_ast **yynode)
             return yy_expected_token(yytoken, Token_RPAREN, ")");
           yylex();
         }
-      else if (( LA(2).kind == Token_ASSIGN ) && (yytoken == Token_ADD
-               || yytoken == Token_ALIAS
-               || yytoken == Token_GET
-               || yytoken == Token_GLOBAL
-               || yytoken == Token_PARTIAL
-               || yytoken == Token_REMOVE
-               || yytoken == Token_SET
-               || yytoken == Token_VALUE
-               || yytoken == Token_WHERE
-               || yytoken == Token_YIELD
-               || yytoken == Token_ASSEMBLY
-               || yytoken == Token_IDENTIFIER))
+      else if ((yytoken == Token_ADD
+                || yytoken == Token_ALIAS
+                || yytoken == Token_GET
+                || yytoken == Token_GLOBAL
+                || yytoken == Token_PARTIAL
+                || yytoken == Token_REMOVE
+                || yytoken == Token_SET
+                || yytoken == Token_VALUE
+                || yytoken == Token_WHERE
+                || yytoken == Token_YIELD
+                || yytoken == Token_ASSEMBLY
+                || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_ASSIGN ))
         {
           named_argument_ast *__node_33 = 0;
           if (!parse_named_argument(&__node_33))
@@ -1308,18 +1308,18 @@ bool csharp::parse_attribute_arguments(attribute_arguments_ast **yynode)
               if (yytoken != Token_COMMA)
                 return yy_expected_token(yytoken, Token_COMMA, ",");
               yylex();
-              if (( (yytoken == Token_IDENTIFIER) && (LA(2).kind == Token_ASSIGN) ) && (yytoken == Token_ADD
-                  || yytoken == Token_ALIAS
-                  || yytoken == Token_GET
-                  || yytoken == Token_GLOBAL
-                  || yytoken == Token_PARTIAL
-                  || yytoken == Token_REMOVE
-                  || yytoken == Token_SET
-                  || yytoken == Token_VALUE
-                  || yytoken == Token_WHERE
-                  || yytoken == Token_YIELD
-                  || yytoken == Token_ASSEMBLY
-                  || yytoken == Token_IDENTIFIER))
+              if ((yytoken == Token_ADD
+                   || yytoken == Token_ALIAS
+                   || yytoken == Token_GET
+                   || yytoken == Token_GLOBAL
+                   || yytoken == Token_PARTIAL
+                   || yytoken == Token_REMOVE
+                   || yytoken == Token_SET
+                   || yytoken == Token_VALUE
+                   || yytoken == Token_WHERE
+                   || yytoken == Token_YIELD
+                   || yytoken == Token_ASSEMBLY
+                   || yytoken == Token_IDENTIFIER) && ( (yytoken == Token_IDENTIFIER) && (LA(2).kind == Token_ASSIGN) ))
                 {
                   named_argument_ast *__node_36 = 0;
                   if (!parse_named_argument(&__node_36))
@@ -1436,92 +1436,92 @@ bool csharp::parse_attribute_section(attribute_section_ast **yynode)
       if (yytoken != Token_LBRACKET)
         return yy_expected_token(yytoken, Token_LBRACKET, "[");
       yylex();
-      if (( LA(2).kind == Token_COLON ) && (yytoken == Token_ABSTRACT
-                                            || yytoken == Token_AS
-                                            || yytoken == Token_BASE
-                                            || yytoken == Token_BOOL
-                                            || yytoken == Token_BREAK
-                                            || yytoken == Token_BYTE
-                                            || yytoken == Token_CASE
-                                            || yytoken == Token_CATCH
-                                            || yytoken == Token_CHAR
-                                            || yytoken == Token_CHECKED
-                                            || yytoken == Token_CLASS
-                                            || yytoken == Token_CONST
-                                            || yytoken == Token_CONTINUE
-                                            || yytoken == Token_DECIMAL
-                                            || yytoken == Token_DEFAULT
-                                            || yytoken == Token_DELEGATE
-                                            || yytoken == Token_DO
-                                            || yytoken == Token_DOUBLE
-                                            || yytoken == Token_ELSE
-                                            || yytoken == Token_ENUM
-                                            || yytoken == Token_EVENT
-                                            || yytoken == Token_EXPLICIT
-                                            || yytoken == Token_EXTERN
-                                            || yytoken == Token_FINALLY
-                                            || yytoken == Token_FIXED
-                                            || yytoken == Token_FLOAT
-                                            || yytoken == Token_FOREACH
-                                            || yytoken == Token_FOR
-                                            || yytoken == Token_GOTO
-                                            || yytoken == Token_IF
-                                            || yytoken == Token_IMPLICIT
-                                            || yytoken == Token_IN
-                                            || yytoken == Token_INT
-                                            || yytoken == Token_INTERFACE
-                                            || yytoken == Token_INTERNAL
-                                            || yytoken == Token_IS
-                                            || yytoken == Token_LOCK
-                                            || yytoken == Token_LONG
-                                            || yytoken == Token_NAMESPACE
-                                            || yytoken == Token_NEW
-                                            || yytoken == Token_OBJECT
-                                            || yytoken == Token_OPERATOR
-                                            || yytoken == Token_OUT
-                                            || yytoken == Token_OVERRIDE
-                                            || yytoken == Token_PARAMS
-                                            || yytoken == Token_PRIVATE
-                                            || yytoken == Token_PROTECTED
-                                            || yytoken == Token_PUBLIC
-                                            || yytoken == Token_READONLY
-                                            || yytoken == Token_REF
-                                            || yytoken == Token_RETURN
-                                            || yytoken == Token_SBYTE
-                                            || yytoken == Token_SEALED
-                                            || yytoken == Token_SHORT
-                                            || yytoken == Token_SIZEOF
-                                            || yytoken == Token_STACKALLOC
-                                            || yytoken == Token_STATIC
-                                            || yytoken == Token_STRING
-                                            || yytoken == Token_STRUCT
-                                            || yytoken == Token_SWITCH
-                                            || yytoken == Token_THIS
-                                            || yytoken == Token_THROW
-                                            || yytoken == Token_TRY
-                                            || yytoken == Token_TYPEOF
-                                            || yytoken == Token_UINT
-                                            || yytoken == Token_ULONG
-                                            || yytoken == Token_UNCHECKED
-                                            || yytoken == Token_UNSAFE
-                                            || yytoken == Token_USHORT
-                                            || yytoken == Token_USING
-                                            || yytoken == Token_VIRTUAL
-                                            || yytoken == Token_VOID
-                                            || yytoken == Token_VOLATILE
-                                            || yytoken == Token_WHILE
-                                            || yytoken == Token_ADD
-                                            || yytoken == Token_ALIAS
-                                            || yytoken == Token_GET
-                                            || yytoken == Token_GLOBAL
-                                            || yytoken == Token_PARTIAL
-                                            || yytoken == Token_REMOVE
-                                            || yytoken == Token_SET
-                                            || yytoken == Token_VALUE
-                                            || yytoken == Token_WHERE
-                                            || yytoken == Token_YIELD
-                                            || yytoken == Token_ASSEMBLY
-                                            || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_ABSTRACT
+           || yytoken == Token_AS
+           || yytoken == Token_BASE
+           || yytoken == Token_BOOL
+           || yytoken == Token_BREAK
+           || yytoken == Token_BYTE
+           || yytoken == Token_CASE
+           || yytoken == Token_CATCH
+           || yytoken == Token_CHAR
+           || yytoken == Token_CHECKED
+           || yytoken == Token_CLASS
+           || yytoken == Token_CONST
+           || yytoken == Token_CONTINUE
+           || yytoken == Token_DECIMAL
+           || yytoken == Token_DEFAULT
+           || yytoken == Token_DELEGATE
+           || yytoken == Token_DO
+           || yytoken == Token_DOUBLE
+           || yytoken == Token_ELSE
+           || yytoken == Token_ENUM
+           || yytoken == Token_EVENT
+           || yytoken == Token_EXPLICIT
+           || yytoken == Token_EXTERN
+           || yytoken == Token_FINALLY
+           || yytoken == Token_FIXED
+           || yytoken == Token_FLOAT
+           || yytoken == Token_FOREACH
+           || yytoken == Token_FOR
+           || yytoken == Token_GOTO
+           || yytoken == Token_IF
+           || yytoken == Token_IMPLICIT
+           || yytoken == Token_IN
+           || yytoken == Token_INT
+           || yytoken == Token_INTERFACE
+           || yytoken == Token_INTERNAL
+           || yytoken == Token_IS
+           || yytoken == Token_LOCK
+           || yytoken == Token_LONG
+           || yytoken == Token_NAMESPACE
+           || yytoken == Token_NEW
+           || yytoken == Token_OBJECT
+           || yytoken == Token_OPERATOR
+           || yytoken == Token_OUT
+           || yytoken == Token_OVERRIDE
+           || yytoken == Token_PARAMS
+           || yytoken == Token_PRIVATE
+           || yytoken == Token_PROTECTED
+           || yytoken == Token_PUBLIC
+           || yytoken == Token_READONLY
+           || yytoken == Token_REF
+           || yytoken == Token_RETURN
+           || yytoken == Token_SBYTE
+           || yytoken == Token_SEALED
+           || yytoken == Token_SHORT
+           || yytoken == Token_SIZEOF
+           || yytoken == Token_STACKALLOC
+           || yytoken == Token_STATIC
+           || yytoken == Token_STRING
+           || yytoken == Token_STRUCT
+           || yytoken == Token_SWITCH
+           || yytoken == Token_THIS
+           || yytoken == Token_THROW
+           || yytoken == Token_TRY
+           || yytoken == Token_TYPEOF
+           || yytoken == Token_UINT
+           || yytoken == Token_ULONG
+           || yytoken == Token_UNCHECKED
+           || yytoken == Token_UNSAFE
+           || yytoken == Token_USHORT
+           || yytoken == Token_USING
+           || yytoken == Token_VIRTUAL
+           || yytoken == Token_VOID
+           || yytoken == Token_VOLATILE
+           || yytoken == Token_WHILE
+           || yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_COLON ))
         {
           attribute_target_ast *__node_39 = 0;
           if (!parse_attribute_target(&__node_39))
@@ -1819,7 +1819,7 @@ bool csharp::parse_base_access(base_access_ast **yynode)
               return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
             }
           (*yynode)->identifier = __node_44;
-          if (( lookahead_is_type_arguments() == true ) && (yytoken == Token_LESS_THAN))
+          if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
             {
               type_arguments_ast *__node_45 = 0;
               if (!parse_type_arguments(&__node_45))
@@ -2327,18 +2327,18 @@ bool csharp::parse_block_statement(block_statement_ast **yynode)
       || yytoken == Token_STRING_LITERAL
       || yytoken == Token_IDENTIFIER)
     {
-      if (( LA(2).kind == Token_COLON ) && (yytoken == Token_ADD
-                                            || yytoken == Token_ALIAS
-                                            || yytoken == Token_GET
-                                            || yytoken == Token_GLOBAL
-                                            || yytoken == Token_PARTIAL
-                                            || yytoken == Token_REMOVE
-                                            || yytoken == Token_SET
-                                            || yytoken == Token_VALUE
-                                            || yytoken == Token_WHERE
-                                            || yytoken == Token_YIELD
-                                            || yytoken == Token_ASSEMBLY
-                                            || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_COLON ))
         {
           labeled_statement_ast *__node_55 = 0;
           if (!parse_labeled_statement(&__node_55))
@@ -2347,35 +2347,35 @@ bool csharp::parse_block_statement(block_statement_ast **yynode)
             }
           (*yynode)->labeled_statement = __node_55;
         }
-      else if (( lookahead_is_variable_declaration() == true ) && (yytoken == Token_BOOL
-               || yytoken == Token_BYTE
-               || yytoken == Token_CHAR
-               || yytoken == Token_CONST
-               || yytoken == Token_DECIMAL
-               || yytoken == Token_DOUBLE
-               || yytoken == Token_FLOAT
-               || yytoken == Token_INT
-               || yytoken == Token_LONG
-               || yytoken == Token_OBJECT
-               || yytoken == Token_SBYTE
-               || yytoken == Token_SHORT
-               || yytoken == Token_STRING
-               || yytoken == Token_UINT
-               || yytoken == Token_ULONG
-               || yytoken == Token_USHORT
-               || yytoken == Token_VOID
-               || yytoken == Token_ADD
-               || yytoken == Token_ALIAS
-               || yytoken == Token_GET
-               || yytoken == Token_GLOBAL
-               || yytoken == Token_PARTIAL
-               || yytoken == Token_REMOVE
-               || yytoken == Token_SET
-               || yytoken == Token_VALUE
-               || yytoken == Token_WHERE
-               || yytoken == Token_YIELD
-               || yytoken == Token_ASSEMBLY
-               || yytoken == Token_IDENTIFIER))
+      else if ((yytoken == Token_BOOL
+                || yytoken == Token_BYTE
+                || yytoken == Token_CHAR
+                || yytoken == Token_CONST
+                || yytoken == Token_DECIMAL
+                || yytoken == Token_DOUBLE
+                || yytoken == Token_FLOAT
+                || yytoken == Token_INT
+                || yytoken == Token_LONG
+                || yytoken == Token_OBJECT
+                || yytoken == Token_SBYTE
+                || yytoken == Token_SHORT
+                || yytoken == Token_STRING
+                || yytoken == Token_UINT
+                || yytoken == Token_ULONG
+                || yytoken == Token_USHORT
+                || yytoken == Token_VOID
+                || yytoken == Token_ADD
+                || yytoken == Token_ALIAS
+                || yytoken == Token_GET
+                || yytoken == Token_GLOBAL
+                || yytoken == Token_PARTIAL
+                || yytoken == Token_REMOVE
+                || yytoken == Token_SET
+                || yytoken == Token_VALUE
+                || yytoken == Token_WHERE
+                || yytoken == Token_YIELD
+                || yytoken == Token_ASSEMBLY
+                || yytoken == Token_IDENTIFIER) && ( lookahead_is_variable_declaration() == true ))
         {
           declaration_statement_ast *__node_56 = 0;
           if (!parse_declaration_statement(&__node_56))
@@ -2661,7 +2661,7 @@ bool csharp::parse_catch_clauses(catch_clauses_ast **yynode)
 
   if (yytoken == Token_CATCH)
     {
-      if (( LA(2).kind != Token_LPAREN ) && (yytoken == Token_CATCH))
+      if ((yytoken == Token_CATCH) && ( LA(2).kind != Token_LPAREN ))
         {
           general_catch_clause_ast *__node_61 = 0;
           if (!parse_general_catch_clause(&__node_61))
@@ -2946,7 +2946,7 @@ bool csharp::parse_class_declaration(class_declaration_ast **yynode)
           return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
         }
       (*yynode)->class_name = __node_71;
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_LESS_THAN))
+      if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           type_parameters_ast *__node_72 = 0;
           if (!parse_type_parameters(&__node_72))
@@ -2976,7 +2976,7 @@ bool csharp::parse_class_declaration(class_declaration_ast **yynode)
         {
           return false;
         }
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_WHERE))
+      if ((yytoken == Token_WHERE) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           type_parameter_constraints_clauses_ast *__node_74 = 0;
           if (!parse_type_parameter_constraints_clauses(&__node_74))
@@ -3337,18 +3337,18 @@ bool csharp::parse_class_or_struct_member_declaration(class_or_struct_member_dec
             }
           (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit;
         }
-      else if (( LA(2).kind == Token_LPAREN ) && (yytoken == Token_ADD
-               || yytoken == Token_ALIAS
-               || yytoken == Token_GET
-               || yytoken == Token_GLOBAL
-               || yytoken == Token_PARTIAL
-               || yytoken == Token_REMOVE
-               || yytoken == Token_SET
-               || yytoken == Token_VALUE
-               || yytoken == Token_WHERE
-               || yytoken == Token_YIELD
-               || yytoken == Token_ASSEMBLY
-               || yytoken == Token_IDENTIFIER))
+      else if ((yytoken == Token_ADD
+                || yytoken == Token_ALIAS
+                || yytoken == Token_GET
+                || yytoken == Token_GLOBAL
+                || yytoken == Token_PARTIAL
+                || yytoken == Token_REMOVE
+                || yytoken == Token_SET
+                || yytoken == Token_VALUE
+                || yytoken == Token_WHERE
+                || yytoken == Token_YIELD
+                || yytoken == Token_ASSEMBLY
+                || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_LPAREN ))
         {
           constructor_declaration_ast *__node_90 = 0;
           if (!parse_constructor_declaration(&__node_90))
@@ -3358,14 +3358,14 @@ bool csharp::parse_class_or_struct_member_declaration(class_or_struct_member_dec
           (*yynode)->constructor_declaration = __node_90;
           (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_constructor_declaration;
         }
-      else if (( (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
-                 || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
-                 || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) ) && (yytoken == Token_CLASS
-                     || yytoken == Token_DELEGATE
-                     || yytoken == Token_ENUM
-                     || yytoken == Token_INTERFACE
-                     || yytoken == Token_STRUCT
-                     || yytoken == Token_PARTIAL))
+      else if ((yytoken == Token_CLASS
+                || yytoken == Token_DELEGATE
+                || yytoken == Token_ENUM
+                || yytoken == Token_INTERFACE
+                || yytoken == Token_STRUCT
+                || yytoken == Token_PARTIAL) && ( (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
+                                                  || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
+                                                  || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) ))
         {
           type_declaration_rest_ast *__node_91 = 0;
           if (!parse_type_declaration_rest(&__node_91))
@@ -3598,19 +3598,19 @@ bool csharp::parse_class_or_struct_member_declaration(class_or_struct_member_dec
               yylex();
               (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_indexer_declaration;
             }
-          else if (( LA(2).kind == Token_ASSIGN || LA(2).kind == Token_COMMA
-                     || LA(2).kind == Token_SEMICOLON ) && (yytoken == Token_ADD
-                                                            || yytoken == Token_ALIAS
-                                                            || yytoken == Token_GET
-                                                            || yytoken == Token_GLOBAL
-                                                            || yytoken == Token_PARTIAL
-                                                            || yytoken == Token_REMOVE
-                                                            || yytoken == Token_SET
-                                                            || yytoken == Token_VALUE
-                                                            || yytoken == Token_WHERE
-                                                            || yytoken == Token_YIELD
-                                                            || yytoken == Token_ASSEMBLY
-                                                            || yytoken == Token_IDENTIFIER))
+          else if ((yytoken == Token_ADD
+                    || yytoken == Token_ALIAS
+                    || yytoken == Token_GET
+                    || yytoken == Token_GLOBAL
+                    || yytoken == Token_PARTIAL
+                    || yytoken == Token_REMOVE
+                    || yytoken == Token_SET
+                    || yytoken == Token_VALUE
+                    || yytoken == Token_WHERE
+                    || yytoken == Token_YIELD
+                    || yytoken == Token_ASSEMBLY
+                    || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_ASSIGN || LA(2).kind == Token_COMMA
+                                                         || LA(2).kind == Token_SEMICOLON ))
             {
               variable_declarator_ast *__node_108 = 0;
               if (!parse_variable_declarator(&__node_108))
@@ -3695,7 +3695,7 @@ bool csharp::parse_class_or_struct_member_declaration(class_or_struct_member_dec
               else if (yytoken == Token_LPAREN
                        || yytoken == Token_LESS_THAN)
                 {
-                  if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_LESS_THAN))
+                  if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                     {
                       type_parameters_ast *__node_113 = 0;
                       if (!parse_type_parameters(&__node_113))
@@ -3762,7 +3762,7 @@ bool csharp::parse_class_or_struct_member_declaration(class_or_struct_member_dec
                   if (yytoken != Token_RPAREN)
                     return yy_expected_token(yytoken, Token_RPAREN, ")");
                   yylex();
-                  if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_WHERE))
+                  if ((yytoken == Token_WHERE) && ( compatibility_mode() >= csharp20_compatibility ))
                     {
                       type_parameter_constraints_clauses_ast *__node_115 = 0;
                       if (!parse_type_parameter_constraints_clauses(&__node_115))
@@ -4603,7 +4603,7 @@ bool csharp::parse_delegate_declaration(delegate_declaration_ast **yynode)
           return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
         }
       (*yynode)->delegate_name = __node_140;
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_LESS_THAN))
+      if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           type_parameters_ast *__node_141 = 0;
           if (!parse_type_parameters(&__node_141))
@@ -4670,7 +4670,7 @@ bool csharp::parse_delegate_declaration(delegate_declaration_ast **yynode)
       if (yytoken != Token_RPAREN)
         return yy_expected_token(yytoken, Token_RPAREN, ")");
       yylex();
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_WHERE))
+      if ((yytoken == Token_WHERE) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           type_parameter_constraints_clauses_ast *__node_143 = 0;
           if (!parse_type_parameter_constraints_clauses(&__node_143))
@@ -4963,7 +4963,7 @@ bool csharp::parse_embedded_statement(embedded_statement_ast **yynode)
             return yy_expected_token(yytoken, Token_SEMICOLON, ";");
           yylex();
         }
-      else if (( LA(2).kind == Token_LBRACE ) && (yytoken == Token_CHECKED))
+      else if ((yytoken == Token_CHECKED) && ( LA(2).kind == Token_LBRACE ))
         {
           checked_statement_ast *__node_161 = 0;
           if (!parse_checked_statement(&__node_161))
@@ -4972,7 +4972,7 @@ bool csharp::parse_embedded_statement(embedded_statement_ast **yynode)
             }
           (*yynode)->checked_statement = __node_161;
         }
-      else if (( LA(2).kind == Token_LBRACE ) && (yytoken == Token_UNCHECKED))
+      else if ((yytoken == Token_UNCHECKED) && ( LA(2).kind == Token_LBRACE ))
         {
           unchecked_statement_ast *__node_162 = 0;
           if (!parse_unchecked_statement(&__node_162))
@@ -4981,7 +4981,7 @@ bool csharp::parse_embedded_statement(embedded_statement_ast **yynode)
             }
           (*yynode)->unchecked_statement = __node_162;
         }
-      else if (( LA(2).kind == Token_RETURN || LA(2).kind == Token_BREAK ) && (yytoken == Token_YIELD))
+      else if ((yytoken == Token_YIELD) && ( LA(2).kind == Token_RETURN || LA(2).kind == Token_BREAK ))
         {
           yield_statement_ast *__node_163 = 0;
           if (!parse_yield_statement(&__node_163))
@@ -5560,20 +5560,20 @@ bool csharp::parse_event_declaration(event_declaration_ast **yynode)
           return yy_expected_symbol(csharp_ast_node::Kind_type, "type");
         }
       (*yynode)->type = __node_186;
-      if (( (LA(2).kind == Token_COMMA) || (LA(2).kind == Token_ASSIGN)
-            || (LA(2).kind == Token_SEMICOLON)
-          ) && (yytoken == Token_ADD
-                || yytoken == Token_ALIAS
-                || yytoken == Token_GET
-                || yytoken == Token_GLOBAL
-                || yytoken == Token_PARTIAL
-                || yytoken == Token_REMOVE
-                || yytoken == Token_SET
-                || yytoken == Token_VALUE
-                || yytoken == Token_WHERE
-                || yytoken == Token_YIELD
-                || yytoken == Token_ASSEMBLY
-                || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( (LA(2).kind == Token_COMMA) || (LA(2).kind == Token_ASSIGN)
+                                                || (LA(2).kind == Token_SEMICOLON)
+                                              ))
         {
           variable_declarator_ast *__node_187 = 0;
           if (!parse_variable_declarator(&__node_187))
@@ -6117,34 +6117,34 @@ bool csharp::parse_for_control(for_control_ast **yynode)
       || yytoken == Token_STRING_LITERAL
       || yytoken == Token_IDENTIFIER)
     {
-      if (( lookahead_is_variable_declaration() == true ) && (yytoken == Token_BOOL
-          || yytoken == Token_BYTE
-          || yytoken == Token_CHAR
-          || yytoken == Token_DECIMAL
-          || yytoken == Token_DOUBLE
-          || yytoken == Token_FLOAT
-          || yytoken == Token_INT
-          || yytoken == Token_LONG
-          || yytoken == Token_OBJECT
-          || yytoken == Token_SBYTE
-          || yytoken == Token_SHORT
-          || yytoken == Token_STRING
-          || yytoken == Token_UINT
-          || yytoken == Token_ULONG
-          || yytoken == Token_USHORT
-          || yytoken == Token_VOID
-          || yytoken == Token_ADD
-          || yytoken == Token_ALIAS
-          || yytoken == Token_GET
-          || yytoken == Token_GLOBAL
-          || yytoken == Token_PARTIAL
-          || yytoken == Token_REMOVE
-          || yytoken == Token_SET
-          || yytoken == Token_VALUE
-          || yytoken == Token_WHERE
-          || yytoken == Token_YIELD
-          || yytoken == Token_ASSEMBLY
-          || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_BOOL
+           || yytoken == Token_BYTE
+           || yytoken == Token_CHAR
+           || yytoken == Token_DECIMAL
+           || yytoken == Token_DOUBLE
+           || yytoken == Token_FLOAT
+           || yytoken == Token_INT
+           || yytoken == Token_LONG
+           || yytoken == Token_OBJECT
+           || yytoken == Token_SBYTE
+           || yytoken == Token_SHORT
+           || yytoken == Token_STRING
+           || yytoken == Token_UINT
+           || yytoken == Token_ULONG
+           || yytoken == Token_USHORT
+           || yytoken == Token_VOID
+           || yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( lookahead_is_variable_declaration() == true ))
         {
           variable_declaration_ast *__node_202 = 0;
           if (!parse_variable_declaration(&__node_202))
@@ -7390,7 +7390,7 @@ bool csharp::parse_interface_declaration(interface_declaration_ast **yynode)
           return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
         }
       (*yynode)->interface_name = __node_235;
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_LESS_THAN))
+      if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           type_parameters_ast *__node_236 = 0;
           if (!parse_type_parameters(&__node_236))
@@ -7420,7 +7420,7 @@ bool csharp::parse_interface_declaration(interface_declaration_ast **yynode)
         {
           return false;
         }
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_WHERE))
+      if ((yytoken == Token_WHERE) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           type_parameter_constraints_clauses_ast *__node_238 = 0;
           if (!parse_type_parameter_constraints_clauses(&__node_238))
@@ -7677,7 +7677,7 @@ bool csharp::parse_interface_member_declaration(interface_member_declaration_ast
               else if (yytoken == Token_LPAREN
                        || yytoken == Token_LESS_THAN)
                 {
-                  if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_LESS_THAN))
+                  if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                     {
                       type_parameters_ast *__node_249 = 0;
                       if (!parse_type_parameters(&__node_249))
@@ -9233,18 +9233,18 @@ bool csharp::parse_namespace_or_type_name(namespace_or_type_name_ast **yynode)
       || yytoken == Token_ASSEMBLY
       || yytoken == Token_IDENTIFIER)
     {
-      if (( LA(2).kind == Token_SCOPE ) && (yytoken == Token_ADD
-                                            || yytoken == Token_ALIAS
-                                            || yytoken == Token_GET
-                                            || yytoken == Token_GLOBAL
-                                            || yytoken == Token_PARTIAL
-                                            || yytoken == Token_REMOVE
-                                            || yytoken == Token_SET
-                                            || yytoken == Token_VALUE
-                                            || yytoken == Token_WHERE
-                                            || yytoken == Token_YIELD
-                                            || yytoken == Token_ASSEMBLY
-                                            || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
         {
           identifier_ast *__node_275 = 0;
           if (!parse_identifier(&__node_275))
@@ -9316,7 +9316,7 @@ bool csharp::parse_namespace_or_type_name_part(namespace_or_type_name_part_ast *
           return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
         }
       (*yynode)->identifier = __node_278;
-      if (( lookahead_is_type_arguments() == true ) && (yytoken == Token_LESS_THAN))
+      if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
         {
           type_arguments_ast *__node_279 = 0;
           if (!parse_type_arguments(&__node_279))
@@ -9361,18 +9361,18 @@ bool csharp::parse_namespace_or_type_name_safe(namespace_or_type_name_safe_ast *
       || yytoken == Token_ASSEMBLY
       || yytoken == Token_IDENTIFIER)
     {
-      if (( LA(2).kind == Token_SCOPE ) && (yytoken == Token_ADD
-                                            || yytoken == Token_ALIAS
-                                            || yytoken == Token_GET
-                                            || yytoken == Token_GLOBAL
-                                            || yytoken == Token_PARTIAL
-                                            || yytoken == Token_REMOVE
-                                            || yytoken == Token_SET
-                                            || yytoken == Token_VALUE
-                                            || yytoken == Token_WHERE
-                                            || yytoken == Token_YIELD
-                                            || yytoken == Token_ASSEMBLY
-                                            || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
         {
           identifier_ast *__node_280 = 0;
           if (!parse_identifier(&__node_280))
@@ -10303,7 +10303,7 @@ bool csharp::parse_optionally_nullable_type(optionally_nullable_type_ast **yynod
           return yy_expected_symbol(csharp_ast_node::Kind_non_nullable_type, "non_nullable_type");
         }
       (*yynode)->non_nullable_type = __node_296;
-      if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_QUESTION))
+      if ((yytoken == Token_QUESTION) && ( compatibility_mode() >= csharp20_compatibility ))
         {
           if (yytoken != Token_QUESTION)
             return yy_expected_token(yytoken, Token_QUESTION, "?");
@@ -11405,7 +11405,7 @@ bool csharp::parse_primary_suffix(primary_suffix_ast **yynode)
               return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
             }
           (*yynode)->member_name = __node_315;
-          if (( lookahead_is_type_arguments() == true ) && (yytoken == Token_LESS_THAN))
+          if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
             {
               type_arguments_ast *__node_316 = 0;
               if (!parse_type_arguments(&__node_316))
@@ -11491,7 +11491,7 @@ bool csharp::parse_primary_suffix(primary_suffix_ast **yynode)
               return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
             }
           (*yynode)->member_name = __node_320;
-          if (( lookahead_is_type_arguments() == true ) && (yytoken == Token_LESS_THAN))
+          if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
             {
               type_arguments_ast *__node_321 = 0;
               if (!parse_type_arguments(&__node_321))
@@ -11854,34 +11854,34 @@ bool csharp::parse_resource_acquisition(resource_acquisition_ast **yynode)
       || yytoken == Token_STRING_LITERAL
       || yytoken == Token_IDENTIFIER)
     {
-      if (( lookahead_is_variable_declaration() == true ) && (yytoken == Token_BOOL
-          || yytoken == Token_BYTE
-          || yytoken == Token_CHAR
-          || yytoken == Token_DECIMAL
-          || yytoken == Token_DOUBLE
-          || yytoken == Token_FLOAT
-          || yytoken == Token_INT
-          || yytoken == Token_LONG
-          || yytoken == Token_OBJECT
-          || yytoken == Token_SBYTE
-          || yytoken == Token_SHORT
-          || yytoken == Token_STRING
-          || yytoken == Token_UINT
-          || yytoken == Token_ULONG
-          || yytoken == Token_USHORT
-          || yytoken == Token_VOID
-          || yytoken == Token_ADD
-          || yytoken == Token_ALIAS
-          || yytoken == Token_GET
-          || yytoken == Token_GLOBAL
-          || yytoken == Token_PARTIAL
-          || yytoken == Token_REMOVE
-          || yytoken == Token_SET
-          || yytoken == Token_VALUE
-          || yytoken == Token_WHERE
-          || yytoken == Token_YIELD
-          || yytoken == Token_ASSEMBLY
-          || yytoken == Token_IDENTIFIER))
+      if ((yytoken == Token_BOOL
+           || yytoken == Token_BYTE
+           || yytoken == Token_CHAR
+           || yytoken == Token_DECIMAL
+           || yytoken == Token_DOUBLE
+           || yytoken == Token_FLOAT
+           || yytoken == Token_INT
+           || yytoken == Token_LONG
+           || yytoken == Token_OBJECT
+           || yytoken == Token_SBYTE
+           || yytoken == Token_SHORT
+           || yytoken == Token_STRING
+           || yytoken == Token_UINT
+           || yytoken == Token_ULONG
+           || yytoken == Token_USHORT
+           || yytoken == Token_VOID
+           || yytoken == Token_ADD
+           || yytoken == Token_ALIAS
+           || yytoken == Token_GET
+           || yytoken == Token_GLOBAL
+           || yytoken == Token_PARTIAL
+           || yytoken == Token_REMOVE
+           || yytoken == Token_SET
+           || yytoken == Token_VALUE
+           || yytoken == Token_WHERE
+           || yytoken == Token_YIELD
+           || yytoken == Token_ASSEMBLY
+           || yytoken == Token_IDENTIFIER) && ( lookahead_is_variable_declaration() == true ))
         {
           variable_declaration_ast *__node_328 = 0;
           if (!parse_variable_declaration(&__node_328))
@@ -12091,7 +12091,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                         || yytoken == Token_ASSEMBLY
                                                         || yytoken == Token_IDENTIFIER)
                                                       {
-                                                        if (( LA(2).kind != Token_STAR ) && (yytoken == Token_VOID))
+                                                        if ((yytoken == Token_VOID) && ( LA(2).kind != Token_STAR ))
                                                           {
                                                             if (yytoken != Token_VOID)
                                                               return yy_expected_token(yytoken, Token_VOID, "void");
@@ -12379,18 +12379,18 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                             || yytoken == Token_ASSEMBLY
                                                             || yytoken == Token_IDENTIFIER)
                                                           {
-                                                            if (( LA(2).kind == Token_SCOPE ) && (yytoken == Token_ADD
-                                                                                                  || yytoken == Token_ALIAS
-                                                                                                  || yytoken == Token_GET
-                                                                                                  || yytoken == Token_GLOBAL
-                                                                                                  || yytoken == Token_PARTIAL
-                                                                                                  || yytoken == Token_REMOVE
-                                                                                                  || yytoken == Token_SET
-                                                                                                  || yytoken == Token_VALUE
-                                                                                                  || yytoken == Token_WHERE
-                                                                                                  || yytoken == Token_YIELD
-                                                                                                  || yytoken == Token_ASSEMBLY
-                                                                                                  || yytoken == Token_IDENTIFIER))
+                                                            if ((yytoken == Token_ADD
+                                                                 || yytoken == Token_ALIAS
+                                                                 || yytoken == Token_GET
+                                                                 || yytoken == Token_GLOBAL
+                                                                 || yytoken == Token_PARTIAL
+                                                                 || yytoken == Token_REMOVE
+                                                                 || yytoken == Token_SET
+                                                                 || yytoken == Token_VALUE
+                                                                 || yytoken == Token_WHERE
+                                                                 || yytoken == Token_YIELD
+                                                                 || yytoken == Token_ASSEMBLY
+                                                                 || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
                                                               {
                                                                 identifier_ast *__node_337 = 0;
                                                                 if (!parse_identifier(&__node_337))
@@ -12414,7 +12414,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                                 return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
                                                               }
                                                             (*yynode)->member_name = __node_338;
-                                                            if (( lookahead_is_type_arguments() == true ) && (yytoken == Token_LESS_THAN))
+                                                            if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
                                                               {
                                                                 type_arguments_ast *__node_339 = 0;
                                                                 if (!parse_type_arguments(&__node_339))
@@ -12461,7 +12461,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                                 return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
                                                               }
                                                             (*yynode)->member_name = __node_341;
-                                                            if (( lookahead_is_type_arguments() == true ) && (yytoken == Token_LESS_THAN))
+                                                            if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
                                                               {
                                                                 type_arguments_ast *__node_342 = 0;
                                                                 if (!parse_type_arguments(&__node_342))
@@ -12838,7 +12838,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                             return yy_expected_symbol(csharp_ast_node::Kind_identifier, "identifier");
                                                           }
                                                         (*yynode)->struct_name = __node_351;
-                                                        if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_LESS_THAN))
+                                                        if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                                                           {
                                                             type_parameters_ast *__node_352 = 0;
                                                             if (!parse_type_parameters(&__node_352))
@@ -12868,7 +12868,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                           {
                                                             return false;
                                                           }
-                                                        if (( compatibility_mode() >= csharp20_compatibility ) && (yytoken == Token_WHERE))
+                                                        if ((yytoken == Token_WHERE) && ( compatibility_mode() >= csharp20_compatibility ))
                                                           {
                                                             type_parameter_constraints_clauses_ast *__node_354 = 0;
                                                             if (!parse_type_parameter_constraints_clauses(&__node_354))
@@ -14150,27 +14150,27 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                         if (yytoken != Token_LPAREN)
                                                           return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                         yylex();
-                                                        if (( LA(2).kind == Token_RPAREN ) && (yytoken == Token_VOID))
+                                                        if ((yytoken == Token_VOID) && ( LA(2).kind == Token_RPAREN ))
                                                           {
                                                             if (yytoken != Token_VOID)
                                                               return yy_expected_token(yytoken, Token_VOID, "void");
                                                             yylex();
                                                             (*yynode)->typeof_type = typeof_expression_ast::type_void;
                                                           }
-                                                        else if (( (compatibility_mode() >= csharp20_compatibility)
-                                                                   && (lookahead_is_unbound_type_name() == true)
-                                                                 ) && (yytoken == Token_ADD
-                                                                       || yytoken == Token_ALIAS
-                                                                       || yytoken == Token_GET
-                                                                       || yytoken == Token_GLOBAL
-                                                                       || yytoken == Token_PARTIAL
-                                                                       || yytoken == Token_REMOVE
-                                                                       || yytoken == Token_SET
-                                                                       || yytoken == Token_VALUE
-                                                                       || yytoken == Token_WHERE
-                                                                       || yytoken == Token_YIELD
-                                                                       || yytoken == Token_ASSEMBLY
-                                                                       || yytoken == Token_IDENTIFIER))
+                                                        else if ((yytoken == Token_ADD
+                                                                  || yytoken == Token_ALIAS
+                                                                  || yytoken == Token_GET
+                                                                  || yytoken == Token_GLOBAL
+                                                                  || yytoken == Token_PARTIAL
+                                                                  || yytoken == Token_REMOVE
+                                                                  || yytoken == Token_SET
+                                                                  || yytoken == Token_VALUE
+                                                                  || yytoken == Token_WHERE
+                                                                  || yytoken == Token_YIELD
+                                                                  || yytoken == Token_ASSEMBLY
+                                                                  || yytoken == Token_IDENTIFIER) && ( (compatibility_mode() >= csharp20_compatibility)
+                                                                                                       && (lookahead_is_unbound_type_name() == true)
+                                                                                                     ))
                                                           {
                                                             unbound_type_name_ast *__node_402 = 0;
                                                             if (!parse_unbound_type_name(&__node_402))
@@ -14372,7 +14372,7 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                             (*yynode)->logical_not_expression = __node_409;
                                                             (*yynode)->rule_type = unary_expression_ast::type_logical_not_expression;
                                                           }
-                                                        else if (( lookahead_is_cast_expression() == true ) && (yytoken == Token_LPAREN))
+                                                        else if ((yytoken == Token_LPAREN) && ( lookahead_is_cast_expression() == true ))
                                                           {
                                                             cast_expression_ast *__node_410 = 0;
                                                             if (!parse_cast_expression(&__node_410))
@@ -14495,18 +14495,18 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                         || yytoken == Token_ASSEMBLY
                                                         || yytoken == Token_IDENTIFIER)
                                                       {
-                                                        if (( LA(2).kind == Token_SCOPE ) && (yytoken == Token_ADD
-                                                                                              || yytoken == Token_ALIAS
-                                                                                              || yytoken == Token_GET
-                                                                                              || yytoken == Token_GLOBAL
-                                                                                              || yytoken == Token_PARTIAL
-                                                                                              || yytoken == Token_REMOVE
-                                                                                              || yytoken == Token_SET
-                                                                                              || yytoken == Token_VALUE
-                                                                                              || yytoken == Token_WHERE
-                                                                                              || yytoken == Token_YIELD
-                                                                                              || yytoken == Token_ASSEMBLY
-                                                                                              || yytoken == Token_IDENTIFIER))
+                                                        if ((yytoken == Token_ADD
+                                                             || yytoken == Token_ALIAS
+                                                             || yytoken == Token_GET
+                                                             || yytoken == Token_GLOBAL
+                                                             || yytoken == Token_PARTIAL
+                                                             || yytoken == Token_REMOVE
+                                                             || yytoken == Token_SET
+                                                             || yytoken == Token_VALUE
+                                                             || yytoken == Token_WHERE
+                                                             || yytoken == Token_YIELD
+                                                             || yytoken == Token_ASSEMBLY
+                                                             || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
                                                           {
                                                             identifier_ast *__node_414 = 0;
                                                             if (!parse_identifier(&__node_414))
@@ -14776,18 +14776,18 @@ bool csharp::parse_return_statement(return_statement_ast **yynode)
                                                         if (yytoken != Token_USING)
                                                           return yy_expected_token(yytoken, Token_USING, "using");
                                                         yylex();
-                                                        if (( LA(2).kind == Token_ASSIGN ) && (yytoken == Token_ADD
-                                                                                               || yytoken == Token_ALIAS
-                                                                                               || yytoken == Token_GET
-                                                                                               || yytoken == Token_GLOBAL
-                                                                                               || yytoken == Token_PARTIAL
-                                                                                               || yytoken == Token_REMOVE
-                                                                                               || yytoken == Token_SET
-                                                                                               || yytoken == Token_VALUE
-                                                                                               || yytoken == Token_WHERE
-                                                                                               || yytoken == Token_YIELD
-                                                                                               || yytoken == Token_ASSEMBLY
-                                                                                               || yytoken == Token_IDENTIFIER))
+                                                        if ((yytoken == Token_ADD
+                                                             || yytoken == Token_ALIAS
+                                                             || yytoken == Token_GET
+                                                             || yytoken == Token_GLOBAL
+                                                             || yytoken == Token_PARTIAL
+                                                             || yytoken == Token_REMOVE
+                                                             || yytoken == Token_SET
+                                                             || yytoken == Token_VALUE
+                                                             || yytoken == Token_WHERE
+                                                             || yytoken == Token_YIELD
+                                                             || yytoken == Token_ASSEMBLY
+                                                             || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_ASSIGN ))
                                                           {
                                                             identifier_ast *__node_422 = 0;
                                                             if (!parse_identifier(&__node_422))

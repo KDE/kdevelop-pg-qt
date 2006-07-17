@@ -227,6 +227,9 @@ void code_generator::visit_evolve(model::evolve_item *node)
 
   out << ") {" << std::endl;
 
+  gen_local_decls gen_locals(out);
+  gen_locals(node->_M_item);
+
   out << node->_M_code;
 
   visit_node(node->_M_item);
@@ -370,6 +373,53 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
   out << "return true;" << std::endl
       << "}" << std::endl
       << std::endl;
+}
+
+void gen_local_decls::operator()(model::node *node)
+{
+  visit_node(node);
+}
+
+void gen_local_decls::visit_annotation(model::annotation_item *node)
+{
+  if (node->_M_scope == model::annotation_item::scope_ast_member)
+    return;
+
+  gen_variable_declaration gen_var_decl(out);
+  gen_var_decl(node);
+}
+
+void gen_variable_declaration::operator()(model::annotation_item *node)
+{
+  if (node->_M_type == model::annotation_item::type_sequence)
+    {
+      out << "const list_node<";
+
+      if (node_cast<model::terminal_item*>(node->_M_item))
+        out << "std::size_t";
+      else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
+        out << nt->_M_symbol->_M_name << "_ast *";
+      else
+        assert(0); // ### not supported
+
+      out << "> *";
+    }
+  else
+    {
+      if (node_cast<model::terminal_item*>(node->_M_item))
+        out << "std::size_t ";
+      else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
+        out << nt->_M_symbol->_M_name << "_ast *";
+      else
+        assert(0); // ### not supported
+    }
+
+  out << node->_M_name;
+
+  if (node->_M_type == model::annotation_item::type_sequence)
+    out << "_sequence";
+
+  out << ";" << std::endl;
 }
 
 void gen_token::operator()(std::pair<std::string, model::terminal_item*> const &__it)

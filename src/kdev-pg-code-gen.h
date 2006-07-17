@@ -73,6 +73,29 @@ public:
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
 };
 
+class gen_local_decls: protected default_visitor
+{
+  std::ostream &out;
+
+public:
+  gen_local_decls(std::ostream &o): out(o)
+  {}
+
+  void operator()(model::node *node);
+  virtual void visit_annotation(model::annotation_item *node);
+};
+
+class gen_variable_declaration
+{
+  std::ostream &out;
+
+public:
+  gen_variable_declaration(std::ostream &o): out(o)
+  {}
+
+  void operator()(model::annotation_item *node);
+};
+
 class gen_token
 {
   std::ostream &out;

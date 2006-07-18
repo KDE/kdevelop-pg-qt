@@ -758,10 +758,6 @@
 -- token that makes the parser fail in any case:
 %token INVALID ("invalid token") ;;
 
-%token STUB_A, STUB_B, STUB_C, STUB_D, STUB_E, STUB_F, STUB_G, STUB_H,
-       STUB_I, STUB_J, STUB_K, STUB_L, STUB_M, STUB_N, STUB_O, STUB_P,
-       STUB_Q, STUB_R, STUB_S, STUB_T, STUB_U, STUB_V, STUB_W, STUB_X ;;
-
 
 
 

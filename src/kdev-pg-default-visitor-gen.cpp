@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -37,7 +38,7 @@ void gen_default_visitor_rule::operator()(std::pair<std::string,
                                           model::symbol_item*> const &__it)
 {
   _M_names.clear();
-  _M_annotations.clear();
+  _M_variable_declarations.clear();
 
   model::symbol_item *sym = __it.second;
 
@@ -59,24 +60,22 @@ void gen_default_visitor_rule::operator()(std::pair<std::string,
   out << "}" << std::endl << std::endl;
 }
 
-void gen_default_visitor_rule::visit_annotation(model::annotation_item *node)
+void gen_default_visitor_rule::visit_variable_declaration(model::variable_declaration_item *node)
 {
-  default_visitor::visit_annotation(node);
+  default_visitor::visit_variable_declaration(node);
 
-  if (node->_M_scope == model::annotation_item::scope_local)
+  if (node->_M_storage_type != model::variable_declaration_item::storage_ast_member)
     return;
+
+  if (node->_M_variable_type != model::variable_declaration_item::type_node)
+    return; // nothing to do
 
   if (_M_names.find(node->_M_name) != _M_names.end())
     return;
 
-  model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item);
+  std::string base_type = std::string(node->_M_type) + "_ast*";
 
-  if (!nt)
-    return; // nothing to do
-
-  std::string base_type = std::string(nt->_M_symbol->_M_name) + "_ast*";
-
-  if (node->_M_type == model::annotation_item::type_sequence)
+  if (node->_M_is_sequence)
     {
       out << "if (" << "node->" << node->_M_name << "_sequence" << ") {"
           << "const list_node<" << base_type << "> *__it = " << "node->" << node->_M_name << "_sequence" << "->to_front()"
@@ -93,6 +92,6 @@ void gen_default_visitor_rule::visit_annotation(model::annotation_item *node)
     }
 
   _M_names.insert(node->_M_name);
-  _M_annotations.push_back(node);
+  _M_variable_declarations.push_back(node);
 }
 

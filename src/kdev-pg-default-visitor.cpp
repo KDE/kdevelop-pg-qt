@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -62,6 +63,7 @@ void default_visitor::visit_cons(model::cons_item *node)
 
 void default_visitor::visit_evolve(model::evolve_item *node)
 {
+  visit_node(node->_M_declarations);
   visit_node(node->_M_item);
   visit_node(node->_M_symbol);
 }
@@ -73,10 +75,16 @@ void default_visitor::visit_alias(model::alias_item *node)
 
 void default_visitor::visit_annotation(model::annotation_item *node)
 {
+  visit_node(node->_M_declaration);
   visit_node(node->_M_item);
 }
 
 void default_visitor::visit_condition(model::condition_item *node)
 {
   visit_node(node->_M_item);
+}
+
+void default_visitor::visit_variable_declaration(model::variable_declaration_item *node)
+{
+  visit_node(node->_M_next);
 }

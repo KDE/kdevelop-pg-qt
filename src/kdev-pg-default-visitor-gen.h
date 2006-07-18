@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -42,7 +43,7 @@ class gen_default_visitor_rule: protected default_visitor
 {
   std::ostream &out;
   std::set<std::string> _M_names;
-  std::list<model::annotation_item*> _M_annotations;
+  std::list<model::variable_declaration_item*> _M_variable_declarations;
 
 public:
   gen_default_visitor_rule(std::ostream &o): out(o)
@@ -51,7 +52,7 @@ public:
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
 
 protected:
-  virtual void visit_annotation(model::annotation_item *node);
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
 };
 
 

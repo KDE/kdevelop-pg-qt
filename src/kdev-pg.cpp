@@ -75,11 +75,14 @@ model::cons_item *pg::cons(model::node *left, model::node *right)
   return node;
 }
 
-model::evolve_item *pg::evolve(model::node *item, model::symbol_item *symbol, char const *code)
+model::evolve_item *pg::evolve(
+    model::node *item, model::symbol_item *symbol,
+    model::variable_declaration_item *declarations, char const *code)
 {
   model::evolve_item *node = create_node<model::evolve_item>();
   node->_M_item = item;
   node->_M_symbol = symbol;
+  node->_M_declarations = declarations;
   node->_M_code = code;
   return node;
 }
@@ -100,22 +103,38 @@ model::terminal_item *pg::terminal(char const *name, char const *description)
   return node;
 }
 
-model::nonterminal_item *pg::nonterminal(model::symbol_item *symbol)
+model::nonterminal_item *pg::nonterminal(model::symbol_item *symbol, char const *arguments)
 {
   model::nonterminal_item *node = create_node<model::nonterminal_item>();
   node->_M_symbol = symbol;
+  node->_M_arguments = arguments;
   return node;
 }
 
-model::annotation_item *pg::annotation(char const *name, model::node *item,
-                                       model::annotation_item::annotation_type_enum type,
-                                       model::annotation_item::scope_type_enum scope)
+model::annotation_item *pg::annotation(
+    char const *name, model::node *item, bool is_sequence,
+    model::variable_declaration_item::storage_type_enum storage_type)
 {
   model::annotation_item *node = create_node<model::annotation_item>();
-  node->_M_name = name;
   node->_M_item = item;
-  node->_M_type = type;
-  node->_M_scope = scope;
+
+  model::variable_declaration_item::variable_type_enum variable_type;
+  char const *type;
+
+  if (model::terminal_item *t = node_cast<model::terminal_item*>(item))
+    {
+      variable_type = model::variable_declaration_item::type_token;
+      type = t->_M_name;
+    }
+  else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(item))
+    {
+      variable_type = model::variable_declaration_item::type_node;
+      type = nt->_M_symbol->_M_name;
+    }
+
+  node->_M_declaration =
+     pg::variable_declaration(model::variable_declaration_item::declaration_local,
+                              storage_type, variable_type, is_sequence, name, type);
   return node;
 }
 
@@ -124,6 +143,23 @@ model::condition_item *pg::condition(char const *code, model::node *item)
   model::condition_item *node = create_node<model::condition_item>();
   node->_M_code = code;
   node->_M_item = item;
+  return node;
+}
+
+model::variable_declaration_item *pg::variable_declaration(
+      model::variable_declaration_item::declaration_type_enum declaration_type,
+      model::variable_declaration_item::storage_type_enum     storage_type,
+      model::variable_declaration_item::variable_type_enum    variable_type,
+      bool is_sequence, char const* name, char const *type)
+{
+  model::variable_declaration_item *node = create_node<model::variable_declaration_item>();
+  node->_M_name = name;
+  node->_M_type = type;
+  node->_M_declaration_type = declaration_type;
+  node->_M_storage_type     = storage_type;
+  node->_M_variable_type    = variable_type;
+  node->_M_is_sequence      = is_sequence;
+  node->_M_next = 0;
   return node;
 }
 
@@ -145,9 +181,10 @@ std::ostream &operator << (std::ostream &out, model::node const *__node)
   else if (model::terminal_item *t = node_cast<model::terminal_item *>(node))
     return (out << t->_M_name);
   else if (model::annotation_item *a = node_cast<model::annotation_item *>(node))
-    return (out << ((a->_M_type == model::annotation_item::type_sequence) ? "#" : "")
-                << a->_M_name
-                << ((a->_M_scope == model::annotation_item::scope_local) ? ":" : "=")
+    return (out << ((a->_M_declaration->_M_is_sequence) ? "#" : "")
+                << a->_M_declaration->_M_name
+                << ((a->_M_declaration->_M_storage_type
+                     == model::variable_declaration_item::storage_temporary) ? ":" : "=")
                 << a->_M_item);
 #if 0
 

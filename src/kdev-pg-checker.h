@@ -69,6 +69,7 @@ struct undefined_symbol_checker: protected default_visitor
 
 protected:
   virtual void visit_symbol(model::symbol_item *node);
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
 
 private:
   model::symbol_item *_M_symbol;

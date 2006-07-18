@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -53,7 +54,7 @@ public:
 
 protected:
   virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
   virtual void visit_cons(model::cons_item *node);
 
   bool switch_alternative(bool alt);

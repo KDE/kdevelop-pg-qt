@@ -38,14 +38,24 @@ namespace pg
   model::action_item *action(model::node *item, char const *code);
   model::alternative_item *alternative(model::node *left, model::node *right);
   model::cons_item *cons(model::node *left, model::node *right);
-  model::evolve_item *evolve(model::node *item, model::symbol_item *symbol, char const *code);
+  model::evolve_item *evolve(
+      model::node *item, model::symbol_item *symbol,
+      model::variable_declaration_item *declarations, char const *code
+  );
   model::alias_item *alias(char const *code, model::symbol_item *symbol);
   model::terminal_item *terminal(char const *name, char const *description);
-  model::nonterminal_item *nonterminal(model::symbol_item *symbol);
+  model::nonterminal_item *nonterminal(model::symbol_item *symbol, char const *arguments);
   model::condition_item *condition(char const *code, model::node *item);
-  model::annotation_item *annotation(char const *name, model::node *item,
-                                     model::annotation_item::annotation_type_enum type,
-                                     model::annotation_item::scope_type_enum scope);
+  model::annotation_item *annotation(
+      char const *name, model::node *item, bool is_sequence,
+      model::variable_declaration_item::storage_type_enum storage_type
+  );
+  model::variable_declaration_item *variable_declaration(
+      model::variable_declaration_item::declaration_type_enum declaration_type,
+      model::variable_declaration_item::storage_type_enum     storage_type,
+      model::variable_declaration_item::variable_type_enum    variable_type,
+      bool is_sequence, char const* name, char const *type
+  );
   settings::member_item *member(settings::member_item::member_kind_enum kind, char const *code);
 } // namespace pg
 

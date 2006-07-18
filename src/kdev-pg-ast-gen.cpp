@@ -127,11 +127,11 @@ void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const 
       << "};" << std::endl << std::endl;
 }
 
-void gen_ast_rule::visit_annotation(model::annotation_item *node)
+void gen_ast_rule::visit_variable_declaration(model::variable_declaration_item *node)
 {
-  default_visitor::visit_annotation(node);
+  default_visitor::visit_variable_declaration(node);
 
-  if (node->_M_scope == model::annotation_item::scope_local)
+  if (node->_M_storage_type == model::variable_declaration_item::storage_temporary)
     return;
 
   if (_M_names.find(node->_M_name) != _M_names.end())
@@ -139,6 +139,8 @@ void gen_ast_rule::visit_annotation(model::annotation_item *node)
 
   gen_variable_declaration gen_var_decl(out);
   gen_var_decl(node);
+
+  out << ";" << std::endl;
 
   _M_names.insert(node->_M_name);
 }

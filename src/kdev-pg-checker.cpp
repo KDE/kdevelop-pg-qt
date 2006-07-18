@@ -194,6 +194,35 @@ void undefined_symbol_checker::visit_symbol(model::symbol_item *node)
     }
 }
 
+void undefined_symbol_checker::visit_variable_declaration(model::variable_declaration_item *node)
+{
+  if (node->_M_variable_type != model::variable_declaration_item::type_node)
+    return;
+
+  model::symbol_item *sym;
+
+  std::string name = node->_M_type;
+  world::symbol_set::iterator it = _G_system.symbols.find(name);
+  if (it == _G_system.symbols.end())
+    {
+      std::cerr << "** ERROR Undefined symbol ``" << name
+                << "'' (rule parameter declaration) in "
+                << _M_symbol->_M_name << std::endl;
+      problem_summary_printer::report_error();
+      return;
+    }
+  else
+    sym = (*it).second;
+
+  if (_G_system.env.count(sym) == 0)
+    {
+      std::cerr << "** ERROR Undefined symbol ``" << node->_M_name
+                << "'' (rule parameter declaration) in "
+                << _M_symbol->_M_name << std::endl;
+      problem_summary_printer::report_error();
+    }
+}
+
 void undefined_token_checker::operator()(model::node *node)
 {
   model::evolve_item *e = node_cast<model::evolve_item*>(node);

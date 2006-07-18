@@ -45,6 +45,7 @@ namespace model
     node_kind_nonterminal = 11,
     node_kind_annotation = 12,
     node_kind_condition = 13,
+    node_kind_variable_declaration = 14,
 
     node_kind_LAST
   };
@@ -106,15 +107,6 @@ namespace model
     node *_M_right;
   };
 
-  struct evolve_item: public node
-  {
-    PG_NODE(evolve)
-
-    node *_M_item;
-    symbol_item *_M_symbol;
-    char const *_M_code;
-  };
-
   struct alias_item: public node
   {
     PG_NODE(alias)
@@ -136,26 +128,46 @@ namespace model
     PG_NODE(nonterminal)
 
     symbol_item *_M_symbol;
+    char const *_M_arguments;
+  };
+
+  struct variable_declaration_item: public node
+  {
+    PG_NODE(variable_declaration)
+
+    enum declaration_type_enum {
+      declaration_argument,
+      declaration_local,
+    };
+
+    enum storage_type_enum {
+      storage_ast_member,
+      storage_temporary,
+    };
+
+    enum variable_type_enum {
+      type_node,
+      type_token,
+      type_variable,
+    };
+
+    char const *_M_type;
+    char const *_M_name;
+
+    declaration_type_enum _M_declaration_type;
+    storage_type_enum     _M_storage_type;
+    variable_type_enum    _M_variable_type;
+    bool                  _M_is_sequence;
+
+    variable_declaration_item *_M_next;
   };
 
   struct annotation_item: public node
   {
     PG_NODE(annotation)
 
-    enum annotation_type_enum {
-      type_node,
-      type_sequence,
-    };
-
-    enum scope_type_enum {
-      scope_ast_member,
-      scope_local,
-    };
-
-    char const *_M_name;
     node *_M_item;
-    annotation_type_enum _M_type;
-    scope_type_enum _M_scope;
+    variable_declaration_item *_M_declaration;
   };
 
   struct condition_item: public node
@@ -164,6 +176,16 @@ namespace model
 
     char const *_M_code;
     node *_M_item;
+  };
+
+  struct evolve_item: public node
+  {
+    PG_NODE(evolve)
+
+    node *_M_item;
+    symbol_item *_M_symbol;
+    variable_declaration_item *_M_declarations;
+    char const *_M_code;
   };
 
 } // namespace model

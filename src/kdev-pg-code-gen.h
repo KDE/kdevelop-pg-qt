@@ -27,6 +27,7 @@ class code_generator: protected default_visitor
 {
   std::ostream &out;
   char const *parser;
+  model::evolve_item *_M_evolve;
 
 public:
   code_generator(std::ostream &o, char const *p): out(o), parser(p)
@@ -82,7 +83,20 @@ public:
   {}
 
   void operator()(model::node *node);
-  virtual void visit_annotation(model::annotation_item *node);
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+};
+
+class gen_parse_method_signature: protected default_visitor
+{
+  std::ostream &out;
+  bool first_parameter;
+
+public:
+  gen_parse_method_signature(std::ostream &o): out(o), first_parameter(true)
+  {}
+
+  void operator()(model::symbol_item *node);
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
 };
 
 class gen_variable_declaration
@@ -93,7 +107,7 @@ public:
   gen_variable_declaration(std::ostream &o): out(o)
   {}
 
-  void operator()(model::annotation_item *node);
+  void operator()(model::variable_declaration_item *node);
 };
 
 class gen_token

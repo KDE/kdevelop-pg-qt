@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -126,8 +127,9 @@ void pretty_printer::visit_nonterminal(model::nonterminal_item *node)
 
 void pretty_printer::visit_annotation(model::annotation_item *node)
 {
-  out << ((node->_M_type == model::annotation_item::type_sequence) ? "#" : "")
-      << node->_M_name
-      << ((node->_M_scope == model::annotation_item::scope_local) ? ":" : "=");
+  out << ((node->_M_declaration->_M_is_sequence) ? "#" : "")
+      << node->_M_declaration->_M_name
+      << ((node->_M_declaration->_M_storage_type
+           == model::variable_declaration_item::storage_temporary) ? ":" : "=");
   visit_node(node->_M_item);
 }

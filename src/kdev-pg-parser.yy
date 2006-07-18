@@ -33,18 +33,25 @@ extern void yyerror(char const *msg);
 %union {
     model::node *item;
     char* str;
-    model::annotation_item::scope_type_enum scope;
+    model::variable_declaration_item::declaration_type_enum declaration_type;
+    model::variable_declaration_item::storage_type_enum     storage_type;
+    model::variable_declaration_item::variable_type_enum    variable_type;
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_MEMBER_DECLARATION
 %token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_CONSTRUCTOR T_DESTRUCTOR
+%token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_NODE T_NODE_SEQUENCE
+%token T_TOKEN T_VARIABLE
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING name code_opt
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
+%type<str> name code_opt rule_arguments_opt
 %type<item> item primary_item primary_atom unary_item question question_item
 %type<item> postfix_item option_item item_sequence conditional_item
-%type<item> member_declaration_rest
-%type<scope> scope
+%type<item> member_declaration_rest variable_declarations variable_declaration
+%type<declaration_type> declaration_type_opt
+%type<storage_type>     scope storage_type
+%type<variable_type>    variable_type
 
 %%
 
@@ -95,15 +102,18 @@ primary_item
     : '0'                               { $$ = _G_system.zero(); }
     | '(' option_item ')'               { $$ = $2; }
     | primary_atom                      { $$ = $1; }
-    | name scope primary_atom
-        { $$ = pg::annotation($1, $3, model::annotation_item::type_node, $2); }
-    | '#' name scope primary_atom
-        { $$ = pg::annotation($2, $4, model::annotation_item::type_sequence, $3); }
+    | name scope primary_atom      { $$ = pg::annotation($1, $3, false, $2); }
+    | '#' name scope primary_atom  { $$ = pg::annotation($2, $4, true, $3);  }
     ;
 
 primary_atom
-    : T_IDENTIFIER                      { $$ = pg::nonterminal(_G_system.push_symbol($1)); }
+    : T_IDENTIFIER rule_arguments_opt   { $$ = pg::nonterminal(_G_system.push_symbol($1), $2); }
     | T_TERMINAL                        { $$ = _G_system.terminal($1); }
+    ;
+
+rule_arguments_opt
+    : /* empty */                       { $$ = ""; }
+    | T_RULE_ARGUMENTS                  { $$ = $1; }
     ;
 
 name
@@ -117,8 +127,8 @@ name
     ;
 
 scope
-    : '=' { $$ = model::annotation_item::scope_ast_member; }
-    | ':' { $$ = model::annotation_item::scope_local; }
+    : '=' { $$ = model::variable_declaration_item::storage_ast_member; }
+    | ':' { $$ = model::variable_declaration_item::storage_temporary;  }
     ;
 
 unary_item
@@ -134,7 +144,7 @@ question
     ;
 
 question_item
-    : T_IDENTIFIER                      { $$ = pg::nonterminal(_G_system.push_symbol($1)); }
+    : T_IDENTIFIER rule_arguments_opt   { $$ = pg::nonterminal(_G_system.push_symbol($1), $2); }
     | T_TERMINAL                        { $$ = _G_system.terminal($1); }
     ;
 
@@ -169,15 +179,62 @@ option_item
     ;
 
 item
-    : option_item T_ARROW T_IDENTIFIER code_opt
+    : option_item T_ARROW T_IDENTIFIER T_CODE '[' variable_declarations ']'
         {
-          $$ = pg::evolve($1, _G_system.push_symbol($3), $4);
+          $$ = pg::evolve($1, _G_system.push_symbol($3),
+                          (model::variable_declaration_item*) $6, $4);
         }
+    | option_item T_ARROW T_IDENTIFIER '[' variable_declarations ']' code_opt
+        {
+          $$ = pg::evolve($1, _G_system.push_symbol($3),
+                          (model::variable_declaration_item*) $5, $7);
+        }
+    | option_item T_ARROW T_IDENTIFIER code_opt
+        { $$ = pg::evolve($1, _G_system.push_symbol($3), 0, $4); }
     ;
 
 code_opt
-    :                                   { $$ = ""; }
+    : /* empty */                       { $$ = ""; }
     | T_CODE                            { $$ = $1; }
+    ;
+
+variable_declarations
+    : variable_declaration              { $$ = $1; }
+    | variable_declarations variable_declaration
+        {
+          model::variable_declaration_item *last = (model::variable_declaration_item*) $1;
+          while (last->_M_next != 0) {
+            last = last->_M_next;
+          }
+          last->_M_next = (model::variable_declaration_item*) $2;
+          $$ = $1;
+        }
+    ;
+
+variable_declaration
+    : declaration_type_opt storage_type variable_type T_IDENTIFIER ':' T_IDENTIFIER
+        { $$ = pg::variable_declaration($1, $2, $3, false, $4, $6); }
+    | declaration_type_opt storage_type T_TOKEN       T_IDENTIFIER ';'
+        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, false, $4, ""); }
+    | declaration_type_opt storage_type variable_type '#' T_IDENTIFIER ':' T_IDENTIFIER
+        { $$ = pg::variable_declaration($1, $2, $3, true, $5, $7); }
+    | declaration_type_opt storage_type T_TOKEN       '#' T_IDENTIFIER ';'
+        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, true, $5, ""); }
+    ;
+
+declaration_type_opt
+    : /* empty */       { $$ = model::variable_declaration_item::declaration_local;     }
+    | T_ARGUMENT        { $$ = model::variable_declaration_item::declaration_argument;  }
+    ;
+
+storage_type
+    : T_MEMBER          { $$ = model::variable_declaration_item::storage_ast_member;    }
+    | T_TEMPORARY       { $$ = model::variable_declaration_item::storage_temporary;     }
+    ;
+
+variable_type
+    : T_NODE            { $$ = model::variable_declaration_item::type_node;             }
+    | T_VARIABLE        { $$ = model::variable_declaration_item::type_variable;         }
     ;
 
 %%

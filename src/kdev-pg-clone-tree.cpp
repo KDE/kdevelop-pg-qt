@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -37,7 +38,7 @@ void clone_tree::visit_terminal(model::terminal_item *node)
 
 void clone_tree::visit_nonterminal(model::nonterminal_item *node)
 {
-  _M_temps.push(pg::nonterminal(node->_M_symbol));
+  _M_temps.push(pg::nonterminal(node->_M_symbol, node->_M_arguments));
 }
 
 void clone_tree::visit_plus(model::plus_item *node)
@@ -107,7 +108,7 @@ void clone_tree::visit_evolve(model::evolve_item *node)
   model::node *item = _M_temps.top();
   _M_temps.pop();
 
-  _M_temps.push(pg::evolve(item, node->_M_symbol, node->_M_code));
+  _M_temps.push(pg::evolve(item, node->_M_symbol, node->_M_declarations, node->_M_code));
 }
 
 void clone_tree::visit_alias(model::alias_item *node)
@@ -122,7 +123,9 @@ void clone_tree::visit_annotation(model::annotation_item *node)
   model::node *item = _M_temps.top();
   _M_temps.pop();
 
-  _M_temps.push(pg::annotation(node->_M_name, item, node->_M_type, node->_M_scope));
+  _M_temps.push(pg::annotation(node->_M_declaration->_M_name, item,
+                               node->_M_declaration->_M_is_sequence,
+                               node->_M_declaration->_M_storage_type));
 }
 
 model::node *clone_tree::clone(model::node *node)

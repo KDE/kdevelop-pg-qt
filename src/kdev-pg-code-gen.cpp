@@ -69,14 +69,19 @@ namespace
         sprintf(__var, "__node_%d", __id++);
 
         out << symbol_name << "_ast *" << __var << " = 0;" << std::endl
-            << "if (!parse_" << symbol_name << "(&" << __var << "))"
+            << "if (!parse_" << symbol_name << "(&" << __var;
+
+        if (node->_M_arguments[0] != '\0') // read: if (_M_arguments != "")
+            out << ", " << node->_M_arguments;
+
+        out << "))"
             << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_"
             << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
       }
     else
       {
-        out << "if (!parse_" << symbol_name << "())"
+        out << "if (!parse_" << symbol_name << "(" << node->_M_arguments << "))"
             << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_"
             << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
@@ -90,6 +95,8 @@ namespace
 
 void code_generator::operator()(model::node *node)
 {
+  _M_evolve = node_cast<model::evolve_item*>(node);
+  assert(_M_evolve != 0);
   visit_node(node);
 }
 
@@ -257,53 +264,105 @@ void code_generator::visit_annotation(model::annotation_item *node)
   if (model::terminal_item *t = node_cast<model::terminal_item*>(node->_M_item))
     {
       out << "if (yytoken != Token_" << t->_M_name << ") "
-          << "return yy_expected_token(yytoken, Token_" << t->_M_name << ", \"" << t->_M_description << "\");"
-          << std::endl;
+          << "return yy_expected_token(yytoken, Token_" << t->_M_name
+          << ", \"" << t->_M_description << "\");" << std::endl;
 
-      if (node->_M_type == model::annotation_item::type_sequence)
+      if (node->_M_declaration->_M_is_sequence)
         {
           std::string target;
 
-          if (node->_M_scope == model::annotation_item::scope_ast_member)
+          if (node->_M_declaration->_M_storage_type == model::variable_declaration_item::storage_ast_member)
             target += "(*yynode)->";
 
-          target += node->_M_name;
+          target += node->_M_declaration->_M_name;
           target += "_sequence";
 
-          out << target << " = snoc(" << target << ", " << "token_stream->index() - 1, memory_pool);" << std::endl
+          out << target << " = snoc(" << target << ", "
+              << "token_stream->index() - 1, memory_pool);" << std::endl
               << "yylex();" << std::endl;
         }
       else
         {
-          out << "(*yynode)->" << node->_M_name << " = token_stream->index() - 1;" << std::endl
+          out << "(*yynode)->" << node->_M_declaration->_M_name
+              << " = token_stream->index() - 1;" << std::endl
               << "yylex();" << std::endl;
         }
     }
-  else if (model::nonterminal_item *n = node_cast<model::nonterminal_item*>(node->_M_item))
+  else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
     {
-      if (node->_M_type == model::annotation_item::type_sequence)
+      std::string __var = gen_parser_call(nt, parser, out);
+
+      bool check_start_token = false;
+      world::environment::iterator it = _G_system.env.find(nt->_M_symbol);
+      while (it != _G_system.env.end())
         {
-          std::string __var = gen_parser_call(n, parser, out);
+          model::evolve_item *e = (*it).second;
+          if ((*it).first != nt->_M_symbol)
+            break;
 
-          std::string target;
-          if (node->_M_scope == model::annotation_item::scope_ast_member)
-            target += "(*yynode)->";
+          ++it;
 
-          target += node->_M_name;
+          model::variable_declaration_item *current_decl = e->_M_declarations;
+          while (current_decl)
+            {
+              if ((current_decl->_M_declaration_type
+                   == model::variable_declaration_item::declaration_argument)
+                  &&
+                  (current_decl->_M_variable_type
+                   != model::variable_declaration_item::type_variable))
+                {
+                  check_start_token = true;
+                  break;
+                }
+
+              current_decl = current_decl->_M_next;
+            }
+        }
+
+      if (check_start_token == true)
+        {
+          check_start_token = false;
+          model::variable_declaration_item *current_decl = _M_evolve->_M_declarations;
+          while (current_decl)
+            {
+              if ((current_decl->_M_storage_type
+                   == model::variable_declaration_item::storage_temporary)
+                  &&
+                  (current_decl->_M_variable_type
+                   != model::variable_declaration_item::type_variable)
+                  &&
+                  (current_decl->_M_declaration_type
+                   == model::variable_declaration_item::declaration_argument))
+                {
+                  check_start_token = true;
+                  break;
+                }
+
+              current_decl = current_decl->_M_next;
+            }
+        }
+
+      if (check_start_token == true)
+        {
+          out << "if (" << __var << "->start_token < (*yynode)->start_token)" << std::endl
+              << "(*yynode)->start_token = " << __var << "->start_token;" << std::endl;
+        }
+
+      std::string target;
+      if (node->_M_declaration->_M_storage_type == model::variable_declaration_item::storage_ast_member)
+        target += "(*yynode)->";
+
+      target += node->_M_declaration->_M_name;
+
+      if (node->_M_declaration->_M_is_sequence)
+        {
           target += "_sequence";
 
-          out << target << " = " << "snoc(" << target << ", " << __var << ", memory_pool);" << std::endl;
+          out << target << " = " << "snoc(" << target << ", "
+              << __var << ", memory_pool);" << std::endl;
         }
       else
         {
-          std::string __var = gen_parser_call(n, parser, out);
-
-          std::string target;
-          if (node->_M_scope == model::annotation_item::scope_ast_member)
-            target += "(*yynode)->";
-
-          target += node->_M_name;
-
           out << target << " = " << __var << ";" << std::endl;
         }
     }
@@ -316,10 +375,10 @@ void gen_forward_parser_rule::operator()(std::pair<std::string, model::symbol_it
 {
   model::symbol_item *sym = __it.second;
   out << "bool" << " " << "parse_" << sym->_M_name << "(";
-  if (_G_system.generate_ast)
-    {
-      out << sym->_M_name << "_ast **yynode";
-    }
+
+  gen_parse_method_signature gen_signature(out);
+  gen_signature(sym);
+
   out << ");" << std::endl;
 }
 
@@ -329,10 +388,10 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
   code_generator cg(out, parser);
 
   out << "bool" << " " << parser << "::parse_" << sym->_M_name << "(";
-  if (_G_system.generate_ast)
-    {
-      out << sym->_M_name << "_ast **yynode";
-    }
+
+  gen_parse_method_signature gen_signature(out);
+  gen_signature(sym);
+
   out << ")" << std::endl
       << "{" << std::endl;
 
@@ -344,6 +403,19 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
     }
 
   world::environment::iterator it = _G_system.env.find(sym);
+  while (it != _G_system.env.end())
+    {
+      model::evolve_item *e = (*it).second;
+      if ((*it).first != sym)
+        break;
+
+      ++it;
+
+      gen_local_decls gen_locals(out);
+      gen_locals(e->_M_declarations);
+    }
+
+  it = _G_system.env.find(sym);
   bool initial = true;
   while (it != _G_system.env.end())
     {
@@ -380,46 +452,103 @@ void gen_local_decls::operator()(model::node *node)
   visit_node(node);
 }
 
-void gen_local_decls::visit_annotation(model::annotation_item *node)
+void gen_local_decls::visit_variable_declaration(model::variable_declaration_item *node)
 {
-  if (node->_M_scope == model::annotation_item::scope_ast_member)
-    return;
+  // normal declarations for local variables
+  if (node->_M_storage_type == model::variable_declaration_item::storage_temporary
+      && node->_M_declaration_type == model::variable_declaration_item::declaration_local)
+    {
+      gen_variable_declaration gen_var_decl(out);
+      gen_var_decl(node);
 
-  gen_variable_declaration gen_var_decl(out);
-  gen_var_decl(node);
+      out << ";" << std::endl << std::endl;
+    }
+
+  // for argument member nodes and tokens, check if their index precedes the current one
+  else if (node->_M_storage_type == model::variable_declaration_item::storage_ast_member
+           && node->_M_declaration_type == model::variable_declaration_item::declaration_argument
+           && node->_M_variable_type != model::variable_declaration_item::type_variable
+           && _G_system.generate_ast)
+    {
+      std::string argument_start_token = node->_M_name;
+      if (node->_M_is_sequence)
+        argument_start_token += "_sequence->to_front()->element";
+
+      if (node->_M_variable_type == model::variable_declaration_item::type_node)
+        argument_start_token += "->start_token";
+
+      out << "if (";
+
+      if (node->_M_is_sequence)
+        out << node->_M_name << "_sequence &&";
+
+      out << argument_start_token << " < (*yynode)->start_token)" << std::endl
+          << "(*yynode)->start_token = " << argument_start_token << ";"
+          << std::endl << std::endl;
+    }
+
+  default_visitor::visit_variable_declaration(node);
 }
 
-void gen_variable_declaration::operator()(model::annotation_item *node)
+void gen_parse_method_signature::operator()(model::symbol_item* sym)
 {
-  if (node->_M_type == model::annotation_item::type_sequence)
+  if (_G_system.generate_ast)
     {
-      out << "const list_node<";
-
-      if (node_cast<model::terminal_item*>(node->_M_item))
-        out << "std::size_t";
-      else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
-        out << nt->_M_symbol->_M_name << "_ast *";
-      else
-        assert(0); // ### not supported
-
-      out << "> *";
+      out << sym->_M_name << "_ast **yynode";
+      first_parameter = false;
     }
+
+  world::environment::iterator it = _G_system.env.find(sym);
+  if (it != _G_system.env.end())
+    {
+      // this creates the method signature using just the first of
+      // possibly multiple rules with the same name.
+      model::evolve_item *e = (*it).second;
+      if (e->_M_declarations)
+        visit_node(e->_M_declarations);
+    }
+}
+
+void gen_parse_method_signature::visit_variable_declaration(model::variable_declaration_item *node)
+{
+  if (node->_M_declaration_type == model::variable_declaration_item::declaration_argument)
+    {
+      if (_G_system.generate_ast || (node->_M_storage_type != model::variable_declaration_item::storage_ast_member))
+        {
+          if (first_parameter)
+            first_parameter = false;
+          else
+            out << ", ";
+
+          gen_variable_declaration gen_var_decl(out);
+          gen_var_decl(node);
+        }
+    }
+
+  default_visitor::visit_variable_declaration(node);
+}
+
+void gen_variable_declaration::operator()(model::variable_declaration_item *node)
+{
+  if (node->_M_is_sequence)
+    out << "const list_node<";
+
+  if (node->_M_variable_type == model::variable_declaration_item::type_token)
+    out << "std::size_t ";
+  else if (node->_M_variable_type == model::variable_declaration_item::type_node)
+    out << node->_M_type << "_ast *";
+  else if (node->_M_variable_type == model::variable_declaration_item::type_variable)
+    out << node->_M_type << " ";
   else
-    {
-      if (node_cast<model::terminal_item*>(node->_M_item))
-        out << "std::size_t ";
-      else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
-        out << nt->_M_symbol->_M_name << "_ast *";
-      else
-        assert(0); // ### not supported
-    }
+    assert(0); // ### not supported
+
+  if (node->_M_is_sequence)
+    out << "> *";
 
   out << node->_M_name;
 
-  if (node->_M_type == model::annotation_item::type_sequence)
+  if (node->_M_is_sequence)
     out << "_sequence";
-
-  out << ";" << std::endl;
 }
 
 void gen_token::operator()(std::pair<std::string, model::terminal_item*> const &__it)
@@ -449,7 +578,7 @@ void generate_parser_decls::operator()()
       << "inline token_type LA(std::size_t k = 1) const" << std::endl
       << "{ return token_stream->token(token_stream->index() - 1 + k - 1); }"
       << std::endl
-      << "inline int yylex() {"
+      << "inline int yylex() {" << std::endl
       << "return (yytoken = token_stream->next_token());" << std::endl
       << "}" << std::endl
       << std::endl;

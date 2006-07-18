@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -33,5 +34,6 @@ visitor::visitor_fun_ptr visitor::_S_table[model::node_kind_LAST] = {
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_terminal),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_nonterminal),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_annotation),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_condition)
+  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_condition),
+  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_variable_declaration),
 };

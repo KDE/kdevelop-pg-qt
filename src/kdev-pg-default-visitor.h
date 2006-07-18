@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -38,6 +39,7 @@ protected:
   virtual void visit_alias(model::alias_item *node);
   virtual void visit_annotation(model::annotation_item *node);
   virtual void visit_condition(model::condition_item *node);
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
 };
 
 #endif // KDEV_PG_DEFAULT_VISITOR_H

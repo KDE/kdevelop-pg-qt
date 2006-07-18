@@ -41,14 +41,26 @@ void yyerror(char const *);
   strcpy(yylval.str, string); \
   yylval.str[len] = '\0';
 
+namespace {
+  enum rule_position_enum {
+    rule_body,
+    rule_footer,
+  };
+  rule_position_enum rule_position = rule_body;
+  int open_brackets; // for rule arguments usage
+}
+
 %}
 
 Whitespace  [ \f\t]
 Newline     "\r\n"|\r|\n
+String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 %x CODE
-%x STRING
 %x MEMBER
+%x RULE_ARGUMENTS
+%x RULE_PARAMETERS_HEADER
+%x RULE_PARAMETERS_VARNAME
 
 %%
 
@@ -57,8 +69,8 @@ Newline     "\r\n"|\r|\n
 {Newline}               newline();
 "--"[^\r\n]*            /* line comments, skip */ ;
 
-";;"                    return ';';
-"->"                    return T_ARROW;
+";;"                    rule_position = rule_body;   return ';';
+"->"                    rule_position = rule_footer; return T_ARROW;
 
 "("                     return '(';
 ")"                     return ')';
@@ -96,6 +108,81 @@ Newline     "\r\n"|\r|\n
 }
 
 
+"[" {
+    if (rule_position == rule_body) { /* use the arguments in a rule call */
+      open_brackets = 0;
+      BEGIN(RULE_ARGUMENTS);
+    }
+    else if (rule_position == rule_footer) { /* declare the arguments */
+      BEGIN(RULE_PARAMETERS_HEADER); return '[';
+    }
+}
+
+<RULE_ARGUMENTS>{
+{Newline}               newline(); yymore();
+{String}                yymore(); /* this and... */
+["]                     yymore(); /* ...this prevent brackets inside strings to be counted */
+[^\[\]\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
+"["                     open_brackets++; yymore();
+"]" {
+    open_brackets--;
+    if (open_brackets < 0) {
+      COPY_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
+      BEGIN(INITIAL);
+      return T_RULE_ARGUMENTS;
+    }
+}
+<<EOF>> {
+    BEGIN(INITIAL); // is not set automatically by yyrestart()
+    std::cout << "Encountered end of file in an unclosed rule argument specification..." << std::endl;
+    yyerror("");
+    return 0;
+}
+}
+
+<RULE_PARAMETERS_HEADER>{
+{Whitespace}*           /* skip */ ;
+{Newline}               newline();
+":"{Whitespace}*        BEGIN(RULE_PARAMETERS_VARNAME); return ':';
+"#"                     return '#';
+"member"                return T_MEMBER;
+"temporary"             return T_TEMPORARY;
+"argument"              return T_ARGUMENT;
+"node"                  return T_NODE;
+"token"                 return T_TOKEN;
+"variable"              return T_VARIABLE;
+";"                     return ';';  /* only used for "token" types */
+[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+"]"                     BEGIN(INITIAL); return ']';
+.                       BEGIN(INITIAL); REJECT; /* everything else */
+}
+
+<RULE_PARAMETERS_VARNAME>{
+{Newline}               newline(); yymore();
+[^;\r\n]*               yymore(); /* gather everything that's not a semicolon, and append what comes next */
+";" {
+    // strip trailing whitespace
+    int length = yyleng-1; // and first, the trailing semicolon
+    for (int i = length-1; i < 1; i--) {
+      switch(yytext[i-1])
+      {
+        case ' ':
+        case '\f':
+        case '\t':
+          continue;
+        default:
+          length = i;
+          break;
+      }
+    }
+    COPY_TO_YYLVAL(yytext,length);
+    BEGIN(RULE_PARAMETERS_HEADER);
+    return T_IDENTIFIER;
+}
+.                       BEGIN(INITIAL); REJECT; /* everything else */
+}
+
+
 "[:"                    BEGIN(CODE);
 <CODE>{
 {Newline}               newline(); yymore();
@@ -108,7 +195,7 @@ Newline     "\r\n"|\r|\n
 }
 <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    std::cout << "Encountered end of file in an unclosed block comment..." << std::endl;
+    std::cout << "Encountered end of file in an unclosed code segment..." << std::endl;
     yyerror("");
     return 0;
 }
@@ -119,22 +206,11 @@ Newline     "\r\n"|\r|\n
 [_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 
 
-\"([^\r\n\"]|\\[^\r\n])*\" {
+{String} {
    yytext++;                         /* start inside the quotes */
    COPY_TO_YYLVAL(yytext,yyleng-2);  /* cut off the trailing quote */
    return T_STRING;
 }
- /*/
-\"                      BEGIN(STRING);
-<STRING>{
-[^\r\n\"]*\" {
-   BEGIN(INITIAL);
-   COPY_TO_YYLVAL(yytext,yyleng-1);
-   return T_STRING;
-}
-.                       BEGIN(INITIAL); REJECT; /* everything else *
-}
- */
 
 . {
   std::cout << "Unexpected character: ``" << yytext[0] << "''" << std::endl;

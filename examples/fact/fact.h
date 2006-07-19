@@ -25,6 +25,7 @@ struct return_statement_ast;
 struct statement_ast;
 struct variable_ast;
 
+
 struct fact_ast_node
   {
     enum ast_node_kind_enum {
@@ -59,7 +60,6 @@ struct assignment_statement_ast: public fact_ast_node
 
     std::size_t id;
     expression_ast *expr;
-
   };
 
 struct block_statement_ast: public fact_ast_node
@@ -70,7 +70,6 @@ struct block_statement_ast: public fact_ast_node
     };
 
     const list_node<statement_ast *> *stmt_sequence;
-
   };
 
 struct body_ast: public fact_ast_node
@@ -82,7 +81,6 @@ struct body_ast: public fact_ast_node
 
     const list_node<declaration_ast *> *decl_sequence;
     const list_node<statement_ast *> *stmt_sequence;
-
   };
 
 struct condition_ast: public fact_ast_node
@@ -95,7 +93,6 @@ struct condition_ast: public fact_ast_node
     expression_ast *left_expr;
     std::size_t op;
     expression_ast *right_expr;
-
   };
 
 struct declaration_ast: public fact_ast_node
@@ -106,7 +103,6 @@ struct declaration_ast: public fact_ast_node
     };
 
     variable_ast *var;
-
   };
 
 struct expression_ast: public fact_ast_node
@@ -119,7 +115,6 @@ struct expression_ast: public fact_ast_node
     mult_expression_ast *left_expr;
     std::size_t op;
     mult_expression_ast *right_expr;
-
   };
 
 struct function_definition_ast: public fact_ast_node
@@ -130,9 +125,8 @@ struct function_definition_ast: public fact_ast_node
     };
 
     std::size_t id;
-    const list_node<std::size_t> *param_sequence;
+    const list_node<std::size_t > *param_sequence;
     body_ast *body;
-
   };
 
 struct if_statement_ast: public fact_ast_node
@@ -145,7 +139,6 @@ struct if_statement_ast: public fact_ast_node
     condition_ast *cond;
     statement_ast *stmt;
     statement_ast *else_stmt;
-
   };
 
 struct mult_expression_ast: public fact_ast_node
@@ -158,7 +151,6 @@ struct mult_expression_ast: public fact_ast_node
     primary_ast *left_expr;
     std::size_t op;
     primary_ast *right_expr;
-
   };
 
 struct primary_ast: public fact_ast_node
@@ -171,7 +163,6 @@ struct primary_ast: public fact_ast_node
     std::size_t num;
     std::size_t id;
     const list_node<expression_ast *> *arg_sequence;
-
   };
 
 struct program_ast: public fact_ast_node
@@ -182,7 +173,6 @@ struct program_ast: public fact_ast_node
     };
 
     const list_node<function_definition_ast *> *fun_sequence;
-
   };
 
 struct return_statement_ast: public fact_ast_node
@@ -193,7 +183,6 @@ struct return_statement_ast: public fact_ast_node
                  };
 
                  expression_ast *expr;
-
                };
 
 struct statement_ast: public fact_ast_node
@@ -207,7 +196,6 @@ struct statement_ast: public fact_ast_node
     if_statement_ast *if_stmt;
     block_statement_ast *block_stmt;
     return_statement_ast *ret_stmt;
-
   };
 
 struct variable_ast: public fact_ast_node
@@ -218,7 +206,6 @@ struct variable_ast: public fact_ast_node
     };
 
     std::size_t id;
-
   };
 
 

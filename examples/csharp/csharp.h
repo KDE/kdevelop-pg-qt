@@ -10,7 +10,6 @@
 #include "kdev-pg-token-stream.h"
 #include <cassert>
 
-struct _modifiers_ast;
 struct accessor_declarations_ast;
 struct accessor_modifier_ast;
 struct additive_expression_ast;
@@ -176,216 +175,568 @@ struct variable_initializer_ast;
 struct while_statement_ast;
 struct yield_statement_ast;
 
-struct csharp_ast_node
+namespace accessor_declarations
   {
-    enum ast_node_kind_enum {
-      Kind__modifiers = 1000,
-      Kind_accessor_declarations = 1001,
-      Kind_accessor_modifier = 1002,
-      Kind_additive_expression = 1003,
-      Kind_additive_expression_rest = 1004,
-      Kind_anonymous_method_expression = 1005,
-      Kind_anonymous_method_parameter = 1006,
-      Kind_argument = 1007,
-      Kind_array_creation_expression_rest = 1008,
-      Kind_array_initializer = 1009,
-      Kind_array_type = 1010,
-      Kind_attribute = 1011,
-      Kind_attribute_arguments = 1012,
-      Kind_attribute_section = 1013,
-      Kind_attribute_target = 1014,
-      Kind_base_access = 1015,
-      Kind_bit_and_expression = 1016,
-      Kind_bit_or_expression = 1017,
-      Kind_bit_xor_expression = 1018,
-      Kind_block = 1019,
-      Kind_block_statement = 1020,
-      Kind_boolean_expression = 1021,
-      Kind_break_statement = 1022,
-      Kind_builtin_class_type = 1023,
-      Kind_cast_expression = 1024,
-      Kind_catch_clauses = 1025,
-      Kind_checked_statement = 1026,
-      Kind_class_base = 1027,
-      Kind_class_body = 1028,
-      Kind_class_declaration = 1029,
-      Kind_class_member_declaration = 1030,
-      Kind_class_or_struct_member_declaration = 1031,
-      Kind_class_type = 1032,
-      Kind_compilation_unit = 1033,
-      Kind_conditional_expression = 1034,
-      Kind_constant_declaration = 1035,
-      Kind_constant_declarator = 1036,
-      Kind_constant_expression = 1037,
-      Kind_constructor_constraint = 1038,
-      Kind_constructor_declaration = 1039,
-      Kind_constructor_initializer = 1040,
-      Kind_continue_statement = 1041,
-      Kind_declaration_statement = 1042,
-      Kind_delegate_declaration = 1043,
-      Kind_do_while_statement = 1044,
-      Kind_embedded_statement = 1045,
-      Kind_enum_base = 1046,
-      Kind_enum_body = 1047,
-      Kind_enum_declaration = 1048,
-      Kind_enum_member_declaration = 1049,
-      Kind_equality_expression = 1050,
-      Kind_equality_expression_rest = 1051,
-      Kind_event_accessor_declarations = 1052,
-      Kind_event_declaration = 1053,
-      Kind_expression = 1054,
-      Kind_extern_alias_directive = 1055,
-      Kind_finalizer_declaration = 1056,
-      Kind_fixed_pointer_declarator = 1057,
-      Kind_fixed_statement = 1058,
-      Kind_floating_point_type = 1059,
-      Kind_for_control = 1060,
-      Kind_for_statement = 1061,
-      Kind_foreach_statement = 1062,
-      Kind_formal_parameter = 1063,
-      Kind_formal_parameter_list = 1064,
-      Kind_general_catch_clause = 1065,
-      Kind_generic_dimension_specifier = 1066,
-      Kind_global_attribute_section = 1067,
-      Kind_goto_statement = 1068,
-      Kind_identifier = 1069,
-      Kind_if_statement = 1070,
-      Kind_integral_type = 1071,
-      Kind_interface_accessors = 1072,
-      Kind_interface_base = 1073,
-      Kind_interface_body = 1074,
-      Kind_interface_declaration = 1075,
-      Kind_interface_event_declaration = 1076,
-      Kind_interface_member_declaration = 1077,
-      Kind_keyword = 1078,
-      Kind_labeled_statement = 1079,
-      Kind_literal = 1080,
-      Kind_lock_statement = 1081,
-      Kind_logical_and_expression = 1082,
-      Kind_logical_or_expression = 1083,
-      Kind_managed_type = 1084,
-      Kind_multiplicative_expression = 1085,
-      Kind_multiplicative_expression_rest = 1086,
-      Kind_named_argument = 1087,
-      Kind_namespace_body = 1088,
-      Kind_namespace_declaration = 1089,
-      Kind_namespace_member_declaration = 1090,
-      Kind_namespace_name = 1091,
-      Kind_namespace_or_type_name = 1092,
-      Kind_namespace_or_type_name_part = 1093,
-      Kind_namespace_or_type_name_safe = 1094,
-      Kind_new_expression = 1095,
-      Kind_non_array_type = 1096,
-      Kind_non_nullable_type = 1097,
-      Kind_null_coalescing_expression = 1098,
-      Kind_numeric_type = 1099,
-      Kind_optional_argument_list = 1100,
-      Kind_optional_modifiers = 1101,
-      Kind_optional_type_modifiers = 1102,
-      Kind_optionally_nullable_type = 1103,
-      Kind_overloadable_binary_only_operator = 1104,
-      Kind_overloadable_unary_only_operator = 1105,
-      Kind_overloadable_unary_or_binary_operator = 1106,
-      Kind_parameter_array = 1107,
-      Kind_parameter_modifier = 1108,
-      Kind_pointer_type = 1109,
-      Kind_positional_argument = 1110,
-      Kind_predefined_type = 1111,
-      Kind_primary_atom = 1112,
-      Kind_primary_expression = 1113,
-      Kind_primary_or_secondary_constraint = 1114,
-      Kind_primary_suffix = 1115,
-      Kind_qualified_identifier = 1116,
-      Kind_rank_specifier = 1117,
-      Kind_relational_expression = 1118,
-      Kind_relational_expression_rest = 1119,
-      Kind_resource_acquisition = 1120,
-      Kind_return_statement = 1121,
-      Kind_return_type = 1122,
-      Kind_secondary_constraints = 1123,
-      Kind_shift_expression = 1124,
-      Kind_shift_expression_rest = 1125,
-      Kind_simple_name_or_member_access = 1126,
-      Kind_simple_type = 1127,
-      Kind_specific_catch_clause = 1128,
-      Kind_stackalloc_initializer = 1129,
-      Kind_statement_expression = 1130,
-      Kind_struct_body = 1131,
-      Kind_struct_declaration = 1132,
-      Kind_struct_interfaces = 1133,
-      Kind_struct_member_declaration = 1134,
-      Kind_switch_label = 1135,
-      Kind_switch_section = 1136,
-      Kind_switch_statement = 1137,
-      Kind_throw_statement = 1138,
-      Kind_try_statement = 1139,
-      Kind_type = 1140,
-      Kind_type_arguments = 1141,
-      Kind_type_arguments_or_parameters_end = 1142,
-      Kind_type_declaration = 1143,
-      Kind_type_declaration_rest = 1144,
-      Kind_type_name = 1145,
-      Kind_type_name_safe = 1146,
-      Kind_type_parameter = 1147,
-      Kind_type_parameter_constraints = 1148,
-      Kind_type_parameter_constraints_clauses = 1149,
-      Kind_type_parameters = 1150,
-      Kind_typeof_expression = 1151,
-      Kind_unary_expression = 1152,
-      Kind_unbound_type_name = 1153,
-      Kind_unbound_type_name_part = 1154,
-      Kind_unchecked_statement = 1155,
-      Kind_unmanaged_type = 1156,
-      Kind_unsafe_statement = 1157,
-      Kind_using_directive = 1158,
-      Kind_using_statement = 1159,
-      Kind_variable_declaration = 1160,
-      Kind_variable_declarator = 1161,
-      Kind_variable_initializer = 1162,
-      Kind_while_statement = 1163,
-      Kind_yield_statement = 1164,
-      AST_NODE_KIND_COUNT
-    };
-
-    int kind;
-    std::size_t start_token;
-    std::size_t end_token;
+  enum accessor_declarations_enum {
+    type_get,
+    type_set,
+    type_none, // only possible for the second, optional accessor
   };
+}
 
-struct _modifiers_ast: public csharp_ast_node
+namespace additive_expression_rest
   {
-    enum
-    {
-      KIND = Kind__modifiers
-    };
-
-
-    // user defined declarations:
-  public:
-
-    enum modifier_enum {
-      mod_new          = 1,
-      mod_public       = 2,
-      mod_protected    = 4,
-      mod_internal     = 8,
-      mod_private      = 16,
-      mod_abstract     = 32,
-      mod_sealed       = 64,
-      mod_static       = 128,
-      mod_readonly     = 256,
-      mod_volatile     = 512,
-      mod_virtual      = 1024,
-      mod_override     = 2048,
-      mod_extern       = 4096,
-      mod_unsafe       = 8192,
-    };
-
-  protected:
-  private:
-
-  public:
-
+  enum additive_operator_enum {
+    op_plus,
+    op_minus
   };
+}
+
+namespace argument
+  {
+  enum argument_type_enum {
+    type_value_parameter,
+    type_reference_parameter,
+    type_output_parameter,
+  };
+}
+
+namespace base_access
+  {
+  enum base_access_enum {
+    type_base_member_access,
+    type_base_indexer_access,
+  };
+}
+
+namespace builtin_class_type
+  {
+  enum builtin_class_type_enum {
+    type_object,
+    type_string,
+  };
+}
+
+namespace class_or_struct_member_declaration
+  {
+  enum class_or_struct_member_declaration_enum {
+    type_constant_declaration,
+    type_event_declaration,
+    type_operator_declaration_implicit,
+    type_operator_declaration_explicit,
+    type_operator_declaration_typed,
+    type_constructor_declaration,
+    type_type_declaration,
+    type_indexer_declaration,
+    type_field_declaration,
+    type_property_declaration,
+    type_member_declaration,
+  };
+}
+
+namespace constructor_initializer
+  {
+  enum constructor_initializer_type_enum {
+    type_base,
+    type_this,
+  };
+}
+
+namespace equality_expression_rest
+  {
+  enum equality_operator_enum {
+    op_equal,
+    op_not_equal,
+  };
+}
+
+namespace event_accessor_declarations
+  {
+  enum event_accessor_declarations_enum {
+    order_add_remove,
+    order_remove_add,
+  };
+}
+
+namespace expression
+  {
+  enum assignment_operator_enum {
+    no_assignment,
+    op_assign,
+    op_plus_assign,
+    op_minus_assign,
+    op_star_assign,
+    op_slash_assign,
+    op_remainder_assign,
+    op_bit_and_assign,
+    op_bit_or_assign,
+    op_bit_xor_assign,
+    op_lshift_assign,
+    op_rshift_assign,
+  };
+}
+
+namespace floating_point_type
+  {
+  enum floating_point_type_enum {
+    type_float,
+    type_double,
+  };
+}
+
+namespace goto_statement
+  {
+  enum goto_statement_enum {
+    type_labeled_statement,
+    type_switch_case,
+    type_switch_default,
+  };
+}
+
+namespace integral_type
+  {
+  enum integral_type_enum {
+    type_sbyte,
+    type_byte,
+    type_short,
+    type_ushort,
+    type_int,
+    type_uint,
+    type_long,
+    type_ulong,
+    type_char,
+  };
+}
+
+namespace interface_member_declaration
+  {
+  enum interface_member_declaration_enum {
+    type_interface_event_declaration,
+    type_interface_indexer_declaration,
+    type_interface_property_declaration,
+    type_interface_method_declaration,
+  };
+}
+
+namespace literal
+  {
+  enum literal_type_enum {
+    type_true,
+    type_false,
+    type_null,
+    type_integer,
+    type_real,
+    type_character,
+    type_string
+  };
+}
+
+namespace modifiers
+  {
+  enum modifier_enum {
+    mod_new          = 1,
+    mod_public       = 2,
+    mod_protected    = 4,
+    mod_internal     = 8,
+    mod_private      = 16,
+    mod_abstract     = 32,
+    mod_sealed       = 64,
+    mod_static       = 128,
+    mod_readonly     = 256,
+    mod_volatile     = 512,
+    mod_virtual      = 1024,
+    mod_override     = 2048,
+    mod_extern       = 4096,
+    mod_unsafe       = 8192,
+  };
+}
+
+namespace multiplicative_expression_rest
+  {
+  enum multiplicative_operator_enum {
+    op_star,
+    op_slash,
+    op_remainder
+  };
+}
+
+namespace numeric_type
+  {
+  enum numeric_type_enum {
+    type_integral,
+    type_floating_point,
+    type_decimal,
+  };
+}
+
+namespace overloadable_binary_only_operator
+  {
+  enum overloadable_binary_only_operator_enum {
+    op_star,
+    op_slash,
+    op_remainder,
+    op_bit_and,
+    op_bit_or,
+    op_bit_xor,
+    op_lshift,
+    op_rshift,
+    op_equal,
+    op_not_equal,
+    op_greater_than,
+    op_less_than,
+    op_greater_equal,
+    op_less_equal,
+  };
+}
+
+namespace overloadable_unary_only_operator
+  {
+  enum overloadable_unary_only_operator_enum {
+    op_bang,
+    op_tilde,
+    op_increment,
+    op_decrement,
+    op_true,
+    op_false,
+  };
+}
+
+namespace overloadable_unary_or_binary_operator
+  {
+  enum overloadable_unary_or_binary_operator_enum {
+    op_plus,
+    op_minus,
+  };
+}
+
+namespace parameter_modifier
+  {
+  enum parameter_modifier_enum {
+    mod_ref,
+    mod_out,
+  };
+}
+
+namespace pointer_type
+  {
+  enum pointer_type_enum {
+    type_regular,
+    type_void,
+  };
+}
+
+namespace predefined_type
+  {
+  enum predefined_type_enum {
+    type_bool,
+    type_byte,
+    type_char,
+    type_decimal,
+    type_double,
+    type_float,
+    type_int,
+    type_long,
+    type_object,
+    type_sbyte,
+    type_short,
+    type_string,
+    type_uint,
+    type_ulong,
+    type_ushort,
+  };
+}
+
+namespace primary_atom
+  {
+  enum primary_atom_enum {
+    type_literal,
+    type_parenthesized_expression,
+    type_member_access,
+    type_this_access,
+    type_base_access,
+    type_new_expression,
+    type_typeof_expression,
+    type_checked_expression,
+    type_unchecked_expression,
+    type_default_value_expression,
+    type_anonymous_method_expression,
+    type_sizeof_expression,
+  };
+}
+
+namespace primary_or_secondary_constraint
+  {
+  enum primary_or_secondary_constraint_enum {
+    type_type,
+    type_class,
+    type_struct,
+  };
+}
+
+namespace primary_suffix
+  {
+  enum primary_suffix_enum {
+    type_member_access,
+    type_pointer_member_access,
+    type_invocation,
+    type_element_access,
+    type_increment,
+    type_decrement,
+  };
+}
+
+namespace relational_expression_rest
+  {
+  enum relational_operator_enum {
+    op_less_than,
+    op_greater_than,
+    op_less_equal,
+    op_greater_equal,
+    op_is,
+    op_as,
+  };
+}
+
+namespace return_type
+                  {
+                  enum return_type_enum {
+                               type_regular,
+                               type_void,
+                             };
+                }
+
+                namespace shift_expression_rest
+                  {
+                  enum shift_operator_enum {
+                    op_lshift,
+                    op_rshift,
+                  };
+                }
+
+                namespace simple_type
+                  {
+                  enum simple_type_enum {
+                    type_numeric,
+                    type_bool,
+                  };
+                }
+
+                namespace switch_label
+                  {
+                  enum branch_type_enum {
+                    case_branch,
+                    default_branch
+                  };
+                }
+
+                namespace typeof_expression
+                  {
+                  enum typeof_expression_enum {
+                    type_void,
+                    type_unbound_type_name,
+                    type_type,
+                  };
+                }
+
+                namespace unary_expression
+                  {
+                  enum unary_expression_enum {
+                    type_incremented_expression,
+                    type_decremented_expression,
+                    type_unary_minus_expression,
+                    type_unary_plus_expression,
+                    type_bitwise_not_expression,
+                    type_logical_not_expression,
+                    type_cast_expression,
+                    type_primary_expression,
+                    type_pointer_indirection_expression,
+                    type_addressof_expression,
+                  };
+                }
+
+                namespace yield_statement
+                  {
+                  enum yield_statement_enum {
+                    type_yield_return,
+                    type_yield_break,
+                  };
+                }
+
+
+                struct csharp_ast_node
+                  {
+                    enum ast_node_kind_enum {
+                      Kind_accessor_declarations = 1000,
+                      Kind_accessor_modifier = 1001,
+                      Kind_additive_expression = 1002,
+                      Kind_additive_expression_rest = 1003,
+                      Kind_anonymous_method_expression = 1004,
+                      Kind_anonymous_method_parameter = 1005,
+                      Kind_argument = 1006,
+                      Kind_array_creation_expression_rest = 1007,
+                      Kind_array_initializer = 1008,
+                      Kind_array_type = 1009,
+                      Kind_attribute = 1010,
+                      Kind_attribute_arguments = 1011,
+                      Kind_attribute_section = 1012,
+                      Kind_attribute_target = 1013,
+                      Kind_base_access = 1014,
+                      Kind_bit_and_expression = 1015,
+                      Kind_bit_or_expression = 1016,
+                      Kind_bit_xor_expression = 1017,
+                      Kind_block = 1018,
+                      Kind_block_statement = 1019,
+                      Kind_boolean_expression = 1020,
+                      Kind_break_statement = 1021,
+                      Kind_builtin_class_type = 1022,
+                      Kind_cast_expression = 1023,
+                      Kind_catch_clauses = 1024,
+                      Kind_checked_statement = 1025,
+                      Kind_class_base = 1026,
+                      Kind_class_body = 1027,
+                      Kind_class_declaration = 1028,
+                      Kind_class_member_declaration = 1029,
+                      Kind_class_or_struct_member_declaration = 1030,
+                      Kind_class_type = 1031,
+                      Kind_compilation_unit = 1032,
+                      Kind_conditional_expression = 1033,
+                      Kind_constant_declaration = 1034,
+                      Kind_constant_declarator = 1035,
+                      Kind_constant_expression = 1036,
+                      Kind_constructor_constraint = 1037,
+                      Kind_constructor_declaration = 1038,
+                      Kind_constructor_initializer = 1039,
+                      Kind_continue_statement = 1040,
+                      Kind_declaration_statement = 1041,
+                      Kind_delegate_declaration = 1042,
+                      Kind_do_while_statement = 1043,
+                      Kind_embedded_statement = 1044,
+                      Kind_enum_base = 1045,
+                      Kind_enum_body = 1046,
+                      Kind_enum_declaration = 1047,
+                      Kind_enum_member_declaration = 1048,
+                      Kind_equality_expression = 1049,
+                      Kind_equality_expression_rest = 1050,
+                      Kind_event_accessor_declarations = 1051,
+                      Kind_event_declaration = 1052,
+                      Kind_expression = 1053,
+                      Kind_extern_alias_directive = 1054,
+                      Kind_finalizer_declaration = 1055,
+                      Kind_fixed_pointer_declarator = 1056,
+                      Kind_fixed_statement = 1057,
+                      Kind_floating_point_type = 1058,
+                      Kind_for_control = 1059,
+                      Kind_for_statement = 1060,
+                      Kind_foreach_statement = 1061,
+                      Kind_formal_parameter = 1062,
+                      Kind_formal_parameter_list = 1063,
+                      Kind_general_catch_clause = 1064,
+                      Kind_generic_dimension_specifier = 1065,
+                      Kind_global_attribute_section = 1066,
+                      Kind_goto_statement = 1067,
+                      Kind_identifier = 1068,
+                      Kind_if_statement = 1069,
+                      Kind_integral_type = 1070,
+                      Kind_interface_accessors = 1071,
+                      Kind_interface_base = 1072,
+                      Kind_interface_body = 1073,
+                      Kind_interface_declaration = 1074,
+                      Kind_interface_event_declaration = 1075,
+                      Kind_interface_member_declaration = 1076,
+                      Kind_keyword = 1077,
+                      Kind_labeled_statement = 1078,
+                      Kind_literal = 1079,
+                      Kind_lock_statement = 1080,
+                      Kind_logical_and_expression = 1081,
+                      Kind_logical_or_expression = 1082,
+                      Kind_managed_type = 1083,
+                      Kind_multiplicative_expression = 1084,
+                      Kind_multiplicative_expression_rest = 1085,
+                      Kind_named_argument = 1086,
+                      Kind_namespace_body = 1087,
+                      Kind_namespace_declaration = 1088,
+                      Kind_namespace_member_declaration = 1089,
+                      Kind_namespace_name = 1090,
+                      Kind_namespace_or_type_name = 1091,
+                      Kind_namespace_or_type_name_part = 1092,
+                      Kind_namespace_or_type_name_safe = 1093,
+                      Kind_new_expression = 1094,
+                      Kind_non_array_type = 1095,
+                      Kind_non_nullable_type = 1096,
+                      Kind_null_coalescing_expression = 1097,
+                      Kind_numeric_type = 1098,
+                      Kind_optional_argument_list = 1099,
+                      Kind_optional_modifiers = 1100,
+                      Kind_optional_type_modifiers = 1101,
+                      Kind_optionally_nullable_type = 1102,
+                      Kind_overloadable_binary_only_operator = 1103,
+                      Kind_overloadable_unary_only_operator = 1104,
+                      Kind_overloadable_unary_or_binary_operator = 1105,
+                      Kind_parameter_array = 1106,
+                      Kind_parameter_modifier = 1107,
+                      Kind_pointer_type = 1108,
+                      Kind_positional_argument = 1109,
+                      Kind_predefined_type = 1110,
+                      Kind_primary_atom = 1111,
+                      Kind_primary_expression = 1112,
+                      Kind_primary_or_secondary_constraint = 1113,
+                      Kind_primary_suffix = 1114,
+                      Kind_qualified_identifier = 1115,
+                      Kind_rank_specifier = 1116,
+                      Kind_relational_expression = 1117,
+                      Kind_relational_expression_rest = 1118,
+                      Kind_resource_acquisition = 1119,
+                      Kind_return_statement = 1120,
+                      Kind_return_type = 1121,
+                      Kind_secondary_constraints = 1122,
+                      Kind_shift_expression = 1123,
+                      Kind_shift_expression_rest = 1124,
+                      Kind_simple_name_or_member_access = 1125,
+                      Kind_simple_type = 1126,
+                      Kind_specific_catch_clause = 1127,
+                      Kind_stackalloc_initializer = 1128,
+                      Kind_statement_expression = 1129,
+                      Kind_struct_body = 1130,
+                      Kind_struct_declaration = 1131,
+                      Kind_struct_interfaces = 1132,
+                      Kind_struct_member_declaration = 1133,
+                      Kind_switch_label = 1134,
+                      Kind_switch_section = 1135,
+                      Kind_switch_statement = 1136,
+                      Kind_throw_statement = 1137,
+                      Kind_try_statement = 1138,
+                      Kind_type = 1139,
+                      Kind_type_arguments = 1140,
+                      Kind_type_arguments_or_parameters_end = 1141,
+                      Kind_type_declaration = 1142,
+                      Kind_type_declaration_rest = 1143,
+                      Kind_type_name = 1144,
+                      Kind_type_name_safe = 1145,
+                      Kind_type_parameter = 1146,
+                      Kind_type_parameter_constraints = 1147,
+                      Kind_type_parameter_constraints_clauses = 1148,
+                      Kind_type_parameters = 1149,
+                      Kind_typeof_expression = 1150,
+                      Kind_unary_expression = 1151,
+                      Kind_unbound_type_name = 1152,
+                      Kind_unbound_type_name_part = 1153,
+                      Kind_unchecked_statement = 1154,
+                      Kind_unmanaged_type = 1155,
+                      Kind_unsafe_statement = 1156,
+                      Kind_using_directive = 1157,
+                      Kind_using_statement = 1158,
+                      Kind_variable_declaration = 1159,
+                      Kind_variable_declarator = 1160,
+                      Kind_variable_initializer = 1161,
+                      Kind_while_statement = 1162,
+                      Kind_yield_statement = 1163,
+                      AST_NODE_KIND_COUNT
+                    };
+
+                    int kind;
+                    std::size_t start_token;
+                    std::size_t end_token;
+                  };
 
 struct accessor_declarations_ast: public csharp_ast_node
   {
@@ -394,29 +745,14 @@ struct accessor_declarations_ast: public csharp_ast_node
       KIND = Kind_accessor_declarations
     };
 
+    accessor_declarations::accessor_declarations_enum type_accessor1;
+    accessor_declarations::accessor_declarations_enum type_accessor2;
     const list_node<attribute_section_ast *> *attributes_accessor1_sequence;
     accessor_modifier_ast *accessor1_modifier;
     block_ast *accessor1_body;
     const list_node<attribute_section_ast *> *attributes_accessor2_sequence;
     accessor_modifier_ast *accessor2_modifier;
     block_ast *accessor2_body;
-
-    // user defined declarations:
-  public:
-
-    enum accessor_declarations_enum {
-      type_get,
-      type_set,
-      type_none, // only possible for the second, optional accessor
-    };
-    accessor_declarations_enum type_accessor1;
-    accessor_declarations_enum type_accessor2;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct accessor_modifier_ast: public csharp_ast_node
@@ -426,17 +762,7 @@ struct accessor_modifier_ast: public csharp_ast_node
       KIND = Kind_accessor_modifier
     };
 
-
-    // user defined declarations:
-  public:
-
-    int modifiers; // using the modifier_enum values
-
-  protected:
-  private:
-
-  public:
-
+    int modifiers;
   };
 
 struct additive_expression_ast: public csharp_ast_node
@@ -448,7 +774,6 @@ struct additive_expression_ast: public csharp_ast_node
 
     multiplicative_expression_ast *expression;
     const list_node<additive_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct additive_expression_rest_ast: public csharp_ast_node
@@ -458,22 +783,8 @@ struct additive_expression_rest_ast: public csharp_ast_node
       KIND = Kind_additive_expression_rest
     };
 
+    additive_expression_rest::additive_operator_enum additive_operator;
     multiplicative_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum additive_operator_enum {
-      op_plus,
-      op_minus
-    };
-    additive_operator_enum additive_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct anonymous_method_expression_ast: public csharp_ast_node
@@ -485,7 +796,6 @@ struct anonymous_method_expression_ast: public csharp_ast_node
 
     const list_node<anonymous_method_parameter_ast *> *anonymous_method_parameter_sequence;
     block_ast *body;
-
   };
 
 struct anonymous_method_parameter_ast: public csharp_ast_node
@@ -498,7 +808,6 @@ struct anonymous_method_parameter_ast: public csharp_ast_node
     parameter_modifier_ast *modifier;
     type_ast *type;
     identifier_ast *variable_name;
-
   };
 
 struct argument_ast: public csharp_ast_node
@@ -508,23 +817,8 @@ struct argument_ast: public csharp_ast_node
       KIND = Kind_argument
     };
 
+    argument::argument_type_enum argument_type;
     expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum argument_type_enum {
-      type_value_parameter,
-      type_reference_parameter,
-      type_output_parameter,
-    };
-    argument_type_enum argument_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct array_creation_expression_rest_ast: public csharp_ast_node
@@ -537,7 +831,6 @@ struct array_creation_expression_rest_ast: public csharp_ast_node
     array_initializer_ast *array_initializer;
     const list_node<expression_ast *> *expression_sequence;
     const list_node<rank_specifier_ast *> *rank_specifier_sequence;
-
   };
 
 struct array_initializer_ast: public csharp_ast_node
@@ -548,7 +841,6 @@ struct array_initializer_ast: public csharp_ast_node
     };
 
     const list_node<variable_initializer_ast *> *variable_initializer_sequence;
-
   };
 
 struct array_type_ast: public csharp_ast_node
@@ -560,7 +852,6 @@ struct array_type_ast: public csharp_ast_node
 
     non_array_type_ast *non_array_type;
     const list_node<rank_specifier_ast *> *rank_specifier_sequence;
-
   };
 
 struct attribute_ast: public csharp_ast_node
@@ -572,7 +863,6 @@ struct attribute_ast: public csharp_ast_node
 
     type_name_ast *name;
     attribute_arguments_ast *arguments;
-
   };
 
 struct attribute_arguments_ast: public csharp_ast_node
@@ -584,7 +874,6 @@ struct attribute_arguments_ast: public csharp_ast_node
 
     const list_node<named_argument_ast *> *named_argument_sequence;
     const list_node<positional_argument_ast *> *positional_argument_sequence;
-
   };
 
 struct attribute_section_ast: public csharp_ast_node
@@ -596,7 +885,6 @@ struct attribute_section_ast: public csharp_ast_node
 
     attribute_target_ast *target;
     const list_node<attribute_ast *> *attribute_sequence;
-
   };
 
 struct attribute_target_ast: public csharp_ast_node
@@ -608,7 +896,6 @@ struct attribute_target_ast: public csharp_ast_node
 
     identifier_ast *identifier;
     keyword_ast *keyword;
-
   };
 
 struct base_access_ast: public csharp_ast_node
@@ -618,24 +905,10 @@ struct base_access_ast: public csharp_ast_node
       KIND = Kind_base_access
     };
 
+    base_access::base_access_enum access_type;
     identifier_ast *identifier;
     type_arguments_ast *type_arguments;
     const list_node<expression_ast *> *expression_sequence;
-
-    // user defined declarations:
-  public:
-
-    enum base_access_enum {
-      type_base_member_access,
-      type_base_indexer_access,
-    };
-    base_access_enum access_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct bit_and_expression_ast: public csharp_ast_node
@@ -646,7 +919,6 @@ struct bit_and_expression_ast: public csharp_ast_node
     };
 
     const list_node<equality_expression_ast *> *expression_sequence;
-
   };
 
 struct bit_or_expression_ast: public csharp_ast_node
@@ -657,7 +929,6 @@ struct bit_or_expression_ast: public csharp_ast_node
     };
 
     const list_node<bit_xor_expression_ast *> *expression_sequence;
-
   };
 
 struct bit_xor_expression_ast: public csharp_ast_node
@@ -668,7 +939,6 @@ struct bit_xor_expression_ast: public csharp_ast_node
     };
 
     const list_node<bit_and_expression_ast *> *expression_sequence;
-
   };
 
 struct block_ast: public csharp_ast_node
@@ -679,7 +949,6 @@ struct block_ast: public csharp_ast_node
     };
 
     const list_node<block_statement_ast *> *statement_sequence;
-
   };
 
 struct block_statement_ast: public csharp_ast_node
@@ -692,7 +961,6 @@ struct block_statement_ast: public csharp_ast_node
     labeled_statement_ast *labeled_statement;
     declaration_statement_ast *declaration_statement;
     embedded_statement_ast *statement;
-
   };
 
 struct boolean_expression_ast: public csharp_ast_node
@@ -703,7 +971,6 @@ struct boolean_expression_ast: public csharp_ast_node
     };
 
     expression_ast *expression;
-
   };
 
 struct break_statement_ast: public csharp_ast_node
@@ -712,7 +979,6 @@ struct break_statement_ast: public csharp_ast_node
     {
       KIND = Kind_break_statement
     };
-
 
   };
 
@@ -723,21 +989,7 @@ struct builtin_class_type_ast: public csharp_ast_node
       KIND = Kind_builtin_class_type
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum builtin_class_type_enum {
-      type_object,
-      type_string,
-    };
-    builtin_class_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
+    builtin_class_type::builtin_class_type_enum type;
   };
 
 struct cast_expression_ast: public csharp_ast_node
@@ -749,7 +1001,6 @@ struct cast_expression_ast: public csharp_ast_node
 
     type_ast *type;
     unary_expression_ast *casted_expression;
-
   };
 
 struct catch_clauses_ast: public csharp_ast_node
@@ -761,7 +1012,6 @@ struct catch_clauses_ast: public csharp_ast_node
 
     general_catch_clause_ast *general_catch_clause;
     const list_node<specific_catch_clause_ast *> *specific_catch_clause_sequence;
-
   };
 
 struct checked_statement_ast: public csharp_ast_node
@@ -772,7 +1022,6 @@ struct checked_statement_ast: public csharp_ast_node
     };
 
     block_ast *body;
-
   };
 
 struct class_base_ast: public csharp_ast_node
@@ -785,7 +1034,6 @@ struct class_base_ast: public csharp_ast_node
     builtin_class_type_ast *builtin_class_type;
     const list_node<type_name_ast *> *interface_type_sequence;
     const list_node<type_name_ast *> *base_type_sequence;
-
   };
 
 struct class_body_ast: public csharp_ast_node
@@ -796,7 +1044,6 @@ struct class_body_ast: public csharp_ast_node
     };
 
     const list_node<class_member_declaration_ast *> *member_declaration_sequence;
-
   };
 
 struct class_declaration_ast: public csharp_ast_node
@@ -811,7 +1058,6 @@ struct class_declaration_ast: public csharp_ast_node
     class_base_ast *class_base;
     type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
     class_body_ast *body;
-
   };
 
 struct class_member_declaration_ast: public csharp_ast_node
@@ -825,7 +1071,6 @@ struct class_member_declaration_ast: public csharp_ast_node
     optional_modifiers_ast *modifiers;
     finalizer_declaration_ast *finalizer_declaration;
     class_or_struct_member_declaration_ast *other_declaration;
-
   };
 
 struct class_or_struct_member_declaration_ast: public csharp_ast_node
@@ -835,6 +1080,7 @@ struct class_or_struct_member_declaration_ast: public csharp_ast_node
       KIND = Kind_class_or_struct_member_declaration
     };
 
+    class_or_struct_member_declaration::class_or_struct_member_declaration_enum declaration_type;
     constant_declaration_ast *constant_declaration;
     event_declaration_ast *event_declaration;
     type_ast *operator_type;
@@ -856,30 +1102,6 @@ struct class_or_struct_member_declaration_ast: public csharp_ast_node
     type_parameters_ast *type_parameters;
     type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
     block_ast *method_body;
-
-    // user defined declarations:
-  public:
-
-    enum class_or_struct_member_declaration_enum {
-      type_constant_declaration,
-      type_event_declaration,
-      type_operator_declaration_implicit,
-      type_operator_declaration_explicit,
-      type_operator_declaration_typed,
-      type_constructor_declaration,
-      type_type_declaration,
-      type_indexer_declaration,
-      type_field_declaration,
-      type_property_declaration,
-      type_member_declaration,
-    };
-    class_or_struct_member_declaration_enum declaration_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct class_type_ast: public csharp_ast_node
@@ -891,7 +1113,6 @@ struct class_type_ast: public csharp_ast_node
 
     type_name_ast *type_name;
     builtin_class_type_ast *builtin_class_type;
-
   };
 
 struct compilation_unit_ast: public csharp_ast_node
@@ -905,7 +1126,6 @@ struct compilation_unit_ast: public csharp_ast_node
     const list_node<using_directive_ast *> *using_sequence;
     const list_node<global_attribute_section_ast *> *global_attribute_sequence;
     const list_node<namespace_member_declaration_ast *> *namespace_sequence;
-
   };
 
 struct conditional_expression_ast: public csharp_ast_node
@@ -918,7 +1138,6 @@ struct conditional_expression_ast: public csharp_ast_node
     null_coalescing_expression_ast *null_coalescing_expression;
     expression_ast *if_expression;
     expression_ast *else_expression;
-
   };
 
 struct constant_declaration_ast: public csharp_ast_node
@@ -930,7 +1149,6 @@ struct constant_declaration_ast: public csharp_ast_node
 
     type_ast *type;
     const list_node<constant_declarator_ast *> *constant_declarator_sequence;
-
   };
 
 struct constant_declarator_ast: public csharp_ast_node
@@ -942,7 +1160,6 @@ struct constant_declarator_ast: public csharp_ast_node
 
     identifier_ast *constant_name;
     constant_expression_ast *expression;
-
   };
 
 struct constant_expression_ast: public csharp_ast_node
@@ -953,7 +1170,6 @@ struct constant_expression_ast: public csharp_ast_node
     };
 
     expression_ast *expression;
-
   };
 
 struct constructor_constraint_ast: public csharp_ast_node
@@ -962,7 +1178,6 @@ struct constructor_constraint_ast: public csharp_ast_node
     {
       KIND = Kind_constructor_constraint
     };
-
 
   };
 
@@ -977,7 +1192,6 @@ struct constructor_declaration_ast: public csharp_ast_node
     formal_parameter_list_ast *formal_parameters;
     constructor_initializer_ast *constructor_initializer;
     block_ast *constructor_body;
-
   };
 
 struct constructor_initializer_ast: public csharp_ast_node
@@ -987,22 +1201,8 @@ struct constructor_initializer_ast: public csharp_ast_node
       KIND = Kind_constructor_initializer
     };
 
+    constructor_initializer::constructor_initializer_type_enum initializer_type;
     optional_argument_list_ast *arguments;
-
-    // user defined declarations:
-  public:
-
-    enum constructor_initializer_type_enum {
-      type_base,
-      type_this,
-    };
-    constructor_initializer_type_enum initializer_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct continue_statement_ast: public csharp_ast_node
@@ -1011,7 +1211,6 @@ struct continue_statement_ast: public csharp_ast_node
     {
       KIND = Kind_continue_statement
     };
-
 
   };
 
@@ -1024,7 +1223,6 @@ struct declaration_statement_ast: public csharp_ast_node
 
     variable_declaration_ast *local_variable_declaration;
     constant_declaration_ast *local_constant_declaration;
-
   };
 
 struct delegate_declaration_ast: public csharp_ast_node
@@ -1039,7 +1237,6 @@ struct delegate_declaration_ast: public csharp_ast_node
     type_parameters_ast *type_parameters;
     formal_parameter_list_ast *formal_parameters;
     type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
-
   };
 
 struct do_while_statement_ast: public csharp_ast_node
@@ -1051,7 +1248,6 @@ struct do_while_statement_ast: public csharp_ast_node
 
     embedded_statement_ast *body;
     boolean_expression_ast *condition;
-
   };
 
 struct embedded_statement_ast: public csharp_ast_node
@@ -1082,7 +1278,6 @@ struct embedded_statement_ast: public csharp_ast_node
     statement_expression_ast *expression_statement;
     unsafe_statement_ast *unsafe_statement;
     fixed_statement_ast *fixed_statement;
-
   };
 
 struct enum_base_ast: public csharp_ast_node
@@ -1093,7 +1288,6 @@ struct enum_base_ast: public csharp_ast_node
     };
 
     integral_type_ast *integral_type;
-
   };
 
 struct enum_body_ast: public csharp_ast_node
@@ -1104,7 +1298,6 @@ struct enum_body_ast: public csharp_ast_node
     };
 
     const list_node<enum_member_declaration_ast *> *member_declaration_sequence;
-
   };
 
 struct enum_declaration_ast: public csharp_ast_node
@@ -1117,7 +1310,6 @@ struct enum_declaration_ast: public csharp_ast_node
     identifier_ast *enum_name;
     enum_base_ast *enum_base;
     enum_body_ast *body;
-
   };
 
 struct enum_member_declaration_ast: public csharp_ast_node
@@ -1130,7 +1322,6 @@ struct enum_member_declaration_ast: public csharp_ast_node
     const list_node<attribute_section_ast *> *attribute_sequence;
     identifier_ast *member_name;
     constant_expression_ast *constant_expression;
-
   };
 
 struct equality_expression_ast: public csharp_ast_node
@@ -1142,7 +1333,6 @@ struct equality_expression_ast: public csharp_ast_node
 
     relational_expression_ast *expression;
     const list_node<equality_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct equality_expression_rest_ast: public csharp_ast_node
@@ -1152,22 +1342,8 @@ struct equality_expression_rest_ast: public csharp_ast_node
       KIND = Kind_equality_expression_rest
     };
 
+    equality_expression_rest::equality_operator_enum equality_operator;
     relational_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum equality_operator_enum {
-      op_equal,
-      op_not_equal,
-    };
-    equality_operator_enum equality_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct event_accessor_declarations_ast: public csharp_ast_node
@@ -1177,25 +1353,11 @@ struct event_accessor_declarations_ast: public csharp_ast_node
       KIND = Kind_event_accessor_declarations
     };
 
+    event_accessor_declarations::event_accessor_declarations_enum order;
     const list_node<attribute_section_ast *> *attributes_accessor1_sequence;
     block_ast *accessor1_body;
     const list_node<attribute_section_ast *> *attributes_accessor2_sequence;
     block_ast *accessor2_body;
-
-    // user defined declarations:
-  public:
-
-    enum event_accessor_declarations_enum {
-      order_add_remove,
-      order_remove_add,
-    };
-    event_accessor_declarations_enum order;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct event_declaration_ast: public csharp_ast_node
@@ -1209,7 +1371,6 @@ struct event_declaration_ast: public csharp_ast_node
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
     type_name_ast *event_name;
     event_accessor_declarations_ast *event_accessor_declarations;
-
   };
 
 struct expression_ast: public csharp_ast_node
@@ -1219,33 +1380,9 @@ struct expression_ast: public csharp_ast_node
       KIND = Kind_expression
     };
 
+    expression::assignment_operator_enum assignment_operator;
     conditional_expression_ast *conditional_expression;
     expression_ast *assignment_expression;
-
-    // user defined declarations:
-  public:
-
-    enum assignment_operator_enum {
-      no_assignment,
-      op_assign,
-      op_plus_assign,
-      op_minus_assign,
-      op_star_assign,
-      op_slash_assign,
-      op_remainder_assign,
-      op_bit_and_assign,
-      op_bit_or_assign,
-      op_bit_xor_assign,
-      op_lshift_assign,
-      op_rshift_assign,
-    };
-    assignment_operator_enum assignment_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct extern_alias_directive_ast: public csharp_ast_node
@@ -1256,7 +1393,6 @@ struct extern_alias_directive_ast: public csharp_ast_node
     };
 
     identifier_ast *identifier;
-
   };
 
 struct finalizer_declaration_ast: public csharp_ast_node
@@ -1268,7 +1404,6 @@ struct finalizer_declaration_ast: public csharp_ast_node
 
     identifier_ast *class_name;
     block_ast *finalizer_body;
-
   };
 
 struct fixed_pointer_declarator_ast: public csharp_ast_node
@@ -1280,7 +1415,6 @@ struct fixed_pointer_declarator_ast: public csharp_ast_node
 
     identifier_ast *pointer_name;
     expression_ast *initializer;
-
   };
 
 struct fixed_statement_ast: public csharp_ast_node
@@ -1293,7 +1427,6 @@ struct fixed_statement_ast: public csharp_ast_node
     pointer_type_ast *pointer_type;
     fixed_pointer_declarator_ast *fixed_pointer_declarator;
     embedded_statement_ast *body;
-
   };
 
 struct floating_point_type_ast: public csharp_ast_node
@@ -1303,21 +1436,7 @@ struct floating_point_type_ast: public csharp_ast_node
       KIND = Kind_floating_point_type
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum floating_point_type_enum {
-      type_float,
-      type_double,
-    };
-    floating_point_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
+    floating_point_type::floating_point_type_enum type;
   };
 
 struct for_control_ast: public csharp_ast_node
@@ -1331,7 +1450,6 @@ struct for_control_ast: public csharp_ast_node
     const list_node<statement_expression_ast *> *statement_expression_sequence;
     boolean_expression_ast *for_condition;
     const list_node<statement_expression_ast *> *for_iterator_sequence;
-
   };
 
 struct for_statement_ast: public csharp_ast_node
@@ -1343,7 +1461,6 @@ struct for_statement_ast: public csharp_ast_node
 
     for_control_ast *for_control;
     embedded_statement_ast *for_body;
-
   };
 
 struct foreach_statement_ast: public csharp_ast_node
@@ -1357,7 +1474,6 @@ struct foreach_statement_ast: public csharp_ast_node
     identifier_ast *variable_name;
     expression_ast *collection;
     embedded_statement_ast *body;
-
   };
 
 struct formal_parameter_ast: public csharp_ast_node
@@ -1372,7 +1488,6 @@ struct formal_parameter_ast: public csharp_ast_node
     parameter_modifier_ast *modifier;
     type_ast *type;
     identifier_ast *variable_name;
-
   };
 
 struct formal_parameter_list_ast: public csharp_ast_node
@@ -1383,7 +1498,6 @@ struct formal_parameter_list_ast: public csharp_ast_node
     };
 
     const list_node<formal_parameter_ast *> *formal_parameter_sequence;
-
   };
 
 struct general_catch_clause_ast: public csharp_ast_node
@@ -1394,7 +1508,6 @@ struct general_catch_clause_ast: public csharp_ast_node
     };
 
     block_ast *body;
-
   };
 
 struct generic_dimension_specifier_ast: public csharp_ast_node
@@ -1404,15 +1517,7 @@ struct generic_dimension_specifier_ast: public csharp_ast_node
       KIND = Kind_generic_dimension_specifier
     };
 
-
-    // user defined declarations:
-  public:
     int comma_count;
-  protected:
-  private:
-
-  public:
-
   };
 
 struct global_attribute_section_ast: public csharp_ast_node
@@ -1423,7 +1528,6 @@ struct global_attribute_section_ast: public csharp_ast_node
     };
 
     const list_node<attribute_ast *> *attribute_sequence;
-
   };
 
 struct goto_statement_ast: public csharp_ast_node
@@ -1433,24 +1537,9 @@ struct goto_statement_ast: public csharp_ast_node
       KIND = Kind_goto_statement
     };
 
+    goto_statement::goto_statement_enum goto_type;
     identifier_ast *label;
     constant_expression_ast *constant_expression;
-
-    // user defined declarations:
-  public:
-
-    enum goto_statement_enum {
-      type_labeled_statement,
-      type_switch_case,
-      type_switch_default,
-    };
-    goto_statement_enum goto_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct identifier_ast: public csharp_ast_node
@@ -1461,7 +1550,6 @@ struct identifier_ast: public csharp_ast_node
     };
 
     std::size_t ident;
-
   };
 
 struct if_statement_ast: public csharp_ast_node
@@ -1474,7 +1562,6 @@ struct if_statement_ast: public csharp_ast_node
     boolean_expression_ast *condition;
     embedded_statement_ast *if_body;
     embedded_statement_ast *else_body;
-
   };
 
 struct integral_type_ast: public csharp_ast_node
@@ -1484,28 +1571,7 @@ struct integral_type_ast: public csharp_ast_node
       KIND = Kind_integral_type
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum integral_type_enum {
-      type_sbyte,
-      type_byte,
-      type_short,
-      type_ushort,
-      type_int,
-      type_uint,
-      type_long,
-      type_ulong,
-      type_char,
-    };
-    integral_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
+    integral_type::integral_type_enum type;
   };
 
 struct interface_accessors_ast: public csharp_ast_node
@@ -1515,20 +1581,10 @@ struct interface_accessors_ast: public csharp_ast_node
       KIND = Kind_interface_accessors
     };
 
+    accessor_declarations::accessor_declarations_enum type_accessor1;
+    accessor_declarations::accessor_declarations_enum type_accessor2;
     const list_node<attribute_section_ast *> *attributes_accessor1_sequence;
     const list_node<attribute_section_ast *> *attributes_accessor2_sequence;
-
-    // user defined declarations:
-  public:
-
-    accessor_declarations_ast::accessor_declarations_enum type_accessor1;
-    accessor_declarations_ast::accessor_declarations_enum type_accessor2;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct interface_base_ast: public csharp_ast_node
@@ -1539,7 +1595,6 @@ struct interface_base_ast: public csharp_ast_node
     };
 
     const list_node<type_name_ast *> *interface_type_sequence;
-
   };
 
 struct interface_body_ast: public csharp_ast_node
@@ -1550,7 +1605,6 @@ struct interface_body_ast: public csharp_ast_node
     };
 
     const list_node<interface_member_declaration_ast *> *member_declaration_sequence;
-
   };
 
 struct interface_declaration_ast: public csharp_ast_node
@@ -1565,7 +1619,6 @@ struct interface_declaration_ast: public csharp_ast_node
     interface_base_ast *interface_base;
     type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
     interface_body_ast *body;
-
   };
 
 struct interface_event_declaration_ast: public csharp_ast_node
@@ -1577,7 +1630,6 @@ struct interface_event_declaration_ast: public csharp_ast_node
 
     type_ast *event_type;
     identifier_ast *event_name;
-
   };
 
 struct interface_member_declaration_ast: public csharp_ast_node
@@ -1587,6 +1639,8 @@ struct interface_member_declaration_ast: public csharp_ast_node
       KIND = Kind_interface_member_declaration
     };
 
+    interface_member_declaration::interface_member_declaration_enum declaration_type;
+    bool decl_new;
     const list_node<attribute_section_ast *> *attribute_sequence;
     interface_event_declaration_ast *event_declaration;
     return_type_ast *member_type;
@@ -1595,24 +1649,6 @@ struct interface_member_declaration_ast: public csharp_ast_node
     identifier_ast *member_name;
     type_parameters_ast *type_parameters;
     type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
-
-    // user defined declarations:
-  public:
-
-    enum interface_member_declaration_enum {
-      type_interface_event_declaration,
-      type_interface_indexer_declaration,
-      type_interface_property_declaration,
-      type_interface_method_declaration,
-    };
-    interface_member_declaration_enum declaration_type;
-    bool decl_new; // specifies if the "new" keyword prepends the declaration
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct keyword_ast: public csharp_ast_node
@@ -1623,7 +1659,6 @@ struct keyword_ast: public csharp_ast_node
     };
 
     std::size_t keyword;
-
   };
 
 struct labeled_statement_ast: public csharp_ast_node
@@ -1634,7 +1669,6 @@ struct labeled_statement_ast: public csharp_ast_node
     };
 
     identifier_ast *label;
-
   };
 
 struct literal_ast: public csharp_ast_node
@@ -1644,30 +1678,11 @@ struct literal_ast: public csharp_ast_node
       KIND = Kind_literal
     };
 
+    literal::literal_type_enum literal_type;
     std::size_t integer_literal;
     std::size_t floating_point_literal;
     std::size_t character_literal;
     std::size_t string_literal;
-
-    // user defined declarations:
-  public:
-
-    enum literal_type_enum {
-      type_true,
-      type_false,
-      type_null,
-      type_integer,
-      type_real,
-      type_character,
-      type_string
-    };
-    literal_type_enum literal_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct lock_statement_ast: public csharp_ast_node
@@ -1679,7 +1694,6 @@ struct lock_statement_ast: public csharp_ast_node
 
     expression_ast *lock_expression;
     embedded_statement_ast *body;
-
   };
 
 struct logical_and_expression_ast: public csharp_ast_node
@@ -1690,7 +1704,6 @@ struct logical_and_expression_ast: public csharp_ast_node
     };
 
     const list_node<bit_or_expression_ast *> *expression_sequence;
-
   };
 
 struct logical_or_expression_ast: public csharp_ast_node
@@ -1701,7 +1714,6 @@ struct logical_or_expression_ast: public csharp_ast_node
     };
 
     const list_node<logical_and_expression_ast *> *expression_sequence;
-
   };
 
 struct managed_type_ast: public csharp_ast_node
@@ -1713,7 +1725,6 @@ struct managed_type_ast: public csharp_ast_node
 
     non_array_type_ast *non_array_type;
     const list_node<rank_specifier_ast *> *rank_specifier_sequence;
-
   };
 
 struct multiplicative_expression_ast: public csharp_ast_node
@@ -1725,7 +1736,6 @@ struct multiplicative_expression_ast: public csharp_ast_node
 
     unary_expression_ast *expression;
     const list_node<multiplicative_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct multiplicative_expression_rest_ast: public csharp_ast_node
@@ -1735,23 +1745,8 @@ struct multiplicative_expression_rest_ast: public csharp_ast_node
       KIND = Kind_multiplicative_expression_rest
     };
 
+    multiplicative_expression_rest::multiplicative_operator_enum multiplicative_operator;
     unary_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum multiplicative_operator_enum {
-      op_star,
-      op_slash,
-      op_remainder
-    };
-    multiplicative_operator_enum multiplicative_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct named_argument_ast: public csharp_ast_node
@@ -1763,7 +1758,6 @@ struct named_argument_ast: public csharp_ast_node
 
     identifier_ast *argument_name;
     expression_ast *attribute_argument_expression;
-
   };
 
 struct namespace_body_ast: public csharp_ast_node
@@ -1776,7 +1770,6 @@ struct namespace_body_ast: public csharp_ast_node
     const list_node<extern_alias_directive_ast *> *extern_alias_sequence;
     const list_node<using_directive_ast *> *using_sequence;
     const list_node<namespace_member_declaration_ast *> *namespace_sequence;
-
   };
 
 struct namespace_declaration_ast: public csharp_ast_node
@@ -1788,7 +1781,6 @@ struct namespace_declaration_ast: public csharp_ast_node
 
     qualified_identifier_ast *name;
     namespace_body_ast *body;
-
   };
 
 struct namespace_member_declaration_ast: public csharp_ast_node
@@ -1800,7 +1792,6 @@ struct namespace_member_declaration_ast: public csharp_ast_node
 
     namespace_declaration_ast *namespace_declaration;
     type_declaration_ast *type_declaration;
-
   };
 
 struct namespace_name_ast: public csharp_ast_node
@@ -1809,7 +1800,6 @@ struct namespace_name_ast: public csharp_ast_node
     {
       KIND = Kind_namespace_name
     };
-
 
   };
 
@@ -1822,7 +1812,6 @@ struct namespace_or_type_name_ast: public csharp_ast_node
 
     identifier_ast *qualified_alias_label;
     const list_node<namespace_or_type_name_part_ast *> *name_part_sequence;
-
   };
 
 struct namespace_or_type_name_part_ast: public csharp_ast_node
@@ -1834,7 +1823,6 @@ struct namespace_or_type_name_part_ast: public csharp_ast_node
 
     identifier_ast *identifier;
     type_arguments_ast *type_arguments;
-
   };
 
 struct namespace_or_type_name_safe_ast: public csharp_ast_node
@@ -1846,7 +1834,6 @@ struct namespace_or_type_name_safe_ast: public csharp_ast_node
 
     identifier_ast *qualified_alias_label;
     const list_node<namespace_or_type_name_part_ast *> *name_part_sequence;
-
   };
 
 struct new_expression_ast: public csharp_ast_node
@@ -1859,7 +1846,6 @@ struct new_expression_ast: public csharp_ast_node
     type_ast *type;
     array_creation_expression_rest_ast *array_creation_expression_rest;
     optional_argument_list_ast *expression_or_argument_list;
-
   };
 
 struct non_array_type_ast: public csharp_ast_node
@@ -1871,7 +1857,6 @@ struct non_array_type_ast: public csharp_ast_node
 
     builtin_class_type_ast *builtin_class_type;
     optionally_nullable_type_ast *optionally_nullable_type;
-
   };
 
 struct non_nullable_type_ast: public csharp_ast_node
@@ -1883,7 +1868,6 @@ struct non_nullable_type_ast: public csharp_ast_node
 
     type_name_ast *type_name;
     simple_type_ast *simple_type;
-
   };
 
 struct null_coalescing_expression_ast: public csharp_ast_node
@@ -1894,7 +1878,6 @@ struct null_coalescing_expression_ast: public csharp_ast_node
     };
 
     const list_node<logical_or_expression_ast *> *expression_sequence;
-
   };
 
 struct numeric_type_ast: public csharp_ast_node
@@ -1904,24 +1887,9 @@ struct numeric_type_ast: public csharp_ast_node
       KIND = Kind_numeric_type
     };
 
+    numeric_type::numeric_type_enum type;
     integral_type_ast *int_type;
     floating_point_type_ast *float_type;
-
-    // user defined declarations:
-  public:
-
-    enum numeric_type_enum {
-      type_integral,
-      type_floating_point,
-      type_decimal,
-    };
-    numeric_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct optional_argument_list_ast: public csharp_ast_node
@@ -1932,7 +1900,6 @@ struct optional_argument_list_ast: public csharp_ast_node
     };
 
     const list_node<argument_ast *> *argument_sequence;
-
   };
 
 struct optional_modifiers_ast: public csharp_ast_node
@@ -1942,17 +1909,7 @@ struct optional_modifiers_ast: public csharp_ast_node
       KIND = Kind_optional_modifiers
     };
 
-
-    // user defined declarations:
-  public:
-
-    int modifiers; // using the modifier_enum values
-
-  protected:
-  private:
-
-  public:
-
+    int modifiers;
   };
 
 struct optional_type_modifiers_ast: public csharp_ast_node
@@ -1962,17 +1919,7 @@ struct optional_type_modifiers_ast: public csharp_ast_node
       KIND = Kind_optional_type_modifiers
     };
 
-
-    // user defined declarations:
-  public:
-
-    int modifiers; // using the modifier_enum values
-
-  protected:
-  private:
-
-  public:
-
+    int modifiers;
   };
 
 struct optionally_nullable_type_ast: public csharp_ast_node
@@ -1982,18 +1929,8 @@ struct optionally_nullable_type_ast: public csharp_ast_node
       KIND = Kind_optionally_nullable_type
     };
 
-    non_nullable_type_ast *non_nullable_type;
-
-    // user defined declarations:
-  public:
-
     bool nullable;
-
-  protected:
-  private:
-
-  public:
-
+    non_nullable_type_ast *non_nullable_type;
   };
 
 struct overloadable_binary_only_operator_ast: public csharp_ast_node
@@ -2003,33 +1940,7 @@ struct overloadable_binary_only_operator_ast: public csharp_ast_node
       KIND = Kind_overloadable_binary_only_operator
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum overloadable_binary_only_operator_enum {
-      op_star,
-      op_slash,
-      op_remainder,
-      op_bit_and,
-      op_bit_or,
-      op_bit_xor,
-      op_lshift,
-      op_rshift,
-      op_equal,
-      op_not_equal,
-      op_greater_than,
-      op_less_than,
-      op_greater_equal,
-      op_less_equal,
-    };
-    overloadable_binary_only_operator_enum op;
-
-  protected:
-  private:
-
-  public:
-
+    overloadable_binary_only_operator::overloadable_binary_only_operator_enum op;
   };
 
 struct overloadable_unary_only_operator_ast: public csharp_ast_node
@@ -2039,25 +1950,7 @@ struct overloadable_unary_only_operator_ast: public csharp_ast_node
       KIND = Kind_overloadable_unary_only_operator
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum overloadable_unary_only_operator_enum {
-      op_bang,
-      op_tilde,
-      op_increment,
-      op_decrement,
-      op_true,
-      op_false,
-    };
-    overloadable_unary_only_operator_enum op;
-
-  protected:
-  private:
-
-  public:
-
+    overloadable_unary_only_operator::overloadable_unary_only_operator_enum op;
   };
 
 struct overloadable_unary_or_binary_operator_ast: public csharp_ast_node
@@ -2067,21 +1960,7 @@ struct overloadable_unary_or_binary_operator_ast: public csharp_ast_node
       KIND = Kind_overloadable_unary_or_binary_operator
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum overloadable_unary_or_binary_operator_enum {
-      op_plus,
-      op_minus,
-    };
-    overloadable_unary_or_binary_operator_enum op;
-
-  protected:
-  private:
-
-  public:
-
+    overloadable_unary_or_binary_operator::overloadable_unary_or_binary_operator_enum op;
   };
 
 struct parameter_array_ast: public csharp_ast_node
@@ -2093,7 +1972,6 @@ struct parameter_array_ast: public csharp_ast_node
 
     array_type_ast *type;
     identifier_ast *variable_name;
-
   };
 
 struct parameter_modifier_ast: public csharp_ast_node
@@ -2103,21 +1981,7 @@ struct parameter_modifier_ast: public csharp_ast_node
       KIND = Kind_parameter_modifier
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum parameter_modifier_enum {
-      mod_ref,
-      mod_out,
-    };
-    parameter_modifier_enum modifier;
-
-  protected:
-  private:
-
-  public:
-
+    parameter_modifier::parameter_modifier_enum modifier;
   };
 
 struct pointer_type_ast: public csharp_ast_node
@@ -2127,23 +1991,9 @@ struct pointer_type_ast: public csharp_ast_node
       KIND = Kind_pointer_type
     };
 
-    managed_type_ast *regular_type;
-
-    // user defined declarations:
-  public:
-
-    enum pointer_type_enum {
-      type_regular,
-      type_void,
-    };
-    pointer_type_enum type;
+    pointer_type::pointer_type_enum type;
     int star_count;
-
-  protected:
-  private:
-
-  public:
-
+    managed_type_ast *regular_type;
   };
 
 struct positional_argument_ast: public csharp_ast_node
@@ -2154,7 +2004,6 @@ struct positional_argument_ast: public csharp_ast_node
     };
 
     expression_ast *attribute_argument_expression;
-
   };
 
 struct predefined_type_ast: public csharp_ast_node
@@ -2164,34 +2013,7 @@ struct predefined_type_ast: public csharp_ast_node
       KIND = Kind_predefined_type
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum predefined_type_enum {
-      type_bool,
-      type_byte,
-      type_char,
-      type_decimal,
-      type_double,
-      type_float,
-      type_int,
-      type_long,
-      type_object,
-      type_sbyte,
-      type_short,
-      type_string,
-      type_uint,
-      type_ulong,
-      type_ushort,
-    };
-    predefined_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
+    predefined_type::predefined_type_enum type;
   };
 
 struct primary_atom_ast: public csharp_ast_node
@@ -2201,6 +2023,7 @@ struct primary_atom_ast: public csharp_ast_node
       KIND = Kind_primary_atom
     };
 
+    primary_atom::primary_atom_enum rule_type;
     literal_ast *literal;
     expression_ast *expression;
     simple_name_or_member_access_ast *simple_name_or_member_access;
@@ -2210,31 +2033,6 @@ struct primary_atom_ast: public csharp_ast_node
     type_ast *type;
     anonymous_method_expression_ast *anonymous_method_expression;
     unmanaged_type_ast *unmanaged_type;
-
-    // user defined declarations:
-  public:
-
-    enum primary_atom_enum {
-      type_literal,
-      type_parenthesized_expression,
-      type_member_access,
-      type_this_access,
-      type_base_access,
-      type_new_expression,
-      type_typeof_expression,
-      type_checked_expression,
-      type_unchecked_expression,
-      type_default_value_expression,
-      type_anonymous_method_expression,
-      type_sizeof_expression,
-    };
-    primary_atom_enum rule_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct primary_expression_ast: public csharp_ast_node
@@ -2246,7 +2044,6 @@ struct primary_expression_ast: public csharp_ast_node
 
     primary_atom_ast *primary_atom;
     const list_node<primary_suffix_ast *> *primary_suffix_sequence;
-
   };
 
 struct primary_or_secondary_constraint_ast: public csharp_ast_node
@@ -2256,23 +2053,8 @@ struct primary_or_secondary_constraint_ast: public csharp_ast_node
       KIND = Kind_primary_or_secondary_constraint
     };
 
+    primary_or_secondary_constraint::primary_or_secondary_constraint_enum constraint_type;
     class_type_ast *class_type_or_secondary_constraint;
-
-    // user defined declarations:
-  public:
-
-    enum primary_or_secondary_constraint_enum {
-      type_type,
-      type_class,
-      type_struct,
-    };
-    primary_or_secondary_constraint_enum constraint_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct primary_suffix_ast: public csharp_ast_node
@@ -2282,29 +2064,11 @@ struct primary_suffix_ast: public csharp_ast_node
       KIND = Kind_primary_suffix
     };
 
+    primary_suffix::primary_suffix_enum suffix_type;
     identifier_ast *member_name;
     type_arguments_ast *type_arguments;
     optional_argument_list_ast *arguments;
     const list_node<expression_ast *> *expression_sequence;
-
-    // user defined declarations:
-  public:
-
-    enum primary_suffix_enum {
-      type_member_access,
-      type_pointer_member_access,
-      type_invocation,
-      type_element_access,
-      type_increment,
-      type_decrement,
-    };
-    primary_suffix_enum suffix_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct qualified_identifier_ast: public csharp_ast_node
@@ -2315,7 +2079,6 @@ struct qualified_identifier_ast: public csharp_ast_node
     };
 
     const list_node<identifier_ast *> *name_sequence;
-
   };
 
 struct rank_specifier_ast: public csharp_ast_node
@@ -2325,17 +2088,7 @@ struct rank_specifier_ast: public csharp_ast_node
       KIND = Kind_rank_specifier
     };
 
-
-    // user defined declarations:
-  public:
-
     int dimension_seperator_count;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct relational_expression_ast: public csharp_ast_node
@@ -2347,7 +2100,6 @@ struct relational_expression_ast: public csharp_ast_node
 
     shift_expression_ast *expression;
     const list_node<relational_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct relational_expression_rest_ast: public csharp_ast_node
@@ -2357,27 +2109,9 @@ struct relational_expression_rest_ast: public csharp_ast_node
       KIND = Kind_relational_expression_rest
     };
 
+    relational_expression_rest::relational_operator_enum relational_operator;
     shift_expression_ast *expression;
     type_ast *type;
-
-    // user defined declarations:
-  public:
-
-    enum relational_operator_enum {
-      op_less_than,
-      op_greater_than,
-      op_less_equal,
-      op_greater_equal,
-      op_is,
-      op_as,
-    };
-    relational_operator_enum relational_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct resource_acquisition_ast: public csharp_ast_node
@@ -2389,7 +2123,6 @@ struct resource_acquisition_ast: public csharp_ast_node
 
     variable_declaration_ast *local_variable_declaration;
     expression_ast *expression;
-
   };
 
 struct return_statement_ast: public csharp_ast_node
@@ -2400,7 +2133,6 @@ struct return_statement_ast: public csharp_ast_node
                  };
 
                  expression_ast *return_expression;
-
                };
 
 struct return_type_ast: public csharp_ast_node
@@ -2410,22 +2142,8 @@ struct return_type_ast: public csharp_ast_node
                    KIND = Kind_return_type
                  };
 
+                 return_type::return_type_enum type;
                  type_ast *regular_type;
-
-                 // user defined declarations:
-               public:
-
-                 enum return_type_enum {
-                              type_regular,
-                              type_void,
-                            };
-                 return_type_enum type;
-
-               protected:
-               private:
-
-               public:
-
                };
 
 struct secondary_constraints_ast: public csharp_ast_node
@@ -2436,7 +2154,6 @@ struct secondary_constraints_ast: public csharp_ast_node
     };
 
     const list_node<type_name_ast *> *interface_type_or_type_parameter_sequence;
-
   };
 
 struct shift_expression_ast: public csharp_ast_node
@@ -2448,7 +2165,6 @@ struct shift_expression_ast: public csharp_ast_node
 
     additive_expression_ast *expression;
     const list_node<shift_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct shift_expression_rest_ast: public csharp_ast_node
@@ -2458,22 +2174,8 @@ struct shift_expression_rest_ast: public csharp_ast_node
       KIND = Kind_shift_expression_rest
     };
 
+    shift_expression_rest::shift_operator_enum shift_operator;
     additive_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum shift_operator_enum {
-      op_lshift,
-      op_rshift,
-    };
-    shift_operator_enum shift_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct simple_name_or_member_access_ast: public csharp_ast_node
@@ -2487,7 +2189,6 @@ struct simple_name_or_member_access_ast: public csharp_ast_node
     identifier_ast *member_name;
     type_arguments_ast *type_arguments;
     predefined_type_ast *predefined_type;
-
   };
 
 struct simple_type_ast: public csharp_ast_node
@@ -2497,22 +2198,8 @@ struct simple_type_ast: public csharp_ast_node
       KIND = Kind_simple_type
     };
 
+    simple_type::simple_type_enum type;
     numeric_type_ast *numeric_type;
-
-    // user defined declarations:
-  public:
-
-    enum simple_type_enum {
-      type_numeric,
-      type_bool,
-    };
-    simple_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct specific_catch_clause_ast: public csharp_ast_node
@@ -2525,7 +2212,6 @@ struct specific_catch_clause_ast: public csharp_ast_node
     class_type_ast *exception_type;
     identifier_ast *exception_name;
     block_ast *body;
-
   };
 
 struct stackalloc_initializer_ast: public csharp_ast_node
@@ -2536,7 +2222,6 @@ struct stackalloc_initializer_ast: public csharp_ast_node
     };
 
     expression_ast *expression;
-
   };
 
 struct statement_expression_ast: public csharp_ast_node
@@ -2547,7 +2232,6 @@ struct statement_expression_ast: public csharp_ast_node
     };
 
     expression_ast *expression;
-
   };
 
 struct struct_body_ast: public csharp_ast_node
@@ -2558,7 +2242,6 @@ struct struct_body_ast: public csharp_ast_node
     };
 
     const list_node<struct_member_declaration_ast *> *member_declaration_sequence;
-
   };
 
 struct struct_declaration_ast: public csharp_ast_node
@@ -2573,7 +2256,6 @@ struct struct_declaration_ast: public csharp_ast_node
     struct_interfaces_ast *struct_interfaces;
     type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
     struct_body_ast *body;
-
   };
 
 struct struct_interfaces_ast: public csharp_ast_node
@@ -2584,7 +2266,6 @@ struct struct_interfaces_ast: public csharp_ast_node
     };
 
     const list_node<type_name_ast *> *interface_type_sequence;
-
   };
 
 struct struct_member_declaration_ast: public csharp_ast_node
@@ -2597,7 +2278,6 @@ struct struct_member_declaration_ast: public csharp_ast_node
     const list_node<attribute_section_ast *> *attribute_sequence;
     optional_modifiers_ast *modifiers;
     class_or_struct_member_declaration_ast *declaration;
-
   };
 
 struct switch_label_ast: public csharp_ast_node
@@ -2607,22 +2287,8 @@ struct switch_label_ast: public csharp_ast_node
       KIND = Kind_switch_label
     };
 
+    switch_label::branch_type_enum branch_type;
     constant_expression_ast *case_expression;
-
-    // user defined declarations:
-  public:
-
-    enum branch_type_enum {
-      case_branch,
-      default_branch
-    };
-    branch_type_enum branch_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct switch_section_ast: public csharp_ast_node
@@ -2634,7 +2300,6 @@ struct switch_section_ast: public csharp_ast_node
 
     const list_node<switch_label_ast *> *label_sequence;
     const list_node<block_statement_ast *> *statement_sequence;
-
   };
 
 struct switch_statement_ast: public csharp_ast_node
@@ -2646,7 +2311,6 @@ struct switch_statement_ast: public csharp_ast_node
 
     expression_ast *switch_expression;
     const list_node<switch_section_ast *> *switch_section_sequence;
-
   };
 
 struct throw_statement_ast: public csharp_ast_node
@@ -2657,7 +2321,6 @@ struct throw_statement_ast: public csharp_ast_node
     };
 
     expression_ast *exception;
-
   };
 
 struct try_statement_ast: public csharp_ast_node
@@ -2670,7 +2333,6 @@ struct try_statement_ast: public csharp_ast_node
     block_ast *try_body;
     catch_clauses_ast *catch_clauses;
     block_ast *finally_body;
-
   };
 
 struct type_ast: public csharp_ast_node
@@ -2681,7 +2343,6 @@ struct type_ast: public csharp_ast_node
     };
 
     unmanaged_type_ast *unmanaged_type;
-
   };
 
 struct type_arguments_ast: public csharp_ast_node
@@ -2692,7 +2353,6 @@ struct type_arguments_ast: public csharp_ast_node
     };
 
     const list_node<type_ast *> *type_argument_sequence;
-
   };
 
 struct type_arguments_or_parameters_end_ast: public csharp_ast_node
@@ -2701,7 +2361,6 @@ struct type_arguments_or_parameters_end_ast: public csharp_ast_node
     {
       KIND = Kind_type_arguments_or_parameters_end
     };
-
 
   };
 
@@ -2715,7 +2374,6 @@ struct type_declaration_ast: public csharp_ast_node
     const list_node<attribute_section_ast *> *attribute_sequence;
     optional_type_modifiers_ast *modifiers;
     type_declaration_rest_ast *rest;
-
   };
 
 struct type_declaration_rest_ast: public csharp_ast_node
@@ -2725,22 +2383,12 @@ struct type_declaration_rest_ast: public csharp_ast_node
       KIND = Kind_type_declaration_rest
     };
 
+    bool partial;
     class_declaration_ast *class_declaration;
     struct_declaration_ast *struct_declaration;
     interface_declaration_ast *interface_declaration;
     enum_declaration_ast *enum_declaration;
     delegate_declaration_ast *delegate_declaration;
-
-    // user defined declarations:
-  public:
-
-    bool partial;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct type_name_ast: public csharp_ast_node
@@ -2750,7 +2398,6 @@ struct type_name_ast: public csharp_ast_node
       KIND = Kind_type_name
     };
 
-
   };
 
 struct type_name_safe_ast: public csharp_ast_node
@@ -2759,7 +2406,6 @@ struct type_name_safe_ast: public csharp_ast_node
     {
       KIND = Kind_type_name_safe
     };
-
 
   };
 
@@ -2772,7 +2418,6 @@ struct type_parameter_ast: public csharp_ast_node
 
     const list_node<attribute_section_ast *> *attribute_sequence;
     identifier_ast *parameter_name;
-
   };
 
 struct type_parameter_constraints_ast: public csharp_ast_node
@@ -2785,7 +2430,6 @@ struct type_parameter_constraints_ast: public csharp_ast_node
     primary_or_secondary_constraint_ast *primary_or_secondary_constraint;
     secondary_constraints_ast *secondary_constraints;
     constructor_constraint_ast *constructor_constraint;
-
   };
 
 struct type_parameter_constraints_clauses_ast: public csharp_ast_node
@@ -2797,7 +2441,6 @@ struct type_parameter_constraints_clauses_ast: public csharp_ast_node
 
     identifier_ast *type_parameter;
     type_parameter_constraints_ast *constraints;
-
   };
 
 struct type_parameters_ast: public csharp_ast_node
@@ -2808,7 +2451,6 @@ struct type_parameters_ast: public csharp_ast_node
     };
 
     const list_node<type_parameter_ast *> *type_parameter_sequence;
-
   };
 
 struct typeof_expression_ast: public csharp_ast_node
@@ -2818,24 +2460,9 @@ struct typeof_expression_ast: public csharp_ast_node
       KIND = Kind_typeof_expression
     };
 
+    typeof_expression::typeof_expression_enum typeof_type;
     unbound_type_name_ast *unbound_type_name;
     type_ast *other_type;
-
-    // user defined declarations:
-  public:
-
-    enum typeof_expression_enum {
-      type_void,
-      type_unbound_type_name,
-      type_type,
-    };
-    typeof_expression_enum typeof_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct unary_expression_ast: public csharp_ast_node
@@ -2845,6 +2472,7 @@ struct unary_expression_ast: public csharp_ast_node
       KIND = Kind_unary_expression
     };
 
+    unary_expression::unary_expression_enum rule_type;
     unary_expression_ast *unary_expression;
     unary_expression_ast *bitwise_not_expression;
     unary_expression_ast *logical_not_expression;
@@ -2852,29 +2480,6 @@ struct unary_expression_ast: public csharp_ast_node
     primary_expression_ast *primary_expression;
     unary_expression_ast *pointer_indirection_expression;
     unary_expression_ast *addressof_expression;
-
-    // user defined declarations:
-  public:
-
-    enum unary_expression_enum {
-      type_incremented_expression,
-      type_decremented_expression,
-      type_unary_minus_expression,
-      type_unary_plus_expression,
-      type_bitwise_not_expression,
-      type_logical_not_expression,
-      type_cast_expression,
-      type_primary_expression,
-      type_pointer_indirection_expression,
-      type_addressof_expression,
-    };
-    unary_expression_enum rule_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct unbound_type_name_ast: public csharp_ast_node
@@ -2886,7 +2491,6 @@ struct unbound_type_name_ast: public csharp_ast_node
 
     identifier_ast *qualified_alias_label;
     const list_node<unbound_type_name_part_ast *> *name_part_sequence;
-
   };
 
 struct unbound_type_name_part_ast: public csharp_ast_node
@@ -2898,7 +2502,6 @@ struct unbound_type_name_part_ast: public csharp_ast_node
 
     identifier_ast *identifier;
     generic_dimension_specifier_ast *generic_dimension_specifier;
-
   };
 
 struct unchecked_statement_ast: public csharp_ast_node
@@ -2909,7 +2512,6 @@ struct unchecked_statement_ast: public csharp_ast_node
     };
 
     block_ast *body;
-
   };
 
 struct unmanaged_type_ast: public csharp_ast_node
@@ -2919,19 +2521,9 @@ struct unmanaged_type_ast: public csharp_ast_node
       KIND = Kind_unmanaged_type
     };
 
-    managed_type_ast *regular_type;
-
-    // user defined declarations:
-  public:
-
-    pointer_type_ast::pointer_type_enum type;
+    pointer_type::pointer_type_enum type;
     int star_count;
-
-  protected:
-  private:
-
-  public:
-
+    managed_type_ast *regular_type;
   };
 
 struct unsafe_statement_ast: public csharp_ast_node
@@ -2942,7 +2534,6 @@ struct unsafe_statement_ast: public csharp_ast_node
     };
 
     block_ast *body;
-
   };
 
 struct using_directive_ast: public csharp_ast_node
@@ -2955,7 +2546,6 @@ struct using_directive_ast: public csharp_ast_node
     identifier_ast *alias;
     namespace_or_type_name_ast *namespace_or_type_name;
     namespace_or_type_name_ast *namespace_name;
-
   };
 
 struct using_statement_ast: public csharp_ast_node
@@ -2967,7 +2557,6 @@ struct using_statement_ast: public csharp_ast_node
 
     resource_acquisition_ast *resource_acquisition;
     embedded_statement_ast *body;
-
   };
 
 struct variable_declaration_ast: public csharp_ast_node
@@ -2979,7 +2568,6 @@ struct variable_declaration_ast: public csharp_ast_node
 
     type_ast *type;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
-
   };
 
 struct variable_declarator_ast: public csharp_ast_node
@@ -2991,7 +2579,6 @@ struct variable_declarator_ast: public csharp_ast_node
 
     identifier_ast *variable_name;
     variable_initializer_ast *variable_initializer;
-
   };
 
 struct variable_initializer_ast: public csharp_ast_node
@@ -3004,7 +2591,6 @@ struct variable_initializer_ast: public csharp_ast_node
     expression_ast *expression;
     array_initializer_ast *array_initializer;
     stackalloc_initializer_ast *stackalloc_initializer;
-
   };
 
 struct while_statement_ast: public csharp_ast_node
@@ -3016,7 +2602,6 @@ struct while_statement_ast: public csharp_ast_node
 
     boolean_expression_ast *condition;
     embedded_statement_ast *body;
-
   };
 
 struct yield_statement_ast: public csharp_ast_node
@@ -3026,22 +2611,8 @@ struct yield_statement_ast: public csharp_ast_node
       KIND = Kind_yield_statement
     };
 
+    yield_statement::yield_statement_enum yield_type;
     expression_ast *return_expression;
-
-    // user defined declarations:
-  public:
-
-    enum yield_statement_enum {
-      type_yield_return,
-      type_yield_break,
-    };
-    yield_statement_enum yield_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 
@@ -3323,7 +2894,6 @@ class csharp
 
     }
 
-    bool parse__modifiers(_modifiers_ast **yynode);
     bool parse_accessor_declarations(accessor_declarations_ast **yynode);
     bool parse_accessor_modifier(accessor_modifier_ast **yynode);
     bool parse_additive_expression(additive_expression_ast **yynode);
@@ -3502,10 +3072,8 @@ class csharp_visitor
       if (node)
         (this->*_S_parser_table[node->kind - 1000])(node);
     }
-    virtual void visit__modifiers(_modifiers_ast *)
-  {}
     virtual void visit_accessor_declarations(accessor_declarations_ast *)
-    {}
+  {}
     virtual void visit_accessor_modifier(accessor_modifier_ast *)
     {}
     virtual void visit_additive_expression(additive_expression_ast *)
@@ -3837,9 +3405,6 @@ class csharp_visitor
 class csharp_default_visitor: public csharp_visitor
   {
   public:
-    virtual void visit__modifiers(_modifiers_ast *node)
-    {}
-
     virtual void visit_accessor_declarations(accessor_declarations_ast *node)
     {
       if (node->attributes_accessor1_sequence)

@@ -176,14 +176,14 @@ bool java::parse_additive_expression_rest(additive_expression_rest_ast **yynode)
           if (yytoken != Token_PLUS)
             return yy_expected_token(yytoken, Token_PLUS, "+");
           yylex();
-          (*yynode)->additive_operator = additive_expression_rest_ast::op_plus;
+          (*yynode)->additive_operator = additive_expression_rest::op_plus;
         }
       else if (yytoken == Token_MINUS)
         {
           if (yytoken != Token_MINUS)
             return yy_expected_token(yytoken, Token_MINUS, "-");
           yylex();
-          (*yynode)->additive_operator = additive_expression_rest_ast::op_minus;
+          (*yynode)->additive_operator = additive_expression_rest::op_minus;
         }
       else
         {
@@ -1729,63 +1729,63 @@ bool java::parse_builtin_type(builtin_type_ast **yynode)
           if (yytoken != Token_VOID)
             return yy_expected_token(yytoken, Token_VOID, "void");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_void;
+          (*yynode)->type = builtin_type::type_void;
         }
       else if (yytoken == Token_BOOLEAN)
         {
           if (yytoken != Token_BOOLEAN)
             return yy_expected_token(yytoken, Token_BOOLEAN, "boolean");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_boolean;
+          (*yynode)->type = builtin_type::type_boolean;
         }
       else if (yytoken == Token_BYTE)
         {
           if (yytoken != Token_BYTE)
             return yy_expected_token(yytoken, Token_BYTE, "byte");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_byte;
+          (*yynode)->type = builtin_type::type_byte;
         }
       else if (yytoken == Token_CHAR)
         {
           if (yytoken != Token_CHAR)
             return yy_expected_token(yytoken, Token_CHAR, "char");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_char;
+          (*yynode)->type = builtin_type::type_char;
         }
       else if (yytoken == Token_SHORT)
         {
           if (yytoken != Token_SHORT)
             return yy_expected_token(yytoken, Token_SHORT, "short");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_short;
+          (*yynode)->type = builtin_type::type_short;
         }
       else if (yytoken == Token_INT)
         {
           if (yytoken != Token_INT)
             return yy_expected_token(yytoken, Token_INT, "int");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_int;
+          (*yynode)->type = builtin_type::type_int;
         }
       else if (yytoken == Token_FLOAT)
         {
           if (yytoken != Token_FLOAT)
             return yy_expected_token(yytoken, Token_FLOAT, "float");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_float;
+          (*yynode)->type = builtin_type::type_float;
         }
       else if (yytoken == Token_LONG)
         {
           if (yytoken != Token_LONG)
             return yy_expected_token(yytoken, Token_LONG, "long");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_long;
+          (*yynode)->type = builtin_type::type_long;
         }
       else if (yytoken == Token_DOUBLE)
         {
           if (yytoken != Token_DOUBLE)
             return yy_expected_token(yytoken, Token_DOUBLE, "double");
           yylex();
-          (*yynode)->type = builtin_type_ast::type_double;
+          (*yynode)->type = builtin_type::type_double;
         }
       else
         {
@@ -3649,14 +3649,14 @@ bool java::parse_equality_expression_rest(equality_expression_rest_ast **yynode)
           if (yytoken != Token_EQUAL)
             return yy_expected_token(yytoken, Token_EQUAL, "==");
           yylex();
-          (*yynode)->equality_operator = equality_expression_rest_ast::op_equal;
+          (*yynode)->equality_operator = equality_expression_rest::op_equal;
         }
       else if (yytoken == Token_NOT_EQUAL)
         {
           if (yytoken != Token_NOT_EQUAL)
             return yy_expected_token(yytoken, Token_NOT_EQUAL, "!=");
           yylex();
-          (*yynode)->equality_operator = equality_expression_rest_ast::op_not_equal;
+          (*yynode)->equality_operator = equality_expression_rest::op_not_equal;
         }
       else
         {
@@ -3738,84 +3738,84 @@ bool java::parse_expression(expression_ast **yynode)
               if (yytoken != Token_ASSIGN)
                 return yy_expected_token(yytoken, Token_ASSIGN, "=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_assign;
+              (*yynode)->assignment_operator = expression::op_assign;
             }
           else if (yytoken == Token_PLUS_ASSIGN)
             {
               if (yytoken != Token_PLUS_ASSIGN)
                 return yy_expected_token(yytoken, Token_PLUS_ASSIGN, "+=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_plus_assign;
+              (*yynode)->assignment_operator = expression::op_plus_assign;
             }
           else if (yytoken == Token_MINUS_ASSIGN)
             {
               if (yytoken != Token_MINUS_ASSIGN)
                 return yy_expected_token(yytoken, Token_MINUS_ASSIGN, "-=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_minus_assign;
+              (*yynode)->assignment_operator = expression::op_minus_assign;
             }
           else if (yytoken == Token_STAR_ASSIGN)
             {
               if (yytoken != Token_STAR_ASSIGN)
                 return yy_expected_token(yytoken, Token_STAR_ASSIGN, "*=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_star_assign;
+              (*yynode)->assignment_operator = expression::op_star_assign;
             }
           else if (yytoken == Token_SLASH_ASSIGN)
             {
               if (yytoken != Token_SLASH_ASSIGN)
                 return yy_expected_token(yytoken, Token_SLASH_ASSIGN, "/=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_slash_assign;
+              (*yynode)->assignment_operator = expression::op_slash_assign;
             }
           else if (yytoken == Token_BIT_AND_ASSIGN)
             {
               if (yytoken != Token_BIT_AND_ASSIGN)
                 return yy_expected_token(yytoken, Token_BIT_AND_ASSIGN, "&=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_bit_and_assign;
+              (*yynode)->assignment_operator = expression::op_bit_and_assign;
             }
           else if (yytoken == Token_BIT_OR_ASSIGN)
             {
               if (yytoken != Token_BIT_OR_ASSIGN)
                 return yy_expected_token(yytoken, Token_BIT_OR_ASSIGN, "|=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_bit_or_assign;
+              (*yynode)->assignment_operator = expression::op_bit_or_assign;
             }
           else if (yytoken == Token_BIT_XOR_ASSIGN)
             {
               if (yytoken != Token_BIT_XOR_ASSIGN)
                 return yy_expected_token(yytoken, Token_BIT_XOR_ASSIGN, "^=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_bit_xor_assign;
+              (*yynode)->assignment_operator = expression::op_bit_xor_assign;
             }
           else if (yytoken == Token_REMAINDER_ASSIGN)
             {
               if (yytoken != Token_REMAINDER_ASSIGN)
                 return yy_expected_token(yytoken, Token_REMAINDER_ASSIGN, "%=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_remainder_assign;
+              (*yynode)->assignment_operator = expression::op_remainder_assign;
             }
           else if (yytoken == Token_LSHIFT_ASSIGN)
             {
               if (yytoken != Token_LSHIFT_ASSIGN)
                 return yy_expected_token(yytoken, Token_LSHIFT_ASSIGN, "<<=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_lshift_assign;
+              (*yynode)->assignment_operator = expression::op_lshift_assign;
             }
           else if (yytoken == Token_SIGNED_RSHIFT_ASSIGN)
             {
               if (yytoken != Token_SIGNED_RSHIFT_ASSIGN)
                 return yy_expected_token(yytoken, Token_SIGNED_RSHIFT_ASSIGN, ">>=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_signed_rshift_assign;
+              (*yynode)->assignment_operator = expression::op_signed_rshift_assign;
             }
           else if (yytoken == Token_UNSIGNED_RSHIFT_ASSIGN)
             {
               if (yytoken != Token_UNSIGNED_RSHIFT_ASSIGN)
                 return yy_expected_token(yytoken, Token_UNSIGNED_RSHIFT_ASSIGN, ">>>=");
               yylex();
-              (*yynode)->assignment_operator = expression_ast::op_unsigned_rshift_assign;
+              (*yynode)->assignment_operator = expression::op_unsigned_rshift_assign;
             }
           else
             {
@@ -3830,7 +3830,7 @@ bool java::parse_expression(expression_ast **yynode)
         }
       else if (true /*epsilon*/)
         {
-          (*yynode)->assignment_operator = expression_ast::no_assignment;
+          (*yynode)->assignment_operator = expression::no_assignment;
         }
       else
         {
@@ -4801,21 +4801,21 @@ bool java::parse_literal(literal_ast **yynode)
           if (yytoken != Token_TRUE)
             return yy_expected_token(yytoken, Token_TRUE, "true");
           yylex();
-          (*yynode)->literal_type = literal_ast::type_true;
+          (*yynode)->literal_type = literal::type_true;
         }
       else if (yytoken == Token_FALSE)
         {
           if (yytoken != Token_FALSE)
             return yy_expected_token(yytoken, Token_FALSE, "false");
           yylex();
-          (*yynode)->literal_type = literal_ast::type_false;
+          (*yynode)->literal_type = literal::type_false;
         }
       else if (yytoken == Token_NULL)
         {
           if (yytoken != Token_NULL)
             return yy_expected_token(yytoken, Token_NULL, "null");
           yylex();
-          (*yynode)->literal_type = literal_ast::type_null;
+          (*yynode)->literal_type = literal::type_null;
         }
       else if (yytoken == Token_INTEGER_LITERAL)
         {
@@ -4823,7 +4823,7 @@ bool java::parse_literal(literal_ast **yynode)
             return yy_expected_token(yytoken, Token_INTEGER_LITERAL, "integer literal");
           (*yynode)->integer_literal = token_stream->index() - 1;
           yylex();
-          (*yynode)->literal_type = literal_ast::type_integer;
+          (*yynode)->literal_type = literal::type_integer;
         }
       else if (yytoken == Token_FLOATING_POINT_LITERAL)
         {
@@ -4831,7 +4831,7 @@ bool java::parse_literal(literal_ast **yynode)
             return yy_expected_token(yytoken, Token_FLOATING_POINT_LITERAL, "floating point literal");
           (*yynode)->floating_point_literal = token_stream->index() - 1;
           yylex();
-          (*yynode)->literal_type = literal_ast::type_floating_point;
+          (*yynode)->literal_type = literal::type_floating_point;
         }
       else if (yytoken == Token_CHARACTER_LITERAL)
         {
@@ -4839,7 +4839,7 @@ bool java::parse_literal(literal_ast **yynode)
             return yy_expected_token(yytoken, Token_CHARACTER_LITERAL, "character literal");
           (*yynode)->character_literal = token_stream->index() - 1;
           yylex();
-          (*yynode)->literal_type = literal_ast::type_character;
+          (*yynode)->literal_type = literal::type_character;
         }
       else if (yytoken == Token_STRING_LITERAL)
         {
@@ -4847,7 +4847,7 @@ bool java::parse_literal(literal_ast **yynode)
             return yy_expected_token(yytoken, Token_STRING_LITERAL, "string literal");
           (*yynode)->string_literal = token_stream->index() - 1;
           yylex();
-          (*yynode)->literal_type = literal_ast::type_string;
+          (*yynode)->literal_type = literal::type_string;
         }
       else
         {
@@ -5139,21 +5139,21 @@ bool java::parse_multiplicative_expression_rest(multiplicative_expression_rest_a
           if (yytoken != Token_STAR)
             return yy_expected_token(yytoken, Token_STAR, "*");
           yylex();
-          (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_star;
+          (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_star;
         }
       else if (yytoken == Token_SLASH)
         {
           if (yytoken != Token_SLASH)
             return yy_expected_token(yytoken, Token_SLASH, "/");
           yylex();
-          (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_slash;
+          (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_slash;
         }
       else if (yytoken == Token_REMAINDER)
         {
           if (yytoken != Token_REMAINDER)
             return yy_expected_token(yytoken, Token_REMAINDER, "%");
           yylex();
-          (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_remainder;
+          (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_remainder;
         }
       else
         {
@@ -5666,77 +5666,77 @@ bool java::parse_optional_modifiers(optional_modifiers_ast **yynode)
               if (yytoken != Token_PRIVATE)
                 return yy_expected_token(yytoken, Token_PRIVATE, "private");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_private;
+              (*yynode)->modifiers |= optional_modifiers::mod_private;
             }
           else if (yytoken == Token_PUBLIC)
             {
               if (yytoken != Token_PUBLIC)
                 return yy_expected_token(yytoken, Token_PUBLIC, "public");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_public;
+              (*yynode)->modifiers |= optional_modifiers::mod_public;
             }
           else if (yytoken == Token_PROTECTED)
             {
               if (yytoken != Token_PROTECTED)
                 return yy_expected_token(yytoken, Token_PROTECTED, "protected");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_protected;
+              (*yynode)->modifiers |= optional_modifiers::mod_protected;
             }
           else if (yytoken == Token_STATIC)
             {
               if (yytoken != Token_STATIC)
                 return yy_expected_token(yytoken, Token_STATIC, "static");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_static;
+              (*yynode)->modifiers |= optional_modifiers::mod_static;
             }
           else if (yytoken == Token_TRANSIENT)
             {
               if (yytoken != Token_TRANSIENT)
                 return yy_expected_token(yytoken, Token_TRANSIENT, "transient");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_transient;
+              (*yynode)->modifiers |= optional_modifiers::mod_transient;
             }
           else if (yytoken == Token_FINAL)
             {
               if (yytoken != Token_FINAL)
                 return yy_expected_token(yytoken, Token_FINAL, "final");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_final;
+              (*yynode)->modifiers |= optional_modifiers::mod_final;
             }
           else if (yytoken == Token_ABSTRACT)
             {
               if (yytoken != Token_ABSTRACT)
                 return yy_expected_token(yytoken, Token_ABSTRACT, "abstract");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;
+              (*yynode)->modifiers |= optional_modifiers::mod_abstract;
             }
           else if (yytoken == Token_NATIVE)
             {
               if (yytoken != Token_NATIVE)
                 return yy_expected_token(yytoken, Token_NATIVE, "native");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_native;
+              (*yynode)->modifiers |= optional_modifiers::mod_native;
             }
           else if (yytoken == Token_SYNCHRONIZED)
             {
               if (yytoken != Token_SYNCHRONIZED)
                 return yy_expected_token(yytoken, Token_SYNCHRONIZED, "synchronized");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_synchronized;
+              (*yynode)->modifiers |= optional_modifiers::mod_synchronized;
             }
           else if (yytoken == Token_VOLATILE)
             {
               if (yytoken != Token_VOLATILE)
                 return yy_expected_token(yytoken, Token_VOLATILE, "volatile");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_volatile;
+              (*yynode)->modifiers |= optional_modifiers::mod_volatile;
             }
           else if (yytoken == Token_STRICTFP)
             {
               if (yytoken != Token_STRICTFP)
                 return yy_expected_token(yytoken, Token_STRICTFP, "strictfp");
               yylex();
-              (*yynode)->modifiers |= optional_modifiers_ast::mod_strictfp;
+              (*yynode)->modifiers |= optional_modifiers::mod_strictfp;
             }
           else if (yytoken == Token_AT)
             {
@@ -6068,14 +6068,14 @@ bool java::parse_postfix_operator(postfix_operator_ast **yynode)
           if (yytoken != Token_INCREMENT)
             return yy_expected_token(yytoken, Token_INCREMENT, "++");
           yylex();
-          (*yynode)->postfix_operator = postfix_operator_ast::op_increment;
+          (*yynode)->postfix_operator = postfix_operator::op_increment;
         }
       else if (yytoken == Token_DECREMENT)
         {
           if (yytoken != Token_DECREMENT)
             return yy_expected_token(yytoken, Token_DECREMENT, "--");
           yylex();
-          (*yynode)->postfix_operator = postfix_operator_ast::op_decrement;
+          (*yynode)->postfix_operator = postfix_operator::op_decrement;
         }
       else
         {
@@ -6143,7 +6143,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
           if (yytoken != Token_CLASS)
             return yy_expected_token(yytoken, Token_CLASS, "class");
           yylex();
-          (*yynode)->rule_type = primary_atom_ast::type_builtin_type_dot_class;
+          (*yynode)->rule_type = primary_atom::type_builtin_type_dot_class;
         }
       else if (yytoken == Token_TRUE
                || yytoken == Token_FALSE
@@ -6159,7 +6159,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
               return yy_expected_symbol(java_ast_node::Kind_literal, "literal");
             }
           (*yynode)->literal = __node_225;
-          (*yynode)->rule_type = primary_atom_ast::type_literal;
+          (*yynode)->rule_type = primary_atom::type_literal;
         }
       else if (yytoken == Token_NEW)
         {
@@ -6169,7 +6169,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
               return yy_expected_symbol(java_ast_node::Kind_new_expression, "new_expression");
             }
           (*yynode)->new_expression = __node_226;
-          (*yynode)->rule_type = primary_atom_ast::type_new_expression;
+          (*yynode)->rule_type = primary_atom::type_new_expression;
         }
       else if (yytoken == Token_LPAREN)
         {
@@ -6185,7 +6185,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
           if (yytoken != Token_RPAREN)
             return yy_expected_token(yytoken, Token_RPAREN, ")");
           yylex();
-          (*yynode)->rule_type = primary_atom_ast::type_parenthesis_expression;
+          (*yynode)->rule_type = primary_atom::type_parenthesis_expression;
         }
       else if (yytoken == Token_THIS)
         {
@@ -6213,7 +6213,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
             {
               return false;
             }
-          (*yynode)->rule_type = primary_atom_ast::type_this_call_no_type_arguments;
+          (*yynode)->rule_type = primary_atom::type_this_call_no_type_arguments;
         }
       else if (yytoken == Token_SUPER)
         {
@@ -6226,7 +6226,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
               return yy_expected_symbol(java_ast_node::Kind_super_suffix, "super_suffix");
             }
           (*yynode)->super_suffix = __node_229;
-          (*yynode)->rule_type = primary_atom_ast::type_super_call_no_type_arguments;
+          (*yynode)->rule_type = primary_atom::type_super_call_no_type_arguments;
         }
       else if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= java15_compatibility ))
         {
@@ -6247,7 +6247,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
                   return yy_expected_symbol(java_ast_node::Kind_super_suffix, "super_suffix");
                 }
               (*yynode)->super_suffix = __node_231;
-              (*yynode)->rule_type = primary_atom_ast::type_super_call_with_type_arguments;
+              (*yynode)->rule_type = primary_atom::type_super_call_with_type_arguments;
             }
           else if (yytoken == Token_THIS)
             {
@@ -6266,7 +6266,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
               if (yytoken != Token_RPAREN)
                 return yy_expected_token(yytoken, Token_RPAREN, ")");
               yylex();
-              (*yynode)->rule_type = primary_atom_ast::type_this_call_with_type_arguments;
+              (*yynode)->rule_type = primary_atom::type_this_call_with_type_arguments;
             }
           else if (yytoken == Token_IDENTIFIER)
             {
@@ -6288,7 +6288,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
               if (yytoken != Token_RPAREN)
                 return yy_expected_token(yytoken, Token_RPAREN, ")");
               yylex();
-              (*yynode)->rule_type = primary_atom_ast::type_method_call_with_type_arguments;
+              (*yynode)->rule_type = primary_atom::type_method_call_with_type_arguments;
             }
           else
             {
@@ -6317,7 +6317,7 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
               if (yytoken != Token_RPAREN)
                 return yy_expected_token(yytoken, Token_RPAREN, ")");
               yylex();
-              (*yynode)->rule_type = primary_atom_ast::type_method_call_no_type_arguments;
+              (*yynode)->rule_type = primary_atom::type_method_call_no_type_arguments;
             }
           else if ((yytoken == Token_LBRACKET) && ( LA(2).kind == Token_RBRACKET ))
             {
@@ -6334,11 +6334,11 @@ bool java::parse_primary_atom(primary_atom_ast **yynode)
                 return yy_expected_token(yytoken, Token_CLASS, "class");
               (*yynode)->array_dotclass = token_stream->index() - 1;
               yylex();
-              (*yynode)->rule_type = primary_atom_ast::type_array_type_dot_class;
+              (*yynode)->rule_type = primary_atom::type_array_type_dot_class;
             }
           else if (true /*epsilon*/)
             {
-              (*yynode)->rule_type = primary_atom_ast::type_type_name;
+              (*yynode)->rule_type = primary_atom::type_type_name;
             }
           else
             {
@@ -6435,14 +6435,14 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
               if (yytoken != Token_CLASS)
                 return yy_expected_token(yytoken, Token_CLASS, "class");
               yylex();
-              (*yynode)->rule_type = primary_selector_ast::type_dotclass;
+              (*yynode)->rule_type = primary_selector::type_dotclass;
             }
           else if (yytoken == Token_THIS)
             {
               if (yytoken != Token_THIS)
                 return yy_expected_token(yytoken, Token_THIS, "this");
               yylex();
-              (*yynode)->rule_type = primary_selector_ast::type_dotthis;
+              (*yynode)->rule_type = primary_selector::type_dotthis;
             }
           else if (yytoken == Token_NEW)
             {
@@ -6452,7 +6452,7 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
                   return yy_expected_symbol(java_ast_node::Kind_new_expression, "new_expression");
                 }
               (*yynode)->new_expression = __node_240;
-              (*yynode)->rule_type = primary_selector_ast::type_new_expression;
+              (*yynode)->rule_type = primary_selector::type_new_expression;
             }
           else if ((yytoken == Token_IDENTIFIER) && ( LA(2).kind != Token_LPAREN ))
             {
@@ -6462,7 +6462,7 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
                   return yy_expected_symbol(java_ast_node::Kind_identifier, "identifier");
                 }
               (*yynode)->variable_name = __node_241;
-              (*yynode)->rule_type = primary_selector_ast::type_member_variable;
+              (*yynode)->rule_type = primary_selector::type_member_variable;
             }
           else if (yytoken == Token_SUPER
                    || yytoken == Token_LESS_THAN
@@ -6494,7 +6494,7 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
                       return yy_expected_symbol(java_ast_node::Kind_super_suffix, "super_suffix");
                     }
                   (*yynode)->super_suffix = __node_243;
-                  (*yynode)->rule_type = primary_selector_ast::type_super_access;
+                  (*yynode)->rule_type = primary_selector::type_super_access;
                 }
               else if (yytoken == Token_IDENTIFIER)
                 {
@@ -6516,7 +6516,7 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
                   if (yytoken != Token_RPAREN)
                     return yy_expected_token(yytoken, Token_RPAREN, ")");
                   yylex();
-                  (*yynode)->rule_type = primary_selector_ast::type_method_call;
+                  (*yynode)->rule_type = primary_selector::type_method_call;
                 }
               else
                 {
@@ -6542,7 +6542,7 @@ bool java::parse_primary_selector(primary_selector_ast **yynode)
           if (yytoken != Token_RBRACKET)
             return yy_expected_token(yytoken, Token_RBRACKET, "]");
           yylex();
-          (*yynode)->rule_type = primary_selector_ast::type_array_access;
+          (*yynode)->rule_type = primary_selector::type_array_access;
         }
       else
         {
@@ -6795,28 +6795,28 @@ bool java::parse_relational_expression_rest(relational_expression_rest_ast **yyn
           if (yytoken != Token_LESS_THAN)
             return yy_expected_token(yytoken, Token_LESS_THAN, "<");
           yylex();
-          (*yynode)->relational_operator = relational_expression_rest_ast::op_less_than;
+          (*yynode)->relational_operator = relational_expression_rest::op_less_than;
         }
       else if (yytoken == Token_GREATER_THAN)
         {
           if (yytoken != Token_GREATER_THAN)
             return yy_expected_token(yytoken, Token_GREATER_THAN, ">");
           yylex();
-          (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_than;
+          (*yynode)->relational_operator = relational_expression_rest::op_greater_than;
         }
       else if (yytoken == Token_LESS_EQUAL)
         {
           if (yytoken != Token_LESS_EQUAL)
             return yy_expected_token(yytoken, Token_LESS_EQUAL, "<=");
           yylex();
-          (*yynode)->relational_operator = relational_expression_rest_ast::op_less_equal;
+          (*yynode)->relational_operator = relational_expression_rest::op_less_equal;
         }
       else if (yytoken == Token_GREATER_EQUAL)
         {
           if (yytoken != Token_GREATER_EQUAL)
             return yy_expected_token(yytoken, Token_GREATER_EQUAL, ">=");
           yylex();
-          (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_equal;
+          (*yynode)->relational_operator = relational_expression_rest::op_greater_equal;
         }
       else
         {
@@ -6984,21 +6984,21 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                  if (yytoken != Token_LSHIFT)
                                    return yy_expected_token(yytoken, Token_LSHIFT, "<<");
                                  yylex();
-                                 (*yynode)->shift_operator = shift_expression_rest_ast::op_lshift;
+                                 (*yynode)->shift_operator = shift_expression_rest::op_lshift;
                                }
                              else if (yytoken == Token_SIGNED_RSHIFT)
                                {
                                  if (yytoken != Token_SIGNED_RSHIFT)
                                    return yy_expected_token(yytoken, Token_SIGNED_RSHIFT, ">>");
                                  yylex();
-                                 (*yynode)->shift_operator = shift_expression_rest_ast::op_signed_rshift;
+                                 (*yynode)->shift_operator = shift_expression_rest::op_signed_rshift;
                                }
                              else if (yytoken == Token_UNSIGNED_RSHIFT)
                                {
                                  if (yytoken != Token_UNSIGNED_RSHIFT)
                                    return yy_expected_token(yytoken, Token_UNSIGNED_RSHIFT, ">>>");
                                  yylex();
-                                 (*yynode)->shift_operator = shift_expression_rest_ast::op_unsigned_rshift;
+                                 (*yynode)->shift_operator = shift_expression_rest::op_unsigned_rshift;
                                }
                              else
                                {
@@ -7197,14 +7197,14 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_expression, "expression");
                                    }
                                  (*yynode)->case_expression = __node_267;
-                                 (*yynode)->branch_type = switch_label_ast::case_branch;
+                                 (*yynode)->branch_type = switch_label::case_branch;
                                }
                              else if (yytoken == Token_DEFAULT)
                                {
                                  if (yytoken != Token_DEFAULT)
                                    return yy_expected_token(yytoken, Token_DEFAULT, "default");
                                  yylex();
-                                 (*yynode)->branch_type = switch_label_ast::default_branch;
+                                 (*yynode)->branch_type = switch_label::default_branch;
                                }
                              else
                                {
@@ -8115,7 +8115,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
                                    }
                                  (*yynode)->unary_expression = __node_301;
-                                 (*yynode)->rule_type = unary_expression_ast::type_incremented_expression;
+                                 (*yynode)->rule_type = unary_expression::type_incremented_expression;
                                }
                              else if (yytoken == Token_DECREMENT)
                                {
@@ -8128,7 +8128,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
                                    }
                                  (*yynode)->unary_expression = __node_302;
-                                 (*yynode)->rule_type = unary_expression_ast::type_decremented_expression;
+                                 (*yynode)->rule_type = unary_expression::type_decremented_expression;
                                }
                              else if (yytoken == Token_MINUS)
                                {
@@ -8141,7 +8141,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
                                    }
                                  (*yynode)->unary_expression = __node_303;
-                                 (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression;
+                                 (*yynode)->rule_type = unary_expression::type_unary_minus_expression;
                                }
                              else if (yytoken == Token_PLUS)
                                {
@@ -8154,7 +8154,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
                                    }
                                  (*yynode)->unary_expression = __node_304;
-                                 (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;
+                                 (*yynode)->rule_type = unary_expression::type_unary_plus_expression;
                                }
                              else if (yytoken == Token_BOOLEAN
                                       || yytoken == Token_BYTE
@@ -8187,7 +8187,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression_not_plusminus, "unary_expression_not_plusminus");
                                    }
                                  (*yynode)->unary_expression_not_plusminus = __node_305;
-                                 (*yynode)->rule_type = unary_expression_ast::type_unary_expression_not_plusminus;
+                                 (*yynode)->rule_type = unary_expression::type_unary_expression_not_plusminus;
                                }
                              else
                                {
@@ -8246,7 +8246,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
                                    }
                                  (*yynode)->bitwise_not_expression = __node_306;
-                                 (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_bitwise_not_expression;
+                                 (*yynode)->rule_type = unary_expression_not_plusminus::type_bitwise_not_expression;
                                }
                              else if (yytoken == Token_BANG)
                                {
@@ -8259,7 +8259,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_unary_expression, "unary_expression");
                                    }
                                  (*yynode)->logical_not_expression = __node_307;
-                                 (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_logical_not_expression;
+                                 (*yynode)->rule_type = unary_expression_not_plusminus::type_logical_not_expression;
                                }
                              else if ((yytoken == Token_LPAREN) && ( lookahead_is_cast_expression() == true ))
                                {
@@ -8269,7 +8269,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                      return yy_expected_symbol(java_ast_node::Kind_cast_expression, "cast_expression");
                                    }
                                  (*yynode)->cast_expression = __node_308;
-                                 (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_cast_expression;
+                                 (*yynode)->rule_type = unary_expression_not_plusminus::type_cast_expression;
                                }
                              else if (yytoken == Token_BOOLEAN
                                       || yytoken == Token_BYTE
@@ -8310,7 +8310,7 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                        }
                                      (*yynode)->postfix_operator_sequence = snoc((*yynode)->postfix_operator_sequence, __node_310, memory_pool);
                                    }
-                                 (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_primary_expression;
+                                 (*yynode)->rule_type = unary_expression_not_plusminus::type_primary_expression;
                                }
                              else
                                {
@@ -8752,14 +8752,14 @@ bool java::parse_return_statement(return_statement_ast **yynode)
                                  if (yytoken != Token_EXTENDS)
                                    return yy_expected_token(yytoken, Token_EXTENDS, "extends");
                                  yylex();
-                                 (*yynode)->extends_or_super = wildcard_type_bounds_ast::extends;
+                                 (*yynode)->extends_or_super = wildcard_type_bounds::extends;
                                }
                              else if (yytoken == Token_SUPER)
                                {
                                  if (yytoken != Token_SUPER)
                                    return yy_expected_token(yytoken, Token_SUPER, "super");
                                  yylex();
-                                 (*yynode)->extends_or_super = wildcard_type_bounds_ast::super;
+                                 (*yynode)->extends_or_super = wildcard_type_bounds::super;
                                }
                              else
                                {

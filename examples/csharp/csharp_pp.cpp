@@ -138,14 +138,14 @@ bool csharp_pp::parse_pp_declaration(pp_declaration_ast **yynode)
           if (yytoken != Token_PP_DEFINE)
             return yy_expected_token(yytoken, Token_PP_DEFINE, "#define");
           yylex();
-          (*yynode)->type = pp_declaration_ast::type_define;
+          (*yynode)->type = pp_declaration::type_define;
         }
       else if (yytoken == Token_PP_UNDEF)
         {
           if (yytoken != Token_PP_UNDEF)
             return yy_expected_token(yytoken, Token_PP_UNDEF, "#undef");
           yylex();
-          (*yynode)->type = pp_declaration_ast::type_undef;
+          (*yynode)->type = pp_declaration::type_undef;
         }
       else
         {
@@ -180,14 +180,14 @@ bool csharp_pp::parse_pp_diagnostic(pp_diagnostic_ast **yynode)
           if (yytoken != Token_PP_ERROR)
             return yy_expected_token(yytoken, Token_PP_ERROR, "#error");
           yylex();
-          (*yynode)->type = pp_diagnostic_ast::type_error;
+          (*yynode)->type = pp_diagnostic::type_error;
         }
       else if (yytoken == Token_PP_WARNING)
         {
           if (yytoken != Token_PP_WARNING)
             return yy_expected_token(yytoken, Token_PP_WARNING, "#warning");
           yylex();
-          (*yynode)->type = pp_diagnostic_ast::type_warning;
+          (*yynode)->type = pp_diagnostic::type_warning;
         }
       else
         {
@@ -467,14 +467,14 @@ bool csharp_pp::parse_pp_equality_expression_rest(pp_equality_expression_rest_as
           if (yytoken != Token_PP_EQUAL)
             return yy_expected_token(yytoken, Token_PP_EQUAL, "==");
           yylex();
-          (*yynode)->equality_operator = pp_equality_expression_rest_ast::op_equal;
+          (*yynode)->equality_operator = pp_equality_expression_rest::op_equal;
         }
       else if (yytoken == Token_PP_NOT_EQUAL)
         {
           if (yytoken != Token_PP_NOT_EQUAL)
             return yy_expected_token(yytoken, Token_PP_NOT_EQUAL, "!=");
           yylex();
-          (*yynode)->equality_operator = pp_equality_expression_rest_ast::op_not_equal;
+          (*yynode)->equality_operator = pp_equality_expression_rest::op_not_equal;
         }
       else
         {
@@ -677,14 +677,14 @@ bool csharp_pp::parse_pp_primary_expression(pp_primary_expression_ast **yynode)
           if (yytoken != Token_PP_TRUE)
             return yy_expected_token(yytoken, Token_PP_TRUE, "true");
           yylex();
-          (*yynode)->type = pp_primary_expression_ast::type_true;
+          (*yynode)->type = pp_primary_expression::type_true;
         }
       else if (yytoken == Token_PP_FALSE)
         {
           if (yytoken != Token_PP_FALSE)
             return yy_expected_token(yytoken, Token_PP_FALSE, "false");
           yylex();
-          (*yynode)->type = pp_primary_expression_ast::type_false;
+          (*yynode)->type = pp_primary_expression::type_false;
         }
       else if (yytoken == Token_PP_CONDITIONAL_SYMBOL)
         {
@@ -692,7 +692,7 @@ bool csharp_pp::parse_pp_primary_expression(pp_primary_expression_ast **yynode)
             return yy_expected_token(yytoken, Token_PP_CONDITIONAL_SYMBOL, "pre-processor symbol");
           (*yynode)->conditional_symbol = token_stream->index() - 1;
           yylex();
-          (*yynode)->type = pp_primary_expression_ast::type_conditional_symbol;
+          (*yynode)->type = pp_primary_expression::type_conditional_symbol;
         }
       else if (yytoken == Token_PP_LPAREN)
         {
@@ -708,7 +708,7 @@ bool csharp_pp::parse_pp_primary_expression(pp_primary_expression_ast **yynode)
           if (yytoken != Token_PP_RPAREN)
             return yy_expected_token(yytoken, Token_PP_RPAREN, ")");
           yylex();
-          (*yynode)->type = pp_primary_expression_ast::type_parenthesis_expression;
+          (*yynode)->type = pp_primary_expression::type_parenthesis_expression;
         }
       else
         {
@@ -739,14 +739,14 @@ bool csharp_pp::parse_pp_region(pp_region_ast **yynode)
           if (yytoken != Token_PP_REGION)
             return yy_expected_token(yytoken, Token_PP_REGION, "#region");
           yylex();
-          (*yynode)->type = pp_region_ast::type_region;
+          (*yynode)->type = pp_region::type_region;
         }
       else if (yytoken == Token_PP_ENDREGION)
         {
           if (yytoken != Token_PP_ENDREGION)
             return yy_expected_token(yytoken, Token_PP_ENDREGION, "#endregion");
           yylex();
-          (*yynode)->type = pp_region_ast::type_endregion;
+          (*yynode)->type = pp_region::type_endregion;
         }
       else
         {

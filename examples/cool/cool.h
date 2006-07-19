@@ -29,6 +29,7 @@ struct relational_expression_ast;
 struct unary_expression_ast;
 struct while_expression_ast;
 
+
 struct cool_ast_node
   {
     enum ast_node_kind_enum {
@@ -67,7 +68,6 @@ struct additive_expression_ast: public cool_ast_node
 
     const list_node<multiplicative_expression_ast *> *expression_sequence;
     std::size_t op;
-
   };
 
 struct block_expression_ast: public cool_ast_node
@@ -78,7 +78,6 @@ struct block_expression_ast: public cool_ast_node
     };
 
     const list_node<expression_ast *> *expression_sequence;
-
   };
 
 struct case_condition_ast: public cool_ast_node
@@ -91,7 +90,6 @@ struct case_condition_ast: public cool_ast_node
     std::size_t name;
     std::size_t type;
     expression_ast *expression;
-
   };
 
 struct case_expression_ast: public cool_ast_node
@@ -103,7 +101,6 @@ struct case_expression_ast: public cool_ast_node
 
     expression_ast *expression;
     const list_node<case_condition_ast *> *condition_sequence;
-
   };
 
 struct class_ast: public cool_ast_node
@@ -116,7 +113,6 @@ struct class_ast: public cool_ast_node
     std::size_t type;
     std::size_t base_type;
     const list_node<feature_ast *> *feature_sequence;
-
   };
 
 struct expression_ast: public cool_ast_node
@@ -127,7 +123,6 @@ struct expression_ast: public cool_ast_node
     };
 
     relational_expression_ast *expression;
-
   };
 
 struct feature_ast: public cool_ast_node
@@ -141,7 +136,6 @@ struct feature_ast: public cool_ast_node
     const list_node<formal_ast *> *formal_sequence;
     std::size_t type;
     expression_ast *expression;
-
   };
 
 struct formal_ast: public cool_ast_node
@@ -153,7 +147,6 @@ struct formal_ast: public cool_ast_node
 
     std::size_t name;
     std::size_t type;
-
   };
 
 struct if_expression_ast: public cool_ast_node
@@ -166,7 +159,6 @@ struct if_expression_ast: public cool_ast_node
     expression_ast *condition;
     expression_ast *true_expression;
     expression_ast *false_expression;
-
   };
 
 struct let_declaration_ast: public cool_ast_node
@@ -179,7 +171,6 @@ struct let_declaration_ast: public cool_ast_node
     std::size_t name;
     std::size_t type;
     expression_ast *expression;
-
   };
 
 struct let_expression_ast: public cool_ast_node
@@ -191,7 +182,6 @@ struct let_expression_ast: public cool_ast_node
 
     const list_node<let_declaration_ast *> *declaration_sequence;
     expression_ast *body_expression;
-
   };
 
 struct multiplicative_expression_ast: public cool_ast_node
@@ -203,7 +193,6 @@ struct multiplicative_expression_ast: public cool_ast_node
 
     const list_node<postfix_expression_ast *> *expression_sequence;
     std::size_t op;
-
   };
 
 struct postfix_expression_ast: public cool_ast_node
@@ -217,7 +206,6 @@ struct postfix_expression_ast: public cool_ast_node
     std::size_t at_type;
     std::size_t name;
     const list_node<expression_ast *> *arguments_sequence;
-
   };
 
 struct primary_expression_ast: public cool_ast_node
@@ -241,7 +229,6 @@ struct primary_expression_ast: public cool_ast_node
     block_expression_ast *block_expression;
     let_expression_ast *let_expression;
     case_expression_ast *case_expression;
-
   };
 
 struct program_ast: public cool_ast_node
@@ -252,7 +239,6 @@ struct program_ast: public cool_ast_node
     };
 
     const list_node<class_ast *> *klass_sequence;
-
   };
 
 struct relational_expression_ast: public cool_ast_node
@@ -264,7 +250,6 @@ struct relational_expression_ast: public cool_ast_node
 
     const list_node<additive_expression_ast *> *expression_sequence;
     std::size_t op;
-
   };
 
 struct unary_expression_ast: public cool_ast_node
@@ -276,7 +261,6 @@ struct unary_expression_ast: public cool_ast_node
 
     std::size_t op;
     primary_expression_ast *expression;
-
   };
 
 struct while_expression_ast: public cool_ast_node
@@ -288,7 +272,6 @@ struct while_expression_ast: public cool_ast_node
 
     expression_ast *condition;
     expression_ast *loop_expression;
-
   };
 
 

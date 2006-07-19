@@ -50,9 +50,9 @@ void csharp_pp_handler_visitor::visit_pp_declaration(pp_declaration_ast* node)
   decoder d(_M_pp_parser->token_stream);
   std::string symbol_name = d.decode_id(node->conditional_symbol);
 
-  if (node->type == pp_declaration_ast::type_define)
+  if (node->type == pp_declaration::type_define)
     _M_scope->parser()->pp_define_symbol(symbol_name);
-  else if (node->type == pp_declaration_ast::type_undef)
+  else if (node->type == pp_declaration::type_undef)
     _M_scope->parser()->pp_undefine_symbol(symbol_name);
 }
 
@@ -132,9 +132,9 @@ void csharp_pp_handler_visitor::visit_pp_diagnostic(pp_diagnostic_ast* node)
   if (!_M_scope->parser() != 0)
     {
       csharp::problem_type diagnostic_type;
-      if (node->type == pp_diagnostic_ast::type_error)
+      if (node->type == pp_diagnostic::type_error)
         diagnostic_type = csharp::error;
-      else if (node->type == pp_diagnostic_ast::type_warning)
+      else if (node->type == pp_diagnostic::type_warning)
         diagnostic_type = csharp::warning;
 
       if (node->message)
@@ -153,11 +153,11 @@ void csharp_pp_handler_visitor::visit_pp_region(pp_region_ast* node)
   if (_M_scope == 0 || _M_pp_parser == 0)
     return;
 
-  if (node->type == pp_region_ast::type_region)
+  if (node->type == pp_region::type_region)
     {
       _M_scope->push_scope( csharp_pp_scope::type_region, &_M_scope );
     }
-  if (node->type == pp_region_ast::type_endregion)
+  if (node->type == pp_region::type_endregion)
     {
       bool successful = _M_scope->pop_scope( csharp_pp_scope::type_region, &_M_scope );
       if (!successful && _M_scope->parser() != 0)
@@ -226,7 +226,7 @@ void csharp_pp_handler_visitor::visit_pp_equality_expression_rest(pp_equality_ex
 {
   bool previous = _M_expression_bool;
   visit_node(node->expression);
-  if (node->equality_operator == pp_equality_expression_rest_ast::op_equal)
+  if (node->equality_operator == pp_equality_expression_rest::op_equal)
     _M_expression_bool = (previous == _M_expression_bool);
   else // op_not_equal
     _M_expression_bool = (previous != _M_expression_bool);
@@ -244,13 +244,13 @@ void csharp_pp_handler_visitor::visit_pp_primary_expression(pp_primary_expressio
 {
   switch (node->type)
   {
-  case pp_primary_expression_ast::type_true:
+  case pp_primary_expression::type_true:
     _M_expression_bool = true;
     break;
-  case pp_primary_expression_ast::type_false:
+  case pp_primary_expression::type_false:
     _M_expression_bool = false;
     break;
-  case pp_primary_expression_ast::type_conditional_symbol:
+  case pp_primary_expression::type_conditional_symbol:
     {
       decoder d(_M_pp_parser->token_stream);
       _M_expression_bool = _M_scope->parser()->pp_is_symbol_defined(
@@ -258,7 +258,7 @@ void csharp_pp_handler_visitor::visit_pp_primary_expression(pp_primary_expressio
       );
     }
     break;
-  case pp_primary_expression_ast::type_parenthesis_expression:
+  case pp_primary_expression::type_parenthesis_expression:
     csharp_pp_default_visitor::visit_node(node->parenthesis_expression);
     break;
   }

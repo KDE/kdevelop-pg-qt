@@ -39,7 +39,7 @@ class csharp;
 -- Parser class members
 --
 
-%member (parserclass: public declaration)
+%parserclass (public declaration)
 [:
   enum pp_parse_result {
     result_ok,
@@ -65,7 +65,7 @@ class csharp;
     csharp_pp::token_type_enum first_token, csharp_pp_scope* scope );
 :]
 
-%member (parserclass: private declaration)
+%parserclass (private declaration)
 [:
   csharp_pp_scope* _M_scope;
 
@@ -88,7 +88,7 @@ class csharp;
   memory_pool_type _M_csharp_pp_memory_pool;
 :]
 
-%member (parserclass: constructor)
+%parserclass (constructor)
 [:
   set_token_stream(&_M_csharp_pp_token_stream);
   set_memory_pool(&_M_csharp_pp_memory_pool);
@@ -100,19 +100,15 @@ class csharp;
 -- Additional AST members
 --
 
-%member (pp_equality_expression_rest: public declaration)
+%namespace pp_equality_expression_rest
 [:
   enum pp_equality_operator_enum {
     op_equal,
     op_not_equal
   };
-  pp_equality_operator_enum equality_operator;
 :]
 
-%member (pp_unary_expression: public declaration)
-  [: bool negated; :]
-
-%member (pp_primary_expression: public declaration)
+%namespace pp_primary_expression
 [:
   enum pp_primary_expression_type_enum {
     type_true,
@@ -120,34 +116,30 @@ class csharp;
     type_conditional_symbol,
     type_parenthesis_expression
   };
-  pp_primary_expression_type_enum type;
 :]
 
-%member (pp_declaration: public declaration)
+%namespace pp_declaration
 [:
   enum pp_declaration_type_enum {
     type_define,
     type_undef
   };
-  pp_declaration_type_enum type;
 :]
 
-%member (pp_diagnostic: public declaration)
+%namespace pp_diagnostic
 [:
   enum pp_diagnostic_type_enum {
     type_error,
     type_warning
   };
-  pp_diagnostic_type_enum type;
 :]
 
-%member (pp_region: public declaration)
+%namespace pp_region
 [:
   enum pp_region_type_enum {
     type_region,
     type_endregion
   };
-  pp_region_type_enum type;
 :]
 
 
@@ -204,11 +196,13 @@ class csharp;
    PP_NEW_LINE
 -> pp_directive ;;
 
-   (  PP_DEFINE [: (*yynode)->type = pp_declaration_ast::type_define; :]
-    | PP_UNDEF  [: (*yynode)->type = pp_declaration_ast::type_undef;  :]
+   (  PP_DEFINE [: (*yynode)->type = pp_declaration::type_define; :]
+    | PP_UNDEF  [: (*yynode)->type = pp_declaration::type_undef;  :]
    )
    conditional_symbol=PP_CONDITIONAL_SYMBOL
--> pp_declaration ;;
+-> pp_declaration [
+     member variable type: pp_declaration::pp_declaration_type_enum;
+] ;;
 
    PP_IF expression=pp_expression
 -> pp_if_clause ;;
@@ -222,17 +216,21 @@ class csharp;
    PP_ENDIF
 -> pp_endif_clause ;;
 
-   (  PP_ERROR    [: (*yynode)->type = pp_diagnostic_ast::type_error;   :]
-    | PP_WARNING  [: (*yynode)->type = pp_diagnostic_ast::type_warning; :]
+   (  PP_ERROR    [: (*yynode)->type = pp_diagnostic::type_error;   :]
+    | PP_WARNING  [: (*yynode)->type = pp_diagnostic::type_warning; :]
    )
    (message=PP_MESSAGE | 0)
--> pp_diagnostic ;;
+-> pp_diagnostic [
+     member variable type: pp_diagnostic::pp_diagnostic_type_enum;
+] ;;
 
-   (  PP_REGION     [: (*yynode)->type = pp_region_ast::type_region;    :]
-    | PP_ENDREGION  [: (*yynode)->type = pp_region_ast::type_endregion; :]
+   (  PP_REGION     [: (*yynode)->type = pp_region::type_region;    :]
+    | PP_ENDREGION  [: (*yynode)->type = pp_region::type_endregion; :]
    )
    (label=PP_MESSAGE | 0)
--> pp_region ;;
+-> pp_region [
+     member variable type: pp_region::pp_region_type_enum;
+] ;;
 
    PP_LINE
    (  line_number=PP_LINE_NUMBER (file_name=PP_FILE_NAME | 0)
@@ -258,26 +256,32 @@ class csharp;
    (#additional_expression=pp_equality_expression_rest)*
 -> pp_equality_expression ;;
 
-   (  PP_EQUAL     [: (*yynode)->equality_operator = pp_equality_expression_rest_ast::op_equal;     :]
-    | PP_NOT_EQUAL [: (*yynode)->equality_operator = pp_equality_expression_rest_ast::op_not_equal; :]
+   (  PP_EQUAL     [: (*yynode)->equality_operator = pp_equality_expression_rest::op_equal;     :]
+    | PP_NOT_EQUAL [: (*yynode)->equality_operator = pp_equality_expression_rest::op_not_equal; :]
    )
    expression=pp_unary_expression
--> pp_equality_expression_rest ;;
+-> pp_equality_expression_rest [
+     member variable equality_operator: pp_equality_expression_rest::pp_equality_operator_enum;
+] ;;
 
  ( PP_BANG expression=pp_primary_expression [: (*yynode)->negated = true;  :]
  | expression=pp_primary_expression         [: (*yynode)->negated = false; :]
  )
--> pp_unary_expression ;;
+-> pp_unary_expression [
+     member variable negated: bool;
+] ;;
 
  (
-   PP_TRUE   [: (*yynode)->type = pp_primary_expression_ast::type_true;           :]
- | PP_FALSE  [: (*yynode)->type = pp_primary_expression_ast::type_false;          :]
+   PP_TRUE   [: (*yynode)->type = pp_primary_expression::type_true;           :]
+ | PP_FALSE  [: (*yynode)->type = pp_primary_expression::type_false;          :]
  | conditional_symbol=PP_CONDITIONAL_SYMBOL
-     [: (*yynode)->type = pp_primary_expression_ast::type_conditional_symbol;     :]
+     [: (*yynode)->type = pp_primary_expression::type_conditional_symbol;     :]
  | PP_LPAREN parenthesis_expression=pp_expression PP_RPAREN
-     [: (*yynode)->type = pp_primary_expression_ast::type_parenthesis_expression; :]
+     [: (*yynode)->type = pp_primary_expression::type_parenthesis_expression; :]
  )
--> pp_primary_expression ;;
+-> pp_primary_expression [
+     member variable type: pp_primary_expression::pp_primary_expression_type_enum;
+] ;;
 
 
 

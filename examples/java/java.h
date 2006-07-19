@@ -123,6 +123,191 @@ struct while_statement_ast;
 struct wildcard_type_ast;
 struct wildcard_type_bounds_ast;
 
+namespace additive_expression_rest
+  {
+  enum additive_operator_enum {
+    op_plus,
+    op_minus,
+  };
+}
+
+namespace builtin_type
+  {
+  enum builtin_type_enum {
+    type_void,
+    type_boolean,
+    type_byte,
+    type_char,
+    type_short,
+    type_int,
+    type_float,
+    type_long,
+    type_double,
+  };
+}
+
+namespace equality_expression_rest
+  {
+  enum equality_operator_enum {
+    op_equal,
+    op_not_equal,
+  };
+}
+
+namespace expression
+  {
+  enum assignment_operator_enum {
+    no_assignment,
+    op_assign,
+    op_plus_assign,
+    op_minus_assign,
+    op_star_assign,
+    op_slash_assign,
+    op_bit_and_assign,
+    op_bit_or_assign,
+    op_bit_xor_assign,
+    op_remainder_assign,
+    op_lshift_assign,
+    op_signed_rshift_assign,
+    op_unsigned_rshift_assign,
+  };
+}
+
+namespace literal
+  {
+  enum literal_type_enum {
+    type_true,
+    type_false,
+    type_null,
+    type_integer,
+    type_floating_point,
+    type_character,
+    type_string,
+  };
+}
+
+namespace multiplicative_expression_rest
+  {
+  enum multiplicative_operator_enum {
+    op_star,
+    op_slash,
+    op_remainder,
+  };
+}
+
+namespace optional_modifiers
+  {
+  enum modifier_enum {
+    mod_private      = 1,
+    mod_public       = 2,
+    mod_protected    = 4,
+    mod_static       = 8,
+    mod_transient    = 16,
+    mod_final        = 32,
+    mod_abstract     = 64,
+    mod_native       = 128,
+    mod_synchronized = 256,
+    mod_volatile     = 512,
+    mod_strictfp     = 1024,
+  };
+}
+
+namespace postfix_operator
+  {
+  enum postfix_operator_enum {
+    op_increment,
+    op_decrement,
+  };
+}
+
+namespace primary_atom
+  {
+  enum primary_atom_enum {
+    type_literal,
+    type_new_expression,
+    type_parenthesis_expression,
+    type_builtin_type_dot_class,
+    type_array_type_dot_class,
+    type_type_name,
+    type_this_call_no_type_arguments,
+    type_this_call_with_type_arguments,
+    type_super_call_no_type_arguments,
+    type_super_call_with_type_arguments,
+    type_method_call_no_type_arguments,
+    type_method_call_with_type_arguments,
+  };
+}
+
+namespace primary_selector
+  {
+  enum primary_selector_enum {
+    type_dotclass,
+    type_dotthis,
+    type_new_expression,
+    type_member_variable,
+    type_method_call,
+    type_super_access,
+    type_array_access,
+  };
+}
+
+namespace relational_expression_rest
+  {
+  enum relational_operator_enum {
+    op_less_than,
+    op_greater_than,
+    op_less_equal,
+    op_greater_equal,
+  };
+}
+
+namespace shift_expression_rest
+  {
+  enum shift_operator_enum {
+    op_lshift,
+    op_signed_rshift,
+    op_unsigned_rshift,
+  };
+}
+
+namespace switch_label
+  {
+  enum branch_type_enum {
+    case_branch,
+    default_branch,
+  };
+}
+
+namespace unary_expression
+  {
+  enum unary_expression_enum {
+    type_incremented_expression,
+    type_decremented_expression,
+    type_unary_minus_expression,
+    type_unary_plus_expression,
+    type_unary_expression_not_plusminus,
+  };
+}
+
+namespace unary_expression_not_plusminus
+  {
+  enum unary_expression_not_plusminus_enum {
+    type_bitwise_not_expression,
+    type_logical_not_expression,
+    type_cast_expression,
+    type_primary_expression,
+  };
+}
+
+namespace wildcard_type_bounds
+  {
+  enum extends_or_super_enum {
+    extends,
+    super,
+  };
+}
+
+
 struct java_ast_node
   {
     enum ast_node_kind_enum {
@@ -255,7 +440,6 @@ struct additive_expression_ast: public java_ast_node
 
     multiplicative_expression_ast *expression;
     const list_node<additive_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct additive_expression_rest_ast: public java_ast_node
@@ -265,22 +449,8 @@ struct additive_expression_rest_ast: public java_ast_node
       KIND = Kind_additive_expression_rest
     };
 
+    additive_expression_rest::additive_operator_enum additive_operator;
     multiplicative_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum additive_operator_enum {
-      op_plus,
-      op_minus,
-    };
-    additive_operator_enum additive_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct annotation_ast: public java_ast_node
@@ -290,17 +460,9 @@ struct annotation_ast: public java_ast_node
       KIND = Kind_annotation
     };
 
+    bool has_parentheses;
     qualified_identifier_ast *type_name;
     annotation_arguments_ast *args;
-
-    // user defined declarations:
-  public:
-    bool has_parentheses;
-  protected:
-  private:
-
-  public:
-
   };
 
 struct annotation_arguments_ast: public java_ast_node
@@ -312,7 +474,6 @@ struct annotation_arguments_ast: public java_ast_node
 
     const list_node<annotation_element_value_pair_ast *> *value_pair_sequence;
     annotation_element_value_ast *element_value;
-
   };
 
 struct annotation_element_array_initializer_ast: public java_ast_node
@@ -323,7 +484,6 @@ struct annotation_element_array_initializer_ast: public java_ast_node
     };
 
     const list_node<annotation_element_array_value_ast *> *element_value_sequence;
-
   };
 
 struct annotation_element_array_value_ast: public java_ast_node
@@ -335,7 +495,6 @@ struct annotation_element_array_value_ast: public java_ast_node
 
     conditional_expression_ast *cond_expression;
     annotation_ast *annotation;
-
   };
 
 struct annotation_element_value_ast: public java_ast_node
@@ -348,7 +507,6 @@ struct annotation_element_value_ast: public java_ast_node
     conditional_expression_ast *cond_expression;
     annotation_ast *annotation;
     annotation_element_array_initializer_ast *element_array_initializer;
-
   };
 
 struct annotation_element_value_pair_ast: public java_ast_node
@@ -360,7 +518,6 @@ struct annotation_element_value_pair_ast: public java_ast_node
 
     identifier_ast *element_name;
     annotation_element_value_ast *element_value;
-
   };
 
 struct annotation_type_body_ast: public java_ast_node
@@ -371,7 +528,6 @@ struct annotation_type_body_ast: public java_ast_node
     };
 
     const list_node<annotation_type_field_ast *> *annotation_type_field_sequence;
-
   };
 
 struct annotation_type_declaration_ast: public java_ast_node
@@ -383,7 +539,6 @@ struct annotation_type_declaration_ast: public java_ast_node
 
     identifier_ast *annotation_type_name;
     annotation_type_body_ast *body;
-
   };
 
 struct annotation_type_field_ast: public java_ast_node
@@ -402,7 +557,6 @@ struct annotation_type_field_ast: public java_ast_node
     identifier_ast *method_name;
     annotation_element_value_ast *annotation_element_value;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
-
   };
 
 struct array_creator_rest_ast: public java_ast_node
@@ -416,7 +570,6 @@ struct array_creator_rest_ast: public java_ast_node
     variable_array_initializer_ast *array_initializer;
     const list_node<expression_ast *> *index_expression_sequence;
     optional_declarator_brackets_ast *optional_declarator_brackets;
-
   };
 
 struct assert_statement_ast: public java_ast_node
@@ -428,7 +581,6 @@ struct assert_statement_ast: public java_ast_node
 
     expression_ast *condition;
     expression_ast *message;
-
   };
 
 struct bit_and_expression_ast: public java_ast_node
@@ -439,7 +591,6 @@ struct bit_and_expression_ast: public java_ast_node
     };
 
     const list_node<equality_expression_ast *> *expression_sequence;
-
   };
 
 struct bit_or_expression_ast: public java_ast_node
@@ -450,7 +601,6 @@ struct bit_or_expression_ast: public java_ast_node
     };
 
     const list_node<bit_xor_expression_ast *> *expression_sequence;
-
   };
 
 struct bit_xor_expression_ast: public java_ast_node
@@ -461,7 +611,6 @@ struct bit_xor_expression_ast: public java_ast_node
     };
 
     const list_node<bit_and_expression_ast *> *expression_sequence;
-
   };
 
 struct block_ast: public java_ast_node
@@ -472,7 +621,6 @@ struct block_ast: public java_ast_node
     };
 
     const list_node<block_statement_ast *> *statement_sequence;
-
   };
 
 struct block_statement_ast: public java_ast_node
@@ -489,7 +637,6 @@ struct block_statement_ast: public java_ast_node
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
-
   };
 
 struct break_statement_ast: public java_ast_node
@@ -500,7 +647,6 @@ struct break_statement_ast: public java_ast_node
     };
 
     identifier_ast *label;
-
   };
 
 struct builtin_type_ast: public java_ast_node
@@ -510,28 +656,7 @@ struct builtin_type_ast: public java_ast_node
       KIND = Kind_builtin_type
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum builtin_type_enum {
-      type_void,
-      type_boolean,
-      type_byte,
-      type_char,
-      type_short,
-      type_int,
-      type_float,
-      type_long,
-      type_double,
-    };
-    builtin_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
+    builtin_type::builtin_type_enum type;
   };
 
 struct cast_expression_ast: public java_ast_node
@@ -545,7 +670,6 @@ struct cast_expression_ast: public java_ast_node
     unary_expression_ast *builtin_casted_expression;
     class_type_ast *class_type;
     unary_expression_not_plusminus_ast *class_casted_expression;
-
   };
 
 struct catch_clause_ast: public java_ast_node
@@ -557,7 +681,6 @@ struct catch_clause_ast: public java_ast_node
 
     parameter_declaration_ast *exception_parameter;
     block_ast *body;
-
   };
 
 struct class_body_ast: public java_ast_node
@@ -568,7 +691,6 @@ struct class_body_ast: public java_ast_node
     };
 
     const list_node<class_field_ast *> *declaration_sequence;
-
   };
 
 struct class_declaration_ast: public java_ast_node
@@ -583,7 +705,6 @@ struct class_declaration_ast: public java_ast_node
     class_extends_clause_ast *extends;
     implements_clause_ast *implements;
     class_body_ast *body;
-
   };
 
 struct class_extends_clause_ast: public java_ast_node
@@ -594,7 +715,6 @@ struct class_extends_clause_ast: public java_ast_node
     };
 
     class_or_interface_type_name_ast *type;
-
   };
 
 struct class_field_ast: public java_ast_node
@@ -623,7 +743,6 @@ struct class_field_ast: public java_ast_node
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
     block_ast *instance_initializer_block;
     block_ast *static_initializer_block;
-
   };
 
 struct class_or_interface_type_name_ast: public java_ast_node
@@ -634,7 +753,6 @@ struct class_or_interface_type_name_ast: public java_ast_node
     };
 
     const list_node<class_or_interface_type_name_part_ast *> *part_sequence;
-
   };
 
 struct class_or_interface_type_name_part_ast: public java_ast_node
@@ -646,7 +764,6 @@ struct class_or_interface_type_name_part_ast: public java_ast_node
 
     identifier_ast *identifier;
     type_arguments_ast *type_arguments;
-
   };
 
 struct class_type_ast: public java_ast_node
@@ -658,7 +775,6 @@ struct class_type_ast: public java_ast_node
 
     class_or_interface_type_name_ast *type;
     optional_declarator_brackets_ast *declarator_brackets;
-
   };
 
 struct compilation_unit_ast: public java_ast_node
@@ -671,7 +787,6 @@ struct compilation_unit_ast: public java_ast_node
     package_declaration_ast *package_declaration;
     const list_node<import_declaration_ast *> *import_declaration_sequence;
     const list_node<type_declaration_ast *> *type_declaration_sequence;
-
   };
 
 struct conditional_expression_ast: public java_ast_node
@@ -684,7 +799,6 @@ struct conditional_expression_ast: public java_ast_node
     logical_or_expression_ast *logical_or_expression;
     expression_ast *if_expression;
     conditional_expression_ast *else_expression;
-
   };
 
 struct continue_statement_ast: public java_ast_node
@@ -695,7 +809,6 @@ struct continue_statement_ast: public java_ast_node
     };
 
     identifier_ast *label;
-
   };
 
 struct do_while_statement_ast: public java_ast_node
@@ -707,7 +820,6 @@ struct do_while_statement_ast: public java_ast_node
 
     embedded_statement_ast *body;
     expression_ast *condition;
-
   };
 
 struct embedded_statement_ast: public java_ast_node
@@ -732,7 +844,6 @@ struct embedded_statement_ast: public java_ast_node
     continue_statement_ast *continue_statement;
     labeled_statement_ast *labeled_statement;
     statement_expression_ast *expression_statement;
-
   };
 
 struct enum_body_ast: public java_ast_node
@@ -744,7 +855,6 @@ struct enum_body_ast: public java_ast_node
 
     const list_node<enum_constant_ast *> *enum_constant_sequence;
     const list_node<class_field_ast *> *class_field_sequence;
-
   };
 
 struct enum_constant_ast: public java_ast_node
@@ -758,7 +868,6 @@ struct enum_constant_ast: public java_ast_node
     identifier_ast *identifier;
     optional_argument_list_ast *arguments;
     enum_constant_body_ast *body;
-
   };
 
 struct enum_constant_body_ast: public java_ast_node
@@ -769,7 +878,6 @@ struct enum_constant_body_ast: public java_ast_node
     };
 
     const list_node<enum_constant_field_ast *> *declaration_sequence;
-
   };
 
 struct enum_constant_field_ast: public java_ast_node
@@ -793,7 +901,6 @@ struct enum_constant_field_ast: public java_ast_node
     block_ast *method_body;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
     block_ast *instance_initializer_block;
-
   };
 
 struct enum_declaration_ast: public java_ast_node
@@ -806,7 +913,6 @@ struct enum_declaration_ast: public java_ast_node
     identifier_ast *enum_name;
     implements_clause_ast *implements;
     enum_body_ast *body;
-
   };
 
 struct equality_expression_ast: public java_ast_node
@@ -818,7 +924,6 @@ struct equality_expression_ast: public java_ast_node
 
     relational_expression_ast *expression;
     const list_node<equality_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct equality_expression_rest_ast: public java_ast_node
@@ -828,22 +933,8 @@ struct equality_expression_rest_ast: public java_ast_node
       KIND = Kind_equality_expression_rest
     };
 
+    equality_expression_rest::equality_operator_enum equality_operator;
     relational_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum equality_operator_enum {
-      op_equal,
-      op_not_equal,
-    };
-    equality_operator_enum equality_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct expression_ast: public java_ast_node
@@ -853,34 +944,9 @@ struct expression_ast: public java_ast_node
       KIND = Kind_expression
     };
 
+    expression::assignment_operator_enum assignment_operator;
     conditional_expression_ast *conditional_expression;
     expression_ast *assignment_expression;
-
-    // user defined declarations:
-  public:
-
-    enum assignment_operator_enum {
-      no_assignment,
-      op_assign,
-      op_plus_assign,
-      op_minus_assign,
-      op_star_assign,
-      op_slash_assign,
-      op_bit_and_assign,
-      op_bit_or_assign,
-      op_bit_xor_assign,
-      op_remainder_assign,
-      op_lshift_assign,
-      op_signed_rshift_assign,
-      op_unsigned_rshift_assign,
-    };
-    assignment_operator_enum assignment_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct for_clause_traditional_rest_ast: public java_ast_node
@@ -892,7 +958,6 @@ struct for_clause_traditional_rest_ast: public java_ast_node
 
     expression_ast *for_condition;
     const list_node<statement_expression_ast *> *for_update_expression_sequence;
-
   };
 
 struct for_control_ast: public java_ast_node
@@ -907,7 +972,6 @@ struct for_control_ast: public java_ast_node
     variable_declaration_rest_ast *variable_declaration_rest;
     for_clause_traditional_rest_ast *traditional_for_rest;
     const list_node<statement_expression_ast *> *statement_expression_sequence;
-
   };
 
 struct for_statement_ast: public java_ast_node
@@ -919,7 +983,6 @@ struct for_statement_ast: public java_ast_node
 
     for_control_ast *for_control;
     embedded_statement_ast *for_body;
-
   };
 
 struct identifier_ast: public java_ast_node
@@ -930,7 +993,6 @@ struct identifier_ast: public java_ast_node
     };
 
     std::size_t ident;
-
   };
 
 struct if_statement_ast: public java_ast_node
@@ -943,7 +1005,6 @@ struct if_statement_ast: public java_ast_node
     expression_ast *condition;
     embedded_statement_ast *if_body;
     embedded_statement_ast *else_body;
-
   };
 
 struct implements_clause_ast: public java_ast_node
@@ -954,7 +1015,6 @@ struct implements_clause_ast: public java_ast_node
     };
 
     const list_node<class_or_interface_type_name_ast *> *type_sequence;
-
   };
 
 struct import_declaration_ast: public java_ast_node
@@ -964,16 +1024,8 @@ struct import_declaration_ast: public java_ast_node
       KIND = Kind_import_declaration
     };
 
-    qualified_identifier_with_optional_star_ast *identifier_name;
-
-    // user defined declarations:
-  public:
     bool static_import;
-  protected:
-  private:
-
-  public:
-
+    qualified_identifier_with_optional_star_ast *identifier_name;
   };
 
 struct interface_body_ast: public java_ast_node
@@ -984,7 +1036,6 @@ struct interface_body_ast: public java_ast_node
     };
 
     const list_node<interface_field_ast *> *declaration_sequence;
-
   };
 
 struct interface_declaration_ast: public java_ast_node
@@ -998,7 +1049,6 @@ struct interface_declaration_ast: public java_ast_node
     type_parameters_ast *type_parameters;
     interface_extends_clause_ast *extends;
     interface_body_ast *body;
-
   };
 
 struct interface_extends_clause_ast: public java_ast_node
@@ -1009,7 +1059,6 @@ struct interface_extends_clause_ast: public java_ast_node
     };
 
     const list_node<class_or_interface_type_name_ast *> *type_sequence;
-
   };
 
 struct interface_field_ast: public java_ast_node
@@ -1031,7 +1080,6 @@ struct interface_field_ast: public java_ast_node
     optional_declarator_brackets_ast *method_declarator_brackets;
     throws_clause_ast *method_throws_clause;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
-
   };
 
 struct labeled_statement_ast: public java_ast_node
@@ -1043,7 +1091,6 @@ struct labeled_statement_ast: public java_ast_node
 
     identifier_ast *label;
     embedded_statement_ast *statement;
-
   };
 
 struct literal_ast: public java_ast_node
@@ -1053,30 +1100,11 @@ struct literal_ast: public java_ast_node
       KIND = Kind_literal
     };
 
+    literal::literal_type_enum literal_type;
     std::size_t integer_literal;
     std::size_t floating_point_literal;
     std::size_t character_literal;
     std::size_t string_literal;
-
-    // user defined declarations:
-  public:
-
-    enum literal_type_enum {
-      type_true,
-      type_false,
-      type_null,
-      type_integer,
-      type_floating_point,
-      type_character,
-      type_string,
-    };
-    literal_type_enum literal_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct logical_and_expression_ast: public java_ast_node
@@ -1087,7 +1115,6 @@ struct logical_and_expression_ast: public java_ast_node
     };
 
     const list_node<bit_or_expression_ast *> *expression_sequence;
-
   };
 
 struct logical_or_expression_ast: public java_ast_node
@@ -1098,7 +1125,6 @@ struct logical_or_expression_ast: public java_ast_node
     };
 
     const list_node<logical_and_expression_ast *> *expression_sequence;
-
   };
 
 struct mandatory_array_builtin_type_ast: public java_ast_node
@@ -1110,7 +1136,6 @@ struct mandatory_array_builtin_type_ast: public java_ast_node
 
     builtin_type_ast *type;
     mandatory_declarator_brackets_ast *declarator_brackets;
-
   };
 
 struct mandatory_declarator_brackets_ast: public java_ast_node
@@ -1120,15 +1145,7 @@ struct mandatory_declarator_brackets_ast: public java_ast_node
       KIND = Kind_mandatory_declarator_brackets
     };
 
-
-    // user defined declarations:
-  public:
     int bracket_count;
-  protected:
-  private:
-
-  public:
-
   };
 
 struct multiplicative_expression_ast: public java_ast_node
@@ -1140,7 +1157,6 @@ struct multiplicative_expression_ast: public java_ast_node
 
     unary_expression_ast *expression;
     const list_node<multiplicative_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct multiplicative_expression_rest_ast: public java_ast_node
@@ -1150,23 +1166,8 @@ struct multiplicative_expression_rest_ast: public java_ast_node
       KIND = Kind_multiplicative_expression_rest
     };
 
+    multiplicative_expression_rest::multiplicative_operator_enum multiplicative_operator;
     unary_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum multiplicative_operator_enum {
-      op_star,
-      op_slash,
-      op_remainder,
-    };
-    multiplicative_operator_enum multiplicative_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct new_expression_ast: public java_ast_node
@@ -1181,7 +1182,6 @@ struct new_expression_ast: public java_ast_node
     optional_argument_list_ast *class_constructor_arguments;
     class_body_ast *class_body;
     array_creator_rest_ast *array_creator_rest;
-
   };
 
 struct non_array_type_ast: public java_ast_node
@@ -1193,7 +1193,6 @@ struct non_array_type_ast: public java_ast_node
 
     class_or_interface_type_name_ast *class_or_interface_type;
     builtin_type_ast *builtin_type;
-
   };
 
 struct non_wildcard_type_arguments_ast: public java_ast_node
@@ -1204,7 +1203,6 @@ struct non_wildcard_type_arguments_ast: public java_ast_node
     };
 
     const list_node<type_argument_type_ast *> *type_argument_type_sequence;
-
   };
 
 struct optional_argument_list_ast: public java_ast_node
@@ -1215,7 +1213,6 @@ struct optional_argument_list_ast: public java_ast_node
     };
 
     const list_node<expression_ast *> *expression_sequence;
-
   };
 
 struct optional_array_builtin_type_ast: public java_ast_node
@@ -1227,7 +1224,6 @@ struct optional_array_builtin_type_ast: public java_ast_node
 
     builtin_type_ast *type;
     optional_declarator_brackets_ast *declarator_brackets;
-
   };
 
 struct optional_declarator_brackets_ast: public java_ast_node
@@ -1237,15 +1233,7 @@ struct optional_declarator_brackets_ast: public java_ast_node
       KIND = Kind_optional_declarator_brackets
     };
 
-
-    // user defined declarations:
-  public:
     int bracket_count;
-  protected:
-  private:
-
-  public:
-
   };
 
 struct optional_modifiers_ast: public java_ast_node
@@ -1255,31 +1243,8 @@ struct optional_modifiers_ast: public java_ast_node
       KIND = Kind_optional_modifiers
     };
 
-    const list_node<annotation_ast *> *mod_annotation_sequence;
-
-    // user defined declarations:
-  public:
-
-    enum modifier_enum {
-      mod_private      = 1,
-      mod_public       = 2,
-      mod_protected    = 4,
-      mod_static       = 8,
-      mod_transient    = 16,
-      mod_final        = 32,
-      mod_abstract     = 64,
-      mod_native       = 128,
-      mod_synchronized = 256,
-      mod_volatile     = 512,
-      mod_strictfp     = 1024,
-    };
     int modifiers;
-
-  protected:
-  private:
-
-  public:
-
+    const list_node<annotation_ast *> *mod_annotation_sequence;
   };
 
 struct optional_parameter_modifiers_ast: public java_ast_node
@@ -1289,16 +1254,8 @@ struct optional_parameter_modifiers_ast: public java_ast_node
       KIND = Kind_optional_parameter_modifiers
     };
 
-    const list_node<annotation_ast *> *mod_annotation_sequence;
-
-    // user defined declarations:
-  public:
     bool mod_final;
-  protected:
-  private:
-
-  public:
-
+    const list_node<annotation_ast *> *mod_annotation_sequence;
   };
 
 struct package_declaration_ast: public java_ast_node
@@ -1310,7 +1267,6 @@ struct package_declaration_ast: public java_ast_node
 
     const list_node<annotation_ast *> *annotation_sequence;
     qualified_identifier_ast *package_name;
-
   };
 
 struct parameter_declaration_ast: public java_ast_node
@@ -1324,7 +1280,6 @@ struct parameter_declaration_ast: public java_ast_node
     type_ast *type;
     identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
-
   };
 
 struct parameter_declaration_ellipsis_ast: public java_ast_node
@@ -1334,19 +1289,11 @@ struct parameter_declaration_ellipsis_ast: public java_ast_node
       KIND = Kind_parameter_declaration_ellipsis
     };
 
+    bool has_ellipsis;
     optional_parameter_modifiers_ast *parameter_modifiers;
     type_ast *type;
     identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
-
-    // user defined declarations:
-  public:
-    bool has_ellipsis;
-  protected:
-  private:
-
-  public:
-
   };
 
 struct parameter_declaration_list_ast: public java_ast_node
@@ -1357,7 +1304,6 @@ struct parameter_declaration_list_ast: public java_ast_node
     };
 
     const list_node<parameter_declaration_ellipsis_ast *> *parameter_declaration_sequence;
-
   };
 
 struct postfix_operator_ast: public java_ast_node
@@ -1367,21 +1313,7 @@ struct postfix_operator_ast: public java_ast_node
       KIND = Kind_postfix_operator
     };
 
-
-    // user defined declarations:
-  public:
-
-    enum postfix_operator_enum {
-      op_increment,
-      op_decrement,
-    };
-    postfix_operator_enum postfix_operator;
-
-  protected:
-  private:
-
-  public:
-
+    postfix_operator::postfix_operator_enum postfix_operator;
   };
 
 struct primary_atom_ast: public java_ast_node
@@ -1391,6 +1323,7 @@ struct primary_atom_ast: public java_ast_node
       KIND = Kind_primary_atom
     };
 
+    primary_atom::primary_atom_enum rule_type;
     optional_array_builtin_type_ast *builtin_type;
     literal_ast *literal;
     new_expression_ast *new_expression;
@@ -1403,31 +1336,6 @@ struct primary_atom_ast: public java_ast_node
     qualified_identifier_safe_ast *identifier;
     mandatory_declarator_brackets_ast *declarator_brackets;
     std::size_t array_dotclass;
-
-    // user defined declarations:
-  public:
-
-    enum primary_atom_enum {
-      type_literal,
-      type_new_expression,
-      type_parenthesis_expression,
-      type_builtin_type_dot_class,
-      type_array_type_dot_class,
-      type_type_name,
-      type_this_call_no_type_arguments,
-      type_this_call_with_type_arguments,
-      type_super_call_no_type_arguments,
-      type_super_call_with_type_arguments,
-      type_method_call_no_type_arguments,
-      type_method_call_with_type_arguments,
-    };
-    primary_atom_enum rule_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct primary_expression_ast: public java_ast_node
@@ -1439,7 +1347,6 @@ struct primary_expression_ast: public java_ast_node
 
     primary_atom_ast *primary_atom;
     const list_node<primary_selector_ast *> *selector_sequence;
-
   };
 
 struct primary_selector_ast: public java_ast_node
@@ -1449,6 +1356,7 @@ struct primary_selector_ast: public java_ast_node
       KIND = Kind_primary_selector
     };
 
+    primary_selector::primary_selector_enum rule_type;
     new_expression_ast *new_expression;
     identifier_ast *variable_name;
     non_wildcard_type_arguments_ast *type_arguments;
@@ -1456,26 +1364,6 @@ struct primary_selector_ast: public java_ast_node
     identifier_ast *method_name;
     optional_argument_list_ast *method_arguments;
     expression_ast *array_index_expression;
-
-    // user defined declarations:
-  public:
-
-    enum primary_selector_enum {
-      type_dotclass,
-      type_dotthis,
-      type_new_expression,
-      type_member_variable,
-      type_method_call,
-      type_super_access,
-      type_array_access,
-    };
-    primary_selector_enum rule_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct qualified_identifier_ast: public java_ast_node
@@ -1486,7 +1374,6 @@ struct qualified_identifier_ast: public java_ast_node
     };
 
     const list_node<identifier_ast *> *name_sequence;
-
   };
 
 struct qualified_identifier_safe_ast: public java_ast_node
@@ -1497,7 +1384,6 @@ struct qualified_identifier_safe_ast: public java_ast_node
     };
 
     const list_node<identifier_ast *> *name_sequence;
-
   };
 
 struct qualified_identifier_with_optional_star_ast: public java_ast_node
@@ -1507,16 +1393,8 @@ struct qualified_identifier_with_optional_star_ast: public java_ast_node
       KIND = Kind_qualified_identifier_with_optional_star
     };
 
-    const list_node<identifier_ast *> *name_sequence;
-
-    // user defined declarations:
-  public:
     bool has_star;
-  protected:
-  private:
-
-  public:
-
+    const list_node<identifier_ast *> *name_sequence;
   };
 
 struct relational_expression_ast: public java_ast_node
@@ -1529,7 +1407,6 @@ struct relational_expression_ast: public java_ast_node
     shift_expression_ast *expression;
     const list_node<relational_expression_rest_ast *> *additional_expression_sequence;
     type_ast *instanceof_type;
-
   };
 
 struct relational_expression_rest_ast: public java_ast_node
@@ -1539,24 +1416,8 @@ struct relational_expression_rest_ast: public java_ast_node
       KIND = Kind_relational_expression_rest
     };
 
+    relational_expression_rest::relational_operator_enum relational_operator;
     shift_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum relational_operator_enum {
-      op_less_than,
-      op_greater_than,
-      op_less_equal,
-      op_greater_equal,
-    };
-    relational_operator_enum relational_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct return_statement_ast: public java_ast_node
@@ -1567,7 +1428,6 @@ struct return_statement_ast: public java_ast_node
                  };
 
                  expression_ast *return_expression;
-
                };
 
 struct shift_expression_ast: public java_ast_node
@@ -1579,7 +1439,6 @@ struct shift_expression_ast: public java_ast_node
 
     additive_expression_ast *expression;
     const list_node<shift_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct shift_expression_rest_ast: public java_ast_node
@@ -1589,23 +1448,8 @@ struct shift_expression_rest_ast: public java_ast_node
       KIND = Kind_shift_expression_rest
     };
 
+    shift_expression_rest::shift_operator_enum shift_operator;
     additive_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum shift_operator_enum {
-      op_lshift,
-      op_signed_rshift,
-      op_unsigned_rshift,
-    };
-    shift_operator_enum shift_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct statement_expression_ast: public java_ast_node
@@ -1616,7 +1460,6 @@ struct statement_expression_ast: public java_ast_node
     };
 
     expression_ast *expression;
-
   };
 
 struct super_suffix_ast: public java_ast_node
@@ -1631,7 +1474,6 @@ struct super_suffix_ast: public java_ast_node
     non_wildcard_type_arguments_ast *type_arguments;
     identifier_ast *method_name;
     optional_argument_list_ast *method_arguments;
-
   };
 
 struct switch_label_ast: public java_ast_node
@@ -1641,22 +1483,8 @@ struct switch_label_ast: public java_ast_node
       KIND = Kind_switch_label
     };
 
+    switch_label::branch_type_enum branch_type;
     expression_ast *case_expression;
-
-    // user defined declarations:
-  public:
-
-    enum branch_type_enum {
-      case_branch,
-      default_branch,
-    };
-    branch_type_enum branch_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct switch_section_ast: public java_ast_node
@@ -1668,7 +1496,6 @@ struct switch_section_ast: public java_ast_node
 
     const list_node<switch_label_ast *> *label_sequence;
     const list_node<block_statement_ast *> *statement_sequence;
-
   };
 
 struct switch_statement_ast: public java_ast_node
@@ -1680,7 +1507,6 @@ struct switch_statement_ast: public java_ast_node
 
     expression_ast *switch_expression;
     const list_node<switch_section_ast *> *switch_section_sequence;
-
   };
 
 struct synchronized_statement_ast: public java_ast_node
@@ -1692,7 +1518,6 @@ struct synchronized_statement_ast: public java_ast_node
 
     expression_ast *locked_type;
     block_ast *synchronized_body;
-
   };
 
 struct throw_statement_ast: public java_ast_node
@@ -1703,7 +1528,6 @@ struct throw_statement_ast: public java_ast_node
     };
 
     expression_ast *exception;
-
   };
 
 struct throws_clause_ast: public java_ast_node
@@ -1714,7 +1538,6 @@ struct throws_clause_ast: public java_ast_node
     };
 
     const list_node<qualified_identifier_ast *> *identifier_sequence;
-
   };
 
 struct try_statement_ast: public java_ast_node
@@ -1727,7 +1550,6 @@ struct try_statement_ast: public java_ast_node
     block_ast *try_body;
     const list_node<catch_clause_ast *> *catch_clause_sequence;
     block_ast *finally_body;
-
   };
 
 struct type_ast: public java_ast_node
@@ -1739,7 +1561,6 @@ struct type_ast: public java_ast_node
 
     class_type_ast *class_type;
     optional_array_builtin_type_ast *builtin_type;
-
   };
 
 struct type_argument_ast: public java_ast_node
@@ -1751,7 +1572,6 @@ struct type_argument_ast: public java_ast_node
 
     type_argument_type_ast *type_argument_type;
     wildcard_type_ast *wildcard_type;
-
   };
 
 struct type_argument_type_ast: public java_ast_node
@@ -1763,7 +1583,6 @@ struct type_argument_type_ast: public java_ast_node
 
     class_type_ast *class_type;
     mandatory_array_builtin_type_ast *mandatory_array_builtin_type;
-
   };
 
 struct type_arguments_ast: public java_ast_node
@@ -1774,7 +1593,6 @@ struct type_arguments_ast: public java_ast_node
     };
 
     const list_node<type_argument_ast *> *type_argument_sequence;
-
   };
 
 struct type_arguments_or_parameters_end_ast: public java_ast_node
@@ -1783,7 +1601,6 @@ struct type_arguments_or_parameters_end_ast: public java_ast_node
     {
       KIND = Kind_type_arguments_or_parameters_end
     };
-
 
   };
 
@@ -1799,7 +1616,6 @@ struct type_declaration_ast: public java_ast_node
     enum_declaration_ast *enum_declaration;
     interface_declaration_ast *interface_declaration;
     annotation_type_declaration_ast *annotation_type_declaration;
-
   };
 
 struct type_parameter_ast: public java_ast_node
@@ -1811,7 +1627,6 @@ struct type_parameter_ast: public java_ast_node
 
     identifier_ast *identifier;
     const list_node<class_or_interface_type_name_ast *> *extends_type_sequence;
-
   };
 
 struct type_parameters_ast: public java_ast_node
@@ -1822,7 +1637,6 @@ struct type_parameters_ast: public java_ast_node
     };
 
     const list_node<type_parameter_ast *> *type_parameter_sequence;
-
   };
 
 struct unary_expression_ast: public java_ast_node
@@ -1832,26 +1646,9 @@ struct unary_expression_ast: public java_ast_node
       KIND = Kind_unary_expression
     };
 
+    unary_expression::unary_expression_enum rule_type;
     unary_expression_ast *unary_expression;
     unary_expression_not_plusminus_ast *unary_expression_not_plusminus;
-
-    // user defined declarations:
-  public:
-
-    enum unary_expression_enum {
-      type_incremented_expression,
-      type_decremented_expression,
-      type_unary_minus_expression,
-      type_unary_plus_expression,
-      type_unary_expression_not_plusminus,
-    };
-    unary_expression_enum rule_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct unary_expression_not_plusminus_ast: public java_ast_node
@@ -1861,28 +1658,12 @@ struct unary_expression_not_plusminus_ast: public java_ast_node
       KIND = Kind_unary_expression_not_plusminus
     };
 
+    unary_expression_not_plusminus::unary_expression_not_plusminus_enum rule_type;
     unary_expression_ast *bitwise_not_expression;
     unary_expression_ast *logical_not_expression;
     cast_expression_ast *cast_expression;
     primary_expression_ast *primary_expression;
     const list_node<postfix_operator_ast *> *postfix_operator_sequence;
-
-    // user defined declarations:
-  public:
-
-    enum unary_expression_not_plusminus_enum {
-      type_bitwise_not_expression,
-      type_logical_not_expression,
-      type_cast_expression,
-      type_primary_expression,
-    };
-    unary_expression_not_plusminus_enum rule_type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct variable_array_initializer_ast: public java_ast_node
@@ -1893,7 +1674,6 @@ struct variable_array_initializer_ast: public java_ast_node
     };
 
     const list_node<variable_initializer_ast *> *variable_initializer_sequence;
-
   };
 
 struct variable_declaration_ast: public java_ast_node
@@ -1905,7 +1685,6 @@ struct variable_declaration_ast: public java_ast_node
 
     parameter_declaration_ast *initial_declaration;
     variable_declaration_rest_ast *rest;
-
   };
 
 struct variable_declaration_rest_ast: public java_ast_node
@@ -1917,7 +1696,6 @@ struct variable_declaration_rest_ast: public java_ast_node
 
     variable_initializer_ast *first_initializer;
     const list_node<variable_declarator_ast *> *variable_declarator_sequence;
-
   };
 
 struct variable_declarator_ast: public java_ast_node
@@ -1930,7 +1708,6 @@ struct variable_declarator_ast: public java_ast_node
     identifier_ast *variable_name;
     optional_declarator_brackets_ast *declarator_brackets;
     variable_initializer_ast *initializer;
-
   };
 
 struct variable_initializer_ast: public java_ast_node
@@ -1942,7 +1719,6 @@ struct variable_initializer_ast: public java_ast_node
 
     expression_ast *expression;
     variable_array_initializer_ast *array_initializer;
-
   };
 
 struct while_statement_ast: public java_ast_node
@@ -1954,7 +1730,6 @@ struct while_statement_ast: public java_ast_node
 
     expression_ast *condition;
     embedded_statement_ast *body;
-
   };
 
 struct wildcard_type_ast: public java_ast_node
@@ -1965,7 +1740,6 @@ struct wildcard_type_ast: public java_ast_node
     };
 
     wildcard_type_bounds_ast *bounds;
-
   };
 
 struct wildcard_type_bounds_ast: public java_ast_node
@@ -1975,22 +1749,8 @@ struct wildcard_type_bounds_ast: public java_ast_node
       KIND = Kind_wildcard_type_bounds
     };
 
+    wildcard_type_bounds::extends_or_super_enum extends_or_super;
     class_type_ast *type;
-
-    // user defined declarations:
-  public:
-
-    enum extends_or_super_enum {
-      extends,
-      super,
-    };
-    extends_or_super_enum extends_or_super;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 
@@ -2184,7 +1944,6 @@ class java
     void report_problem( java::problem_type type, const char* message );
     void report_problem( java::problem_type type, std::string message );
 
-  protected:
   private:
 
     java::java_compatibility_mode _M_compatibility_mode;

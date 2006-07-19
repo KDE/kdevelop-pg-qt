@@ -27,6 +27,49 @@ struct pp_primary_expression_ast;
 struct pp_region_ast;
 struct pp_unary_expression_ast;
 
+namespace pp_declaration
+  {
+  enum pp_declaration_type_enum {
+    type_define,
+    type_undef
+  };
+}
+
+namespace pp_diagnostic
+  {
+  enum pp_diagnostic_type_enum {
+    type_error,
+    type_warning
+  };
+}
+
+namespace pp_equality_expression_rest
+  {
+  enum pp_equality_operator_enum {
+    op_equal,
+    op_not_equal
+  };
+}
+
+namespace pp_primary_expression
+  {
+  enum pp_primary_expression_type_enum {
+    type_true,
+    type_false,
+    type_conditional_symbol,
+    type_parenthesis_expression
+  };
+}
+
+namespace pp_region
+  {
+  enum pp_region_type_enum {
+    type_region,
+    type_endregion
+  };
+}
+
+
 struct csharp_pp_ast_node
   {
     enum ast_node_kind_enum {
@@ -62,7 +105,6 @@ struct pp_and_expression_ast: public csharp_pp_ast_node
     };
 
     const list_node<pp_equality_expression_ast *> *expression_sequence;
-
   };
 
 struct pp_declaration_ast: public csharp_pp_ast_node
@@ -72,22 +114,8 @@ struct pp_declaration_ast: public csharp_pp_ast_node
       KIND = Kind_pp_declaration
     };
 
+    pp_declaration::pp_declaration_type_enum type;
     std::size_t conditional_symbol;
-
-    // user defined declarations:
-  public:
-
-    enum pp_declaration_type_enum {
-      type_define,
-      type_undef
-    };
-    pp_declaration_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct pp_diagnostic_ast: public csharp_pp_ast_node
@@ -97,22 +125,8 @@ struct pp_diagnostic_ast: public csharp_pp_ast_node
       KIND = Kind_pp_diagnostic
     };
 
+    pp_diagnostic::pp_diagnostic_type_enum type;
     std::size_t message;
-
-    // user defined declarations:
-  public:
-
-    enum pp_diagnostic_type_enum {
-      type_error,
-      type_warning
-    };
-    pp_diagnostic_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct pp_directive_ast: public csharp_pp_ast_node
@@ -131,7 +145,6 @@ struct pp_directive_ast: public csharp_pp_ast_node
     pp_region_ast *region;
     pp_line_ast *line;
     pp_pragma_ast *pragma;
-
   };
 
 struct pp_elif_clause_ast: public csharp_pp_ast_node
@@ -142,7 +155,6 @@ struct pp_elif_clause_ast: public csharp_pp_ast_node
     };
 
     pp_expression_ast *expression;
-
   };
 
 struct pp_else_clause_ast: public csharp_pp_ast_node
@@ -152,7 +164,6 @@ struct pp_else_clause_ast: public csharp_pp_ast_node
       KIND = Kind_pp_else_clause
     };
 
-
   };
 
 struct pp_endif_clause_ast: public csharp_pp_ast_node
@@ -161,7 +172,6 @@ struct pp_endif_clause_ast: public csharp_pp_ast_node
     {
       KIND = Kind_pp_endif_clause
     };
-
 
   };
 
@@ -174,7 +184,6 @@ struct pp_equality_expression_ast: public csharp_pp_ast_node
 
     pp_unary_expression_ast *expression;
     const list_node<pp_equality_expression_rest_ast *> *additional_expression_sequence;
-
   };
 
 struct pp_equality_expression_rest_ast: public csharp_pp_ast_node
@@ -184,22 +193,8 @@ struct pp_equality_expression_rest_ast: public csharp_pp_ast_node
       KIND = Kind_pp_equality_expression_rest
     };
 
+    pp_equality_expression_rest::pp_equality_operator_enum equality_operator;
     pp_unary_expression_ast *expression;
-
-    // user defined declarations:
-  public:
-
-    enum pp_equality_operator_enum {
-      op_equal,
-      op_not_equal
-    };
-    pp_equality_operator_enum equality_operator;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct pp_expression_ast: public csharp_pp_ast_node
@@ -210,7 +205,6 @@ struct pp_expression_ast: public csharp_pp_ast_node
     };
 
     const list_node<pp_and_expression_ast *> *expression_sequence;
-
   };
 
 struct pp_if_clause_ast: public csharp_pp_ast_node
@@ -221,7 +215,6 @@ struct pp_if_clause_ast: public csharp_pp_ast_node
     };
 
     pp_expression_ast *expression;
-
   };
 
 struct pp_line_ast: public csharp_pp_ast_node
@@ -235,7 +228,6 @@ struct pp_line_ast: public csharp_pp_ast_node
     std::size_t file_name;
     std::size_t token_default;
     std::size_t identifier_or_keyword;
-
   };
 
 struct pp_pragma_ast: public csharp_pp_ast_node
@@ -246,7 +238,6 @@ struct pp_pragma_ast: public csharp_pp_ast_node
     };
 
     std::size_t pragma_text;
-
   };
 
 struct pp_primary_expression_ast: public csharp_pp_ast_node
@@ -256,25 +247,9 @@ struct pp_primary_expression_ast: public csharp_pp_ast_node
       KIND = Kind_pp_primary_expression
     };
 
+    pp_primary_expression::pp_primary_expression_type_enum type;
     std::size_t conditional_symbol;
     pp_expression_ast *parenthesis_expression;
-
-    // user defined declarations:
-  public:
-
-    enum pp_primary_expression_type_enum {
-      type_true,
-      type_false,
-      type_conditional_symbol,
-      type_parenthesis_expression
-    };
-    pp_primary_expression_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct pp_region_ast: public csharp_pp_ast_node
@@ -284,22 +259,8 @@ struct pp_region_ast: public csharp_pp_ast_node
       KIND = Kind_pp_region
     };
 
+    pp_region::pp_region_type_enum type;
     std::size_t label;
-
-    // user defined declarations:
-  public:
-
-    enum pp_region_type_enum {
-      type_region,
-      type_endregion
-    };
-    pp_region_type_enum type;
-
-  protected:
-  private:
-
-  public:
-
   };
 
 struct pp_unary_expression_ast: public csharp_pp_ast_node
@@ -309,16 +270,8 @@ struct pp_unary_expression_ast: public csharp_pp_ast_node
       KIND = Kind_pp_unary_expression
     };
 
-    pp_primary_expression_ast *expression;
-
-    // user defined declarations:
-  public:
     bool negated;
-  protected:
-  private:
-
-  public:
-
+    pp_primary_expression_ast *expression;
   };
 
 
@@ -432,7 +385,6 @@ class csharp_pp
     csharp_pp::pp_parse_result pp_parse_line(
       csharp_pp::token_type_enum first_token, csharp_pp_scope* scope );
 
-  protected:
   private:
 
     csharp_pp_scope* _M_scope;

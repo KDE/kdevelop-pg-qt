@@ -110,7 +110,7 @@
 -- Parser class members
 --
 
-%member (parserclass: public declaration)
+%parserclass (public declaration)
 [:
   /**
    * Transform the raw input into tokens.
@@ -141,7 +141,7 @@
   void report_problem( java::problem_type type, std::string message );
 :]
 
-%member (parserclass: private declaration)
+%parserclass (private declaration)
 [:
   java::java_compatibility_mode _M_compatibility_mode;
 
@@ -163,7 +163,7 @@
   bool lookahead_is_cast_expression();
 :]
 
-%member (parserclass: constructor)
+%parserclass (constructor)
   [: _M_compatibility_mode = java15_compatibility; :]
 
 
@@ -171,25 +171,15 @@
 -- Additional AST members
 --
 
-%member (import_declaration: public declaration)
-  [: bool static_import; :]
-
-%member (parameter_declaration_ellipsis: public declaration)
-  [: bool has_ellipsis; :]
-
-%member (optional_parameter_modifiers: public declaration)
-  [: bool mod_final; :]
-
-%member (wildcard_type_bounds: public declaration)
+%namespace wildcard_type_bounds
 [:
   enum extends_or_super_enum {
     extends,
     super,
   };
-  extends_or_super_enum extends_or_super;
 :]
 
-%member (builtin_type: public declaration)
+%namespace builtin_type
 [:
   enum builtin_type_enum {
     type_void,
@@ -202,30 +192,17 @@
     type_long,
     type_double,
   };
-  builtin_type_enum type;
 :]
 
-%member (qualified_identifier_with_optional_star: public declaration)
-  [: bool has_star; :]
-
-%member (optional_declarator_brackets: public declaration)
-  [: int bracket_count; :]
-%member (mandatory_declarator_brackets: public declaration)
-  [: int bracket_count; :]
-
-%member (annotation: public declaration)
-  [: bool has_parentheses; :]
-
-%member (switch_label: public declaration)
+%namespace switch_label
 [:
   enum branch_type_enum {
     case_branch,
     default_branch,
   };
-  branch_type_enum branch_type;
 :]
 
-%member (expression: public declaration)
+%namespace expression
 [:
   enum assignment_operator_enum {
     no_assignment,
@@ -242,19 +219,17 @@
     op_signed_rshift_assign,
     op_unsigned_rshift_assign,
   };
-  assignment_operator_enum assignment_operator;
 :]
 
-%member (equality_expression_rest: public declaration)
+%namespace equality_expression_rest
 [:
   enum equality_operator_enum {
     op_equal,
     op_not_equal,
   };
-  equality_operator_enum equality_operator;
 :]
 
-%member (relational_expression_rest: public declaration)
+%namespace relational_expression_rest
 [:
   enum relational_operator_enum {
     op_less_than,
@@ -262,39 +237,35 @@
     op_less_equal,
     op_greater_equal,
   };
-  relational_operator_enum relational_operator;
 :]
 
-%member (shift_expression_rest: public declaration)
+%namespace shift_expression_rest
 [:
   enum shift_operator_enum {
     op_lshift,
     op_signed_rshift,
     op_unsigned_rshift,
   };
-  shift_operator_enum shift_operator;
 :]
 
-%member (additive_expression_rest: public declaration)
+%namespace additive_expression_rest
 [:
   enum additive_operator_enum {
     op_plus,
     op_minus,
   };
-  additive_operator_enum additive_operator;
 :]
 
-%member (multiplicative_expression_rest: public declaration)
+%namespace multiplicative_expression_rest
 [:
   enum multiplicative_operator_enum {
     op_star,
     op_slash,
     op_remainder,
   };
-  multiplicative_operator_enum multiplicative_operator;
 :]
 
-%member (unary_expression: public declaration)
+%namespace unary_expression
 [:
   enum unary_expression_enum {
     type_incremented_expression,
@@ -303,10 +274,9 @@
     type_unary_plus_expression,
     type_unary_expression_not_plusminus,
   };
-  unary_expression_enum rule_type;
 :]
 
-%member (unary_expression_not_plusminus: public declaration)
+%namespace unary_expression_not_plusminus
 [:
   enum unary_expression_not_plusminus_enum {
     type_bitwise_not_expression,
@@ -314,19 +284,17 @@
     type_cast_expression,
     type_primary_expression,
   };
-  unary_expression_not_plusminus_enum rule_type;
 :]
 
-%member (postfix_operator: public declaration)
+%namespace postfix_operator
 [:
   enum postfix_operator_enum {
     op_increment,
     op_decrement,
   };
-  postfix_operator_enum postfix_operator;
 :]
 
-%member (primary_selector: public declaration)
+%namespace primary_selector
 [:
   enum primary_selector_enum {
     type_dotclass,
@@ -337,10 +305,9 @@
     type_super_access,
     type_array_access,
   };
-  primary_selector_enum rule_type;
 :]
 
-%member (primary_atom: public declaration)
+%namespace primary_atom
 [:
   enum primary_atom_enum {
     type_literal,
@@ -356,10 +323,9 @@
     type_method_call_no_type_arguments,
     type_method_call_with_type_arguments,
   };
-  primary_atom_enum rule_type;
 :]
 
-%member (optional_modifiers: public declaration)
+%namespace optional_modifiers
 [:
   enum modifier_enum {
     mod_private      = 1,
@@ -374,10 +340,9 @@
     mod_volatile     = 512,
     mod_strictfp     = 1024,
   };
-  int modifiers;
 :]
 
-%member (literal: public declaration)
+%namespace literal
 [:
   enum literal_type_enum {
     type_true,
@@ -388,7 +353,6 @@
     type_character,
     type_string,
   };
-  literal_type_enum literal_type;
 :]
 
 
@@ -486,7 +450,9 @@
     | 0      [: (*yynode)->static_import = false; :]
    )
    identifier_name=qualified_identifier_with_optional_star SEMICOLON
--> import_declaration ;;
+-> import_declaration [
+     member variable static_import: bool;
+] ;;
 
 
 -- A TYPE DECLARATION is either a class, interface, enum or annotation.
@@ -513,7 +479,9 @@
         [: (*yynode)->has_parentheses = true; :]
     | 0 [: (*yynode)->has_parentheses = false; :]
    )
--> annotation ;;
+-> annotation [
+     member variable has_parentheses: bool;
+] ;;
 
  ( ( ?[: LA(2).kind == Token_ASSIGN :]
      #value_pair=annotation_element_value_pair @ COMMA
@@ -877,7 +845,9 @@
    )
    variable_name=identifier
    declarator_brackets=optional_declarator_brackets
--> parameter_declaration_ellipsis ;;
+-> parameter_declaration_ellipsis [
+     member variable has_ellipsis: bool;
+] ;;
 
 -- This PARAMETER DECLARATION rule is not used in parameter_declaration_list,
 -- and lacks the ellipsis possibility & handling. It's used in try_handler
@@ -893,7 +863,9 @@
    (  FINAL [: (*yynode)->mod_final = true; :]
     | #mod_annotation=annotation
    )*
--> optional_parameter_modifiers ;;
+-> optional_parameter_modifiers [
+     member variable mod_final: bool;
+] ;;
 
 
 
@@ -1011,11 +983,13 @@
    QUESTION (bounds=wildcard_type_bounds | 0)
 -> wildcard_type ;;
 
-   (  EXTENDS [: (*yynode)->extends_or_super = wildcard_type_bounds_ast::extends; :]
-    | SUPER   [: (*yynode)->extends_or_super = wildcard_type_bounds_ast::super; :]
+   (  EXTENDS [: (*yynode)->extends_or_super = wildcard_type_bounds::extends; :]
+    | SUPER   [: (*yynode)->extends_or_super = wildcard_type_bounds::super; :]
    )
    type=class_type
--> wildcard_type_bounds ;;
+-> wildcard_type_bounds [
+     member variable extends_or_super: wildcard_type_bounds::extends_or_super_enum;
+] ;;
 
 
    GREATER_THAN    [: ltCounter -= 1; :]  -- ">"
@@ -1196,11 +1170,13 @@
 -> switch_section ;;
 
    (  CASE case_expression=expression
-      [: (*yynode)->branch_type = switch_label_ast::case_branch;    :]
+      [: (*yynode)->branch_type = switch_label::case_branch;    :]
     | DEFAULT
-      [: (*yynode)->branch_type = switch_label_ast::default_branch; :]
+      [: (*yynode)->branch_type = switch_label::default_branch; :]
    ) COLON
--> switch_label ;;
+-> switch_label [
+     member variable branch_type: switch_label::branch_type_enum;
+] ;;
 
 
 
@@ -1282,35 +1258,37 @@
    conditional_expression=conditional_expression
    (
       (  ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_assign;                :]
+           [: (*yynode)->assignment_operator = expression::op_assign;                :]
        | PLUS_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_plus_assign;           :]
+           [: (*yynode)->assignment_operator = expression::op_plus_assign;           :]
        | MINUS_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_minus_assign;          :]
+           [: (*yynode)->assignment_operator = expression::op_minus_assign;          :]
        | STAR_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_star_assign;           :]
+           [: (*yynode)->assignment_operator = expression::op_star_assign;           :]
        | SLASH_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_slash_assign;          :]
+           [: (*yynode)->assignment_operator = expression::op_slash_assign;          :]
        | BIT_AND_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_bit_and_assign;        :]
+           [: (*yynode)->assignment_operator = expression::op_bit_and_assign;        :]
        | BIT_OR_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_bit_or_assign;         :]
+           [: (*yynode)->assignment_operator = expression::op_bit_or_assign;         :]
        | BIT_XOR_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_bit_xor_assign;        :]
+           [: (*yynode)->assignment_operator = expression::op_bit_xor_assign;        :]
        | REMAINDER_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_remainder_assign;      :]
+           [: (*yynode)->assignment_operator = expression::op_remainder_assign;      :]
        | LSHIFT_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_lshift_assign;         :]
+           [: (*yynode)->assignment_operator = expression::op_lshift_assign;         :]
        | SIGNED_RSHIFT_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_signed_rshift_assign;   :]
+           [: (*yynode)->assignment_operator = expression::op_signed_rshift_assign;   :]
        | UNSIGNED_RSHIFT_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_unsigned_rshift_assign; :]
+           [: (*yynode)->assignment_operator = expression::op_unsigned_rshift_assign; :]
       )
       assignment_expression=expression
     |
-      0 [: (*yynode)->assignment_operator = expression_ast::no_assignment; :]
+      0 [: (*yynode)->assignment_operator = expression::no_assignment; :]
    )
--> expression ;;
+-> expression [
+     member variable assignment_operator: expression::assignment_operator_enum;
+] ;;
 
 
    logical_or_expression=logical_or_expression
@@ -1339,11 +1317,13 @@
    (#additional_expression=equality_expression_rest)*
 -> equality_expression ;;
 
-   (  EQUAL     [: (*yynode)->equality_operator = equality_expression_rest_ast::op_equal;     :]
-    | NOT_EQUAL [: (*yynode)->equality_operator = equality_expression_rest_ast::op_not_equal; :]
+   (  EQUAL     [: (*yynode)->equality_operator = equality_expression_rest::op_equal;     :]
+    | NOT_EQUAL [: (*yynode)->equality_operator = equality_expression_rest::op_not_equal; :]
    )
    expression=relational_expression
--> equality_expression_rest ;;
+-> equality_expression_rest [
+     member variable equality_operator: equality_expression_rest::equality_operator_enum;
+] ;;
 
    expression=shift_expression
    (  (#additional_expression=relational_expression_rest)+
@@ -1352,45 +1332,53 @@
    )
 -> relational_expression ;;
 
-   (  LESS_THAN     [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_than;     :]
-    | GREATER_THAN  [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_than;  :]
-    | LESS_EQUAL    [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_equal;    :]
-    | GREATER_EQUAL [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_equal; :]
+   (  LESS_THAN     [: (*yynode)->relational_operator = relational_expression_rest::op_less_than;     :]
+    | GREATER_THAN  [: (*yynode)->relational_operator = relational_expression_rest::op_greater_than;  :]
+    | LESS_EQUAL    [: (*yynode)->relational_operator = relational_expression_rest::op_less_equal;    :]
+    | GREATER_EQUAL [: (*yynode)->relational_operator = relational_expression_rest::op_greater_equal; :]
    )
    expression=shift_expression
--> relational_expression_rest ;;
+-> relational_expression_rest [
+     member variable relational_operator: relational_expression_rest::relational_operator_enum;
+] ;;
 
    expression=additive_expression
    (#additional_expression=shift_expression_rest)*
 -> shift_expression ;;
 
-   (  LSHIFT          [: (*yynode)->shift_operator = shift_expression_rest_ast::op_lshift;          :]
-    | SIGNED_RSHIFT   [: (*yynode)->shift_operator = shift_expression_rest_ast::op_signed_rshift;   :]
-    | UNSIGNED_RSHIFT [: (*yynode)->shift_operator = shift_expression_rest_ast::op_unsigned_rshift; :]
+   (  LSHIFT          [: (*yynode)->shift_operator = shift_expression_rest::op_lshift;          :]
+    | SIGNED_RSHIFT   [: (*yynode)->shift_operator = shift_expression_rest::op_signed_rshift;   :]
+    | UNSIGNED_RSHIFT [: (*yynode)->shift_operator = shift_expression_rest::op_unsigned_rshift; :]
    )
    expression=additive_expression
--> shift_expression_rest ;;
+-> shift_expression_rest [
+     member variable shift_operator: shift_expression_rest::shift_operator_enum;
+] ;;
 
    expression=multiplicative_expression
    (#additional_expression=additive_expression_rest)*
 -> additive_expression ;;
 
-   (  PLUS  [: (*yynode)->additive_operator = additive_expression_rest_ast::op_plus;  :]
-    | MINUS [: (*yynode)->additive_operator = additive_expression_rest_ast::op_minus; :]
+   (  PLUS  [: (*yynode)->additive_operator = additive_expression_rest::op_plus;  :]
+    | MINUS [: (*yynode)->additive_operator = additive_expression_rest::op_minus; :]
    )
    expression=multiplicative_expression
--> additive_expression_rest ;;
+-> additive_expression_rest [
+     member variable additive_operator: additive_expression_rest::additive_operator_enum;
+] ;;
 
    expression=unary_expression
    (#additional_expression=multiplicative_expression_rest)*
 -> multiplicative_expression ;;
 
-   (  STAR      [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_star;      :]
-    | SLASH     [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_slash;     :]
-    | REMAINDER [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_remainder; :]
+   (  STAR      [: (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_star;      :]
+    | SLASH     [: (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_slash;     :]
+    | REMAINDER [: (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_remainder; :]
    )
    expression=unary_expression
--> multiplicative_expression_rest ;;
+-> multiplicative_expression_rest [
+     member variable multiplicative_operator: multiplicative_expression_rest::multiplicative_operator_enum;
+] ;;
 
 
 -- The UNARY EXPRESSION and the its not-plusminus part are one rule in the
@@ -1398,17 +1386,19 @@
 
  (
    INCREMENT unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_incremented_expression; :]
  | DECREMENT unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_decremented_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_decremented_expression; :]
  | MINUS unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_unary_minus_expression; :]
  | PLUS  unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;  :]
+     [: (*yynode)->rule_type = unary_expression::type_unary_plus_expression;  :]
  | unary_expression_not_plusminus=unary_expression_not_plusminus
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_expression_not_plusminus; :]
+     [: (*yynode)->rule_type = unary_expression::type_unary_expression_not_plusminus; :]
  )
--> unary_expression ;;
+-> unary_expression [
+     member variable rule_type: unary_expression::unary_expression_enum;
+] ;;
 
 
 -- So, up till now this was the easy stuff. Here comes another sincere
@@ -1421,18 +1411,20 @@
 
  (
    TILDE bitwise_not_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_bitwise_not_expression; :]
+     [: (*yynode)->rule_type = unary_expression_not_plusminus::type_bitwise_not_expression; :]
  | BANG  logical_not_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_logical_not_expression; :]
+     [: (*yynode)->rule_type = unary_expression_not_plusminus::type_logical_not_expression; :]
  |
    ?[: lookahead_is_cast_expression() == true :]
    cast_expression=cast_expression
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_cast_expression;        :]
+     [: (*yynode)->rule_type = unary_expression_not_plusminus::type_cast_expression;        :]
  |
    primary_expression=primary_expression (#postfix_operator=postfix_operator)*
-     [: (*yynode)->rule_type = unary_expression_not_plusminus_ast::type_primary_expression;     :]
+     [: (*yynode)->rule_type = unary_expression_not_plusminus::type_primary_expression;     :]
  )
--> unary_expression_not_plusminus ;;
+-> unary_expression_not_plusminus [
+     member variable rule_type: unary_expression_not_plusminus::unary_expression_not_plusminus_enum;
+] ;;
 
 
 --    LPAREN
@@ -1450,9 +1442,11 @@
    )
 -> cast_expression ;;
 
-   INCREMENT [: (*yynode)->postfix_operator = postfix_operator_ast::op_increment; :]
- | DECREMENT [: (*yynode)->postfix_operator = postfix_operator_ast::op_decrement; :]
--> postfix_operator ;;
+   INCREMENT [: (*yynode)->postfix_operator = postfix_operator::op_increment; :]
+ | DECREMENT [: (*yynode)->postfix_operator = postfix_operator::op_decrement; :]
+-> postfix_operator [
+     member variable postfix_operator: postfix_operator::postfix_operator_enum;
+] ;;
 
 
 -- PRIMARY EXPRESSIONs: qualified names, array expressions,
@@ -1469,15 +1463,15 @@
  (
    DOT
    (  CLASS
-        [: (*yynode)->rule_type = primary_selector_ast::type_dotclass;        :]
+        [: (*yynode)->rule_type = primary_selector::type_dotclass;        :]
     | THIS
-        [: (*yynode)->rule_type = primary_selector_ast::type_dotthis;         :]
+        [: (*yynode)->rule_type = primary_selector::type_dotthis;         :]
     | new_expression=new_expression
-        [: (*yynode)->rule_type = primary_selector_ast::type_new_expression;  :]
+        [: (*yynode)->rule_type = primary_selector::type_new_expression;  :]
     |
       ?[: LA(2).kind != Token_LPAREN :]  -- member variable access
       variable_name=identifier           -- (no method call)
-        [: (*yynode)->rule_type = primary_selector_ast::type_member_variable; :]
+        [: (*yynode)->rule_type = primary_selector::type_member_variable; :]
     |
       -- method calls (including the "super" ones) may have type arguments
       (  ?[: compatibility_mode() >= java15_compatibility :]
@@ -1485,17 +1479,19 @@
        | 0
       )
       (  SUPER super_suffix=super_suffix
-           [: (*yynode)->rule_type = primary_selector_ast::type_super_access; :]
+           [: (*yynode)->rule_type = primary_selector::type_super_access; :]
        | method_name=identifier
          LPAREN method_arguments=optional_argument_list RPAREN
-           [: (*yynode)->rule_type = primary_selector_ast::type_method_call;  :]
+           [: (*yynode)->rule_type = primary_selector::type_method_call;  :]
       )
    )
  |
    LBRACKET array_index_expression=expression RBRACKET
-     [: (*yynode)->rule_type = primary_selector_ast::type_array_access;       :]
+     [: (*yynode)->rule_type = primary_selector::type_array_access;       :]
  )
--> primary_selector ;;
+-> primary_selector [
+     member variable rule_type: primary_selector::primary_selector_enum;
+] ;;
 
 
 -- SUPER SUFFIX: a call to either a constructor, a method or
@@ -1527,53 +1523,55 @@
  (
    builtin_type=optional_array_builtin_type
    DOT CLASS   -- things like int.class or int[].class
-     [: (*yynode)->rule_type = primary_atom_ast::type_builtin_type_dot_class;       :]
+     [: (*yynode)->rule_type = primary_atom::type_builtin_type_dot_class;       :]
  |
    literal=literal
-     [: (*yynode)->rule_type = primary_atom_ast::type_literal;                      :]
+     [: (*yynode)->rule_type = primary_atom::type_literal;                      :]
  |
    new_expression=new_expression
-     [: (*yynode)->rule_type = primary_atom_ast::type_new_expression;                     :]
+     [: (*yynode)->rule_type = primary_atom::type_new_expression;                     :]
  |
    LPAREN parenthesis_expression=expression RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_parenthesis_expression;             :]
+     [: (*yynode)->rule_type = primary_atom::type_parenthesis_expression;             :]
  |
    THIS (LPAREN this_constructor_arguments=optional_argument_list RPAREN | 0)
-     [: (*yynode)->rule_type = primary_atom_ast::type_this_call_no_type_arguments;        :]
+     [: (*yynode)->rule_type = primary_atom::type_this_call_no_type_arguments;        :]
  |
    SUPER super_suffix=super_suffix
-     [: (*yynode)->rule_type = primary_atom_ast::type_super_call_no_type_arguments;       :]
+     [: (*yynode)->rule_type = primary_atom::type_super_call_no_type_arguments;       :]
  |
    ?[: compatibility_mode() >= java15_compatibility :]
    -- generic method invocation with type arguments:
    type_arguments=non_wildcard_type_arguments
    (
       SUPER super_suffix=super_suffix
-        [: (*yynode)->rule_type = primary_atom_ast::type_super_call_with_type_arguments;  :]
+        [: (*yynode)->rule_type = primary_atom::type_super_call_with_type_arguments;  :]
     |
       THIS LPAREN this_constructor_arguments=optional_argument_list RPAREN
-        [: (*yynode)->rule_type = primary_atom_ast::type_this_call_with_type_arguments;   :]
+        [: (*yynode)->rule_type = primary_atom::type_this_call_with_type_arguments;   :]
     |
       method_name_typed=identifier
       LPAREN method_arguments=optional_argument_list RPAREN
-        [: (*yynode)->rule_type = primary_atom_ast::type_method_call_with_type_arguments; :]
+        [: (*yynode)->rule_type = primary_atom::type_method_call_with_type_arguments; :]
    )
  |
    -- type names (normal) - either pure, as method or like bla[][].class
    identifier=qualified_identifier_safe  -- without type arguments
    (
       LPAREN method_arguments=optional_argument_list RPAREN
-        [: (*yynode)->rule_type = primary_atom_ast::type_method_call_no_type_arguments;   :]
+        [: (*yynode)->rule_type = primary_atom::type_method_call_no_type_arguments;   :]
     |
       ?[: LA(2).kind == Token_RBRACKET :]
       declarator_brackets=mandatory_declarator_brackets
       DOT array_dotclass=CLASS
-        [: (*yynode)->rule_type = primary_atom_ast::type_array_type_dot_class;            :]
+        [: (*yynode)->rule_type = primary_atom::type_array_type_dot_class;            :]
     |
-      0 [: (*yynode)->rule_type = primary_atom_ast::type_type_name;                       :]
+      0 [: (*yynode)->rule_type = primary_atom::type_type_name;                       :]
    )
  )
--> primary_atom ;;
+-> primary_atom [
+     member variable rule_type: primary_atom::primary_atom_enum;
+] ;;
 
 
 -- NEW EXPRESSIONs are allocations of new types or arrays.
@@ -1642,16 +1640,18 @@
 -- The primitive types. The Java specification doesn't include void here,
 -- but the ANTLR grammar works that way, and so does this one.
 
-   VOID    [: (*yynode)->type = builtin_type_ast::type_void;    :]
- | BOOLEAN [: (*yynode)->type = builtin_type_ast::type_boolean; :]
- | BYTE    [: (*yynode)->type = builtin_type_ast::type_byte;    :]
- | CHAR    [: (*yynode)->type = builtin_type_ast::type_char;    :]
- | SHORT   [: (*yynode)->type = builtin_type_ast::type_short;   :]
- | INT     [: (*yynode)->type = builtin_type_ast::type_int;     :]
- | FLOAT   [: (*yynode)->type = builtin_type_ast::type_float;   :]
- | LONG    [: (*yynode)->type = builtin_type_ast::type_long;    :]
- | DOUBLE  [: (*yynode)->type = builtin_type_ast::type_double;  :]
--> builtin_type ;;
+   VOID    [: (*yynode)->type = builtin_type::type_void;    :]
+ | BOOLEAN [: (*yynode)->type = builtin_type::type_boolean; :]
+ | BYTE    [: (*yynode)->type = builtin_type::type_byte;    :]
+ | CHAR    [: (*yynode)->type = builtin_type::type_char;    :]
+ | SHORT   [: (*yynode)->type = builtin_type::type_short;   :]
+ | INT     [: (*yynode)->type = builtin_type::type_int;     :]
+ | FLOAT   [: (*yynode)->type = builtin_type::type_float;   :]
+ | LONG    [: (*yynode)->type = builtin_type::type_long;    :]
+ | DOUBLE  [: (*yynode)->type = builtin_type::type_double;  :]
+-> builtin_type [
+     member variable type: builtin_type::builtin_type_enum;
+] ;;
 
    #part=class_or_interface_type_name_part @ DOT
 -> class_or_interface_type_name ;;
@@ -1682,16 +1682,22 @@
                        -- break -> no more identifiers after the star
          )
    )*
--> qualified_identifier_with_optional_star ;;
+-> qualified_identifier_with_optional_star [
+     member variable has_star: bool;
+] ;;
 
 -- Declarator brackets are part of a type specification, like String[][].
 -- They are always empty, only have to be counted.
 
    ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )*
--> optional_declarator_brackets ;;
+-> optional_declarator_brackets [
+     member variable bracket_count: int;
+] ;;
 
    ( LBRACKET RBRACKET [: (*yynode)->bracket_count++; :] )+
--> mandatory_declarator_brackets ;;
+-> mandatory_declarator_brackets [
+     member variable bracket_count: int;
+] ;;
 
 
 
@@ -1703,19 +1709,19 @@
 -- AST node member as flags, except for the annotations who get their own list.
 
  (
-   PRIVATE      [: (*yynode)->modifiers |= optional_modifiers_ast::mod_private;   :]
- | PUBLIC       [: (*yynode)->modifiers |= optional_modifiers_ast::mod_public;    :]
- | PROTECTED    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_protected; :]
- | STATIC       [: (*yynode)->modifiers |= optional_modifiers_ast::mod_static;    :]
- | TRANSIENT    [: (*yynode)->modifiers |= optional_modifiers_ast::mod_transient; :]
- | FINAL        [: (*yynode)->modifiers |= optional_modifiers_ast::mod_final;     :]
- | ABSTRACT     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_abstract;  :]
- | NATIVE       [: (*yynode)->modifiers |= optional_modifiers_ast::mod_native;    :]
+   PRIVATE      [: (*yynode)->modifiers |= optional_modifiers::mod_private;   :]
+ | PUBLIC       [: (*yynode)->modifiers |= optional_modifiers::mod_public;    :]
+ | PROTECTED    [: (*yynode)->modifiers |= optional_modifiers::mod_protected; :]
+ | STATIC       [: (*yynode)->modifiers |= optional_modifiers::mod_static;    :]
+ | TRANSIENT    [: (*yynode)->modifiers |= optional_modifiers::mod_transient; :]
+ | FINAL        [: (*yynode)->modifiers |= optional_modifiers::mod_final;     :]
+ | ABSTRACT     [: (*yynode)->modifiers |= optional_modifiers::mod_abstract;  :]
+ | NATIVE       [: (*yynode)->modifiers |= optional_modifiers::mod_native;    :]
  -- Neither in the Java spec nor in the JavaCC grammar, just in the ANTLR one:
  -- | mod_threadsafe=THREADSAFE
- | SYNCHRONIZED [: (*yynode)->modifiers |= optional_modifiers_ast::mod_synchronized; :]
- | VOLATILE     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_volatile;  :]
- | STRICTFP     [: (*yynode)->modifiers |= optional_modifiers_ast::mod_strictfp;  :]
+ | SYNCHRONIZED [: (*yynode)->modifiers |= optional_modifiers::mod_synchronized; :]
+ | VOLATILE     [: (*yynode)->modifiers |= optional_modifiers::mod_volatile;  :]
+ | STRICTFP     [: (*yynode)->modifiers |= optional_modifiers::mod_strictfp;  :]
  |
  -- A modifier may be any annotation (e.g. @bla), but not @interface.
  -- This condition resolves the conflict between modifiers
@@ -1723,7 +1729,9 @@
    0 [: if (yytoken == Token_AT && LA(2).kind == Token_INTERFACE) { break; } :]
    #mod_annotation=annotation
  )*
--> optional_modifiers ;;
+-> optional_modifiers [
+     member variable modifiers: int;
+] ;;
 
 
 
@@ -1731,23 +1739,25 @@
 -> identifier ;;
 
  (
-   TRUE   [: (*yynode)->literal_type = literal_ast::type_true;  :]
- | FALSE  [: (*yynode)->literal_type = literal_ast::type_false; :]
- | NULL   [: (*yynode)->literal_type = literal_ast::type_null;  :]
+   TRUE   [: (*yynode)->literal_type = literal::type_true;  :]
+ | FALSE  [: (*yynode)->literal_type = literal::type_false; :]
+ | NULL   [: (*yynode)->literal_type = literal::type_null;  :]
  |
    integer_literal=INTEGER_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_integer;  :]
+   [: (*yynode)->literal_type = literal::type_integer;  :]
  |
    floating_point_literal=FLOATING_POINT_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_floating_point;  :]
+   [: (*yynode)->literal_type = literal::type_floating_point;  :]
  |
    character_literal=CHARACTER_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_character;  :]
+   [: (*yynode)->literal_type = literal::type_character;  :]
  |
    string_literal=STRING_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_string;  :]
+   [: (*yynode)->literal_type = literal::type_string;  :]
  )
--> literal ;;
+-> literal [
+     member variable literal_type: literal::literal_type_enum;
+] ;;
 
 
 

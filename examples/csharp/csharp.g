@@ -147,7 +147,7 @@
 -- Parser class members
 --
 
-%member (parserclass: public declaration)
+%parserclass (public declaration)
 [:
   /**
    * Transform the raw input into tokens.
@@ -178,7 +178,7 @@
   void report_problem( csharp::problem_type type, std::string message );
 :]
 
-%member (parserclass: protected declaration)
+%parserclass (protected declaration)
 [:
   friend class csharp_pp_handler_visitor; // calls the pp_*() methods
 
@@ -190,7 +190,7 @@
   virtual void pp_diagnostic( csharp::problem_type type ) {}
 :]
 
-%member (parserclass: private declaration)
+%parserclass (private declaration)
 [:
   void pp_undefine_symbol( std::string symbol_name );
   bool pp_is_symbol_defined( std::string symbol_name );
@@ -216,7 +216,7 @@
   bool lookahead_is_type_arguments();
 :]
 
-%member (parserclass: constructor)
+%parserclass (constructor)
 [:
   _M_compatibility_mode = csharp20_compatibility;
 :]
@@ -227,7 +227,7 @@
 -- Additional AST members
 --
 
-%member (_modifiers: public declaration)
+%namespace modifiers
 [:
   enum modifier_enum {
     mod_new          = 1,
@@ -247,12 +247,7 @@
   };
 :]
 
-%member (type_declaration_rest: public declaration)
-[:
-  bool partial;
-:]
-
-%member (class_or_struct_member_declaration: public declaration)
+%namespace class_or_struct_member_declaration
 [:
   enum class_or_struct_member_declaration_enum {
     type_constant_declaration,
@@ -267,19 +262,17 @@
     type_property_declaration,
     type_member_declaration,
   };
-  class_or_struct_member_declaration_enum declaration_type;
 :]
 
-%member (constructor_initializer: public declaration)
+%namespace constructor_initializer
 [:
   enum constructor_initializer_type_enum {
     type_base,
     type_this,
   };
-  constructor_initializer_type_enum initializer_type;
 :]
 
-%member (overloadable_unary_only_operator: public declaration)
+%namespace overloadable_unary_only_operator
 [:
   enum overloadable_unary_only_operator_enum {
     op_bang,
@@ -289,10 +282,9 @@
     op_true,
     op_false,
   };
-  overloadable_unary_only_operator_enum op;
 :]
 
-%member (overloadable_binary_only_operator: public declaration)
+%namespace overloadable_binary_only_operator
 [:
   enum overloadable_binary_only_operator_enum {
     op_star,
@@ -310,19 +302,17 @@
     op_greater_equal,
     op_less_equal,
   };
-  overloadable_binary_only_operator_enum op;
 :]
 
-%member (overloadable_unary_or_binary_operator: public declaration)
+%namespace overloadable_unary_or_binary_operator
 [:
   enum overloadable_unary_or_binary_operator_enum {
     op_plus,
     op_minus,
   };
-  overloadable_unary_or_binary_operator_enum op;
 :]
 
-%member (interface_member_declaration: public declaration)
+%namespace interface_member_declaration
 [:
   enum interface_member_declaration_enum {
     type_interface_event_declaration,
@@ -330,178 +320,69 @@
     type_interface_property_declaration,
     type_interface_method_declaration,
   };
-  interface_member_declaration_enum declaration_type;
-  bool decl_new; // specifies if the "new" keyword prepends the declaration
 :]
 
-%member (accessor_declarations: public declaration)
+%namespace accessor_declarations
 [:
   enum accessor_declarations_enum {
     type_get,
     type_set,
     type_none, // only possible for the second, optional accessor
   };
-  accessor_declarations_enum type_accessor1;
-  accessor_declarations_enum type_accessor2;
 :]
 
-%member (accessor_modifier: public declaration)
-[:
-  int modifiers; // using the modifier_enum values
-:]
-
-%member (event_accessor_declarations: public declaration)
+%namespace event_accessor_declarations
 [:
   enum event_accessor_declarations_enum {
     order_add_remove,
     order_remove_add,
   };
-  event_accessor_declarations_enum order;
 :]
 
-%member (primary_or_secondary_constraint: public declaration)
+%namespace primary_or_secondary_constraint
 [:
   enum primary_or_secondary_constraint_enum {
     type_type,
     type_class,
     type_struct,
   };
-  primary_or_secondary_constraint_enum constraint_type;
 :]
 
-%member (interface_accessors: public declaration)
-[:
-  accessor_declarations_ast::accessor_declarations_enum type_accessor1;
-  accessor_declarations_ast::accessor_declarations_enum type_accessor2;
-:]
-
-%member (argument: public declaration)
+%namespace argument
 [:
   enum argument_type_enum {
     type_value_parameter,
     type_reference_parameter,
     type_output_parameter,
   };
-  argument_type_enum argument_type;
 :]
 
-%member (return_type: public declaration)
-[:
-  enum return_type_enum {
-    type_regular,
-    type_void,
-  };
-  return_type_enum type;
-:]
-
-%member (unmanaged_type: public declaration)
-[:
-  pointer_type_ast::pointer_type_enum type;
-  int star_count;
-:]
-
-%member (pointer_type: public declaration)
-[:
-  enum pointer_type_enum {
-    type_regular,
-    type_void,
-  };
-  pointer_type_enum type;
-  int star_count;
-:]
-
-%member (builtin_class_type: public declaration)
-[:
-  enum builtin_class_type_enum {
-    type_object,
-    type_string,
-  };
-  builtin_class_type_enum type;
-:]
-
-%member (rank_specifier: public declaration)
-[:
-  int dimension_seperator_count;
-:]
-
-%member (optionally_nullable_type: public declaration)
-[:
-  bool nullable;
-:]
-
-%member (simple_type: public declaration)
-[:
-  enum simple_type_enum {
-    type_numeric,
-    type_bool,
-  };
-  simple_type_enum type;
-:]
-
-%member (numeric_type: public declaration)
-[:
-  enum numeric_type_enum {
-    type_integral,
-    type_floating_point,
-    type_decimal,
-  };
-  numeric_type_enum type;
-:]
-
-%member (integral_type: public declaration)
-[:
-  enum integral_type_enum {
-    type_sbyte,
-    type_byte,
-    type_short,
-    type_ushort,
-    type_int,
-    type_uint,
-    type_long,
-    type_ulong,
-    type_char,
-  };
-  integral_type_enum type;
-:]
-
-%member (floating_point_type: public declaration)
-[:
-  enum floating_point_type_enum {
-    type_float,
-    type_double,
-  };
-  floating_point_type_enum type;
-:]
-
-%member (goto_statement: public declaration)
+%namespace goto_statement
 [:
   enum goto_statement_enum {
     type_labeled_statement,
     type_switch_case,
     type_switch_default,
   };
-  goto_statement_enum goto_type;
 :]
 
-%member (yield_statement: public declaration)
+%namespace yield_statement
 [:
   enum yield_statement_enum {
     type_yield_return,
     type_yield_break,
   };
-  yield_statement_enum yield_type;
 :]
 
-%member (switch_label: public declaration)
+%namespace switch_label
 [:
   enum branch_type_enum {
     case_branch,
     default_branch
   };
-  branch_type_enum branch_type;
 :]
 
-%member (expression: public declaration)
+%namespace expression
 [:
   enum assignment_operator_enum {
     no_assignment,
@@ -517,19 +398,17 @@
     op_lshift_assign,
     op_rshift_assign,
   };
-  assignment_operator_enum assignment_operator;
 :]
 
-%member (equality_expression_rest: public declaration)
+%namespace equality_expression_rest
 [:
   enum equality_operator_enum {
     op_equal,
     op_not_equal,
   };
-  equality_operator_enum equality_operator;
 :]
 
-%member (relational_expression_rest: public declaration)
+%namespace relational_expression_rest
 [:
   enum relational_operator_enum {
     op_less_than,
@@ -539,38 +418,34 @@
     op_is,
     op_as,
   };
-  relational_operator_enum relational_operator;
 :]
 
-%member (shift_expression_rest: public declaration)
+%namespace shift_expression_rest
 [:
   enum shift_operator_enum {
     op_lshift,
     op_rshift,
   };
-  shift_operator_enum shift_operator;
 :]
 
-%member (additive_expression_rest: public declaration)
+%namespace additive_expression_rest
 [:
   enum additive_operator_enum {
     op_plus,
     op_minus
   };
-  additive_operator_enum additive_operator;
 :]
 
-%member (multiplicative_expression_rest: public declaration)
+%namespace multiplicative_expression_rest
 [:
   enum multiplicative_operator_enum {
     op_star,
     op_slash,
     op_remainder
   };
-  multiplicative_operator_enum multiplicative_operator;
 :]
 
-%member (unary_expression: public declaration)
+%namespace unary_expression
 [:
   enum unary_expression_enum {
     type_incremented_expression,
@@ -584,10 +459,9 @@
     type_pointer_indirection_expression,
     type_addressof_expression,
   };
-  unary_expression_enum rule_type;
 :]
 
-%member (primary_suffix: public declaration)
+%namespace primary_suffix
 [:
   enum primary_suffix_enum {
     type_member_access,
@@ -597,10 +471,9 @@
     type_increment,
     type_decrement,
   };
-  primary_suffix_enum suffix_type;
 :]
 
-%member (primary_atom: public declaration)
+%namespace primary_atom
 [:
   enum primary_atom_enum {
     type_literal,
@@ -616,10 +489,9 @@
     type_anonymous_method_expression,
     type_sizeof_expression,
   };
-  primary_atom_enum rule_type;
 :]
 
-%member (predefined_type: public declaration)
+%namespace predefined_type
 [:
   enum predefined_type_enum {
     type_bool,
@@ -638,51 +510,98 @@
     type_ulong,
     type_ushort,
   };
-  predefined_type_enum type;
 :]
 
-%member (base_access: public declaration)
+%namespace base_access
 [:
   enum base_access_enum {
     type_base_member_access,
     type_base_indexer_access,
   };
-  base_access_enum access_type;
 :]
 
-%member (typeof_expression: public declaration)
+%namespace typeof_expression
 [:
   enum typeof_expression_enum {
     type_void,
     type_unbound_type_name,
     type_type,
   };
-  typeof_expression_enum typeof_type;
 :]
 
-%member (generic_dimension_specifier: public declaration)
-  [: int comma_count; :]
+%namespace return_type
+[:
+  enum return_type_enum {
+    type_regular,
+    type_void,
+  };
+:]
 
-%member (parameter_modifier: public declaration)
+%namespace pointer_type
+[:
+  enum pointer_type_enum {
+    type_regular,
+    type_void,
+  };
+:]
+
+%namespace builtin_class_type
+[:
+  enum builtin_class_type_enum {
+    type_object,
+    type_string,
+  };
+:]
+
+%namespace simple_type
+[:
+  enum simple_type_enum {
+    type_numeric,
+    type_bool,
+  };
+:]
+
+%namespace numeric_type
+[:
+  enum numeric_type_enum {
+    type_integral,
+    type_floating_point,
+    type_decimal,
+  };
+:]
+
+%namespace integral_type
+[:
+  enum integral_type_enum {
+    type_sbyte,
+    type_byte,
+    type_short,
+    type_ushort,
+    type_int,
+    type_uint,
+    type_long,
+    type_ulong,
+    type_char,
+  };
+:]
+
+%namespace floating_point_type
+[:
+  enum floating_point_type_enum {
+    type_float,
+    type_double,
+  };
+:]
+
+%namespace parameter_modifier
 [:
   enum parameter_modifier_enum {
     mod_ref,
     mod_out,
   };
-  parameter_modifier_enum modifier;
 :]
 
-%member (optional_modifiers: public declaration)
-[:
-  int modifiers; // using the modifier_enum values
-:]
-
-%member (optional_type_modifiers: public declaration)
-[:
-  int modifiers; // using the modifier_enum values
-:]
-
-%member (literal: public declaration)
+%namespace literal
 [:
   enum literal_type_enum {
     type_true,
@@ -693,7 +612,6 @@
     type_character,
     type_string
   };
-  literal_type_enum literal_type;
 :]
 
 
@@ -894,22 +812,26 @@
     | delegate_declaration=delegate_declaration
    )
  )
--> type_declaration_rest ;;
+-> type_declaration_rest [
+     member variable partial: bool;
+] ;;
 
  (
-   NEW        [: (*yynode)->modifiers |= _modifiers_ast::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
+   NEW        [: (*yynode)->modifiers |= modifiers::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= modifiers::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= modifiers::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= modifiers::mod_private;   :]
  -- unsafe grammar extension: "unsafe" modifier
- | UNSAFE     [: (*yynode)->modifiers |= _modifiers_ast::mod_unsafe;    :]
+ | UNSAFE     [: (*yynode)->modifiers |= modifiers::mod_unsafe;    :]
  -- the following three ones only occur in class declarations:
- | ABSTRACT   [: (*yynode)->modifiers |= _modifiers_ast::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= _modifiers_ast::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_static;    :]
+ | ABSTRACT   [: (*yynode)->modifiers |= modifiers::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= modifiers::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= modifiers::mod_static;    :]
  )*
--> optional_type_modifiers ;;
+-> optional_type_modifiers [
+  member variable modifiers: int; -- using the modifier_enum values
+] ;;
 
 
 
@@ -1080,36 +1002,36 @@
 
  (
    constant_declaration=constant_declaration SEMICOLON
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_constant_declaration; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_constant_declaration; :]
  |
    event_declaration=event_declaration
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_event_declaration;    :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_event_declaration;    :]
  |
    -- The OPERATOR DECLARATION, part one. Makes overloaded operators.
    IMPLICIT OPERATOR operator_type=type
    LPAREN arg1_type=type arg1_name=identifier RPAREN
    (operator_body=block | SEMICOLON)
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_implicit; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_operator_declaration_implicit; :]
  |
    -- The OPERATOR DECLARATION, part two. Makes overloaded operators.
    -- (There's also part three, later in this rule.)
    EXPLICIT OPERATOR operator_type=type
    LPAREN arg1_type=type arg1_name=identifier RPAREN
    (operator_body=block | SEMICOLON)
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_explicit; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_operator_declaration_explicit; :]
  |
    -- A normal or static CONSTRUCTOR DECLARATION.
    -- For feasability, static_constructor_declaration is not used here.
    ?[: LA(2).kind == Token_LPAREN :]
    constructor_declaration=constructor_declaration
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_constructor_declaration; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_constructor_declaration; :]
  |
    -- The TYPE DECLARATION, buried under condition & action code ;)
    ?[: (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
         || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
         || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) :]
    type_declaration_rest=type_declaration_rest
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_type_declaration; :]
+     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_type_declaration; :]
  |
    -- for the rest of the declarations, we need to generalize some parts of the
    -- rules, which allows more productions than the specified ones, but
@@ -1131,17 +1053,17 @@
          (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
       )
       (operator_body=block | SEMICOLON)
-        [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_operator_declaration_typed; :]
+        [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_operator_declaration_typed; :]
     |
       -- The INDEXER DECLARATION rest, part one.
       THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
-        [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
+        [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_indexer_declaration; :]
     |
       -- The FIELD DECLARATION rest. Declares member variables.
       ?[: LA(2).kind == Token_ASSIGN || LA(2).kind == Token_COMMA
           || LA(2).kind == Token_SEMICOLON :]
       (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
-        [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_field_declaration; :]
+        [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_field_declaration; :]
     |
       -- and this is for rules that are still not split up sufficiently:
       member_name_or_interface_type=type_name_safe
@@ -1149,11 +1071,11 @@
       (
          -- The INDEXER DECLARATION rest, part two.
          DOT THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
-           [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_indexer_declaration; :]
+           [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_indexer_declaration; :]
        |
          -- The PROPERTY DECLARATION rest.
          LBRACE accessor_declarations=accessor_declarations RBRACE
-           [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_property_declaration; :]
+           [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_property_declaration; :]
        |
          -- The METHOD DECLARATION rest.
          (
@@ -1168,11 +1090,13 @@
            | 0
          )
          (method_body=block | SEMICOLON)
-           [: (*yynode)->declaration_type = class_or_struct_member_declaration_ast::type_member_declaration; :]
+           [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_member_declaration; :]
       )
    )
  )
--> class_or_struct_member_declaration ;;
+-> class_or_struct_member_declaration [
+     member variable declaration_type: class_or_struct_member_declaration::class_or_struct_member_declaration_enum;
+] ;;
 
 
 -- The FINALIZER is what other languages know as deconstructor.
@@ -1193,11 +1117,13 @@
 -> constructor_declaration ;;
 
    COLON
-   (  BASE [: (*yynode)->initializer_type = constructor_initializer_ast::type_base; :]
-    | THIS [: (*yynode)->initializer_type = constructor_initializer_ast::type_this; :]
+   (  BASE [: (*yynode)->initializer_type = constructor_initializer::type_base; :]
+    | THIS [: (*yynode)->initializer_type = constructor_initializer::type_this; :]
    )
    LPAREN arguments=optional_argument_list RPAREN
--> constructor_initializer ;;
+-> constructor_initializer [
+     member variable initializer_type: constructor_initializer::constructor_initializer_type_enum;
+] ;;
 
 -- There is also a STATIC CONSTRUCTOR DECLARATION which is only used if
 -- the modifiers contain "static" (and optionally "extern", and nothing else).
@@ -1278,13 +1204,15 @@
 
  (
    expression=expression
-     [: (*yynode)->argument_type = argument_ast::type_value_parameter;     :]
+     [: (*yynode)->argument_type = argument::type_value_parameter;     :]
  | REF expression=expression
-     [: (*yynode)->argument_type = argument_ast::type_reference_parameter; :]
+     [: (*yynode)->argument_type = argument::type_reference_parameter; :]
  | OUT expression=expression
-     [: (*yynode)->argument_type = argument_ast::type_output_parameter;    :]
+     [: (*yynode)->argument_type = argument::type_output_parameter;    :]
  )
--> argument ;;
+-> argument [
+     member variable argument_type: argument::argument_type_enum;
+] ;;
 
 
 
@@ -1292,36 +1220,42 @@
 -- OVERLOADABLE OPERATORS for operator declarations.
 
  (
-   BANG       [: (*yynode)->op = overloadable_unary_only_operator_ast::op_bang;      :]
- | TILDE      [: (*yynode)->op = overloadable_unary_only_operator_ast::op_tilde;     :]
- | INCREMENT  [: (*yynode)->op = overloadable_unary_only_operator_ast::op_increment; :]
- | DECREMENT  [: (*yynode)->op = overloadable_unary_only_operator_ast::op_decrement; :]
- | TRUE       [: (*yynode)->op = overloadable_unary_only_operator_ast::op_true;      :]
- | FALSE      [: (*yynode)->op = overloadable_unary_only_operator_ast::op_false;     :]
+   BANG       [: (*yynode)->op = overloadable_unary_only_operator::op_bang;      :]
+ | TILDE      [: (*yynode)->op = overloadable_unary_only_operator::op_tilde;     :]
+ | INCREMENT  [: (*yynode)->op = overloadable_unary_only_operator::op_increment; :]
+ | DECREMENT  [: (*yynode)->op = overloadable_unary_only_operator::op_decrement; :]
+ | TRUE       [: (*yynode)->op = overloadable_unary_only_operator::op_true;      :]
+ | FALSE      [: (*yynode)->op = overloadable_unary_only_operator::op_false;     :]
  )
--> overloadable_unary_only_operator ;;
+-> overloadable_unary_only_operator [
+     member variable op: overloadable_unary_only_operator::overloadable_unary_only_operator_enum;
+] ;;
 
  (
-   STAR          [: (*yynode)->op = overloadable_binary_only_operator_ast::op_star;          :]
- | SLASH         [: (*yynode)->op = overloadable_binary_only_operator_ast::op_slash;         :]
- | REMAINDER     [: (*yynode)->op = overloadable_binary_only_operator_ast::op_remainder;     :]
- | BIT_AND       [: (*yynode)->op = overloadable_binary_only_operator_ast::op_bit_and;       :]
- | BIT_OR        [: (*yynode)->op = overloadable_binary_only_operator_ast::op_bit_or;        :]
- | BIT_XOR       [: (*yynode)->op = overloadable_binary_only_operator_ast::op_bit_xor;       :]
- | LSHIFT        [: (*yynode)->op = overloadable_binary_only_operator_ast::op_lshift;        :]
- | RSHIFT        [: (*yynode)->op = overloadable_binary_only_operator_ast::op_rshift;        :]
- | EQUAL         [: (*yynode)->op = overloadable_binary_only_operator_ast::op_equal;         :]
- | NOT_EQUAL     [: (*yynode)->op = overloadable_binary_only_operator_ast::op_not_equal;     :]
- | GREATER_THAN  [: (*yynode)->op = overloadable_binary_only_operator_ast::op_greater_than;  :]
- | LESS_THAN     [: (*yynode)->op = overloadable_binary_only_operator_ast::op_less_than;     :]
- | GREATER_EQUAL [: (*yynode)->op = overloadable_binary_only_operator_ast::op_greater_equal; :]
- | LESS_EQUAL    [: (*yynode)->op = overloadable_binary_only_operator_ast::op_less_equal;    :]
+   STAR          [: (*yynode)->op = overloadable_binary_only_operator::op_star;          :]
+ | SLASH         [: (*yynode)->op = overloadable_binary_only_operator::op_slash;         :]
+ | REMAINDER     [: (*yynode)->op = overloadable_binary_only_operator::op_remainder;     :]
+ | BIT_AND       [: (*yynode)->op = overloadable_binary_only_operator::op_bit_and;       :]
+ | BIT_OR        [: (*yynode)->op = overloadable_binary_only_operator::op_bit_or;        :]
+ | BIT_XOR       [: (*yynode)->op = overloadable_binary_only_operator::op_bit_xor;       :]
+ | LSHIFT        [: (*yynode)->op = overloadable_binary_only_operator::op_lshift;        :]
+ | RSHIFT        [: (*yynode)->op = overloadable_binary_only_operator::op_rshift;        :]
+ | EQUAL         [: (*yynode)->op = overloadable_binary_only_operator::op_equal;         :]
+ | NOT_EQUAL     [: (*yynode)->op = overloadable_binary_only_operator::op_not_equal;     :]
+ | GREATER_THAN  [: (*yynode)->op = overloadable_binary_only_operator::op_greater_than;  :]
+ | LESS_THAN     [: (*yynode)->op = overloadable_binary_only_operator::op_less_than;     :]
+ | GREATER_EQUAL [: (*yynode)->op = overloadable_binary_only_operator::op_greater_equal; :]
+ | LESS_EQUAL    [: (*yynode)->op = overloadable_binary_only_operator::op_less_equal;    :]
  )
--> overloadable_binary_only_operator ;;
+-> overloadable_binary_only_operator [
+     member variable op: overloadable_binary_only_operator::overloadable_binary_only_operator_enum;
+] ;;
 
-   PLUS   [: (*yynode)->op = overloadable_unary_or_binary_operator_ast::op_plus;   :]
- | MINUS  [: (*yynode)->op = overloadable_unary_or_binary_operator_ast::op_minus;  :]
--> overloadable_unary_or_binary_operator ;;
+   PLUS   [: (*yynode)->op = overloadable_unary_or_binary_operator::op_plus;   :]
+ | MINUS  [: (*yynode)->op = overloadable_unary_or_binary_operator::op_minus;  :]
+-> overloadable_unary_or_binary_operator [
+     member variable op: overloadable_unary_or_binary_operator::overloadable_unary_or_binary_operator_enum;
+] ;;
 
 
 
@@ -1331,37 +1265,42 @@
    (accessor1_modifier=accessor_modifier | 0)
    (
       GET (accessor1_body=block | SEMICOLON)
-        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_get; :]
+        [: (*yynode)->type_accessor1 = accessor_declarations::type_get; :]
       (
          (#attributes_accessor2=attribute_section)*
          (accessor2_modifier=accessor_modifier | 0)
          SET (accessor2_body=block | SEMICOLON)
-           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_set;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+           [: (*yynode)->type_accessor2 = accessor_declarations::type_set;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
       )
     |
       SET (accessor1_body=block | SEMICOLON)
-        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_set; :]
+        [: (*yynode)->type_accessor1 = accessor_declarations::type_set; :]
       (
          (#attributes_accessor2=attribute_section)*
          (accessor2_modifier=accessor_modifier | 0)
          GET (accessor2_body=block | SEMICOLON)
-           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_get;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+           [: (*yynode)->type_accessor2 = accessor_declarations::type_get;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
       )
    )
--> accessor_declarations ;;
+-> accessor_declarations [
+     member variable type_accessor1: accessor_declarations::accessor_declarations_enum;
+     member variable type_accessor2: accessor_declarations::accessor_declarations_enum;
+] ;;
 
-   PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
-   (  INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
+   PROTECTED     [: (*yynode)->modifiers |= modifiers::mod_protected; :]
+   (  INTERNAL   [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
     | 0
    )
- | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
-   (  PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
+ | INTERNAL      [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
+   (  PROTECTED  [: (*yynode)->modifiers |= modifiers::mod_protected; :]
     | 0
    )
- | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
--> accessor_modifier ;;
+ | PRIVATE       [: (*yynode)->modifiers |= modifiers::mod_private;   :]
+-> accessor_modifier [
+     member variable modifiers: int; -- using the modifier_enum values
+] ;;
 
 
 -- EVENT ACCESSOR DECLARATIONS appear inside an event declaration.
@@ -1371,14 +1310,16 @@
       ADD accessor1_body=block
       (#attributes_accessor2=attribute_section)*
       REMOVE accessor2_body=block
-      [: (*yynode)->order = event_accessor_declarations_ast::order_add_remove; :]
+      [: (*yynode)->order = event_accessor_declarations::order_add_remove; :]
     |
       REMOVE accessor1_body=block
       (#attributes_accessor2=attribute_section)*
       ADD accessor2_body=block
-      [: (*yynode)->order = event_accessor_declarations_ast::order_remove_add; :]
+      [: (*yynode)->order = event_accessor_declarations::order_remove_add; :]
    )
--> event_accessor_declarations ;;
+-> event_accessor_declarations [
+     member variable order: event_accessor_declarations::event_accessor_declarations_enum;
+] ;;
 
 
 
@@ -1391,7 +1332,7 @@
    )
    (
        event_declaration=interface_event_declaration
-         [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_event_declaration; :]
+         [: (*yynode)->declaration_type = interface_member_declaration::type_interface_event_declaration; :]
     |
        -- the property and indexer declarations are in principle only types,
        -- not return_types. Generalized for a cleaner grammar, though.
@@ -1403,14 +1344,14 @@
           THIS
           LBRACKET formal_parameters=formal_parameter_list RBRACKET
           LBRACE interface_accessors=interface_accessors RBRACE
-            [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_indexer_declaration; :]
+            [: (*yynode)->declaration_type = interface_member_declaration::type_interface_indexer_declaration; :]
         |
           -- The method and property declarations need to be split further.
           member_name=identifier
           (
              -- The PROPERTY DECLARATION REST.
              RBRACE interface_accessors=interface_accessors RBRACE
-               [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_property_declaration; :]
+               [: (*yynode)->declaration_type = interface_member_declaration::type_interface_property_declaration; :]
            |
              (  ?[: compatibility_mode() >= csharp20_compatibility :]
                 type_parameters=type_parameters
@@ -1419,11 +1360,14 @@
              LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
              (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
              SEMICOLON
-               [: (*yynode)->declaration_type = interface_member_declaration_ast::type_interface_method_declaration; :]
+               [: (*yynode)->declaration_type = interface_member_declaration::type_interface_method_declaration; :]
           )
        )
    )
--> interface_member_declaration ;;
+-> interface_member_declaration [
+     member variable declaration_type: interface_member_declaration::interface_member_declaration_enum;
+     member variable decl_new: bool; -- specifies if the "new" keyword prepends the declaration
+] ;;
 
    EVENT event_type=type event_name=identifier SEMICOLON
 -> interface_event_declaration ;;
@@ -1433,22 +1377,25 @@
    (#attributes_accessor1=attribute_section)*
    (
       GET SEMICOLON
-        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_get; :]
+        [: (*yynode)->type_accessor1 = accessor_declarations::type_get; :]
       (
          (#attributes_accessor2=attribute_section)* SET SEMICOLON
-           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_set;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+           [: (*yynode)->type_accessor2 = accessor_declarations::type_set;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
       )
     |
       SET SEMICOLON
-        [: (*yynode)->type_accessor1 = accessor_declarations_ast::type_set; :]
+        [: (*yynode)->type_accessor1 = accessor_declarations::type_set; :]
       (
          (#attributes_accessor2=attribute_section)* GET SEMICOLON
-           [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_get;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations_ast::type_none; :]
+           [: (*yynode)->type_accessor2 = accessor_declarations::type_get;  :]
+       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
       )
    )
--> interface_accessors ;;
+-> interface_accessors [
+     member variable type_accessor1: accessor_declarations::accessor_declarations_enum;
+     member variable type_accessor2: accessor_declarations::accessor_declarations_enum;
+] ;;
 
 
 
@@ -1527,11 +1474,13 @@
 
  (
    class_type_or_secondary_constraint=class_type
-           [: (*yynode)->constraint_type = primary_or_secondary_constraint_ast::type_type;   :]
- | CLASS   [: (*yynode)->constraint_type = primary_or_secondary_constraint_ast::type_class;  :]
- | STRUCT  [: (*yynode)->constraint_type = primary_or_secondary_constraint_ast::type_struct; :]
+           [: (*yynode)->constraint_type = primary_or_secondary_constraint::type_type;   :]
+ | CLASS   [: (*yynode)->constraint_type = primary_or_secondary_constraint::type_class;  :]
+ | STRUCT  [: (*yynode)->constraint_type = primary_or_secondary_constraint::type_struct; :]
  )
--> primary_or_secondary_constraint ;;
+-> primary_or_secondary_constraint [
+     member variable constraint_type: primary_or_secondary_constraint::primary_or_secondary_constraint_enum;
+] ;;
 
    #interface_type_or_type_parameter=type_name
    (
@@ -1716,14 +1665,16 @@
 
    GOTO
    (  label=identifier
-        [: (*yynode)->goto_type = goto_statement_ast::type_labeled_statement; :]
+        [: (*yynode)->goto_type = goto_statement::type_labeled_statement; :]
     | CASE constant_expression=constant_expression
-        [: (*yynode)->goto_type = goto_statement_ast::type_switch_case;       :]
+        [: (*yynode)->goto_type = goto_statement::type_switch_case;       :]
     | DEFAULT
-        [: (*yynode)->goto_type = goto_statement_ast::type_switch_default;    :]
+        [: (*yynode)->goto_type = goto_statement::type_switch_default;    :]
    )
    SEMICOLON
--> goto_statement ;;
+-> goto_statement [
+     member variable goto_type: goto_statement::goto_statement_enum;
+] ;;
 
    RETURN (return_expression=expression | 0) SEMICOLON
 -> return_statement ;;
@@ -1742,12 +1693,14 @@
 
    YIELD
    (  RETURN return_expression=expression
-        [: (*yynode)->yield_type = yield_statement_ast::type_yield_return; :]
+        [: (*yynode)->yield_type = yield_statement::type_yield_return; :]
     | BREAK
-        [: (*yynode)->yield_type = yield_statement_ast::type_yield_break; :]
+        [: (*yynode)->yield_type = yield_statement::type_yield_break; :]
    )
    SEMICOLON
--> yield_statement ;;
+-> yield_statement [
+     member variable yield_type: yield_statement::yield_statement_enum;
+] ;;
 
 
 -- unsafe grammar extension: "unsafe" and "fixed" statements
@@ -1782,11 +1735,13 @@
 -> switch_section ;;
 
    (  CASE case_expression=constant_expression
-      [: (*yynode)->branch_type = switch_label_ast::case_branch;    :]
+      [: (*yynode)->branch_type = switch_label::case_branch;    :]
     | DEFAULT
-      [: (*yynode)->branch_type = switch_label_ast::default_branch; :]
+      [: (*yynode)->branch_type = switch_label::default_branch; :]
    ) COLON
--> switch_label ;;
+-> switch_label [
+     member variable branch_type: switch_label::branch_type_enum;
+] ;;
 
 
 -- The TRY STATEMENT, also known as try/catch/finally block.
@@ -1906,33 +1861,35 @@
    conditional_expression=conditional_expression
    (
       (  ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_assign;           :]
+           [: (*yynode)->assignment_operator = expression::op_assign;           :]
        | PLUS_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_plus_assign;      :]
+           [: (*yynode)->assignment_operator = expression::op_plus_assign;      :]
        | MINUS_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_minus_assign;     :]
+           [: (*yynode)->assignment_operator = expression::op_minus_assign;     :]
        | STAR_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_star_assign;      :]
+           [: (*yynode)->assignment_operator = expression::op_star_assign;      :]
        | SLASH_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_slash_assign;     :]
+           [: (*yynode)->assignment_operator = expression::op_slash_assign;     :]
        | REMAINDER_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_remainder_assign; :]
+           [: (*yynode)->assignment_operator = expression::op_remainder_assign; :]
        | BIT_AND_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_bit_and_assign;   :]
+           [: (*yynode)->assignment_operator = expression::op_bit_and_assign;   :]
        | BIT_OR_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_bit_or_assign;    :]
+           [: (*yynode)->assignment_operator = expression::op_bit_or_assign;    :]
        | BIT_XOR_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_bit_xor_assign;   :]
+           [: (*yynode)->assignment_operator = expression::op_bit_xor_assign;   :]
        | LSHIFT_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_lshift_assign;    :]
+           [: (*yynode)->assignment_operator = expression::op_lshift_assign;    :]
        | RSHIFT_ASSIGN
-           [: (*yynode)->assignment_operator = expression_ast::op_rshift_assign;    :]
+           [: (*yynode)->assignment_operator = expression::op_rshift_assign;    :]
       )
       assignment_expression=expression
     |
-      0 [: (*yynode)->assignment_operator = expression_ast::no_assignment; :]
+      0 [: (*yynode)->assignment_operator = expression::no_assignment; :]
    )
--> expression ;;
+-> expression [
+     member variable assignment_operator: expression::assignment_operator_enum;
+] ;;
 
 
    null_coalescing_expression=null_coalescing_expression
@@ -1969,61 +1926,71 @@
    (#additional_expression=equality_expression_rest)*
 -> equality_expression ;;
 
-   (  EQUAL     [: (*yynode)->equality_operator = equality_expression_rest_ast::op_equal;     :]
-    | NOT_EQUAL [: (*yynode)->equality_operator = equality_expression_rest_ast::op_not_equal; :]
+   (  EQUAL     [: (*yynode)->equality_operator = equality_expression_rest::op_equal;     :]
+    | NOT_EQUAL [: (*yynode)->equality_operator = equality_expression_rest::op_not_equal; :]
    )
    expression=relational_expression
--> equality_expression_rest ;;
+-> equality_expression_rest [
+     member variable equality_operator: equality_expression_rest::equality_operator_enum;
+] ;;
 
    expression=shift_expression
    (#additional_expression=relational_expression_rest)*
 -> relational_expression ;;
 
  (
-   (  LESS_THAN     [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_than;     :]
-    | GREATER_THAN  [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_than;  :]
-    | LESS_EQUAL    [: (*yynode)->relational_operator = relational_expression_rest_ast::op_less_equal;    :]
-    | GREATER_EQUAL [: (*yynode)->relational_operator = relational_expression_rest_ast::op_greater_equal; :]
+   (  LESS_THAN     [: (*yynode)->relational_operator = relational_expression_rest::op_less_than;     :]
+    | GREATER_THAN  [: (*yynode)->relational_operator = relational_expression_rest::op_greater_than;  :]
+    | LESS_EQUAL    [: (*yynode)->relational_operator = relational_expression_rest::op_less_equal;    :]
+    | GREATER_EQUAL [: (*yynode)->relational_operator = relational_expression_rest::op_greater_equal; :]
    )
    expression=shift_expression
  |
-   (  IS [: (*yynode)->relational_operator = relational_expression_rest_ast::op_is; :]
-    | AS [: (*yynode)->relational_operator = relational_expression_rest_ast::op_as; :]
+   (  IS [: (*yynode)->relational_operator = relational_expression_rest::op_is; :]
+    | AS [: (*yynode)->relational_operator = relational_expression_rest::op_as; :]
    )
    type=type
  )
--> relational_expression_rest ;;
+-> relational_expression_rest [
+     member variable relational_operator: relational_expression_rest::relational_operator_enum;
+] ;;
 
    expression=additive_expression
    (#additional_expression=shift_expression_rest)*
 -> shift_expression ;;
 
-   (  LSHIFT   [: (*yynode)->shift_operator = shift_expression_rest_ast::op_lshift; :]
-    | RSHIFT   [: (*yynode)->shift_operator = shift_expression_rest_ast::op_rshift; :]
+   (  LSHIFT   [: (*yynode)->shift_operator = shift_expression_rest::op_lshift; :]
+    | RSHIFT   [: (*yynode)->shift_operator = shift_expression_rest::op_rshift; :]
    )
    expression=additive_expression
--> shift_expression_rest ;;
+-> shift_expression_rest [
+     member variable shift_operator: shift_expression_rest::shift_operator_enum;
+] ;;
 
    expression=multiplicative_expression
    (#additional_expression=additive_expression_rest)*
 -> additive_expression ;;
 
-   (  PLUS  [: (*yynode)->additive_operator = additive_expression_rest_ast::op_plus;  :]
-    | MINUS [: (*yynode)->additive_operator = additive_expression_rest_ast::op_minus; :]
+   (  PLUS  [: (*yynode)->additive_operator = additive_expression_rest::op_plus;  :]
+    | MINUS [: (*yynode)->additive_operator = additive_expression_rest::op_minus; :]
    )
    expression=multiplicative_expression
--> additive_expression_rest ;;
+-> additive_expression_rest [
+     member variable additive_operator: additive_expression_rest::additive_operator_enum;
+] ;;
 
    expression=unary_expression
    (#additional_expression=multiplicative_expression_rest)*
 -> multiplicative_expression ;;
 
-   (  STAR      [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_star;      :]
-    | SLASH     [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_slash;     :]
-    | REMAINDER [: (*yynode)->multiplicative_operator = multiplicative_expression_rest_ast::op_remainder; :]
+   (  STAR      [: (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_star;      :]
+    | SLASH     [: (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_slash;     :]
+    | REMAINDER [: (*yynode)->multiplicative_operator = multiplicative_expression_rest::op_remainder; :]
    )
    expression=unary_expression
--> multiplicative_expression_rest ;;
+-> multiplicative_expression_rest [
+     member variable multiplicative_operator: multiplicative_expression_rest::multiplicative_operator_enum;
+] ;;
 
 
 
@@ -2037,34 +2004,36 @@
 
  (
    INCREMENT unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_incremented_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_incremented_expression; :]
  | DECREMENT unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_decremented_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_decremented_expression; :]
  | MINUS unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_minus_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_unary_minus_expression; :]
  | PLUS  unary_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_unary_plus_expression;  :]
+     [: (*yynode)->rule_type = unary_expression::type_unary_plus_expression;  :]
  | TILDE bitwise_not_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_bitwise_not_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_bitwise_not_expression; :]
  | BANG  logical_not_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_logical_not_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_logical_not_expression; :]
  |
    ?[: lookahead_is_cast_expression() == true :]
    cast_expression=cast_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_cast_expression;        :]
+     [: (*yynode)->rule_type = unary_expression::type_cast_expression;        :]
  |
    primary_expression=primary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_primary_expression;     :]
+     [: (*yynode)->rule_type = unary_expression::type_primary_expression;     :]
  |
    -- unsafe grammar extension: pointer indirection expression
    STAR pointer_indirection_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_pointer_indirection_expression; :]
+     [: (*yynode)->rule_type = unary_expression::type_pointer_indirection_expression; :]
  |
    -- unsafe grammar extension: addressof expression
    BIT_AND addressof_expression=unary_expression
-     [: (*yynode)->rule_type = unary_expression_ast::type_addressof_expression;   :]
+     [: (*yynode)->rule_type = unary_expression::type_addressof_expression;   :]
  )
--> unary_expression ;;
+-> unary_expression [
+     member variable rule_type: unary_expression::unary_expression_enum;
+] ;;
 
    LPAREN type=type RPAREN casted_expression=unary_expression
 -> cast_expression ;;
@@ -2083,21 +2052,21 @@
       type_arguments=type_arguments
     | 0
    )
-     [: (*yynode)->suffix_type = primary_suffix_ast::type_member_access;   :]
+     [: (*yynode)->suffix_type = primary_suffix::type_member_access;   :]
  |
    -- the suffix part of invocation_expression
    LPAREN arguments=optional_argument_list RPAREN
-     [: (*yynode)->suffix_type = primary_suffix_ast::type_invocation;      :]
+     [: (*yynode)->suffix_type = primary_suffix::type_invocation;      :]
  |
    -- element_access (also known as array access)
    LBRACKET (#expression=expression @ COMMA) RBRACKET
-     [: (*yynode)->suffix_type = primary_suffix_ast::type_element_access;  :]
+     [: (*yynode)->suffix_type = primary_suffix::type_element_access;  :]
  |
    INCREMENT
-     [: (*yynode)->suffix_type = primary_suffix_ast::type_increment;       :]
+     [: (*yynode)->suffix_type = primary_suffix::type_increment;       :]
  |
    DECREMENT
-     [: (*yynode)->suffix_type = primary_suffix_ast::type_decrement;       :]
+     [: (*yynode)->suffix_type = primary_suffix::type_decrement;       :]
  |
    -- unsafe grammar extension: pointer access
    ARROW_RIGHT member_name=identifier
@@ -2105,9 +2074,11 @@
       type_arguments=type_arguments
     | 0
    )
-     [: (*yynode)->suffix_type = primary_suffix_ast::type_pointer_member_access; :]
+     [: (*yynode)->suffix_type = primary_suffix::type_pointer_member_access; :]
  )
--> primary_suffix ;;
+-> primary_suffix [
+     member variable suffix_type: primary_suffix::primary_suffix_enum;
+] ;;
 
 
 -- PRIMARY ATOM: the basic element of a primary expression,
@@ -2115,43 +2086,45 @@
 
  (
    literal=literal
-     [: (*yynode)->rule_type = primary_atom_ast::type_literal;               :]
+     [: (*yynode)->rule_type = primary_atom::type_literal;               :]
  |
    LPAREN expression=expression RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_parenthesized_expression;    :]
+     [: (*yynode)->rule_type = primary_atom::type_parenthesized_expression;    :]
  |
    simple_name_or_member_access=simple_name_or_member_access
-     [: (*yynode)->rule_type = primary_atom_ast::type_member_access;         :]
+     [: (*yynode)->rule_type = primary_atom::type_member_access;         :]
  |
    THIS
-     [: (*yynode)->rule_type = primary_atom_ast::type_this_access;           :]
+     [: (*yynode)->rule_type = primary_atom::type_this_access;           :]
  |
    base_access=base_access
-     [: (*yynode)->rule_type = primary_atom_ast::type_base_access;           :]
+     [: (*yynode)->rule_type = primary_atom::type_base_access;           :]
  |
    new_expression=new_expression
-     [: (*yynode)->rule_type = primary_atom_ast::type_new_expression;        :]
+     [: (*yynode)->rule_type = primary_atom::type_new_expression;        :]
  |
    typeof_expression=typeof_expression
-     [: (*yynode)->rule_type = primary_atom_ast::type_typeof_expression;     :]
+     [: (*yynode)->rule_type = primary_atom::type_typeof_expression;     :]
  |
    CHECKED LPAREN expression=expression RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_checked_expression;    :]
+     [: (*yynode)->rule_type = primary_atom::type_checked_expression;    :]
  |
    UNCHECKED LPAREN expression=expression RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_unchecked_expression;  :]
+     [: (*yynode)->rule_type = primary_atom::type_unchecked_expression;  :]
  |
    DEFAULT LPAREN type=type RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_default_value_expression;    :]
+     [: (*yynode)->rule_type = primary_atom::type_default_value_expression;    :]
  |
    anonymous_method_expression=anonymous_method_expression
-     [: (*yynode)->rule_type = primary_atom_ast::type_anonymous_method_expression; :]
+     [: (*yynode)->rule_type = primary_atom::type_anonymous_method_expression; :]
  |
    -- unsafe grammar extension: sizeof(type)
    SIZEOF LPAREN unmanaged_type=unmanaged_type RPAREN
-     [: (*yynode)->rule_type = primary_atom_ast::type_sizeof_expression;    :]
+     [: (*yynode)->rule_type = primary_atom::type_sizeof_expression;    :]
  )
--> primary_atom ;;
+-> primary_atom [
+     member variable rule_type: primary_atom::primary_atom_enum;
+] ;;
 
 
 -- Here come the more complex parts of primary_atom that have been split out.
@@ -2178,23 +2151,25 @@
 -> simple_name_or_member_access ;;
 
  (
-   BOOL     [: (*yynode)->type = predefined_type_ast::type_bool;    :]
- | BYTE     [: (*yynode)->type = predefined_type_ast::type_byte;    :]
- | CHAR     [: (*yynode)->type = predefined_type_ast::type_char;    :]
- | DECIMAL  [: (*yynode)->type = predefined_type_ast::type_decimal; :]
- | DOUBLE   [: (*yynode)->type = predefined_type_ast::type_double;  :]
- | FLOAT    [: (*yynode)->type = predefined_type_ast::type_float;   :]
- | INT      [: (*yynode)->type = predefined_type_ast::type_int;     :]
- | LONG     [: (*yynode)->type = predefined_type_ast::type_long;    :]
- | OBJECT   [: (*yynode)->type = predefined_type_ast::type_object;  :]
- | SBYTE    [: (*yynode)->type = predefined_type_ast::type_sbyte;   :]
- | SHORT    [: (*yynode)->type = predefined_type_ast::type_short;   :]
- | STRING   [: (*yynode)->type = predefined_type_ast::type_string;  :]
- | UINT     [: (*yynode)->type = predefined_type_ast::type_uint;    :]
- | ULONG    [: (*yynode)->type = predefined_type_ast::type_ulong;   :]
- | USHORT   [: (*yynode)->type = predefined_type_ast::type_ushort;  :]
+   BOOL     [: (*yynode)->type = predefined_type::type_bool;    :]
+ | BYTE     [: (*yynode)->type = predefined_type::type_byte;    :]
+ | CHAR     [: (*yynode)->type = predefined_type::type_char;    :]
+ | DECIMAL  [: (*yynode)->type = predefined_type::type_decimal; :]
+ | DOUBLE   [: (*yynode)->type = predefined_type::type_double;  :]
+ | FLOAT    [: (*yynode)->type = predefined_type::type_float;   :]
+ | INT      [: (*yynode)->type = predefined_type::type_int;     :]
+ | LONG     [: (*yynode)->type = predefined_type::type_long;    :]
+ | OBJECT   [: (*yynode)->type = predefined_type::type_object;  :]
+ | SBYTE    [: (*yynode)->type = predefined_type::type_sbyte;   :]
+ | SHORT    [: (*yynode)->type = predefined_type::type_short;   :]
+ | STRING   [: (*yynode)->type = predefined_type::type_string;  :]
+ | UINT     [: (*yynode)->type = predefined_type::type_uint;    :]
+ | ULONG    [: (*yynode)->type = predefined_type::type_ulong;   :]
+ | USHORT   [: (*yynode)->type = predefined_type::type_ushort;  :]
  )
--> predefined_type ;;
+-> predefined_type [
+     member variable type: predefined_type::predefined_type_enum;
+] ;;
 
 
    BASE
@@ -2203,12 +2178,14 @@
           type_arguments=type_arguments
         | 0
       )
-        [: (*yynode)->access_type = base_access_ast::type_base_member_access;  :]
+        [: (*yynode)->access_type = base_access::type_base_member_access;  :]
     |
       LBRACKET (#expression=expression @ COMMA) RBRACKET
-        [: (*yynode)->access_type = base_access_ast::type_base_indexer_access; :]
+        [: (*yynode)->access_type = base_access::type_base_indexer_access; :]
    )
--> base_access ;;
+-> base_access [
+     member variable access_type: base_access::base_access_enum;
+] ;;
 
 
    DELEGATE LPAREN
@@ -2256,19 +2233,21 @@
    (
       ?[: LA(2).kind == Token_RPAREN :]
       VOID
-        [: (*yynode)->typeof_type = typeof_expression_ast::type_void; :]
+        [: (*yynode)->typeof_type = typeof_expression::type_void; :]
     |
       ?[: (compatibility_mode() >= csharp20_compatibility)
           && (lookahead_is_unbound_type_name() == true)
         :]
       unbound_type_name=unbound_type_name
-        [: (*yynode)->typeof_type = typeof_expression_ast::type_unbound_type_name; :]
+        [: (*yynode)->typeof_type = typeof_expression::type_unbound_type_name; :]
     |
       other_type=type
-        [: (*yynode)->typeof_type = typeof_expression_ast::type_type; :]
+        [: (*yynode)->typeof_type = typeof_expression::type_type; :]
    )
    RPAREN
--> typeof_expression ;;
+-> typeof_expression [
+     member variable typeof_type: typeof_expression::typeof_expression_enum;
+] ;;
 
    (  ?[: LA(2).kind == Token_SCOPE :] qualified_alias_label=identifier SCOPE
     | 0
@@ -2285,7 +2264,9 @@
    LESS_THAN [: (*yynode)->comma_count = 0; :]
    ( COMMA   [: (*yynode)->comma_count++;   :] )*
    GREATER_THAN
--> generic_dimension_specifier ;;
+-> generic_dimension_specifier [
+     member variable comma_count: int;
+] ;;
 
 
 
@@ -2299,11 +2280,13 @@
 
  (
    ?[: LA(2).kind != Token_STAR :] -- "void*" is a regular type in unsafe code
-   VOID              [: (*yynode)->type = return_type_ast::type_void;    :]
+   VOID              [: (*yynode)->type = return_type::type_void;    :]
  |
-   regular_type=type [: (*yynode)->type = return_type_ast::type_regular; :]
+   regular_type=type [: (*yynode)->type = return_type::type_regular; :]
  )
--> return_type ;;
+-> return_type [
+     member variable type: return_type::return_type_enum;
+] ;;
 
 -- The regular TYPE recognizes the same set of tokens as the one in the C#
 -- specification, but had to be refactored quite a bit. Looks different here.
@@ -2314,19 +2297,25 @@
 
    -- unsafe grammar extension: unmanaged type (includes all of the managed one)
    0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
+   (  regular_type=managed_type          [: (*yynode)->type = pointer_type::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type::type_void;    :]
    )
    ( STAR [: (*yynode)->star_count++; :] )*
--> unmanaged_type ;;
+-> unmanaged_type [
+     member variable type: pointer_type::pointer_type_enum;
+     member variable star_count: int;
+] ;;
 
    -- unsafe grammar extension: pointer type
    0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = pointer_type_ast::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type_ast::type_void;    :]
+   (  regular_type=managed_type          [: (*yynode)->type = pointer_type::type_regular; :]
+    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type::type_void;    :]
    )
    ( STAR [: (*yynode)->star_count++; :] )+
--> pointer_type ;;
+-> pointer_type [
+     member variable type: pointer_type::pointer_type_enum;
+     member variable star_count: int;
+] ;;
 
    non_array_type=non_array_type
    ( 0 [: if (LA(2).kind != Token_COMMA && LA(2).kind != Token_RBRACKET)
@@ -2343,7 +2332,9 @@
    LBRACKET [: (*yynode)->dimension_seperator_count = 0; :]
    ( COMMA  [: (*yynode)->dimension_seperator_count++;   :] )*
    RBRACKET
--> rank_specifier ;;
+-> rank_specifier [
+     member variable dimension_seperator_count: int;
+] ;;
 
    builtin_class_type=builtin_class_type
  | optionally_nullable_type=optionally_nullable_type
@@ -2353,9 +2344,11 @@
  | builtin_class_type=builtin_class_type
 -> class_type ;;
 
-   OBJECT [: (*yynode)->type = builtin_class_type_ast::type_object; :]
- | STRING [: (*yynode)->type = builtin_class_type_ast::type_string; :]
--> builtin_class_type ;;
+   OBJECT [: (*yynode)->type = builtin_class_type::type_object; :]
+ | STRING [: (*yynode)->type = builtin_class_type::type_string; :]
+-> builtin_class_type [
+     member variable type: builtin_class_type::builtin_class_type_enum;
+] ;;
 
 -- NULLABLE TYPES are new in C# 2.0 and need to be expressed a little bit
 -- differently than in LALR grammars like in the C# specification.
@@ -2366,7 +2359,9 @@
     |
       0        [: (*yynode)->nullable = false; :]
    )
--> optionally_nullable_type ;;
+-> optionally_nullable_type [
+     member variable nullable: bool;
+] ;;
 
    type_name=type_name
  | simple_type=simple_type
@@ -2377,43 +2372,51 @@
 
  (
    numeric_type=numeric_type
-     [: (*yynode)->type = simple_type_ast::type_numeric; :]
+     [: (*yynode)->type = simple_type::type_numeric; :]
  | BOOL
-     [: (*yynode)->type = simple_type_ast::type_bool; :]
+     [: (*yynode)->type = simple_type::type_bool; :]
  )
--> simple_type ;;
+-> simple_type [
+     member variable type: simple_type::simple_type_enum;
+] ;;
 
 
 -- NUMERIC TYPES include INTEGRAL TYPES, FLOATING POINT TYPES, and DECIMAL.
 
  (
    int_type=integral_type
-     [: (*yynode)->type = numeric_type_ast::type_integral; :]
+     [: (*yynode)->type = numeric_type::type_integral; :]
  | float_type=floating_point_type
-     [: (*yynode)->type = numeric_type_ast::type_floating_point; :]
+     [: (*yynode)->type = numeric_type::type_floating_point; :]
  | DECIMAL
-     [: (*yynode)->type = numeric_type_ast::type_decimal; :]
+     [: (*yynode)->type = numeric_type::type_decimal; :]
  )
--> numeric_type ;;
+-> numeric_type [
+     member variable type: numeric_type::numeric_type_enum;
+] ;;
 
  (
-   SBYTE   [: (*yynode)->type = integral_type_ast::type_sbyte;  :]
- | BYTE    [: (*yynode)->type = integral_type_ast::type_byte;   :]
- | SHORT   [: (*yynode)->type = integral_type_ast::type_short;  :]
- | USHORT  [: (*yynode)->type = integral_type_ast::type_ushort; :]
- | INT     [: (*yynode)->type = integral_type_ast::type_int;    :]
- | UINT    [: (*yynode)->type = integral_type_ast::type_uint;   :]
- | LONG    [: (*yynode)->type = integral_type_ast::type_long;   :]
- | ULONG   [: (*yynode)->type = integral_type_ast::type_ulong;  :]
- | CHAR    [: (*yynode)->type = integral_type_ast::type_char;   :]
+   SBYTE   [: (*yynode)->type = integral_type::type_sbyte;  :]
+ | BYTE    [: (*yynode)->type = integral_type::type_byte;   :]
+ | SHORT   [: (*yynode)->type = integral_type::type_short;  :]
+ | USHORT  [: (*yynode)->type = integral_type::type_ushort; :]
+ | INT     [: (*yynode)->type = integral_type::type_int;    :]
+ | UINT    [: (*yynode)->type = integral_type::type_uint;   :]
+ | LONG    [: (*yynode)->type = integral_type::type_long;   :]
+ | ULONG   [: (*yynode)->type = integral_type::type_ulong;  :]
+ | CHAR    [: (*yynode)->type = integral_type::type_char;   :]
  )
--> integral_type ;;
+-> integral_type [
+     member variable type: integral_type::integral_type_enum;
+] ;;
 
  (
-   FLOAT   [: (*yynode)->type = floating_point_type_ast::type_float;  :]
- | DOUBLE  [: (*yynode)->type = floating_point_type_ast::type_double; :]
+   FLOAT   [: (*yynode)->type = floating_point_type::type_float;  :]
+ | DOUBLE  [: (*yynode)->type = floating_point_type::type_double; :]
  )
--> floating_point_type ;;
+-> floating_point_type [
+     member variable type: floating_point_type::floating_point_type_enum;
+] ;;
 
 
 -- TYPE NAMES and NAMESPACE NAMES are the same thing,
@@ -2463,32 +2466,36 @@
 -- MODIFIERS, KEYWORDS, LITERALS, and the IDENTIFIER wrapper
 --
 
-   REF       [: (*yynode)->modifier = parameter_modifier_ast::mod_ref; :]
- | OUT       [: (*yynode)->modifier = parameter_modifier_ast::mod_out; :]
--> parameter_modifier ;;
+   REF       [: (*yynode)->modifier = parameter_modifier::mod_ref; :]
+ | OUT       [: (*yynode)->modifier = parameter_modifier::mod_out; :]
+-> parameter_modifier [
+     member variable modifier: parameter_modifier::parameter_modifier_enum;
+] ;;
 
 -- These are all the modifiers that can occur in front of type and type member
 -- declarations. They are not valid in every combination, this has to be
 -- checked seperately after parsing this rule.
 
  (
-   NEW        [: (*yynode)->modifiers |= _modifiers_ast::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= _modifiers_ast::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= _modifiers_ast::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= _modifiers_ast::mod_private;   :]
- | ABSTRACT   [: (*yynode)->modifiers |= _modifiers_ast::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= _modifiers_ast::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= _modifiers_ast::mod_static;    :]
- | READONLY   [: (*yynode)->modifiers |= _modifiers_ast::mod_readonly;  :]
- | VOLATILE   [: (*yynode)->modifiers |= _modifiers_ast::mod_volatile;  :]
- | VIRTUAL    [: (*yynode)->modifiers |= _modifiers_ast::mod_virtual;   :]
- | OVERRIDE   [: (*yynode)->modifiers |= _modifiers_ast::mod_override;  :]
- | EXTERN     [: (*yynode)->modifiers |= _modifiers_ast::mod_extern;    :]
+   NEW        [: (*yynode)->modifiers |= modifiers::mod_new;       :]
+ | PUBLIC     [: (*yynode)->modifiers |= modifiers::mod_public;    :]
+ | PROTECTED  [: (*yynode)->modifiers |= modifiers::mod_protected; :]
+ | INTERNAL   [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
+ | PRIVATE    [: (*yynode)->modifiers |= modifiers::mod_private;   :]
+ | ABSTRACT   [: (*yynode)->modifiers |= modifiers::mod_abstract;  :]
+ | SEALED     [: (*yynode)->modifiers |= modifiers::mod_sealed;    :]
+ | STATIC     [: (*yynode)->modifiers |= modifiers::mod_static;    :]
+ | READONLY   [: (*yynode)->modifiers |= modifiers::mod_readonly;  :]
+ | VOLATILE   [: (*yynode)->modifiers |= modifiers::mod_volatile;  :]
+ | VIRTUAL    [: (*yynode)->modifiers |= modifiers::mod_virtual;   :]
+ | OVERRIDE   [: (*yynode)->modifiers |= modifiers::mod_override;  :]
+ | EXTERN     [: (*yynode)->modifiers |= modifiers::mod_extern;    :]
  -- unsafe grammar extension: "unsafe" keyword
- | UNSAFE     [: (*yynode)->modifiers |= _modifiers_ast::mod_unsafe;    :]
+ | UNSAFE     [: (*yynode)->modifiers |= modifiers::mod_unsafe;    :]
  )*
--> optional_modifiers ;;
+-> optional_modifiers [
+  member variable modifiers: int; -- using the modifier_enum values
+] ;;
 
  (
    keyword=ABSTRACT | keyword=AS | keyword=BASE | keyword=BOOL
@@ -2529,29 +2536,25 @@
 -> identifier ;;
 
  (
-   TRUE   [: (*yynode)->literal_type = literal_ast::type_true;  :]
- | FALSE  [: (*yynode)->literal_type = literal_ast::type_false; :]
- | NULL   [: (*yynode)->literal_type = literal_ast::type_null;  :]
+   TRUE   [: (*yynode)->literal_type = literal::type_true;  :]
+ | FALSE  [: (*yynode)->literal_type = literal::type_false; :]
+ | NULL   [: (*yynode)->literal_type = literal::type_null;  :]
  |
    integer_literal=INTEGER_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_integer;  :]
+   [: (*yynode)->literal_type = literal::type_integer;  :]
  |
    floating_point_literal=REAL_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_real;  :]
+   [: (*yynode)->literal_type = literal::type_real;  :]
  |
    character_literal=CHARACTER_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_character;  :]
+   [: (*yynode)->literal_type = literal::type_character;  :]
  |
    string_literal=STRING_LITERAL
-   [: (*yynode)->literal_type = literal_ast::type_string;  :]
+   [: (*yynode)->literal_type = literal::type_string;  :]
  )
--> literal ;;
-
-
--- Pseudo rules for declaring enums that are used in multiple rules.
--- TODO: make kdev-pg have a %namespace declaration, making this obsolete.
-
-0 -> _modifiers ;;
+-> literal [
+     member variable literal_type: literal::literal_type_enum;
+] ;;
 
 
 

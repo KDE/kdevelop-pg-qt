@@ -75,14 +75,14 @@ namespace
             out << ", " << node->_M_arguments;
 
         out << "))"
-            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_"
+            << "{ return yy_expected_symbol(" << "ast_node::Kind_"
             << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
       }
     else
       {
         out << "if (!parse_" << symbol_name << "(" << node->_M_arguments << "))"
-            << "{ return yy_expected_symbol(" << parser << "_ast_node::Kind_"
+            << "{ return yy_expected_symbol(" << "ast_node::Kind_"
             << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
       }
@@ -387,7 +387,7 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
   model::symbol_item *sym = __it.second;
   code_generator cg(out, parser);
 
-  out << "bool" << " " << parser << "::parse_" << sym->_M_name << "(";
+  out << "bool parser::parse_" << sym->_M_name << "(";
 
   gen_parse_method_signature gen_signature(out);
   gen_signature(sym);
@@ -588,7 +588,7 @@ void generate_parser_decls::operator()()
   if (_G_system.decl)
     out << _G_system.decl << std::endl;
 
-  out << "class " << parser << "{"
+  out << "class parser {"
       << "public:" << std::endl
       << "typedef " << _G_system.token_stream << " token_stream_type;" << std::endl
       << "typedef " << _G_system.token_stream << "::token_type token_type;" << std::endl
@@ -650,7 +650,7 @@ void generate_parser_decls::operator()()
       out << std::endl << "public:" << std::endl;
     }
 
-  out << parser << "()" << "{" << std::endl;
+  out << "parser()" << "{" << std::endl;
   if (_G_system.generate_ast)
     {
       out << "memory_pool = 0;" << std::endl;
@@ -671,7 +671,7 @@ void generate_parser_decls::operator()()
 
   if (_G_system.parserclass_members.destructor_code.empty() == false)
     {
-      out << "virtual ~" << parser << "()" << "{" << std::endl
+      out << "virtual ~parser()" << "{" << std::endl
           << "// user defined destructor code:" << std::endl;
       std::for_each(_G_system.parserclass_members.destructor_code.begin(),
                     _G_system.parserclass_members.destructor_code.end(),
@@ -686,9 +686,6 @@ void generate_parser_decls::operator()()
 
 void generate_parser_bits::operator()()
 {
-  if (_G_system.bits)
-    out << _G_system.bits << std::endl;
-
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_parser_rule(out, parser));
 }
 

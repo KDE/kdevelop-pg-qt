@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -23,14 +24,16 @@
 
 void generate_visitor::operator()()
 {
-  out << "class " << parser << "_visitor {" << std::endl
-      << "typedef void (" << parser << "_visitor::*parser_fun_t)(" << parser << "_ast_node *);" << std::endl
+  out << "class visitor {" << std::endl
+      << "typedef void (visitor::*parser_fun_t)(" << "ast_node *);" << std::endl
       << "static parser_fun_t _S_parser_table[];" << std::endl
       << std::endl
       << "public:" << std::endl
-      << "virtual ~" << parser << "_visitor() {}" << std::endl;
+      << "virtual ~visitor() {}" << std::endl;
 
-  out << "virtual void visit_node(" << parser << "_ast_node" << " *node" << ") { if (node) (this->*_S_parser_table[node->kind - 1000])(node); }" << std::endl;
+  out << "virtual void visit_node(ast_node *node) { "
+      << "if (node) (this->*_S_parser_table[node->kind - 1000])(node); "
+      << "}" << std::endl;
 
   for (std::map<std::string, model::symbol_item*>::iterator it = _G_system.symbols.begin();
        it != _G_system.symbols.end(); ++it)

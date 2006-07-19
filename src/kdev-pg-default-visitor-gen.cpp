@@ -24,8 +24,7 @@
 
 void generate_default_visitor::operator()()
 {
-  out << "class " << parser << "_default_visitor: public "
-      << parser << "_visitor {" << std::endl
+  out << "class default_visitor: public visitor {" << std::endl
       << "public:" << std::endl;
 
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),

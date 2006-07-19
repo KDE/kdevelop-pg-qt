@@ -242,8 +242,20 @@ int main(int, char *argv[])
 
     if (_G_system.generate_ast)
       {
+        s << "namespace " << parser << "{" << std::endl
+          << std::endl;
+
         __ast();
+
+        s << std::endl << "} // end of namespace " << parser << std::endl
+          << std::endl;
       }
+
+    if (_G_system.decl)
+      s << _G_system.decl << std::endl;
+
+    s << "namespace " << parser << "{" << std::endl
+      << std::endl;
 
     __decls();
 
@@ -252,6 +264,9 @@ int main(int, char *argv[])
         __visitor();
         __default_visitor();
       }
+
+    s << std::endl << "} // end of namespace " << parser << std::endl
+      << std::endl;
 
     s << "#endif" << std::endl << std::endl;
 
@@ -273,6 +288,12 @@ int main(int, char *argv[])
     s << "#include \"" << parser << ".h\"" << std::endl
       << std::endl;
 
+    if (_G_system.bits)
+      s << _G_system.bits << std::endl;
+
+    s << "namespace " << parser << "{" << std::endl
+      << std::endl;
+
     generate_parser_bits __bits(s, parser);
     generate_visitor_bits __visitor_bits(s, parser);
 
@@ -282,6 +303,9 @@ int main(int, char *argv[])
       {
         __visitor_bits();
       }
+
+    s << std::endl << "} // end of namespace " << parser << std::endl
+      << std::endl;
 
     std::string oname = parser;
     oname += ".cpp";

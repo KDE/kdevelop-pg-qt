@@ -1,5 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -24,13 +25,13 @@
 
 void generate_visitor_bits::operator()()
 {
-  out << parser << "_visitor" << "::parser_fun_t " << parser << "_visitor::_S_parser_table[] = {" << std::endl;
+  out << "visitor::parser_fun_t visitor::_S_parser_table[] = {" << std::endl;
 
   std::map<std::string, model::symbol_item*>::iterator it = _G_system.symbols.begin();
   while (it != _G_system.symbols.end())
     {
       model::symbol_item *sym = (*it++).second;
-      out << "reinterpret_cast<parser_fun_t>(&" << parser << "_visitor" << "::visit_" << sym->_M_name << ")";
+      out << "reinterpret_cast<parser_fun_t>(&visitor::visit_" << sym->_M_name << ")";
 
       if (it != _G_system.symbols.end())
         out << ",";

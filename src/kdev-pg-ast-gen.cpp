@@ -43,7 +43,7 @@ void generate_ast::operator()()
 
   out << std::endl;
 
-  out << "struct " << parser << "_ast_node {" << std::endl
+  out << "struct ast_node {" << std::endl
       << "enum ast_node_kind_enum {" << std::endl;
 
   int node_id = 1000;
@@ -73,7 +73,7 @@ void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const 
   _M_in_cons = false;
 
   model::symbol_item *sym = __it.second;
-  out << "struct " << sym->_M_name << "_ast: public " << parser << "_ast_node"
+  out << "struct " << sym->_M_name << "_ast: public ast_node"
       << "{" << std::endl
       << "enum { KIND = Kind_" << sym->_M_name << "};" << std::endl << std::endl;
 
@@ -119,7 +119,7 @@ void gen_ast_rule::visit_alternative(model::alternative_item *node)
     {
       out << "union" << std::endl
           << "{" << std::endl
-          << parser << "_ast_node *__node_cast;" << std::endl
+          << "ast_node *__node_cast;" << std::endl
           << "std::size_t __token_cast;" << std::endl
           << std::endl;
     }

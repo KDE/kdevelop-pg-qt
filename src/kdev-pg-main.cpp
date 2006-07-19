@@ -180,9 +180,6 @@ int main(int, char *argv[])
   std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
                 undefined_token_checker());
 
-  std::for_each(_G_system.members.begin(), _G_system.members.end(),
-                undefined_memberstruct_checker());
-
   problem_summary_printer()();
 
   if (dump_terminals)

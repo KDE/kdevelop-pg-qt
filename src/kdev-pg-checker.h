@@ -86,11 +86,6 @@ private:
   model::symbol_item *_M_symbol;
 };
 
-struct undefined_memberstruct_checker: protected default_visitor
-{
-  void operator()(std::pair<const std::string, world::member_code*> &item);
-};
-
 struct problem_summary_printer
 {
   void operator()();

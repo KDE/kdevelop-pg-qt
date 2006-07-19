@@ -125,11 +125,11 @@ public:
 class gen_member_code
 {
   std::ostream &out;
-  settings::member_item::member_kind_enum kind;
+  int _M_kind_mask;
 
 public:
-  gen_member_code(std::ostream &o, settings::member_item::member_kind_enum k)
-  : out(o), kind(k)
+  gen_member_code(std::ostream &o, int kind_mask)
+  : out(o), _M_kind_mask(kind_mask)
   {}
 
   void operator()(settings::member_item* m);

@@ -242,18 +242,6 @@ void undefined_token_checker::visit_terminal(model::terminal_item *node)
     }
 }
 
-void undefined_memberstruct_checker::operator()(std::pair<const std::string,
-                                                world::member_code*> &item)
-{
-  if (item.first != "parserclass"
-      && _G_system.symbols.find(item.first) == _G_system.symbols.end())
-    {
-      std::cerr << "** ERROR Undefined rule for member code ``"
-                << item.first << "''" << std::endl;
-      problem_summary_printer::report_error();
-    }
-}
-
 void empty_FIRST_checker::operator()(model::node *node)
 {
   visit_node(node);

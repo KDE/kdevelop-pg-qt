@@ -39,10 +39,10 @@ extern void yyerror(char const *msg);
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
-%token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_MEMBER_DECLARATION
-%token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_CONSTRUCTOR T_DESTRUCTOR
-%token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_NODE T_NODE_SEQUENCE
-%token T_TOKEN T_VARIABLE
+%token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
+%token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
+%token T_CONSTRUCTOR T_DESTRUCTOR T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY
+%token T_ARGUMENT T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
@@ -68,42 +68,52 @@ declarations
     ;
 
 declaration
-    : T_MEMBER_DECLARATION '(' T_IDENTIFIER ':' member_declaration_rest { _G_system.push_member($3,$5); }
+    : T_PARSERCLASS_DECLARATION member_declaration_rest
+        { _G_system.push_parserclass_member($2); }
     | T_TOKEN_DECLARATION declared_tokens ';'
-    | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';' { _G_system.token_stream = $2; }
+    | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
+        { _G_system.token_stream = $2;           }
+    | namespace_declaration
     ;
 
 member_declaration_rest
-    : T_PUBLIC T_DECLARATION ')' T_CODE
-        { $$ = pg::member(settings::member_item::public_declaration, $4); }
-    | T_PROTECTED T_DECLARATION ')' T_CODE
-        { $$ = pg::member(settings::member_item::protected_declaration, $4); }
-    | T_PRIVATE T_DECLARATION ')' T_CODE
-        { $$ = pg::member(settings::member_item::private_declaration, $4); }
-    | T_CONSTRUCTOR ')' T_CODE
-        { $$ = pg::member(settings::member_item::constructor_code, $3); }
-    | T_DESTRUCTOR ')' T_CODE
-        { $$ = pg::member(settings::member_item::destructor_code, $3); }
+    : '(' T_PUBLIC T_DECLARATION ')' T_CODE
+        { $$ = pg::member(settings::member_item::public_declaration, $5);    }
+    | '(' T_PROTECTED T_DECLARATION ')' T_CODE
+        { $$ = pg::member(settings::member_item::protected_declaration, $5); }
+    | '(' T_PRIVATE T_DECLARATION ')' T_CODE
+        { $$ = pg::member(settings::member_item::private_declaration, $5);   }
+    | '(' T_CONSTRUCTOR ')' T_CODE
+        { $$ = pg::member(settings::member_item::constructor_code, $4);      }
+    | '(' T_DESTRUCTOR ')' T_CODE
+        { $$ = pg::member(settings::member_item::destructor_code, $4);       }
+    ;
+
+namespace_declaration
+    : T_NAMESPACE_DECLARATION T_IDENTIFIER T_CODE
+        { _G_system.push_namespace($2, $3); }
     ;
 
 declared_tokens
     : T_TERMINAL                        { _G_system.push_terminal($1,$1); }
     | T_TERMINAL '(' T_STRING ')'       { _G_system.push_terminal($1,$3); }
     | declared_tokens ',' T_TERMINAL    { _G_system.push_terminal($3,$3); }
-    | declared_tokens ',' T_TERMINAL '(' T_STRING ')'  { _G_system.push_terminal($3,$5); }
+    | declared_tokens ',' T_TERMINAL '(' T_STRING ')'
+                                        { _G_system.push_terminal($3,$5); }
     ;
 
 rules
     : item ';'                          { _G_system.push_rule($1); }
     | rules item ';'                    { _G_system.push_rule($2); }
+    | rules namespace_declaration
     ;
 
 primary_item
     : '0'                               { $$ = _G_system.zero(); }
     | '(' option_item ')'               { $$ = $2; }
     | primary_atom                      { $$ = $1; }
-    | name scope primary_atom      { $$ = pg::annotation($1, $3, false, $2); }
-    | '#' name scope primary_atom  { $$ = pg::annotation($2, $4, true, $3);  }
+    | name scope primary_atom           { $$ = pg::annotation($1, $3, false, $2); }
+    | '#' name scope primary_atom       { $$ = pg::annotation($2, $4, true, $3);  }
     ;
 
 primary_atom

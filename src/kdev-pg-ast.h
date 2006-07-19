@@ -206,11 +206,11 @@ namespace settings
     PG_NODE(member)
 
     enum member_kind_enum {
-      public_declaration,
-      protected_declaration,
-      private_declaration,
-      constructor_code,
-      destructor_code
+      public_declaration    = 1,
+      protected_declaration = 2,
+      private_declaration   = 4,
+      constructor_code      = 8,
+      destructor_code       = 16,
     };
 
     member_kind_enum _M_member_kind;

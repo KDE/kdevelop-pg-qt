@@ -34,6 +34,15 @@ void generate_ast::operator()()
 
   out << std::endl;
 
+  for (world::namespace_set::iterator it = _G_system.namespaces.begin();
+       it != _G_system.namespaces.end(); ++it)
+    {
+      out << "namespace " << (*it).first
+          << "{" << (*it).second << "}" << std::endl << std::endl;
+    }
+
+  out << std::endl;
+
   out << "struct " << parser << "_ast_node {" << std::endl
       << "enum ast_node_kind_enum {" << std::endl;
 
@@ -80,57 +89,11 @@ void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const 
       visit_node(e);
     }
 
-
-  std::string name = sym->_M_name;
-  world::member_set::iterator member_it = _G_system.members.find(name);
-
-  if (member_it != _G_system.members.end())
-    {
-      if ((*member_it).second->declarations.empty() == false)
-        {
-          out << std::endl << "// user defined declarations:" << std::endl;
-          out << "public:" << std::endl;
-          std::for_each((*member_it).second->declarations.begin(),
-                        (*member_it).second->declarations.end(),
-                        gen_member_code(out, settings::member_item::public_declaration));
-          out << "protected:" << std::endl;
-          std::for_each((*member_it).second->declarations.begin(),
-                        (*member_it).second->declarations.end(),
-                        gen_member_code(out, settings::member_item::protected_declaration));
-          out << "private:" << std::endl;
-          std::for_each((*member_it).second->declarations.begin(),
-                        (*member_it).second->declarations.end(),
-                        gen_member_code(out, settings::member_item::private_declaration));
-          out << std::endl << "public:" << std::endl;
-        }
-      if ((*member_it).second->constructor_code.empty() == false)
-        {
-          out << sym->_M_name << "_ast()" << "{" << std::endl;
-          out << "// user defined constructor code:" << std::endl;
-          std::for_each((*member_it).second->constructor_code.begin(),
-                        (*member_it).second->constructor_code.end(),
-                        gen_member_code(out, settings::member_item::constructor_code));
-          out << "}" << std::endl << std::endl;
-        }
-      if ((*member_it).second->destructor_code.empty() == false)
-        {
-          out << "~" << sym->_M_name << "_ast()" << "{" << std::endl;
-          out << "// user defined destructor code:" << std::endl;
-          std::for_each((*member_it).second->destructor_code.begin(),
-                        (*member_it).second->destructor_code.end(),
-                        gen_member_code(out, settings::member_item::destructor_code));
-          out << "}" << std::endl << std::endl;
-        }
-    }
-
-  out << std::endl
-      << "};" << std::endl << std::endl;
+  out << "};" << std::endl << std::endl;
 }
 
 void gen_ast_rule::visit_variable_declaration(model::variable_declaration_item *node)
 {
-  default_visitor::visit_variable_declaration(node);
-
   if (node->_M_storage_type == model::variable_declaration_item::storage_temporary)
     return;
 
@@ -143,6 +106,8 @@ void gen_ast_rule::visit_variable_declaration(model::variable_declaration_item *
   out << ";" << std::endl;
 
   _M_names.insert(node->_M_name);
+
+  default_visitor::visit_variable_declaration(node);
 }
 
 void gen_ast_rule::visit_alternative(model::alternative_item *node)

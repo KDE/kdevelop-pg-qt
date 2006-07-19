@@ -62,15 +62,15 @@ namespace pg
 struct world
 {
   typedef struct member_code {
-    std::set<settings::member_item*> declarations;
-    std::set<settings::member_item*> constructor_code;
-    std::set<settings::member_item*> destructor_code;
+    std::deque<settings::member_item*> declarations;
+    std::deque<settings::member_item*> constructor_code;
+    std::deque<settings::member_item*> destructor_code;
   };
   typedef std::set<model::node*> node_set;
   typedef std::map<std::string, model::symbol_item*> symbol_set;
   typedef std::map<std::string, model::terminal_item*> terminal_set;
-  typedef std::map<std::string, member_code*> member_set;
   typedef std::multimap<model::symbol_item*, model::evolve_item*> environment;
+  typedef std::multimap<std::string, std::string> namespace_set;
 
   typedef std::map<std::pair<model::node*, int>, node_set> first_set;
   typedef std::map<std::pair<model::node*, int>, node_set> follow_set;
@@ -113,22 +113,22 @@ struct world
     rules.push_back(e);
   }
 
-  void *push_member(char const *__whose, model::node *member)
+  void push_namespace(char const *name, char const *code)
+  {
+    namespaces.insert(std::make_pair(name, code));
+  }
+
+  void *push_parserclass_member(model::node *member)
   {
     settings::member_item *m = node_cast<settings::member_item*>(member);
     assert(m != 0);
 
-    std::string whose = __whose;
-    member_set::iterator it = members.find(whose);
-    if (it == members.end())
-      it = members.insert(std::make_pair(whose, new member_code())).first;
-
     if (m->_M_member_kind == settings::member_item::constructor_code)
-      (*it).second->constructor_code.insert(m);
+      parserclass_members.constructor_code.push_back(m);
     else if (m->_M_member_kind == settings::member_item::destructor_code)
-      (*it).second->destructor_code.insert(m);
+      parserclass_members.destructor_code.push_back(m);
     else // public, protected or private declaration
-      (*it).second->declarations.insert(m);
+      parserclass_members.declarations.push_back(m);
   }
 
   model::terminal_item *push_terminal(char const *__name, char const *__description)
@@ -175,7 +175,8 @@ struct world
   symbol_set symbols;
   terminal_set terminals;
   std::deque<model::node*> rules;
-  member_set members;
+  namespace_set namespaces;
+  member_code parserclass_members;
 
   environment env;
 

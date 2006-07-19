@@ -467,24 +467,35 @@ void gen_local_decls::visit_variable_declaration(model::variable_declaration_ite
   // for argument member nodes and tokens, check if their index precedes the current one
   else if (node->_M_storage_type == model::variable_declaration_item::storage_ast_member
            && node->_M_declaration_type == model::variable_declaration_item::declaration_argument
-           && node->_M_variable_type != model::variable_declaration_item::type_variable
            && _G_system.generate_ast)
     {
-      std::string argument_start_token = node->_M_name;
-      if (node->_M_is_sequence)
-        argument_start_token += "_sequence->to_front()->element";
+      char const *sequence_suffix = (node->_M_is_sequence) ? "_sequence" : "";
 
-      if (node->_M_variable_type == model::variable_declaration_item::type_node)
-        argument_start_token += "->start_token";
+      out << "(*yynode)->" << node->_M_name << sequence_suffix << " = "
+          << node->_M_name << sequence_suffix << ";" << std::endl;
 
-      out << "if (";
+      if (node->_M_variable_type != model::variable_declaration_item::type_variable)
+        {
+          std::string argument_start_token = node->_M_name;
+          if (node->_M_is_sequence)
+            argument_start_token += "_sequence->to_front()->element";
 
-      if (node->_M_is_sequence)
-        out << node->_M_name << "_sequence &&";
+          if (node->_M_variable_type == model::variable_declaration_item::type_node)
+            argument_start_token += "->start_token";
 
-      out << argument_start_token << " < (*yynode)->start_token)" << std::endl
-          << "(*yynode)->start_token = " << argument_start_token << ";"
-          << std::endl << std::endl;
+          out << "if (";
+
+          // check that the variable is not null
+          if (node->_M_variable_type == model::variable_declaration_item::type_node
+              || node->_M_is_sequence)
+            {
+              out << node->_M_name << sequence_suffix << " && ";
+            }
+
+          out << argument_start_token << " < (*yynode)->start_token)" << std::endl
+              << "(*yynode)->start_token = " << argument_start_token << ";"
+            << std::endl << std::endl;
+        }
     }
 
   default_visitor::visit_variable_declaration(node);
@@ -559,8 +570,17 @@ void gen_token::operator()(std::pair<std::string, model::terminal_item*> const &
 
 void gen_member_code::operator()(settings::member_item* m)
 {
-  if (m->_M_member_kind == kind)
+  if ((_M_kind_mask & m->_M_member_kind) != 0)
+    {
+      if (m->_M_member_kind == settings::member_item::public_declaration)
+        out << "public:" << std::endl;
+      else if (m->_M_member_kind == settings::member_item::protected_declaration)
+        out << "protected:" << std::endl;
+      else if (m->_M_member_kind == settings::member_item::private_declaration)
+        out << "private:" << std::endl;
+
       out << m->_M_code << std::endl;
+    }
 }
 
 void generate_parser_decls::operator()()
@@ -618,24 +638,15 @@ void generate_parser_decls::operator()()
       << std::endl;
 
 
-  world::member_set::iterator member_it = _G_system.members.find("parserclass");
-
-  if (member_it != _G_system.members.end()
-      && (*member_it).second->declarations.empty() == false)
+  if (_G_system.parserclass_members.declarations.empty() == false)
     {
       out << "// user defined declarations:" << std::endl;
-      out << "public:" << std::endl;
-      std::for_each((*member_it).second->declarations.begin(),
-                    (*member_it).second->declarations.end(),
-                    gen_member_code(out, settings::member_item::public_declaration));
-      out << "protected:" << std::endl;
-      std::for_each((*member_it).second->declarations.begin(),
-                    (*member_it).second->declarations.end(),
-                    gen_member_code(out, settings::member_item::protected_declaration));
-      out << "private:" << std::endl;
-      std::for_each((*member_it).second->declarations.begin(),
-                    (*member_it).second->declarations.end(),
-                    gen_member_code(out, settings::member_item::private_declaration));
+      std::for_each(_G_system.parserclass_members.declarations.begin(),
+                    _G_system.parserclass_members.declarations.end(),
+                    gen_member_code(out, settings::member_item::public_declaration
+                                         | settings::member_item::protected_declaration
+                                         | settings::member_item::private_declaration)
+                   );
       out << std::endl << "public:" << std::endl;
     }
 
@@ -648,24 +659,22 @@ void generate_parser_decls::operator()()
   out << "token_stream = 0;" << std::endl
       << "yytoken = Token_EOF;" << std::endl;
 
-  if (member_it != _G_system.members.end()
-      && (*member_it).second->constructor_code.empty() == false)
+  if (_G_system.parserclass_members.constructor_code.empty() == false)
     {
       out << std::endl << "// user defined constructor code:" << std::endl;
-      std::for_each((*member_it).second->constructor_code.begin(),
-                    (*member_it).second->constructor_code.end(),
+      std::for_each(_G_system.parserclass_members.constructor_code.begin(),
+                    _G_system.parserclass_members.constructor_code.end(),
                     gen_member_code(out, settings::member_item::constructor_code));
     }
 
   out << "}" << std::endl << std::endl;
 
-  if (member_it != _G_system.members.end()
-      && (*member_it).second->destructor_code.empty() == false)
+  if (_G_system.parserclass_members.destructor_code.empty() == false)
     {
       out << "virtual ~" << parser << "()" << "{" << std::endl
           << "// user defined destructor code:" << std::endl;
-      std::for_each((*member_it).second->destructor_code.begin(),
-                    (*member_it).second->destructor_code.end(),
+      std::for_each(_G_system.parserclass_members.destructor_code.begin(),
+                    _G_system.parserclass_members.destructor_code.end(),
                     gen_member_code(out, settings::member_item::destructor_code));
       out << "}" << std::endl << std::endl;
     }

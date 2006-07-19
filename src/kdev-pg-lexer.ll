@@ -268,13 +268,15 @@ void yyerror(char const *)
   if(!end_of_line)
     {
       p = current_end;
-      int c;
+      int c = ch;
 
-      do {
-        c = inp();
-        *p++ = c;
-      } while(c != '\n');
+      while(c != '\n')
+        {
+          *p++ = c;
+          c = inp();
+        }
 
+      *p++ = '\n';
       *p = 0;
     }
 

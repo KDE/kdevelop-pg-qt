@@ -1,36 +1,41 @@
-#ifndef DECODER_H
-#define DECODER_H
+#ifndef COOL_DECODER_H
+#define COOL_DECODER_H
 
 #include "cool.h"
 
 #include <string>
 #include <cstdlib>
 
+namespace cool
+{
+
 class decoder
 {
-  cool::token_stream_type *_M_token_stream;
+  parser::token_stream_type *_M_token_stream;
 
 public:
-  decoder(cool::token_stream_type *token_stream)
+  decoder(parser::token_stream_type *token_stream)
     : _M_token_stream(token_stream) {}
 
   int decode_op(std::size_t index) const
   {
-    cool::token_type const &tk = _M_token_stream->token(index);
+    parser::token_type const &tk = _M_token_stream->token(index);
     return tk.kind;
   }
 
   std::string decode_id(std::size_t index) const
   {
-    cool::token_type const &tk = _M_token_stream->token(index);
+    parser::token_type const &tk = _M_token_stream->token(index);
     return std::string(&tk.text[tk.begin], tk.end - tk.begin);
   }
 
   long decode_number(std::size_t index) const
   {
-    cool::token_type const &tk = _M_token_stream->token(index);
+    parser::token_type const &tk = _M_token_stream->token(index);
     return ::strtol(&tk.text[tk.begin], 0, 0);
   }
 };
 
-#endif // DECODER_H
+} // end of namespace cool
+
+#endif // COOL_DECODER_H

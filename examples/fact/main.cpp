@@ -1,90 +1,147 @@
 
 #include "fact.h"
+#include "decoder.h"
 
 #include <cstdlib>
-#include <cstdio>
 #include <iostream>
 #include <fstream>
 
-#define MAX_BUFF (10 * 1024)
+using namespace fact;
 
 char *_G_contents;
-std::size_t _M_token_begin, _M_token_end;
-std::size_t _G_current_offset;
 
-static void tokenize(fact &m);
-int yylex();
+static void usage(char const* argv0);
+static bool parse_file(char const* filename);
 
 
-// custom error recovery
-bool fact::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+void print_token_environment(parser* parser)
 {
-    std::cerr << "** ERROR expected token ``" << name << "''" << std::endl;
-    return false;
+    static bool done = false;
+    if (done)
+      return; // don't print with each call when going up the error path
+
+    decoder dec(parser->token_stream);
+
+    int current_index = parser->token_stream->index() - 1;
+    for (int i = current_index - 5; i < current_index + 5; i++)
+      {
+        if (i < 0 || i >= parser->token_stream->size())
+          continue;
+
+        if (i == current_index)
+          std::cerr << ">>";
+
+        std::cerr << dec.decode_id(i); // print out currently processed token
+
+        if (i == current_index)
+          std::cerr << "<<";
+
+        std::cerr << " ";
+      }
+    std::cerr << std::endl;
+
+    done = true;
 }
 
-bool fact::yy_expected_symbol(int /*expected_symbol*/, char const *name)
-{
-    std::cerr << "** ERROR expected symbol ``" << name << "''" << std::endl;
-    return false;
-}
 
-int main(int, char *argv[])
+int main(int argc, char *argv[])
 {
-  if (!*++argv)
+  if (argc == 1)
     {
-      std::cerr << "usage: fact file.f" << std::endl;
+      usage(argv[0]);
       exit(EXIT_FAILURE);
     }
-
-  if (FILE *fp = fopen(*argv, "r"))
+  while (char const *arg = *++argv)
     {
-      fread(_G_contents = new char[MAX_BUFF], 1, MAX_BUFF, fp);
-      fclose(fp);
+      /*if (!strncmp(arg, "--option=", 9))
+        {
+          char const* option = arg + 9;
+
+          std::cerr << "--option=" << option
+                    << " has been given!" << std::endl;
+        }
+      else */
+      if (!strncmp(arg, "--", 2))
+        {
+          std::cerr << "Unknown option: " << arg << std::endl;
+          usage(argv[0]);
+          exit(EXIT_FAILURE);
+        }
+      else if(!parse_file(arg))
+        {
+          exit(EXIT_FAILURE);
+        }
+    }
+}
+
+bool parse_file(char const *filename)
+{
+  std::ifstream filestr(filename);
+
+  if (filestr.is_open())
+    {
+      std::filebuf *pbuf;
+      long size;
+
+      // get pointer to associated buffer object
+      pbuf=filestr.rdbuf();
+
+      // get file size using buffer's members
+      size=pbuf->pubseekoff(0,std::ios::end,std::ios::in);
+      pbuf->pubseekpos(0,std::ios::in);
+
+      // allocate memory to contain file data
+      _G_contents=new char[size+1];
+
+      // get file data
+      pbuf->sgetn(_G_contents, size);
+
+      _G_contents[size] = '\0';
+
+      filestr.close();
     }
   else
     {
-      std::cerr << "file not found" << std::endl;
-      exit(EXIT_FAILURE);
+      std::cerr << filename << ": file not found" << std::endl;
+      return false;
     }
 
-  fact::token_stream_type token_stream;
-  fact::memory_pool_type memory_pool;
+  parser::token_stream_type token_stream;
+  parser::memory_pool_type memory_pool;
 
   // 0) setup
-  fact parser;
-  parser.set_token_stream(&token_stream);
-  parser.set_memory_pool(&memory_pool);
+  parser fact_parser;
+  fact_parser.set_token_stream(&token_stream);
+  fact_parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  tokenize(parser);
+  fact_parser.tokenize();
 
   // 2) parse
   program_ast *ast = 0;
-  assert(parser.parse_program(&ast));
+  bool matched = fact_parser.parse_program(&ast);
+  if (matched)
+    {
+      default_visitor v;
+      v.visit_node(ast);
+    }
+  else
+    {
+      fact_parser.yy_expected_symbol(ast_node::Kind_program, "program"); // ### remove me
+    }
 
   delete[] _G_contents;
 
-  return EXIT_SUCCESS;
+  return matched;
 }
 
-static void tokenize(fact &m)
+static void usage(char const* argv0)
 {
-  // tokenize
-  int kind = fact::Token_EOF;
-  do
-    {
-      kind = ::yylex();
-      if (!kind)
-	kind = fact::Token_EOF;
-
-      fact::token_type &t = m.token_stream->next();
-      t.kind = kind;
-      t.begin = _M_token_begin;
-      t.end = _M_token_end;
-      t.text = _G_contents;
-    }
-  while (kind != fact::Token_EOF);
-
-  m.yylex(); // produce the look ahead token
+  std::cerr << "usage: " << argv0 /*<< " [options]"*/ << " file1.f [file2.f...]"
+    << std::endl; /*<< std::endl
+    << "Options:" << std::endl
+    << "  --option=BLA: Do BLAH while parsing." << std::endl
+    << "                BLAH is one of FOO, BAR or KUNG, default is FOO."
+    << std::endl;
+    */
 }

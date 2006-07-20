@@ -17,12 +17,14 @@
 -- Boston, MA 02110-1301, USA.
 
 
+-----------------------------------------------------------------------------
 -- Grammar for C# 2.0
 -- Modelled after the reference grammar of the C# 2.0 language specification
 -- (ECMA-334, Third Edition from June 2005, available at
 -- http://www.ecma-international.org/publications/standards/Ecma-334.htm),
 -- and the BSD-licensed ANTLR C# 1.0 grammar "kcsparse" at
 -- http://antlr.org/grammar/list (version from December 01, 2005)
+-----------------------------------------------------------------------------
 
 
 -- 13 first/follow conflicts:
@@ -132,20 +134,25 @@
 
 
 
---
+------------------------------------------------------------
 -- Global declarations
---
+------------------------------------------------------------
 
 [:
 #include <string>
 #include <set>
+
+namespace csharp_pp
+{
+  class handler_visitor;
+}
 :]
 
 
 
---
+------------------------------------------------------------
 -- Parser class members
---
+------------------------------------------------------------
 
 %parserclass (public declaration)
 [:
@@ -164,8 +171,8 @@
     csharp10_compatibility = 100,
     csharp20_compatibility = 200,
   };
-  csharp::csharp_compatibility_mode compatibility_mode();
-  void set_compatibility_mode( csharp::csharp_compatibility_mode mode );
+  parser::csharp_compatibility_mode compatibility_mode();
+  void set_compatibility_mode( parser::csharp_compatibility_mode mode );
 
   void pp_define_symbol( std::string symbol_name );
 
@@ -174,20 +181,20 @@
     warning,
     info
   };
-  void report_problem( csharp::problem_type type, const char* message );
-  void report_problem( csharp::problem_type type, std::string message );
+  void report_problem( parser::problem_type type, const char* message );
+  void report_problem( parser::problem_type type, std::string message );
 :]
 
 %parserclass (protected declaration)
 [:
-  friend class csharp_pp_handler_visitor; // calls the pp_*() methods
+  friend class ::csharp_pp::handler_visitor; // calls the pp_*() methods
 
   /** Called when an #error or #warning directive has been found.
-   *  @param type   Either csharp::error or csharp::warning.
+   *  @param type   Either parser::error or parser::warning.
    *  @param label  The error/warning text.
    */
-  virtual void pp_diagnostic( csharp::problem_type type, std::string message ) {}
-  virtual void pp_diagnostic( csharp::problem_type type ) {}
+  virtual void pp_diagnostic( parser::problem_type type, std::string message ) {}
+  virtual void pp_diagnostic( parser::problem_type type ) {}
 :]
 
 %parserclass (private declaration)
@@ -195,7 +202,7 @@
   void pp_undefine_symbol( std::string symbol_name );
   bool pp_is_symbol_defined( std::string symbol_name );
 
-  csharp::csharp_compatibility_mode _M_compatibility_mode;
+  parser::csharp_compatibility_mode _M_compatibility_mode;
   std::set<std::string> _M_pp_defined_symbols;
 
   // _M_ltCounter stores the amount of currently open type arguments rules,
@@ -223,9 +230,9 @@
 
 
 
---
--- Additional AST members
---
+------------------------------------------------------------
+-- Enumeration types for additional AST members
+------------------------------------------------------------
 
 %namespace modifiers
 [:
@@ -616,10 +623,9 @@
 
 
 
-
---
+------------------------------------------------------------
 -- List of defined tokens
---
+------------------------------------------------------------
 
 -- keywords:
 %token ABSTRACT ("abstract"), AS ("as"), BASE ("base"), BOOL ("bool"),
@@ -679,9 +685,10 @@
 
 
 
---
+------------------------------------------------------------
 -- Start of the actual grammar
---
+------------------------------------------------------------
+
 
    (#extern_alias=extern_alias_directive)*  -- TODO: probably not in C# 1.0
    (#using=using_directive)*
@@ -2561,63 +2568,40 @@
 
 
 
---
+-----------------------------------------------------------------
 -- Code segments copied to the implementation (.cpp) file.
--- If existent, kdevelop-pg's current syntax requires this block to occur
--- at the end of the file.
---
+-- If existent, kdevelop-pg's current syntax requires this block
+-- to occur at the end of the file.
+-----------------------------------------------------------------
 
 [:
 #include "csharp_lookahead.h"
-void print_token_environment(csharp* parser);
+void print_token_environment(csharp::parser* parser);
 
 
-csharp::csharp_compatibility_mode csharp::compatibility_mode() {
+namespace csharp
+{
+
+parser::csharp_compatibility_mode parser::compatibility_mode() {
   return _M_compatibility_mode;
 }
-void csharp::set_compatibility_mode( csharp::csharp_compatibility_mode mode ) {
+void parser::set_compatibility_mode( parser::csharp_compatibility_mode mode ) {
   _M_compatibility_mode = mode;
 }
 
-void csharp::pp_define_symbol( std::string symbol_name )
+void parser::pp_define_symbol( std::string symbol_name )
 {
   _M_pp_defined_symbols.insert(symbol_name);
 }
 
-void csharp::pp_undefine_symbol( std::string symbol_name )
+void parser::pp_undefine_symbol( std::string symbol_name )
 {
   _M_pp_defined_symbols.erase(symbol_name);
 }
 
-bool csharp::pp_is_symbol_defined( std::string symbol_name )
+bool parser::pp_is_symbol_defined( std::string symbol_name )
 {
   return (_M_pp_defined_symbols.find(symbol_name) != _M_pp_defined_symbols.end());
-}
-
-
-// custom error recovery
-bool csharp::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
-{
-  print_token_environment(this);
-  report_problem(
-    csharp::error,
-    std::string("Expected token ``") + name
-      //+ "'' instead of ``" + current_token_text
-      + "''"
-  );
-  return false;
-}
-
-bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
-{
-  print_token_environment(this);
-  report_problem(
-    csharp::error,
-    std::string("Expected symbol ``") + name
-      //+ "'' instead of ``" + current_token_text
-      + "''"
-  );
-  return false;
 }
 
 
@@ -2633,9 +2617,9 @@ bool csharp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 * The function returns false if the upcoming tokens are (for sure) not
 * the beginning of a variable declaration.
 */
-bool csharp::lookahead_is_variable_declaration()
+bool parser::lookahead_is_variable_declaration()
 {
-    csharp_lookahead* la = new csharp_lookahead(this);
+    csharp::lookahead* la = new csharp::lookahead(this);
     bool result = la->is_variable_declaration_start();
     delete la;
     return result;
@@ -2651,9 +2635,9 @@ bool csharp::lookahead_is_variable_declaration()
 * The function returns false if the upcoming tokens are (for sure) not
 * the beginning of a cast expression.
 */
-bool csharp::lookahead_is_cast_expression()
+bool parser::lookahead_is_cast_expression()
 {
-    csharp_lookahead* la = new csharp_lookahead(this);
+    csharp::lookahead* la = new csharp::lookahead(this);
     bool result = la->is_cast_expression_start();
     delete la;
     return result;
@@ -2668,23 +2652,25 @@ bool csharp::lookahead_is_cast_expression()
 * The function returns false if the upcoming tokens are not
 * the beginning of an unbound type name.
 */
-bool csharp::lookahead_is_unbound_type_name()
+bool parser::lookahead_is_unbound_type_name()
 {
-    csharp_lookahead* la = new csharp_lookahead(this);
+    csharp::lookahead* la = new csharp::lookahead(this);
     bool result = la->is_unbound_type_name();
     delete la;
     return result;
 }
 
-bool csharp::lookahead_is_type_arguments()
+bool parser::lookahead_is_type_arguments()
 {
     if (compatibility_mode() < csharp20_compatibility)
       return false;
 
-    csharp_lookahead* la = new csharp_lookahead(this);
+    csharp::lookahead* la = new csharp::lookahead(this);
     bool result = la->is_type_arguments();
     delete la;
     return result;
 }
+
+} // end of namespace csharp
 
 :]

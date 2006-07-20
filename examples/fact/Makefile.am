@@ -4,6 +4,7 @@ bin_PROGRAMS = fact
 fact_SOURCES = \
 	decoder.cpp \
 	fact.cpp \
+	fact_io.cpp \
 	fact_lexer.ll \
 	main.cpp
 
@@ -13,10 +14,10 @@ noinst_HEADERS = \
 # set the include path found by configure
 INCLUDES= \
 	-I$(top_srcdir)/include \
-	$(all_includes) 
+	$(all_includes)
 
 # the library search path.
-fact_LDADD = 
+fact_LDADD =
 
 fact_LDFLAGS = \
 	$(all_libraries)

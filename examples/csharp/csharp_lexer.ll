@@ -26,7 +26,7 @@
 #include <iostream>
 
 /* call this before calling yylex(): */
-void lexer_restart(csharp* parser);
+void lexer_restart(csharp::parser* parser);
 
 extern std::size_t _G_token_begin, _G_token_end;
 extern char *_G_contents;
@@ -36,12 +36,15 @@ extern char *_G_contents;
 /* the rest of these declarations are internal to the lexer,
  * don't use them outside of this file. */
 
-std::size_t _G_current_offset;
-csharp* _G_parser;
-csharp_pp_scope* _G_pp_root_scope;
+namespace
+{
+  std::size_t _G_current_offset;
+  csharp::parser* _G_parser;
+  csharp_pp::scope* _G_pp_root_scope;
+}
 
 // retrieves the upper-most pre-processor scope
-csharp_pp_scope* pp_current_scope();
+csharp_pp::scope* pp_current_scope();
 
 // to be called from within <<EOF>> rules to free memory and report open scopes
 void cleanup();
@@ -65,21 +68,21 @@ _G_token_end += yyleng;
 // Pre-processing completely bypasses the normal tokenizing process.
 #define PP_PROCESS_TOKEN(t) \
   { \
-    csharp_pp pp_parser; \
-    csharp_pp::pp_parse_result result = \
-      pp_parser.pp_parse_line( csharp_pp::Token_##t, pp_current_scope() ); \
+    csharp_pp::parser pp_parser; \
+    csharp_pp::parser::pp_parse_result result = \
+      pp_parser.pp_parse_line( csharp_pp::parser::Token_##t, pp_current_scope() ); \
     \
-    if (result == csharp_pp::result_eof) \
+    if (result == csharp_pp::parser::result_eof) \
       { \
         BEGIN(INITIAL); \
         return 0; /* end of file */  \
       } \
-    else if (result == csharp_pp::result_invalid) \
+    else if (result == csharp_pp::parser::result_invalid) \
       { \
         BEGIN(INITIAL); \
-        return csharp::Token_INVALID; \
+        return csharp::parser::Token_INVALID; \
       } \
-    else if (result == csharp_pp::result_ok) \
+    else if (result == csharp_pp::parser::result_ok) \
       { \
         if (pp_current_scope()->is_active()) \
           BEGIN(INITIAL); \
@@ -95,7 +98,7 @@ _G_token_end += yyleng;
   * http://lists.gnu.org/archive/html/help-flex/2005-01/msg00043.html */
 
  /* 0x0041-0x005a, 0x005f, 0x0061-0x007a: one byte in UTF-8 */
-Letter1         [A-Z_a-z]
+Letter1         [A-Za-z_]
  /* 0x00c0-0x00d6, 0x00d8-0x00f6, 0x00f8-0x00ff */
 Letter2         [\xC3]([\x80-\x96]|[\x98-\xB6]|[\xB8-\xBF])
  /* 0x0100-0x1fff */
@@ -178,70 +181,6 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 
 %%
 
- /* seperators */
-
-"("             return csharp::Token_LPAREN;
-")"             return csharp::Token_RPAREN;
-"{"             return csharp::Token_LBRACE;
-"}"             return csharp::Token_RBRACE;
-"["             return csharp::Token_LBRACKET;
-"]"             return csharp::Token_RBRACKET;
-","             return csharp::Token_COMMA;
-";"             return csharp::Token_SEMICOLON;
-"."             return csharp::Token_DOT;
-
-
- /* operators */
-
-":"             return csharp::Token_COLON;
-"::"            return csharp::Token_SCOPE; // TODO: new in 2.0?
-"?"             return csharp::Token_QUESTION;
-"??" {
-    if( _G_parser->compatibility_mode() >= csharp::csharp20_compatibility ) {
-      return csharp::Token_QUESTIONQUESTION;
-    }
-    else {
-      _G_parser->report_problem( csharp::error,
-        "Null coalescing expressions (with \"??\") are not supported by C# 1.0" );
-      return csharp::Token_INVALID;
-    }
-}
-"!"             return csharp::Token_BANG;
-"~"             return csharp::Token_TILDE;
-"=="            return csharp::Token_EQUAL;
-"<"             return csharp::Token_LESS_THAN;
-"<="            return csharp::Token_LESS_EQUAL;
-">"             return csharp::Token_GREATER_THAN;
-">="            return csharp::Token_GREATER_EQUAL;
-"!="            return csharp::Token_NOT_EQUAL;
-"&&"            return csharp::Token_LOG_AND;
-"||"            return csharp::Token_LOG_OR;
-"->"            return csharp::Token_ARROW_RIGHT; // TODO: new in 2.0 or not?
-"++"            return csharp::Token_INCREMENT;
-"--"            return csharp::Token_DECREMENT;
-"="             return csharp::Token_ASSIGN;
-"+"             return csharp::Token_PLUS;
-"+="            return csharp::Token_PLUS_ASSIGN;
-"-"             return csharp::Token_MINUS;
-"-="            return csharp::Token_MINUS_ASSIGN;
-"*"             return csharp::Token_STAR;
-"*="            return csharp::Token_STAR_ASSIGN;
-"/"             return csharp::Token_SLASH;
-"/="            return csharp::Token_SLASH_ASSIGN;
-"&"             return csharp::Token_BIT_AND;
-"&="            return csharp::Token_BIT_AND_ASSIGN;
-"|"             return csharp::Token_BIT_OR;
-"|="            return csharp::Token_BIT_OR_ASSIGN;
-"^"             return csharp::Token_BIT_XOR;
-"^="            return csharp::Token_BIT_XOR_ASSIGN;
-"%"             return csharp::Token_REMAINDER;
-"%="            return csharp::Token_REMAINDER_ASSIGN;
-"<<"            return csharp::Token_LSHIFT;
-"<<="           return csharp::Token_LSHIFT_ASSIGN;
-">>"            return csharp::Token_RSHIFT;
-">>="           return csharp::Token_RSHIFT_ASSIGN;
-
-
  /* whitespace, newlines and comments */
 
 {Whitespace}    /* skip */ ;
@@ -256,130 +195,194 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 {NewLine}       /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    _G_parser->report_problem( csharp::error,
+    _G_parser->report_problem( csharp::parser::error,
       "Encountered end of file in an unclosed block comment" );
     cleanup();
-    return csharp::Token_EOF;
+    return csharp::parser::Token_EOF;
 }
 }
 
 
- /* characters and strings */
+ /* seperators */
 
-[']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return csharp::Token_CHARACTER_LITERAL;
-[']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?[\r\n])|[']) {
-    _G_parser->report_problem( csharp::error,
-      std::string("Invalid character literal: ") + yytext );
-    return csharp::Token_CHARACTER_LITERAL;
-}
+"("             return csharp::parser::Token_LPAREN;
+")"             return csharp::parser::Token_RPAREN;
+"{"             return csharp::parser::Token_LBRACE;
+"}"             return csharp::parser::Token_RBRACE;
+"["             return csharp::parser::Token_LBRACKET;
+"]"             return csharp::parser::Token_RBRACKET;
+","             return csharp::parser::Token_COMMA;
+";"             return csharp::parser::Token_SEMICOLON;
+"."             return csharp::parser::Token_DOT;
 
-["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return csharp::Token_STRING_LITERAL;
-["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?[\r\n])|["]) {
-    _G_parser->report_problem( csharp::error,
-      std::string("Invalid string literal: ") + yytext );
-    return csharp::Token_STRING_LITERAL;
+
+ /* operators */
+
+":"             return csharp::parser::Token_COLON;
+"::"            return csharp::parser::Token_SCOPE; // TODO: new in 2.0?
+"?"             return csharp::parser::Token_QUESTION;
+"??" {
+    if( _G_parser->compatibility_mode() >= csharp::parser::csharp20_compatibility ) {
+      return csharp::parser::Token_QUESTIONQUESTION;
+    }
+    else {
+      _G_parser->report_problem( csharp::parser::error,
+        "Null coalescing expressions (with \"??\") are not supported by C# 1.0" );
+      return csharp::parser::Token_INVALID;
+    }
 }
- /* verbatim strings: */
-[@]["](["]["]|[^"])*["]                 return csharp::Token_STRING_LITERAL;
+"!"             return csharp::parser::Token_BANG;
+"~"             return csharp::parser::Token_TILDE;
+"=="            return csharp::parser::Token_EQUAL;
+"<"             return csharp::parser::Token_LESS_THAN;
+"<="            return csharp::parser::Token_LESS_EQUAL;
+">"             return csharp::parser::Token_GREATER_THAN;
+">="            return csharp::parser::Token_GREATER_EQUAL;
+"!="            return csharp::parser::Token_NOT_EQUAL;
+"&&"            return csharp::parser::Token_LOG_AND;
+"||"            return csharp::parser::Token_LOG_OR;
+"->"            return csharp::parser::Token_ARROW_RIGHT; // TODO: new in 2.0 or not?
+"++"            return csharp::parser::Token_INCREMENT;
+"--"            return csharp::parser::Token_DECREMENT;
+"="             return csharp::parser::Token_ASSIGN;
+"+"             return csharp::parser::Token_PLUS;
+"+="            return csharp::parser::Token_PLUS_ASSIGN;
+"-"             return csharp::parser::Token_MINUS;
+"-="            return csharp::parser::Token_MINUS_ASSIGN;
+"*"             return csharp::parser::Token_STAR;
+"*="            return csharp::parser::Token_STAR_ASSIGN;
+"/"             return csharp::parser::Token_SLASH;
+"/="            return csharp::parser::Token_SLASH_ASSIGN;
+"&"             return csharp::parser::Token_BIT_AND;
+"&="            return csharp::parser::Token_BIT_AND_ASSIGN;
+"|"             return csharp::parser::Token_BIT_OR;
+"|="            return csharp::parser::Token_BIT_OR_ASSIGN;
+"^"             return csharp::parser::Token_BIT_XOR;
+"^="            return csharp::parser::Token_BIT_XOR_ASSIGN;
+"%"             return csharp::parser::Token_REMAINDER;
+"%="            return csharp::parser::Token_REMAINDER_ASSIGN;
+"<<"            return csharp::parser::Token_LSHIFT;
+"<<="           return csharp::parser::Token_LSHIFT_ASSIGN;
+">>"            return csharp::parser::Token_RSHIFT;
+">>="           return csharp::parser::Token_RSHIFT_ASSIGN;
 
 
  /* reserved words */
 
-"abstract"      return csharp::Token_ABSTRACT;
-"as"            return csharp::Token_AS;
-"base"          return csharp::Token_BASE;
-"bool"          return csharp::Token_BOOL;
-"break"         return csharp::Token_BREAK;
-"byte"          return csharp::Token_BYTE;
-"case"          return csharp::Token_CASE;
-"catch"         return csharp::Token_CATCH;
-"char"          return csharp::Token_CHAR;
-"checked"       return csharp::Token_CHECKED;
-"class"         return csharp::Token_CLASS;
-"const"         return csharp::Token_CONST;
-"continue"      return csharp::Token_CONTINUE;
-"decimal"       return csharp::Token_DECIMAL;
-"default"       return csharp::Token_DEFAULT;
-"delegate"      return csharp::Token_DELEGATE;
-"do"            return csharp::Token_DO;
-"double"        return csharp::Token_DOUBLE;
-"else"          return csharp::Token_ELSE;
-"enum"          return csharp::Token_ENUM;
-"event"         return csharp::Token_EVENT;
-"explicit"      return csharp::Token_EXPLICIT;
-"extern"        return csharp::Token_EXTERN;
-"false"         return csharp::Token_FALSE;
-"finally"       return csharp::Token_FINALLY;
-"fixed"         return csharp::Token_FIXED;
-"float"         return csharp::Token_FLOAT;
-"for"           return csharp::Token_FOR;
-"foreach"       return csharp::Token_FOREACH;
-"goto"          return csharp::Token_GOTO;
-"if"            return csharp::Token_IF;
-"implicit"      return csharp::Token_IMPLICIT;
-"in"            return csharp::Token_IN;
-"int"           return csharp::Token_INT;
-"interface"     return csharp::Token_INTERFACE;
-"internal"      return csharp::Token_INTERNAL;
-"is"            return csharp::Token_IS;
-"lock"          return csharp::Token_LOCK;
-"long"          return csharp::Token_LONG;
-"namespace"     return csharp::Token_NAMESPACE;
-"new"           return csharp::Token_NEW;
-"null"          return csharp::Token_NULL;
-"object"        return csharp::Token_OBJECT;
-"operator"      return csharp::Token_OPERATOR;
-"out"           return csharp::Token_OUT;
-"override"      return csharp::Token_OVERRIDE;
-"params"        return csharp::Token_PARAMS;
-"private"       return csharp::Token_PRIVATE;
-"protected"     return csharp::Token_PROTECTED;
-"public"        return csharp::Token_PUBLIC;
-"readonly"      return csharp::Token_READONLY;
-"ref"           return csharp::Token_REF;
-"return"        return csharp::Token_RETURN;
-"sbyte"         return csharp::Token_SBYTE;
-"sealed"        return csharp::Token_SEALED;
-"short"         return csharp::Token_SHORT;
-"sizeof"        return csharp::Token_SIZEOF;
-"stackalloc"    return csharp::Token_STACKALLOC;
-"static"        return csharp::Token_STATIC;
-"string"        return csharp::Token_STRING;
-"struct"        return csharp::Token_STRUCT;
-"switch"        return csharp::Token_SWITCH;
-"this"          return csharp::Token_THIS;
-"throw"         return csharp::Token_THROW;
-"true"          return csharp::Token_TRUE;
-"try"           return csharp::Token_TRY;
-"typeof"        return csharp::Token_TYPEOF;
-"uint"          return csharp::Token_UINT;
-"ulong"         return csharp::Token_ULONG;
-"unchecked"     return csharp::Token_UNCHECKED;
-"unsafe"        return csharp::Token_UNSAFE;
-"ushort"        return csharp::Token_USHORT;
-"using"         return csharp::Token_USING;
-"virtual"       return csharp::Token_VIRTUAL;
-"void"          return csharp::Token_VOID;
-"volatile"      return csharp::Token_VOLATILE;
-"while"         return csharp::Token_WHILE;
+"abstract"      return csharp::parser::Token_ABSTRACT;
+"as"            return csharp::parser::Token_AS;
+"base"          return csharp::parser::Token_BASE;
+"bool"          return csharp::parser::Token_BOOL;
+"break"         return csharp::parser::Token_BREAK;
+"byte"          return csharp::parser::Token_BYTE;
+"case"          return csharp::parser::Token_CASE;
+"catch"         return csharp::parser::Token_CATCH;
+"char"          return csharp::parser::Token_CHAR;
+"checked"       return csharp::parser::Token_CHECKED;
+"class"         return csharp::parser::Token_CLASS;
+"const"         return csharp::parser::Token_CONST;
+"continue"      return csharp::parser::Token_CONTINUE;
+"decimal"       return csharp::parser::Token_DECIMAL;
+"default"       return csharp::parser::Token_DEFAULT;
+"delegate"      return csharp::parser::Token_DELEGATE;
+"do"            return csharp::parser::Token_DO;
+"double"        return csharp::parser::Token_DOUBLE;
+"else"          return csharp::parser::Token_ELSE;
+"enum"          return csharp::parser::Token_ENUM;
+"event"         return csharp::parser::Token_EVENT;
+"explicit"      return csharp::parser::Token_EXPLICIT;
+"extern"        return csharp::parser::Token_EXTERN;
+"false"         return csharp::parser::Token_FALSE;
+"finally"       return csharp::parser::Token_FINALLY;
+"fixed"         return csharp::parser::Token_FIXED;
+"float"         return csharp::parser::Token_FLOAT;
+"for"           return csharp::parser::Token_FOR;
+"foreach"       return csharp::parser::Token_FOREACH;
+"goto"          return csharp::parser::Token_GOTO;
+"if"            return csharp::parser::Token_IF;
+"implicit"      return csharp::parser::Token_IMPLICIT;
+"in"            return csharp::parser::Token_IN;
+"int"           return csharp::parser::Token_INT;
+"interface"     return csharp::parser::Token_INTERFACE;
+"internal"      return csharp::parser::Token_INTERNAL;
+"is"            return csharp::parser::Token_IS;
+"lock"          return csharp::parser::Token_LOCK;
+"long"          return csharp::parser::Token_LONG;
+"namespace"     return csharp::parser::Token_NAMESPACE;
+"new"           return csharp::parser::Token_NEW;
+"null"          return csharp::parser::Token_NULL;
+"object"        return csharp::parser::Token_OBJECT;
+"operator"      return csharp::parser::Token_OPERATOR;
+"out"           return csharp::parser::Token_OUT;
+"override"      return csharp::parser::Token_OVERRIDE;
+"params"        return csharp::parser::Token_PARAMS;
+"private"       return csharp::parser::Token_PRIVATE;
+"protected"     return csharp::parser::Token_PROTECTED;
+"public"        return csharp::parser::Token_PUBLIC;
+"readonly"      return csharp::parser::Token_READONLY;
+"ref"           return csharp::parser::Token_REF;
+"return"        return csharp::parser::Token_RETURN;
+"sbyte"         return csharp::parser::Token_SBYTE;
+"sealed"        return csharp::parser::Token_SEALED;
+"short"         return csharp::parser::Token_SHORT;
+"sizeof"        return csharp::parser::Token_SIZEOF;
+"stackalloc"    return csharp::parser::Token_STACKALLOC;
+"static"        return csharp::parser::Token_STATIC;
+"string"        return csharp::parser::Token_STRING;
+"struct"        return csharp::parser::Token_STRUCT;
+"switch"        return csharp::parser::Token_SWITCH;
+"this"          return csharp::parser::Token_THIS;
+"throw"         return csharp::parser::Token_THROW;
+"true"          return csharp::parser::Token_TRUE;
+"try"           return csharp::parser::Token_TRY;
+"typeof"        return csharp::parser::Token_TYPEOF;
+"uint"          return csharp::parser::Token_UINT;
+"ulong"         return csharp::parser::Token_ULONG;
+"unchecked"     return csharp::parser::Token_UNCHECKED;
+"unsafe"        return csharp::parser::Token_UNSAFE;
+"ushort"        return csharp::parser::Token_USHORT;
+"using"         return csharp::parser::Token_USING;
+"virtual"       return csharp::parser::Token_VIRTUAL;
+"void"          return csharp::parser::Token_VOID;
+"volatile"      return csharp::parser::Token_VOLATILE;
+"while"         return csharp::parser::Token_WHILE;
 
 
  /* Non-keyword identifiers. They only have special meaning in
   * specific contexts and are treated as identifiers otherwise. */
 
-"add"           return csharp::Token_ADD;
-"alias"         return csharp::Token_ALIAS;
-"get"           return csharp::Token_GET;
-"global"        return csharp::Token_GLOBAL;
-"partial"       return csharp::Token_PARTIAL;
-"remove"        return csharp::Token_REMOVE;
-"set"           return csharp::Token_SET;
-"value"         return csharp::Token_VALUE;
-"where"         return csharp::Token_WHERE;
-"yield"         return csharp::Token_YIELD;
+"add"           return csharp::parser::Token_ADD;
+"alias"         return csharp::parser::Token_ALIAS;
+"get"           return csharp::parser::Token_GET;
+"global"        return csharp::parser::Token_GLOBAL;
+"partial"       return csharp::parser::Token_PARTIAL;
+"remove"        return csharp::parser::Token_REMOVE;
+"set"           return csharp::parser::Token_SET;
+"value"         return csharp::parser::Token_VALUE;
+"where"         return csharp::parser::Token_WHERE;
+"yield"         return csharp::parser::Token_YIELD;
 
  /* An unspecified one, for global attributes: */
-"assembly"      return csharp::Token_ASSEMBLY;
+"assembly"      return csharp::parser::Token_ASSEMBLY;
+
+
+ /* characters and strings */
+
+[']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return csharp::parser::Token_CHARACTER_LITERAL;
+[']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*(([\\]?[\r\n])|[']) {
+    _G_parser->report_problem( csharp::parser::error,
+      std::string("Invalid character literal: ") + yytext );
+    return csharp::parser::Token_CHARACTER_LITERAL;
+}
+
+["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return csharp::parser::Token_STRING_LITERAL;
+["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*(([\\]?[\r\n])|["]) {
+    _G_parser->report_problem( csharp::parser::error,
+      std::string("Invalid string literal: ") + yytext );
+    return csharp::parser::Token_STRING_LITERAL;
+}
+ /* verbatim strings: */
+[@]["](["]["]|[^"])*["]                 return csharp::parser::Token_STRING_LITERAL;
 
 
 
@@ -398,99 +401,99 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 {ppPrefix}"region"{Whitespace}?     BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_REGION);
 {ppPrefix}"endregion"{Whitespace}?  BEGIN(PP_MESSAGE); PP_PROCESS_TOKEN(PP_ENDREGION);
 {ppPrefix}"pragma"{Whitespace}? {
-    if( _G_parser->compatibility_mode() >= csharp::csharp20_compatibility ) {
+    if( _G_parser->compatibility_mode() >= csharp::parser::csharp20_compatibility ) {
       BEGIN(PP_PRAGMA); PP_PROCESS_TOKEN(PP_PRAGMA);
     }
     else {
       BEGIN(INITIAL);
-      _G_parser->report_problem( csharp::error,
+      _G_parser->report_problem( csharp::parser::error,
         "#pragma directives are not supported by C# 1.0" );
-      return csharp::Token_INVALID;
+      return csharp::parser::Token_INVALID;
     }
 }
 {ppPrefix}{Identifier} {
-    _G_parser->report_problem( csharp::error,
+    _G_parser->report_problem( csharp::parser::error,
       std::string("Invalid pre-processor directive: ``") + yytext + "''" );
-    return csharp::Token_INVALID;
+    return csharp::parser::Token_INVALID;
 }
 }
 
 <PP_EXPECT_NEW_LINE,PP_DECLARATION,PP_IF_CLAUSE,PP_LINE,PP_MESSAGE,PP_PRAGMA>{
-<<EOF>>  return csharp_pp::Token_EOF;
+<<EOF>>  return csharp_pp::parser::Token_EOF;
 }
 
 
 <PP_EXPECT_NEW_LINE>{
-{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
-.                   return csharp_pp::Token_PP_INVALID;
+{ppNewLine}         return csharp_pp::parser::Token_PP_NEW_LINE;
+.                   return csharp_pp::parser::Token_PP_INVALID;
 }
 
 <PP_DECLARATION>{
 {Whitespace}        /* skip */ ;
 "true"|"false" {
-    _G_parser->report_problem( csharp::error,
+    _G_parser->report_problem( csharp::parser::error,
       "You may not define ``true'' or ``false'' with #define or #undef" );
-    return csharp_pp::Token_PP_CONDITIONAL_SYMBOL;  // we could do Token_INVALID here,
+    return csharp_pp::parser::Token_PP_CONDITIONAL_SYMBOL;  // we could do Token_INVALID here,
     // but this way the error is shown and the parser continues, I prefer this.
 }
-{Identifier}        return csharp_pp::Token_PP_CONDITIONAL_SYMBOL; // ...including keywords
-{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
-.                   return csharp_pp::Token_PP_INVALID;
+{Identifier}        return csharp_pp::parser::Token_PP_CONDITIONAL_SYMBOL; // ...including keywords
+{ppNewLine}         return csharp_pp::parser::Token_PP_NEW_LINE;
+.                   return csharp_pp::parser::Token_PP_INVALID;
 }
 
 <PP_IF_CLAUSE>{
 {Whitespace}        /* skip */ ;
-"=="                return csharp_pp::Token_PP_EQUAL;
-"!="                return csharp_pp::Token_PP_NOT_EQUAL;
-"&&"                return csharp_pp::Token_PP_LOG_AND;
-"||"                return csharp_pp::Token_PP_LOG_OR;
-"!"                 return csharp_pp::Token_PP_BANG;
-"true"              return csharp_pp::Token_PP_TRUE;
-"false"             return csharp_pp::Token_PP_FALSE;
-"("                 return csharp_pp::Token_PP_LPAREN;
-")"                 return csharp_pp::Token_PP_RPAREN;
-{Identifier}        return csharp_pp::Token_PP_CONDITIONAL_SYMBOL;
-{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
-.                   return csharp_pp::Token_PP_INVALID;
+"=="                return csharp_pp::parser::Token_PP_EQUAL;
+"!="                return csharp_pp::parser::Token_PP_NOT_EQUAL;
+"&&"                return csharp_pp::parser::Token_PP_LOG_AND;
+"||"                return csharp_pp::parser::Token_PP_LOG_OR;
+"!"                 return csharp_pp::parser::Token_PP_BANG;
+"true"              return csharp_pp::parser::Token_PP_TRUE;
+"false"             return csharp_pp::parser::Token_PP_FALSE;
+"("                 return csharp_pp::parser::Token_PP_LPAREN;
+")"                 return csharp_pp::parser::Token_PP_RPAREN;
+{Identifier}        return csharp_pp::parser::Token_PP_CONDITIONAL_SYMBOL;
+{ppNewLine}         return csharp_pp::parser::Token_PP_NEW_LINE;
+.                   return csharp_pp::parser::Token_PP_INVALID;
 }
 
 <PP_SKIPPED_SECTION_PART>{
 {Whitespace}?([^#\r\n][^\r\n]*)?{NewLine}  /* skip */ ;
-.                   return csharp::Token_INVALID;
+.                   return csharp::parser::Token_INVALID;
 }
 
 <PP_LINE>{
 {Whitespace}        /* skip */ ;
-{ppNewLine}         return csharp_pp::Token_PP_NEW_LINE;
-{DecimalDigit}+     return csharp_pp::Token_PP_LINE_NUMBER;
-["][^\"\r\n]+["]    return csharp_pp::Token_PP_FILE_NAME;
-"default"           return csharp_pp::Token_PP_DEFAULT;
-{Identifier}        return csharp_pp::Token_PP_IDENTIFIER_OR_KEYWORD;
-.                   return csharp_pp::Token_PP_INVALID;
+{ppNewLine}         return csharp_pp::parser::Token_PP_NEW_LINE;
+{DecimalDigit}+     return csharp_pp::parser::Token_PP_LINE_NUMBER;
+["][^\"\r\n]+["]    return csharp_pp::parser::Token_PP_FILE_NAME;
+"default"           return csharp_pp::parser::Token_PP_DEFAULT;
+{Identifier}        return csharp_pp::parser::Token_PP_IDENTIFIER_OR_KEYWORD;
+.                   return csharp_pp::parser::Token_PP_INVALID;
 }
 
 <PP_MESSAGE>{
-[^\r\n]+            return csharp_pp::Token_PP_MESSAGE;
-{NewLine}           return csharp_pp::Token_PP_NEW_LINE;
+[^\r\n]+            return csharp_pp::parser::Token_PP_MESSAGE;
+{NewLine}           return csharp_pp::parser::Token_PP_NEW_LINE;
 }
 
 <PP_PRAGMA>{
-[^\r\n]+            return csharp_pp::Token_PP_PRAGMA_TEXT;
-{NewLine}           return csharp_pp::Token_PP_NEW_LINE;
+[^\r\n]+            return csharp_pp::parser::Token_PP_PRAGMA_TEXT;
+{NewLine}           return csharp_pp::parser::Token_PP_NEW_LINE;
 }
 
 
  /* identifiers and number literals */
 
-{Identifier}        return csharp::Token_IDENTIFIER;
+{Identifier}        return csharp::parser::Token_IDENTIFIER;
 
-{IntegerLiteral}    return csharp::Token_INTEGER_LITERAL;
-{RealLiteral}       return csharp::Token_REAL_LITERAL;
+{IntegerLiteral}    return csharp::parser::Token_INTEGER_LITERAL;
+{RealLiteral}       return csharp::parser::Token_REAL_LITERAL;
 
 
  /* everything else is not a valid lexeme */
 
-.                   return csharp::Token_INVALID;
+.                   return csharp::parser::Token_INVALID;
 
 
  /* some additional checking for unclosed #ifs and #regions at the EOF */
@@ -498,13 +501,13 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 <INITIAL,PP_SKIPPED_SECTION_PART>{
 <<EOF>> {
   cleanup();
-  return csharp::Token_EOF;
+  return csharp::parser::Token_EOF;
 }
 }
 
 %%
 
-void lexer_restart(csharp* parser) {
+void lexer_restart(csharp::parser* parser) {
   _G_parser = parser;
   _G_pp_root_scope = 0;
   yyrestart(NULL);
@@ -512,11 +515,11 @@ void lexer_restart(csharp* parser) {
   YY_USER_INIT
 }
 
-csharp_pp_scope* pp_current_scope()
+csharp_pp::scope* pp_current_scope()
 {
   if (_G_pp_root_scope == 0)
     {
-      _G_pp_root_scope = new csharp_pp_scope(_G_parser);
+      _G_pp_root_scope = new csharp_pp::scope(_G_parser);
     }
   return _G_pp_root_scope->current_scope();
 }
@@ -526,19 +529,19 @@ void cleanup()
   // check for open scopes, and pop them / report errors as needed
   if (_G_pp_root_scope != 0)
     {
-      csharp_pp_scope* current_scope = pp_current_scope();
-      csharp_pp_scope::scope_type scope_type = current_scope->type();
+      csharp_pp::scope* current_scope = pp_current_scope();
+      csharp_pp::scope::scope_type scope_type = current_scope->type();
 
-      while (scope_type != csharp_pp_scope::type_root)
+      while (scope_type != csharp_pp::scope::type_root)
         {
-          if (scope_type == csharp_pp_scope::type_if)
+          if (scope_type == csharp_pp::scope::type_if)
             {
-              _G_parser->report_problem( csharp::error,
+              _G_parser->report_problem( csharp::parser::error,
                 "Encountered end of file in an unclosed #if/#elif/#else section" );
             }
-          else if (scope_type == csharp_pp_scope::type_region)
+          else if (scope_type == csharp_pp::scope::type_region)
             {
-              _G_parser->report_problem( csharp::error,
+              _G_parser->report_problem( csharp::parser::error,
                 "Encountered end of file in an unclosed #region section" );
             }
 

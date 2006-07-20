@@ -21,8 +21,13 @@
 #ifndef CSHARP_PP_SCOPE_H
 #define CSHARP_PP_SCOPE_H
 
-class csharp;
+namespace csharp
+{
+  class parser;
+}
 
+namespace csharp_pp
+{
 
 /**
  * Pre-processor scopes are managed by the pre-processor parser
@@ -34,7 +39,7 @@ class csharp;
  * in order to to know if the upcoming text is to be treated as tokens
  * or like #ifdef'd out.
  */
-class csharp_pp_scope
+class scope
 {
 public:
     enum scope_type {
@@ -43,17 +48,17 @@ public:
       type_region
     };
 
-    csharp_pp_scope( csharp* parser );
-    ~csharp_pp_scope();
+    scope( csharp::parser* parser );
+    ~scope();
 
     /**
      * Retrieves the last child of the scope hierarchy. That child contains
      * the state at the current code position and should be used for getting
      * info.
      */
-    csharp_pp_scope* current_scope();
+    scope* current_scope();
 
-    csharp_pp_scope::scope_type type();
+    scope::scope_type type();
 
     /**
      * Returns @true if the code at the current position is included into
@@ -85,7 +90,7 @@ public:
      * @return  @true if the scope has been created, or @false if this scope
      *          already possesses a child (in this case, nothing is done).
      */
-    bool push_scope( csharp_pp_scope::scope_type type, csharp_pp_scope** new_current = 0 );
+    bool push_scope( scope::scope_type type, scope** new_current = 0 );
 
     /**
      * Destroys this scope so that its parent is the current scope again.
@@ -99,28 +104,28 @@ public:
      * @return  @true if the scope has been destroyed,
      *          @false if it is already the root scope.
      */
-    bool pop_scope( csharp_pp_scope::scope_type type, csharp_pp_scope** new_current = 0 );
+    bool pop_scope( scope::scope_type type, scope** new_current = 0 );
 
     /**
      * Sets the actual parser class - the one not handling the pre-processor.
      */
-    void set_parser( csharp* parser );
-    csharp* parser();
+    void set_csharp_parser( ::csharp::parser* parser );
+    ::csharp::parser* csharp_parser();
 
 private:
-    csharp_pp_scope( csharp_pp_scope::scope_type type, csharp* parser, bool active );
+    scope( scope::scope_type type, csharp::parser* parser, bool active );
 
-    void set_parent( csharp_pp_scope* parent );
-    csharp_pp_scope* parent();
+    void set_parent( scope* parent );
+    scope* parent();
 
     scope_type _M_type;
-    csharp* _M_parser;
+    csharp::parser* _M_parser;
 
     /** Child scope of the current one. (May be recursive.) */
-    csharp_pp_scope* _M_child;
+    scope* _M_child;
 
     /** Parent scope of the current one. */
-    csharp_pp_scope* _M_parent;
+    scope* _M_parent;
 
     bool _M_is_active;
 
@@ -128,5 +133,7 @@ private:
      *  #elif expression is found that evaluates to true. */
     bool _M_waiting_for_active_section;
 };
+
+} // end of namespace csharp_pp
 
 #endif // CSHARP_PP_SCOPE_H

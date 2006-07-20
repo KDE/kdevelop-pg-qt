@@ -1,5 +1,5 @@
 -- This file is part of KDevelop.
--- Copyright (c) 2005 Jakob Petsovits <jpetso@gmx.at>
+-- Copyright (c) 2005, 2006 Jakob Petsovits <jpetso@gmx.at>
 --
 -- This grammar is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU Library General Public
@@ -17,12 +17,14 @@
 -- Boston, MA 02110-1301, USA.
 
 
+-----------------------------------------------------------------
 -- Grammar for Java 1.3, 1.4 or 1.5
 -- Modelled after the public domain ANTLR Java 1.5 grammar at
 -- http://www.antlr.org/grammar/1090713067533/index.html
 -- (Version 1.22.5 from January 03, 2005)
 -- and the reference grammar of the Java language specification,
 -- Third Edition, at http://java.sun.com/docs/books/jls/.
+-----------------------------------------------------------------
 
 
 
@@ -96,9 +98,9 @@
 
 
 
---
+------------------------------------------------------------
 -- Global declarations
---
+------------------------------------------------------------
 
 [:
 #include <string>
@@ -106,9 +108,9 @@
 
 
 
---
+------------------------------------------------------------
 -- Parser class members
---
+------------------------------------------------------------
 
 %parserclass (public declaration)
 [:
@@ -129,21 +131,21 @@
     java15_compatibility = 150,
   };
 
-  java::java_compatibility_mode compatibility_mode();
-  void set_compatibility_mode( java::java_compatibility_mode mode );
+  parser::java_compatibility_mode compatibility_mode();
+  void set_compatibility_mode( parser::java_compatibility_mode mode );
 
   enum problem_type {
     error,
     warning,
     info,
   };
-  void report_problem( java::problem_type type, const char* message );
-  void report_problem( java::problem_type type, std::string message );
+  void report_problem( parser::problem_type type, const char* message );
+  void report_problem( parser::problem_type type, std::string message );
 :]
 
 %parserclass (private declaration)
 [:
-  java::java_compatibility_mode _M_compatibility_mode;
+  parser::java_compatibility_mode _M_compatibility_mode;
 
   // ltCounter stores the amount of currently open type arguments rules,
   // all of which are beginning with a less than ("<") character.
@@ -167,9 +169,10 @@
   [: _M_compatibility_mode = java15_compatibility; :]
 
 
---
--- Additional AST members
---
+
+------------------------------------------------------------
+-- Enumeration types for additional AST members
+------------------------------------------------------------
 
 %namespace wildcard_type_bounds
 [:
@@ -357,9 +360,9 @@
 
 
 
---
+------------------------------------------------------------
 -- List of defined tokens
---
+------------------------------------------------------------
 
 -- keywords:
 %token ABSTRACT ("abstract"), ASSERT ("assert"), BOOLEAN ("boolean"),
@@ -409,8 +412,10 @@
 
 
 
--- The grammar starts with compilation_unit,
--- which is equivalent to a single source file.
+------------------------------------------------------------
+-- Start of the actual grammar
+------------------------------------------------------------
+
 
    0 [: ltCounter = 0; :]
    ( -- The first thing there is (haha) is a serious conflict between
@@ -1765,47 +1770,24 @@
 
 
 
---
+-----------------------------------------------------------------
 -- Code segments copied to the implementation (.cpp) file.
--- If existant, kdevelop-pg's current syntax requires this block to occur
--- at the end of the file.
---
+-- If existent, kdevelop-pg's current syntax requires this block
+-- to occur at the end of the file.
+-----------------------------------------------------------------
 
 [:
 #include "java_lookahead.h"
 
 
-java::java_compatibility_mode java::compatibility_mode() {
+namespace java
+{
+
+parser::java_compatibility_mode parser::compatibility_mode() {
   return _M_compatibility_mode;
 }
-void java::set_compatibility_mode( java::java_compatibility_mode mode ) {
+void parser::set_compatibility_mode( parser::java_compatibility_mode mode ) {
   _M_compatibility_mode = mode;
-}
-
-
-// custom error recovery
-bool java::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
-{
-  //print_token_environment(this);
-  report_problem(
-    java::error,
-    std::string("Expected token ``") + name
-      //+ "'' instead of ``" + current_token_text
-      + "''"
-  );
-  return false;
-}
-
-bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
-{
-  //print_token_environment(this);
-  report_problem(
-    java::error,
-    std::string("Expected symbol ``") + name
-      //+ "'' instead of ``" + current_token_text
-      + "''"
-  );
-  return false;
 }
 
 
@@ -1822,9 +1804,9 @@ bool java::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 * The function returns false if the upcoming tokens are (for sure) not
 * the beginning of a package declaration.
 */
-bool java::lookahead_is_package_declaration()
+bool parser::lookahead_is_package_declaration()
 {
-    java_lookahead* la = new java_lookahead(this);
+    lookahead* la = new lookahead(this);
     bool result = la->is_package_declaration_start();
     delete la;
     return result;
@@ -1839,9 +1821,9 @@ bool java::lookahead_is_package_declaration()
 * The function returns false if the upcoming tokens are (for sure) not
 * the beginning of a variable declaration.
 */
-bool java::lookahead_is_parameter_declaration()
+bool parser::lookahead_is_parameter_declaration()
 {
-    java_lookahead* la = new java_lookahead(this);
+    lookahead* la = new lookahead(this);
     bool result = la->is_parameter_declaration_start();
     delete la;
     return result;
@@ -1857,12 +1839,14 @@ bool java::lookahead_is_parameter_declaration()
 * The function returns false if the upcoming tokens are (for sure) not
 * the beginning of a cast expression.
 */
-bool java::lookahead_is_cast_expression()
+bool parser::lookahead_is_cast_expression()
 {
-    java_lookahead* la = new java_lookahead(this);
+    lookahead* la = new lookahead(this);
     bool result = la->is_cast_expression_start();
     delete la;
     return result;
 }
+
+} // end of namespace java
 
 :]

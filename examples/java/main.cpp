@@ -6,13 +6,15 @@
 #include <iostream>
 #include <fstream>
 
+using namespace java;
+
 char *_G_contents;
 
 static void usage(char const* argv0);
-static bool parse_file(char const* filename, java::java_compatibility_mode compatibility_mode);
+static bool parse_file(char const* filename, parser::java_compatibility_mode compatibility_mode);
 
 
-void print_token_environment(java* parser)
+void print_token_environment(java::parser* parser)
 {
     static bool done = false;
     if (done)
@@ -44,7 +46,7 @@ void print_token_environment(java* parser)
 
 int main(int argc, char *argv[])
 {
-  java::java_compatibility_mode compatibility_mode = java::java15_compatibility;
+  parser::java_compatibility_mode compatibility_mode = parser::java15_compatibility;
 
   if (argc == 1)
     {
@@ -58,13 +60,13 @@ int main(int argc, char *argv[])
           char const* version = arg + 16;
 
           if (!strcmp("1.5", version)) {
-            compatibility_mode = java::java15_compatibility;
+            compatibility_mode = parser::java15_compatibility;
           }
           else if (!strcmp("1.4", version)) {
-            compatibility_mode = java::java14_compatibility;
+            compatibility_mode = parser::java14_compatibility;
           }
           else if (!strcmp("1.3", version)) {
-            compatibility_mode = java::java13_compatibility;
+            compatibility_mode = parser::java13_compatibility;
           }
           else {
             std::cerr << "Unsupported Java version: " << version << std::endl;
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
     }
 }
 
-bool parse_file(char const *filename, java::java_compatibility_mode compatibility_mode)
+bool parse_file(char const *filename, parser::java_compatibility_mode compatibility_mode)
 {
   std::ifstream filestr(filename);
 
@@ -117,29 +119,29 @@ bool parse_file(char const *filename, java::java_compatibility_mode compatibilit
       return false;
     }
 
-  java::token_stream_type token_stream;
-  java::memory_pool_type memory_pool;
+  parser::token_stream_type token_stream;
+  parser::memory_pool_type memory_pool;
 
   // 0) setup
-  java parser;
-  parser.set_compatibility_mode(compatibility_mode);
-  parser.set_token_stream(&token_stream);
-  parser.set_memory_pool(&memory_pool);
+  java::parser java_parser;
+  java_parser.set_compatibility_mode(compatibility_mode);
+  java_parser.set_token_stream(&token_stream);
+  java_parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  parser.tokenize();
+  java_parser.tokenize();
 
   // 2) parse
   compilation_unit_ast *ast = 0;
-  bool matched = parser.parse_compilation_unit(&ast);
+  bool matched = java_parser.parse_compilation_unit(&ast);
   if (matched)
     {
-      java_default_visitor v;
+      default_visitor v;
       v.visit_node(ast);
     }
   else
     {
-      parser.yy_expected_symbol(java_ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
+      java_parser.yy_expected_symbol(ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
     }
 
   delete[] _G_contents;

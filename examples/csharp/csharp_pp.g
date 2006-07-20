@@ -30,7 +30,10 @@
 [:
 #include "csharp_pp_scope.h"
 
-class csharp;
+namespace csharp
+{
+  class parser;
+}
 :]
 
 
@@ -57,17 +60,17 @@ class csharp;
    *
    * @param first_token  The first token of the pre-processor line.
    * @param scope  The currently active pre-processor state, stored as a scope.
-   * @return  csharp::pp_result_ok if the line was processed correctly,
-   *          csharp::pp_result_invalid if there was a parsing error,
-   *          or csharp::pp_result_eof if the end of file was found (unexpectedly).
+   * @return  csharp_pp::parser::result_ok if the line was processed correctly,
+   *          csharp_pp::parser::result_invalid if there was a parsing error,
+   *          or csharp_pp::parser::result_eof if the end of file was found (unexpectedly).
    */
-  csharp_pp::pp_parse_result pp_parse_line(
-    csharp_pp::token_type_enum first_token, csharp_pp_scope* scope );
+  parser::pp_parse_result pp_parse_line(
+    parser::token_type_enum first_token, scope* scope );
 :]
 
 %parserclass (private declaration)
 [:
-  csharp_pp_scope* _M_scope;
+  scope* _M_scope;
 
   /**
    * Transform the raw input into tokens.
@@ -82,16 +85,16 @@ class csharp;
    * given token kind. Used by the pre-processor that has to bypass
    * the normal tokenizing process.
    */
-  void add_token( csharp_pp::token_type_enum token_kind );
+  void add_token( parser::token_type_enum token_kind );
 
-  token_stream_type _M_csharp_pp_token_stream;
-  memory_pool_type _M_csharp_pp_memory_pool;
+  token_stream_type _M_token_stream;
+  memory_pool_type _M_memory_pool;
 :]
 
 %parserclass (constructor)
 [:
-  set_token_stream(&_M_csharp_pp_token_stream);
-  set_memory_pool(&_M_csharp_pp_memory_pool);
+  set_token_stream(&_M_token_stream);
+  set_memory_pool(&_M_memory_pool);
 :]
 
 
@@ -300,25 +303,28 @@ class csharp;
 #include <string>
 
 
-csharp_pp::pp_parse_result csharp_pp::pp_parse_line(
-  csharp_pp::token_type_enum first_token, csharp_pp_scope* scope )
+namespace csharp_pp
+{
+
+parser::pp_parse_result parser::pp_parse_line(
+  parser::token_type_enum first_token, scope* scope )
 {
   // 0) setup
   if (scope == 0)
-    return csharp_pp::result_invalid;
+    return parser::result_invalid;
 
   _M_scope = scope;
 
   // 1) tokenize
   add_token(first_token);
-  if (tokenize() == csharp_pp::Token_EOF)
+  if (tokenize() == parser::Token_EOF)
     {
-      if (_M_scope->parser() != 0)
+      if (_M_scope->csharp_parser() != 0)
         {
-          _M_scope->parser()->report_problem( csharp::error,
+          _M_scope->csharp_parser()->report_problem( ::csharp::parser::error,
             "Encountered unexpected end of file in a pre-processor directive");
         }
-      return csharp_pp::result_eof;
+      return parser::result_eof;
     }
 
   // 2) parse
@@ -327,28 +333,28 @@ csharp_pp::pp_parse_result csharp_pp::pp_parse_line(
 
   if (matched)
     {
-      csharp_pp_handler_visitor v(this);
+      handler_visitor v(this);
       v.set_scope(_M_scope);
       v.visit_node(pp_directive_node);
     }
   else
     {
-      yy_expected_symbol(csharp_pp_ast_node::Kind_pp_directive, "pp_directive"); // ### remove me
-      return csharp_pp::result_invalid;
+      yy_expected_symbol(ast_node::Kind_pp_directive, "pp_directive"); // ### remove me
+      return parser::result_invalid;
     }
 
-  return csharp_pp::result_ok;
+  return parser::result_ok;
 }
 
 
 // custom error recovery
-bool csharp_pp::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
+bool parser::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
 {
   //print_token_environment(this);
-  if (_M_scope->parser() != 0)
+  if (_M_scope->csharp_parser() != 0)
     {
-      _M_scope->parser()->report_problem(
-        csharp::error,
+      _M_scope->csharp_parser()->report_problem(
+        ::csharp::parser::error,
         std::string("Invalid pre-processor directive: Expected token ``") + name
           //+ "'' instead of ``" + current_token_text
           + "''"
@@ -357,13 +363,13 @@ bool csharp_pp::yy_expected_token(int /*expected*/, std::size_t where, char cons
   return false;
 }
 
-bool csharp_pp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+bool parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 {
   //print_token_environment(this);
-  if (_M_scope->parser() != 0)
+  if (_M_scope->csharp_parser() != 0)
     {
-      _M_scope->parser()->report_problem(
-        csharp::error,
+      _M_scope->csharp_parser()->report_problem(
+        ::csharp::parser::error,
         std::string("Invalid pre-processor directive: Expected symbol ``") + name
           //+ "'' instead of ``" + current_token_text
           + "''"
@@ -371,5 +377,7 @@ bool csharp_pp::yy_expected_symbol(int /*expected_symbol*/, char const *name)
     }
   return false;
 }
+
+} // end of namespace csharp_pp
 
 :]

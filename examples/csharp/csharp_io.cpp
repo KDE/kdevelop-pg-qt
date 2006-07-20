@@ -34,40 +34,44 @@ std::size_t _G_token_begin, _G_token_end;
 extern char* yytext;
 
 int yylex();
-void lexer_restart(csharp* parser);
+void lexer_restart(csharp::parser* parser);
+void print_token_environment(csharp::parser* parser);
 
 
-void csharp::tokenize()
+namespace csharp
+{
+
+void parser::tokenize()
 {
   ::lexer_restart(this);
 
-  int kind = csharp::Token_EOF;
+  int kind = parser::Token_EOF;
   do
     {
       kind = ::yylex();
       //std::cerr << yytext << std::endl; //" "; // debug output
 
       if (!kind) // when the lexer returns 0, the end of file is reached
-        kind = csharp::Token_EOF;
+        kind = parser::Token_EOF;
 
-      csharp::token_type &t = this->token_stream->next();
+      parser::token_type &t = this->token_stream->next();
       t.kind = kind;
       t.begin = _G_token_begin;
       t.end = _G_token_end;
       t.text = _G_contents;
     }
-  while (kind != csharp::Token_EOF);
+  while (kind != parser::Token_EOF);
 
   this->yylex(); // produce the look ahead token
 }
 
 
-void csharp::report_problem( csharp::problem_type type, std::string message )
+void parser::report_problem( parser::problem_type type, std::string message )
 {
   report_problem( type, message.c_str() );
 }
 
-void csharp::report_problem( csharp::problem_type type, const char* message )
+void parser::report_problem( parser::problem_type type, const char* message )
 {
   if (type == error)
     std::cerr << "** ERROR: " << message << std::endl;
@@ -78,27 +82,58 @@ void csharp::report_problem( csharp::problem_type type, const char* message )
 }
 
 
-bool csharp_pp::tokenize()
+// custom error recovery
+bool parser::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
 {
-  int kind = csharp_pp::Token_EOF;
+  print_token_environment(this);
+  report_problem(
+    parser::error,
+    std::string("Expected token ``") + name
+      //+ "'' instead of ``" + current_token_text
+      + "''"
+  );
+  return false;
+}
+
+bool parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+  print_token_environment(this);
+  report_problem(
+    parser::error,
+    std::string("Expected symbol ``") + name
+      //+ "'' instead of ``" + current_token_text
+      + "''"
+  );
+  return false;
+}
+
+} // end of namespace csharp
+
+
+namespace csharp_pp
+{
+
+bool parser::tokenize()
+{
+  int kind = parser::Token_EOF;
   do
     {
       kind = ::yylex();
       //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
 
-      csharp_pp::token_type &t = this->token_stream->next();
+      parser::token_type &t = this->token_stream->next();
       t.kind = kind;
       t.begin = _G_token_begin;
       t.end = _G_token_end;
       t.text = _G_contents;
 
-      if (kind == csharp_pp::Token_EOF)
+      if (kind == parser::Token_EOF)
         return false; // we neither want nor expect this in a preprocessor line
     }
-  while (kind != csharp_pp::Token_PP_NEW_LINE);
+  while (kind != parser::Token_PP_NEW_LINE);
 
-  csharp::token_type &t = this->token_stream->next();
-  t.kind = csharp_pp::Token_EOF;
+  parser::token_type &t = this->token_stream->next();
+  t.kind = parser::Token_EOF;
   t.begin = _G_token_begin;
   t.end = _G_token_end;
   t.text = _G_contents;
@@ -106,12 +141,14 @@ bool csharp_pp::tokenize()
   this->yylex(); // produce the look ahead token
 }
 
-void csharp_pp::add_token( csharp_pp::token_type_enum token_kind )
+void parser::add_token( parser::token_type_enum token_kind )
 {
   //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
-  csharp_pp::token_type &t = this->token_stream->next();
+  parser::token_type &t = this->token_stream->next();
   t.kind = token_kind;
   t.begin = _G_token_begin;
   t.end = _G_token_end;
   t.text = _G_contents;
 }
+
+} // end of namespace csharp_pp

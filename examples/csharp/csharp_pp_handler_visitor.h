@@ -23,16 +23,19 @@
 
 #include "csharp_pp.h"
 
-class csharp_pp_scope;
+namespace csharp_pp
+{
+
+class scope;
 
 
-class csharp_pp_handler_visitor : public csharp_pp_default_visitor
+class handler_visitor : public default_visitor
 {
 public:
-    csharp_pp_handler_visitor( csharp_pp* pp_parser );
-    ~csharp_pp_handler_visitor();
+    handler_visitor( parser* pp_parser );
+    ~handler_visitor();
 
-    void set_scope( csharp_pp_scope* current_scope );
+    void set_scope( scope* current_scope );
 
     virtual void visit_pp_declaration(pp_declaration_ast* node);
     virtual void visit_pp_if_clause(pp_if_clause_ast* node);
@@ -52,11 +55,13 @@ public:
     virtual void visit_pp_primary_expression(pp_primary_expression_ast* node);
 
 private:
-    csharp_pp* _M_pp_parser;
-    csharp_pp_scope* _M_scope;
+    parser* _M_pp_parser;
+    scope* _M_scope;
 
     /** Temporary variable for evaluating #if and #elif conditions. */
     bool _M_expression_bool;
 };
+
+} // end of namespace csharp_pp
 
 #endif // CSHARP_PP_HANDLER_VISITOR_H

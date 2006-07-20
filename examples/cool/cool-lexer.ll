@@ -2,88 +2,130 @@
 %{
 #include "cool.h"
 
-extern std::size_t _M_token_begin, _M_token_end;
+#include <iostream>
+
+/* call this before calling yylex(): */
+void lexer_restart(cool::parser* parser);
+
+extern std::size_t _G_token_begin, _G_token_end;
 extern char *_G_contents;
-extern std::size_t _G_current_offset;
+
+
+
+/* the rest of these declarations are internal to the lexer,
+ * don't use them outside of this file. */
+
+std::size_t _G_current_offset;
+cool::parser* _G_parser;
+
 
 #define YY_INPUT(buf, result, max_size) \
- do \
-   { \
-     int c = _G_contents[_G_current_offset++]; \
-     result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
-   } \
- while (0)
+  { \
+    int c = _G_contents[_G_current_offset++]; \
+    result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
+  }
 
 #define YY_USER_INIT \
-  _M_token_begin = _M_token_end = 0; \
-  _G_current_offset = 0;
+_G_token_begin = _G_token_end = 0; \
+_G_current_offset = 0;
 
 #define YY_USER_ACTION \
-  _M_token_begin = _M_token_end; \
-  _M_token_end += yyleng;
+_G_token_begin = _G_token_end; \
+_G_token_end += yyleng;
+
 %}
 
-%x IN_STRING
-%x IN_COMMENT
+Whitespace  [ \t\f\r\n]
+
+%x IN_BLOCKCOMMENT
 
 %%
 
-[ \t\r\n]+  /* skip */ ;
-"--".*      /* skip */ ;
+ /* whitespace, newlines and comments */
 
-"@" return cool::Token_AT;
-"case" return cool::Token_CASE;
-"esac" return cool::Token_ESAC;
-"class" return cool::Token_CLASS;
-"Class" return cool::Token_CLASS;
-":" return cool::Token_COLON;
-"," return cool::Token_COMMA;
-"/" return cool::Token_DIVIDE;
-"." return cool::Token_DOT;
-"else" return cool::Token_ELSE;
-"=" return cool::Token_EQUAL;
-"false" return cool::Token_FALSE;
-"if" return cool::Token_IF;
-"in" return cool::Token_IN;
-"fi" return cool::Token_FI;
-"inherits" return cool::Token_INHERITS;
-"isvoid" return cool::Token_ISVOID;
-"{" return cool::Token_LBRACE;
-"<-" return cool::Token_LEFT_ARROW;
-"<" return cool::Token_LESS;
-"<=" return cool::Token_LESS_EQUAL;
-"let" return cool::Token_LET;
-"loop" return cool::Token_LOOP;
-"(" return cool::Token_LPAREN;
-"-" return cool::Token_MINUS;
-"new" return cool::Token_NEW;
-"not" return cool::Token_NOT;
-"of" return cool::Token_OF;
-"+" return cool::Token_PLUS;
-"pool" return cool::Token_POOL;
-"}" return cool::Token_RBRACE;
-"=>" return cool::Token_RIGHT_ARROW;
-")" return cool::Token_RPAREN;
-";" return cool::Token_SEMICOLON;
-"*" return cool::Token_STAR;
-"then" return cool::Token_THEN;
-"~" return cool::Token_TILDE;
-"true" return cool::Token_TRUE;
-"while" return cool::Token_WHILE;
+{Whitespace}+   /* skip */ ;
+"--".*          /* line comments, skip */ ;
 
-[A-Z][a-zA-Z0-9_]* return cool::Token_TYPE;
-[a-z_][a-zA-Z0-9_]* return cool::Token_ID;
-[0-9]+ return cool::Token_INTEGER;
+"(*"                    BEGIN(IN_BLOCKCOMMENT);
+<IN_BLOCKCOMMENT>{
+"*)"            BEGIN(INITIAL);
+<<EOF>>         return cool::parser::Token_EOF;
+"\r\n"|\r|\n    /* advance */ ;
+.               /* advance */ ;
+}
 
-"(*"                          BEGIN(IN_COMMENT);
-<IN_COMMENT>"*)"              { BEGIN(INITIAL); }
-<IN_COMMENT>\n                /*advance*/ ;
-<IN_COMMENT>.                 /*advance*/ ;
 
-"\""([^"\\]|\\.)*"\""          { return cool::Token_STRING; }
+ /* seperators */
 
-. return yytext[0];
+"("             return cool::parser::Token_LPAREN;
+")"             return cool::parser::Token_RPAREN;
+"{"             return cool::parser::Token_LBRACE;
+"}"             return cool::parser::Token_RBRACE;
+";"             return cool::parser::Token_SEMICOLON;
+","             return cool::parser::Token_COMMA;
+"."             return cool::parser::Token_DOT;
+"@"             return cool::parser::Token_AT;
+
+
+ /* operators */
+
+"+"             return cool::parser::Token_PLUS;
+"-"             return cool::parser::Token_MINUS;
+"*"             return cool::parser::Token_STAR;
+"/"             return cool::parser::Token_SLASH;
+"="             return cool::parser::Token_EQUAL;
+"<="            return cool::parser::Token_LESS_EQUAL;
+"<"             return cool::parser::Token_LESS;
+":"             return cool::parser::Token_COLON;
+"<-"            return cool::parser::Token_ARROW_LEFT;
+"=>"            return cool::parser::Token_ARROW_RIGHT;
+"~"             return cool::parser::Token_TILDE;
+"not"           return cool::parser::Token_NOT;
+"isvoid"        return cool::parser::Token_ISVOID;
+
+
+ /* reserved words */
+
+"case"          return cool::parser::Token_CASE;
+"esac"          return cool::parser::Token_ESAC;
+"class"         return cool::parser::Token_CLASS;
+"Class"         return cool::parser::Token_CLASS;
+"else"          return cool::parser::Token_ELSE;
+"false"         return cool::parser::Token_FALSE;
+"if"            return cool::parser::Token_IF;
+"in"            return cool::parser::Token_IN;
+"fi"            return cool::parser::Token_FI;
+"inherits"      return cool::parser::Token_INHERITS;
+"let"           return cool::parser::Token_LET;
+"loop"          return cool::parser::Token_LOOP;
+"new"           return cool::parser::Token_NEW;
+"of"            return cool::parser::Token_OF;
+"pool"          return cool::parser::Token_POOL;
+"then"          return cool::parser::Token_THEN;
+"true"          return cool::parser::Token_TRUE;
+"while"         return cool::parser::Token_WHILE;
+
+
+ /* literals */
+
+"\""([^"\\]|\\.)*"\""   return cool::parser::Token_STRING;
+
+[A-Z][a-zA-Z0-9_]*      return cool::parser::Token_TYPE;
+[a-z_][a-zA-Z0-9_]*     return cool::parser::Token_IDENTIFIER;
+[0-9]+          return cool::parser::Token_INTEGER;
+
+
+ /* everything else is not a valid lexeme */
+
+.               return cool::parser::Token_INVALID;
 
 %%
+
+void lexer_restart(cool::parser* _parser) {
+  _G_parser = _parser;
+  yyrestart(NULL);
+  BEGIN(INITIAL); // is not set automatically by yyrestart()
+  YY_USER_INIT
+}
 
 int yywrap() { return 1; }

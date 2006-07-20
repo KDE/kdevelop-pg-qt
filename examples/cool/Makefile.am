@@ -4,6 +4,7 @@ bin_PROGRAMS = cool
 cool_SOURCES = \
 	decoder.cpp \
 	cool.cpp \
+	cool_io.cpp \
 	cool-lexer.ll \
 	main.cpp
 

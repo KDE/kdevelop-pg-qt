@@ -362,45 +362,45 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[819] =
     {   0,
-        0,    0,   53,   53,  119,  117,   49,   50,   50,   13,
-      117,  114,   40,   34,  117,    1,    2,   30,   26,    7,
-       28,    9,   32,  115,  115,   12,    8,   16,   25,   18,
-       11,   10,    5,    6,   38,  114,  114,  114,  114,  114,
+        0,    0,    5,    5,  119,  117,    1,    2,    2,   21,
+      117,  114,   48,   42,  117,    9,   10,   38,   34,   15,
+       36,   17,   40,  115,  115,   20,   16,   24,   33,   26,
+       19,   18,   13,   14,   46,  114,  114,  114,  114,  114,
       114,  114,  114,  114,  114,  114,  114,  114,  114,  114,
-      114,    3,   36,    4,   14,  117,  117,  117,  117,  117,
-      117,  117,  117,  117,  117,   53,   55,   55,   54,   49,
-       50,   20,    0,   60,   59,    0,    0,    0,    0,    0,
+      114,   11,   44,   12,   22,  117,  117,  117,  117,  117,
+      117,  117,  117,  117,  117,    5,    7,    7,    6,    1,
+        2,   28,    0,  113,  112,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,  114,  114,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,   41,   21,   35,
+        0,    0,    0,    0,    0,    0,    0,   49,   29,   43,
 
-        0,   58,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,   31,   23,   27,   24,   29,    0,  116,    0,
-        0,    0,    0,    0,   52,   51,   33,  116,  115,    0,
+        0,  111,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,   39,   31,   35,   32,   37,    0,  116,    0,
+        0,    0,    0,    0,    4,    3,   41,  116,  115,    0,
       116,  116,  115,    0,    0,    0,    0,    0,    0,  115,
-        0,    0,    0,    0,    0,   42,   17,   15,   19,   44,
-       39,  114,  114,  114,  114,  114,  114,  114,  114,  114,
-      114,   73,  114,  114,  114,  114,  114,  114,  114,  114,
-       84,  114,  114,  114,  114,  114,  114,  114,  114,  114,
+        0,    0,    0,    0,    0,   50,   25,   23,   27,   52,
+       47,  114,  114,  114,  114,  114,  114,  114,  114,  114,
+      114,   69,  114,  114,  114,  114,  114,  114,  114,  114,
+       80,  114,  114,  114,  114,  114,  114,  114,  114,  114,
       114,  114,  114,  114,  114,  114,  114,  114,  114,  114,
-       37,   22,  114,  114,  114,    0,    0,    0,    0,    0,
+       45,   30,  114,  114,  114,    0,    0,    0,    0,    0,
 
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,   53,   55,   54,   54,   56,    0,    0,    0,    0,
+        0,    5,    7,    6,    6,    8,    0,    0,    0,    0,
         0,    0,    0,    0,  114,  114,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,   57,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,  110,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,   48,  116,  116,    0,    0,    0,    0,    0,
-        0,    0,    0,   51,  116,  116,  116,    0,    0,    0,
+        0,    0,   56,  116,  116,    0,    0,    0,    0,    0,
+        0,    0,    0,    3,  116,  116,  116,    0,    0,    0,
         0,    0,  115,    0,  116,  116,    0,    0,    0,    0,
         0,    0,  115,    0,    0,    0,    0,    0,    0,    0,
 
-        0,    0,    0,    0,    0,    0,    0,    0,   43,   45,
-       46,  114,  114,  114,  114,  114,  114,  114,  114,  114,
-      114,  114,  114,  114,  114,  114,  114,  114,  114,   82,
-      114,  114,  114,   88,  114,  114,   92,  114,  114,  114,
+        0,    0,    0,    0,    0,    0,    0,    0,   51,   53,
+       54,  114,  114,  114,  114,  114,  114,  114,  114,  114,
+      114,  114,  114,  114,  114,  114,  114,  114,  114,   78,
+      114,  114,  114,   84,  114,  114,   88,  114,  114,  114,
       114,  114,  114,  114,  114,  114,  114,  114,  114,  114,
-      114,  114,  114,  110,  114,  114,  114,  114,  114,  114,
+      114,  114,  114,  106,  114,  114,  114,  114,  114,  114,
         0,    0,    0,    0,    0,  114,  114,  114,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,  114,  114,
@@ -410,11 +410,11 @@ static yyconst flex_int16_t yy_accept[819] =
         0,    0,    0,    0,    0,  116,    0,  116,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,  115,  116,    0,  115,   47,  114,  114,  114,  114,
-       65,   66,  114,   68,  114,  114,  114,  114,  114,   75,
-       76,  114,  114,  114,  114,   83,  114,  114,  114,  114,
-       90,  114,   93,  114,  114,  114,  114,  114,  114,  114,
-      114,  114,  114,  114,  105,  114,  114,  109,  111,  114,
+        0,  115,  116,    0,  115,   55,  114,  114,  114,  114,
+       61,   62,  114,   64,  114,  114,  114,  114,  114,   71,
+       72,  114,  114,  114,  114,   79,  114,  114,  114,  114,
+       86,  114,   89,  114,  114,  114,  114,  114,  114,  114,
+      114,  114,  114,  114,  101,  114,  114,  105,  107,  114,
       114,  114,  114,    0,    0,    0,    0,    0,  114,    0,
 
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -426,11 +426,11 @@ static yyconst flex_int16_t yy_accept[819] =
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,  116,  116,  116,    0,
         0,  116,  116,    0,    0,    0,    0,    0,  114,  114,
-      114,   64,   67,   69,   70,  114,  114,  114,  114,   78,
+      114,   60,   63,   65,   66,  114,  114,  114,  114,   74,
 
-       79,   81,  114,  114,  114,  114,  114,  114,  114,  114,
-      114,  114,   99,  114,  114,  102,  114,  114,  106,  114,
-      114,  113,  114,    0,    0,    0,    0,    0,    0,    0,
+       75,   77,  114,  114,  114,  114,  114,  114,  114,  114,
+      114,  114,   95,  114,  114,   98,  114,  114,  102,  114,
+      114,  109,  114,    0,    0,    0,    0,    0,    0,    0,
         0,  114,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -439,19 +439,19 @@ static yyconst flex_int16_t yy_accept[819] =
         0,    0,  116,  116,    0,  116,  116,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
 
-      114,   62,  114,  114,  114,   74,  114,  114,  114,   86,
-      114,  114,   91,  114,  114,  114,   97,   98,  100,  114,
-      103,  114,  107,  114,  114,  114,    0,    0,    0,    0,
+      114,   58,  114,  114,  114,   70,  114,  114,  114,   82,
+      114,  114,   87,  114,  114,  114,   93,   94,   96,  114,
+       99,  114,  103,  114,  114,  114,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,  116,  114,   63,  114,   72,
-       77,   80,  114,  114,  114,   94,   95,  114,  114,  114,
+        0,    0,    0,    0,    0,  116,  114,   59,  114,   68,
+       73,   76,  114,  114,  114,   90,   91,  114,  114,  114,
       114,  114,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,  116,   61,   71,  114,  114,  114,
+        0,    0,    0,    0,  116,   57,   67,  114,  114,  114,
 
-      114,  101,  114,  114,  112,    0,  114,  114,   89,   96,
-      114,  108,   85,   87,  114,  114,  104,    0
+      114,   97,  114,  114,  108,    0,  114,  114,   85,   92,
+      114,  104,   81,   83,  114,  114,  100,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -2702,7 +2702,7 @@ char *yytext;
 #include <iostream>
 
 /* call this before calling yylex(): */
-void lexer_restart(java* parser);
+void lexer_restart(java::parser* parser);
 
 extern std::size_t _G_token_begin, _G_token_end;
 extern char *_G_contents;
@@ -2713,7 +2713,7 @@ extern char *_G_contents;
  * don't use them outside of this file. */
 
 std::size_t _G_current_offset;
-java* _G_parser;
+java::parser* _G_parser;
 
 
 #define YY_INPUT(buf, result, max_size) \
@@ -2911,7 +2911,7 @@ YY_DECL
 #line 147 "java_lexer.ll"
 
 
- /* seperators */
+ /* whitespace, newlines and comments */
 
 #line 2917 "java_lexer.cc"
 
@@ -2999,649 +2999,649 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 151 "java_lexer.ll"
-return java::Token_LPAREN;
+/* skip */ ;
 	YY_BREAK
 case 2:
+/* rule 2 can match eol */
 YY_RULE_SETUP
 #line 152 "java_lexer.ll"
-return java::Token_RPAREN;
+/* { newLine(); } */ ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 153 "java_lexer.ll"
-return java::Token_LBRACE;
+#line 154 "java_lexer.ll"
+/* line comments, skip */ ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 154 "java_lexer.ll"
-return java::Token_RBRACE;
+#line 156 "java_lexer.ll"
+BEGIN(IN_BLOCKCOMMENT);
 	YY_BREAK
+
 case 5:
 YY_RULE_SETUP
-#line 155 "java_lexer.ll"
-return java::Token_LBRACKET;
+#line 158 "java_lexer.ll"
+/* eat anything that's not a '*' */ ;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 156 "java_lexer.ll"
-return java::Token_RBRACKET;
+#line 159 "java_lexer.ll"
+/* eat up '*'s that are not followed by slashes or newlines */;
 	YY_BREAK
 case 7:
+/* rule 7 can match eol */
 YY_RULE_SETUP
-#line 157 "java_lexer.ll"
-return java::Token_COMMA;
+#line 160 "java_lexer.ll"
+/* { newLine(); } */ ;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 158 "java_lexer.ll"
-return java::Token_SEMICOLON;
+#line 161 "java_lexer.ll"
+BEGIN(INITIAL);
 	YY_BREAK
+case YY_STATE_EOF(IN_BLOCKCOMMENT):
+#line 162 "java_lexer.ll"
+{
+    _G_parser->report_problem( java::parser::error,
+      "Encountered end of file in an unclosed block comment");
+    return java::parser::Token_EOF;
+}
+	YY_BREAK
+
+/* seperators */
 case 9:
 YY_RULE_SETUP
-#line 159 "java_lexer.ll"
-return java::Token_DOT;
+#line 172 "java_lexer.ll"
+return java::parser::Token_LPAREN;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 160 "java_lexer.ll"
+#line 173 "java_lexer.ll"
+return java::parser::Token_RPAREN;
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 174 "java_lexer.ll"
+return java::parser::Token_LBRACE;
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 175 "java_lexer.ll"
+return java::parser::Token_RBRACE;
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 176 "java_lexer.ll"
+return java::parser::Token_LBRACKET;
+	YY_BREAK
+case 14:
+YY_RULE_SETUP
+#line 177 "java_lexer.ll"
+return java::parser::Token_RBRACKET;
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 178 "java_lexer.ll"
+return java::parser::Token_COMMA;
+	YY_BREAK
+case 16:
+YY_RULE_SETUP
+#line 179 "java_lexer.ll"
+return java::parser::Token_SEMICOLON;
+	YY_BREAK
+case 17:
+YY_RULE_SETUP
+#line 180 "java_lexer.ll"
+return java::parser::Token_DOT;
+	YY_BREAK
+case 18:
+YY_RULE_SETUP
+#line 181 "java_lexer.ll"
 {
-    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
-      return java::Token_AT;
+    if (_G_parser->compatibility_mode() >= java::parser::java15_compatibility)
+      return java::parser::Token_AT;
     else {
-      _G_parser->report_problem( java::error,
+      _G_parser->report_problem( java::parser::error,
         "Annotations are not supported by Java 1.4 or earlier");
-      return java::Token_INVALID;
+      return java::parser::Token_INVALID;
     }
 }
 	YY_BREAK
 /* operators */
-case 11:
-YY_RULE_SETUP
-#line 173 "java_lexer.ll"
-return java::Token_QUESTION;
-	YY_BREAK
-case 12:
-YY_RULE_SETUP
-#line 174 "java_lexer.ll"
-return java::Token_COLON;
-	YY_BREAK
-case 13:
-YY_RULE_SETUP
-#line 175 "java_lexer.ll"
-return java::Token_BANG;
-	YY_BREAK
-case 14:
-YY_RULE_SETUP
-#line 176 "java_lexer.ll"
-return java::Token_TILDE;
-	YY_BREAK
-case 15:
-YY_RULE_SETUP
-#line 177 "java_lexer.ll"
-return java::Token_EQUAL;
-	YY_BREAK
-case 16:
-YY_RULE_SETUP
-#line 178 "java_lexer.ll"
-return java::Token_LESS_THAN;
-	YY_BREAK
-case 17:
-YY_RULE_SETUP
-#line 179 "java_lexer.ll"
-return java::Token_LESS_EQUAL;
-	YY_BREAK
-case 18:
-YY_RULE_SETUP
-#line 180 "java_lexer.ll"
-return java::Token_GREATER_THAN;
-	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 181 "java_lexer.ll"
-return java::Token_GREATER_EQUAL;
+#line 194 "java_lexer.ll"
+return java::parser::Token_QUESTION;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 182 "java_lexer.ll"
-return java::Token_NOT_EQUAL;
+#line 195 "java_lexer.ll"
+return java::parser::Token_COLON;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 183 "java_lexer.ll"
-return java::Token_LOG_AND;
+#line 196 "java_lexer.ll"
+return java::parser::Token_BANG;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 184 "java_lexer.ll"
-return java::Token_LOG_OR;
+#line 197 "java_lexer.ll"
+return java::parser::Token_TILDE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 185 "java_lexer.ll"
-return java::Token_INCREMENT;
+#line 198 "java_lexer.ll"
+return java::parser::Token_EQUAL;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 186 "java_lexer.ll"
-return java::Token_DECREMENT;
+#line 199 "java_lexer.ll"
+return java::parser::Token_LESS_THAN;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 187 "java_lexer.ll"
-return java::Token_ASSIGN;
+#line 200 "java_lexer.ll"
+return java::parser::Token_LESS_EQUAL;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 188 "java_lexer.ll"
-return java::Token_PLUS;
+#line 201 "java_lexer.ll"
+return java::parser::Token_GREATER_THAN;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 189 "java_lexer.ll"
-return java::Token_PLUS_ASSIGN;
+#line 202 "java_lexer.ll"
+return java::parser::Token_GREATER_EQUAL;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 190 "java_lexer.ll"
-return java::Token_MINUS;
+#line 203 "java_lexer.ll"
+return java::parser::Token_NOT_EQUAL;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 191 "java_lexer.ll"
-return java::Token_MINUS_ASSIGN;
+#line 204 "java_lexer.ll"
+return java::parser::Token_LOG_AND;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 192 "java_lexer.ll"
-return java::Token_STAR;
+#line 205 "java_lexer.ll"
+return java::parser::Token_LOG_OR;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 193 "java_lexer.ll"
-return java::Token_STAR_ASSIGN;
+#line 206 "java_lexer.ll"
+return java::parser::Token_INCREMENT;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 194 "java_lexer.ll"
-return java::Token_SLASH;
+#line 207 "java_lexer.ll"
+return java::parser::Token_DECREMENT;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 195 "java_lexer.ll"
-return java::Token_SLASH_ASSIGN;
+#line 208 "java_lexer.ll"
+return java::parser::Token_ASSIGN;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 196 "java_lexer.ll"
-return java::Token_BIT_AND;
+#line 209 "java_lexer.ll"
+return java::parser::Token_PLUS;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 197 "java_lexer.ll"
-return java::Token_BIT_AND_ASSIGN;
+#line 210 "java_lexer.ll"
+return java::parser::Token_PLUS_ASSIGN;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 198 "java_lexer.ll"
-return java::Token_BIT_OR;
+#line 211 "java_lexer.ll"
+return java::parser::Token_MINUS;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 199 "java_lexer.ll"
-return java::Token_BIT_OR_ASSIGN;
+#line 212 "java_lexer.ll"
+return java::parser::Token_MINUS_ASSIGN;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 200 "java_lexer.ll"
-return java::Token_BIT_XOR;
+#line 213 "java_lexer.ll"
+return java::parser::Token_STAR;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 201 "java_lexer.ll"
-return java::Token_BIT_XOR_ASSIGN;
+#line 214 "java_lexer.ll"
+return java::parser::Token_STAR_ASSIGN;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 202 "java_lexer.ll"
-return java::Token_REMAINDER;
+#line 215 "java_lexer.ll"
+return java::parser::Token_SLASH;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 203 "java_lexer.ll"
-return java::Token_REMAINDER_ASSIGN;
+#line 216 "java_lexer.ll"
+return java::parser::Token_SLASH_ASSIGN;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 204 "java_lexer.ll"
-return java::Token_LSHIFT;
+#line 217 "java_lexer.ll"
+return java::parser::Token_BIT_AND;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 205 "java_lexer.ll"
-return java::Token_LSHIFT_ASSIGN;
+#line 218 "java_lexer.ll"
+return java::parser::Token_BIT_AND_ASSIGN;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 206 "java_lexer.ll"
-return java::Token_SIGNED_RSHIFT;
+#line 219 "java_lexer.ll"
+return java::parser::Token_BIT_OR;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 207 "java_lexer.ll"
-return java::Token_SIGNED_RSHIFT_ASSIGN;
+#line 220 "java_lexer.ll"
+return java::parser::Token_BIT_OR_ASSIGN;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 208 "java_lexer.ll"
-return java::Token_UNSIGNED_RSHIFT;
+#line 221 "java_lexer.ll"
+return java::parser::Token_BIT_XOR;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 209 "java_lexer.ll"
-return java::Token_UNSIGNED_RSHIFT_ASSIGN;
+#line 222 "java_lexer.ll"
+return java::parser::Token_BIT_XOR_ASSIGN;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 210 "java_lexer.ll"
-{
-    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
-      return java::Token_ELLIPSIS;
-    else {
-      _G_parser->report_problem( java::error,
-        "Variable-length argument lists are not supported by Java 1.4 or earlier");
-      return java::Token_INVALID;
-    }
-}
+#line 223 "java_lexer.ll"
+return java::parser::Token_REMAINDER;
 	YY_BREAK
-/* whitespace, newlines and comments */
 case 49:
 YY_RULE_SETUP
-#line 223 "java_lexer.ll"
-/* skip */ ;
+#line 224 "java_lexer.ll"
+return java::parser::Token_REMAINDER_ASSIGN;
 	YY_BREAK
 case 50:
-/* rule 50 can match eol */
 YY_RULE_SETUP
-#line 224 "java_lexer.ll"
-/* { newLine(); } */ ;
+#line 225 "java_lexer.ll"
+return java::parser::Token_LSHIFT;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 226 "java_lexer.ll"
-/* line comments, skip */ ;
+return java::parser::Token_LSHIFT_ASSIGN;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 228 "java_lexer.ll"
-BEGIN(IN_BLOCKCOMMENT);
+#line 227 "java_lexer.ll"
+return java::parser::Token_SIGNED_RSHIFT;
 	YY_BREAK
-
 case 53:
 YY_RULE_SETUP
-#line 230 "java_lexer.ll"
-/* eat anything that's not a '*' */ ;
+#line 228 "java_lexer.ll"
+return java::parser::Token_SIGNED_RSHIFT_ASSIGN;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 231 "java_lexer.ll"
-/* eat up '*'s that are not followed by slashes or newlines */;
+#line 229 "java_lexer.ll"
+return java::parser::Token_UNSIGNED_RSHIFT;
 	YY_BREAK
 case 55:
-/* rule 55 can match eol */
 YY_RULE_SETUP
-#line 232 "java_lexer.ll"
-/* { newLine(); } */ ;
+#line 230 "java_lexer.ll"
+return java::parser::Token_UNSIGNED_RSHIFT_ASSIGN;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 233 "java_lexer.ll"
-BEGIN(INITIAL);
-	YY_BREAK
-case YY_STATE_EOF(IN_BLOCKCOMMENT):
-#line 234 "java_lexer.ll"
+#line 231 "java_lexer.ll"
 {
-    _G_parser->report_problem( java::error,
-      "Encountered end of file in an unclosed block comment");
-    return java::Token_EOF;
+    if (_G_parser->compatibility_mode() >= java::parser::java15_compatibility)
+      return java::parser::Token_ELLIPSIS;
+    else {
+      _G_parser->report_problem( java::parser::error,
+        "Variable-length argument lists are not supported by Java 1.4 or earlier");
+      return java::parser::Token_INVALID;
+    }
 }
 	YY_BREAK
-
-/* characters and strings */
+/* reserved words */
 case 57:
 YY_RULE_SETUP
 #line 244 "java_lexer.ll"
-return java::Token_CHARACTER_LITERAL;
+return java::parser::Token_ABSTRACT;
 	YY_BREAK
 case 58:
-/* rule 58 can match eol */
 YY_RULE_SETUP
 #line 245 "java_lexer.ll"
 {
-    _G_parser->report_problem( java::error,
-      std::string("Invalid character literal: ") + yytext );
-    return java::Token_CHARACTER_LITERAL;
+    if (_G_parser->compatibility_mode() >= java::parser::java14_compatibility)
+      return java::parser::Token_ASSERT;
+    else
+      return java::parser::Token_IDENTIFIER;
 }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
 #line 251 "java_lexer.ll"
-return java::Token_STRING_LITERAL;
+return java::parser::Token_BOOLEAN;
 	YY_BREAK
 case 60:
-/* rule 60 can match eol */
 YY_RULE_SETUP
 #line 252 "java_lexer.ll"
-{
-    _G_parser->report_problem( java::error,
-      std::string("Invalid string literal: ") + yytext );
-    return java::Token_STRING_LITERAL;
-}
+return java::parser::Token_BREAK;
 	YY_BREAK
-/* reserved words */
 case 61:
 YY_RULE_SETUP
-#line 261 "java_lexer.ll"
-return java::Token_ABSTRACT;
+#line 253 "java_lexer.ll"
+return java::parser::Token_BYTE;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 262 "java_lexer.ll"
-{
-    if (_G_parser->compatibility_mode() >= java::java14_compatibility)
-      return java::Token_ASSERT;
-    else
-      return java::Token_IDENTIFIER;
-}
+#line 254 "java_lexer.ll"
+return java::parser::Token_CASE;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 268 "java_lexer.ll"
-return java::Token_BOOLEAN;
+#line 255 "java_lexer.ll"
+return java::parser::Token_CATCH;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 269 "java_lexer.ll"
-return java::Token_BREAK;
+#line 256 "java_lexer.ll"
+return java::parser::Token_CHAR;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 270 "java_lexer.ll"
-return java::Token_BYTE;
+#line 257 "java_lexer.ll"
+return java::parser::Token_CLASS;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 271 "java_lexer.ll"
-return java::Token_CASE;
+#line 258 "java_lexer.ll"
+{
+    _G_parser->report_problem( java::parser::error,
+      "\"const\": reserved but unused (invalid) keyword");
+    return java::parser::Token_CONST;
+}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 272 "java_lexer.ll"
-return java::Token_CATCH;
+#line 263 "java_lexer.ll"
+return java::parser::Token_CONTINUE;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 273 "java_lexer.ll"
-return java::Token_CHAR;
+#line 264 "java_lexer.ll"
+return java::parser::Token_DEFAULT;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 274 "java_lexer.ll"
-return java::Token_CLASS;
+#line 265 "java_lexer.ll"
+return java::parser::Token_DO;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 275 "java_lexer.ll"
-{
-    _G_parser->report_problem( java::error,
-      "\"const\": reserved but unused (invalid) keyword");
-    return java::Token_CONST;
-}
+#line 266 "java_lexer.ll"
+return java::parser::Token_DOUBLE;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 280 "java_lexer.ll"
-return java::Token_CONTINUE;
+#line 267 "java_lexer.ll"
+return java::parser::Token_ELSE;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 281 "java_lexer.ll"
-return java::Token_DEFAULT;
+#line 268 "java_lexer.ll"
+{
+    if (_G_parser->compatibility_mode() >= java::parser::java15_compatibility)
+      return java::parser::Token_ENUM;
+    else
+      return java::parser::Token_IDENTIFIER;
+}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 282 "java_lexer.ll"
-return java::Token_DO;
+#line 274 "java_lexer.ll"
+return java::parser::Token_EXTENDS;
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 283 "java_lexer.ll"
-return java::Token_DOUBLE;
+#line 275 "java_lexer.ll"
+return java::parser::Token_FALSE;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 284 "java_lexer.ll"
-return java::Token_ELSE;
+#line 276 "java_lexer.ll"
+return java::parser::Token_FINAL;
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 285 "java_lexer.ll"
-{
-    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
-      return java::Token_ENUM;
-    else
-      return java::Token_IDENTIFIER;
-}
+#line 277 "java_lexer.ll"
+return java::parser::Token_FINALLY;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 291 "java_lexer.ll"
-return java::Token_EXTENDS;
+#line 278 "java_lexer.ll"
+return java::parser::Token_FLOAT;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 292 "java_lexer.ll"
-return java::Token_FALSE;
+#line 279 "java_lexer.ll"
+return java::parser::Token_FOR;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 293 "java_lexer.ll"
-return java::Token_FINAL;
+#line 280 "java_lexer.ll"
+{
+    _G_parser->report_problem( java::parser::error,
+      "\"goto\": reserved but unused (invalid) keyword");
+    return java::parser::Token_GOTO;
+}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 294 "java_lexer.ll"
-return java::Token_FINALLY;
+#line 285 "java_lexer.ll"
+return java::parser::Token_IF;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 295 "java_lexer.ll"
-return java::Token_FLOAT;
+#line 286 "java_lexer.ll"
+return java::parser::Token_IMPLEMENTS;
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 296 "java_lexer.ll"
-return java::Token_FOR;
+#line 287 "java_lexer.ll"
+return java::parser::Token_IMPORT;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 297 "java_lexer.ll"
-{
-    _G_parser->report_problem( java::error,
-      "\"goto\": reserved but unused (invalid) keyword");
-    return java::Token_GOTO;
-}
+#line 288 "java_lexer.ll"
+return java::parser::Token_INSTANCEOF;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 302 "java_lexer.ll"
-return java::Token_IF;
+#line 289 "java_lexer.ll"
+return java::parser::Token_INT;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 303 "java_lexer.ll"
-return java::Token_IMPLEMENTS;
+#line 290 "java_lexer.ll"
+return java::parser::Token_INTERFACE;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 304 "java_lexer.ll"
-return java::Token_IMPORT;
+#line 291 "java_lexer.ll"
+return java::parser::Token_LONG;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 305 "java_lexer.ll"
-return java::Token_INSTANCEOF;
+#line 292 "java_lexer.ll"
+return java::parser::Token_NATIVE;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 306 "java_lexer.ll"
-return java::Token_INT;
+#line 293 "java_lexer.ll"
+return java::parser::Token_NEW;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 307 "java_lexer.ll"
-return java::Token_INTERFACE;
+#line 294 "java_lexer.ll"
+return java::parser::Token_NULL;
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 308 "java_lexer.ll"
-return java::Token_LONG;
+#line 295 "java_lexer.ll"
+return java::parser::Token_PACKAGE;
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 309 "java_lexer.ll"
-return java::Token_NATIVE;
+#line 296 "java_lexer.ll"
+return java::parser::Token_PRIVATE;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 310 "java_lexer.ll"
-return java::Token_NEW;
+#line 297 "java_lexer.ll"
+return java::parser::Token_PROTECTED;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 311 "java_lexer.ll"
-return java::Token_NULL;
+#line 298 "java_lexer.ll"
+return java::parser::Token_PUBLIC;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 312 "java_lexer.ll"
-return java::Token_PACKAGE;
+#line 299 "java_lexer.ll"
+return java::parser::Token_RETURN;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 313 "java_lexer.ll"
-return java::Token_PRIVATE;
+#line 300 "java_lexer.ll"
+return java::parser::Token_SHORT;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 314 "java_lexer.ll"
-return java::Token_PROTECTED;
+#line 301 "java_lexer.ll"
+return java::parser::Token_STATIC;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 315 "java_lexer.ll"
-return java::Token_PUBLIC;
+#line 302 "java_lexer.ll"
+return java::parser::Token_STRICTFP;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 316 "java_lexer.ll"
-return java::Token_RETURN;
+#line 303 "java_lexer.ll"
+return java::parser::Token_SUPER;
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 317 "java_lexer.ll"
-return java::Token_SHORT;
+#line 304 "java_lexer.ll"
+return java::parser::Token_SWITCH;
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 318 "java_lexer.ll"
-return java::Token_STATIC;
+#line 305 "java_lexer.ll"
+return java::parser::Token_SYNCHRONIZED;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 319 "java_lexer.ll"
-return java::Token_STRICTFP;
+#line 306 "java_lexer.ll"
+return java::parser::Token_THIS;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 320 "java_lexer.ll"
-return java::Token_SUPER;
+#line 307 "java_lexer.ll"
+return java::parser::Token_THROW;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 321 "java_lexer.ll"
-return java::Token_SWITCH;
+#line 308 "java_lexer.ll"
+return java::parser::Token_THROWS;
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 322 "java_lexer.ll"
-return java::Token_SYNCHRONIZED;
+#line 309 "java_lexer.ll"
+return java::parser::Token_TRANSIENT;
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 323 "java_lexer.ll"
-return java::Token_THIS;
+#line 310 "java_lexer.ll"
+return java::parser::Token_TRUE;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 324 "java_lexer.ll"
-return java::Token_THROW;
+#line 311 "java_lexer.ll"
+return java::parser::Token_TRY;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 325 "java_lexer.ll"
-return java::Token_THROWS;
+#line 312 "java_lexer.ll"
+return java::parser::Token_VOID;
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 326 "java_lexer.ll"
-return java::Token_TRANSIENT;
+#line 313 "java_lexer.ll"
+return java::parser::Token_VOLATILE;
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 327 "java_lexer.ll"
-return java::Token_TRUE;
+#line 314 "java_lexer.ll"
+return java::parser::Token_WHILE;
 	YY_BREAK
+/* characters and strings */
 case 110:
 YY_RULE_SETUP
-#line 328 "java_lexer.ll"
-return java::Token_TRY;
+#line 319 "java_lexer.ll"
+return java::parser::Token_CHARACTER_LITERAL;
 	YY_BREAK
 case 111:
+/* rule 111 can match eol */
 YY_RULE_SETUP
-#line 329 "java_lexer.ll"
-return java::Token_VOID;
+#line 320 "java_lexer.ll"
+{
+    _G_parser->report_problem( java::parser::error,
+      std::string("Invalid character literal: ") + yytext );
+    return java::parser::Token_CHARACTER_LITERAL;
+}
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 330 "java_lexer.ll"
-return java::Token_VOLATILE;
+#line 326 "java_lexer.ll"
+return java::parser::Token_STRING_LITERAL;
 	YY_BREAK
 case 113:
+/* rule 113 can match eol */
 YY_RULE_SETUP
-#line 331 "java_lexer.ll"
-return java::Token_WHILE;
+#line 327 "java_lexer.ll"
+{
+    _G_parser->report_problem( java::parser::error,
+      std::string("Invalid string literal: ") + yytext );
+    return java::parser::Token_STRING_LITERAL;
+}
 	YY_BREAK
 /* identifiers and number literals */
 case 114:
 YY_RULE_SETUP
 #line 336 "java_lexer.ll"
-return java::Token_IDENTIFIER;
+return java::parser::Token_IDENTIFIER;
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
 #line 338 "java_lexer.ll"
-return java::Token_INTEGER_LITERAL;
+return java::parser::Token_INTEGER_LITERAL;
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
 #line 339 "java_lexer.ll"
-return java::Token_FLOATING_POINT_LITERAL;
+return java::parser::Token_FLOATING_POINT_LITERAL;
 	YY_BREAK
 /* everything else is not a valid lexeme */
 case 117:
 YY_RULE_SETUP
 #line 344 "java_lexer.ll"
-return java::Token_INVALID;
+return java::parser::Token_INVALID;
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
@@ -4618,7 +4618,7 @@ void yyfree (void * ptr )
 
 
 
-void lexer_restart(java* _parser) {
+void lexer_restart(java::parser* _parser) {
   _G_parser = _parser;
   yyrestart(NULL);
   BEGIN(INITIAL); // is not set automatically by yyrestart()

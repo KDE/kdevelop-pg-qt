@@ -6,13 +6,15 @@
 #include <iostream>
 #include <fstream>
 
+using namespace csharp;
+
 char *_G_contents;
 
 static void usage(char const* argv0);
-static bool parse_file(char const* filename, csharp::csharp_compatibility_mode compatibility_mode);
+static bool parse_file(char const* filename, parser::csharp_compatibility_mode compatibility_mode);
 
 
-void print_token_environment(csharp* parser)
+void print_token_environment(parser* parser)
 {
     static bool done = false;
     if (done)
@@ -44,7 +46,7 @@ void print_token_environment(csharp* parser)
 
 int main(int argc, char *argv[])
 {
-  csharp::csharp_compatibility_mode compatibility_mode = csharp::csharp20_compatibility;
+  parser::csharp_compatibility_mode compatibility_mode = parser::csharp20_compatibility;
 
   if (argc == 1)
     {
@@ -59,11 +61,11 @@ int main(int argc, char *argv[])
           char const* version = arg + 16;
 
           if (!strcmp("1.0", version)) {
-            compatibility_mode = csharp::csharp10_compatibility;
+            compatibility_mode = parser::csharp10_compatibility;
           }
           else if (!strcmp("2.0", version)) {
           */
-            compatibility_mode = csharp::csharp20_compatibility;
+            compatibility_mode = parser::csharp20_compatibility;
           /*
           }
           else {
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
     }
 }
 
-bool parse_file(char const *filename, csharp::csharp_compatibility_mode compatibility_mode)
+bool parse_file(char const *filename, parser::csharp_compatibility_mode compatibility_mode)
 {
   std::ifstream filestr(filename);
 
@@ -118,29 +120,29 @@ bool parse_file(char const *filename, csharp::csharp_compatibility_mode compatib
       return false;
     }
 
-  csharp::token_stream_type token_stream;
-  csharp::memory_pool_type memory_pool;
+  parser::token_stream_type token_stream;
+  parser::memory_pool_type memory_pool;
 
   // 0) setup
-  csharp parser;
-  parser.set_compatibility_mode(compatibility_mode);
-  parser.set_token_stream(&token_stream);
-  parser.set_memory_pool(&memory_pool);
+  parser csharp_parser;
+  csharp_parser.set_compatibility_mode(compatibility_mode);
+  csharp_parser.set_token_stream(&token_stream);
+  csharp_parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  parser.tokenize();
+  csharp_parser.tokenize();
 
   // 2) parse
   compilation_unit_ast *ast = 0;
-  bool matched = parser.parse_compilation_unit(&ast);
+  bool matched = csharp_parser.parse_compilation_unit(&ast);
   if (matched)
     {
-      csharp_default_visitor v;
+      default_visitor v;
       v.visit_node(ast);
     }
   else
     {
-      parser.yy_expected_symbol(csharp_ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
+      csharp_parser.yy_expected_symbol(ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
     }
 
   delete[] _G_contents;

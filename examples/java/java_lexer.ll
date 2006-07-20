@@ -25,7 +25,7 @@
 #include <iostream>
 
 /* call this before calling yylex(): */
-void lexer_restart(java* parser);
+void lexer_restart(java::parser* parser);
 
 extern std::size_t _G_token_begin, _G_token_end;
 extern char *_G_contents;
@@ -36,7 +36,7 @@ extern char *_G_contents;
  * don't use them outside of this file. */
 
 std::size_t _G_current_offset;
-java* _G_parser;
+java::parser* _G_parser;
 
 
 #define YY_INPUT(buf, result, max_size) \
@@ -60,7 +60,7 @@ _G_token_end += yyleng;
   * http://lists.gnu.org/archive/html/help-flex/2005-01/msg00043.html */
 
  /* \u0024, \u0041-\u005a, \u005f, \u0061-\u007a: one byte in UTF-8 */
-Letter1         [$A-Z_a-z]
+Letter1         [A-Za-z_$]
  /* \u00c0-\u00d6, \u00d8-\u00f6, \u00f8-\u00ff */
 Letter2         [\xC3]([\x80-\x96]|[\x98-\xB6]|[\xB8-\xBF])
  /* \u0100-\u1fff */
@@ -146,78 +146,6 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 
 %%
 
- /* seperators */
-
-"("             return java::Token_LPAREN;
-")"             return java::Token_RPAREN;
-"{"             return java::Token_LBRACE;
-"}"             return java::Token_RBRACE;
-"["             return java::Token_LBRACKET;
-"]"             return java::Token_RBRACKET;
-","             return java::Token_COMMA;
-";"             return java::Token_SEMICOLON;
-"."             return java::Token_DOT;
-"@"             {
-    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
-      return java::Token_AT;
-    else {
-      _G_parser->report_problem( java::error,
-        "Annotations are not supported by Java 1.4 or earlier");
-      return java::Token_INVALID;
-    }
-}
-
-
- /* operators */
-
-"?"             return java::Token_QUESTION;
-":"             return java::Token_COLON;
-"!"             return java::Token_BANG;
-"~"             return java::Token_TILDE;
-"=="            return java::Token_EQUAL;
-"<"             return java::Token_LESS_THAN;
-"<="            return java::Token_LESS_EQUAL;
-">"             return java::Token_GREATER_THAN;
-">="            return java::Token_GREATER_EQUAL;
-"!="            return java::Token_NOT_EQUAL;
-"&&"            return java::Token_LOG_AND;
-"||"            return java::Token_LOG_OR;
-"++"            return java::Token_INCREMENT;
-"--"            return java::Token_DECREMENT;
-"="             return java::Token_ASSIGN;
-"+"             return java::Token_PLUS;
-"+="            return java::Token_PLUS_ASSIGN;
-"-"             return java::Token_MINUS;
-"-="            return java::Token_MINUS_ASSIGN;
-"*"             return java::Token_STAR;
-"*="            return java::Token_STAR_ASSIGN;
-"/"             return java::Token_SLASH;
-"/="            return java::Token_SLASH_ASSIGN;
-"&"             return java::Token_BIT_AND;
-"&="            return java::Token_BIT_AND_ASSIGN;
-"|"             return java::Token_BIT_OR;
-"|="            return java::Token_BIT_OR_ASSIGN;
-"^"             return java::Token_BIT_XOR;
-"^="            return java::Token_BIT_XOR_ASSIGN;
-"%"             return java::Token_REMAINDER;
-"%="            return java::Token_REMAINDER_ASSIGN;
-"<<"            return java::Token_LSHIFT;
-"<<="           return java::Token_LSHIFT_ASSIGN;
-">>"            return java::Token_SIGNED_RSHIFT;
-">>="           return java::Token_SIGNED_RSHIFT_ASSIGN;
-">>>"           return java::Token_UNSIGNED_RSHIFT;
-">>>="          return java::Token_UNSIGNED_RSHIFT_ASSIGN;
-"..."           {
-    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
-      return java::Token_ELLIPSIS;
-    else {
-      _G_parser->report_problem( java::error,
-        "Variable-length argument lists are not supported by Java 1.4 or earlier");
-      return java::Token_INVALID;
-    }
-}
-
-
  /* whitespace, newlines and comments */
 
 [ \f\t]+        /* skip */ ;
@@ -232,120 +160,192 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "\r\n"|\r|\n    /* { newLine(); } */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    _G_parser->report_problem( java::error,
+    _G_parser->report_problem( java::parser::error,
       "Encountered end of file in an unclosed block comment");
-    return java::Token_EOF;
+    return java::parser::Token_EOF;
 }
 }
 
 
- /* characters and strings */
+ /* seperators */
 
-[']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return java::Token_CHARACTER_LITERAL;
-[']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*([\\]?[\r\n]|[']) {
-    _G_parser->report_problem( java::error,
-      std::string("Invalid character literal: ") + yytext );
-    return java::Token_CHARACTER_LITERAL;
+"("             return java::parser::Token_LPAREN;
+")"             return java::parser::Token_RPAREN;
+"{"             return java::parser::Token_LBRACE;
+"}"             return java::parser::Token_RBRACE;
+"["             return java::parser::Token_LBRACKET;
+"]"             return java::parser::Token_RBRACKET;
+","             return java::parser::Token_COMMA;
+";"             return java::parser::Token_SEMICOLON;
+"."             return java::parser::Token_DOT;
+"@"             {
+    if (_G_parser->compatibility_mode() >= java::parser::java15_compatibility)
+      return java::parser::Token_AT;
+    else {
+      _G_parser->report_problem( java::parser::error,
+        "Annotations are not supported by Java 1.4 or earlier");
+      return java::parser::Token_INVALID;
+    }
 }
 
-["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return java::Token_STRING_LITERAL;
-["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*([\\]?[\r\n]|["]) {
-    _G_parser->report_problem( java::error,
-      std::string("Invalid string literal: ") + yytext );
-    return java::Token_STRING_LITERAL;
+
+ /* operators */
+
+"?"             return java::parser::Token_QUESTION;
+":"             return java::parser::Token_COLON;
+"!"             return java::parser::Token_BANG;
+"~"             return java::parser::Token_TILDE;
+"=="            return java::parser::Token_EQUAL;
+"<"             return java::parser::Token_LESS_THAN;
+"<="            return java::parser::Token_LESS_EQUAL;
+">"             return java::parser::Token_GREATER_THAN;
+">="            return java::parser::Token_GREATER_EQUAL;
+"!="            return java::parser::Token_NOT_EQUAL;
+"&&"            return java::parser::Token_LOG_AND;
+"||"            return java::parser::Token_LOG_OR;
+"++"            return java::parser::Token_INCREMENT;
+"--"            return java::parser::Token_DECREMENT;
+"="             return java::parser::Token_ASSIGN;
+"+"             return java::parser::Token_PLUS;
+"+="            return java::parser::Token_PLUS_ASSIGN;
+"-"             return java::parser::Token_MINUS;
+"-="            return java::parser::Token_MINUS_ASSIGN;
+"*"             return java::parser::Token_STAR;
+"*="            return java::parser::Token_STAR_ASSIGN;
+"/"             return java::parser::Token_SLASH;
+"/="            return java::parser::Token_SLASH_ASSIGN;
+"&"             return java::parser::Token_BIT_AND;
+"&="            return java::parser::Token_BIT_AND_ASSIGN;
+"|"             return java::parser::Token_BIT_OR;
+"|="            return java::parser::Token_BIT_OR_ASSIGN;
+"^"             return java::parser::Token_BIT_XOR;
+"^="            return java::parser::Token_BIT_XOR_ASSIGN;
+"%"             return java::parser::Token_REMAINDER;
+"%="            return java::parser::Token_REMAINDER_ASSIGN;
+"<<"            return java::parser::Token_LSHIFT;
+"<<="           return java::parser::Token_LSHIFT_ASSIGN;
+">>"            return java::parser::Token_SIGNED_RSHIFT;
+">>="           return java::parser::Token_SIGNED_RSHIFT_ASSIGN;
+">>>"           return java::parser::Token_UNSIGNED_RSHIFT;
+">>>="          return java::parser::Token_UNSIGNED_RSHIFT_ASSIGN;
+"..."           {
+    if (_G_parser->compatibility_mode() >= java::parser::java15_compatibility)
+      return java::parser::Token_ELLIPSIS;
+    else {
+      _G_parser->report_problem( java::parser::error,
+        "Variable-length argument lists are not supported by Java 1.4 or earlier");
+      return java::parser::Token_INVALID;
+    }
 }
 
 
  /* reserved words */
 
-"abstract"      return java::Token_ABSTRACT;
+"abstract"      return java::parser::Token_ABSTRACT;
 "assert"        {
-    if (_G_parser->compatibility_mode() >= java::java14_compatibility)
-      return java::Token_ASSERT;
+    if (_G_parser->compatibility_mode() >= java::parser::java14_compatibility)
+      return java::parser::Token_ASSERT;
     else
-      return java::Token_IDENTIFIER;
+      return java::parser::Token_IDENTIFIER;
 }
-"boolean"       return java::Token_BOOLEAN;
-"break"         return java::Token_BREAK;
-"byte"          return java::Token_BYTE;
-"case"          return java::Token_CASE;
-"catch"         return java::Token_CATCH;
-"char"          return java::Token_CHAR;
-"class"         return java::Token_CLASS;
+"boolean"       return java::parser::Token_BOOLEAN;
+"break"         return java::parser::Token_BREAK;
+"byte"          return java::parser::Token_BYTE;
+"case"          return java::parser::Token_CASE;
+"catch"         return java::parser::Token_CATCH;
+"char"          return java::parser::Token_CHAR;
+"class"         return java::parser::Token_CLASS;
 "const"         {
-    _G_parser->report_problem( java::error,
+    _G_parser->report_problem( java::parser::error,
       "\"const\": reserved but unused (invalid) keyword");
-    return java::Token_CONST;
+    return java::parser::Token_CONST;
 }
-"continue"      return java::Token_CONTINUE;
-"default"       return java::Token_DEFAULT;
-"do"            return java::Token_DO;
-"double"        return java::Token_DOUBLE;
-"else"          return java::Token_ELSE;
+"continue"      return java::parser::Token_CONTINUE;
+"default"       return java::parser::Token_DEFAULT;
+"do"            return java::parser::Token_DO;
+"double"        return java::parser::Token_DOUBLE;
+"else"          return java::parser::Token_ELSE;
 "enum"          {
-    if (_G_parser->compatibility_mode() >= java::java15_compatibility)
-      return java::Token_ENUM;
+    if (_G_parser->compatibility_mode() >= java::parser::java15_compatibility)
+      return java::parser::Token_ENUM;
     else
-      return java::Token_IDENTIFIER;
+      return java::parser::Token_IDENTIFIER;
 }
-"extends"       return java::Token_EXTENDS;
-"false"         return java::Token_FALSE;
-"final"         return java::Token_FINAL;
-"finally"       return java::Token_FINALLY;
-"float"         return java::Token_FLOAT;
-"for"           return java::Token_FOR;
+"extends"       return java::parser::Token_EXTENDS;
+"false"         return java::parser::Token_FALSE;
+"final"         return java::parser::Token_FINAL;
+"finally"       return java::parser::Token_FINALLY;
+"float"         return java::parser::Token_FLOAT;
+"for"           return java::parser::Token_FOR;
 "goto"          {
-    _G_parser->report_problem( java::error,
+    _G_parser->report_problem( java::parser::error,
       "\"goto\": reserved but unused (invalid) keyword");
-    return java::Token_GOTO;
+    return java::parser::Token_GOTO;
 }
-"if"            return java::Token_IF;
-"implements"    return java::Token_IMPLEMENTS;
-"import"        return java::Token_IMPORT;
-"instanceof"    return java::Token_INSTANCEOF;
-"int"           return java::Token_INT;
-"interface"     return java::Token_INTERFACE;
-"long"          return java::Token_LONG;
-"native"        return java::Token_NATIVE;
-"new"           return java::Token_NEW;
-"null"          return java::Token_NULL;
-"package"       return java::Token_PACKAGE;
-"private"       return java::Token_PRIVATE;
-"protected"     return java::Token_PROTECTED;
-"public"        return java::Token_PUBLIC;
-"return"        return java::Token_RETURN;
-"short"         return java::Token_SHORT;
-"static"        return java::Token_STATIC;
-"strictfp"      return java::Token_STRICTFP;
-"super"         return java::Token_SUPER;
-"switch"        return java::Token_SWITCH;
-"synchronized"  return java::Token_SYNCHRONIZED;
-"this"          return java::Token_THIS;
-"throw"         return java::Token_THROW;
-"throws"        return java::Token_THROWS;
-"transient"     return java::Token_TRANSIENT;
-"true"          return java::Token_TRUE;
-"try"           return java::Token_TRY;
-"void"          return java::Token_VOID;
-"volatile"      return java::Token_VOLATILE;
-"while"         return java::Token_WHILE;
+"if"            return java::parser::Token_IF;
+"implements"    return java::parser::Token_IMPLEMENTS;
+"import"        return java::parser::Token_IMPORT;
+"instanceof"    return java::parser::Token_INSTANCEOF;
+"int"           return java::parser::Token_INT;
+"interface"     return java::parser::Token_INTERFACE;
+"long"          return java::parser::Token_LONG;
+"native"        return java::parser::Token_NATIVE;
+"new"           return java::parser::Token_NEW;
+"null"          return java::parser::Token_NULL;
+"package"       return java::parser::Token_PACKAGE;
+"private"       return java::parser::Token_PRIVATE;
+"protected"     return java::parser::Token_PROTECTED;
+"public"        return java::parser::Token_PUBLIC;
+"return"        return java::parser::Token_RETURN;
+"short"         return java::parser::Token_SHORT;
+"static"        return java::parser::Token_STATIC;
+"strictfp"      return java::parser::Token_STRICTFP;
+"super"         return java::parser::Token_SUPER;
+"switch"        return java::parser::Token_SWITCH;
+"synchronized"  return java::parser::Token_SYNCHRONIZED;
+"this"          return java::parser::Token_THIS;
+"throw"         return java::parser::Token_THROW;
+"throws"        return java::parser::Token_THROWS;
+"transient"     return java::parser::Token_TRANSIENT;
+"true"          return java::parser::Token_TRUE;
+"try"           return java::parser::Token_TRY;
+"void"          return java::parser::Token_VOID;
+"volatile"      return java::parser::Token_VOLATILE;
+"while"         return java::parser::Token_WHILE;
+
+
+ /* characters and strings */
+
+[']({Escape}|{Multibyte}|[^\\\r\n\'])[']   return java::parser::Token_CHARACTER_LITERAL;
+[']({Escape}|{Multibyte}|[\\][^\\\r\n\']|[^\\\r\n\'])*([\\]?[\r\n]|[']) {
+    _G_parser->report_problem( java::parser::error,
+      std::string("Invalid character literal: ") + yytext );
+    return java::parser::Token_CHARACTER_LITERAL;
+}
+
+["]({Escape}|{Multibyte}|[^\\\r\n\"])*["]  return java::parser::Token_STRING_LITERAL;
+["]({Escape}|{Multibyte}|[\\][^\\\r\n\"]|[^\\\r\n\"])*([\\]?[\r\n]|["]) {
+    _G_parser->report_problem( java::parser::error,
+      std::string("Invalid string literal: ") + yytext );
+    return java::parser::Token_STRING_LITERAL;
+}
 
 
  /* identifiers and number literals */
 
-{Letter}({Letter}|{Digit})*  return java::Token_IDENTIFIER;
+{Letter}({Letter}|{Digit})*  return java::parser::Token_IDENTIFIER;
 
-{IntegerLiteral}   return java::Token_INTEGER_LITERAL;
-{FloatingPoint}    return java::Token_FLOATING_POINT_LITERAL;
+{IntegerLiteral}   return java::parser::Token_INTEGER_LITERAL;
+{FloatingPoint}    return java::parser::Token_FLOATING_POINT_LITERAL;
 
 
  /* everything else is not a valid lexeme */
 
-.               return java::Token_INVALID;
+.               return java::parser::Token_INVALID;
 
 %%
 
-void lexer_restart(java* _parser) {
+void lexer_restart(java::parser* _parser) {
   _G_parser = _parser;
   yyrestart(NULL);
   BEGIN(INITIAL); // is not set automatically by yyrestart()

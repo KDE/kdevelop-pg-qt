@@ -226,6 +226,34 @@ bool lookahead::is_cast_expression_start()
 }
 
 
+// modified to only require tokens up to (and including)
+// qualified_identifier '[' ']', the remaining brackets and the ".class"
+// are not needed anymore for disambiguation.
+bool lookahead::is_array_type_dot_class_start()
+{
+  if (_M_token == parser::Token_IDENTIFIER)
+    {
+      if (!is_qualified_identifier())
+        {
+          return false;
+        }
+
+      if (_M_token != parser::Token_LBRACKET)
+        return false;
+      fetch_next_token();
+
+      if (_M_token != parser::Token_RBRACKET)
+        return false;
+    }
+  else
+    {
+      return false;
+    }
+
+  return true;
+}
+
+
 // modified to accept almost anything within the parentheses
 bool lookahead::is_annotation()
 {

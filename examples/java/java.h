@@ -25,7 +25,9 @@ namespace java
   struct annotation_type_body_ast;
   struct annotation_type_declaration_ast;
   struct annotation_type_field_ast;
+  struct array_access_ast;
   struct array_creator_rest_ast;
+  struct array_type_dot_class_ast;
   struct assert_statement_ast;
   struct bit_and_expression_ast;
   struct bit_or_expression_ast;
@@ -34,8 +36,10 @@ namespace java
   struct block_statement_ast;
   struct break_statement_ast;
   struct builtin_type_ast;
+  struct builtin_type_dot_class_ast;
   struct cast_expression_ast;
   struct catch_clause_ast;
+  struct class_access_data_ast;
   struct class_body_ast;
   struct class_declaration_ast;
   struct class_extends_clause_ast;
@@ -76,6 +80,7 @@ namespace java
   struct logical_or_expression_ast;
   struct mandatory_array_builtin_type_ast;
   struct mandatory_declarator_brackets_ast;
+  struct method_call_data_ast;
   struct method_declaration_data_ast;
   struct multiplicative_expression_ast;
   struct multiplicative_expression_rest_ast;
@@ -96,19 +101,22 @@ namespace java
   struct primary_expression_ast;
   struct primary_selector_ast;
   struct qualified_identifier_ast;
-  struct qualified_identifier_safe_ast;
   struct qualified_identifier_with_optional_star_ast;
   struct relational_expression_ast;
   struct relational_expression_rest_ast;
   struct return_statement_ast;
   struct shift_expression_ast;
   struct shift_expression_rest_ast;
+  struct simple_name_access_data_ast;
   struct statement_expression_ast;
+  struct super_access_data_ast;
   struct super_suffix_ast;
   struct switch_label_ast;
   struct switch_section_ast;
   struct switch_statement_ast;
   struct synchronized_statement_ast;
+  struct this_access_data_ast;
+  struct this_call_data_ast;
   struct throw_statement_ast;
   struct throws_clause_ast;
   struct try_statement_ast;
@@ -230,37 +238,6 @@ namespace java
     };
   }
 
-  namespace primary_atom
-    {
-    enum primary_atom_enum {
-      type_literal,
-      type_new_expression,
-      type_parenthesis_expression,
-      type_builtin_type_dot_class,
-      type_array_type_dot_class,
-      type_type_name,
-      type_this_call_no_type_arguments,
-      type_this_call_with_type_arguments,
-      type_super_call_no_type_arguments,
-      type_super_call_with_type_arguments,
-      type_method_call_no_type_arguments,
-      type_method_call_with_type_arguments,
-    };
-  }
-
-  namespace primary_selector
-    {
-    enum primary_selector_enum {
-      type_dotclass,
-      type_dotthis,
-      type_new_expression,
-      type_member_variable,
-      type_method_call,
-      type_super_access,
-      type_array_access,
-    };
-  }
-
   namespace relational_expression_rest
     {
     enum relational_operator_enum {
@@ -333,113 +310,121 @@ namespace java
         Kind_annotation_type_body = 1009,
         Kind_annotation_type_declaration = 1010,
         Kind_annotation_type_field = 1011,
-        Kind_array_creator_rest = 1012,
-        Kind_assert_statement = 1013,
-        Kind_bit_and_expression = 1014,
-        Kind_bit_or_expression = 1015,
-        Kind_bit_xor_expression = 1016,
-        Kind_block = 1017,
-        Kind_block_statement = 1018,
-        Kind_break_statement = 1019,
-        Kind_builtin_type = 1020,
-        Kind_cast_expression = 1021,
-        Kind_catch_clause = 1022,
-        Kind_class_body = 1023,
-        Kind_class_declaration = 1024,
-        Kind_class_extends_clause = 1025,
-        Kind_class_field = 1026,
-        Kind_class_or_interface_type_name = 1027,
-        Kind_class_or_interface_type_name_part = 1028,
-        Kind_class_type = 1029,
-        Kind_compilation_unit = 1030,
-        Kind_conditional_expression = 1031,
-        Kind_constructor_declaration_data = 1032,
-        Kind_continue_statement = 1033,
-        Kind_do_while_statement = 1034,
-        Kind_embedded_statement = 1035,
-        Kind_enum_body = 1036,
-        Kind_enum_constant = 1037,
-        Kind_enum_constant_body = 1038,
-        Kind_enum_constant_field = 1039,
-        Kind_enum_declaration = 1040,
-        Kind_equality_expression = 1041,
-        Kind_equality_expression_rest = 1042,
-        Kind_expression = 1043,
-        Kind_for_clause_traditional_rest = 1044,
-        Kind_for_control = 1045,
-        Kind_for_statement = 1046,
-        Kind_foreach_declaration_data = 1047,
-        Kind_identifier = 1048,
-        Kind_if_statement = 1049,
-        Kind_implements_clause = 1050,
-        Kind_import_declaration = 1051,
-        Kind_interface_body = 1052,
-        Kind_interface_declaration = 1053,
-        Kind_interface_extends_clause = 1054,
-        Kind_interface_field = 1055,
-        Kind_interface_method_declaration_data = 1056,
-        Kind_labeled_statement = 1057,
-        Kind_literal = 1058,
-        Kind_logical_and_expression = 1059,
-        Kind_logical_or_expression = 1060,
-        Kind_mandatory_array_builtin_type = 1061,
-        Kind_mandatory_declarator_brackets = 1062,
-        Kind_method_declaration_data = 1063,
-        Kind_multiplicative_expression = 1064,
-        Kind_multiplicative_expression_rest = 1065,
-        Kind_new_expression = 1066,
-        Kind_non_array_type = 1067,
-        Kind_non_wildcard_type_arguments = 1068,
-        Kind_optional_argument_list = 1069,
-        Kind_optional_array_builtin_type = 1070,
-        Kind_optional_declarator_brackets = 1071,
-        Kind_optional_modifiers = 1072,
-        Kind_optional_parameter_declaration_list = 1073,
-        Kind_optional_parameter_modifiers = 1074,
-        Kind_package_declaration = 1075,
-        Kind_parameter_declaration = 1076,
-        Kind_parameter_declaration_ellipsis = 1077,
-        Kind_postfix_operator = 1078,
-        Kind_primary_atom = 1079,
-        Kind_primary_expression = 1080,
-        Kind_primary_selector = 1081,
-        Kind_qualified_identifier = 1082,
-        Kind_qualified_identifier_safe = 1083,
-        Kind_qualified_identifier_with_optional_star = 1084,
-        Kind_relational_expression = 1085,
-        Kind_relational_expression_rest = 1086,
-        Kind_return_statement = 1087,
-        Kind_shift_expression = 1088,
-        Kind_shift_expression_rest = 1089,
-        Kind_statement_expression = 1090,
-        Kind_super_suffix = 1091,
-        Kind_switch_label = 1092,
-        Kind_switch_section = 1093,
-        Kind_switch_statement = 1094,
-        Kind_synchronized_statement = 1095,
-        Kind_throw_statement = 1096,
-        Kind_throws_clause = 1097,
-        Kind_try_statement = 1098,
-        Kind_type = 1099,
-        Kind_type_argument = 1100,
-        Kind_type_argument_type = 1101,
-        Kind_type_arguments = 1102,
-        Kind_type_arguments_or_parameters_end = 1103,
-        Kind_type_declaration = 1104,
-        Kind_type_parameter = 1105,
-        Kind_type_parameters = 1106,
-        Kind_unary_expression = 1107,
-        Kind_unary_expression_not_plusminus = 1108,
-        Kind_variable_array_initializer = 1109,
-        Kind_variable_declaration = 1110,
-        Kind_variable_declaration_data = 1111,
-        Kind_variable_declaration_rest = 1112,
-        Kind_variable_declaration_split_data = 1113,
-        Kind_variable_declarator = 1114,
-        Kind_variable_initializer = 1115,
-        Kind_while_statement = 1116,
-        Kind_wildcard_type = 1117,
-        Kind_wildcard_type_bounds = 1118,
+        Kind_array_access = 1012,
+        Kind_array_creator_rest = 1013,
+        Kind_array_type_dot_class = 1014,
+        Kind_assert_statement = 1015,
+        Kind_bit_and_expression = 1016,
+        Kind_bit_or_expression = 1017,
+        Kind_bit_xor_expression = 1018,
+        Kind_block = 1019,
+        Kind_block_statement = 1020,
+        Kind_break_statement = 1021,
+        Kind_builtin_type = 1022,
+        Kind_builtin_type_dot_class = 1023,
+        Kind_cast_expression = 1024,
+        Kind_catch_clause = 1025,
+        Kind_class_access_data = 1026,
+        Kind_class_body = 1027,
+        Kind_class_declaration = 1028,
+        Kind_class_extends_clause = 1029,
+        Kind_class_field = 1030,
+        Kind_class_or_interface_type_name = 1031,
+        Kind_class_or_interface_type_name_part = 1032,
+        Kind_class_type = 1033,
+        Kind_compilation_unit = 1034,
+        Kind_conditional_expression = 1035,
+        Kind_constructor_declaration_data = 1036,
+        Kind_continue_statement = 1037,
+        Kind_do_while_statement = 1038,
+        Kind_embedded_statement = 1039,
+        Kind_enum_body = 1040,
+        Kind_enum_constant = 1041,
+        Kind_enum_constant_body = 1042,
+        Kind_enum_constant_field = 1043,
+        Kind_enum_declaration = 1044,
+        Kind_equality_expression = 1045,
+        Kind_equality_expression_rest = 1046,
+        Kind_expression = 1047,
+        Kind_for_clause_traditional_rest = 1048,
+        Kind_for_control = 1049,
+        Kind_for_statement = 1050,
+        Kind_foreach_declaration_data = 1051,
+        Kind_identifier = 1052,
+        Kind_if_statement = 1053,
+        Kind_implements_clause = 1054,
+        Kind_import_declaration = 1055,
+        Kind_interface_body = 1056,
+        Kind_interface_declaration = 1057,
+        Kind_interface_extends_clause = 1058,
+        Kind_interface_field = 1059,
+        Kind_interface_method_declaration_data = 1060,
+        Kind_labeled_statement = 1061,
+        Kind_literal = 1062,
+        Kind_logical_and_expression = 1063,
+        Kind_logical_or_expression = 1064,
+        Kind_mandatory_array_builtin_type = 1065,
+        Kind_mandatory_declarator_brackets = 1066,
+        Kind_method_call_data = 1067,
+        Kind_method_declaration_data = 1068,
+        Kind_multiplicative_expression = 1069,
+        Kind_multiplicative_expression_rest = 1070,
+        Kind_new_expression = 1071,
+        Kind_non_array_type = 1072,
+        Kind_non_wildcard_type_arguments = 1073,
+        Kind_optional_argument_list = 1074,
+        Kind_optional_array_builtin_type = 1075,
+        Kind_optional_declarator_brackets = 1076,
+        Kind_optional_modifiers = 1077,
+        Kind_optional_parameter_declaration_list = 1078,
+        Kind_optional_parameter_modifiers = 1079,
+        Kind_package_declaration = 1080,
+        Kind_parameter_declaration = 1081,
+        Kind_parameter_declaration_ellipsis = 1082,
+        Kind_postfix_operator = 1083,
+        Kind_primary_atom = 1084,
+        Kind_primary_expression = 1085,
+        Kind_primary_selector = 1086,
+        Kind_qualified_identifier = 1087,
+        Kind_qualified_identifier_with_optional_star = 1088,
+        Kind_relational_expression = 1089,
+        Kind_relational_expression_rest = 1090,
+        Kind_return_statement = 1091,
+        Kind_shift_expression = 1092,
+        Kind_shift_expression_rest = 1093,
+        Kind_simple_name_access_data = 1094,
+        Kind_statement_expression = 1095,
+        Kind_super_access_data = 1096,
+        Kind_super_suffix = 1097,
+        Kind_switch_label = 1098,
+        Kind_switch_section = 1099,
+        Kind_switch_statement = 1100,
+        Kind_synchronized_statement = 1101,
+        Kind_this_access_data = 1102,
+        Kind_this_call_data = 1103,
+        Kind_throw_statement = 1104,
+        Kind_throws_clause = 1105,
+        Kind_try_statement = 1106,
+        Kind_type = 1107,
+        Kind_type_argument = 1108,
+        Kind_type_argument_type = 1109,
+        Kind_type_arguments = 1110,
+        Kind_type_arguments_or_parameters_end = 1111,
+        Kind_type_declaration = 1112,
+        Kind_type_parameter = 1113,
+        Kind_type_parameters = 1114,
+        Kind_unary_expression = 1115,
+        Kind_unary_expression_not_plusminus = 1116,
+        Kind_variable_array_initializer = 1117,
+        Kind_variable_declaration = 1118,
+        Kind_variable_declaration_data = 1119,
+        Kind_variable_declaration_rest = 1120,
+        Kind_variable_declaration_split_data = 1121,
+        Kind_variable_declarator = 1122,
+        Kind_variable_initializer = 1123,
+        Kind_while_statement = 1124,
+        Kind_wildcard_type = 1125,
+        Kind_wildcard_type_bounds = 1126,
         AST_NODE_KIND_COUNT
       };
 
@@ -587,6 +572,16 @@ namespace java
       variable_declaration_data_ast *variable_declaration;
     };
 
+  struct array_access_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_array_access
+      };
+
+      expression_ast *array_index_expression;
+    };
+
   struct array_creator_rest_ast: public ast_node
     {
       enum
@@ -598,6 +593,17 @@ namespace java
       variable_array_initializer_ast *array_initializer;
       const list_node<expression_ast *> *index_expression_sequence;
       optional_declarator_brackets_ast *optional_declarator_brackets;
+    };
+
+  struct array_type_dot_class_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_array_type_dot_class
+      };
+
+      qualified_identifier_ast *qualified_identifier;
+      mandatory_declarator_brackets_ast *declarator_brackets;
     };
 
   struct assert_statement_ast: public ast_node
@@ -686,6 +692,16 @@ namespace java
       builtin_type::builtin_type_enum type;
     };
 
+  struct builtin_type_dot_class_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_builtin_type_dot_class
+      };
+
+      optional_array_builtin_type_ast *builtin_type;
+    };
+
   struct cast_expression_ast: public ast_node
     {
       enum
@@ -708,6 +724,15 @@ namespace java
 
       variable_declaration_split_data_ast *exception_declaration;
       block_ast *body;
+    };
+
+  struct class_access_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_class_access_data
+      };
+
     };
 
   struct class_body_ast: public ast_node
@@ -1193,6 +1218,18 @@ namespace java
       int bracket_count;
     };
 
+  struct method_call_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_method_call_data
+      };
+
+      non_wildcard_type_arguments_ast *type_arguments;
+      identifier_ast *method_name;
+      optional_argument_list_ast *arguments;
+    };
+
   struct method_declaration_data_ast: public ast_node
     {
       enum
@@ -1385,18 +1422,16 @@ namespace java
         KIND = Kind_primary_atom
       };
 
-      primary_atom::primary_atom_enum rule_type;
-      optional_array_builtin_type_ast *builtin_type;
       literal_ast *literal;
       new_expression_ast *new_expression;
       expression_ast *parenthesis_expression;
-      optional_argument_list_ast *this_constructor_arguments;
-      super_suffix_ast *super_suffix;
-      non_wildcard_type_arguments_ast *type_arguments;
-      identifier_ast *method_name_typed;
-      optional_argument_list_ast *method_arguments;
-      qualified_identifier_safe_ast *identifier;
-      mandatory_declarator_brackets_ast *declarator_brackets;
+      builtin_type_dot_class_ast *builtin_type_dot_class;
+      this_call_data_ast *this_call;
+      this_access_data_ast *this_access;
+      super_access_data_ast *super_access;
+      method_call_data_ast *method_call;
+      simple_name_access_data_ast *simple_name_access;
+      array_type_dot_class_ast *array_type_dot_class;
     };
 
   struct primary_expression_ast: public ast_node
@@ -1417,14 +1452,13 @@ namespace java
         KIND = Kind_primary_selector
       };
 
-      primary_selector::primary_selector_enum rule_type;
+      class_access_data_ast *class_access;
+      this_access_data_ast *this_access;
       new_expression_ast *new_expression;
-      identifier_ast *variable_name;
-      non_wildcard_type_arguments_ast *type_arguments;
-      super_suffix_ast *super_suffix;
-      identifier_ast *method_name;
-      optional_argument_list_ast *method_arguments;
-      expression_ast *array_index_expression;
+      simple_name_access_data_ast *simple_name_access;
+      super_access_data_ast *super_access;
+      method_call_data_ast *method_call;
+      array_access_ast *array_access;
     };
 
   struct qualified_identifier_ast: public ast_node
@@ -1432,16 +1466,6 @@ namespace java
       enum
       {
         KIND = Kind_qualified_identifier
-      };
-
-      const list_node<identifier_ast *> *name_sequence;
-    };
-
-  struct qualified_identifier_safe_ast: public ast_node
-    {
-      enum
-      {
-        KIND = Kind_qualified_identifier_safe
       };
 
       const list_node<identifier_ast *> *name_sequence;
@@ -1513,6 +1537,16 @@ namespace java
       additive_expression_ast *expression;
     };
 
+  struct simple_name_access_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_simple_name_access_data
+      };
+
+      identifier_ast *name;
+    };
+
   struct statement_expression_ast: public ast_node
     {
       enum
@@ -1523,6 +1557,17 @@ namespace java
       expression_ast *expression;
     };
 
+  struct super_access_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_super_access_data
+      };
+
+      non_wildcard_type_arguments_ast *type_arguments;
+      super_suffix_ast *super_suffix;
+    };
+
   struct super_suffix_ast: public ast_node
     {
       enum
@@ -1531,10 +1576,8 @@ namespace java
       };
 
       optional_argument_list_ast *constructor_arguments;
-      identifier_ast *variable_name;
-      non_wildcard_type_arguments_ast *type_arguments;
-      identifier_ast *method_name;
-      optional_argument_list_ast *method_arguments;
+      simple_name_access_data_ast *simple_name_access;
+      method_call_data_ast *method_call;
     };
 
   struct switch_label_ast: public ast_node
@@ -1579,6 +1622,26 @@ namespace java
 
       expression_ast *locked_type;
       block_ast *synchronized_body;
+    };
+
+  struct this_access_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_this_access_data
+      };
+
+    };
+
+  struct this_call_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_this_call_data
+      };
+
+      non_wildcard_type_arguments_ast *type_arguments;
+      optional_argument_list_ast *arguments;
     };
 
   struct throw_statement_ast: public ast_node
@@ -2048,6 +2111,7 @@ namespace java
       bool lookahead_is_package_declaration();
       bool lookahead_is_parameter_declaration();
       bool lookahead_is_cast_expression();
+      bool lookahead_is_array_type_dot_class();
 
 
     public:
@@ -2073,7 +2137,9 @@ namespace java
       bool parse_annotation_type_body(annotation_type_body_ast **yynode);
       bool parse_annotation_type_declaration(annotation_type_declaration_ast **yynode, optional_modifiers_ast *modifiers);
       bool parse_annotation_type_field(annotation_type_field_ast **yynode);
+      bool parse_array_access(array_access_ast **yynode);
       bool parse_array_creator_rest(array_creator_rest_ast **yynode);
+      bool parse_array_type_dot_class(array_type_dot_class_ast **yynode);
       bool parse_assert_statement(assert_statement_ast **yynode);
       bool parse_bit_and_expression(bit_and_expression_ast **yynode);
       bool parse_bit_or_expression(bit_or_expression_ast **yynode);
@@ -2082,8 +2148,10 @@ namespace java
       bool parse_block_statement(block_statement_ast **yynode);
       bool parse_break_statement(break_statement_ast **yynode);
       bool parse_builtin_type(builtin_type_ast **yynode);
+      bool parse_builtin_type_dot_class(builtin_type_dot_class_ast **yynode);
       bool parse_cast_expression(cast_expression_ast **yynode);
       bool parse_catch_clause(catch_clause_ast **yynode);
+      bool parse_class_access_data(class_access_data_ast **yynode);
       bool parse_class_body(class_body_ast **yynode);
       bool parse_class_declaration(class_declaration_ast **yynode, optional_modifiers_ast *modifiers);
       bool parse_class_extends_clause(class_extends_clause_ast **yynode);
@@ -2124,6 +2192,7 @@ namespace java
       bool parse_logical_or_expression(logical_or_expression_ast **yynode);
       bool parse_mandatory_array_builtin_type(mandatory_array_builtin_type_ast **yynode);
       bool parse_mandatory_declarator_brackets(mandatory_declarator_brackets_ast **yynode);
+      bool parse_method_call_data(method_call_data_ast **yynode, non_wildcard_type_arguments_ast *type_arguments, identifier_ast *method_name, optional_argument_list_ast *arguments);
       bool parse_method_declaration_data(method_declaration_data_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters, type_ast *type, identifier_ast *name, optional_parameter_declaration_list_ast *parameters, optional_declarator_brackets_ast *declarator_brackets, throws_clause_ast *throws_clause, block_ast *body);
       bool parse_multiplicative_expression(multiplicative_expression_ast **yynode);
       bool parse_multiplicative_expression_rest(multiplicative_expression_rest_ast **yynode);
@@ -2144,19 +2213,22 @@ namespace java
       bool parse_primary_expression(primary_expression_ast **yynode);
       bool parse_primary_selector(primary_selector_ast **yynode);
       bool parse_qualified_identifier(qualified_identifier_ast **yynode);
-      bool parse_qualified_identifier_safe(qualified_identifier_safe_ast **yynode);
       bool parse_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast **yynode);
       bool parse_relational_expression(relational_expression_ast **yynode);
       bool parse_relational_expression_rest(relational_expression_rest_ast **yynode);
       bool parse_return_statement(return_statement_ast **yynode);
       bool parse_shift_expression(shift_expression_ast **yynode);
       bool parse_shift_expression_rest(shift_expression_rest_ast **yynode);
+      bool parse_simple_name_access_data(simple_name_access_data_ast **yynode, identifier_ast *name);
       bool parse_statement_expression(statement_expression_ast **yynode);
+      bool parse_super_access_data(super_access_data_ast **yynode, non_wildcard_type_arguments_ast *type_arguments, super_suffix_ast *super_suffix);
       bool parse_super_suffix(super_suffix_ast **yynode);
       bool parse_switch_label(switch_label_ast **yynode);
       bool parse_switch_section(switch_section_ast **yynode);
       bool parse_switch_statement(switch_statement_ast **yynode);
       bool parse_synchronized_statement(synchronized_statement_ast **yynode);
+      bool parse_this_access_data(this_access_data_ast **yynode);
+      bool parse_this_call_data(this_call_data_ast **yynode, non_wildcard_type_arguments_ast *type_arguments, optional_argument_list_ast *arguments);
       bool parse_throw_statement(throw_statement_ast **yynode);
       bool parse_throws_clause(throws_clause_ast **yynode);
       bool parse_try_statement(try_statement_ast **yynode);
@@ -2218,7 +2290,11 @@ namespace java
       {}
       virtual void visit_annotation_type_field(annotation_type_field_ast *)
       {}
+      virtual void visit_array_access(array_access_ast *)
+      {}
       virtual void visit_array_creator_rest(array_creator_rest_ast *)
+      {}
+      virtual void visit_array_type_dot_class(array_type_dot_class_ast *)
       {}
       virtual void visit_assert_statement(assert_statement_ast *)
       {}
@@ -2236,9 +2312,13 @@ namespace java
       {}
       virtual void visit_builtin_type(builtin_type_ast *)
       {}
+      virtual void visit_builtin_type_dot_class(builtin_type_dot_class_ast *)
+      {}
       virtual void visit_cast_expression(cast_expression_ast *)
       {}
       virtual void visit_catch_clause(catch_clause_ast *)
+      {}
+      virtual void visit_class_access_data(class_access_data_ast *)
       {}
       virtual void visit_class_body(class_body_ast *)
       {}
@@ -2320,6 +2400,8 @@ namespace java
       {}
       virtual void visit_mandatory_declarator_brackets(mandatory_declarator_brackets_ast *)
       {}
+      virtual void visit_method_call_data(method_call_data_ast *)
+      {}
       virtual void visit_method_declaration_data(method_declaration_data_ast *)
       {}
       virtual void visit_multiplicative_expression(multiplicative_expression_ast *)
@@ -2360,8 +2442,6 @@ namespace java
       {}
       virtual void visit_qualified_identifier(qualified_identifier_ast *)
       {}
-      virtual void visit_qualified_identifier_safe(qualified_identifier_safe_ast *)
-      {}
       virtual void visit_qualified_identifier_with_optional_star(qualified_identifier_with_optional_star_ast *)
       {}
       virtual void visit_relational_expression(relational_expression_ast *)
@@ -2374,7 +2454,11 @@ namespace java
                                {}
                                virtual void visit_shift_expression_rest(shift_expression_rest_ast *)
                                {}
+                               virtual void visit_simple_name_access_data(simple_name_access_data_ast *)
+                               {}
                                virtual void visit_statement_expression(statement_expression_ast *)
+                               {}
+                               virtual void visit_super_access_data(super_access_data_ast *)
                                {}
                                virtual void visit_super_suffix(super_suffix_ast *)
                                {}
@@ -2385,6 +2469,10 @@ namespace java
                                virtual void visit_switch_statement(switch_statement_ast *)
                                {}
                                virtual void visit_synchronized_statement(synchronized_statement_ast *)
+                               {}
+                               virtual void visit_this_access_data(this_access_data_ast *)
+                               {}
+                               virtual void visit_this_call_data(this_call_data_ast *)
                                {}
                                virtual void visit_throw_statement(throw_statement_ast *)
                                {}
@@ -2550,6 +2638,11 @@ namespace java
         visit_node(node->variable_declaration);
       }
 
+      virtual void visit_array_access(array_access_ast *node)
+      {
+        visit_node(node->array_index_expression);
+      }
+
       virtual void visit_array_creator_rest(array_creator_rest_ast *node)
       {
         visit_node(node->mandatory_declarator_brackets);
@@ -2565,6 +2658,12 @@ namespace java
             while (__it != __end);
           }
         visit_node(node->optional_declarator_brackets);
+      }
+
+      virtual void visit_array_type_dot_class(array_type_dot_class_ast *node)
+      {
+        visit_node(node->qualified_identifier);
+        visit_node(node->declarator_brackets);
       }
 
       virtual void visit_assert_statement(assert_statement_ast *node)
@@ -2647,6 +2746,11 @@ namespace java
       virtual void visit_builtin_type(builtin_type_ast *node)
       {}
 
+      virtual void visit_builtin_type_dot_class(builtin_type_dot_class_ast *node)
+      {
+        visit_node(node->builtin_type);
+      }
+
       virtual void visit_cast_expression(cast_expression_ast *node)
       {
         visit_node(node->builtin_type);
@@ -2660,6 +2764,9 @@ namespace java
         visit_node(node->exception_declaration);
         visit_node(node->body);
       }
+
+      virtual void visit_class_access_data(class_access_data_ast *node)
+      {}
 
       virtual void visit_class_body(class_body_ast *node)
       {
@@ -3075,6 +3182,13 @@ namespace java
       virtual void visit_mandatory_declarator_brackets(mandatory_declarator_brackets_ast *node)
       {}
 
+      virtual void visit_method_call_data(method_call_data_ast *node)
+      {
+        visit_node(node->arguments);
+        visit_node(node->method_name);
+        visit_node(node->type_arguments);
+      }
+
       virtual void visit_method_declaration_data(method_declaration_data_ast *node)
       {
         visit_node(node->body);
@@ -3237,17 +3351,16 @@ namespace java
 
       virtual void visit_primary_atom(primary_atom_ast *node)
       {
-        visit_node(node->builtin_type);
         visit_node(node->literal);
         visit_node(node->new_expression);
         visit_node(node->parenthesis_expression);
-        visit_node(node->this_constructor_arguments);
-        visit_node(node->super_suffix);
-        visit_node(node->type_arguments);
-        visit_node(node->method_name_typed);
-        visit_node(node->method_arguments);
-        visit_node(node->identifier);
-        visit_node(node->declarator_brackets);
+        visit_node(node->builtin_type_dot_class);
+        visit_node(node->this_call);
+        visit_node(node->this_access);
+        visit_node(node->super_access);
+        visit_node(node->method_call);
+        visit_node(node->simple_name_access);
+        visit_node(node->array_type_dot_class);
       }
 
       virtual void visit_primary_expression(primary_expression_ast *node)
@@ -3267,30 +3380,16 @@ namespace java
 
       virtual void visit_primary_selector(primary_selector_ast *node)
       {
+        visit_node(node->class_access);
+        visit_node(node->this_access);
         visit_node(node->new_expression);
-        visit_node(node->variable_name);
-        visit_node(node->type_arguments);
-        visit_node(node->super_suffix);
-        visit_node(node->method_name);
-        visit_node(node->method_arguments);
-        visit_node(node->array_index_expression);
+        visit_node(node->simple_name_access);
+        visit_node(node->super_access);
+        visit_node(node->method_call);
+        visit_node(node->array_access);
       }
 
       virtual void visit_qualified_identifier(qualified_identifier_ast *node)
-      {
-        if (node->name_sequence)
-          {
-            const list_node<identifier_ast*> *__it = node->name_sequence->to_front(), *__end = __it;
-            do
-              {
-                visit_node(__it->element);
-                __it = __it->next;
-              }
-            while (__it != __end);
-          }
-      }
-
-      virtual void visit_qualified_identifier_safe(qualified_identifier_safe_ast *node)
       {
         if (node->name_sequence)
           {
@@ -3364,18 +3463,27 @@ namespace java
                                  visit_node(node->expression);
                                }
 
+                               virtual void visit_simple_name_access_data(simple_name_access_data_ast *node)
+                               {
+                                 visit_node(node->name);
+                               }
+
                                virtual void visit_statement_expression(statement_expression_ast *node)
                                {
                                  visit_node(node->expression);
                                }
 
+                               virtual void visit_super_access_data(super_access_data_ast *node)
+                               {
+                                 visit_node(node->super_suffix);
+                                 visit_node(node->type_arguments);
+                               }
+
                                virtual void visit_super_suffix(super_suffix_ast *node)
                                {
                                  visit_node(node->constructor_arguments);
-                                 visit_node(node->variable_name);
-                                 visit_node(node->type_arguments);
-                                 visit_node(node->method_name);
-                                 visit_node(node->method_arguments);
+                                 visit_node(node->simple_name_access);
+                                 visit_node(node->method_call);
                                }
 
                                virtual void visit_switch_label(switch_label_ast *node)
@@ -3426,6 +3534,15 @@ namespace java
                                {
                                  visit_node(node->locked_type);
                                  visit_node(node->synchronized_body);
+                               }
+
+                               virtual void visit_this_access_data(this_access_data_ast *node)
+                               {}
+
+                               virtual void visit_this_call_data(this_call_data_ast *node)
+                               {
+                                 visit_node(node->arguments);
+                                 visit_node(node->type_arguments);
                                }
 
                                virtual void visit_throw_statement(throw_statement_ast *node)

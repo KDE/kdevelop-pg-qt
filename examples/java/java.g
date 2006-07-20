@@ -28,7 +28,7 @@
 
 
 
--- 11 first/follow conflicts:
+-- 10 first/follow conflicts:
 --  - The AT conflict in compilation_unit
 --    (namely: package_declaration vs. type_declaration).
 --    Needs LL(k), solved by lookahead_is_package_declaration().
@@ -41,8 +41,6 @@
 --    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
 --    at all, only kdevelop-pg thinks it does. Code segments...
 --    (done right by default, 1 conflict)
---  - The DOT conflict in qualified_identifier_safe.
---    (manually resolved, 1 conflict)
 --  - The LBRACKET conflict in optional_declarator_brackets:
 --    No idea where it stems from, but I think it should be ok.
 --    (done right by default, 1 conflict)
@@ -57,11 +55,11 @@
 --  - The AT conflict in optional_modifiers.
 --    (manually resolved, 1 conflict)
 
--- 15 first/first conflicts:
+-- 16 first/first conflicts:
 --  - The IDENTIFIER conflict in annotation_arguments
 --    (manually resolved, 1 conflict)
 --  - The IDENTIFIER conflicts in *_field,
---    between method_name and variable_name
+--    between the method name and variable name
 --    (manually resolved, 4 conflicts)
 --  - The IDENTIFIER conflict in class_field
 --    (manually resolved, 1 conflict)
@@ -70,7 +68,7 @@
 --  - The BOOLEAN, BYTE, CHAR, DOUBLE, etc. conflict in block_statement,
 --    which is essentially an variable declarations vs. expression statements
 --    conflict. Needs LL(k), solved by lookahead_is_parameter_declaration().
---    (1 conflict)
+--    (manually resolved, 1 conflict)
 --  - The FINAL, SYNCHRONIZED, AT conflict in block_statement, which is a
 --    side product of the lookahead solution and solved by it as well.
 --    Harmless because lookahead chooses the right one.
@@ -81,15 +79,19 @@
 --    This is the same variable declaration vs. expression issue
 --    that block_statement also suffers from.
 --    Needs LL(k), also solved by lookahead_is_parameter_declaration().
---    (1 conflict)
+--    (manually resolved, 1 conflict)
 --  - The LPAREN conflict in unary_expression_not_plusminus
 --    which is cast_expression vs. primary_expression.
 --    Needs LL(k), solved by lookahead_is_cast_expression().
---    (1 conflict)
+--    (manually resolved, 1 conflict)
 --  - The IDENTIFIER conflicts in primary_selector and super_suffix.
 --    Could be written without conflict, but done on purpose to tell methods
 --    (with possible type arguments) and variables (without those) apart.
 --    (manually resolved, 2 identical conflicts)
+--  - The IDENTIFIER conflict in primary_atom.
+--    Using LL(k) on purpose in order to get a better AST,
+--    and even the parsing time doesn't increase.
+--    (manually resolved, 1 conflict)
 --  - The LBRACKET conflict in array_creator_rest.
 --    This is by design and works as expected.
 --    (manually resolved, 1 conflict)
@@ -157,6 +159,7 @@
   bool lookahead_is_package_declaration();
   bool lookahead_is_parameter_declaration();
   bool lookahead_is_cast_expression();
+  bool lookahead_is_array_type_dot_class();
 :]
 
 %parserclass (constructor)
@@ -288,37 +291,6 @@
   enum postfix_operator_enum {
     op_increment,
     op_decrement,
-  };
-:]
-
-%namespace primary_selector
-[:
-  enum primary_selector_enum {
-    type_dotclass,
-    type_dotthis,
-    type_new_expression,
-    type_member_variable,
-    type_method_call,
-    type_super_access,
-    type_array_access,
-  };
-:]
-
-%namespace primary_atom
-[:
-  enum primary_atom_enum {
-    type_literal,
-    type_new_expression,
-    type_parenthesis_expression,
-    type_builtin_type_dot_class,
-    type_array_type_dot_class,
-    type_type_name,
-    type_this_call_no_type_arguments,
-    type_this_call_with_type_arguments,
-    type_super_call_no_type_arguments,
-    type_super_call_with_type_arguments,
-    type_method_call_no_type_arguments,
-    type_method_call_with_type_arguments,
   };
 :]
 
@@ -640,7 +612,7 @@
       type:type
       (                      -- annotation method without arguments:
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
-                                      -- between method_name and variable_name
+                                      -- between method name and variable name
          name:identifier
          LPAREN RPAREN
          -- declarator_brackets=optional_declarator_brackets -- ANTLR grammar's bug:
@@ -699,7 +671,7 @@
          type:type
          (
             ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier
-                          -- conflict between method_name and variable_name
+                          -- conflict between method name and variable name
             name:identifier
             LPAREN parameters:optional_parameter_declaration_list RPAREN
             declarator_brackets:optional_declarator_brackets
@@ -754,7 +726,7 @@
       type:type
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
-                                      -- between method_name and variable_name
+                                      -- between method name and variable name
          name:identifier
          LPAREN parameters:optional_parameter_declaration_list RPAREN
          declarator_brackets:optional_declarator_brackets
@@ -801,7 +773,7 @@
       type:type
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
-                                      -- between method_name and variable_name
+                                      -- between method name and variable name
          name:identifier
          LPAREN parameters:optional_parameter_declaration_list RPAREN
          declarator_brackets:optional_declarator_brackets
@@ -1597,36 +1569,35 @@
 
  (
    DOT
-   (  CLASS
-        [: (*yynode)->rule_type = primary_selector::type_dotclass;        :]
-    | THIS
-        [: (*yynode)->rule_type = primary_selector::type_dotthis;         :]
+   (  CLASS class_access=class_access_data -- empty rules, for having
+    | THIS this_access=this_access_data    -- a default visitor auto-generated.
     | new_expression=new_expression
-        [: (*yynode)->rule_type = primary_selector::type_new_expression;  :]
     |
       ?[: LA(2).kind != Token_LPAREN :]  -- member variable access
-      variable_name=identifier           -- (no method call)
-        [: (*yynode)->rule_type = primary_selector::type_member_variable; :]
+      identifier:identifier           -- (no method call)
+      simple_name_access=simple_name_access_data[ identifier ]
     |
       -- method calls (including the "super" ones) may have type arguments
       (  ?[: compatibility_mode() >= java15_compatibility :]
-         type_arguments=non_wildcard_type_arguments
+         type_arguments:non_wildcard_type_arguments
        | 0
       )
-      (  SUPER super_suffix=super_suffix
-           [: (*yynode)->rule_type = primary_selector::type_super_access; :]
-       | method_name=identifier
-         LPAREN method_arguments=optional_argument_list RPAREN
-           [: (*yynode)->rule_type = primary_selector::type_method_call;  :]
+      (  SUPER super_suffix:super_suffix
+         super_access=super_access_data[ type_arguments, super_suffix ]
+       |
+         identifier:identifier
+         LPAREN arguments:optional_argument_list RPAREN
+         method_call=method_call_data[ type_arguments, identifier, arguments ]
       )
    )
  |
-   LBRACKET array_index_expression=expression RBRACKET
-     [: (*yynode)->rule_type = primary_selector::type_array_access;       :]
+   array_access=array_access
  )
--> primary_selector [
-     member variable rule_type: primary_selector::primary_selector_enum;
-] ;;
+-> primary_selector ;;
+
+   LBRACKET array_index_expression=expression RBRACKET
+-> array_access ;;
+
 
 
 -- SUPER SUFFIX: a call to either a constructor, a method or
@@ -1637,15 +1608,17 @@
  |
    DOT  -- member access
    (  ?[: LA(2).kind != Token_LPAREN :]  -- member variable access (no method call)
-      variable_name=identifier
+      identifier:identifier
+      simple_name_access=simple_name_access_data[ identifier ]
     |
       -- method access (looks like super.methodName(...) in the end)
       (  ?[: compatibility_mode() >= java15_compatibility :]
-         type_arguments=non_wildcard_type_arguments
+         type_arguments:non_wildcard_type_arguments
        | 0
       )
-      method_name=identifier
-      (LPAREN method_arguments=optional_argument_list RPAREN | 0)
+      identifier:identifier
+      LPAREN arguments:optional_argument_list RPAREN
+      method_call=method_call_data[ type_arguments, identifier, arguments ]
    )
  )
 -> super_suffix ;;
@@ -1656,56 +1629,96 @@
 --               and expressions in general
 
  (
-   builtin_type=optional_array_builtin_type
-   DOT CLASS   -- things like int.class or int[].class
-     [: (*yynode)->rule_type = primary_atom::type_builtin_type_dot_class;       :]
- |
    literal=literal
-     [: (*yynode)->rule_type = primary_atom::type_literal;                      :]
+ | new_expression=new_expression
+ | LPAREN parenthesis_expression=expression RPAREN
  |
-   new_expression=new_expression
-     [: (*yynode)->rule_type = primary_atom::type_new_expression;                     :]
+   -- stuff like int.class or int[].class
+   builtin_type_dot_class=builtin_type_dot_class
  |
-   LPAREN parenthesis_expression=expression RPAREN
-     [: (*yynode)->rule_type = primary_atom::type_parenthesis_expression;             :]
+   THIS
+   (  LPAREN arguments:optional_argument_list RPAREN
+      this_call=this_call_data[ 0 /* no type arguments */, arguments ]
+    |
+      this_access=this_access_data -- empty rule, for having a default visitor
+   )
  |
-   THIS (LPAREN this_constructor_arguments=optional_argument_list RPAREN | 0)
-     [: (*yynode)->rule_type = primary_atom::type_this_call_no_type_arguments;        :]
- |
-   SUPER super_suffix=super_suffix
-     [: (*yynode)->rule_type = primary_atom::type_super_call_no_type_arguments;       :]
+   SUPER super_suffix:super_suffix
+   super_access=super_access_data[ 0 /* no type arguments */, super_suffix ]
  |
    ?[: compatibility_mode() >= java15_compatibility :]
    -- generic method invocation with type arguments:
-   type_arguments=non_wildcard_type_arguments
+   type_arguments:non_wildcard_type_arguments
    (
-      SUPER super_suffix=super_suffix
-        [: (*yynode)->rule_type = primary_atom::type_super_call_with_type_arguments;  :]
+      SUPER super_suffix:super_suffix
+      super_access=super_access_data[ type_arguments, super_suffix ]
     |
-      THIS LPAREN this_constructor_arguments=optional_argument_list RPAREN
-        [: (*yynode)->rule_type = primary_atom::type_this_call_with_type_arguments;   :]
+      THIS LPAREN arguments:optional_argument_list RPAREN
+      this_call=this_call_data[ type_arguments, arguments ]
     |
-      method_name_typed=identifier
-      LPAREN method_arguments=optional_argument_list RPAREN
-        [: (*yynode)->rule_type = primary_atom::type_method_call_with_type_arguments; :]
+      identifier:identifier
+      LPAREN arguments:optional_argument_list RPAREN
+      method_call=method_call_data[ type_arguments, identifier, arguments ]
    )
  |
-   -- type names (normal) - either pure, as method or like bla[][].class
-   identifier=qualified_identifier_safe  -- without type arguments
+   -- type names (normal) - either pure or as method
+   ?[: lookahead_is_array_type_dot_class() == false :]
+   identifier:identifier
    (
-      LPAREN method_arguments=optional_argument_list RPAREN
-        [: (*yynode)->rule_type = primary_atom::type_method_call_no_type_arguments;   :]
+      LPAREN arguments:optional_argument_list RPAREN
+      method_call=method_call_data[
+        0 /* no type arguments */, identifier, arguments
+      ]
     |
-      ?[: LA(2).kind == Token_RBRACKET :]
-      declarator_brackets=mandatory_declarator_brackets DOT CLASS
-        [: (*yynode)->rule_type = primary_atom::type_array_type_dot_class;            :]
-    |
-      0 [: (*yynode)->rule_type = primary_atom::type_type_name;                       :]
+      simple_name_access=simple_name_access_data[ identifier ]
    )
+ |
+   -- stuff like narf.zoht[][].class
+   array_type_dot_class=array_type_dot_class
  )
--> primary_atom [
-     member variable rule_type: primary_atom::primary_atom_enum;
+-> primary_atom ;;
+
+
+   builtin_type=optional_array_builtin_type DOT CLASS
+-> builtin_type_dot_class ;;
+
+   qualified_identifier=qualified_identifier
+   declarator_brackets=mandatory_declarator_brackets DOT CLASS
+-> array_type_dot_class ;;
+
+
+   0
+-> method_call_data [
+     argument member node type_arguments: non_wildcard_type_arguments;
+     argument member node method_name:    identifier;
+     argument member node arguments:      optional_argument_list;
 ] ;;
+
+   0
+-> this_call_data [
+     argument member node type_arguments: non_wildcard_type_arguments;
+     argument member node arguments:      optional_argument_list;
+] ;;
+
+   0
+-> this_access_data ;; -- probably the emptiest rule in the whole grammar ;)
+   -- but kdev-pg creates a default visitor method, and that's why it's there
+
+   0
+-> class_access_data ;; -- hm maybe this rule is equally empty...
+
+   0
+-> super_access_data [
+     argument member node type_arguments: non_wildcard_type_arguments;
+     argument member node super_suffix:   super_suffix;
+] ;;
+
+   0
+-> simple_name_access_data [
+     argument member node name:           identifier;
+] ;;
+
+
 
 
 -- NEW EXPRESSIONs are allocations of new types or arrays.
@@ -1803,12 +1816,6 @@
 
    #name=identifier @ DOT
 -> qualified_identifier ;;
-
-   #name=identifier
-   ( 0 [: if (LA(2).kind != Token_IDENTIFIER) { break; } :]
-     DOT #name=identifier
-   )*
--> qualified_identifier_safe ;; -- lookahead version of the above
 
    #name=identifier [: (*yynode)->has_star = false; :]
    ( DOT (  #name=identifier
@@ -1924,13 +1931,13 @@ void parser::set_compatibility_mode( parser::java_compatibility_mode mode ) {
 // which are not yet implemented
 
 /**
-* This function checks if the next following tokens of the parser class
+* This method checks if the next following tokens of the parser class
 * match the beginning of a package declaration. If true is returned then it
 * looks like a package declaration is coming up. It doesn't have to match the
 * full package_declaration rule (because annotation contents are only checked
 * rudimentarily), but it is guaranteed that the upcoming tokens are
 * not a type specification.
-* The function returns false if the upcoming tokens are (for sure) not
+* The method returns false if the upcoming tokens are (for sure) not
 * the beginning of a package declaration.
 */
 bool parser::lookahead_is_package_declaration()
@@ -1942,12 +1949,12 @@ bool parser::lookahead_is_package_declaration()
 }
 
 /**
-* This function checks if the next following tokens of the parser class
+* This method checks if the next following tokens of the parser class
 * match the beginning of a variable declaration. If true is returned then it
 * looks like a variable declaration is coming up. It doesn't have to match the
 * full variable_declaration rule (as only the first few tokens are checked),
 * but it is guaranteed that the upcoming tokens are not an expression.
-* The function returns false if the upcoming tokens are (for sure) not
+* The method returns false if the upcoming tokens are (for sure) not
 * the beginning of a variable declaration.
 */
 bool parser::lookahead_is_parameter_declaration()
@@ -1959,19 +1966,36 @@ bool parser::lookahead_is_parameter_declaration()
 }
 
 /**
-* This function checks if the next following tokens of the parser class
+* This method checks if the next following tokens of the parser class
 * match the beginning of a cast expression. If true is returned then it
 * looks like a cast expression is coming up. It doesn't have to match the
 * full cast_expression rule (because type arguments are only checked
 * rudimentarily, and expressions are not checked at all), but there's a very
 * high chance that the upcoming tokens are not a primary expression.
-* The function returns false if the upcoming tokens are (for sure) not
+* The method returns false if the upcoming tokens are (for sure) not
 * the beginning of a cast expression.
 */
 bool parser::lookahead_is_cast_expression()
 {
     lookahead* la = new lookahead(this);
     bool result = la->is_cast_expression_start();
+    delete la;
+    return result;
+}
+
+/**
+* This method checks if the next following tokens of the parser class
+* match the beginning of a variable declaration. If true is returned then it
+* looks like a variable declaration is coming up. It doesn't have to match the
+* full variable_declaration rule (as only the first few tokens are checked),
+* but it is guaranteed that the upcoming tokens are not an expression.
+* The method returns false if the upcoming tokens are (for sure) not
+* the beginning of a variable declaration.
+*/
+bool parser::lookahead_is_array_type_dot_class()
+{
+    lookahead* la = new lookahead(this);
+    bool result = la->is_array_type_dot_class_start();
     delete la;
     return result;
 }

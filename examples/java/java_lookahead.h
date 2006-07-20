@@ -41,37 +41,38 @@ namespace java
 class lookahead {
 
 public:
-	lookahead(parser* parser);
+  lookahead(parser* parser);
 
-	bool is_parameter_declaration_start();
-	bool is_package_declaration_start();
-	bool is_cast_expression_start();
-	bool is_annotation();
-	bool is_type_arguments();
-	bool is_optional_parameter_modifiers();
-	bool is_optional_modifiers();
-	bool is_identifier();
-	bool is_qualified_identifier();
-	bool is_type();
-	bool is_optional_array_builtin_type();
-	bool is_builtin_type();
-	bool is_optional_declarator_brackets();
-	bool is_class_type();
-	bool is_class_or_interface_type_name();
-	bool is_class_or_interface_type_name_part();
+  bool is_parameter_declaration_start();
+  bool is_package_declaration_start();
+  bool is_cast_expression_start();
+  bool is_array_type_dot_class_start();
+  bool is_annotation();
+  bool is_type_arguments();
+  bool is_optional_parameter_modifiers();
+  bool is_optional_modifiers();
+  bool is_identifier();
+  bool is_qualified_identifier();
+  bool is_type();
+  bool is_optional_array_builtin_type();
+  bool is_builtin_type();
+  bool is_optional_declarator_brackets();
+  bool is_class_type();
+  bool is_class_or_interface_type_name();
+  bool is_class_or_interface_type_name_part();
 
 private:
-	// Increases _M_count and fetches LA(_M_count) into _M_token
-	void fetch_next_token();
+  // Increases _M_count and fetches LA(_M_count) into _M_token
+  void fetch_next_token();
 
-	// The instance of the parser class
-	parser* _M_parser;
+  // The instance of the parser class
+  parser* _M_parser;
 
-	// The currently inspected lookahead token
-	int _M_token;
+  // The currently inspected lookahead token
+  int _M_token;
 
-	// Counter variable for the currently inspected lookahead token
-	int _M_count;
+  // Counter variable for the currently inspected lookahead token
+  int _M_count;
 };
 
 } // end of namespace java

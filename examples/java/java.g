@@ -322,7 +322,7 @@
   };
 :]
 
-%namespace optional_modifiers
+%namespace modifiers
 [:
   enum modifier_enum {
     mod_private      = 1,
@@ -456,11 +456,11 @@
 
 -- A TYPE DECLARATION is either a class, interface, enum or annotation.
 
-   (  modifiers=optional_modifiers
-      (  class_declaration=class_declaration
-       | enum_declaration=enum_declaration
-       | interface_declaration=interface_declaration
-       | annotation_type_declaration=annotation_type_declaration
+   (  modifiers:optional_modifiers
+      (  class_declaration=class_declaration[modifiers]
+       | enum_declaration=enum_declaration[modifiers]
+       | interface_declaration=interface_declaration[modifiers]
+       | annotation_type_declaration=annotation_type_declaration[modifiers]
       )
     | SEMICOLON
    )
@@ -500,6 +500,7 @@
 -- Same as annotation_element_value, but array_initializer is excluded.
 -- That's because nested annotation array initialisers are not valid.
 -- (The Java specification hides that in a short "discussion" area.)
+
    cond_expression=conditional_expression
  | annotation=annotation
 -> annotation_element_array_value ;;
@@ -529,7 +530,9 @@
    (extends=class_extends_clause     | 0)  -- it might have a super class
    (implements=implements_clause     | 0)  -- it might implement some interfaces
    body=class_body
--> class_declaration ;;
+-> class_declaration [
+     argument member node modifiers: optional_modifiers;
+] ;;
 
 
 -- Definition of a Java INTERFACE
@@ -541,7 +544,9 @@
    )  -- in Java 1.5 or higher, it might have type parameters
    (extends=interface_extends_clause | 0)  -- it might extend other interfaces
    body=interface_body
--> interface_declaration ;;
+-> interface_declaration [
+     argument member node modifiers: optional_modifiers;
+] ;;
 
 
 -- Definition of ENUMERATIONs and ANNOTATION TYPEs
@@ -549,11 +554,15 @@
    ENUM enum_name=identifier
    (implements=implements_clause     | 0)  -- it might implement some interfaces
    body=enum_body
--> enum_declaration ;;
+-> enum_declaration [
+     argument member node modifiers: optional_modifiers;
+] ;;
 
    AT INTERFACE annotation_type_name=identifier
    body=annotation_type_body
--> annotation_type_declaration ;;
+-> annotation_type_declaration [
+     argument member node modifiers: optional_modifiers;
+] ;;
 
 
 
@@ -622,26 +631,32 @@
 -- and the grammar appendix. I chose the one from the body,
 -- which is the same that the ANTLR grammar also uses.
 
- ( modifiers=optional_modifiers
-   (  class_declaration=class_declaration
-    | enum_declaration=enum_declaration
-    | interface_declaration=interface_declaration
-    | annotation_type_declaration=annotation_type_declaration
+ ( modifiers:optional_modifiers
+   (  class_declaration=class_declaration[modifiers]
+    | enum_declaration=enum_declaration[modifiers]
+    | interface_declaration=interface_declaration[modifiers]
+    | annotation_type_declaration=annotation_type_declaration[modifiers]
     |
-      member_type=type
+      type:type
       (                      -- annotation method without arguments:
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
-         method_name=identifier
+         name:identifier
          LPAREN RPAREN
          -- declarator_brackets=optional_declarator_brackets -- ANTLR grammar's bug:
          -- It's not in the Java Spec, and obviously has been copied
          -- from classField even if it doesn't belong here.
-         (DEFAULT annotation_element_value=annotation_element_value | 0)
+         (DEFAULT annotation_element_value:annotation_element_value | 0)
          SEMICOLON
+         method_declaration=annotation_method_declaration_data[
+           modifiers, type, name, annotation_element_value
+         ]
        |                     -- or a ConstantDeclaration:
-         #variable_declarator=variable_declarator @ COMMA
+         #variable_declarator:variable_declarator @ COMMA
          SEMICOLON
+         variable_declaration=variable_declaration_data[
+           modifiers, type, variable_declarator_sequence
+         ]
       )
    )
  | SEMICOLON
@@ -654,44 +669,51 @@
 
  ( ?[: !(yytoken == Token_STATIC && LA(2).kind == Token_LBRACE) :]
     -- resolves the 'static' conflict, see further down
-   modifiers=optional_modifiers
-   (  class_declaration=class_declaration
-    | enum_declaration=enum_declaration
-    | interface_declaration=interface_declaration
-    | annotation_type_declaration=annotation_type_declaration
+   modifiers:optional_modifiers
+   (  class_declaration=class_declaration[modifiers]
+    | enum_declaration=enum_declaration[modifiers]
+    | interface_declaration=interface_declaration[modifiers]
+    | annotation_type_declaration=annotation_type_declaration[modifiers]
     |
       -- A generic method/ctor has the type_parameters before the return type.
-      -- This is not allowed for variable definitions, hence the flag:
-      0 [: bool has_type_parameters = false; :]
+      -- This is not allowed for variable definitions, which is checked later.
       (  ?[: compatibility_mode() >= java15_compatibility :]
-         type_parameters=type_parameters [: has_type_parameters = true; :]
+         type_parameters:type_parameters
        | 0
       )
       (
          -- constructor declaration (without prepended type specification)
          ?[: LA(2).kind == Token_LPAREN :]
          -- resolves the identifier conflict with type
-         constructor_name=identifier
-         constructor_parameters=parameter_declaration_list
-         (constructor_throws_clause=throws_clause | 0)
-         constructor_body=block
+         name:identifier
+         LPAREN parameters:optional_parameter_declaration_list RPAREN
+         (throws_clause:throws_clause | 0)
+         body:block
          -- leaving out explicit this(...) and super(...) invocations,
          -- these are just normal statements for the grammar
+         constructor_declaration=constructor_declaration_data[
+            modifiers, type_parameters, name, parameters, throws_clause, body
+         ]
        |
          -- method or variable declaration
-         member_type=type
+         type:type
          (
             ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier
                           -- conflict between method_name and variable_name
-            method_name=identifier
-            method_parameters=parameter_declaration_list
-            method_declarator_brackets=optional_declarator_brackets
-            (method_throws_clause=throws_clause | 0)
-            (method_body=block | SEMICOLON)
+            name:identifier
+            LPAREN parameters:optional_parameter_declaration_list RPAREN
+            declarator_brackets:optional_declarator_brackets
+            (throws_clause:throws_clause | 0)
+            (body:block | SEMICOLON)
+            method_declaration=method_declaration_data[
+              modifiers, type_parameters, type, name, parameters,
+              declarator_brackets, throws_clause, body
+            ]
           |
-            ?[: has_type_parameters == false :]
-            #variable_declarator=variable_declarator @ COMMA
+            ?[: type_parameters == 0 :]
+            #variable_declarator:variable_declarator @ COMMA
             SEMICOLON
+            -- TODO: argumented variable declaration rule
           |
             0 [: report_problem( error,
                    "Expected method declaration after type parameter list" );
@@ -717,32 +739,36 @@
 -- An ENUM CONSTANT FIELD is just like a class field but without
 -- the possibility of a constructor definition or a static initializer.
 
- ( modifiers=optional_modifiers
-   (  class_declaration=class_declaration
-    | enum_declaration=enum_declaration
-    | interface_declaration=interface_declaration
-    | annotation_type_declaration=annotation_type_declaration
+ ( modifiers:optional_modifiers
+   (  class_declaration=class_declaration[modifiers]
+    | enum_declaration=enum_declaration[modifiers]
+    | interface_declaration=interface_declaration[modifiers]
+    | annotation_type_declaration=annotation_type_declaration[modifiers]
     |
-      -- A generic method/ctor has the type_parameters before the return type.
-      -- This is not allowed for variable definitions, hence the flag:
-      0 [: bool has_type_parameters = false; :]
+      -- A generic method has the type_parameters before the return type.
+      -- This is not allowed for variable definitions, which is checked later.
       (  ?[: compatibility_mode() >= java15_compatibility :]
-         type_parameters=type_parameters [: has_type_parameters = true; :]
+         type_parameters:type_parameters
        | 0
       )
-      member_type=type
+      type:type
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
-         method_name=identifier
-         method_parameters=parameter_declaration_list
-         method_declarator_brackets=optional_declarator_brackets
-         (method_throws_clause=throws_clause | 0)
-         (method_body=block | SEMICOLON)
+         name:identifier
+         LPAREN parameters:optional_parameter_declaration_list RPAREN
+         declarator_brackets:optional_declarator_brackets
+         (throws_clause:throws_clause | 0)
+         (body:block | SEMICOLON)
+         method_declaration=method_declaration_data[
+           modifiers, type_parameters, type, name, parameters,
+           declarator_brackets, throws_clause, body
+         ]
        |
-         ?[: has_type_parameters == false :]
-         #variable_declarator=variable_declarator @ COMMA
+         ?[: type_parameters == 0 :]
+         #variable_declarator:variable_declarator @ COMMA
          SEMICOLON
+         -- TODO: argumented variable declaration rule
        |
          0 [: report_problem( error,
                 "Expected method declaration after type parameter list" );
@@ -759,32 +785,37 @@
 -- An INTERFACE FIELD is the same as an enum constant field but without
 -- the possibility of any initializers or method blocks.
 
- ( modifiers=optional_modifiers
-   (  class_declaration=class_declaration
-    | enum_declaration=enum_declaration
-    | interface_declaration=interface_declaration
-    | annotation_type_declaration=annotation_type_declaration
+ ( modifiers:optional_modifiers
+   (  class_declaration=class_declaration[modifiers]
+    | enum_declaration=enum_declaration[modifiers]
+    | interface_declaration=interface_declaration[modifiers]
+    | annotation_type_declaration=annotation_type_declaration[modifiers]
     |
-      -- A generic method/ctor has the type_parameters before the return type.
-      -- This is not allowed for variable definitions, hence the flag:
+      -- A generic method has the type_parameters before the return type.
+      -- This is not allowed for variable definitions, which is checked later.
       0 [: bool has_type_parameters = false; :]
       (  ?[: compatibility_mode() >= java15_compatibility :]
-         type_parameters=type_parameters [: has_type_parameters = true; :]
+         type_parameters:type_parameters [: has_type_parameters = true; :]
        | 0
       )
-      member_type=type
+      type:type
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method_name and variable_name
-         method_name=identifier
-         method_parameters=parameter_declaration_list
-         method_declarator_brackets=optional_declarator_brackets
-         (method_throws_clause=throws_clause | 0)
+         name:identifier
+         LPAREN parameters:optional_parameter_declaration_list RPAREN
+         declarator_brackets:optional_declarator_brackets
+         (throws_clause:throws_clause | 0)
          SEMICOLON
+         interface_method_declaration=interface_method_declaration_data[
+           modifiers, type_parameters, type, name, parameters,
+           declarator_brackets, throws_clause
+         ]
        |
-         ?[: has_type_parameters == false :]
-         #variable_declarator=variable_declarator @ COMMA
+         ?[: type_parameters == 0 :]
+         #variable_declarator:variable_declarator @ COMMA
          SEMICOLON
+         -- TODO: argumented variable declaration rule
        |
          0 [: report_problem( error,
                 "Expected method declaration after type parameter list" );
@@ -797,6 +828,48 @@
 -> interface_field ;;
 
 
+   0
+-> annotation_method_declaration_data [
+     argument member node modifiers:           optional_modifiers;
+     argument member node type:                type;
+     argument member node name:                identifier;
+     argument member node annotation_element_value: annotation_element_value;
+] ;;
+
+   0
+-> constructor_declaration_data [
+     argument member node modifiers:           optional_modifiers;
+     argument member node type_parameters:     type_parameters;
+     argument member node name:                identifier;
+     argument member node parameters:          optional_parameter_declaration_list;
+     argument member node throws_clause:       throws_clause;
+     argument member node body:                block;
+] ;;
+
+   0
+-> method_declaration_data [
+     argument member node modifiers:           optional_modifiers;
+     argument member node type_parameters:     type_parameters;
+     argument member node type:                type;
+     argument member node name:                identifier;
+     argument member node parameters:          optional_parameter_declaration_list;
+     argument member node declarator_brackets: optional_declarator_brackets;
+     argument member node throws_clause:       throws_clause;
+     argument member node body:                block;
+] ;;
+
+   0
+-> interface_method_declaration_data [
+     argument member node modifiers:           optional_modifiers;
+     argument member node type_parameters:     type_parameters;
+     argument member node type:                type;
+     argument member node name:                identifier;
+     argument member node parameters:          optional_parameter_declaration_list;
+     argument member node declarator_brackets: optional_declarator_brackets;
+     argument member node throws_clause:       throws_clause;
+] ;;
+
+
 
 
 
@@ -807,7 +880,7 @@
 -- zero or more parameters, optionally ending with a variable-length parameter.
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
 
-   LPAREN [: ellipsis_occurred = false; :]
+   0 [: bool ellipsis_occurred = false; :]
    (
       #parameter_declaration=parameter_declaration_ellipsis[&ellipsis_occurred]
       @ ( 0 [: if( ellipsis_occurred == true ) { break; } :]
@@ -819,14 +892,11 @@
     |
       0
    )
-   RPAREN
--> parameter_declaration_list [
-     temporary variable ellipsis_occurred: bool;
-] ;;
+-> optional_parameter_declaration_list ;;
 
 -- How it _should_ look:
 --
---    LPAREN [: ellipsis_occurred = false; :]
+--    0 [: bool ellipsis_occurred = false; :]
 --    (
 --       #parameter_declaration=parameter_declaration_ellipsis[&ellipsis_occurred]
 --       @ ( ?[: ellipsis_occurred == false :] COMMA )
@@ -834,8 +904,7 @@
 --     |
 --       0
 --    )
---    RPAREN
--- -> parameter_declaration_list ;;
+-- -> optional_parameter_declaration_list ;;
 
    parameter_modifiers=optional_parameter_modifiers
    type=type
@@ -849,22 +918,12 @@
      argument temporary variable ellipsis_occurred: bool*;
 ] ;;
 
--- This PARAMETER DECLARATION rule is not used in parameter_declaration_list,
--- and lacks the ellipsis possibility & handling. It's used in try_handler
--- and in for_control.
-
-   parameter_modifiers=optional_parameter_modifiers
-   type=type
-   variable_name=identifier
-   declarator_brackets=optional_declarator_brackets
--> parameter_declaration ;;
-
-   0 [: (*yynode)->mod_final = false; :]
-   (  FINAL [: (*yynode)->mod_final = true; :]
+   0 [: (*yynode)->has_mod_final = false; :]
+   (  FINAL [: (*yynode)->has_mod_final = true; :]
     | #mod_annotation=annotation
    )*
 -> optional_parameter_modifiers [
-     member variable mod_final: bool;
+     member variable has_mod_final: bool;
 ] ;;
 
 
@@ -984,7 +1043,7 @@
 -> wildcard_type ;;
 
    (  EXTENDS [: (*yynode)->extends_or_super = wildcard_type_bounds::extends; :]
-    | SUPER   [: (*yynode)->extends_or_super = wildcard_type_bounds::super; :]
+    | SUPER   [: (*yynode)->extends_or_super = wildcard_type_bounds::super;   :]
    )
    type=class_type
 -> wildcard_type_bounds [
@@ -1034,21 +1093,34 @@
  |
    -- Inside a block, our four "complex types" can be declared
    -- (enums, nested classes and the likes...):
-   modifiers=optional_modifiers
-   (  class_declaration=class_declaration
-    | enum_declaration=enum_declaration
-    | interface_declaration=interface_declaration
-    | annotation_type_declaration=annotation_type_declaration
+   modifiers:optional_modifiers
+   (  class_declaration=class_declaration[modifiers]
+    | enum_declaration=enum_declaration[modifiers]
+    | interface_declaration=interface_declaration[modifiers]
+    | annotation_type_declaration=annotation_type_declaration[modifiers]
    )
  )
 -> block_statement ;;
 
 
--- VARIABLE DECLARATIONS, initializers, etc.
 
-   initial_declaration=parameter_declaration
-   rest=variable_declaration_rest
+-- VARIABLE DECLARATIONS, initializers, etc.
+-- TODO: the modifiers need to be checked (after parsing) if they contain
+--       only the allowed modifiers, which is FINAL and annotations.
+
+   modifiers:optional_modifiers type:type
+   #variable_declarator:variable_declarator @ COMMA
+   data=variable_declaration_data[
+     modifiers, type, variable_declarator_sequence
+   ]
 -> variable_declaration ;;
+
+   0
+-> variable_declaration_data [
+     argument member node modifiers:   optional_modifiers;
+     argument member node type:        type;
+     argument member node #declarator: variable_declarator;
+] ;;
 
    ( ASSIGN first_initializer=variable_initializer | 0 )
    ( COMMA #variable_declarator=variable_declarator )*
@@ -1075,6 +1147,55 @@
    )
    RBRACE
 -> variable_array_initializer ;;
+
+
+-- This PARAMETER DECLARATION rule is not used in optional_parameter_declaration_list,
+-- and lacks the ellipsis possibility & handling. It's used in catch_clause
+-- and in for_control.
+
+   parameter_modifiers=optional_modifiers
+   type=type
+   variable_name=identifier
+   declarator_brackets=optional_declarator_brackets
+-> parameter_declaration ;;
+
+
+-- This rule, admittedly, runs deep into implementation details.
+-- But anyways, it helps transforming the ugly representation of variable
+-- declarations in for_control and catch_clause to the standard format. Unity!
+
+   0 [:
+     variable_declarator_ast* declarator = create<variable_declarator_ast>();
+     declarator->variable_name       = parameter_declaration->variable_name;
+     declarator->declarator_brackets = parameter_declaration->declarator_brackets;
+
+     if (rest)
+       declarator->initializer         = rest->first_initializer;
+     else
+       declarator->initializer         = 0;
+
+     declarator_sequence = snoc(declarator_sequence, declarator, memory_pool);
+
+     if (rest && rest->variable_declarator_sequence)
+       {
+         const list_node<variable_declarator_ast*> *__it
+           = rest->variable_declarator_sequence->to_front(), *__end = __it;
+
+         do {
+             declarator_sequence = snoc(declarator_sequence, __it->element, memory_pool);
+             __it = __it->next;
+         } while (__it != __end);
+       }
+   :]
+   data=variable_declaration_data[
+     parameter_declaration->parameter_modifiers, parameter_declaration->type,
+     declarator_sequence
+   ]
+-> variable_declaration_split_data [
+     argument temporary node parameter_declaration: parameter_declaration;
+     argument temporary node rest:                  variable_declaration_rest;
+     temporary node #declarator:                    variable_declarator;
+] ;;
 
 
 
@@ -1154,7 +1275,9 @@
    )
 -> try_statement ;;
 
-   CATCH LPAREN exception_parameter=parameter_declaration RPAREN body=block
+   CATCH LPAREN exception_parameter:parameter_declaration RPAREN
+   exception_declaration=variable_declaration_split_data[exception_parameter, 0]
+   body=block
 -> catch_clause ;;
 
 
@@ -1192,14 +1315,20 @@
 -- implemented, we have to workaround with a lookahead hack function.
 
  ( ?[: lookahead_is_parameter_declaration() == true :]
-   vardecl_start_or_foreach_parameter=parameter_declaration  -- "int i"
+   vardecl_start_or_foreach_parameter:parameter_declaration  -- "int i"
    (
       -- foreach: int i : intList.values()
       ?[: compatibility_mode() >= java15_compatibility :]
-      COLON iterable_expression=expression
+      COLON iterable_expression:expression
+      foreach_declaration=foreach_declaration_data[
+        vardecl_start_or_foreach_parameter, iterable_expression
+      ]
     |
       -- traditional: int i = 0; i < size; i++
-      variable_declaration_rest=variable_declaration_rest -- "= 0"
+      variable_declaration_rest:variable_declaration_rest -- "= 0"
+      variable_declaration=variable_declaration_split_data[
+        vardecl_start_or_foreach_parameter, variable_declaration_rest
+      ]
       traditional_for_rest=for_clause_traditional_rest    -- "; i < size; i++"
    )
  |
@@ -1214,6 +1343,12 @@
    (for_condition=expression | 0) SEMICOLON                   -- "i < size;"
    (#for_update_expression=statement_expression @ COMMA | 0)  -- "i++"
 -> for_clause_traditional_rest ;;
+
+   0
+-> foreach_declaration_data [
+     argument member node foreach_parameter:   parameter_declaration;
+     argument member node iterable_expression: expression;
+] ;;
 
 
 
@@ -1562,8 +1697,7 @@
         [: (*yynode)->rule_type = primary_atom::type_method_call_no_type_arguments;   :]
     |
       ?[: LA(2).kind == Token_RBRACKET :]
-      declarator_brackets=mandatory_declarator_brackets
-      DOT array_dotclass=CLASS
+      declarator_brackets=mandatory_declarator_brackets DOT CLASS
         [: (*yynode)->rule_type = primary_atom::type_array_type_dot_class;            :]
     |
       0 [: (*yynode)->rule_type = primary_atom::type_type_name;                       :]
@@ -1709,19 +1843,19 @@
 -- AST node member as flags, except for the annotations who get their own list.
 
  (
-   PRIVATE      [: (*yynode)->modifiers |= optional_modifiers::mod_private;   :]
- | PUBLIC       [: (*yynode)->modifiers |= optional_modifiers::mod_public;    :]
- | PROTECTED    [: (*yynode)->modifiers |= optional_modifiers::mod_protected; :]
- | STATIC       [: (*yynode)->modifiers |= optional_modifiers::mod_static;    :]
- | TRANSIENT    [: (*yynode)->modifiers |= optional_modifiers::mod_transient; :]
- | FINAL        [: (*yynode)->modifiers |= optional_modifiers::mod_final;     :]
- | ABSTRACT     [: (*yynode)->modifiers |= optional_modifiers::mod_abstract;  :]
- | NATIVE       [: (*yynode)->modifiers |= optional_modifiers::mod_native;    :]
+   PRIVATE      [: (*yynode)->modifiers |= modifiers::mod_private;      :]
+ | PUBLIC       [: (*yynode)->modifiers |= modifiers::mod_public;       :]
+ | PROTECTED    [: (*yynode)->modifiers |= modifiers::mod_protected;    :]
+ | STATIC       [: (*yynode)->modifiers |= modifiers::mod_static;       :]
+ | TRANSIENT    [: (*yynode)->modifiers |= modifiers::mod_transient;    :]
+ | FINAL        [: (*yynode)->modifiers |= modifiers::mod_final;        :]
+ | ABSTRACT     [: (*yynode)->modifiers |= modifiers::mod_abstract;     :]
+ | NATIVE       [: (*yynode)->modifiers |= modifiers::mod_native;       :]
  -- Neither in the Java spec nor in the JavaCC grammar, just in the ANTLR one:
  -- | mod_threadsafe=THREADSAFE
- | SYNCHRONIZED [: (*yynode)->modifiers |= optional_modifiers::mod_synchronized; :]
- | VOLATILE     [: (*yynode)->modifiers |= optional_modifiers::mod_volatile;  :]
- | STRICTFP     [: (*yynode)->modifiers |= optional_modifiers::mod_strictfp;  :]
+ | SYNCHRONIZED [: (*yynode)->modifiers |= modifiers::mod_synchronized; :]
+ | VOLATILE     [: (*yynode)->modifiers |= modifiers::mod_volatile;     :]
+ | STRICTFP     [: (*yynode)->modifiers |= modifiers::mod_strictfp;     :]
  |
  -- A modifier may be any annotation (e.g. @bla), but not @interface.
  -- This condition resolves the conflict between modifiers

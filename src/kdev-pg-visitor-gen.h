@@ -29,10 +29,9 @@
 class generate_visitor
 {
   std::ostream &out;
-  char const *parser;
 
 public:
-  generate_visitor(std::ostream &o, char const *p): out(o), parser(p)
+  generate_visitor(std::ostream &o): out(o)
   {}
 
   void operator()();

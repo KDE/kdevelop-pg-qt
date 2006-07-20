@@ -26,11 +26,12 @@
 class code_generator: protected default_visitor
 {
   std::ostream &out;
-  char const *parser;
   model::evolve_item *_M_evolve;
+  std::set<std::string> *_M_names;
 
 public:
-  code_generator(std::ostream &o, char const *p): out(o), parser(p)
+  code_generator(std::ostream &o, std::set<std::string> *names)
+    : out(o), _M_names(names)
   {}
 
   void operator()(model::node *node);
@@ -65,10 +66,10 @@ public:
 class gen_parser_rule
 {
   std::ostream &out;
-  char const *parser;
+  std::set<std::string> _M_names;
 
 public:
-  gen_parser_rule(std::ostream &o, char const *p): out(o), parser(p)
+  gen_parser_rule(std::ostream &o): out(o)
   {}
 
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
@@ -77,9 +78,11 @@ public:
 class gen_local_decls: protected default_visitor
 {
   std::ostream &out;
+  std::set<std::string> *_M_names;
 
 public:
-  gen_local_decls(std::ostream &o): out(o)
+  gen_local_decls(std::ostream &o, std::set<std::string> *names)
+    : out(o), _M_names(names)
   {}
 
   void operator()(model::node *node);
@@ -90,9 +93,11 @@ class gen_parse_method_signature: protected default_visitor
 {
   std::ostream &out;
   bool first_parameter;
+  std::set<std::string> *_M_names;
 
 public:
-  gen_parse_method_signature(std::ostream &o): out(o), first_parameter(true)
+  gen_parse_method_signature(std::ostream &o, std::set<std::string> *names)
+    : out(o), first_parameter(true), _M_names(names)
   {}
 
   void operator()(model::symbol_item *node);
@@ -138,10 +143,9 @@ public:
 class generate_parser_decls
 {
   std::ostream &out;
-  char const *parser;
 
 public:
-  generate_parser_decls(std::ostream &o, char const *p): out(o), parser(p)
+  generate_parser_decls(std::ostream &o): out(o)
   {}
 
   void operator()();
@@ -150,10 +154,9 @@ public:
 class generate_parser_bits
 {
   std::ostream &out;
-  char const *parser;
 
 public:
-  generate_parser_bits(std::ostream &o, char const *p): out(o), parser(p)
+  generate_parser_bits(std::ostream &o): out(o)
   {}
 
   void operator()();

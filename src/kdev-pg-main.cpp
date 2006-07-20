@@ -214,10 +214,10 @@ int main(int, char *argv[])
   { // generate the decls
     std::stringstream s;
 
-    generate_ast __ast(s, parser);
-    generate_parser_decls __decls(s, parser);
-    generate_visitor __visitor(s, parser);
-    generate_default_visitor __default_visitor(s, parser);
+    generate_ast __ast(s);
+    generate_parser_decls __decls(s);
+    generate_visitor __visitor(s);
+    generate_default_visitor __default_visitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
@@ -294,8 +294,8 @@ int main(int, char *argv[])
     s << "namespace " << parser << "{" << std::endl
       << std::endl;
 
-    generate_parser_bits __bits(s, parser);
-    generate_visitor_bits __visitor_bits(s, parser);
+    generate_parser_bits __bits(s);
+    generate_visitor_bits __visitor_bits(s);
 
     __bits();
 

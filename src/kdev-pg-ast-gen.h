@@ -30,10 +30,9 @@
 class generate_ast
 {
   std::ostream &out;
-  char const *parser;
 
 public:
-  generate_ast(std::ostream &o, char const *p): out(o), parser(p)
+  generate_ast(std::ostream &o): out(o)
   {}
 
   void operator()();
@@ -42,13 +41,12 @@ public:
 class gen_ast_rule: protected default_visitor
 {
   std::ostream &out;
-  char const *parser;
   std::set<std::string> _M_names;
   bool _M_in_alternative;
   bool _M_in_cons;
 
 public:
-  gen_ast_rule(std::ostream &o, char const *p): out(o), parser(p) {}
+  gen_ast_rule(std::ostream &o): out(o) {}
 
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
 

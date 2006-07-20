@@ -58,7 +58,7 @@ namespace
     gen_condition(s, out);
   }
 
-  std::string gen_parser_call(model::nonterminal_item *node, char const *parser, std::ostream &out)
+  std::string gen_parser_call(model::nonterminal_item *node, std::ostream &out)
   {
     static int __id = 0;
     static char __var[1024];
@@ -112,7 +112,7 @@ void code_generator::visit_symbol(model::symbol_item *node)
 
 void code_generator::visit_nonterminal(model::nonterminal_item *node)
 {
-  gen_parser_call(node, parser, out);
+  gen_parser_call(node, out);
 }
 
 void code_generator::visit_terminal(model::terminal_item *node)
@@ -234,7 +234,7 @@ void code_generator::visit_evolve(model::evolve_item *node)
 
   out << ") {" << std::endl;
 
-  gen_local_decls gen_locals(out);
+  gen_local_decls gen_locals(out, _M_names);
   gen_locals(node->_M_item);
 
   out << node->_M_code;
@@ -290,7 +290,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
     }
   else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
     {
-      std::string __var = gen_parser_call(nt, parser, out);
+      std::string __var = gen_parser_call(nt, out);
 
       bool check_start_token = false;
       world::environment::iterator it = _G_system.env.find(nt->_M_symbol);
@@ -376,7 +376,7 @@ void gen_forward_parser_rule::operator()(std::pair<std::string, model::symbol_it
   model::symbol_item *sym = __it.second;
   out << "bool" << " " << "parse_" << sym->_M_name << "(";
 
-  gen_parse_method_signature gen_signature(out);
+  gen_parse_method_signature gen_signature(out, 0);
   gen_signature(sym);
 
   out << ");" << std::endl;
@@ -384,12 +384,13 @@ void gen_forward_parser_rule::operator()(std::pair<std::string, model::symbol_it
 
 void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
 {
+  _M_names.clear();
   model::symbol_item *sym = __it.second;
-  code_generator cg(out, parser);
+  code_generator cg(out, &_M_names);
 
   out << "bool parser::parse_" << sym->_M_name << "(";
 
-  gen_parse_method_signature gen_signature(out);
+  gen_parse_method_signature gen_signature(out, &_M_names);
   gen_signature(sym);
 
   out << ")" << std::endl
@@ -411,7 +412,7 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
 
       ++it;
 
-      gen_local_decls gen_locals(out);
+      gen_local_decls gen_locals(out, &_M_names);
       gen_locals(e->_M_declarations);
     }
 
@@ -458,10 +459,23 @@ void gen_local_decls::visit_variable_declaration(model::variable_declaration_ite
   if (node->_M_storage_type == model::variable_declaration_item::storage_temporary
       && node->_M_declaration_type == model::variable_declaration_item::declaration_local)
     {
-      gen_variable_declaration gen_var_decl(out);
-      gen_var_decl(node);
+      if ((_M_names == 0) || _M_names->find(node->_M_name) == _M_names->end())
+        {
+          gen_variable_declaration gen_var_decl(out);
+          gen_var_decl(node);
 
-      out << ";" << std::endl << std::endl;
+          if (node->_M_variable_type == model::variable_declaration_item::type_token
+              || node->_M_variable_type == model::variable_declaration_item::type_node
+              || node->_M_is_sequence)
+            {
+              out << " = 0";
+            }
+
+          out << ";" << std::endl << std::endl;
+
+          if (_M_names != 0)
+            _M_names->insert(node->_M_name);
+        }
     }
 
   // for argument member nodes and tokens, check if their index precedes the current one
@@ -533,6 +547,9 @@ void gen_parse_method_signature::visit_variable_declaration(model::variable_decl
 
           gen_variable_declaration gen_var_decl(out);
           gen_var_decl(node);
+
+          if (_M_names != 0)
+            _M_names->insert(node->_M_name);
         }
     }
 
@@ -686,6 +703,6 @@ void generate_parser_decls::operator()()
 
 void generate_parser_bits::operator()()
 {
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_parser_rule(out, parser));
+  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_parser_rule(out));
 }
 

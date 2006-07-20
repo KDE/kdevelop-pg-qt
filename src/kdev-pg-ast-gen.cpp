@@ -62,7 +62,7 @@ void generate_ast::operator()()
       << "};" << std::endl
       << std::endl;
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_ast_rule(out, parser));
+  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_ast_rule(out));
   out << std::endl;
 }
 

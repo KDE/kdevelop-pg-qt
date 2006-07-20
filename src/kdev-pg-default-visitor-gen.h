@@ -30,10 +30,9 @@
 class generate_default_visitor
 {
   std::ostream &out;
-  char const *parser;
 
 public:
-  generate_default_visitor(std::ostream &o, char const *p): out(o), parser(p)
+  generate_default_visitor(std::ostream &o): out(o)
   {}
 
   void operator()();

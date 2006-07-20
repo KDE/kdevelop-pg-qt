@@ -5898,7 +5898,7 @@ namespace java
     return true;
   }
 
-  bool parser::parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast **yynode)
+  bool parser::parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast **yynode, bool* ellipsis_occurred)
   {
     *yynode = create<parameter_declaration_ellipsis_ast>();
 
@@ -5935,7 +5935,7 @@ namespace java
               return yy_expected_token(yytoken, Token_ELLIPSIS, "...");
             yylex();
             (*yynode)->has_ellipsis = true;
-            ellipsis_occurred = true;
+            *ellipsis_occurred = true;
           }
         else if (true /*epsilon*/)
           {
@@ -5974,6 +5974,8 @@ namespace java
 
     (*yynode)->start_token = token_stream->index() - 1;
 
+    bool ellipsis_occurred;
+
     if (yytoken == Token_LPAREN)
       {
         if (yytoken != Token_LPAREN)
@@ -5994,7 +5996,7 @@ namespace java
             || yytoken == Token_IDENTIFIER)
           {
             parameter_declaration_ellipsis_ast *__node_222 = 0;
-            if (!parse_parameter_declaration_ellipsis(&__node_222))
+            if (!parse_parameter_declaration_ellipsis(&__node_222, &ellipsis_occurred))
               {
                 return yy_expected_symbol(ast_node::Kind_parameter_declaration_ellipsis, "parameter_declaration_ellipsis");
               }
@@ -6009,7 +6011,7 @@ namespace java
                   return yy_expected_token(yytoken, Token_COMMA, ",");
                 yylex();
                 parameter_declaration_ellipsis_ast *__node_223 = 0;
-                if (!parse_parameter_declaration_ellipsis(&__node_223))
+                if (!parse_parameter_declaration_ellipsis(&__node_223, &ellipsis_occurred))
                   {
                     return yy_expected_symbol(ast_node::Kind_parameter_declaration_ellipsis, "parameter_declaration_ellipsis");
                   }

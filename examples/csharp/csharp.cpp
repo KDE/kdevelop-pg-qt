@@ -6451,7 +6451,7 @@ namespace csharp
     return true;
   }
 
-  bool parser::parse_formal_parameter(formal_parameter_ast **yynode)
+  bool parser::parse_formal_parameter(formal_parameter_ast **yynode, bool* parameter_array_occurred)
   {
     *yynode = create<formal_parameter_ast>();
 
@@ -6507,7 +6507,7 @@ namespace csharp
                 return yy_expected_symbol(ast_node::Kind_parameter_array, "parameter_array");
               }
             (*yynode)->parameter_array = __node_215;
-            _M_parameter_array_occurred = true;
+            *parameter_array_occurred = true;
           }
         else if (yytoken == Token_BOOL
                  || yytoken == Token_BYTE
@@ -6590,6 +6590,8 @@ namespace csharp
 
     (*yynode)->start_token = token_stream->index() - 1;
 
+    bool parameter_array_occurred;
+
     if (yytoken == Token_BOOL
         || yytoken == Token_BYTE
         || yytoken == Token_CHAR
@@ -6623,16 +6625,16 @@ namespace csharp
         || yytoken == Token_LBRACKET
         || yytoken == Token_IDENTIFIER)
       {
-        _M_parameter_array_occurred = false;
+        parameter_array_occurred = false;
         formal_parameter_ast *__node_219 = 0;
-        if (!parse_formal_parameter(&__node_219))
+        if (!parse_formal_parameter(&__node_219, &parameter_array_occurred))
           {
             return yy_expected_symbol(ast_node::Kind_formal_parameter, "formal_parameter");
           }
         (*yynode)->formal_parameter_sequence = snoc((*yynode)->formal_parameter_sequence, __node_219, memory_pool);
         while (yytoken == Token_COMMA)
           {
-            if ( _M_parameter_array_occurred == true )
+            if ( parameter_array_occurred == true )
               {
                 break;
               }
@@ -6640,7 +6642,7 @@ namespace csharp
               return yy_expected_token(yytoken, Token_COMMA, ",");
             yylex();
             formal_parameter_ast *__node_220 = 0;
-            if (!parse_formal_parameter(&__node_220))
+            if (!parse_formal_parameter(&__node_220, &parameter_array_occurred))
               {
                 return yy_expected_symbol(ast_node::Kind_formal_parameter, "formal_parameter");
               }

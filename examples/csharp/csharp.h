@@ -2892,11 +2892,6 @@ namespace csharp
       // in addition to GREATER_THAN (">").
       int _M_ltCounter;
 
-      // _M_parameter_array_occurred is used as a means of communication between
-      // formal_parameter_list and formal_parameter to determine if a parameter
-      // array was already in the list (then, no more parameters may follow).
-      bool _M_parameter_array_occurred;
-
       // Lookahead hacks
       bool lookahead_is_variable_declaration();
       bool lookahead_is_cast_expression();
@@ -2979,7 +2974,7 @@ namespace csharp
       bool parse_for_control(for_control_ast **yynode);
       bool parse_for_statement(for_statement_ast **yynode);
       bool parse_foreach_statement(foreach_statement_ast **yynode);
-      bool parse_formal_parameter(formal_parameter_ast **yynode);
+      bool parse_formal_parameter(formal_parameter_ast **yynode, bool* parameter_array_occurred);
       bool parse_formal_parameter_list(formal_parameter_list_ast **yynode);
       bool parse_general_catch_clause(general_catch_clause_ast **yynode);
       bool parse_generic_dimension_specifier(generic_dimension_specifier_ast **yynode);

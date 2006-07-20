@@ -1966,12 +1966,6 @@ namespace java
       // to close type arguments rules, in addition to GREATER_THAN (">").
       int ltCounter;
 
-      // ellipsis_occurred is used as a means of communication between
-      // parameter_declaration_list and parameter_declaration_ellipsis to determine
-      // if an ellipsis was already in the list (then, no more parameters
-      // may follow).
-      bool ellipsis_occurred;
-
       // Lookahead hacks
       bool lookahead_is_package_declaration();
       bool lookahead_is_parameter_declaration();
@@ -2060,7 +2054,7 @@ namespace java
       bool parse_optional_parameter_modifiers(optional_parameter_modifiers_ast **yynode);
       bool parse_package_declaration(package_declaration_ast **yynode);
       bool parse_parameter_declaration(parameter_declaration_ast **yynode);
-      bool parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast **yynode);
+      bool parse_parameter_declaration_ellipsis(parameter_declaration_ellipsis_ast **yynode, bool* ellipsis_occurred);
       bool parse_parameter_declaration_list(parameter_declaration_list_ast **yynode);
       bool parse_postfix_operator(postfix_operator_ast **yynode);
       bool parse_primary_atom(primary_atom_ast **yynode);

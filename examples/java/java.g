@@ -153,12 +153,6 @@
   // to close type arguments rules, in addition to GREATER_THAN (">").
   int ltCounter;
 
-  // ellipsis_occurred is used as a means of communication between
-  // parameter_declaration_list and parameter_declaration_ellipsis to determine
-  // if an ellipsis was already in the list (then, no more parameters
-  // may follow).
-  bool ellipsis_occurred;
-
   // Lookahead hacks
   bool lookahead_is_package_declaration();
   bool lookahead_is_parameter_declaration();
@@ -812,12 +806,10 @@
 -- A PARAMETER DECLARATION LIST is part of a method header and can contain
 -- zero or more parameters, optionally ending with a variable-length parameter.
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
--- TODO: Maybe some fine day rule parameters will be implemented.
---       In that case, please make ellipsis_occurred totally local here.
 
    LPAREN [: ellipsis_occurred = false; :]
    (
-      #parameter_declaration=parameter_declaration_ellipsis
+      #parameter_declaration=parameter_declaration_ellipsis[&ellipsis_occurred]
       @ ( 0 [: if( ellipsis_occurred == true ) { break; } :]
             -- Don't proceed after the ellipsis. If there's a cleaner way
             -- to exit the loop when ellipsis_occurred == true,
@@ -828,13 +820,15 @@
       0
    )
    RPAREN
--> parameter_declaration_list ;;
+-> parameter_declaration_list [
+     temporary variable ellipsis_occurred: bool;
+] ;;
 
 -- How it _should_ look:
 --
 --    LPAREN [: ellipsis_occurred = false; :]
 --    (
---       #parameter_declaration=parameter_declaration_ellipsis
+--       #parameter_declaration=parameter_declaration_ellipsis[&ellipsis_occurred]
 --       @ ( ?[: ellipsis_occurred == false :] COMMA )
 --           -- kdev-pg dismisses this condition!
 --     |
@@ -845,13 +839,14 @@
 
    parameter_modifiers=optional_parameter_modifiers
    type=type
-   (  ELLIPSIS [: (*yynode)->has_ellipsis = true; ellipsis_occurred = true; :]
+   (  ELLIPSIS [: (*yynode)->has_ellipsis = true; *ellipsis_occurred = true; :]
     | 0        [: (*yynode)->has_ellipsis = false; :]
    )
    variable_name=identifier
    declarator_brackets=optional_declarator_brackets
 -> parameter_declaration_ellipsis [
      member variable has_ellipsis: bool;
+     argument temporary variable ellipsis_occurred: bool*;
 ] ;;
 
 -- This PARAMETER DECLARATION rule is not used in parameter_declaration_list,

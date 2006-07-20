@@ -211,11 +211,6 @@ namespace csharp_pp
   // in addition to GREATER_THAN (">").
   int _M_ltCounter;
 
-  // _M_parameter_array_occurred is used as a means of communication between
-  // formal_parameter_list and formal_parameter to determine if a parameter
-  // array was already in the list (then, no more parameters may follow).
-  bool _M_parameter_array_occurred;
-
   // Lookahead hacks
   bool lookahead_is_variable_declaration();
   bool lookahead_is_cast_expression();
@@ -1169,35 +1164,39 @@ namespace csharp_pp
 -- A FORMAL PARAMETER LIST is part of a method header and contains one or more
 -- parameters, optionally ending with a variable-length "parameter array".
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
--- TODO: Maybe some fine day rule parameters will be implemented.
---       In that case, please make ellipsisOccurred totally local here.
 
-   0 [: _M_parameter_array_occurred = false; :]
-   #formal_parameter=formal_parameter
-   @ ( 0 [: if( _M_parameter_array_occurred == true ) { break; } :]
+   0 [: parameter_array_occurred = false; :]
+   #formal_parameter=formal_parameter[&parameter_array_occurred]
+   @ ( 0 [: if( parameter_array_occurred == true ) { break; } :]
          -- Don't proceed after the parameter array. If there's a cleaner way
          -- to exit the loop when _M_parameter_array_occurred == true,
          -- please use that instead of this construct.
        COMMA
      )
--> formal_parameter_list ;;
+-> formal_parameter_list [
+     temporary variable parameter_array_occurred: bool;
+] ;;
 
 -- How it _should_ look:
 --
---    0 [: _M_parameter_array_occurred = false; :]
---    #formal_parameter=formal_parameter
---    @ ( ?[: _M_parameter_array_occurred == false :] COMMA )
+--    0 [: parameter_array_occurred = false; :]
+--    #formal_parameter=formal_parameter[&parameter_array_occurred]
+--    @ ( ?[: parameter_array_occurred == false :] COMMA )
 --        -- kdev-pg dismisses this condition!
--- -> formal_parameter_list ;;
+-- -> formal_parameter_list  [
+--      temporary variable parameter_array_occurred: bool;
+-- ] ;;
 
    (#attribute=attribute_section)*
    (
       parameter_array=parameter_array
-        [: _M_parameter_array_occurred = true; :]
+        [: *parameter_array_occurred = true; :]
     |
       (modifier=parameter_modifier | 0) type=type variable_name=identifier
    )
--> formal_parameter ;;
+-> formal_parameter [
+     argument temporary variable parameter_array_occurred: bool*;
+] ;;
 
    PARAMS type=array_type variable_name=identifier
 -> parameter_array ;;

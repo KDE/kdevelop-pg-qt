@@ -39,8 +39,8 @@ public:
       _M_token_buffer_size(0),
       _M_index(0),
       _M_token_count(0)
-  { 
-    reset(); 
+  {
+    reset();
   }
 
   ~kdev_pg_token_stream()
@@ -50,55 +50,55 @@ public:
   }
 
   inline void reset()
-  { 
+  {
     _M_index = 0;
-    _M_token_count = 0; 
+    _M_token_count = 0;
   }
 
   inline std::size_t size() const
-  { 
-    return _M_token_count; 
+  {
+    return _M_token_count;
   }
 
   inline std::size_t index() const
-  { 
-    return _M_index; 
+  {
+    return _M_index;
   }
 
   inline void rewind(std::size_t index)
-  { 
-    _M_index = index; 
+  {
+    _M_index = index;
   }
 
   inline token_type const &token(std::size_t index) const
-  { 
-    return _M_token_buffer[index]; 
+  {
+    return _M_token_buffer[index];
   }
 
   inline token_type &token(std::size_t index)
-  { 
-    return _M_token_buffer[index]; 
+  {
+    return _M_token_buffer[index];
   }
 
-  inline int next_token() 
+  inline int next_token()
   {
-    return _M_token_buffer[_M_index++].kind; 
+    return _M_token_buffer[_M_index++].kind;
   }
 
   inline token_type &next()
-  { 
+  {
     if (_M_token_count == _M_token_buffer_size)
       {
-	if (_M_token_buffer_size == 0)
-	  _M_token_buffer_size = 1024;
+        if (_M_token_buffer_size == 0)
+          _M_token_buffer_size = 1024;
 
-	_M_token_buffer_size <<= 2;
+        _M_token_buffer_size <<= 2;
 
-	_M_token_buffer = reinterpret_cast<token_type*>
-	  (::realloc(_M_token_buffer, _M_token_buffer_size * sizeof(token_type)));
+        _M_token_buffer = reinterpret_cast<token_type*>
+          (::realloc(_M_token_buffer, _M_token_buffer_size * sizeof(token_type)));
       }
 
-    return _M_token_buffer[_M_token_count++]; 
+    return _M_token_buffer[_M_token_count++];
   }
 
 private:

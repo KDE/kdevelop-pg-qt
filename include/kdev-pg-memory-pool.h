@@ -64,8 +64,8 @@ struct block_t
       //            assert( size < block_size );
 
       if (!chain) {
-	chain = (block_t*) malloc(sizeof(block_t));
-	chain->init0(_M_block_size << 2);
+        chain = (block_t*) malloc(sizeof(block_t));
+        chain->init0(_M_block_size << 2);
       }
 
       return chain->allocate(size, right_most);

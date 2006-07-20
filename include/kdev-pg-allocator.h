@@ -47,14 +47,14 @@ public:
   {
     if (--_S_ref == 0)
       {
-	++_S_block_index;
+        ++_S_block_index;
 
-	for (size_type index = 0; index < _S_block_index; ++index)
-	  delete[] _S_storage[index];
+        for (size_type index = 0; index < _S_block_index; ++index)
+          delete[] _S_storage[index];
 
-	--_S_block_index;
+        --_S_block_index;
 
-	::free(_S_storage);
+        ::free(_S_storage);
       }
   }
 
@@ -72,18 +72,18 @@ public:
     const size_type bytes = __n * sizeof(_Tp);
 
     if (_S_current_block == 0
-	|| _S_block_size < _S_current_index + bytes)
+        || _S_block_size < _S_current_index + bytes)
       {
-	++_S_block_index;
+        ++_S_block_index;
 
-	_S_storage = reinterpret_cast<char**>
-	  (::realloc(_S_storage, sizeof(char*) * (1 + _S_block_index)));
+        _S_storage = reinterpret_cast<char**>
+          (::realloc(_S_storage, sizeof(char*) * (1 + _S_block_index)));
 
-	_S_current_block = _S_storage[_S_block_index] = reinterpret_cast<char*>
-	  (new char[_S_block_size]);
+        _S_current_block = _S_storage[_S_block_index] = reinterpret_cast<char*>
+          (new char[_S_block_size]);
 
-	::memset(_S_current_block, 0, _S_block_size);
-	_S_current_index = 0;
+        ::memset(_S_current_block, 0, _S_block_size);
+        _S_current_index = 0;
       }
 
     pointer p = reinterpret_cast<pointer>

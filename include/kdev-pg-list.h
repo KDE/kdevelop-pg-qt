@@ -80,7 +80,7 @@ struct list_node
 
 template <class _Tp>
 inline const list_node<_Tp> *snoc(const list_node<_Tp> *list,
-				  const _Tp &element, kdev_pg_memory_pool *p)
+                                  const _Tp &element, kdev_pg_memory_pool *p)
 {
   if (!list)
     return list_node<_Tp>::create(element, p);

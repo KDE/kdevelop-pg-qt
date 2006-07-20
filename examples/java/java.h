@@ -1907,9 +1907,6 @@ namespace java
 namespace java
   {
 
-
-#include <string>
-
   class parser
     {
     public:

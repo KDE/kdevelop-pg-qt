@@ -602,9 +602,6 @@ void gen_member_code::operator()(settings::member_item* m)
 
 void generate_parser_decls::operator()()
 {
-  if (_G_system.decl)
-    out << _G_system.decl << std::endl;
-
   out << "class parser {"
       << "public:" << std::endl
       << "typedef " << _G_system.token_stream << " token_stream_type;" << std::endl

@@ -21,7 +21,7 @@ namespace java
   struct annotation_element_array_value_ast;
   struct annotation_element_value_ast;
   struct annotation_element_value_pair_ast;
-  struct annotation_method_declaration_data_ast;
+  struct annotation_method_declaration_ast;
   struct annotation_type_body_ast;
   struct annotation_type_declaration_ast;
   struct annotation_type_field_ast;
@@ -49,7 +49,7 @@ namespace java
   struct class_type_ast;
   struct compilation_unit_ast;
   struct conditional_expression_ast;
-  struct constructor_declaration_data_ast;
+  struct constructor_declaration_ast;
   struct continue_statement_ast;
   struct do_while_statement_ast;
   struct embedded_statement_ast;
@@ -73,7 +73,7 @@ namespace java
   struct interface_declaration_ast;
   struct interface_extends_clause_ast;
   struct interface_field_ast;
-  struct interface_method_declaration_data_ast;
+  struct interface_method_declaration_ast;
   struct labeled_statement_ast;
   struct literal_ast;
   struct logical_and_expression_ast;
@@ -81,7 +81,7 @@ namespace java
   struct mandatory_array_builtin_type_ast;
   struct mandatory_declarator_brackets_ast;
   struct method_call_data_ast;
-  struct method_declaration_data_ast;
+  struct method_declaration_ast;
   struct multiplicative_expression_ast;
   struct multiplicative_expression_rest_ast;
   struct new_expression_ast;
@@ -306,7 +306,7 @@ namespace java
         Kind_annotation_element_array_value = 1005,
         Kind_annotation_element_value = 1006,
         Kind_annotation_element_value_pair = 1007,
-        Kind_annotation_method_declaration_data = 1008,
+        Kind_annotation_method_declaration = 1008,
         Kind_annotation_type_body = 1009,
         Kind_annotation_type_declaration = 1010,
         Kind_annotation_type_field = 1011,
@@ -334,7 +334,7 @@ namespace java
         Kind_class_type = 1033,
         Kind_compilation_unit = 1034,
         Kind_conditional_expression = 1035,
-        Kind_constructor_declaration_data = 1036,
+        Kind_constructor_declaration = 1036,
         Kind_continue_statement = 1037,
         Kind_do_while_statement = 1038,
         Kind_embedded_statement = 1039,
@@ -358,7 +358,7 @@ namespace java
         Kind_interface_declaration = 1057,
         Kind_interface_extends_clause = 1058,
         Kind_interface_field = 1059,
-        Kind_interface_method_declaration_data = 1060,
+        Kind_interface_method_declaration = 1060,
         Kind_labeled_statement = 1061,
         Kind_literal = 1062,
         Kind_logical_and_expression = 1063,
@@ -366,7 +366,7 @@ namespace java
         Kind_mandatory_array_builtin_type = 1065,
         Kind_mandatory_declarator_brackets = 1066,
         Kind_method_call_data = 1067,
-        Kind_method_declaration_data = 1068,
+        Kind_method_declaration = 1068,
         Kind_multiplicative_expression = 1069,
         Kind_multiplicative_expression_rest = 1070,
         Kind_new_expression = 1071,
@@ -522,16 +522,16 @@ namespace java
       annotation_element_value_ast *element_value;
     };
 
-  struct annotation_method_declaration_data_ast: public ast_node
+  struct annotation_method_declaration_ast: public ast_node
     {
       enum
       {
-        KIND = Kind_annotation_method_declaration_data
+        KIND = Kind_annotation_method_declaration
       };
 
       optional_modifiers_ast *modifiers;
-      type_ast *type;
-      identifier_ast *name;
+      type_ast *return_type;
+      identifier_ast *annotation_name;
       annotation_element_value_ast *annotation_element_value;
     };
 
@@ -568,8 +568,8 @@ namespace java
       enum_declaration_ast *enum_declaration;
       interface_declaration_ast *interface_declaration;
       annotation_type_declaration_ast *annotation_type_declaration;
-      annotation_method_declaration_data_ast *method_declaration;
-      variable_declaration_data_ast *variable_declaration;
+      annotation_method_declaration_ast *method_declaration;
+      variable_declaration_data_ast *constant_declaration;
     };
 
   struct array_access_ast: public ast_node
@@ -781,8 +781,9 @@ namespace java
       enum_declaration_ast *enum_declaration;
       interface_declaration_ast *interface_declaration;
       annotation_type_declaration_ast *annotation_type_declaration;
-      constructor_declaration_data_ast *constructor_declaration;
-      method_declaration_data_ast *method_declaration;
+      constructor_declaration_ast *constructor_declaration;
+      method_declaration_ast *method_declaration;
+      variable_declaration_data_ast *variable_declaration;
       block_ast *instance_initializer_block;
       block_ast *static_initializer_block;
     };
@@ -843,16 +844,16 @@ namespace java
       conditional_expression_ast *else_expression;
     };
 
-  struct constructor_declaration_data_ast: public ast_node
+  struct constructor_declaration_ast: public ast_node
     {
       enum
       {
-        KIND = Kind_constructor_declaration_data
+        KIND = Kind_constructor_declaration
       };
 
       optional_modifiers_ast *modifiers;
       type_parameters_ast *type_parameters;
-      identifier_ast *name;
+      identifier_ast *class_name;
       optional_parameter_declaration_list_ast *parameters;
       throws_clause_ast *throws_clause;
       block_ast *body;
@@ -948,7 +949,8 @@ namespace java
       enum_declaration_ast *enum_declaration;
       interface_declaration_ast *interface_declaration;
       annotation_type_declaration_ast *annotation_type_declaration;
-      method_declaration_data_ast *method_declaration;
+      method_declaration_ast *method_declaration;
+      variable_declaration_data_ast *variable_declaration;
       block_ast *instance_initializer_block;
     };
 
@@ -1133,20 +1135,21 @@ namespace java
       enum_declaration_ast *enum_declaration;
       interface_declaration_ast *interface_declaration;
       annotation_type_declaration_ast *annotation_type_declaration;
-      interface_method_declaration_data_ast *interface_method_declaration;
+      interface_method_declaration_ast *interface_method_declaration;
+      variable_declaration_data_ast *variable_declaration;
     };
 
-  struct interface_method_declaration_data_ast: public ast_node
+  struct interface_method_declaration_ast: public ast_node
     {
       enum
       {
-        KIND = Kind_interface_method_declaration_data
+        KIND = Kind_interface_method_declaration
       };
 
       optional_modifiers_ast *modifiers;
       type_parameters_ast *type_parameters;
-      type_ast *type;
-      identifier_ast *name;
+      type_ast *return_type;
+      identifier_ast *method_name;
       optional_parameter_declaration_list_ast *parameters;
       optional_declarator_brackets_ast *declarator_brackets;
       throws_clause_ast *throws_clause;
@@ -1230,21 +1233,20 @@ namespace java
       optional_argument_list_ast *arguments;
     };
 
-  struct method_declaration_data_ast: public ast_node
+  struct method_declaration_ast: public ast_node
     {
       enum
       {
-        KIND = Kind_method_declaration_data
+        KIND = Kind_method_declaration
       };
 
       optional_modifiers_ast *modifiers;
       type_parameters_ast *type_parameters;
-      type_ast *type;
-      identifier_ast *name;
+      type_ast *return_type;
+      identifier_ast *method_name;
       optional_parameter_declaration_list_ast *parameters;
       optional_declarator_brackets_ast *declarator_brackets;
       throws_clause_ast *throws_clause;
-      block_ast *body;
     };
 
   struct multiplicative_expression_ast: public ast_node
@@ -2130,7 +2132,7 @@ namespace java
       bool parse_annotation_element_array_value(annotation_element_array_value_ast **yynode);
       bool parse_annotation_element_value(annotation_element_value_ast **yynode);
       bool parse_annotation_element_value_pair(annotation_element_value_pair_ast **yynode);
-      bool parse_annotation_method_declaration_data(annotation_method_declaration_data_ast **yynode, optional_modifiers_ast *modifiers, type_ast *type, identifier_ast *name, annotation_element_value_ast *annotation_element_value);
+      bool parse_annotation_method_declaration(annotation_method_declaration_ast **yynode, optional_modifiers_ast *modifiers, type_ast *return_type);
       bool parse_annotation_type_body(annotation_type_body_ast **yynode);
       bool parse_annotation_type_declaration(annotation_type_declaration_ast **yynode, optional_modifiers_ast *modifiers);
       bool parse_annotation_type_field(annotation_type_field_ast **yynode);
@@ -2158,7 +2160,7 @@ namespace java
       bool parse_class_type(class_type_ast **yynode);
       bool parse_compilation_unit(compilation_unit_ast **yynode);
       bool parse_conditional_expression(conditional_expression_ast **yynode);
-      bool parse_constructor_declaration_data(constructor_declaration_data_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters, identifier_ast *name, optional_parameter_declaration_list_ast *parameters, throws_clause_ast *throws_clause, block_ast *body);
+      bool parse_constructor_declaration(constructor_declaration_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters);
       bool parse_continue_statement(continue_statement_ast **yynode);
       bool parse_do_while_statement(do_while_statement_ast **yynode);
       bool parse_embedded_statement(embedded_statement_ast **yynode);
@@ -2182,7 +2184,7 @@ namespace java
       bool parse_interface_declaration(interface_declaration_ast **yynode, optional_modifiers_ast *modifiers);
       bool parse_interface_extends_clause(interface_extends_clause_ast **yynode);
       bool parse_interface_field(interface_field_ast **yynode);
-      bool parse_interface_method_declaration_data(interface_method_declaration_data_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters, type_ast *type, identifier_ast *name, optional_parameter_declaration_list_ast *parameters, optional_declarator_brackets_ast *declarator_brackets, throws_clause_ast *throws_clause);
+      bool parse_interface_method_declaration(interface_method_declaration_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters, type_ast *return_type);
       bool parse_labeled_statement(labeled_statement_ast **yynode);
       bool parse_literal(literal_ast **yynode);
       bool parse_logical_and_expression(logical_and_expression_ast **yynode);
@@ -2190,7 +2192,7 @@ namespace java
       bool parse_mandatory_array_builtin_type(mandatory_array_builtin_type_ast **yynode);
       bool parse_mandatory_declarator_brackets(mandatory_declarator_brackets_ast **yynode);
       bool parse_method_call_data(method_call_data_ast **yynode, non_wildcard_type_arguments_ast *type_arguments, identifier_ast *method_name, optional_argument_list_ast *arguments);
-      bool parse_method_declaration_data(method_declaration_data_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters, type_ast *type, identifier_ast *name, optional_parameter_declaration_list_ast *parameters, optional_declarator_brackets_ast *declarator_brackets, throws_clause_ast *throws_clause, block_ast *body);
+      bool parse_method_declaration(method_declaration_ast **yynode, optional_modifiers_ast *modifiers, type_parameters_ast *type_parameters, type_ast *return_type);
       bool parse_multiplicative_expression(multiplicative_expression_ast **yynode);
       bool parse_multiplicative_expression_rest(multiplicative_expression_rest_ast **yynode);
       bool parse_new_expression(new_expression_ast **yynode);
@@ -2279,7 +2281,7 @@ namespace java
       {}
       virtual void visit_annotation_element_value_pair(annotation_element_value_pair_ast *)
       {}
-      virtual void visit_annotation_method_declaration_data(annotation_method_declaration_data_ast *)
+      virtual void visit_annotation_method_declaration(annotation_method_declaration_ast *)
       {}
       virtual void visit_annotation_type_body(annotation_type_body_ast *)
       {}
@@ -2335,7 +2337,7 @@ namespace java
       {}
       virtual void visit_conditional_expression(conditional_expression_ast *)
       {}
-      virtual void visit_constructor_declaration_data(constructor_declaration_data_ast *)
+      virtual void visit_constructor_declaration(constructor_declaration_ast *)
       {}
       virtual void visit_continue_statement(continue_statement_ast *)
       {}
@@ -2383,7 +2385,7 @@ namespace java
       {}
       virtual void visit_interface_field(interface_field_ast *)
       {}
-      virtual void visit_interface_method_declaration_data(interface_method_declaration_data_ast *)
+      virtual void visit_interface_method_declaration(interface_method_declaration_ast *)
       {}
       virtual void visit_labeled_statement(labeled_statement_ast *)
       {}
@@ -2399,7 +2401,7 @@ namespace java
       {}
       virtual void visit_method_call_data(method_call_data_ast *)
       {}
-      virtual void visit_method_declaration_data(method_declaration_data_ast *)
+      virtual void visit_method_declaration(method_declaration_ast *)
       {}
       virtual void visit_multiplicative_expression(multiplicative_expression_ast *)
       {}
@@ -2596,12 +2598,12 @@ namespace java
         visit_node(node->element_value);
       }
 
-      virtual void visit_annotation_method_declaration_data(annotation_method_declaration_data_ast *node)
+      virtual void visit_annotation_method_declaration(annotation_method_declaration_ast *node)
       {
-        visit_node(node->annotation_element_value);
-        visit_node(node->name);
-        visit_node(node->type);
+        visit_node(node->return_type);
         visit_node(node->modifiers);
+        visit_node(node->annotation_name);
+        visit_node(node->annotation_element_value);
       }
 
       virtual void visit_annotation_type_body(annotation_type_body_ast *node)
@@ -2632,7 +2634,7 @@ namespace java
         visit_node(node->interface_declaration);
         visit_node(node->annotation_type_declaration);
         visit_node(node->method_declaration);
-        visit_node(node->variable_declaration);
+        visit_node(node->constant_declaration);
       }
 
       virtual void visit_array_access(array_access_ast *node)
@@ -2802,6 +2804,7 @@ namespace java
         visit_node(node->annotation_type_declaration);
         visit_node(node->constructor_declaration);
         visit_node(node->method_declaration);
+        visit_node(node->variable_declaration);
         visit_node(node->instance_initializer_block);
         visit_node(node->static_initializer_block);
       }
@@ -2864,14 +2867,14 @@ namespace java
         visit_node(node->else_expression);
       }
 
-      virtual void visit_constructor_declaration_data(constructor_declaration_data_ast *node)
+      virtual void visit_constructor_declaration(constructor_declaration_ast *node)
       {
-        visit_node(node->body);
-        visit_node(node->throws_clause);
-        visit_node(node->parameters);
-        visit_node(node->name);
         visit_node(node->type_parameters);
         visit_node(node->modifiers);
+        visit_node(node->class_name);
+        visit_node(node->parameters);
+        visit_node(node->throws_clause);
+        visit_node(node->body);
       }
 
       virtual void visit_continue_statement(continue_statement_ast *node)
@@ -2966,6 +2969,7 @@ namespace java
         visit_node(node->interface_declaration);
         visit_node(node->annotation_type_declaration);
         visit_node(node->method_declaration);
+        visit_node(node->variable_declaration);
         visit_node(node->instance_initializer_block);
       }
 
@@ -3120,17 +3124,18 @@ namespace java
         visit_node(node->interface_declaration);
         visit_node(node->annotation_type_declaration);
         visit_node(node->interface_method_declaration);
+        visit_node(node->variable_declaration);
       }
 
-      virtual void visit_interface_method_declaration_data(interface_method_declaration_data_ast *node)
+      virtual void visit_interface_method_declaration(interface_method_declaration_ast *node)
       {
-        visit_node(node->throws_clause);
-        visit_node(node->declarator_brackets);
-        visit_node(node->parameters);
-        visit_node(node->name);
-        visit_node(node->type);
+        visit_node(node->return_type);
         visit_node(node->type_parameters);
         visit_node(node->modifiers);
+        visit_node(node->method_name);
+        visit_node(node->parameters);
+        visit_node(node->declarator_brackets);
+        visit_node(node->throws_clause);
       }
 
       virtual void visit_labeled_statement(labeled_statement_ast *node)
@@ -3186,16 +3191,15 @@ namespace java
         visit_node(node->type_arguments);
       }
 
-      virtual void visit_method_declaration_data(method_declaration_data_ast *node)
+      virtual void visit_method_declaration(method_declaration_ast *node)
       {
-        visit_node(node->body);
-        visit_node(node->throws_clause);
-        visit_node(node->declarator_brackets);
-        visit_node(node->parameters);
-        visit_node(node->name);
-        visit_node(node->type);
+        visit_node(node->return_type);
         visit_node(node->type_parameters);
         visit_node(node->modifiers);
+        visit_node(node->method_name);
+        visit_node(node->parameters);
+        visit_node(node->declarator_brackets);
+        visit_node(node->throws_clause);
       }
 
       virtual void visit_multiplicative_expression(multiplicative_expression_ast *node)

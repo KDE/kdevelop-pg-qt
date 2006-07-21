@@ -613,20 +613,11 @@
       (                      -- annotation method without arguments:
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method name and variable name
-         name:identifier
-         LPAREN RPAREN
-         -- declarator_brackets=optional_declarator_brackets -- ANTLR grammar's bug:
-         -- It's not in the Java Spec, and obviously has been copied
-         -- from classField even if it doesn't belong here.
-         (DEFAULT annotation_element_value:annotation_element_value | 0)
-         SEMICOLON
-         method_declaration=annotation_method_declaration_data[
-           modifiers, type, name, annotation_element_value
-         ]
+         method_declaration=annotation_method_declaration[ modifiers, type ]
        |                     -- or a ConstantDeclaration:
          #variable_declarator:variable_declarator @ COMMA
          SEMICOLON
-         variable_declaration=variable_declaration_data[
+         constant_declaration=variable_declaration_data[
            modifiers, type, variable_declarator_sequence
          ]
       )
@@ -653,18 +644,11 @@
          type_parameters:type_parameters
        | 0
       )
-      (
-         -- constructor declaration (without prepended type specification)
+      (  -- constructor declaration (without prepended type specification)
          ?[: LA(2).kind == Token_LPAREN :]
          -- resolves the identifier conflict with type
-         name:identifier
-         LPAREN parameters:optional_parameter_declaration_list RPAREN
-         (throws_clause:throws_clause | 0)
-         body:block
-         -- leaving out explicit this(...) and super(...) invocations,
-         -- these are just normal statements for the grammar
-         constructor_declaration=constructor_declaration_data[
-            modifiers, type_parameters, name, parameters, throws_clause, body
+         constructor_declaration=constructor_declaration[
+            modifiers, type_parameters
          ]
        |
          -- method or variable declaration
@@ -672,20 +656,16 @@
          (
             ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier
                           -- conflict between method name and variable name
-            name:identifier
-            LPAREN parameters:optional_parameter_declaration_list RPAREN
-            declarator_brackets:optional_declarator_brackets
-            (throws_clause:throws_clause | 0)
-            (body:block | SEMICOLON)
-            method_declaration=method_declaration_data[
-              modifiers, type_parameters, type, name, parameters,
-              declarator_brackets, throws_clause, body
+            method_declaration=method_declaration[
+              modifiers, type_parameters, type
             ]
           |
             ?[: type_parameters == 0 :]
             #variable_declarator:variable_declarator @ COMMA
             SEMICOLON
-            -- TODO: argumented variable declaration rule
+            variable_declaration=variable_declaration_data[
+              modifiers, type, variable_declarator_sequence
+            ]
           |
             0 [: report_problem( error,
                    "Expected method declaration after type parameter list" );
@@ -727,20 +707,16 @@
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method name and variable name
-         name:identifier
-         LPAREN parameters:optional_parameter_declaration_list RPAREN
-         declarator_brackets:optional_declarator_brackets
-         (throws_clause:throws_clause | 0)
-         (body:block | SEMICOLON)
-         method_declaration=method_declaration_data[
-           modifiers, type_parameters, type, name, parameters,
-           declarator_brackets, throws_clause, body
+         method_declaration=method_declaration[
+           modifiers, type_parameters, type
          ]
        |
          ?[: type_parameters == 0 :]
          #variable_declarator:variable_declarator @ COMMA
          SEMICOLON
-         -- TODO: argumented variable declaration rule
+         variable_declaration=variable_declaration_data[
+           modifiers, type, variable_declarator_sequence
+         ]
        |
          0 [: report_problem( error,
                 "Expected method declaration after type parameter list" );
@@ -774,20 +750,16 @@
       (
          ?[: LA(2).kind == Token_LPAREN :] -- resolves the identifier conflict
                                       -- between method name and variable name
-         name:identifier
-         LPAREN parameters:optional_parameter_declaration_list RPAREN
-         declarator_brackets:optional_declarator_brackets
-         (throws_clause:throws_clause | 0)
-         SEMICOLON
-         interface_method_declaration=interface_method_declaration_data[
-           modifiers, type_parameters, type, name, parameters,
-           declarator_brackets, throws_clause
+         interface_method_declaration=interface_method_declaration[
+           modifiers, type_parameters, type
          ]
        |
          ?[: type_parameters == 0 :]
          #variable_declarator:variable_declarator @ COMMA
          SEMICOLON
-         -- TODO: argumented variable declaration rule
+         variable_declaration=variable_declaration_data[
+           modifiers, type, variable_declarator_sequence
+         ]
        |
          0 [: report_problem( error,
                 "Expected method declaration after type parameter list" );
@@ -800,45 +772,49 @@
 -> interface_field ;;
 
 
-   0
--> annotation_method_declaration_data [
+   annotation_name=identifier
+   LPAREN RPAREN
+   -- declarator_brackets=optional_declarator_brackets -- ANTLR grammar's bug:
+   -- It's not in the Java Spec, and obviously has been copied
+   -- from classField even if it doesn't belong here.
+   (DEFAULT annotation_element_value=annotation_element_value | 0)
+   SEMICOLON
+-> annotation_method_declaration [
      argument member node modifiers:           optional_modifiers;
-     argument member node type:                type;
-     argument member node name:                identifier;
-     argument member node annotation_element_value: annotation_element_value;
+     argument member node return_type:         type;
 ] ;;
 
-   0
--> constructor_declaration_data [
+   class_name=identifier
+   LPAREN parameters=optional_parameter_declaration_list RPAREN
+   (throws_clause=throws_clause | 0)
+   body=block
+   -- leaving out explicit this(...) and super(...) invocations,
+   -- these are just normal statements for the grammar
+-> constructor_declaration [
      argument member node modifiers:           optional_modifiers;
      argument member node type_parameters:     type_parameters;
-     argument member node name:                identifier;
-     argument member node parameters:          optional_parameter_declaration_list;
-     argument member node throws_clause:       throws_clause;
-     argument member node body:                block;
 ] ;;
 
-   0
--> method_declaration_data [
+   method_name=identifier
+   LPAREN parameters=optional_parameter_declaration_list RPAREN
+   declarator_brackets=optional_declarator_brackets
+   (throws_clause=throws_clause | 0)
+   (body:block | SEMICOLON)
+-> method_declaration [
      argument member node modifiers:           optional_modifiers;
      argument member node type_parameters:     type_parameters;
-     argument member node type:                type;
-     argument member node name:                identifier;
-     argument member node parameters:          optional_parameter_declaration_list;
-     argument member node declarator_brackets: optional_declarator_brackets;
-     argument member node throws_clause:       throws_clause;
-     argument member node body:                block;
+     argument member node return_type:         type;
 ] ;;
 
-   0
--> interface_method_declaration_data [
+   method_name=identifier
+   LPAREN parameters=optional_parameter_declaration_list RPAREN
+   declarator_brackets=optional_declarator_brackets
+   (throws_clause=throws_clause | 0)
+   SEMICOLON
+-> interface_method_declaration [
      argument member node modifiers:           optional_modifiers;
      argument member node type_parameters:     type_parameters;
-     argument member node type:                type;
-     argument member node name:                identifier;
-     argument member node parameters:          optional_parameter_declaration_list;
-     argument member node declarator_brackets: optional_declarator_brackets;
-     argument member node throws_clause:       throws_clause;
+     argument member node return_type:         type;
 ] ;;
 
 

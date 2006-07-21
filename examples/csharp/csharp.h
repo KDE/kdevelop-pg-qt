@@ -48,13 +48,14 @@ namespace csharp
   struct compilation_unit_ast;
   struct conditional_expression_ast;
   struct constant_declaration_ast;
+  struct constant_declaration_data_ast;
   struct constant_declarator_ast;
   struct constant_expression_ast;
   struct constructor_constraint_ast;
   struct constructor_declaration_ast;
   struct constructor_initializer_ast;
   struct continue_statement_ast;
-  struct declaration_statement_ast;
+  struct conversion_operator_declaration_ast;
   struct delegate_declaration_ast;
   struct do_while_statement_ast;
   struct embedded_statement_ast;
@@ -83,20 +84,27 @@ namespace csharp
   struct goto_statement_ast;
   struct identifier_ast;
   struct if_statement_ast;
+  struct indexer_declaration_ast;
   struct integral_type_ast;
   struct interface_accessors_ast;
   struct interface_base_ast;
   struct interface_body_ast;
   struct interface_declaration_ast;
   struct interface_event_declaration_ast;
+  struct interface_indexer_declaration_ast;
   struct interface_member_declaration_ast;
+  struct interface_method_declaration_ast;
+  struct interface_property_declaration_ast;
   struct keyword_ast;
   struct labeled_statement_ast;
   struct literal_ast;
+  struct local_constant_declaration_ast;
+  struct local_variable_declaration_ast;
   struct lock_statement_ast;
   struct logical_and_expression_ast;
   struct logical_or_expression_ast;
   struct managed_type_ast;
+  struct method_declaration_ast;
   struct multiplicative_expression_ast;
   struct multiplicative_expression_rest_ast;
   struct named_argument_ast;
@@ -114,7 +122,6 @@ namespace csharp
   struct numeric_type_ast;
   struct optional_argument_list_ast;
   struct optional_modifiers_ast;
-  struct optional_type_modifiers_ast;
   struct optionally_nullable_type_ast;
   struct overloadable_binary_only_operator_ast;
   struct overloadable_unary_only_operator_ast;
@@ -128,6 +135,7 @@ namespace csharp
   struct primary_expression_ast;
   struct primary_or_secondary_constraint_ast;
   struct primary_suffix_ast;
+  struct property_declaration_ast;
   struct qualified_identifier_ast;
   struct rank_specifier_ast;
   struct relational_expression_ast;
@@ -165,6 +173,7 @@ namespace csharp
   struct type_parameters_ast;
   struct typeof_expression_ast;
   struct unary_expression_ast;
+  struct unary_or_binary_operator_declaration_ast;
   struct unbound_type_name_ast;
   struct unbound_type_name_part_ast;
   struct unchecked_statement_ast;
@@ -172,7 +181,7 @@ namespace csharp
   struct unsafe_statement_ast;
   struct using_directive_ast;
   struct using_statement_ast;
-  struct variable_declaration_ast;
+  struct variable_declaration_data_ast;
   struct variable_declarator_ast;
   struct variable_initializer_ast;
   struct while_statement_ast;
@@ -220,28 +229,19 @@ namespace csharp
     };
   }
 
-  namespace class_or_struct_member_declaration
-    {
-    enum class_or_struct_member_declaration_enum {
-      type_constant_declaration,
-      type_event_declaration,
-      type_operator_declaration_implicit,
-      type_operator_declaration_explicit,
-      type_operator_declaration_typed,
-      type_constructor_declaration,
-      type_type_declaration,
-      type_indexer_declaration,
-      type_field_declaration,
-      type_property_declaration,
-      type_member_declaration,
-    };
-  }
-
   namespace constructor_initializer
     {
     enum constructor_initializer_type_enum {
       type_base,
       type_this,
+    };
+  }
+
+  namespace conversion_operator_declaration
+    {
+    enum conversion_type_enum {
+      conversion_implicit,
+      conversion_explicit,
     };
   }
 
@@ -311,16 +311,6 @@ namespace csharp
     };
   }
 
-  namespace interface_member_declaration
-    {
-    enum interface_member_declaration_enum {
-      type_interface_event_declaration,
-      type_interface_indexer_declaration,
-      type_interface_property_declaration,
-      type_interface_method_declaration,
-    };
-  }
-
   namespace literal
     {
     enum literal_type_enum {
@@ -372,9 +362,26 @@ namespace csharp
     };
   }
 
-  namespace overloadable_binary_only_operator
+  namespace overloadable_operator
     {
-    enum overloadable_binary_only_operator_enum {
+    enum unary_or_binary_enum {
+      type_unary,
+      type_binary,
+    };
+
+    enum overloadable_operator_enum
+    {
+      // overloadable unary operators:
+      op_bang,
+      op_tilde,
+      op_increment,
+      op_decrement,
+      op_true,
+      op_false,
+      // overloadable unary or binary operators:
+      op_plus,
+      op_minus,
+      // overloadable binary operators:
       op_star,
       op_slash,
       op_remainder,
@@ -389,26 +396,6 @@ namespace csharp
       op_less_than,
       op_greater_equal,
       op_less_equal,
-    };
-  }
-
-  namespace overloadable_unary_only_operator
-    {
-    enum overloadable_unary_only_operator_enum {
-      op_bang,
-      op_tilde,
-      op_increment,
-      op_decrement,
-      op_true,
-      op_false,
-    };
-  }
-
-  namespace overloadable_unary_or_binary_operator
-    {
-    enum overloadable_unary_or_binary_operator_enum {
-      op_plus,
-      op_minus,
     };
   }
 
@@ -604,135 +591,144 @@ namespace csharp
                         Kind_compilation_unit = 1032,
                         Kind_conditional_expression = 1033,
                         Kind_constant_declaration = 1034,
-                        Kind_constant_declarator = 1035,
-                        Kind_constant_expression = 1036,
-                        Kind_constructor_constraint = 1037,
-                        Kind_constructor_declaration = 1038,
-                        Kind_constructor_initializer = 1039,
-                        Kind_continue_statement = 1040,
-                        Kind_declaration_statement = 1041,
-                        Kind_delegate_declaration = 1042,
-                        Kind_do_while_statement = 1043,
-                        Kind_embedded_statement = 1044,
-                        Kind_enum_base = 1045,
-                        Kind_enum_body = 1046,
-                        Kind_enum_declaration = 1047,
-                        Kind_enum_member_declaration = 1048,
-                        Kind_equality_expression = 1049,
-                        Kind_equality_expression_rest = 1050,
-                        Kind_event_accessor_declarations = 1051,
-                        Kind_event_declaration = 1052,
-                        Kind_expression = 1053,
-                        Kind_extern_alias_directive = 1054,
-                        Kind_finalizer_declaration = 1055,
-                        Kind_fixed_pointer_declarator = 1056,
-                        Kind_fixed_statement = 1057,
-                        Kind_floating_point_type = 1058,
-                        Kind_for_control = 1059,
-                        Kind_for_statement = 1060,
-                        Kind_foreach_statement = 1061,
-                        Kind_formal_parameter = 1062,
-                        Kind_formal_parameter_list = 1063,
-                        Kind_general_catch_clause = 1064,
-                        Kind_generic_dimension_specifier = 1065,
-                        Kind_global_attribute_section = 1066,
-                        Kind_goto_statement = 1067,
-                        Kind_identifier = 1068,
-                        Kind_if_statement = 1069,
-                        Kind_integral_type = 1070,
-                        Kind_interface_accessors = 1071,
-                        Kind_interface_base = 1072,
-                        Kind_interface_body = 1073,
-                        Kind_interface_declaration = 1074,
-                        Kind_interface_event_declaration = 1075,
-                        Kind_interface_member_declaration = 1076,
-                        Kind_keyword = 1077,
-                        Kind_labeled_statement = 1078,
-                        Kind_literal = 1079,
-                        Kind_lock_statement = 1080,
-                        Kind_logical_and_expression = 1081,
-                        Kind_logical_or_expression = 1082,
-                        Kind_managed_type = 1083,
-                        Kind_multiplicative_expression = 1084,
-                        Kind_multiplicative_expression_rest = 1085,
-                        Kind_named_argument = 1086,
-                        Kind_namespace_body = 1087,
-                        Kind_namespace_declaration = 1088,
-                        Kind_namespace_member_declaration = 1089,
-                        Kind_namespace_name = 1090,
-                        Kind_namespace_or_type_name = 1091,
-                        Kind_namespace_or_type_name_part = 1092,
-                        Kind_namespace_or_type_name_safe = 1093,
-                        Kind_new_expression = 1094,
-                        Kind_non_array_type = 1095,
-                        Kind_non_nullable_type = 1096,
-                        Kind_null_coalescing_expression = 1097,
-                        Kind_numeric_type = 1098,
-                        Kind_optional_argument_list = 1099,
-                        Kind_optional_modifiers = 1100,
-                        Kind_optional_type_modifiers = 1101,
-                        Kind_optionally_nullable_type = 1102,
-                        Kind_overloadable_binary_only_operator = 1103,
-                        Kind_overloadable_unary_only_operator = 1104,
-                        Kind_overloadable_unary_or_binary_operator = 1105,
-                        Kind_parameter_array = 1106,
-                        Kind_parameter_modifier = 1107,
-                        Kind_pointer_type = 1108,
-                        Kind_positional_argument = 1109,
-                        Kind_predefined_type = 1110,
-                        Kind_primary_atom = 1111,
-                        Kind_primary_expression = 1112,
-                        Kind_primary_or_secondary_constraint = 1113,
-                        Kind_primary_suffix = 1114,
-                        Kind_qualified_identifier = 1115,
-                        Kind_rank_specifier = 1116,
-                        Kind_relational_expression = 1117,
-                        Kind_relational_expression_rest = 1118,
-                        Kind_resource_acquisition = 1119,
-                        Kind_return_statement = 1120,
-                        Kind_return_type = 1121,
-                        Kind_secondary_constraints = 1122,
-                        Kind_shift_expression = 1123,
-                        Kind_shift_expression_rest = 1124,
-                        Kind_simple_name_or_member_access = 1125,
-                        Kind_simple_type = 1126,
-                        Kind_specific_catch_clause = 1127,
-                        Kind_stackalloc_initializer = 1128,
-                        Kind_statement_expression = 1129,
-                        Kind_struct_body = 1130,
-                        Kind_struct_declaration = 1131,
-                        Kind_struct_interfaces = 1132,
-                        Kind_struct_member_declaration = 1133,
-                        Kind_switch_label = 1134,
-                        Kind_switch_section = 1135,
-                        Kind_switch_statement = 1136,
-                        Kind_throw_statement = 1137,
-                        Kind_try_statement = 1138,
-                        Kind_type = 1139,
-                        Kind_type_arguments = 1140,
-                        Kind_type_arguments_or_parameters_end = 1141,
-                        Kind_type_declaration = 1142,
-                        Kind_type_declaration_rest = 1143,
-                        Kind_type_name = 1144,
-                        Kind_type_name_safe = 1145,
-                        Kind_type_parameter = 1146,
-                        Kind_type_parameter_constraints = 1147,
-                        Kind_type_parameter_constraints_clauses = 1148,
-                        Kind_type_parameters = 1149,
-                        Kind_typeof_expression = 1150,
-                        Kind_unary_expression = 1151,
-                        Kind_unbound_type_name = 1152,
-                        Kind_unbound_type_name_part = 1153,
-                        Kind_unchecked_statement = 1154,
-                        Kind_unmanaged_type = 1155,
-                        Kind_unsafe_statement = 1156,
-                        Kind_using_directive = 1157,
-                        Kind_using_statement = 1158,
-                        Kind_variable_declaration = 1159,
-                        Kind_variable_declarator = 1160,
-                        Kind_variable_initializer = 1161,
-                        Kind_while_statement = 1162,
-                        Kind_yield_statement = 1163,
+                        Kind_constant_declaration_data = 1035,
+                        Kind_constant_declarator = 1036,
+                        Kind_constant_expression = 1037,
+                        Kind_constructor_constraint = 1038,
+                        Kind_constructor_declaration = 1039,
+                        Kind_constructor_initializer = 1040,
+                        Kind_continue_statement = 1041,
+                        Kind_conversion_operator_declaration = 1042,
+                        Kind_delegate_declaration = 1043,
+                        Kind_do_while_statement = 1044,
+                        Kind_embedded_statement = 1045,
+                        Kind_enum_base = 1046,
+                        Kind_enum_body = 1047,
+                        Kind_enum_declaration = 1048,
+                        Kind_enum_member_declaration = 1049,
+                        Kind_equality_expression = 1050,
+                        Kind_equality_expression_rest = 1051,
+                        Kind_event_accessor_declarations = 1052,
+                        Kind_event_declaration = 1053,
+                        Kind_expression = 1054,
+                        Kind_extern_alias_directive = 1055,
+                        Kind_finalizer_declaration = 1056,
+                        Kind_fixed_pointer_declarator = 1057,
+                        Kind_fixed_statement = 1058,
+                        Kind_floating_point_type = 1059,
+                        Kind_for_control = 1060,
+                        Kind_for_statement = 1061,
+                        Kind_foreach_statement = 1062,
+                        Kind_formal_parameter = 1063,
+                        Kind_formal_parameter_list = 1064,
+                        Kind_general_catch_clause = 1065,
+                        Kind_generic_dimension_specifier = 1066,
+                        Kind_global_attribute_section = 1067,
+                        Kind_goto_statement = 1068,
+                        Kind_identifier = 1069,
+                        Kind_if_statement = 1070,
+                        Kind_indexer_declaration = 1071,
+                        Kind_integral_type = 1072,
+                        Kind_interface_accessors = 1073,
+                        Kind_interface_base = 1074,
+                        Kind_interface_body = 1075,
+                        Kind_interface_declaration = 1076,
+                        Kind_interface_event_declaration = 1077,
+                        Kind_interface_indexer_declaration = 1078,
+                        Kind_interface_member_declaration = 1079,
+                        Kind_interface_method_declaration = 1080,
+                        Kind_interface_property_declaration = 1081,
+                        Kind_keyword = 1082,
+                        Kind_labeled_statement = 1083,
+                        Kind_literal = 1084,
+                        Kind_local_constant_declaration = 1085,
+                        Kind_local_variable_declaration = 1086,
+                        Kind_lock_statement = 1087,
+                        Kind_logical_and_expression = 1088,
+                        Kind_logical_or_expression = 1089,
+                        Kind_managed_type = 1090,
+                        Kind_method_declaration = 1091,
+                        Kind_multiplicative_expression = 1092,
+                        Kind_multiplicative_expression_rest = 1093,
+                        Kind_named_argument = 1094,
+                        Kind_namespace_body = 1095,
+                        Kind_namespace_declaration = 1096,
+                        Kind_namespace_member_declaration = 1097,
+                        Kind_namespace_name = 1098,
+                        Kind_namespace_or_type_name = 1099,
+                        Kind_namespace_or_type_name_part = 1100,
+                        Kind_namespace_or_type_name_safe = 1101,
+                        Kind_new_expression = 1102,
+                        Kind_non_array_type = 1103,
+                        Kind_non_nullable_type = 1104,
+                        Kind_null_coalescing_expression = 1105,
+                        Kind_numeric_type = 1106,
+                        Kind_optional_argument_list = 1107,
+                        Kind_optional_modifiers = 1108,
+                        Kind_optionally_nullable_type = 1109,
+                        Kind_overloadable_binary_only_operator = 1110,
+                        Kind_overloadable_unary_only_operator = 1111,
+                        Kind_overloadable_unary_or_binary_operator = 1112,
+                        Kind_parameter_array = 1113,
+                        Kind_parameter_modifier = 1114,
+                        Kind_pointer_type = 1115,
+                        Kind_positional_argument = 1116,
+                        Kind_predefined_type = 1117,
+                        Kind_primary_atom = 1118,
+                        Kind_primary_expression = 1119,
+                        Kind_primary_or_secondary_constraint = 1120,
+                        Kind_primary_suffix = 1121,
+                        Kind_property_declaration = 1122,
+                        Kind_qualified_identifier = 1123,
+                        Kind_rank_specifier = 1124,
+                        Kind_relational_expression = 1125,
+                        Kind_relational_expression_rest = 1126,
+                        Kind_resource_acquisition = 1127,
+                        Kind_return_statement = 1128,
+                        Kind_return_type = 1129,
+                        Kind_secondary_constraints = 1130,
+                        Kind_shift_expression = 1131,
+                        Kind_shift_expression_rest = 1132,
+                        Kind_simple_name_or_member_access = 1133,
+                        Kind_simple_type = 1134,
+                        Kind_specific_catch_clause = 1135,
+                        Kind_stackalloc_initializer = 1136,
+                        Kind_statement_expression = 1137,
+                        Kind_struct_body = 1138,
+                        Kind_struct_declaration = 1139,
+                        Kind_struct_interfaces = 1140,
+                        Kind_struct_member_declaration = 1141,
+                        Kind_switch_label = 1142,
+                        Kind_switch_section = 1143,
+                        Kind_switch_statement = 1144,
+                        Kind_throw_statement = 1145,
+                        Kind_try_statement = 1146,
+                        Kind_type = 1147,
+                        Kind_type_arguments = 1148,
+                        Kind_type_arguments_or_parameters_end = 1149,
+                        Kind_type_declaration = 1150,
+                        Kind_type_declaration_rest = 1151,
+                        Kind_type_name = 1152,
+                        Kind_type_name_safe = 1153,
+                        Kind_type_parameter = 1154,
+                        Kind_type_parameter_constraints = 1155,
+                        Kind_type_parameter_constraints_clauses = 1156,
+                        Kind_type_parameters = 1157,
+                        Kind_typeof_expression = 1158,
+                        Kind_unary_expression = 1159,
+                        Kind_unary_or_binary_operator_declaration = 1160,
+                        Kind_unbound_type_name = 1161,
+                        Kind_unbound_type_name_part = 1162,
+                        Kind_unchecked_statement = 1163,
+                        Kind_unmanaged_type = 1164,
+                        Kind_unsafe_statement = 1165,
+                        Kind_using_directive = 1166,
+                        Kind_using_statement = 1167,
+                        Kind_variable_declaration_data = 1168,
+                        Kind_variable_declarator = 1169,
+                        Kind_variable_initializer = 1170,
+                        Kind_while_statement = 1171,
+                        Kind_yield_statement = 1172,
                         AST_NODE_KIND_COUNT
                       };
 
@@ -748,12 +744,12 @@ namespace csharp
         KIND = Kind_accessor_declarations
       };
 
-      accessor_declarations::accessor_declarations_enum type_accessor1;
-      accessor_declarations::accessor_declarations_enum type_accessor2;
-      const list_node<attribute_section_ast *> *attributes_accessor1_sequence;
+      accessor_declarations::accessor_declarations_enum accessor1_type;
+      accessor_declarations::accessor_declarations_enum accessor2_type;
+      const list_node<attribute_section_ast *> *accessor1_attribute_sequence;
       accessor_modifier_ast *accessor1_modifier;
       block_ast *accessor1_body;
-      const list_node<attribute_section_ast *> *attributes_accessor2_sequence;
+      const list_node<attribute_section_ast *> *accessor2_attribute_sequence;
       accessor_modifier_ast *accessor2_modifier;
       block_ast *accessor2_body;
     };
@@ -962,7 +958,8 @@ namespace csharp
       };
 
       labeled_statement_ast *labeled_statement;
-      declaration_statement_ast *declaration_statement;
+      local_constant_declaration_ast *local_constant_declaration_statement;
+      local_variable_declaration_ast *local_variable_declaration_statement;
       embedded_statement_ast *statement;
     };
 
@@ -1056,6 +1053,9 @@ namespace csharp
         KIND = Kind_class_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      bool partial;
       identifier_ast *class_name;
       type_parameters_ast *type_parameters;
       class_base_ast *class_base;
@@ -1070,8 +1070,6 @@ namespace csharp
         KIND = Kind_class_member_declaration
       };
 
-      const list_node<attribute_section_ast *> *attribute_sequence;
-      optional_modifiers_ast *modifiers;
       finalizer_declaration_ast *finalizer_declaration;
       class_or_struct_member_declaration_ast *other_declaration;
     };
@@ -1083,28 +1081,16 @@ namespace csharp
         KIND = Kind_class_or_struct_member_declaration
       };
 
-      class_or_struct_member_declaration::class_or_struct_member_declaration_enum declaration_type;
       constant_declaration_ast *constant_declaration;
       event_declaration_ast *event_declaration;
-      type_ast *operator_type;
-      type_ast *arg1_type;
-      identifier_ast *arg1_name;
-      block_ast *operator_body;
+      conversion_operator_declaration_ast *conversion_operator_declaration;
       constructor_declaration_ast *constructor_declaration;
       type_declaration_rest_ast *type_declaration_rest;
-      return_type_ast *member_type;
-      overloadable_unary_only_operator_ast *unary_only_operator;
-      overloadable_binary_only_operator_ast *binary_only_operator;
-      type_ast *arg2_type;
-      identifier_ast *arg2_name;
-      overloadable_unary_or_binary_operator_ast *unary_or_binary_operator;
-      formal_parameter_list_ast *formal_parameters;
-      const list_node<variable_declarator_ast *> *variable_declarator_sequence;
-      type_name_safe_ast *member_name_or_interface_type;
-      accessor_declarations_ast *accessor_declarations;
-      type_parameters_ast *type_parameters;
-      type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
-      block_ast *method_body;
+      unary_or_binary_operator_declaration_ast *unary_or_binary_operator_declaration;
+      indexer_declaration_ast *indexer_declaration;
+      variable_declaration_data_ast *field_declaration;
+      property_declaration_ast *property_declaration;
+      method_declaration_ast *method_declaration;
     };
 
   struct class_type_ast: public ast_node
@@ -1150,6 +1136,18 @@ namespace csharp
         KIND = Kind_constant_declaration
       };
 
+      constant_declaration_data_ast *data;
+    };
+
+  struct constant_declaration_data_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_constant_declaration_data
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       type_ast *type;
       const list_node<constant_declarator_ast *> *constant_declarator_sequence;
     };
@@ -1191,10 +1189,12 @@ namespace csharp
         KIND = Kind_constructor_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       identifier_ast *class_name;
       formal_parameter_list_ast *formal_parameters;
       constructor_initializer_ast *constructor_initializer;
-      block_ast *constructor_body;
+      block_ast *body;
     };
 
   struct constructor_initializer_ast: public ast_node
@@ -1217,15 +1217,20 @@ namespace csharp
 
     };
 
-  struct declaration_statement_ast: public ast_node
+  struct conversion_operator_declaration_ast: public ast_node
     {
       enum
       {
-        KIND = Kind_declaration_statement
+        KIND = Kind_conversion_operator_declaration
       };
 
-      variable_declaration_ast *local_variable_declaration;
-      constant_declaration_ast *local_constant_declaration;
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      conversion_operator_declaration::conversion_type_enum conversion_type;
+      type_ast *target_type;
+      type_ast *source_type;
+      identifier_ast *source_name;
+      block_ast *body;
     };
 
   struct delegate_declaration_ast: public ast_node
@@ -1235,6 +1240,8 @@ namespace csharp
         KIND = Kind_delegate_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       return_type_ast *return_type;
       identifier_ast *delegate_name;
       type_parameters_ast *type_parameters;
@@ -1310,6 +1317,8 @@ namespace csharp
         KIND = Kind_enum_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       identifier_ast *enum_name;
       enum_base_ast *enum_base;
       enum_body_ast *body;
@@ -1370,6 +1379,8 @@ namespace csharp
         KIND = Kind_event_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       type_ast *type;
       const list_node<variable_declarator_ast *> *variable_declarator_sequence;
       type_name_ast *event_name;
@@ -1405,6 +1416,8 @@ namespace csharp
         KIND = Kind_finalizer_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       identifier_ast *class_name;
       block_ast *finalizer_body;
     };
@@ -1449,7 +1462,7 @@ namespace csharp
         KIND = Kind_for_control
       };
 
-      variable_declaration_ast *variable_declaration;
+      local_variable_declaration_ast *local_variable_declaration;
       const list_node<statement_expression_ast *> *statement_expression_sequence;
       boolean_expression_ast *for_condition;
       const list_node<statement_expression_ast *> *for_iterator_sequence;
@@ -1567,6 +1580,20 @@ namespace csharp
       embedded_statement_ast *else_body;
     };
 
+  struct indexer_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_indexer_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      type_ast *type;
+      type_name_safe_ast *interface_type;
+      formal_parameter_list_ast *formal_parameters;
+    };
+
   struct integral_type_ast: public ast_node
     {
       enum
@@ -1584,10 +1611,10 @@ namespace csharp
         KIND = Kind_interface_accessors
       };
 
-      accessor_declarations::accessor_declarations_enum type_accessor1;
-      accessor_declarations::accessor_declarations_enum type_accessor2;
-      const list_node<attribute_section_ast *> *attributes_accessor1_sequence;
-      const list_node<attribute_section_ast *> *attributes_accessor2_sequence;
+      accessor_declarations::accessor_declarations_enum accessor1_type;
+      accessor_declarations::accessor_declarations_enum accessor2_type;
+      const list_node<attribute_section_ast *> *accessor1_attribute_sequence;
+      const list_node<attribute_section_ast *> *accessor2_attribute_sequence;
     };
 
   struct interface_base_ast: public ast_node
@@ -1617,6 +1644,9 @@ namespace csharp
         KIND = Kind_interface_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      bool partial;
       identifier_ast *interface_name;
       type_parameters_ast *type_parameters;
       interface_base_ast *interface_base;
@@ -1631,8 +1661,24 @@ namespace csharp
         KIND = Kind_interface_event_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      bool decl_new;
       type_ast *event_type;
       identifier_ast *event_name;
+    };
+
+  struct interface_indexer_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_interface_indexer_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      bool decl_new;
+      type_ast *type;
+      formal_parameter_list_ast *formal_parameters;
+      interface_accessors_ast *interface_accessors;
     };
 
   struct interface_member_declaration_ast: public ast_node
@@ -1642,16 +1688,40 @@ namespace csharp
         KIND = Kind_interface_member_declaration
       };
 
-      interface_member_declaration::interface_member_declaration_enum declaration_type;
-      bool decl_new;
-      const list_node<attribute_section_ast *> *attribute_sequence;
       interface_event_declaration_ast *event_declaration;
-      return_type_ast *member_type;
-      formal_parameter_list_ast *formal_parameters;
-      interface_accessors_ast *interface_accessors;
-      identifier_ast *member_name;
+      interface_indexer_declaration_ast *indexer_declaration;
+      interface_property_declaration_ast *interface_property_declaration;
+      interface_method_declaration_ast *interface_method_declaration;
+    };
+
+  struct interface_method_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_interface_method_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      bool decl_new;
+      return_type_ast *return_type;
+      identifier_ast *method_name;
       type_parameters_ast *type_parameters;
+      formal_parameter_list_ast *formal_parameters;
       type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
+    };
+
+  struct interface_property_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_interface_property_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      bool decl_new;
+      type_ast *type;
+      identifier_ast *property_name;
+      interface_accessors_ast *interface_accessors;
     };
 
   struct keyword_ast: public ast_node
@@ -1686,6 +1756,26 @@ namespace csharp
       std::size_t floating_point_literal;
       std::size_t character_literal;
       std::size_t string_literal;
+    };
+
+  struct local_constant_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_local_constant_declaration
+      };
+
+      constant_declaration_data_ast *data;
+    };
+
+  struct local_variable_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_local_variable_declaration
+      };
+
+      variable_declaration_data_ast *data;
     };
 
   struct lock_statement_ast: public ast_node
@@ -1728,6 +1818,23 @@ namespace csharp
 
       non_array_type_ast *non_array_type;
       const list_node<rank_specifier_ast *> *rank_specifier_sequence;
+    };
+
+  struct method_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_method_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      return_type_ast *return_type;
+      type_name_safe_ast *method_name;
+      type_parameters_ast *type_parameters;
+      formal_parameter_list_ast *formal_parameters;
+      type_parameter_constraints_clauses_ast *type_parameter_constraints_clauses;
+      block_ast *method_body;
     };
 
   struct multiplicative_expression_ast: public ast_node
@@ -1915,16 +2022,6 @@ namespace csharp
       int modifiers;
     };
 
-  struct optional_type_modifiers_ast: public ast_node
-    {
-      enum
-      {
-        KIND = Kind_optional_type_modifiers
-      };
-
-      int modifiers;
-    };
-
   struct optionally_nullable_type_ast: public ast_node
     {
       enum
@@ -1943,7 +2040,7 @@ namespace csharp
         KIND = Kind_overloadable_binary_only_operator
       };
 
-      overloadable_binary_only_operator::overloadable_binary_only_operator_enum op;
+      std::size_t op;
     };
 
   struct overloadable_unary_only_operator_ast: public ast_node
@@ -1953,7 +2050,7 @@ namespace csharp
         KIND = Kind_overloadable_unary_only_operator
       };
 
-      overloadable_unary_only_operator::overloadable_unary_only_operator_enum op;
+      std::size_t op;
     };
 
   struct overloadable_unary_or_binary_operator_ast: public ast_node
@@ -1963,7 +2060,7 @@ namespace csharp
         KIND = Kind_overloadable_unary_or_binary_operator
       };
 
-      overloadable_unary_or_binary_operator::overloadable_unary_or_binary_operator_enum op;
+      std::size_t op;
     };
 
   struct parameter_array_ast: public ast_node
@@ -2074,6 +2171,20 @@ namespace csharp
       const list_node<expression_ast *> *expression_sequence;
     };
 
+  struct property_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_property_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      type_ast *type;
+      type_name_safe_ast *property_name;
+      accessor_declarations_ast *accessor_declarations;
+    };
+
   struct qualified_identifier_ast: public ast_node
     {
       enum
@@ -2124,7 +2235,7 @@ namespace csharp
         KIND = Kind_resource_acquisition
       };
 
-      variable_declaration_ast *local_variable_declaration;
+      local_variable_declaration_ast *local_variable_declaration;
       expression_ast *expression;
     };
 
@@ -2254,6 +2365,9 @@ namespace csharp
         KIND = Kind_struct_declaration
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      bool partial;
       identifier_ast *struct_name;
       type_parameters_ast *type_parameters;
       struct_interfaces_ast *struct_interfaces;
@@ -2278,8 +2392,6 @@ namespace csharp
         KIND = Kind_struct_member_declaration
       };
 
-      const list_node<attribute_section_ast *> *attribute_sequence;
-      optional_modifiers_ast *modifiers;
       class_or_struct_member_declaration_ast *declaration;
     };
 
@@ -2374,8 +2486,6 @@ namespace csharp
         KIND = Kind_type_declaration
       };
 
-      const list_node<attribute_section_ast *> *attribute_sequence;
-      optional_type_modifiers_ast *modifiers;
       type_declaration_rest_ast *rest;
     };
 
@@ -2386,7 +2496,6 @@ namespace csharp
         KIND = Kind_type_declaration_rest
       };
 
-      bool partial;
       class_declaration_ast *class_declaration;
       struct_declaration_ast *struct_declaration;
       interface_declaration_ast *interface_declaration;
@@ -2485,6 +2594,26 @@ namespace csharp
       unary_expression_ast *addressof_expression;
     };
 
+  struct unary_or_binary_operator_declaration_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_unary_or_binary_operator_declaration
+      };
+
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
+      type_ast *return_type;
+      overloadable_operator::overloadable_operator_enum overloadable_operator_type;
+      overloadable_operator::unary_or_binary_enum unary_or_binary;
+      std::size_t overloadable_operator_token;
+      type_ast *source1_type;
+      identifier_ast *source1_name;
+      type_ast *source2_type;
+      identifier_ast *source2_name;
+      block_ast *body;
+    };
+
   struct unbound_type_name_ast: public ast_node
     {
       enum
@@ -2562,13 +2691,15 @@ namespace csharp
       embedded_statement_ast *body;
     };
 
-  struct variable_declaration_ast: public ast_node
+  struct variable_declaration_data_ast: public ast_node
     {
       enum
       {
-        KIND = Kind_variable_declaration
+        KIND = Kind_variable_declaration_data
       };
 
+      const list_node<attribute_section_ast *> *attribute_sequence;
+      optional_modifiers_ast *modifiers;
       type_ast *type;
       const list_node<variable_declarator_ast *> *variable_declarator_sequence;
     };
@@ -2633,15 +2764,6 @@ namespace csharp_pp
 
 namespace csharp
   {
-
-
-#include <string>
-#include <set>
-
-  namespace csharp_pp
-    {
-    class handler_visitor;
-  }
 
   class parser
     {
@@ -2893,7 +3015,7 @@ namespace csharp
       int _M_ltCounter;
 
       // Lookahead hacks
-      bool lookahead_is_variable_declaration();
+      bool lookahead_is_local_variable_declaration();
       bool lookahead_is_cast_expression();
       bool lookahead_is_unbound_type_name();
       bool lookahead_is_type_arguments();
@@ -2940,34 +3062,35 @@ namespace csharp
       bool parse_checked_statement(checked_statement_ast **yynode);
       bool parse_class_base(class_base_ast **yynode);
       bool parse_class_body(class_body_ast **yynode);
-      bool parse_class_declaration(class_declaration_ast **yynode);
+      bool parse_class_declaration(class_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, bool partial);
       bool parse_class_member_declaration(class_member_declaration_ast **yynode);
-      bool parse_class_or_struct_member_declaration(class_or_struct_member_declaration_ast **yynode);
+      bool parse_class_or_struct_member_declaration(class_or_struct_member_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_class_type(class_type_ast **yynode);
       bool parse_compilation_unit(compilation_unit_ast **yynode);
       bool parse_conditional_expression(conditional_expression_ast **yynode);
-      bool parse_constant_declaration(constant_declaration_ast **yynode);
+      bool parse_constant_declaration(constant_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
+      bool parse_constant_declaration_data(constant_declaration_data_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, type_ast *type, const list_node<constant_declarator_ast *> *constant_declarator_sequence);
       bool parse_constant_declarator(constant_declarator_ast **yynode);
       bool parse_constant_expression(constant_expression_ast **yynode);
       bool parse_constructor_constraint(constructor_constraint_ast **yynode);
-      bool parse_constructor_declaration(constructor_declaration_ast **yynode);
+      bool parse_constructor_declaration(constructor_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_constructor_initializer(constructor_initializer_ast **yynode);
       bool parse_continue_statement(continue_statement_ast **yynode);
-      bool parse_declaration_statement(declaration_statement_ast **yynode);
-      bool parse_delegate_declaration(delegate_declaration_ast **yynode);
+      bool parse_conversion_operator_declaration(conversion_operator_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
+      bool parse_delegate_declaration(delegate_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_do_while_statement(do_while_statement_ast **yynode);
       bool parse_embedded_statement(embedded_statement_ast **yynode);
       bool parse_enum_base(enum_base_ast **yynode);
       bool parse_enum_body(enum_body_ast **yynode);
-      bool parse_enum_declaration(enum_declaration_ast **yynode);
+      bool parse_enum_declaration(enum_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_enum_member_declaration(enum_member_declaration_ast **yynode);
       bool parse_equality_expression(equality_expression_ast **yynode);
       bool parse_equality_expression_rest(equality_expression_rest_ast **yynode);
       bool parse_event_accessor_declarations(event_accessor_declarations_ast **yynode);
-      bool parse_event_declaration(event_declaration_ast **yynode);
+      bool parse_event_declaration(event_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_expression(expression_ast **yynode);
       bool parse_extern_alias_directive(extern_alias_directive_ast **yynode);
-      bool parse_finalizer_declaration(finalizer_declaration_ast **yynode);
+      bool parse_finalizer_declaration(finalizer_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_fixed_pointer_declarator(fixed_pointer_declarator_ast **yynode);
       bool parse_fixed_statement(fixed_statement_ast **yynode);
       bool parse_floating_point_type(floating_point_type_ast **yynode);
@@ -2982,20 +3105,27 @@ namespace csharp
       bool parse_goto_statement(goto_statement_ast **yynode);
       bool parse_identifier(identifier_ast **yynode);
       bool parse_if_statement(if_statement_ast **yynode);
+      bool parse_indexer_declaration(indexer_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, type_ast *type, type_name_safe_ast *interface_type);
       bool parse_integral_type(integral_type_ast **yynode);
       bool parse_interface_accessors(interface_accessors_ast **yynode);
       bool parse_interface_base(interface_base_ast **yynode);
       bool parse_interface_body(interface_body_ast **yynode);
-      bool parse_interface_declaration(interface_declaration_ast **yynode);
-      bool parse_interface_event_declaration(interface_event_declaration_ast **yynode);
+      bool parse_interface_declaration(interface_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, bool partial);
+      bool parse_interface_event_declaration(interface_event_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, bool decl_new);
+      bool parse_interface_indexer_declaration(interface_indexer_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, bool decl_new, type_ast *type);
       bool parse_interface_member_declaration(interface_member_declaration_ast **yynode);
+      bool parse_interface_method_declaration(interface_method_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, bool decl_new, return_type_ast *return_type, identifier_ast *method_name);
+      bool parse_interface_property_declaration(interface_property_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, bool decl_new, type_ast *type, identifier_ast *property_name);
       bool parse_keyword(keyword_ast **yynode);
       bool parse_labeled_statement(labeled_statement_ast **yynode);
       bool parse_literal(literal_ast **yynode);
+      bool parse_local_constant_declaration(local_constant_declaration_ast **yynode);
+      bool parse_local_variable_declaration(local_variable_declaration_ast **yynode);
       bool parse_lock_statement(lock_statement_ast **yynode);
       bool parse_logical_and_expression(logical_and_expression_ast **yynode);
       bool parse_logical_or_expression(logical_or_expression_ast **yynode);
       bool parse_managed_type(managed_type_ast **yynode);
+      bool parse_method_declaration(method_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, return_type_ast *return_type, type_name_safe_ast *method_name);
       bool parse_multiplicative_expression(multiplicative_expression_ast **yynode);
       bool parse_multiplicative_expression_rest(multiplicative_expression_rest_ast **yynode);
       bool parse_named_argument(named_argument_ast **yynode);
@@ -3013,11 +3143,10 @@ namespace csharp
       bool parse_numeric_type(numeric_type_ast **yynode);
       bool parse_optional_argument_list(optional_argument_list_ast **yynode);
       bool parse_optional_modifiers(optional_modifiers_ast **yynode);
-      bool parse_optional_type_modifiers(optional_type_modifiers_ast **yynode);
       bool parse_optionally_nullable_type(optionally_nullable_type_ast **yynode);
-      bool parse_overloadable_binary_only_operator(overloadable_binary_only_operator_ast **yynode);
-      bool parse_overloadable_unary_only_operator(overloadable_unary_only_operator_ast **yynode);
-      bool parse_overloadable_unary_or_binary_operator(overloadable_unary_or_binary_operator_ast **yynode);
+      bool parse_overloadable_binary_only_operator(overloadable_binary_only_operator_ast **yynode, overloadable_operator::overloadable_operator_enum* op);
+      bool parse_overloadable_unary_only_operator(overloadable_unary_only_operator_ast **yynode, overloadable_operator::overloadable_operator_enum* op);
+      bool parse_overloadable_unary_or_binary_operator(overloadable_unary_or_binary_operator_ast **yynode, overloadable_operator::overloadable_operator_enum* op);
       bool parse_parameter_array(parameter_array_ast **yynode);
       bool parse_parameter_modifier(parameter_modifier_ast **yynode);
       bool parse_pointer_type(pointer_type_ast **yynode);
@@ -3027,6 +3156,7 @@ namespace csharp
       bool parse_primary_expression(primary_expression_ast **yynode);
       bool parse_primary_or_secondary_constraint(primary_or_secondary_constraint_ast **yynode);
       bool parse_primary_suffix(primary_suffix_ast **yynode);
+      bool parse_property_declaration(property_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, type_ast *type, type_name_safe_ast *property_name);
       bool parse_qualified_identifier(qualified_identifier_ast **yynode);
       bool parse_rank_specifier(rank_specifier_ast **yynode);
       bool parse_relational_expression(relational_expression_ast **yynode);
@@ -3043,7 +3173,7 @@ namespace csharp
       bool parse_stackalloc_initializer(stackalloc_initializer_ast **yynode);
       bool parse_statement_expression(statement_expression_ast **yynode);
       bool parse_struct_body(struct_body_ast **yynode);
-      bool parse_struct_declaration(struct_declaration_ast **yynode);
+      bool parse_struct_declaration(struct_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, bool partial);
       bool parse_struct_interfaces(struct_interfaces_ast **yynode);
       bool parse_struct_member_declaration(struct_member_declaration_ast **yynode);
       bool parse_switch_label(switch_label_ast **yynode);
@@ -3055,7 +3185,7 @@ namespace csharp
       bool parse_type_arguments(type_arguments_ast **yynode);
       bool parse_type_arguments_or_parameters_end(type_arguments_or_parameters_end_ast **yynode);
       bool parse_type_declaration(type_declaration_ast **yynode);
-      bool parse_type_declaration_rest(type_declaration_rest_ast **yynode);
+      bool parse_type_declaration_rest(type_declaration_rest_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers);
       bool parse_type_name(type_name_ast **yynode);
       bool parse_type_name_safe(type_name_safe_ast **yynode);
       bool parse_type_parameter(type_parameter_ast **yynode);
@@ -3064,6 +3194,7 @@ namespace csharp
       bool parse_type_parameters(type_parameters_ast **yynode);
       bool parse_typeof_expression(typeof_expression_ast **yynode);
       bool parse_unary_expression(unary_expression_ast **yynode);
+      bool parse_unary_or_binary_operator_declaration(unary_or_binary_operator_declaration_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, type_ast *return_type);
       bool parse_unbound_type_name(unbound_type_name_ast **yynode);
       bool parse_unbound_type_name_part(unbound_type_name_part_ast **yynode);
       bool parse_unchecked_statement(unchecked_statement_ast **yynode);
@@ -3071,7 +3202,7 @@ namespace csharp
       bool parse_unsafe_statement(unsafe_statement_ast **yynode);
       bool parse_using_directive(using_directive_ast **yynode);
       bool parse_using_statement(using_statement_ast **yynode);
-      bool parse_variable_declaration(variable_declaration_ast **yynode);
+      bool parse_variable_declaration_data(variable_declaration_data_ast **yynode, const list_node<attribute_section_ast *> *attribute_sequence, optional_modifiers_ast *modifiers, type_ast *type, const list_node<variable_declarator_ast *> *variable_declarator_sequence);
       bool parse_variable_declarator(variable_declarator_ast **yynode);
       bool parse_variable_initializer(variable_initializer_ast **yynode);
       bool parse_while_statement(while_statement_ast **yynode);
@@ -3160,6 +3291,8 @@ namespace csharp
       {}
       virtual void visit_constant_declaration(constant_declaration_ast *)
       {}
+      virtual void visit_constant_declaration_data(constant_declaration_data_ast *)
+      {}
       virtual void visit_constant_declarator(constant_declarator_ast *)
       {}
       virtual void visit_constant_expression(constant_expression_ast *)
@@ -3172,7 +3305,7 @@ namespace csharp
       {}
       virtual void visit_continue_statement(continue_statement_ast *)
       {}
-      virtual void visit_declaration_statement(declaration_statement_ast *)
+      virtual void visit_conversion_operator_declaration(conversion_operator_declaration_ast *)
       {}
       virtual void visit_delegate_declaration(delegate_declaration_ast *)
       {}
@@ -3230,6 +3363,8 @@ namespace csharp
       {}
       virtual void visit_if_statement(if_statement_ast *)
       {}
+      virtual void visit_indexer_declaration(indexer_declaration_ast *)
+      {}
       virtual void visit_integral_type(integral_type_ast *)
       {}
       virtual void visit_interface_accessors(interface_accessors_ast *)
@@ -3242,13 +3377,23 @@ namespace csharp
       {}
       virtual void visit_interface_event_declaration(interface_event_declaration_ast *)
       {}
+      virtual void visit_interface_indexer_declaration(interface_indexer_declaration_ast *)
+      {}
       virtual void visit_interface_member_declaration(interface_member_declaration_ast *)
+      {}
+      virtual void visit_interface_method_declaration(interface_method_declaration_ast *)
+      {}
+      virtual void visit_interface_property_declaration(interface_property_declaration_ast *)
       {}
       virtual void visit_keyword(keyword_ast *)
       {}
       virtual void visit_labeled_statement(labeled_statement_ast *)
       {}
       virtual void visit_literal(literal_ast *)
+      {}
+      virtual void visit_local_constant_declaration(local_constant_declaration_ast *)
+      {}
+      virtual void visit_local_variable_declaration(local_variable_declaration_ast *)
       {}
       virtual void visit_lock_statement(lock_statement_ast *)
       {}
@@ -3257,6 +3402,8 @@ namespace csharp
       virtual void visit_logical_or_expression(logical_or_expression_ast *)
       {}
       virtual void visit_managed_type(managed_type_ast *)
+      {}
+      virtual void visit_method_declaration(method_declaration_ast *)
       {}
       virtual void visit_multiplicative_expression(multiplicative_expression_ast *)
       {}
@@ -3292,8 +3439,6 @@ namespace csharp
       {}
       virtual void visit_optional_modifiers(optional_modifiers_ast *)
       {}
-      virtual void visit_optional_type_modifiers(optional_type_modifiers_ast *)
-      {}
       virtual void visit_optionally_nullable_type(optionally_nullable_type_ast *)
       {}
       virtual void visit_overloadable_binary_only_operator(overloadable_binary_only_operator_ast *)
@@ -3319,6 +3464,8 @@ namespace csharp
       virtual void visit_primary_or_secondary_constraint(primary_or_secondary_constraint_ast *)
       {}
       virtual void visit_primary_suffix(primary_suffix_ast *)
+      {}
+      virtual void visit_property_declaration(property_declaration_ast *)
       {}
       virtual void visit_qualified_identifier(qualified_identifier_ast *)
       {}
@@ -3394,6 +3541,8 @@ namespace csharp
                                                         {}
                                                         virtual void visit_unary_expression(unary_expression_ast *)
                                                         {}
+                                                        virtual void visit_unary_or_binary_operator_declaration(unary_or_binary_operator_declaration_ast *)
+                                                        {}
                                                         virtual void visit_unbound_type_name(unbound_type_name_ast *)
                                                         {}
                                                         virtual void visit_unbound_type_name_part(unbound_type_name_part_ast *)
@@ -3408,7 +3557,7 @@ namespace csharp
                                                         {}
                                                         virtual void visit_using_statement(using_statement_ast *)
                                                         {}
-                                                        virtual void visit_variable_declaration(variable_declaration_ast *)
+                                                        virtual void visit_variable_declaration_data(variable_declaration_data_ast *)
                                                         {}
                                                         virtual void visit_variable_declarator(variable_declarator_ast *)
                                                         {}
@@ -3425,9 +3574,9 @@ namespace csharp
     public:
       virtual void visit_accessor_declarations(accessor_declarations_ast *node)
       {
-        if (node->attributes_accessor1_sequence)
+        if (node->accessor1_attribute_sequence)
           {
-            const list_node<attribute_section_ast*> *__it = node->attributes_accessor1_sequence->to_front(), *__end = __it;
+            const list_node<attribute_section_ast*> *__it = node->accessor1_attribute_sequence->to_front(), *__end = __it;
             do
               {
                 visit_node(__it->element);
@@ -3437,9 +3586,9 @@ namespace csharp
           }
         visit_node(node->accessor1_modifier);
         visit_node(node->accessor1_body);
-        if (node->attributes_accessor2_sequence)
+        if (node->accessor2_attribute_sequence)
           {
-            const list_node<attribute_section_ast*> *__it = node->attributes_accessor2_sequence->to_front(), *__end = __it;
+            const list_node<attribute_section_ast*> *__it = node->accessor2_attribute_sequence->to_front(), *__end = __it;
             do
               {
                 visit_node(__it->element);
@@ -3681,7 +3830,8 @@ namespace csharp
       virtual void visit_block_statement(block_statement_ast *node)
       {
         visit_node(node->labeled_statement);
-        visit_node(node->declaration_statement);
+        visit_node(node->local_constant_declaration_statement);
+        visit_node(node->local_variable_declaration_statement);
         visit_node(node->statement);
       }
 
@@ -3763,15 +3913,7 @@ namespace csharp
 
       virtual void visit_class_declaration(class_declaration_ast *node)
       {
-        visit_node(node->class_name);
-        visit_node(node->type_parameters);
-        visit_node(node->class_base);
-        visit_node(node->type_parameter_constraints_clauses);
-        visit_node(node->body);
-      }
-
-      virtual void visit_class_member_declaration(class_member_declaration_ast *node)
-      {
+        visit_node(node->modifiers);
         if (node->attribute_sequence)
           {
             const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
@@ -3782,7 +3924,15 @@ namespace csharp
               }
             while (__it != __end);
           }
-        visit_node(node->modifiers);
+        visit_node(node->class_name);
+        visit_node(node->type_parameters);
+        visit_node(node->class_base);
+        visit_node(node->type_parameter_constraints_clauses);
+        visit_node(node->body);
+      }
+
+      virtual void visit_class_member_declaration(class_member_declaration_ast *node)
+      {
         visit_node(node->finalizer_declaration);
         visit_node(node->other_declaration);
       }
@@ -3791,34 +3941,14 @@ namespace csharp
       {
         visit_node(node->constant_declaration);
         visit_node(node->event_declaration);
-        visit_node(node->operator_type);
-        visit_node(node->arg1_type);
-        visit_node(node->arg1_name);
-        visit_node(node->operator_body);
+        visit_node(node->conversion_operator_declaration);
         visit_node(node->constructor_declaration);
         visit_node(node->type_declaration_rest);
-        visit_node(node->member_type);
-        visit_node(node->unary_only_operator);
-        visit_node(node->binary_only_operator);
-        visit_node(node->arg2_type);
-        visit_node(node->arg2_name);
-        visit_node(node->unary_or_binary_operator);
-        visit_node(node->formal_parameters);
-        if (node->variable_declarator_sequence)
-          {
-            const list_node<variable_declarator_ast*> *__it = node->variable_declarator_sequence->to_front(), *__end = __it;
-            do
-              {
-                visit_node(__it->element);
-                __it = __it->next;
-              }
-            while (__it != __end);
-          }
-        visit_node(node->member_name_or_interface_type);
-        visit_node(node->accessor_declarations);
-        visit_node(node->type_parameters);
-        visit_node(node->type_parameter_constraints_clauses);
-        visit_node(node->method_body);
+        visit_node(node->unary_or_binary_operator_declaration);
+        visit_node(node->indexer_declaration);
+        visit_node(node->field_declaration);
+        visit_node(node->property_declaration);
+        visit_node(node->method_declaration);
       }
 
       virtual void visit_class_type(class_type_ast *node)
@@ -3880,10 +4010,26 @@ namespace csharp
 
       virtual void visit_constant_declaration(constant_declaration_ast *node)
       {
-        visit_node(node->type);
+        visit_node(node->data);
+      }
+
+      virtual void visit_constant_declaration_data(constant_declaration_data_ast *node)
+      {
         if (node->constant_declarator_sequence)
           {
             const list_node<constant_declarator_ast*> *__it = node->constant_declarator_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
+        visit_node(node->type);
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
             do
               {
                 visit_node(__it->element);
@@ -3909,10 +4055,21 @@ namespace csharp
 
       virtual void visit_constructor_declaration(constructor_declaration_ast *node)
       {
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->class_name);
         visit_node(node->formal_parameters);
         visit_node(node->constructor_initializer);
-        visit_node(node->constructor_body);
+        visit_node(node->body);
       }
 
       virtual void visit_constructor_initializer(constructor_initializer_ast *node)
@@ -3923,14 +4080,38 @@ namespace csharp
       virtual void visit_continue_statement(continue_statement_ast *node)
       {}
 
-      virtual void visit_declaration_statement(declaration_statement_ast *node)
+      virtual void visit_conversion_operator_declaration(conversion_operator_declaration_ast *node)
       {
-        visit_node(node->local_variable_declaration);
-        visit_node(node->local_constant_declaration);
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
+        visit_node(node->target_type);
+        visit_node(node->source_type);
+        visit_node(node->source_name);
+        visit_node(node->body);
       }
 
       virtual void visit_delegate_declaration(delegate_declaration_ast *node)
       {
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->return_type);
         visit_node(node->delegate_name);
         visit_node(node->type_parameters);
@@ -3990,6 +4171,17 @@ namespace csharp
 
       virtual void visit_enum_declaration(enum_declaration_ast *node)
       {
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->enum_name);
         visit_node(node->enum_base);
         visit_node(node->body);
@@ -4059,6 +4251,17 @@ namespace csharp
 
       virtual void visit_event_declaration(event_declaration_ast *node)
       {
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->type);
         if (node->variable_declarator_sequence)
           {
@@ -4087,6 +4290,17 @@ namespace csharp
 
       virtual void visit_finalizer_declaration(finalizer_declaration_ast *node)
       {
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->class_name);
         visit_node(node->finalizer_body);
       }
@@ -4109,7 +4323,7 @@ namespace csharp
 
       virtual void visit_for_control(for_control_ast *node)
       {
-        visit_node(node->variable_declaration);
+        visit_node(node->local_variable_declaration);
         if (node->statement_expression_sequence)
           {
             const list_node<statement_expression_ast*> *__it = node->statement_expression_sequence->to_front(), *__end = __it;
@@ -4217,14 +4431,14 @@ namespace csharp
         visit_node(node->else_body);
       }
 
-      virtual void visit_integral_type(integral_type_ast *node)
-      {}
-
-      virtual void visit_interface_accessors(interface_accessors_ast *node)
+      virtual void visit_indexer_declaration(indexer_declaration_ast *node)
       {
-        if (node->attributes_accessor1_sequence)
+        visit_node(node->interface_type);
+        visit_node(node->type);
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
           {
-            const list_node<attribute_section_ast*> *__it = node->attributes_accessor1_sequence->to_front(), *__end = __it;
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
             do
               {
                 visit_node(__it->element);
@@ -4232,9 +4446,27 @@ namespace csharp
               }
             while (__it != __end);
           }
-        if (node->attributes_accessor2_sequence)
+        visit_node(node->formal_parameters);
+      }
+
+      virtual void visit_integral_type(integral_type_ast *node)
+    {}
+
+      virtual void visit_interface_accessors(interface_accessors_ast *node)
+      {
+        if (node->accessor1_attribute_sequence)
           {
-            const list_node<attribute_section_ast*> *__it = node->attributes_accessor2_sequence->to_front(), *__end = __it;
+            const list_node<attribute_section_ast*> *__it = node->accessor1_attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
+        if (node->accessor2_attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->accessor2_attribute_sequence->to_front(), *__end = __it;
             do
               {
                 visit_node(__it->element);
@@ -4274,6 +4506,17 @@ namespace csharp
 
       virtual void visit_interface_declaration(interface_declaration_ast *node)
       {
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->interface_name);
         visit_node(node->type_parameters);
         visit_node(node->interface_base);
@@ -4282,12 +4525,6 @@ namespace csharp
       }
 
       virtual void visit_interface_event_declaration(interface_event_declaration_ast *node)
-      {
-        visit_node(node->event_type);
-        visit_node(node->event_name);
-      }
-
-      virtual void visit_interface_member_declaration(interface_member_declaration_ast *node)
       {
         if (node->attribute_sequence)
           {
@@ -4299,13 +4536,69 @@ namespace csharp
               }
             while (__it != __end);
           }
-        visit_node(node->event_declaration);
-        visit_node(node->member_type);
+        visit_node(node->event_type);
+        visit_node(node->event_name);
+      }
+
+      virtual void visit_interface_indexer_declaration(interface_indexer_declaration_ast *node)
+      {
+        visit_node(node->type);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->formal_parameters);
         visit_node(node->interface_accessors);
-        visit_node(node->member_name);
+      }
+
+      virtual void visit_interface_member_declaration(interface_member_declaration_ast *node)
+      {
+        visit_node(node->event_declaration);
+        visit_node(node->indexer_declaration);
+        visit_node(node->interface_property_declaration);
+        visit_node(node->interface_method_declaration);
+      }
+
+      virtual void visit_interface_method_declaration(interface_method_declaration_ast *node)
+      {
+        visit_node(node->method_name);
+        visit_node(node->return_type);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
         visit_node(node->type_parameters);
+        visit_node(node->formal_parameters);
         visit_node(node->type_parameter_constraints_clauses);
+      }
+
+      virtual void visit_interface_property_declaration(interface_property_declaration_ast *node)
+      {
+        visit_node(node->property_name);
+        visit_node(node->type);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
+        visit_node(node->interface_accessors);
       }
 
       virtual void visit_keyword(keyword_ast *node)
@@ -4318,6 +4611,16 @@ namespace csharp
 
       virtual void visit_literal(literal_ast *node)
       {}
+
+      virtual void visit_local_constant_declaration(local_constant_declaration_ast *node)
+      {
+        visit_node(node->data);
+      }
+
+      virtual void visit_local_variable_declaration(local_variable_declaration_ast *node)
+      {
+        visit_node(node->data);
+      }
 
       virtual void visit_lock_statement(lock_statement_ast *node)
       {
@@ -4366,6 +4669,27 @@ namespace csharp
               }
             while (__it != __end);
           }
+      }
+
+      virtual void visit_method_declaration(method_declaration_ast *node)
+      {
+        visit_node(node->method_name);
+        visit_node(node->return_type);
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
+        visit_node(node->type_parameters);
+        visit_node(node->formal_parameters);
+        visit_node(node->type_parameter_constraints_clauses);
+        visit_node(node->method_body);
       }
 
       virtual void visit_multiplicative_expression(multiplicative_expression_ast *node)
@@ -4535,9 +4859,6 @@ namespace csharp
       virtual void visit_optional_modifiers(optional_modifiers_ast *node)
     {}
 
-      virtual void visit_optional_type_modifiers(optional_type_modifiers_ast *node)
-      {}
-
       virtual void visit_optionally_nullable_type(optionally_nullable_type_ast *node)
       {
         visit_node(node->non_nullable_type);
@@ -4622,6 +4943,24 @@ namespace csharp
               }
             while (__it != __end);
           }
+      }
+
+      virtual void visit_property_declaration(property_declaration_ast *node)
+      {
+        visit_node(node->property_name);
+        visit_node(node->type);
+        visit_node(node->modifiers);
+        if (node->attribute_sequence)
+          {
+            const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
+        visit_node(node->accessor_declarations);
       }
 
       virtual void visit_qualified_identifier(qualified_identifier_ast *node)
@@ -4758,6 +5097,17 @@ namespace csharp
 
                                                         virtual void visit_struct_declaration(struct_declaration_ast *node)
                                                         {
+                                                          visit_node(node->modifiers);
+                                                          if (node->attribute_sequence)
+                                                            {
+                                                              const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+                                                              do
+                                                                {
+                                                                  visit_node(__it->element);
+                                                                  __it = __it->next;
+                                                                }
+                                                              while (__it != __end);
+                                                            }
                                                           visit_node(node->struct_name);
                                                           visit_node(node->type_parameters);
                                                           visit_node(node->struct_interfaces);
@@ -4781,17 +5131,6 @@ namespace csharp
 
                                                         virtual void visit_struct_member_declaration(struct_member_declaration_ast *node)
                                                         {
-                                                          if (node->attribute_sequence)
-                                                            {
-                                                              const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
-                                                              do
-                                                                {
-                                                                  visit_node(__it->element);
-                                                                  __it = __it->next;
-                                                                }
-                                                              while (__it != __end);
-                                                            }
-                                                          visit_node(node->modifiers);
                                                           visit_node(node->declaration);
                                                         }
 
@@ -4875,17 +5214,6 @@ namespace csharp
 
                                                         virtual void visit_type_declaration(type_declaration_ast *node)
                                                         {
-                                                          if (node->attribute_sequence)
-                                                            {
-                                                              const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
-                                                              do
-                                                                {
-                                                                  visit_node(__it->element);
-                                                                  __it = __it->next;
-                                                                }
-                                                              while (__it != __end);
-                                                            }
-                                                          visit_node(node->modifiers);
                                                           visit_node(node->rest);
                                                         }
 
@@ -4963,6 +5291,27 @@ namespace csharp
                                                           visit_node(node->addressof_expression);
                                                         }
 
+                                                        virtual void visit_unary_or_binary_operator_declaration(unary_or_binary_operator_declaration_ast *node)
+                                                        {
+                                                          visit_node(node->return_type);
+                                                          visit_node(node->modifiers);
+                                                          if (node->attribute_sequence)
+                                                            {
+                                                              const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
+                                                              do
+                                                                {
+                                                                  visit_node(__it->element);
+                                                                  __it = __it->next;
+                                                                }
+                                                              while (__it != __end);
+                                                            }
+                                                          visit_node(node->source1_type);
+                                                          visit_node(node->source1_name);
+                                                          visit_node(node->source2_type);
+                                                          visit_node(node->source2_name);
+                                                          visit_node(node->body);
+                                                        }
+
                                                         virtual void visit_unbound_type_name(unbound_type_name_ast *node)
                                                         {
                                                           visit_node(node->qualified_alias_label);
@@ -5012,12 +5361,23 @@ namespace csharp
                                                           visit_node(node->body);
                                                         }
 
-                                                        virtual void visit_variable_declaration(variable_declaration_ast *node)
+                                                        virtual void visit_variable_declaration_data(variable_declaration_data_ast *node)
                                                         {
-                                                          visit_node(node->type);
                                                           if (node->variable_declarator_sequence)
                                                             {
                                                               const list_node<variable_declarator_ast*> *__it = node->variable_declarator_sequence->to_front(), *__end = __it;
+                                                              do
+                                                                {
+                                                                  visit_node(__it->element);
+                                                                  __it = __it->next;
+                                                                }
+                                                              while (__it != __end);
+                                                            }
+                                                          visit_node(node->type);
+                                                          visit_node(node->modifiers);
+                                                          if (node->attribute_sequence)
+                                                            {
+                                                              const list_node<attribute_section_ast*> *__it = node->attribute_sequence->to_front(), *__end = __it;
                                                               do
                                                                 {
                                                                   visit_node(__it->element);

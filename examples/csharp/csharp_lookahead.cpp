@@ -193,7 +193,7 @@ bool lookahead::is_unbound_type_name()
 
 
 // modified to only verify on (type identifier) instead of the full rule.
-bool lookahead::is_variable_declaration_start()
+bool lookahead::is_local_variable_declaration_start()
 {
   if (_M_token == parser::Token_BOOL
       || _M_token == parser::Token_BYTE

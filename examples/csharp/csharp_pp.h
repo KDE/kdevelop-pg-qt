@@ -292,14 +292,6 @@ namespace csharp
 namespace csharp_pp
   {
 
-
-#include "csharp_pp_scope.h"
-
-  namespace csharp
-    {
-    class parser;
-  }
-
   class parser
     {
     public:

@@ -44,7 +44,7 @@ public:
     lookahead(parser* parser);
 
     bool is_unbound_type_name();
-    bool is_variable_declaration_start();
+    bool is_local_variable_declaration_start();
     bool is_cast_expression_start();
     bool is_type();
     bool is_managed_type();

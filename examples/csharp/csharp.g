@@ -27,13 +27,24 @@
 -----------------------------------------------------------------------------
 
 
--- 13 first/follow conflicts:
---  - The LBRACKET conflict in compilation_unit.
+-- 16 first/follow conflicts:
+--  - The EXTERN conflicts in compilation_unit. They would be gone if
+--    type_declaration used optional_type_modifiers instead of
+--    broader optional_modifiers, but we stick with the latter one in order
+--    to improve the AST. As the extern_alias_directive comes first, it
+--    rightfully gets selected, and so the conflict is harmless.
+--    (done right by default, 2 conflicts)
+--  - The LBRACKET conflict in compilation_unit,
+--    and the following EXTERN, LBRACKET conflict there.
+--    LBRACKET is resolved, EXTERN is just the above harmless conflict again.
 --    (manually resolved, 2 conflicts)
 --  - The COMMA conflict in global_attribute_section. Easy.
 --    (manually resolved, 1 conflict)
 --  - The COMMA conflict in attribute_section, exactly the same one as above.
 --    (manually resolved, 1 conflict)
+--  - The EXTERN conflict in namespace_body. This is exactly the same as
+--    the other "extern" conflicts from above, see there for the explanation.
+--    (done right by default, 1 conflict)
 --  - The COMMA conflict in enum_body, also similar to the above.
 --    (manually resolved, 1 conflict)
 --  - The STAR conflict in unmanaged_type:
@@ -99,9 +110,9 @@
 --    is resolved easily, whereas declaration_statement vs. embedded_statement
 --    needs arbitrary-length LL(k), as is described further above.
 --    (manually resolved, 1 conflict)
---  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in block_statement,
---    it's the classic conflict between variable_declaration and expression.
---    Needs LL(k), solved by lookahead_is_variable_declaration().
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in block_statement, it's the
+--    classic conflict between local_variable_declaration and expression.
+--    Needs LL(k), solved by lookahead_is_local_variable_declaration().
 --    (1 conflict)
 --  - The CHECKED, UNCHECKED, YIELD conflict in embedded_statement.
 --    For "checked" and "unchecked", this is because there are both blocks
@@ -112,13 +123,13 @@
 --    (manually resolved, 1 conflict)
 --  - The CATCH conflict in catch_clauses.
 --    (manually resolved, 1 conflict)
---  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in resource_acquisition,
---    it's the classic conflict between variable_declaration and expression.
---    Needs LL(k), solved by lookahead_is_variable_declaration().
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in resource_acquisition, it's the
+--    classic conflict between local_variable_declaration and expression.
+--    Needs LL(k), solved by lookahead_is_local_variable_declaration().
 --    (1 conflict)
---  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in for_control,
---    it's the classic conflict between variable_declaration and expression.
---    Needs LL(k), solved by lookahead_is_variable_declaration().
+--  - The BOOLEAN, BYTE, CHAR, DOUBLE etc. in for_control, it's the
+--    classic conflict between local_variable_declaration and expression.
+--    Needs LL(k), solved by lookahead_is_local_variable_declaration().
 --    (1 conflict)
 --  - The LPAREN conflict in unary_expression,
 --    which is cast_expression vs. primary_expression.
@@ -130,7 +141,7 @@
 --    Needs LL(k), solved by lookahead_is_unbound_type_name().
 --    (1 conflict)
 
--- Total amount of conflicts: 30
+-- Total amount of conflicts: 33
 
 
 
@@ -212,7 +223,7 @@ namespace csharp_pp
   int _M_ltCounter;
 
   // Lookahead hacks
-  bool lookahead_is_variable_declaration();
+  bool lookahead_is_local_variable_declaration();
   bool lookahead_is_cast_expression();
   bool lookahead_is_unbound_type_name();
   bool lookahead_is_type_arguments();
@@ -249,20 +260,11 @@ namespace csharp_pp
   };
 :]
 
-%namespace class_or_struct_member_declaration
+%namespace conversion_operator_declaration
 [:
-  enum class_or_struct_member_declaration_enum {
-    type_constant_declaration,
-    type_event_declaration,
-    type_operator_declaration_implicit,
-    type_operator_declaration_explicit,
-    type_operator_declaration_typed,
-    type_constructor_declaration,
-    type_type_declaration,
-    type_indexer_declaration,
-    type_field_declaration,
-    type_property_declaration,
-    type_member_declaration,
+  enum conversion_type_enum {
+    conversion_implicit,
+    conversion_explicit,
   };
 :]
 
@@ -274,21 +276,26 @@ namespace csharp_pp
   };
 :]
 
-%namespace overloadable_unary_only_operator
+%namespace overloadable_operator
 [:
-  enum overloadable_unary_only_operator_enum {
+  enum unary_or_binary_enum {
+    type_unary,
+    type_binary,
+  };
+
+  enum overloadable_operator_enum
+  {
+    // overloadable unary operators:
     op_bang,
     op_tilde,
     op_increment,
     op_decrement,
     op_true,
     op_false,
-  };
-:]
-
-%namespace overloadable_binary_only_operator
-[:
-  enum overloadable_binary_only_operator_enum {
+    // overloadable unary or binary operators:
+    op_plus,
+    op_minus,
+    // overloadable binary operators:
     op_star,
     op_slash,
     op_remainder,
@@ -303,24 +310,6 @@ namespace csharp_pp
     op_less_than,
     op_greater_equal,
     op_less_equal,
-  };
-:]
-
-%namespace overloadable_unary_or_binary_operator
-[:
-  enum overloadable_unary_or_binary_operator_enum {
-    op_plus,
-    op_minus,
-  };
-:]
-
-%namespace interface_member_declaration
-[:
-  enum interface_member_declaration_enum {
-    type_interface_event_declaration,
-    type_interface_indexer_declaration,
-    type_interface_property_declaration,
-    type_interface_method_declaration,
   };
 :]
 
@@ -757,7 +746,7 @@ namespace csharp_pp
       -- optionally appended named arguments:
       #positional_argument=positional_argument
       ( COMMA
-        (  ?[: (yytoken == Token_IDENTIFIER) && (LA(2).kind == Token_ASSIGN) :]
+        (  ?[: LA(2).kind == Token_ASSIGN :]
            (#named_argument=named_argument @ COMMA)
            [: break; :] -- go directly to the closing parenthesis
          |
@@ -794,45 +783,31 @@ namespace csharp_pp
    RBRACE
 -> namespace_body ;;
 
-   (#attribute=attribute_section)*
-   modifiers=optional_type_modifiers
-   rest=type_declaration_rest
+   (#attribute:attribute_section)*
+   modifiers:optional_modifiers
+   rest=type_declaration_rest[ attribute_sequence, modifiers ]
 -> type_declaration ;;
 
+-- TODO: after parsing, check if the modifiers are allowed for the specific
+--       kind of type declaration.
+
  (
-   PARTIAL  [: (*yynode)->partial = true;  :]
-   (  class_declaration=class_declaration
-    | struct_declaration=struct_declaration
-    | interface_declaration=interface_declaration
+   PARTIAL
+   (  class_declaration=class_declaration[ attribute_sequence, modifiers, true ]
+    | struct_declaration=struct_declaration[ attribute_sequence, modifiers, true ]
+    | interface_declaration=interface_declaration[ attribute_sequence, modifiers, true ]
    )
  |
-   0        [: (*yynode)->partial = false; :]
-   (  class_declaration=class_declaration
-    | struct_declaration=struct_declaration
-    | interface_declaration=interface_declaration
-    | enum_declaration=enum_declaration
-    | delegate_declaration=delegate_declaration
+   (  class_declaration=class_declaration[ attribute_sequence, modifiers, false ]
+    | struct_declaration=struct_declaration[ attribute_sequence, modifiers, false ]
+    | interface_declaration=interface_declaration[ attribute_sequence, modifiers, false ]
+    | enum_declaration=enum_declaration[ attribute_sequence, modifiers ]
+    | delegate_declaration=delegate_declaration[ attribute_sequence, modifiers ]
    )
  )
 -> type_declaration_rest [
-     member variable partial: bool;
-] ;;
-
- (
-   NEW        [: (*yynode)->modifiers |= modifiers::mod_new;       :]
- | PUBLIC     [: (*yynode)->modifiers |= modifiers::mod_public;    :]
- | PROTECTED  [: (*yynode)->modifiers |= modifiers::mod_protected; :]
- | INTERNAL   [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
- | PRIVATE    [: (*yynode)->modifiers |= modifiers::mod_private;   :]
- -- unsafe grammar extension: "unsafe" modifier
- | UNSAFE     [: (*yynode)->modifiers |= modifiers::mod_unsafe;    :]
- -- the following three ones only occur in class declarations:
- | ABSTRACT   [: (*yynode)->modifiers |= modifiers::mod_abstract;  :]
- | SEALED     [: (*yynode)->modifiers |= modifiers::mod_sealed;    :]
- | STATIC     [: (*yynode)->modifiers |= modifiers::mod_static;    :]
- )*
--> optional_type_modifiers [
-  member variable modifiers: int; -- using the modifier_enum values
+     argument temporary node #attribute: attribute_section;
+     argument temporary node modifiers:  optional_modifiers;
 ] ;;
 
 
@@ -853,7 +828,11 @@ namespace csharp_pp
    )
    body=class_body
    (SEMICOLON | 0)
--> class_declaration ;;
+-> class_declaration [
+     argument member node #attribute:  attribute_section;
+     argument member node modifiers:   optional_modifiers;
+     argument member variable partial: bool;
+] ;;
 
 
 -- Definition of a C# STRUCT
@@ -872,7 +851,11 @@ namespace csharp_pp
    )
    body=struct_body
    (SEMICOLON | 0)
--> struct_declaration ;;
+-> struct_declaration [
+     argument member node #attribute:  attribute_section;
+     argument member node modifiers:   optional_modifiers;
+     argument member variable partial: bool;
+] ;;
 
 
 -- Definition of a C# INTERFACE
@@ -891,7 +874,11 @@ namespace csharp_pp
    )
    body=interface_body
    (SEMICOLON | 0)
--> interface_declaration ;;
+-> interface_declaration [
+     argument member node #attribute:  attribute_section;
+     argument member node modifiers:   optional_modifiers;
+     argument member variable partial: bool;
+] ;;
 
 
 -- Definition of a C# ENUM
@@ -900,7 +887,10 @@ namespace csharp_pp
    (enum_base=enum_base | 0)
    body=enum_body
    (SEMICOLON | 0)
--> enum_declaration ;;
+-> enum_declaration [
+     argument member node #attribute:  attribute_section;
+     argument member node modifiers:   optional_modifiers;
+] ;;
 
 
 -- Definition of a C# DELEGATE
@@ -918,7 +908,10 @@ namespace csharp_pp
     | 0
    )
    SEMICOLON
--> delegate_declaration ;;
+-> delegate_declaration [
+     argument member node #attribute:  attribute_section;
+     argument member node modifiers:   optional_modifiers;
+] ;;
 
 
 -- BASE CLASSES and INTERFACES
@@ -987,118 +980,99 @@ namespace csharp_pp
 -- The CLASS MEMBER DECLARATION is one of the most complex rules in here,
 -- and covers everything that can occur inside a class body.
 
-   (#attribute=attribute_section)*
-   modifiers=optional_modifiers
-   (  finalizer_declaration=finalizer_declaration
-    | other_declaration=class_or_struct_member_declaration
+   (#attribute:attribute_section)*
+   modifiers:optional_modifiers
+   (  finalizer_declaration=finalizer_declaration[ attribute_sequence, modifiers ]
+    | other_declaration=class_or_struct_member_declaration[ attribute_sequence, modifiers ]
    )
 -> class_member_declaration ;;
 
-   (#attribute=attribute_section)*
-   modifiers=optional_modifiers
-   declaration=class_or_struct_member_declaration
+   (#attribute:attribute_section)*
+   modifiers:optional_modifiers
+   declaration=class_or_struct_member_declaration[ attribute_sequence, modifiers ]
 -> struct_member_declaration ;;
 
 -- The first few declarations start with a specific token and don't need
 -- to be refactored. The other declarations must be split to avoid conflicts.
 
  (
-   constant_declaration=constant_declaration SEMICOLON
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_constant_declaration; :]
+   constant_declaration=constant_declaration[ attribute_sequence, modifiers ]
+ | event_declaration=event_declaration[ attribute_sequence, modifiers ]
  |
-   event_declaration=event_declaration
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_event_declaration;    :]
- |
-   -- The OPERATOR DECLARATION, part one. Makes overloaded operators.
-   IMPLICIT OPERATOR operator_type=type
-   LPAREN arg1_type=type arg1_name=identifier RPAREN
-   (operator_body=block | SEMICOLON)
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_operator_declaration_implicit; :]
- |
-   -- The OPERATOR DECLARATION, part two. Makes overloaded operators.
-   -- (There's also part three, later in this rule.)
-   EXPLICIT OPERATOR operator_type=type
-   LPAREN arg1_type=type arg1_name=identifier RPAREN
-   (operator_body=block | SEMICOLON)
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_operator_declaration_explicit; :]
+   -- The OPERATOR DECLARATION, part one: conversion operator overloading.
+   conversion_operator_declaration=conversion_operator_declaration[ attribute_sequence, modifiers ]
  |
    -- A normal or static CONSTRUCTOR DECLARATION.
-   -- For feasability, static_constructor_declaration is not used here.
    ?[: LA(2).kind == Token_LPAREN :]
-   constructor_declaration=constructor_declaration
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_constructor_declaration; :]
+   constructor_declaration=constructor_declaration[ attribute_sequence, modifiers ]
  |
-   -- The TYPE DECLARATION, buried under condition & action code ;)
+   -- The TYPE DECLARATION, buried under lookahead conditions ;)
    ?[: (yytoken != Token_PARTIAL) || (LA(2).kind == Token_CLASS
         || LA(2).kind == Token_INTERFACE || LA(2).kind == Token_ENUM
         || LA(2).kind == Token_STRUCT || LA(2).kind == Token_DELEGATE) :]
-   type_declaration_rest=type_declaration_rest
-     [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_type_declaration; :]
+   type_declaration_rest=type_declaration_rest[ attribute_sequence, modifiers ]
  |
-   -- for the rest of the declarations, we need to generalize some parts of the
-   -- rules, which allows more productions than the specified ones, but
-   -- at least makes LL(1) parsing feasible.
-   member_type=return_type
+   -- Many of the declarations start with a type, and method declarations
+   -- start with a return type which is therefore the least common denominator.
+   member_type:return_type
    (
-      -- The OPERATOR DECLARATION rest, part three. Makes overloaded operators.
-      OPERATOR
-      (
-         unary_only_operator=overloadable_unary_only_operator
-         LPAREN arg1_type=type arg1_name=identifier RPAREN
-       |
-         binary_only_operator=overloadable_binary_only_operator
-         LPAREN arg1_type=type arg1_name=identifier
-         COMMA  arg2_type=type arg2_name=identifier RPAREN
-       |
-         unary_or_binary_operator=overloadable_unary_or_binary_operator
-         LPAREN arg1_type=type arg1_name=identifier
-         (COMMA arg2_type=type arg2_name=identifier | 0) RPAREN
-      )
-      (operator_body=block | SEMICOLON)
-        [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_operator_declaration_typed; :]
+      -- The OPERATOR DECLARATION rest, part two: overloading of real operators
+      ?[: member_type->type == return_type::type_regular :]
+      unary_or_binary_operator_declaration=unary_or_binary_operator_declaration[
+        attribute_sequence, modifiers, member_type->regular_type
+      ]
     |
       -- The INDEXER DECLARATION rest, part one.
-      THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
-        [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_indexer_declaration; :]
+      ?[: member_type->type == return_type::type_regular :]
+      indexer_declaration=indexer_declaration[
+        attribute_sequence, modifiers, member_type->regular_type, 0 /* no interface type */
+      ]
     |
       -- The FIELD DECLARATION rest. Declares member variables.
-      ?[: LA(2).kind == Token_ASSIGN || LA(2).kind == Token_COMMA
-          || LA(2).kind == Token_SEMICOLON :]
-      (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
-        [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_field_declaration; :]
+      ?[: ( LA(2).kind == Token_SEMICOLON || LA(2).kind == Token_ASSIGN
+            || LA(2).kind == Token_COMMA
+          ) && (member_type->type == return_type::type_regular)  :]
+      (#variable_declarator:variable_declarator @ COMMA) SEMICOLON
+      field_declaration=variable_declaration_data[
+        attribute_sequence, modifiers,
+        member_type->regular_type, variable_declarator_sequence
+      ]
     |
       -- and this is for rules that are still not split up sufficiently:
-      member_name_or_interface_type=type_name_safe
+      member_name_or_interface_type:type_name_safe
         -- (interface_type for the indexer declaration, member_name otherwise)
       (
          -- The INDEXER DECLARATION rest, part two.
-         DOT THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
-           [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_indexer_declaration; :]
+         ?[: member_type->type == return_type::type_regular :]
+         DOT
+         indexer_declaration=indexer_declaration[
+           attribute_sequence, modifiers,
+           member_type->regular_type, member_name_or_interface_type
+         ]
        |
          -- The PROPERTY DECLARATION rest.
-         LBRACE accessor_declarations=accessor_declarations RBRACE
-           [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_property_declaration; :]
+         ?[: member_type->type == return_type::type_regular :]
+         property_declaration=property_declaration[
+           attribute_sequence, modifiers, member_type->regular_type, member_name_or_interface_type
+         ]
        |
          -- The METHOD DECLARATION rest.
-         (
-             ?[: compatibility_mode() >= csharp20_compatibility :]
-             type_parameters=type_parameters
-           | 0
-         )
-         LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
-         (
-             ?[: compatibility_mode() >= csharp20_compatibility :]
-             type_parameter_constraints_clauses=type_parameter_constraints_clauses
-           | 0
-         )
-         (method_body=block | SEMICOLON)
-           [: (*yynode)->declaration_type = class_or_struct_member_declaration::type_member_declaration; :]
+         method_declaration=method_declaration[
+           attribute_sequence, modifiers, member_type, member_name_or_interface_type
+         ]
       )
    )
  )
 -> class_or_struct_member_declaration [
+     argument temporary node #attribute: attribute_section;
+     argument temporary node modifiers:  optional_modifiers;
      member variable declaration_type: class_or_struct_member_declaration::class_or_struct_member_declaration_enum;
 ] ;;
+
+
+
+-- Having summarized the possible class/struct members, we now specify
+-- what they look like.
 
 
 -- The FINALIZER is what other languages know as deconstructor.
@@ -1106,7 +1080,11 @@ namespace csharp_pp
 
    TILDE class_name=identifier LPAREN RPAREN
    (finalizer_body=block | SEMICOLON)
--> finalizer_declaration ;;
+-> finalizer_declaration [
+     argument member node #attribute: attribute_section;
+     argument member node modifiers:  optional_modifiers;
+] ;;
+
 
 
 -- The CONSTRUCTOR DECLARATION. Naturally quite similar to the method one.
@@ -1115,8 +1093,11 @@ namespace csharp_pp
    class_name=identifier
    LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
    (constructor_initializer=constructor_initializer | 0)
-   (constructor_body=block | SEMICOLON)
--> constructor_declaration ;;
+   (body=block | SEMICOLON)
+-> constructor_declaration [
+     argument member node #attribute: attribute_section;
+     argument member node modifiers:  optional_modifiers;
+] ;;
 
    COLON
    (  BASE [: (*yynode)->initializer_type = constructor_initializer::type_base; :]
@@ -1132,12 +1113,13 @@ namespace csharp_pp
 -- Apart from the "static" modifier, the static constructor declaration
 -- is a subset of the generic one. In order to keep the parser simple,
 -- we don't check on the modifiers here and thus only use
--- constructor_declaration, which is a superset of this rule.
--- Modifier checking should rather be done in the visitor, later on.
+-- constructor_declaration. On the whole, modifier checking should be done
+-- in the visitor, later on... but we could make an exception here.
 
 --    class_name=identifier LPAREN RPAREN
---    (static_constructor_body=block | SEMICOLON)
+--    (body=block | SEMICOLON)
 -- -> static_constructor_declaration ;;
+
 
 
 -- The EVENT DECLARATION.
@@ -1153,19 +1135,344 @@ namespace csharp_pp
       event_name=type_name
       LPAREN event_accessor_declarations=event_accessor_declarations RPAREN
    )
--> event_declaration ;;
+-> event_declaration [
+     argument member node #attribute: attribute_section;
+     argument member node modifiers:  optional_modifiers;
+] ;;
+
+-- EVENT ACCESSOR DECLARATIONS appear inside an event declaration.
+
+   (#attributes_accessor1=attribute_section)*
+   (
+      ADD accessor1_body=block
+      (#attributes_accessor2=attribute_section)*
+      REMOVE accessor2_body=block
+      [: (*yynode)->order = event_accessor_declarations::order_add_remove; :]
+    |
+      REMOVE accessor1_body=block
+      (#attributes_accessor2=attribute_section)*
+      ADD accessor2_body=block
+      [: (*yynode)->order = event_accessor_declarations::order_remove_add; :]
+   )
+-> event_accessor_declarations [
+     member variable order: event_accessor_declarations::event_accessor_declarations_enum;
+] ;;
+
+
+
+-- The different forms of the OPERATOR DECLARATION which overloads operators:
+-- conversion, unary and binary operator declarations.
+
+   (  IMPLICIT [: (*yynode)->conversion_type = conversion_operator_declaration::conversion_implicit; :]
+    | EXPLICIT [: (*yynode)->conversion_type = conversion_operator_declaration::conversion_explicit; :]
+   )
+   OPERATOR target_type=type
+   LPAREN source_type=type source_name=identifier RPAREN
+   (body=block | SEMICOLON)
+-> conversion_operator_declaration [
+     argument member node #attribute: attribute_section;
+     argument member node modifiers:  optional_modifiers;
+     member variable conversion_type: conversion_operator_declaration::conversion_type_enum;
+] ;;
+
+   OPERATOR
+   (   unary_op:overloadable_unary_only_operator[&(*yynode)->overloadable_operator_type]
+       LPAREN source1_type=type source1_name=identifier RPAREN
+         [: (*yynode)->overloadable_operator_token = unary_op->op;
+            (*yynode)->unary_or_binary = overloadable_operator::type_unary;     :]
+     |
+       binary_op:overloadable_binary_only_operator[&(*yynode)->overloadable_operator_type]
+       LPAREN source1_type=type source1_name=identifier
+       COMMA  source2_type=type source2_name=identifier RPAREN
+         [: (*yynode)->overloadable_operator_token = binary_op->op;
+            (*yynode)->unary_or_binary = overloadable_operator::type_binary;    :]
+     |
+       unary_or_binary_op:overloadable_unary_or_binary_operator[&(*yynode)->overloadable_operator_type]
+         [: (*yynode)->overloadable_operator_token = unary_or_binary_op->op;    :]
+       LPAREN source1_type=type source1_name=identifier
+       (
+          COMMA source2_type=type source2_name=identifier
+            [: (*yynode)->unary_or_binary = overloadable_operator::type_binary; :]
+        |
+          0 [: (*yynode)->unary_or_binary = overloadable_operator::type_unary;  :]
+       )
+       RPAREN
+   )
+   (body=block | SEMICOLON)
+-> unary_or_binary_operator_declaration [
+     argument member node #attribute:            attribute_section;
+     argument member node modifiers:             optional_modifiers;
+     argument member node return_type:           type;
+     member variable overloadable_operator_type: overloadable_operator::overloadable_operator_enum;
+     member variable unary_or_binary:            overloadable_operator::unary_or_binary_enum;
+     member token overloadable_operator_token;
+] ;;
+
+
+-- OVERLOADABLE OPERATORS for operator declarations.
+
+ (
+   op=BANG          [: *op = overloadable_operator::op_bang;          :]
+ | op=TILDE         [: *op = overloadable_operator::op_tilde;         :]
+ | op=INCREMENT     [: *op = overloadable_operator::op_increment;     :]
+ | op=DECREMENT     [: *op = overloadable_operator::op_decrement;     :]
+ | op=TRUE          [: *op = overloadable_operator::op_true;          :]
+ | op=FALSE         [: *op = overloadable_operator::op_false;         :]
+ )
+-> overloadable_unary_only_operator [
+     argument temporary variable op: overloadable_operator::overloadable_operator_enum*;
+] ;;
+
+ (
+   op=STAR          [: *op = overloadable_operator::op_star;          :]
+ | op=SLASH         [: *op = overloadable_operator::op_slash;         :]
+ | op=REMAINDER     [: *op = overloadable_operator::op_remainder;     :]
+ | op=BIT_AND       [: *op = overloadable_operator::op_bit_and;       :]
+ | op=BIT_OR        [: *op = overloadable_operator::op_bit_or;        :]
+ | op=BIT_XOR       [: *op = overloadable_operator::op_bit_xor;       :]
+ | op=LSHIFT        [: *op = overloadable_operator::op_lshift;        :]
+ | op=RSHIFT        [: *op = overloadable_operator::op_rshift;        :]
+ | op=EQUAL         [: *op = overloadable_operator::op_equal;         :]
+ | op=NOT_EQUAL     [: *op = overloadable_operator::op_not_equal;     :]
+ | op=GREATER_THAN  [: *op = overloadable_operator::op_greater_than;  :]
+ | op=LESS_THAN     [: *op = overloadable_operator::op_less_than;     :]
+ | op=GREATER_EQUAL [: *op = overloadable_operator::op_greater_equal; :]
+ | op=LESS_EQUAL    [: *op = overloadable_operator::op_less_equal;    :]
+ )
+-> overloadable_binary_only_operator [
+     argument temporary variable op: overloadable_operator::overloadable_operator_enum*;
+] ;;
+
+ (
+   op=PLUS          [: *op = overloadable_operator::op_plus;          :]
+ | op=MINUS         [: *op = overloadable_operator::op_minus;         :]
+ )
+-> overloadable_unary_or_binary_operator [
+     argument temporary variable op: overloadable_operator::overloadable_operator_enum*;
+] ;;
+
+
+
+-- The INDEXER DECLARATION rest.
+
+   THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
+-> indexer_declaration [
+     argument member node #attribute:     attribute_section;
+     argument member node modifiers:      optional_modifiers;
+     argument member node type:           type;
+     argument member node interface_type: type_name_safe;
+] ;;
+
+
+
+-- The PROPERTY DECLARATION rest.
+
+   LBRACE accessor_declarations=accessor_declarations RBRACE
+-> property_declaration [
+     argument member node #attribute:     attribute_section;
+     argument member node modifiers:      optional_modifiers;
+     argument member node type:           type;
+     argument member node property_name:  type_name_safe;
+] ;;
+
+-- ACCESSOR DECLARATIONS appear inside a property declaration.
+
+   (#accessor1_attribute=attribute_section)*
+   (accessor1_modifier=accessor_modifier | 0)
+   (
+      GET (accessor1_body=block | SEMICOLON)
+        [: (*yynode)->accessor1_type = accessor_declarations::type_get; :]
+      (
+         (#accessor2_attribute=attribute_section)*
+         (accessor2_modifier=accessor_modifier | 0)
+         SET (accessor2_body=block | SEMICOLON)
+           [: (*yynode)->accessor2_type = accessor_declarations::type_set;  :]
+       | 0 [: (*yynode)->accessor2_type = accessor_declarations::type_none; :]
+      )
+    |
+      SET (accessor1_body=block | SEMICOLON)
+        [: (*yynode)->accessor1_type = accessor_declarations::type_set; :]
+      (
+         (#accessor2_attribute=attribute_section)*
+         (accessor2_modifier=accessor_modifier | 0)
+         GET (accessor2_body=block | SEMICOLON)
+           [: (*yynode)->accessor2_type = accessor_declarations::type_get;  :]
+       | 0 [: (*yynode)->accessor2_type = accessor_declarations::type_none; :]
+      )
+   )
+-> accessor_declarations [
+     member variable accessor1_type: accessor_declarations::accessor_declarations_enum;
+     member variable accessor2_type: accessor_declarations::accessor_declarations_enum;
+] ;;
+
+   PROTECTED     [: (*yynode)->modifiers |= modifiers::mod_protected; :]
+   (  INTERNAL   [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
+    | 0
+   )
+ | INTERNAL      [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
+   (  PROTECTED  [: (*yynode)->modifiers |= modifiers::mod_protected; :]
+    | 0
+   )
+ | PRIVATE       [: (*yynode)->modifiers |= modifiers::mod_private;   :]
+-> accessor_modifier [
+     member variable modifiers: int; -- using the modifier_enum values
+] ;;
+
+
+
+-- The METHOD DECLARATION rest.
+
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
+   LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
+   (
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
+   (method_body=block | SEMICOLON)
+-> method_declaration [
+     argument member node #attribute:     attribute_section;
+     argument member node modifiers:      optional_modifiers;
+     argument member node return_type:    return_type;
+     argument member node method_name:    type_name_safe;
+] ;;
 
 
 
 
--- So much for the rough structure, now we get into the details
+-- Interfaces have their own specific INTERFACE MEMBER DECLARATIONS.
+-- Resembling the class_or_struct_member_declaration, but less complex.
+
+   (#attribute:attribute_section)*
+   (  NEW  [: decl_new = true;  :]
+    | 0    [: decl_new = false; :]
+   )
+   (
+      event_declaration=interface_event_declaration[
+        attribute_sequence, decl_new
+      ]
+    |
+      -- Many of the declarations start with a type, and method declarations
+      -- start with a return type which is therefore the least common denominator.
+      member_type:return_type
+      (
+         -- The INDEXER DECLARATION rest.
+         ?[: member_type->type == return_type::type_regular :]
+         indexer_declaration=interface_indexer_declaration[
+           attribute_sequence, decl_new, member_type->regular_type
+         ]
+       |
+         -- The method and property declarations need to be split further.
+         member_name:identifier
+         (
+            -- The INTERFACE PROPERTY DECLARATION rest.
+            ?[: member_type->type == return_type::type_regular :]
+            interface_property_declaration=interface_property_declaration[
+              attribute_sequence, decl_new,
+              member_type->regular_type, member_name
+            ]
+          |
+            -- The INTERFACE METHOD DECLARATION rest.
+            interface_method_declaration=interface_method_declaration[
+              attribute_sequence, decl_new, member_type, member_name
+            ]
+         )
+      )
+   )
+-> interface_member_declaration [
+     temporary variable decl_new: bool; -- specifies if the "new" keyword prepends the declaration
+] ;;
+
+
+-- Here are the detailed interface member declaration rules. Basically,
+-- all of them are just simplified versions of the class/struct ones.
+
+-- The INTERFACE EVENT DECLARATION.
+
+   EVENT event_type=type event_name=identifier SEMICOLON
+-> interface_event_declaration [
+     argument member node #attribute:    attribute_section;
+     argument member variable decl_new:  bool;
+] ;;
+
+-- The INTERFACE INDEXER DECLARATION.
+
+   THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
+   LBRACE interface_accessors=interface_accessors RBRACE
+-> interface_indexer_declaration [
+     argument member node #attribute:    attribute_section;
+     argument member variable decl_new:  bool;
+     argument member node type:          type;
+] ;;
+
+-- The INTERFACE PROPERTY DECLARATION.
+
+   RBRACE interface_accessors=interface_accessors RBRACE
+-> interface_property_declaration [
+     argument member node #attribute:    attribute_section;
+     argument member variable decl_new:  bool;
+     argument member node type:          type;
+     argument member node property_name: identifier;
+] ;;
+
+-- And last but not least, the INTERFACE METHOD DECLARATION.
+
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameters=type_parameters
+    | 0
+   )
+   LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
+   (  ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_parameter_constraints_clauses=type_parameter_constraints_clauses
+    | 0
+   )
+   SEMICOLON
+-> interface_method_declaration [
+     argument member node #attribute:    attribute_section;
+     argument member variable decl_new:  bool;
+     argument member node return_type:   return_type;
+     argument member node method_name:   identifier;
+] ;;
+
+
+
+-- An INTERFACE ACCESSOR looks like "[attributes] get;" or "[attributes] set;"
+-- and is used by interface_indexer_declaration and interface_property_declaration.
+
+   (#accessor1_attribute=attribute_section)*
+   (
+      GET SEMICOLON
+        [: (*yynode)->accessor1_type = accessor_declarations::type_get; :]
+      (
+         (#accessor2_attribute=attribute_section)* SET SEMICOLON
+           [: (*yynode)->accessor2_type = accessor_declarations::type_set;  :]
+       | 0 [: (*yynode)->accessor2_type = accessor_declarations::type_none; :]
+      )
+    |
+      SET SEMICOLON
+        [: (*yynode)->accessor1_type = accessor_declarations::type_set; :]
+      (
+         (#accessor2_attribute=attribute_section)* GET SEMICOLON
+           [: (*yynode)->accessor2_type = accessor_declarations::type_get;  :]
+       | 0 [: (*yynode)->accessor2_type = accessor_declarations::type_none; :]
+      )
+   )
+-> interface_accessors [
+     member variable accessor1_type: accessor_declarations::accessor_declarations_enum;
+     member variable accessor2_type: accessor_declarations::accessor_declarations_enum;
+] ;;
+
+
 
 
 -- A FORMAL PARAMETER LIST is part of a method header and contains one or more
 -- parameters, optionally ending with a variable-length "parameter array".
 -- It's not as hackish as it used to be, nevertheless it could still be nicer.
 
-   0 [: parameter_array_occurred = false; :]
+   0 [: bool parameter_array_occurred = false; :]
    #formal_parameter=formal_parameter[&parameter_array_occurred]
    @ ( 0 [: if( parameter_array_occurred == true ) { break; } :]
          -- Don't proceed after the parameter array. If there's a cleaner way
@@ -1173,19 +1480,15 @@ namespace csharp_pp
          -- please use that instead of this construct.
        COMMA
      )
--> formal_parameter_list [
-     temporary variable parameter_array_occurred: bool;
-] ;;
+-> formal_parameter_list ;;
 
 -- How it _should_ look:
 --
---    0 [: parameter_array_occurred = false; :]
+--    0 [: bool parameter_array_occurred = false; :]
 --    #formal_parameter=formal_parameter[&parameter_array_occurred]
 --    @ ( ?[: parameter_array_occurred == false :] COMMA )
 --        -- kdev-pg dismisses this condition!
--- -> formal_parameter_list  [
---      temporary variable parameter_array_occurred: bool;
--- ] ;;
+-- -> formal_parameter_list ;;
 
    (#attribute=attribute_section)*
    (
@@ -1220,188 +1523,6 @@ namespace csharp_pp
      member variable argument_type: argument::argument_type_enum;
 ] ;;
 
-
-
-
--- OVERLOADABLE OPERATORS for operator declarations.
-
- (
-   BANG       [: (*yynode)->op = overloadable_unary_only_operator::op_bang;      :]
- | TILDE      [: (*yynode)->op = overloadable_unary_only_operator::op_tilde;     :]
- | INCREMENT  [: (*yynode)->op = overloadable_unary_only_operator::op_increment; :]
- | DECREMENT  [: (*yynode)->op = overloadable_unary_only_operator::op_decrement; :]
- | TRUE       [: (*yynode)->op = overloadable_unary_only_operator::op_true;      :]
- | FALSE      [: (*yynode)->op = overloadable_unary_only_operator::op_false;     :]
- )
--> overloadable_unary_only_operator [
-     member variable op: overloadable_unary_only_operator::overloadable_unary_only_operator_enum;
-] ;;
-
- (
-   STAR          [: (*yynode)->op = overloadable_binary_only_operator::op_star;          :]
- | SLASH         [: (*yynode)->op = overloadable_binary_only_operator::op_slash;         :]
- | REMAINDER     [: (*yynode)->op = overloadable_binary_only_operator::op_remainder;     :]
- | BIT_AND       [: (*yynode)->op = overloadable_binary_only_operator::op_bit_and;       :]
- | BIT_OR        [: (*yynode)->op = overloadable_binary_only_operator::op_bit_or;        :]
- | BIT_XOR       [: (*yynode)->op = overloadable_binary_only_operator::op_bit_xor;       :]
- | LSHIFT        [: (*yynode)->op = overloadable_binary_only_operator::op_lshift;        :]
- | RSHIFT        [: (*yynode)->op = overloadable_binary_only_operator::op_rshift;        :]
- | EQUAL         [: (*yynode)->op = overloadable_binary_only_operator::op_equal;         :]
- | NOT_EQUAL     [: (*yynode)->op = overloadable_binary_only_operator::op_not_equal;     :]
- | GREATER_THAN  [: (*yynode)->op = overloadable_binary_only_operator::op_greater_than;  :]
- | LESS_THAN     [: (*yynode)->op = overloadable_binary_only_operator::op_less_than;     :]
- | GREATER_EQUAL [: (*yynode)->op = overloadable_binary_only_operator::op_greater_equal; :]
- | LESS_EQUAL    [: (*yynode)->op = overloadable_binary_only_operator::op_less_equal;    :]
- )
--> overloadable_binary_only_operator [
-     member variable op: overloadable_binary_only_operator::overloadable_binary_only_operator_enum;
-] ;;
-
-   PLUS   [: (*yynode)->op = overloadable_unary_or_binary_operator::op_plus;   :]
- | MINUS  [: (*yynode)->op = overloadable_unary_or_binary_operator::op_minus;  :]
--> overloadable_unary_or_binary_operator [
-     member variable op: overloadable_unary_or_binary_operator::overloadable_unary_or_binary_operator_enum;
-] ;;
-
-
-
--- ACCESSOR DECLARATIONS appear inside a property declaration.
-
-   (#attributes_accessor1=attribute_section)*
-   (accessor1_modifier=accessor_modifier | 0)
-   (
-      GET (accessor1_body=block | SEMICOLON)
-        [: (*yynode)->type_accessor1 = accessor_declarations::type_get; :]
-      (
-         (#attributes_accessor2=attribute_section)*
-         (accessor2_modifier=accessor_modifier | 0)
-         SET (accessor2_body=block | SEMICOLON)
-           [: (*yynode)->type_accessor2 = accessor_declarations::type_set;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
-      )
-    |
-      SET (accessor1_body=block | SEMICOLON)
-        [: (*yynode)->type_accessor1 = accessor_declarations::type_set; :]
-      (
-         (#attributes_accessor2=attribute_section)*
-         (accessor2_modifier=accessor_modifier | 0)
-         GET (accessor2_body=block | SEMICOLON)
-           [: (*yynode)->type_accessor2 = accessor_declarations::type_get;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
-      )
-   )
--> accessor_declarations [
-     member variable type_accessor1: accessor_declarations::accessor_declarations_enum;
-     member variable type_accessor2: accessor_declarations::accessor_declarations_enum;
-] ;;
-
-   PROTECTED     [: (*yynode)->modifiers |= modifiers::mod_protected; :]
-   (  INTERNAL   [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
-    | 0
-   )
- | INTERNAL      [: (*yynode)->modifiers |= modifiers::mod_internal;  :]
-   (  PROTECTED  [: (*yynode)->modifiers |= modifiers::mod_protected; :]
-    | 0
-   )
- | PRIVATE       [: (*yynode)->modifiers |= modifiers::mod_private;   :]
--> accessor_modifier [
-     member variable modifiers: int; -- using the modifier_enum values
-] ;;
-
-
--- EVENT ACCESSOR DECLARATIONS appear inside an event declaration.
-
-   (#attributes_accessor1=attribute_section)*
-   (
-      ADD accessor1_body=block
-      (#attributes_accessor2=attribute_section)*
-      REMOVE accessor2_body=block
-      [: (*yynode)->order = event_accessor_declarations::order_add_remove; :]
-    |
-      REMOVE accessor1_body=block
-      (#attributes_accessor2=attribute_section)*
-      ADD accessor2_body=block
-      [: (*yynode)->order = event_accessor_declarations::order_remove_add; :]
-   )
--> event_accessor_declarations [
-     member variable order: event_accessor_declarations::event_accessor_declarations_enum;
-] ;;
-
-
-
--- Interfaces have their own specific INTERFACE MEMBER DECLARATIONS.
--- Resembling the class_or_struct_member_declaration, but less complex.
-
-   (#attribute=attribute_section)*
-   (  NEW  [: (*yynode)->decl_new = true;  :]
-    | 0    [: (*yynode)->decl_new = false; :]
-   )
-   (
-       event_declaration=interface_event_declaration
-         [: (*yynode)->declaration_type = interface_member_declaration::type_interface_event_declaration; :]
-    |
-       -- the property and indexer declarations are in principle only types,
-       -- not return_types. Generalized for a cleaner grammar, though.
-       -- TODO: Maybe there's some good idea on how to handle this?
-       --       If so, then also for class_or_struct_member_declaration.
-       member_type=return_type
-       (
-          -- The INDEXER DECLARATION rest.
-          THIS
-          LBRACKET formal_parameters=formal_parameter_list RBRACKET
-          LBRACE interface_accessors=interface_accessors RBRACE
-            [: (*yynode)->declaration_type = interface_member_declaration::type_interface_indexer_declaration; :]
-        |
-          -- The method and property declarations need to be split further.
-          member_name=identifier
-          (
-             -- The PROPERTY DECLARATION REST.
-             RBRACE interface_accessors=interface_accessors RBRACE
-               [: (*yynode)->declaration_type = interface_member_declaration::type_interface_property_declaration; :]
-           |
-             (  ?[: compatibility_mode() >= csharp20_compatibility :]
-                type_parameters=type_parameters
-              | 0
-             )
-             LPAREN (formal_parameters=formal_parameter_list | 0) RPAREN
-             (type_parameter_constraints_clauses=type_parameter_constraints_clauses | 0)
-             SEMICOLON
-               [: (*yynode)->declaration_type = interface_member_declaration::type_interface_method_declaration; :]
-          )
-       )
-   )
--> interface_member_declaration [
-     member variable declaration_type: interface_member_declaration::interface_member_declaration_enum;
-     member variable decl_new: bool; -- specifies if the "new" keyword prepends the declaration
-] ;;
-
-   EVENT event_type=type event_name=identifier SEMICOLON
--> interface_event_declaration ;;
-
--- An INTERFACE ACCESSOR looks like "[attributes] get;" or "[attributes] set;"
-
-   (#attributes_accessor1=attribute_section)*
-   (
-      GET SEMICOLON
-        [: (*yynode)->type_accessor1 = accessor_declarations::type_get; :]
-      (
-         (#attributes_accessor2=attribute_section)* SET SEMICOLON
-           [: (*yynode)->type_accessor2 = accessor_declarations::type_set;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
-      )
-    |
-      SET SEMICOLON
-        [: (*yynode)->type_accessor1 = accessor_declarations::type_set; :]
-      (
-         (#attributes_accessor2=attribute_section)* GET SEMICOLON
-           [: (*yynode)->type_accessor2 = accessor_declarations::type_get;  :]
-       | 0 [: (*yynode)->type_accessor2 = accessor_declarations::type_none; :]
-      )
-   )
--> interface_accessors [
-     member variable type_accessor1: accessor_declarations::accessor_declarations_enum;
-     member variable type_accessor2: accessor_declarations::accessor_declarations_enum;
-] ;;
 
 
 
@@ -1520,12 +1641,14 @@ namespace csharp_pp
    ?[: LA(2).kind == Token_COLON :]
    labeled_statement=labeled_statement
  |
+   local_constant_declaration_statement=local_constant_declaration SEMICOLON
+ |
    -- Local variable declarations, as well as expression statements, can start
    -- with class1<xxx>.bla or similar. This is only solvable with LL(k), so
    -- what's needed here is the following hack lookahead function, until
    -- backtracking or real LL(k) is implemented.
-   ?[: lookahead_is_variable_declaration() == true :]
-   declaration_statement=declaration_statement
+   ?[: lookahead_is_local_variable_declaration() == true :]
+   local_variable_declaration_statement=local_variable_declaration SEMICOLON
  |
    statement=embedded_statement
  )
@@ -1538,15 +1661,23 @@ namespace csharp_pp
 
 -- VARIABLE DECLARATIONS, initializers, etc.
 
-   (  local_variable_declaration=variable_declaration
-    | local_constant_declaration=constant_declaration
-   )
-   SEMICOLON
--> declaration_statement ;;
+-- The LOCAL VARIABLE DECLARATION does not allow attributes or modifiers,
+-- this is only allowed in field declarations. Both store their data with
+-- the variable_declaration_data rule, using rule arguments.
 
-   type=type (#variable_declarator=variable_declarator @ COMMA)
--> variable_declaration ;;
--- TODO: note: only backtrack (type identifier), it's enough to disambiguate
+   type:type (#declarator:variable_declarator @ COMMA)
+   data=variable_declaration_data[
+     0 /* no attributes */, 0 /* no modifiers */, type, declarator_sequence
+   ]
+-> local_variable_declaration ;;
+
+   0
+-> variable_declaration_data [
+     argument member node #attribute:  attribute_section;  -- not used in local
+     argument member node modifiers:   optional_modifiers; -- variable declarations
+     argument member node type:                 type;
+     argument member node #variable_declarator: variable_declarator;
+] ;;
 
 -- The VARIABLE DECLARATOR is the part after the type specification for a
 -- variable declaration. There can be more declarators, seperated by commas.
@@ -1557,9 +1688,31 @@ namespace csharp_pp
 
 
 -- The CONSTANT DECLARATION. Declares "const" values.
+-- Analog to variable declarations, attributes and modifiers are not allowed
+-- in local constant declarations, only in class-wide ones.
 
-   CONST type=type (#constant_declarator=constant_declarator @ COMMA)
--> constant_declaration ;;
+   CONST type:type (#declarator:constant_declarator @ COMMA)
+   data=constant_declaration_data[
+     0 /* no attributes */, 0 /* no modifiers */, type, declarator_sequence
+   ]
+-> local_constant_declaration ;;
+
+   CONST type:type (#declarator:constant_declarator @ COMMA) SEMICOLON
+   data=constant_declaration_data[
+     attribute_sequence, modifiers, type, declarator_sequence
+   ]
+-> constant_declaration [
+     argument temporary node #attribute:  attribute_section;
+     argument temporary node modifiers:   optional_modifiers;
+] ;;
+
+   0
+-> constant_declaration_data [
+     argument member node #attribute:  attribute_section;  -- not used in local
+     argument member node modifiers:   optional_modifiers; -- constant declarations
+     argument member node type:                 type;
+     argument member node #constant_declarator: constant_declarator;
+] ;;
 
    constant_name=identifier ASSIGN expression=constant_expression
 -> constant_declarator ;;
@@ -1790,8 +1943,8 @@ namespace csharp_pp
 -- Right, it's the same one as in block_statement and the upcoming for_control.
 
  (
-   ?[: lookahead_is_variable_declaration() == true :]
-   local_variable_declaration=variable_declaration
+   ?[: lookahead_is_local_variable_declaration() == true :]
+   local_variable_declaration=local_variable_declaration
  | expression = expression
  )
 -> resource_acquisition ;;
@@ -1804,13 +1957,13 @@ namespace csharp_pp
 
 -- The FOR CONTROL is the three statements inside the for(...) parentheses,
 -- or the alternative foreach specifier. It has the same problematic conflict
--- between variable_declaration and expression that block_statement also has
--- and which is only solvable with LL(k). Until backtracking or real LL(k) is
--- implemented, we have to workaround with a lookahead hack function.
+-- between local_variable_declaration and expression that block_statement also
+-- has and which is only solvable with LL(k). Until backtracking or real LL(k)
+-- is implemented, we have to workaround with a lookahead hack function.
 
    (
-      ?[: lookahead_is_variable_declaration() == true :]
-      variable_declaration=variable_declaration                 -- "int i = 0"
+      ?[: lookahead_is_local_variable_declaration() == true :]
+      local_variable_declaration=local_variable_declaration    -- "int i = 0"
     |
       #statement_expression=statement_expression @ COMMA
     |
@@ -2017,9 +2170,9 @@ namespace csharp_pp
      [: (*yynode)->rule_type = unary_expression::type_unary_minus_expression; :]
  | PLUS  unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression::type_unary_plus_expression;  :]
- | TILDE bitwise_not_expression=unary_expression
+ | TILDE unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression::type_bitwise_not_expression; :]
- | BANG  logical_not_expression=unary_expression
+ | BANG  unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression::type_logical_not_expression; :]
  |
    ?[: lookahead_is_cast_expression() == true :]
@@ -2030,11 +2183,11 @@ namespace csharp_pp
      [: (*yynode)->rule_type = unary_expression::type_primary_expression;     :]
  |
    -- unsafe grammar extension: pointer indirection expression
-   STAR pointer_indirection_expression=unary_expression
+   STAR unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression::type_pointer_indirection_expression; :]
  |
    -- unsafe grammar extension: addressof expression
-   BIT_AND addressof_expression=unary_expression
+   BIT_AND unary_expression=unary_expression
      [: (*yynode)->rule_type = unary_expression::type_addressof_expression;   :]
  )
 -> unary_expression [
@@ -2608,18 +2761,19 @@ bool parser::pp_is_symbol_defined( std::string symbol_name )
 // which are not yet implemented
 
 /**
-* This function checks if the next following tokens of the parser class
-* match the beginning of a variable declaration. If true is returned then it
-* looks like a variable declaration is coming up. It doesn't have to match the
-* full variable_declaration rule (as only the first few tokens are checked),
-* but it is guaranteed that the upcoming tokens are not an expression.
-* The function returns false if the upcoming tokens are (for sure) not
-* the beginning of a variable declaration.
-*/
-bool parser::lookahead_is_variable_declaration()
+ * This function checks if the next following tokens of the parser class
+ * match the beginning of a local variable declaration (that is, a variable
+ * declaration without attributes and modifiers). If true is returned then it
+ * looks like a variable declaration is coming up. It doesn't have to match the
+ * full local_variable_declaration rule (as only the first few tokens are
+ * checked), but it is guaranteed that the upcoming tokens are not an
+ * expression. The function returns false if the upcoming tokens are (for sure)
+ * not the beginning of a local variable declaration.
+ */
+bool parser::lookahead_is_local_variable_declaration()
 {
     csharp::lookahead* la = new csharp::lookahead(this);
-    bool result = la->is_variable_declaration_start();
+    bool result = la->is_local_variable_declaration_start();
     delete la;
     return result;
 }

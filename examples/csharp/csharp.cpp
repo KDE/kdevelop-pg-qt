@@ -836,11 +836,15 @@ namespace csharp
     return true;
   }
 
-  bool parser::parse_array_creation_expression_rest(array_creation_expression_rest_ast **yynode)
+  bool parser::parse_array_creation_expression_rest(array_creation_expression_rest_ast **yynode, type_ast *type)
   {
     *yynode = create<array_creation_expression_rest_ast>();
 
     (*yynode)->start_token = token_stream->index() - 1;
+
+    (*yynode)->type = type;
+    if (type && type->start_token < (*yynode)->start_token)
+      (*yynode)->start_token = type->start_token;
 
     if (yytoken == Token_LBRACE
         || yytoken == Token_LBRACKET)
@@ -9657,6 +9661,8 @@ namespace csharp
 
     if (yytoken == Token_NEW)
       {
+        type_ast *type = 0;
+
         if (yytoken != Token_NEW)
           return yy_expected_token(yytoken, Token_NEW, "new");
         yylex();
@@ -9665,31 +9671,25 @@ namespace csharp
           {
             return yy_expected_symbol(ast_node::Kind_type, "type");
           }
-        (*yynode)->type = __node_281;
+        type = __node_281;
         if (yytoken == Token_LBRACE
             || yytoken == Token_LBRACKET)
           {
             array_creation_expression_rest_ast *__node_282 = 0;
-            if (!parse_array_creation_expression_rest(&__node_282))
+            if (!parse_array_creation_expression_rest(&__node_282, type))
               {
                 return yy_expected_symbol(ast_node::Kind_array_creation_expression_rest, "array_creation_expression_rest");
               }
-            (*yynode)->array_creation_expression_rest = __node_282;
+            (*yynode)->array_creation_expression = __node_282;
           }
         else if (yytoken == Token_LPAREN)
           {
-            if (yytoken != Token_LPAREN)
-              return yy_expected_token(yytoken, Token_LPAREN, "(");
-            yylex();
-            optional_argument_list_ast *__node_283 = 0;
-            if (!parse_optional_argument_list(&__node_283))
+            object_or_delegate_creation_expression_rest_ast *__node_283 = 0;
+            if (!parse_object_or_delegate_creation_expression_rest(&__node_283, type))
               {
-                return yy_expected_symbol(ast_node::Kind_optional_argument_list, "optional_argument_list");
+                return yy_expected_symbol(ast_node::Kind_object_or_delegate_creation_expression_rest, "object_or_delegate_creation_expression_rest");
               }
-            (*yynode)->expression_or_argument_list = __node_283;
-            if (yytoken != Token_RPAREN)
-              return yy_expected_token(yytoken, Token_RPAREN, ")");
-            yylex();
+            (*yynode)->object_or_delegate_creation_expression = __node_283;
           }
         else
           {
@@ -10044,6 +10044,41 @@ namespace csharp
     return true;
   }
 
+  bool parser::parse_object_or_delegate_creation_expression_rest(object_or_delegate_creation_expression_rest_ast **yynode, type_ast *type)
+  {
+    *yynode = create<object_or_delegate_creation_expression_rest_ast>();
+
+    (*yynode)->start_token = token_stream->index() - 1;
+
+    (*yynode)->type = type;
+    if (type && type->start_token < (*yynode)->start_token)
+      (*yynode)->start_token = type->start_token;
+
+    if (yytoken == Token_LPAREN)
+      {
+        if (yytoken != Token_LPAREN)
+          return yy_expected_token(yytoken, Token_LPAREN, "(");
+        yylex();
+        optional_argument_list_ast *__node_292 = 0;
+        if (!parse_optional_argument_list(&__node_292))
+          {
+            return yy_expected_symbol(ast_node::Kind_optional_argument_list, "optional_argument_list");
+          }
+        (*yynode)->argument_list_or_expression = __node_292;
+        if (yytoken != Token_RPAREN)
+          return yy_expected_token(yytoken, Token_RPAREN, ")");
+        yylex();
+      }
+    else
+      {
+        return false;
+      }
+
+    (*yynode)->end_token = token_stream->index() - 1;
+
+    return true;
+  }
+
   bool parser::parse_optional_argument_list(optional_argument_list_ast **yynode)
   {
     *yynode = create<optional_argument_list_ast>();
@@ -10160,23 +10195,23 @@ namespace csharp
             || yytoken == Token_STRING_LITERAL
             || yytoken == Token_IDENTIFIER)
           {
-            argument_ast *__node_292 = 0;
-            if (!parse_argument(&__node_292))
+            argument_ast *__node_293 = 0;
+            if (!parse_argument(&__node_293))
               {
                 return yy_expected_symbol(ast_node::Kind_argument, "argument");
               }
-            (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_292, memory_pool);
+            (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_293, memory_pool);
             while (yytoken == Token_COMMA)
               {
                 if (yytoken != Token_COMMA)
                   return yy_expected_token(yytoken, Token_COMMA, ",");
                 yylex();
-                argument_ast *__node_293 = 0;
-                if (!parse_argument(&__node_293))
+                argument_ast *__node_294 = 0;
+                if (!parse_argument(&__node_294))
                   {
                     return yy_expected_symbol(ast_node::Kind_argument, "argument");
                   }
-                (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_293, memory_pool);
+                (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_294, memory_pool);
               }
           }
         else if (true /*epsilon*/)
@@ -10415,12 +10450,12 @@ namespace csharp
         || yytoken == Token_ASSEMBLY
         || yytoken == Token_IDENTIFIER)
       {
-        non_nullable_type_ast *__node_294 = 0;
-        if (!parse_non_nullable_type(&__node_294))
+        non_nullable_type_ast *__node_295 = 0;
+        if (!parse_non_nullable_type(&__node_295))
           {
             return yy_expected_symbol(ast_node::Kind_non_nullable_type, "non_nullable_type");
           }
-        (*yynode)->non_nullable_type = __node_294;
+        (*yynode)->non_nullable_type = __node_295;
         if ((yytoken == Token_QUESTION) && ( compatibility_mode() >= csharp20_compatibility ))
           {
             if (yytoken != Token_QUESTION)
@@ -10722,18 +10757,18 @@ namespace csharp
         if (yytoken != Token_PARAMS)
           return yy_expected_token(yytoken, Token_PARAMS, "params");
         yylex();
-        array_type_ast *__node_295 = 0;
-        if (!parse_array_type(&__node_295))
+        array_type_ast *__node_296 = 0;
+        if (!parse_array_type(&__node_296))
           {
             return yy_expected_symbol(ast_node::Kind_array_type, "array_type");
           }
-        (*yynode)->type = __node_295;
-        identifier_ast *__node_296 = 0;
-        if (!parse_identifier(&__node_296))
+        (*yynode)->type = __node_296;
+        identifier_ast *__node_297 = 0;
+        if (!parse_identifier(&__node_297))
           {
             return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
           }
-        (*yynode)->variable_name = __node_296;
+        (*yynode)->variable_name = __node_297;
       }
     else
       {
@@ -10847,12 +10882,12 @@ namespace csharp
             || yytoken == Token_ASSEMBLY
             || yytoken == Token_IDENTIFIER)
           {
-            managed_type_ast *__node_297 = 0;
-            if (!parse_managed_type(&__node_297))
+            managed_type_ast *__node_298 = 0;
+            if (!parse_managed_type(&__node_298))
               {
                 return yy_expected_symbol(ast_node::Kind_managed_type, "managed_type");
               }
-            (*yynode)->regular_type = __node_297;
+            (*yynode)->regular_type = __node_298;
             (*yynode)->type = pointer_type::type_regular;
           }
         else if (yytoken == Token_VOID)
@@ -10948,12 +10983,12 @@ namespace csharp
         || yytoken == Token_STRING_LITERAL
         || yytoken == Token_IDENTIFIER)
       {
-        expression_ast *__node_298 = 0;
-        if (!parse_expression(&__node_298))
+        expression_ast *__node_299 = 0;
+        if (!parse_expression(&__node_299))
           {
             return yy_expected_symbol(ast_node::Kind_expression, "expression");
           }
-        (*yynode)->attribute_argument_expression = __node_298;
+        (*yynode)->attribute_argument_expression = __node_299;
       }
     else
       {
@@ -11166,12 +11201,12 @@ namespace csharp
             || yytoken == Token_CHARACTER_LITERAL
             || yytoken == Token_STRING_LITERAL)
           {
-            literal_ast *__node_299 = 0;
-            if (!parse_literal(&__node_299))
+            literal_ast *__node_300 = 0;
+            if (!parse_literal(&__node_300))
               {
                 return yy_expected_symbol(ast_node::Kind_literal, "literal");
               }
-            (*yynode)->literal = __node_299;
+            (*yynode)->literal = __node_300;
             (*yynode)->rule_type = primary_atom::type_literal;
           }
         else if (yytoken == Token_LPAREN)
@@ -11179,12 +11214,12 @@ namespace csharp
             if (yytoken != Token_LPAREN)
               return yy_expected_token(yytoken, Token_LPAREN, "(");
             yylex();
-            expression_ast *__node_300 = 0;
-            if (!parse_expression(&__node_300))
+            expression_ast *__node_301 = 0;
+            if (!parse_expression(&__node_301))
               {
                 return yy_expected_symbol(ast_node::Kind_expression, "expression");
               }
-            (*yynode)->expression = __node_300;
+            (*yynode)->expression = __node_301;
             if (yytoken != Token_RPAREN)
               return yy_expected_token(yytoken, Token_RPAREN, ")");
             yylex();
@@ -11218,12 +11253,12 @@ namespace csharp
                  || yytoken == Token_ASSEMBLY
                  || yytoken == Token_IDENTIFIER)
           {
-            simple_name_or_member_access_ast *__node_301 = 0;
-            if (!parse_simple_name_or_member_access(&__node_301))
+            simple_name_or_member_access_ast *__node_302 = 0;
+            if (!parse_simple_name_or_member_access(&__node_302))
               {
                 return yy_expected_symbol(ast_node::Kind_simple_name_or_member_access, "simple_name_or_member_access");
               }
-            (*yynode)->simple_name_or_member_access = __node_301;
+            (*yynode)->simple_name_or_member_access = __node_302;
             (*yynode)->rule_type = primary_atom::type_member_access;
           }
         else if (yytoken == Token_THIS)
@@ -11235,57 +11270,38 @@ namespace csharp
           }
         else if (yytoken == Token_BASE)
           {
-            base_access_ast *__node_302 = 0;
-            if (!parse_base_access(&__node_302))
+            base_access_ast *__node_303 = 0;
+            if (!parse_base_access(&__node_303))
               {
                 return yy_expected_symbol(ast_node::Kind_base_access, "base_access");
               }
-            (*yynode)->base_access = __node_302;
+            (*yynode)->base_access = __node_303;
             (*yynode)->rule_type = primary_atom::type_base_access;
           }
         else if (yytoken == Token_NEW)
           {
-            new_expression_ast *__node_303 = 0;
-            if (!parse_new_expression(&__node_303))
+            new_expression_ast *__node_304 = 0;
+            if (!parse_new_expression(&__node_304))
               {
                 return yy_expected_symbol(ast_node::Kind_new_expression, "new_expression");
               }
-            (*yynode)->new_expression = __node_303;
+            (*yynode)->new_expression = __node_304;
             (*yynode)->rule_type = primary_atom::type_new_expression;
           }
         else if (yytoken == Token_TYPEOF)
           {
-            typeof_expression_ast *__node_304 = 0;
-            if (!parse_typeof_expression(&__node_304))
+            typeof_expression_ast *__node_305 = 0;
+            if (!parse_typeof_expression(&__node_305))
               {
                 return yy_expected_symbol(ast_node::Kind_typeof_expression, "typeof_expression");
               }
-            (*yynode)->typeof_expression = __node_304;
+            (*yynode)->typeof_expression = __node_305;
             (*yynode)->rule_type = primary_atom::type_typeof_expression;
           }
         else if (yytoken == Token_CHECKED)
           {
             if (yytoken != Token_CHECKED)
               return yy_expected_token(yytoken, Token_CHECKED, "checked");
-            yylex();
-            if (yytoken != Token_LPAREN)
-              return yy_expected_token(yytoken, Token_LPAREN, "(");
-            yylex();
-            expression_ast *__node_305 = 0;
-            if (!parse_expression(&__node_305))
-              {
-                return yy_expected_symbol(ast_node::Kind_expression, "expression");
-              }
-            (*yynode)->expression = __node_305;
-            if (yytoken != Token_RPAREN)
-              return yy_expected_token(yytoken, Token_RPAREN, ")");
-            yylex();
-            (*yynode)->rule_type = primary_atom::type_checked_expression;
-          }
-        else if (yytoken == Token_UNCHECKED)
-          {
-            if (yytoken != Token_UNCHECKED)
-              return yy_expected_token(yytoken, Token_UNCHECKED, "unchecked");
             yylex();
             if (yytoken != Token_LPAREN)
               return yy_expected_token(yytoken, Token_LPAREN, "(");
@@ -11299,6 +11315,25 @@ namespace csharp
             if (yytoken != Token_RPAREN)
               return yy_expected_token(yytoken, Token_RPAREN, ")");
             yylex();
+            (*yynode)->rule_type = primary_atom::type_checked_expression;
+          }
+        else if (yytoken == Token_UNCHECKED)
+          {
+            if (yytoken != Token_UNCHECKED)
+              return yy_expected_token(yytoken, Token_UNCHECKED, "unchecked");
+            yylex();
+            if (yytoken != Token_LPAREN)
+              return yy_expected_token(yytoken, Token_LPAREN, "(");
+            yylex();
+            expression_ast *__node_307 = 0;
+            if (!parse_expression(&__node_307))
+              {
+                return yy_expected_symbol(ast_node::Kind_expression, "expression");
+              }
+            (*yynode)->expression = __node_307;
+            if (yytoken != Token_RPAREN)
+              return yy_expected_token(yytoken, Token_RPAREN, ")");
+            yylex();
             (*yynode)->rule_type = primary_atom::type_unchecked_expression;
           }
         else if (yytoken == Token_DEFAULT)
@@ -11309,12 +11344,12 @@ namespace csharp
             if (yytoken != Token_LPAREN)
               return yy_expected_token(yytoken, Token_LPAREN, "(");
             yylex();
-            type_ast *__node_307 = 0;
-            if (!parse_type(&__node_307))
+            type_ast *__node_308 = 0;
+            if (!parse_type(&__node_308))
               {
                 return yy_expected_symbol(ast_node::Kind_type, "type");
               }
-            (*yynode)->type = __node_307;
+            (*yynode)->type = __node_308;
             if (yytoken != Token_RPAREN)
               return yy_expected_token(yytoken, Token_RPAREN, ")");
             yylex();
@@ -11322,12 +11357,12 @@ namespace csharp
           }
         else if (yytoken == Token_DELEGATE)
           {
-            anonymous_method_expression_ast *__node_308 = 0;
-            if (!parse_anonymous_method_expression(&__node_308))
+            anonymous_method_expression_ast *__node_309 = 0;
+            if (!parse_anonymous_method_expression(&__node_309))
               {
                 return yy_expected_symbol(ast_node::Kind_anonymous_method_expression, "anonymous_method_expression");
               }
-            (*yynode)->anonymous_method_expression = __node_308;
+            (*yynode)->anonymous_method_expression = __node_309;
             (*yynode)->rule_type = primary_atom::type_anonymous_method_expression;
           }
         else if (yytoken == Token_SIZEOF)
@@ -11338,12 +11373,12 @@ namespace csharp
             if (yytoken != Token_LPAREN)
               return yy_expected_token(yytoken, Token_LPAREN, "(");
             yylex();
-            unmanaged_type_ast *__node_309 = 0;
-            if (!parse_unmanaged_type(&__node_309))
+            unmanaged_type_ast *__node_310 = 0;
+            if (!parse_unmanaged_type(&__node_310))
               {
                 return yy_expected_symbol(ast_node::Kind_unmanaged_type, "unmanaged_type");
               }
-            (*yynode)->unmanaged_type = __node_309;
+            (*yynode)->unmanaged_type = __node_310;
             if (yytoken != Token_RPAREN)
               return yy_expected_token(yytoken, Token_RPAREN, ")");
             yylex();
@@ -11415,12 +11450,12 @@ namespace csharp
         || yytoken == Token_STRING_LITERAL
         || yytoken == Token_IDENTIFIER)
       {
-        primary_atom_ast *__node_310 = 0;
-        if (!parse_primary_atom(&__node_310))
+        primary_atom_ast *__node_311 = 0;
+        if (!parse_primary_atom(&__node_311))
           {
             return yy_expected_symbol(ast_node::Kind_primary_atom, "primary_atom");
           }
-        (*yynode)->primary_atom = __node_310;
+        (*yynode)->primary_atom = __node_311;
         while (yytoken == Token_LPAREN
                || yytoken == Token_LBRACKET
                || yytoken == Token_DOT
@@ -11428,12 +11463,12 @@ namespace csharp
                || yytoken == Token_INCREMENT
                || yytoken == Token_DECREMENT)
           {
-            primary_suffix_ast *__node_311 = 0;
-            if (!parse_primary_suffix(&__node_311))
+            primary_suffix_ast *__node_312 = 0;
+            if (!parse_primary_suffix(&__node_312))
               {
                 return yy_expected_symbol(ast_node::Kind_primary_suffix, "primary_suffix");
               }
-            (*yynode)->primary_suffix_sequence = snoc((*yynode)->primary_suffix_sequence, __node_311, memory_pool);
+            (*yynode)->primary_suffix_sequence = snoc((*yynode)->primary_suffix_sequence, __node_312, memory_pool);
           }
       }
     else
@@ -11484,12 +11519,12 @@ namespace csharp
             || yytoken == Token_ASSEMBLY
             || yytoken == Token_IDENTIFIER)
           {
-            class_type_ast *__node_312 = 0;
-            if (!parse_class_type(&__node_312))
+            class_type_ast *__node_313 = 0;
+            if (!parse_class_type(&__node_313))
               {
                 return yy_expected_symbol(ast_node::Kind_class_type, "class_type");
               }
-            (*yynode)->class_type_or_secondary_constraint = __node_312;
+            (*yynode)->class_type_or_secondary_constraint = __node_313;
             (*yynode)->constraint_type = primary_or_secondary_constraint::type_type;
           }
         else if (yytoken == Token_CLASS)
@@ -11539,20 +11574,20 @@ namespace csharp
             if (yytoken != Token_DOT)
               return yy_expected_token(yytoken, Token_DOT, ".");
             yylex();
-            identifier_ast *__node_313 = 0;
-            if (!parse_identifier(&__node_313))
+            identifier_ast *__node_314 = 0;
+            if (!parse_identifier(&__node_314))
               {
                 return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
               }
-            (*yynode)->member_name = __node_313;
+            (*yynode)->member_name = __node_314;
             if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
               {
-                type_arguments_ast *__node_314 = 0;
-                if (!parse_type_arguments(&__node_314))
+                type_arguments_ast *__node_315 = 0;
+                if (!parse_type_arguments(&__node_315))
                   {
                     return yy_expected_symbol(ast_node::Kind_type_arguments, "type_arguments");
                   }
-                (*yynode)->type_arguments = __node_314;
+                (*yynode)->type_arguments = __node_315;
               }
             else if (true /*epsilon*/)
             {}
@@ -11567,12 +11602,12 @@ namespace csharp
             if (yytoken != Token_LPAREN)
               return yy_expected_token(yytoken, Token_LPAREN, "(");
             yylex();
-            optional_argument_list_ast *__node_315 = 0;
-            if (!parse_optional_argument_list(&__node_315))
+            optional_argument_list_ast *__node_316 = 0;
+            if (!parse_optional_argument_list(&__node_316))
               {
                 return yy_expected_symbol(ast_node::Kind_optional_argument_list, "optional_argument_list");
               }
-            (*yynode)->arguments = __node_315;
+            (*yynode)->arguments = __node_316;
             if (yytoken != Token_RPAREN)
               return yy_expected_token(yytoken, Token_RPAREN, ")");
             yylex();
@@ -11583,23 +11618,23 @@ namespace csharp
             if (yytoken != Token_LBRACKET)
               return yy_expected_token(yytoken, Token_LBRACKET, "[");
             yylex();
-            expression_ast *__node_316 = 0;
-            if (!parse_expression(&__node_316))
+            expression_ast *__node_317 = 0;
+            if (!parse_expression(&__node_317))
               {
                 return yy_expected_symbol(ast_node::Kind_expression, "expression");
               }
-            (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_316, memory_pool);
+            (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_317, memory_pool);
             while (yytoken == Token_COMMA)
               {
                 if (yytoken != Token_COMMA)
                   return yy_expected_token(yytoken, Token_COMMA, ",");
                 yylex();
-                expression_ast *__node_317 = 0;
-                if (!parse_expression(&__node_317))
+                expression_ast *__node_318 = 0;
+                if (!parse_expression(&__node_318))
                   {
                     return yy_expected_symbol(ast_node::Kind_expression, "expression");
                   }
-                (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_317, memory_pool);
+                (*yynode)->expression_sequence = snoc((*yynode)->expression_sequence, __node_318, memory_pool);
               }
             if (yytoken != Token_RBRACKET)
               return yy_expected_token(yytoken, Token_RBRACKET, "]");
@@ -11625,20 +11660,20 @@ namespace csharp
             if (yytoken != Token_ARROW_RIGHT)
               return yy_expected_token(yytoken, Token_ARROW_RIGHT, "->");
             yylex();
-            identifier_ast *__node_318 = 0;
-            if (!parse_identifier(&__node_318))
+            identifier_ast *__node_319 = 0;
+            if (!parse_identifier(&__node_319))
               {
                 return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
               }
-            (*yynode)->member_name = __node_318;
+            (*yynode)->member_name = __node_319;
             if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
               {
-                type_arguments_ast *__node_319 = 0;
-                if (!parse_type_arguments(&__node_319))
+                type_arguments_ast *__node_320 = 0;
+                if (!parse_type_arguments(&__node_320))
                   {
                     return yy_expected_symbol(ast_node::Kind_type_arguments, "type_arguments");
                   }
-                (*yynode)->type_arguments = __node_319;
+                (*yynode)->type_arguments = __node_320;
               }
             else if (true /*epsilon*/)
             {}
@@ -11690,12 +11725,12 @@ namespace csharp
         if (yytoken != Token_LBRACE)
           return yy_expected_token(yytoken, Token_LBRACE, "{");
         yylex();
-        accessor_declarations_ast *__node_320 = 0;
-        if (!parse_accessor_declarations(&__node_320))
+        accessor_declarations_ast *__node_321 = 0;
+        if (!parse_accessor_declarations(&__node_321))
           {
             return yy_expected_symbol(ast_node::Kind_accessor_declarations, "accessor_declarations");
           }
-        (*yynode)->accessor_declarations = __node_320;
+        (*yynode)->accessor_declarations = __node_321;
         if (yytoken != Token_RBRACE)
           return yy_expected_token(yytoken, Token_RBRACE, "}");
         yylex();
@@ -11729,23 +11764,23 @@ namespace csharp
         || yytoken == Token_ASSEMBLY
         || yytoken == Token_IDENTIFIER)
       {
-        identifier_ast *__node_321 = 0;
-        if (!parse_identifier(&__node_321))
+        identifier_ast *__node_322 = 0;
+        if (!parse_identifier(&__node_322))
           {
             return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
           }
-        (*yynode)->name_sequence = snoc((*yynode)->name_sequence, __node_321, memory_pool);
+        (*yynode)->name_sequence = snoc((*yynode)->name_sequence, __node_322, memory_pool);
         while (yytoken == Token_DOT)
           {
             if (yytoken != Token_DOT)
               return yy_expected_token(yytoken, Token_DOT, ".");
             yylex();
-            identifier_ast *__node_322 = 0;
-            if (!parse_identifier(&__node_322))
+            identifier_ast *__node_323 = 0;
+            if (!parse_identifier(&__node_323))
               {
                 return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
               }
-            (*yynode)->name_sequence = snoc((*yynode)->name_sequence, __node_322, memory_pool);
+            (*yynode)->name_sequence = snoc((*yynode)->name_sequence, __node_323, memory_pool);
           }
       }
     else
@@ -11850,12 +11885,12 @@ namespace csharp
         || yytoken == Token_STRING_LITERAL
         || yytoken == Token_IDENTIFIER)
       {
-        shift_expression_ast *__node_323 = 0;
-        if (!parse_shift_expression(&__node_323))
+        shift_expression_ast *__node_324 = 0;
+        if (!parse_shift_expression(&__node_324))
           {
             return yy_expected_symbol(ast_node::Kind_shift_expression, "shift_expression");
           }
-        (*yynode)->expression = __node_323;
+        (*yynode)->expression = __node_324;
         while (yytoken == Token_AS
                || yytoken == Token_IS
                || yytoken == Token_LESS_THAN
@@ -11863,12 +11898,12 @@ namespace csharp
                || yytoken == Token_GREATER_THAN
                || yytoken == Token_GREATER_EQUAL)
           {
-            relational_expression_rest_ast *__node_324 = 0;
-            if (!parse_relational_expression_rest(&__node_324))
+            relational_expression_rest_ast *__node_325 = 0;
+            if (!parse_relational_expression_rest(&__node_325))
               {
                 return yy_expected_symbol(ast_node::Kind_relational_expression_rest, "relational_expression_rest");
               }
-            (*yynode)->additional_expression_sequence = snoc((*yynode)->additional_expression_sequence, __node_324, memory_pool);
+            (*yynode)->additional_expression_sequence = snoc((*yynode)->additional_expression_sequence, __node_325, memory_pool);
           }
       }
     else
@@ -11931,12 +11966,12 @@ namespace csharp
               {
                 return false;
               }
-            shift_expression_ast *__node_325 = 0;
-            if (!parse_shift_expression(&__node_325))
+            shift_expression_ast *__node_326 = 0;
+            if (!parse_shift_expression(&__node_326))
               {
                 return yy_expected_symbol(ast_node::Kind_shift_expression, "shift_expression");
               }
-            (*yynode)->expression = __node_325;
+            (*yynode)->expression = __node_326;
           }
         else if (yytoken == Token_AS
                  || yytoken == Token_IS)
@@ -11959,12 +11994,12 @@ namespace csharp
               {
                 return false;
               }
-            type_ast *__node_326 = 0;
-            if (!parse_type(&__node_326))
+            type_ast *__node_327 = 0;
+            if (!parse_type(&__node_327))
               {
                 return yy_expected_symbol(ast_node::Kind_type, "type");
               }
-            (*yynode)->type = __node_326;
+            (*yynode)->type = __node_327;
           }
         else
           {
@@ -12070,12 +12105,12 @@ namespace csharp
              || yytoken == Token_ASSEMBLY
              || yytoken == Token_IDENTIFIER) && ( lookahead_is_local_variable_declaration() == true ))
           {
-            local_variable_declaration_ast *__node_327 = 0;
-            if (!parse_local_variable_declaration(&__node_327))
+            local_variable_declaration_ast *__node_328 = 0;
+            if (!parse_local_variable_declaration(&__node_328))
               {
                 return yy_expected_symbol(ast_node::Kind_local_variable_declaration, "local_variable_declaration");
               }
-            (*yynode)->local_variable_declaration = __node_327;
+            (*yynode)->local_variable_declaration = __node_328;
           }
         else if (yytoken == Token_BASE
                  || yytoken == Token_BOOL
@@ -12130,12 +12165,12 @@ namespace csharp
                  || yytoken == Token_STRING_LITERAL
                  || yytoken == Token_IDENTIFIER)
           {
-            expression_ast *__node_328 = 0;
-            if (!parse_expression(&__node_328))
+            expression_ast *__node_329 = 0;
+            if (!parse_expression(&__node_329))
               {
                 return yy_expected_symbol(ast_node::Kind_expression, "expression");
               }
-            (*yynode)->expression = __node_328;
+            (*yynode)->expression = __node_329;
           }
         else
           {
@@ -12216,12 +12251,12 @@ namespace csharp
                                      || yytoken == Token_STRING_LITERAL
                                      || yytoken == Token_IDENTIFIER)
                                    {
-                                     expression_ast *__node_329 = 0;
-                                     if (!parse_expression(&__node_329))
+                                     expression_ast *__node_330 = 0;
+                                     if (!parse_expression(&__node_330))
                                        {
                                          return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                        }
-                                     (*yynode)->return_expression = __node_329;
+                                     (*yynode)->return_expression = __node_330;
                                    }
                                  else if (true /*epsilon*/)
                                  {}
@@ -12314,12 +12349,12 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              type_ast *__node_330 = 0;
-                                                              if (!parse_type(&__node_330))
+                                                              type_ast *__node_331 = 0;
+                                                              if (!parse_type(&__node_331))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->regular_type = __node_330;
+                                                              (*yynode)->regular_type = __node_331;
                                                               (*yynode)->type = return_type::type_regular;
                                                             }
                                                           else
@@ -12356,12 +12391,12 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          type_name_ast *__node_331 = 0;
-                                                          if (!parse_type_name(&__node_331))
+                                                          type_name_ast *__node_332 = 0;
+                                                          if (!parse_type_name(&__node_332))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_type_name, "type_name");
                                                             }
-                                                          (*yynode)->interface_type_or_type_parameter_sequence = snoc((*yynode)->interface_type_or_type_parameter_sequence, __node_331, memory_pool);
+                                                          (*yynode)->interface_type_or_type_parameter_sequence = snoc((*yynode)->interface_type_or_type_parameter_sequence, __node_332, memory_pool);
                                                           while (yytoken == Token_COMMA)
                                                             {
                                                               if (LA(2).kind == Token_NEW)
@@ -12371,12 +12406,12 @@ namespace csharp
                                                               if (yytoken != Token_COMMA)
                                                                 return yy_expected_token(yytoken, Token_COMMA, ",");
                                                               yylex();
-                                                              type_name_ast *__node_332 = 0;
-                                                              if (!parse_type_name(&__node_332))
+                                                              type_name_ast *__node_333 = 0;
+                                                              if (!parse_type_name(&__node_333))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_name, "type_name");
                                                                 }
-                                                              (*yynode)->interface_type_or_type_parameter_sequence = snoc((*yynode)->interface_type_or_type_parameter_sequence, __node_332, memory_pool);
+                                                              (*yynode)->interface_type_or_type_parameter_sequence = snoc((*yynode)->interface_type_or_type_parameter_sequence, __node_333, memory_pool);
                                                             }
                                                         }
                                                       else
@@ -12448,21 +12483,21 @@ namespace csharp
                                                           || yytoken == Token_STRING_LITERAL
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          additive_expression_ast *__node_333 = 0;
-                                                          if (!parse_additive_expression(&__node_333))
+                                                          additive_expression_ast *__node_334 = 0;
+                                                          if (!parse_additive_expression(&__node_334))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_additive_expression, "additive_expression");
                                                             }
-                                                          (*yynode)->expression = __node_333;
+                                                          (*yynode)->expression = __node_334;
                                                           while (yytoken == Token_LSHIFT
                                                                  || yytoken == Token_RSHIFT)
                                                             {
-                                                              shift_expression_rest_ast *__node_334 = 0;
-                                                              if (!parse_shift_expression_rest(&__node_334))
+                                                              shift_expression_rest_ast *__node_335 = 0;
+                                                              if (!parse_shift_expression_rest(&__node_335))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_shift_expression_rest, "shift_expression_rest");
                                                                 }
-                                                              (*yynode)->additional_expression_sequence = snoc((*yynode)->additional_expression_sequence, __node_334, memory_pool);
+                                                              (*yynode)->additional_expression_sequence = snoc((*yynode)->additional_expression_sequence, __node_335, memory_pool);
                                                             }
                                                         }
                                                       else
@@ -12502,12 +12537,12 @@ namespace csharp
                                                             {
                                                               return false;
                                                             }
-                                                          additive_expression_ast *__node_335 = 0;
-                                                          if (!parse_additive_expression(&__node_335))
+                                                          additive_expression_ast *__node_336 = 0;
+                                                          if (!parse_additive_expression(&__node_336))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_additive_expression, "additive_expression");
                                                             }
-                                                          (*yynode)->expression = __node_335;
+                                                          (*yynode)->expression = __node_336;
                                                         }
                                                       else
                                                         {
@@ -12579,12 +12614,12 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
                                                                 {
-                                                                  identifier_ast *__node_336 = 0;
-                                                                  if (!parse_identifier(&__node_336))
+                                                                  identifier_ast *__node_337 = 0;
+                                                                  if (!parse_identifier(&__node_337))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                     }
-                                                                  (*yynode)->qualified_alias_label = __node_336;
+                                                                  (*yynode)->qualified_alias_label = __node_337;
                                                                   if (yytoken != Token_SCOPE)
                                                                     return yy_expected_token(yytoken, Token_SCOPE, "::");
                                                                   yylex();
@@ -12595,20 +12630,20 @@ namespace csharp
                                                                 {
                                                                   return false;
                                                                 }
-                                                              identifier_ast *__node_337 = 0;
-                                                              if (!parse_identifier(&__node_337))
+                                                              identifier_ast *__node_338 = 0;
+                                                              if (!parse_identifier(&__node_338))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->member_name = __node_337;
+                                                              (*yynode)->member_name = __node_338;
                                                               if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
                                                                 {
-                                                                  type_arguments_ast *__node_338 = 0;
-                                                                  if (!parse_type_arguments(&__node_338))
+                                                                  type_arguments_ast *__node_339 = 0;
+                                                                  if (!parse_type_arguments(&__node_339))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_type_arguments, "type_arguments");
                                                                     }
-                                                                  (*yynode)->type_arguments = __node_338;
+                                                                  (*yynode)->type_arguments = __node_339;
                                                                 }
                                                               else if (true /*epsilon*/)
                                                               {}
@@ -12633,29 +12668,29 @@ namespace csharp
                                                                    || yytoken == Token_ULONG
                                                                    || yytoken == Token_USHORT)
                                                             {
-                                                              predefined_type_ast *__node_339 = 0;
-                                                              if (!parse_predefined_type(&__node_339))
+                                                              predefined_type_ast *__node_340 = 0;
+                                                              if (!parse_predefined_type(&__node_340))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_predefined_type, "predefined_type");
                                                                 }
-                                                              (*yynode)->predefined_type = __node_339;
+                                                              (*yynode)->predefined_type = __node_340;
                                                               if (yytoken != Token_DOT)
                                                                 return yy_expected_token(yytoken, Token_DOT, ".");
                                                               yylex();
-                                                              identifier_ast *__node_340 = 0;
-                                                              if (!parse_identifier(&__node_340))
+                                                              identifier_ast *__node_341 = 0;
+                                                              if (!parse_identifier(&__node_341))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->member_name = __node_340;
+                                                              (*yynode)->member_name = __node_341;
                                                               if ((yytoken == Token_LESS_THAN) && ( lookahead_is_type_arguments() == true ))
                                                                 {
-                                                                  type_arguments_ast *__node_341 = 0;
-                                                                  if (!parse_type_arguments(&__node_341))
+                                                                  type_arguments_ast *__node_342 = 0;
+                                                                  if (!parse_type_arguments(&__node_342))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_type_arguments, "type_arguments");
                                                                     }
-                                                                  (*yynode)->type_arguments = __node_341;
+                                                                  (*yynode)->type_arguments = __node_342;
                                                                 }
                                                               else if (true /*epsilon*/)
                                                               {}
@@ -12712,12 +12747,12 @@ namespace csharp
                                                               || yytoken == Token_ULONG
                                                               || yytoken == Token_USHORT)
                                                             {
-                                                              numeric_type_ast *__node_342 = 0;
-                                                              if (!parse_numeric_type(&__node_342))
+                                                              numeric_type_ast *__node_343 = 0;
+                                                              if (!parse_numeric_type(&__node_343))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_numeric_type, "numeric_type");
                                                                 }
-                                                              (*yynode)->numeric_type = __node_342;
+                                                              (*yynode)->numeric_type = __node_343;
                                                               (*yynode)->type = simple_type::type_numeric;
                                                             }
                                                           else if (yytoken == Token_BOOL)
@@ -12756,12 +12791,12 @@ namespace csharp
                                                           if (yytoken != Token_LPAREN)
                                                             return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                           yylex();
-                                                          class_type_ast *__node_343 = 0;
-                                                          if (!parse_class_type(&__node_343))
+                                                          class_type_ast *__node_344 = 0;
+                                                          if (!parse_class_type(&__node_344))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_class_type, "class_type");
                                                             }
-                                                          (*yynode)->exception_type = __node_343;
+                                                          (*yynode)->exception_type = __node_344;
                                                           if (yytoken == Token_ADD
                                                               || yytoken == Token_ALIAS
                                                               || yytoken == Token_GET
@@ -12775,12 +12810,12 @@ namespace csharp
                                                               || yytoken == Token_ASSEMBLY
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              identifier_ast *__node_344 = 0;
-                                                              if (!parse_identifier(&__node_344))
+                                                              identifier_ast *__node_345 = 0;
+                                                              if (!parse_identifier(&__node_345))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->exception_name = __node_344;
+                                                              (*yynode)->exception_name = __node_345;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -12791,12 +12826,12 @@ namespace csharp
                                                           if (yytoken != Token_RPAREN)
                                                             return yy_expected_token(yytoken, Token_RPAREN, ")");
                                                           yylex();
-                                                          block_ast *__node_345 = 0;
-                                                          if (!parse_block(&__node_345))
+                                                          block_ast *__node_346 = 0;
+                                                          if (!parse_block(&__node_346))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_block, "block");
                                                             }
-                                                          (*yynode)->body = __node_345;
+                                                          (*yynode)->body = __node_346;
                                                         }
                                                       else
                                                         {
@@ -12819,20 +12854,20 @@ namespace csharp
                                                           if (yytoken != Token_STACKALLOC)
                                                             return yy_expected_token(yytoken, Token_STACKALLOC, "stackalloc");
                                                           yylex();
-                                                          unmanaged_type_ast *__node_346 = 0;
-                                                          if (!parse_unmanaged_type(&__node_346))
+                                                          unmanaged_type_ast *__node_347 = 0;
+                                                          if (!parse_unmanaged_type(&__node_347))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_unmanaged_type, "unmanaged_type");
                                                             }
                                                           if (yytoken != Token_LBRACKET)
                                                             return yy_expected_token(yytoken, Token_LBRACKET, "[");
                                                           yylex();
-                                                          expression_ast *__node_347 = 0;
-                                                          if (!parse_expression(&__node_347))
+                                                          expression_ast *__node_348 = 0;
+                                                          if (!parse_expression(&__node_348))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                                             }
-                                                          (*yynode)->expression = __node_347;
+                                                          (*yynode)->expression = __node_348;
                                                           if (yytoken != Token_RBRACKET)
                                                             return yy_expected_token(yytoken, Token_RBRACKET, "]");
                                                           yylex();
@@ -12906,12 +12941,12 @@ namespace csharp
                                                           || yytoken == Token_STRING_LITERAL
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          expression_ast *__node_348 = 0;
-                                                          if (!parse_expression(&__node_348))
+                                                          expression_ast *__node_349 = 0;
+                                                          if (!parse_expression(&__node_349))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                                             }
-                                                          (*yynode)->expression = __node_348;
+                                                          (*yynode)->expression = __node_349;
                                                         }
                                                       else
                                                         {
@@ -12987,12 +13022,12 @@ namespace csharp
                                                                  || yytoken == Token_LBRACKET
                                                                  || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              struct_member_declaration_ast *__node_349 = 0;
-                                                              if (!parse_struct_member_declaration(&__node_349))
+                                                              struct_member_declaration_ast *__node_350 = 0;
+                                                              if (!parse_struct_member_declaration(&__node_350))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_struct_member_declaration, "struct_member_declaration");
                                                                 }
-                                                              (*yynode)->member_declaration_sequence = snoc((*yynode)->member_declaration_sequence, __node_349, memory_pool);
+                                                              (*yynode)->member_declaration_sequence = snoc((*yynode)->member_declaration_sequence, __node_350, memory_pool);
                                                             }
                                                           if (yytoken != Token_RBRACE)
                                                             return yy_expected_token(yytoken, Token_RBRACE, "}");
@@ -13028,20 +13063,20 @@ namespace csharp
                                                           if (yytoken != Token_STRUCT)
                                                             return yy_expected_token(yytoken, Token_STRUCT, "struct");
                                                           yylex();
-                                                          identifier_ast *__node_350 = 0;
-                                                          if (!parse_identifier(&__node_350))
+                                                          identifier_ast *__node_351 = 0;
+                                                          if (!parse_identifier(&__node_351))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                             }
-                                                          (*yynode)->struct_name = __node_350;
+                                                          (*yynode)->struct_name = __node_351;
                                                           if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                                                             {
-                                                              type_parameters_ast *__node_351 = 0;
-                                                              if (!parse_type_parameters(&__node_351))
+                                                              type_parameters_ast *__node_352 = 0;
+                                                              if (!parse_type_parameters(&__node_352))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_parameters, "type_parameters");
                                                                 }
-                                                              (*yynode)->type_parameters = __node_351;
+                                                              (*yynode)->type_parameters = __node_352;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -13051,12 +13086,12 @@ namespace csharp
                                                             }
                                                           if (yytoken == Token_COLON)
                                                             {
-                                                              struct_interfaces_ast *__node_352 = 0;
-                                                              if (!parse_struct_interfaces(&__node_352))
+                                                              struct_interfaces_ast *__node_353 = 0;
+                                                              if (!parse_struct_interfaces(&__node_353))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_struct_interfaces, "struct_interfaces");
                                                                 }
-                                                              (*yynode)->struct_interfaces = __node_352;
+                                                              (*yynode)->struct_interfaces = __node_353;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -13066,12 +13101,12 @@ namespace csharp
                                                             }
                                                           if ((yytoken == Token_WHERE) && ( compatibility_mode() >= csharp20_compatibility ))
                                                             {
-                                                              type_parameter_constraints_clauses_ast *__node_353 = 0;
-                                                              if (!parse_type_parameter_constraints_clauses(&__node_353))
+                                                              type_parameter_constraints_clauses_ast *__node_354 = 0;
+                                                              if (!parse_type_parameter_constraints_clauses(&__node_354))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_parameter_constraints_clauses, "type_parameter_constraints_clauses");
                                                                 }
-                                                              (*yynode)->type_parameter_constraints_clauses = __node_353;
+                                                              (*yynode)->type_parameter_constraints_clauses = __node_354;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -13079,12 +13114,12 @@ namespace csharp
                                                             {
                                                               return false;
                                                             }
-                                                          struct_body_ast *__node_354 = 0;
-                                                          if (!parse_struct_body(&__node_354))
+                                                          struct_body_ast *__node_355 = 0;
+                                                          if (!parse_struct_body(&__node_355))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_struct_body, "struct_body");
                                                             }
-                                                          (*yynode)->body = __node_354;
+                                                          (*yynode)->body = __node_355;
                                                           if (yytoken == Token_SEMICOLON)
                                                             {
                                                               if (yytoken != Token_SEMICOLON)
@@ -13119,23 +13154,23 @@ namespace csharp
                                                           if (yytoken != Token_COLON)
                                                             return yy_expected_token(yytoken, Token_COLON, ":");
                                                           yylex();
-                                                          type_name_ast *__node_355 = 0;
-                                                          if (!parse_type_name(&__node_355))
+                                                          type_name_ast *__node_356 = 0;
+                                                          if (!parse_type_name(&__node_356))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_type_name, "type_name");
                                                             }
-                                                          (*yynode)->interface_type_sequence = snoc((*yynode)->interface_type_sequence, __node_355, memory_pool);
+                                                          (*yynode)->interface_type_sequence = snoc((*yynode)->interface_type_sequence, __node_356, memory_pool);
                                                           while (yytoken == Token_COMMA)
                                                             {
                                                               if (yytoken != Token_COMMA)
                                                                 return yy_expected_token(yytoken, Token_COMMA, ",");
                                                               yylex();
-                                                              type_name_ast *__node_356 = 0;
-                                                              if (!parse_type_name(&__node_356))
+                                                              type_name_ast *__node_357 = 0;
+                                                              if (!parse_type_name(&__node_357))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_name, "type_name");
                                                                 }
-                                                              (*yynode)->interface_type_sequence = snoc((*yynode)->interface_type_sequence, __node_356, memory_pool);
+                                                              (*yynode)->interface_type_sequence = snoc((*yynode)->interface_type_sequence, __node_357, memory_pool);
                                                             }
                                                         }
                                                       else
@@ -13213,25 +13248,25 @@ namespace csharp
 
                                                           while (yytoken == Token_LBRACKET)
                                                             {
-                                                              attribute_section_ast *__node_357 = 0;
-                                                              if (!parse_attribute_section(&__node_357))
+                                                              attribute_section_ast *__node_358 = 0;
+                                                              if (!parse_attribute_section(&__node_358))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_attribute_section, "attribute_section");
                                                                 }
-                                                              attribute_sequence = snoc(attribute_sequence, __node_357, memory_pool);
+                                                              attribute_sequence = snoc(attribute_sequence, __node_358, memory_pool);
                                                             }
-                                                          optional_modifiers_ast *__node_358 = 0;
-                                                          if (!parse_optional_modifiers(&__node_358))
+                                                          optional_modifiers_ast *__node_359 = 0;
+                                                          if (!parse_optional_modifiers(&__node_359))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_optional_modifiers, "optional_modifiers");
                                                             }
-                                                          modifiers = __node_358;
-                                                          class_or_struct_member_declaration_ast *__node_359 = 0;
-                                                          if (!parse_class_or_struct_member_declaration(&__node_359, attribute_sequence, modifiers ))
+                                                          modifiers = __node_359;
+                                                          class_or_struct_member_declaration_ast *__node_360 = 0;
+                                                          if (!parse_class_or_struct_member_declaration(&__node_360, attribute_sequence, modifiers ))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_class_or_struct_member_declaration, "class_or_struct_member_declaration");
                                                             }
-                                                          (*yynode)->declaration = __node_359;
+                                                          (*yynode)->declaration = __node_360;
                                                         }
                                                       else
                                                         {
@@ -13257,12 +13292,12 @@ namespace csharp
                                                               if (yytoken != Token_CASE)
                                                                 return yy_expected_token(yytoken, Token_CASE, "case");
                                                               yylex();
-                                                              constant_expression_ast *__node_360 = 0;
-                                                              if (!parse_constant_expression(&__node_360))
+                                                              constant_expression_ast *__node_361 = 0;
+                                                              if (!parse_constant_expression(&__node_361))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_constant_expression, "constant_expression");
                                                                 }
-                                                              (*yynode)->case_expression = __node_360;
+                                                              (*yynode)->case_expression = __node_361;
                                                               (*yynode)->branch_type = switch_label::case_branch;
                                                             }
                                                           else if (yytoken == Token_DEFAULT)
@@ -13301,12 +13336,12 @@ namespace csharp
                                                         {
                                                           do
                                                             {
-                                                              switch_label_ast *__node_361 = 0;
-                                                              if (!parse_switch_label(&__node_361))
+                                                              switch_label_ast *__node_362 = 0;
+                                                              if (!parse_switch_label(&__node_362))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_switch_label, "switch_label");
                                                                 }
-                                                              (*yynode)->label_sequence = snoc((*yynode)->label_sequence, __node_361, memory_pool);
+                                                              (*yynode)->label_sequence = snoc((*yynode)->label_sequence, __node_362, memory_pool);
                                                             }
                                                           while (yytoken == Token_CASE
                                                                  || yytoken == Token_DEFAULT);
@@ -13316,12 +13351,12 @@ namespace csharp
                                                                 {
                                                                   break;
                                                                 }  // don't give in to default_value_expression
-                                                              block_statement_ast *__node_362 = 0;
-                                                              if (!parse_block_statement(&__node_362))
+                                                              block_statement_ast *__node_363 = 0;
+                                                              if (!parse_block_statement(&__node_363))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_block_statement, "block_statement");
                                                                 }
-                                                              (*yynode)->statement_sequence = snoc((*yynode)->statement_sequence, __node_362, memory_pool);
+                                                              (*yynode)->statement_sequence = snoc((*yynode)->statement_sequence, __node_363, memory_pool);
                                                             }
                                                           while (yytoken == Token_BASE
                                                                  || yytoken == Token_BOOL
@@ -13420,12 +13455,12 @@ namespace csharp
                                                           if (yytoken != Token_LPAREN)
                                                             return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                           yylex();
-                                                          expression_ast *__node_363 = 0;
-                                                          if (!parse_expression(&__node_363))
+                                                          expression_ast *__node_364 = 0;
+                                                          if (!parse_expression(&__node_364))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                                             }
-                                                          (*yynode)->switch_expression = __node_363;
+                                                          (*yynode)->switch_expression = __node_364;
                                                           if (yytoken != Token_RPAREN)
                                                             return yy_expected_token(yytoken, Token_RPAREN, ")");
                                                           yylex();
@@ -13435,12 +13470,12 @@ namespace csharp
                                                           while (yytoken == Token_CASE
                                                                  || yytoken == Token_DEFAULT)
                                                             {
-                                                              switch_section_ast *__node_364 = 0;
-                                                              if (!parse_switch_section(&__node_364))
+                                                              switch_section_ast *__node_365 = 0;
+                                                              if (!parse_switch_section(&__node_365))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_switch_section, "switch_section");
                                                                 }
-                                                              (*yynode)->switch_section_sequence = snoc((*yynode)->switch_section_sequence, __node_364, memory_pool);
+                                                              (*yynode)->switch_section_sequence = snoc((*yynode)->switch_section_sequence, __node_365, memory_pool);
                                                             }
                                                           if (yytoken != Token_RBRACE)
                                                             return yy_expected_token(yytoken, Token_RBRACE, "}");
@@ -13520,12 +13555,12 @@ namespace csharp
                                                               || yytoken == Token_STRING_LITERAL
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              expression_ast *__node_365 = 0;
-                                                              if (!parse_expression(&__node_365))
+                                                              expression_ast *__node_366 = 0;
+                                                              if (!parse_expression(&__node_366))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                                                 }
-                                                              (*yynode)->exception = __node_365;
+                                                              (*yynode)->exception = __node_366;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -13558,31 +13593,31 @@ namespace csharp
                                                           if (yytoken != Token_TRY)
                                                             return yy_expected_token(yytoken, Token_TRY, "try");
                                                           yylex();
-                                                          block_ast *__node_366 = 0;
-                                                          if (!parse_block(&__node_366))
+                                                          block_ast *__node_367 = 0;
+                                                          if (!parse_block(&__node_367))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_block, "block");
                                                             }
-                                                          (*yynode)->try_body = __node_366;
+                                                          (*yynode)->try_body = __node_367;
                                                           if (yytoken == Token_CATCH)
                                                             {
-                                                              catch_clauses_ast *__node_367 = 0;
-                                                              if (!parse_catch_clauses(&__node_367))
+                                                              catch_clauses_ast *__node_368 = 0;
+                                                              if (!parse_catch_clauses(&__node_368))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_catch_clauses, "catch_clauses");
                                                                 }
-                                                              (*yynode)->catch_clauses = __node_367;
+                                                              (*yynode)->catch_clauses = __node_368;
                                                               if (yytoken == Token_FINALLY)
                                                                 {
                                                                   if (yytoken != Token_FINALLY)
                                                                     return yy_expected_token(yytoken, Token_FINALLY, "finally");
                                                                   yylex();
-                                                                  block_ast *__node_368 = 0;
-                                                                  if (!parse_block(&__node_368))
+                                                                  block_ast *__node_369 = 0;
+                                                                  if (!parse_block(&__node_369))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_block, "block");
                                                                     }
-                                                                  (*yynode)->finally_body = __node_368;
+                                                                  (*yynode)->finally_body = __node_369;
                                                                 }
                                                               else if (true /*epsilon*/)
                                                               {}
@@ -13596,12 +13631,12 @@ namespace csharp
                                                               if (yytoken != Token_FINALLY)
                                                                 return yy_expected_token(yytoken, Token_FINALLY, "finally");
                                                               yylex();
-                                                              block_ast *__node_369 = 0;
-                                                              if (!parse_block(&__node_369))
+                                                              block_ast *__node_370 = 0;
+                                                              if (!parse_block(&__node_370))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_block, "block");
                                                                 }
-                                                              (*yynode)->finally_body = __node_369;
+                                                              (*yynode)->finally_body = __node_370;
                                                             }
                                                           else
                                                             {
@@ -13653,12 +13688,12 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          unmanaged_type_ast *__node_370 = 0;
-                                                          if (!parse_unmanaged_type(&__node_370))
+                                                          unmanaged_type_ast *__node_371 = 0;
+                                                          if (!parse_unmanaged_type(&__node_371))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_unmanaged_type, "unmanaged_type");
                                                             }
-                                                          (*yynode)->unmanaged_type = __node_370;
+                                                          (*yynode)->unmanaged_type = __node_371;
                                                         }
                                                       else
                                                         {
@@ -13683,29 +13718,29 @@ namespace csharp
                                                           yylex();
                                                           int currentLtLevel = _M_ltCounter;
                                                           _M_ltCounter++;
-                                                          type_ast *__node_371 = 0;
-                                                          if (!parse_type(&__node_371))
+                                                          type_ast *__node_372 = 0;
+                                                          if (!parse_type(&__node_372))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_type, "type");
                                                             }
-                                                          (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_371, memory_pool);
+                                                          (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_372, memory_pool);
                                                           while (yytoken == Token_COMMA)
                                                             {
                                                               if (yytoken != Token_COMMA)
                                                                 return yy_expected_token(yytoken, Token_COMMA, ",");
                                                               yylex();
-                                                              type_ast *__node_372 = 0;
-                                                              if (!parse_type(&__node_372))
+                                                              type_ast *__node_373 = 0;
+                                                              if (!parse_type(&__node_373))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_372, memory_pool);
+                                                              (*yynode)->type_argument_sequence = snoc((*yynode)->type_argument_sequence, __node_373, memory_pool);
                                                             }
                                                           if (yytoken == Token_GREATER_THAN
                                                               || yytoken == Token_RSHIFT)
                                                             {
-                                                              type_arguments_or_parameters_end_ast *__node_373 = 0;
-                                                              if (!parse_type_arguments_or_parameters_end(&__node_373))
+                                                              type_arguments_or_parameters_end_ast *__node_374 = 0;
+                                                              if (!parse_type_arguments_or_parameters_end(&__node_374))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
                                                                 }
@@ -13804,25 +13839,25 @@ namespace csharp
 
                                                           while (yytoken == Token_LBRACKET)
                                                             {
-                                                              attribute_section_ast *__node_374 = 0;
-                                                              if (!parse_attribute_section(&__node_374))
+                                                              attribute_section_ast *__node_375 = 0;
+                                                              if (!parse_attribute_section(&__node_375))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_attribute_section, "attribute_section");
                                                                 }
-                                                              attribute_sequence = snoc(attribute_sequence, __node_374, memory_pool);
+                                                              attribute_sequence = snoc(attribute_sequence, __node_375, memory_pool);
                                                             }
-                                                          optional_modifiers_ast *__node_375 = 0;
-                                                          if (!parse_optional_modifiers(&__node_375))
+                                                          optional_modifiers_ast *__node_376 = 0;
+                                                          if (!parse_optional_modifiers(&__node_376))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_optional_modifiers, "optional_modifiers");
                                                             }
-                                                          modifiers = __node_375;
-                                                          type_declaration_rest_ast *__node_376 = 0;
-                                                          if (!parse_type_declaration_rest(&__node_376, attribute_sequence, modifiers ))
+                                                          modifiers = __node_376;
+                                                          type_declaration_rest_ast *__node_377 = 0;
+                                                          if (!parse_type_declaration_rest(&__node_377, attribute_sequence, modifiers ))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_type_declaration_rest, "type_declaration_rest");
                                                             }
-                                                          (*yynode)->rest = __node_376;
+                                                          (*yynode)->rest = __node_377;
                                                         }
                                                       else
                                                         {
@@ -13854,36 +13889,36 @@ namespace csharp
                                                               yylex();
                                                               if (yytoken == Token_CLASS)
                                                                 {
-                                                                  class_declaration_ast *__node_377 = 0;
-                                                                  if (!parse_class_declaration(&__node_377, attribute_sequence, modifiers, true ))
+                                                                  class_declaration_ast *__node_378 = 0;
+                                                                  if (!parse_class_declaration(&__node_378, attribute_sequence, modifiers, true ))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_class_declaration, "class_declaration");
                                                                     }
-                                                                  if (__node_377->start_token < (*yynode)->start_token)
-                                                                    (*yynode)->start_token = __node_377->start_token;
-                                                                  (*yynode)->class_declaration = __node_377;
+                                                                  if (__node_378->start_token < (*yynode)->start_token)
+                                                                    (*yynode)->start_token = __node_378->start_token;
+                                                                  (*yynode)->class_declaration = __node_378;
                                                                 }
                                                               else if (yytoken == Token_STRUCT)
                                                                 {
-                                                                  struct_declaration_ast *__node_378 = 0;
-                                                                  if (!parse_struct_declaration(&__node_378, attribute_sequence, modifiers, true ))
+                                                                  struct_declaration_ast *__node_379 = 0;
+                                                                  if (!parse_struct_declaration(&__node_379, attribute_sequence, modifiers, true ))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_struct_declaration, "struct_declaration");
                                                                     }
-                                                                  if (__node_378->start_token < (*yynode)->start_token)
-                                                                    (*yynode)->start_token = __node_378->start_token;
-                                                                  (*yynode)->struct_declaration = __node_378;
+                                                                  if (__node_379->start_token < (*yynode)->start_token)
+                                                                    (*yynode)->start_token = __node_379->start_token;
+                                                                  (*yynode)->struct_declaration = __node_379;
                                                                 }
                                                               else if (yytoken == Token_INTERFACE)
                                                                 {
-                                                                  interface_declaration_ast *__node_379 = 0;
-                                                                  if (!parse_interface_declaration(&__node_379, attribute_sequence, modifiers, true ))
+                                                                  interface_declaration_ast *__node_380 = 0;
+                                                                  if (!parse_interface_declaration(&__node_380, attribute_sequence, modifiers, true ))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_interface_declaration, "interface_declaration");
                                                                     }
-                                                                  if (__node_379->start_token < (*yynode)->start_token)
-                                                                    (*yynode)->start_token = __node_379->start_token;
-                                                                  (*yynode)->interface_declaration = __node_379;
+                                                                  if (__node_380->start_token < (*yynode)->start_token)
+                                                                    (*yynode)->start_token = __node_380->start_token;
+                                                                  (*yynode)->interface_declaration = __node_380;
                                                                 }
                                                               else
                                                                 {
@@ -13892,58 +13927,58 @@ namespace csharp
                                                             }
                                                           else if (yytoken == Token_CLASS)
                                                             {
-                                                              class_declaration_ast *__node_380 = 0;
-                                                              if (!parse_class_declaration(&__node_380, attribute_sequence, modifiers, false ))
+                                                              class_declaration_ast *__node_381 = 0;
+                                                              if (!parse_class_declaration(&__node_381, attribute_sequence, modifiers, false ))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_class_declaration, "class_declaration");
                                                                 }
-                                                              if (__node_380->start_token < (*yynode)->start_token)
-                                                                (*yynode)->start_token = __node_380->start_token;
-                                                              (*yynode)->class_declaration = __node_380;
+                                                              if (__node_381->start_token < (*yynode)->start_token)
+                                                                (*yynode)->start_token = __node_381->start_token;
+                                                              (*yynode)->class_declaration = __node_381;
                                                             }
                                                           else if (yytoken == Token_STRUCT)
                                                             {
-                                                              struct_declaration_ast *__node_381 = 0;
-                                                              if (!parse_struct_declaration(&__node_381, attribute_sequence, modifiers, false ))
+                                                              struct_declaration_ast *__node_382 = 0;
+                                                              if (!parse_struct_declaration(&__node_382, attribute_sequence, modifiers, false ))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_struct_declaration, "struct_declaration");
                                                                 }
-                                                              if (__node_381->start_token < (*yynode)->start_token)
-                                                                (*yynode)->start_token = __node_381->start_token;
-                                                              (*yynode)->struct_declaration = __node_381;
+                                                              if (__node_382->start_token < (*yynode)->start_token)
+                                                                (*yynode)->start_token = __node_382->start_token;
+                                                              (*yynode)->struct_declaration = __node_382;
                                                             }
                                                           else if (yytoken == Token_INTERFACE)
                                                             {
-                                                              interface_declaration_ast *__node_382 = 0;
-                                                              if (!parse_interface_declaration(&__node_382, attribute_sequence, modifiers, false ))
+                                                              interface_declaration_ast *__node_383 = 0;
+                                                              if (!parse_interface_declaration(&__node_383, attribute_sequence, modifiers, false ))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_interface_declaration, "interface_declaration");
                                                                 }
-                                                              if (__node_382->start_token < (*yynode)->start_token)
-                                                                (*yynode)->start_token = __node_382->start_token;
-                                                              (*yynode)->interface_declaration = __node_382;
+                                                              if (__node_383->start_token < (*yynode)->start_token)
+                                                                (*yynode)->start_token = __node_383->start_token;
+                                                              (*yynode)->interface_declaration = __node_383;
                                                             }
                                                           else if (yytoken == Token_ENUM)
                                                             {
-                                                              enum_declaration_ast *__node_383 = 0;
-                                                              if (!parse_enum_declaration(&__node_383, attribute_sequence, modifiers ))
+                                                              enum_declaration_ast *__node_384 = 0;
+                                                              if (!parse_enum_declaration(&__node_384, attribute_sequence, modifiers ))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_enum_declaration, "enum_declaration");
                                                                 }
-                                                              if (__node_383->start_token < (*yynode)->start_token)
-                                                                (*yynode)->start_token = __node_383->start_token;
-                                                              (*yynode)->enum_declaration = __node_383;
+                                                              if (__node_384->start_token < (*yynode)->start_token)
+                                                                (*yynode)->start_token = __node_384->start_token;
+                                                              (*yynode)->enum_declaration = __node_384;
                                                             }
                                                           else if (yytoken == Token_DELEGATE)
                                                             {
-                                                              delegate_declaration_ast *__node_384 = 0;
-                                                              if (!parse_delegate_declaration(&__node_384, attribute_sequence, modifiers ))
+                                                              delegate_declaration_ast *__node_385 = 0;
+                                                              if (!parse_delegate_declaration(&__node_385, attribute_sequence, modifiers ))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_delegate_declaration, "delegate_declaration");
                                                                 }
-                                                              if (__node_384->start_token < (*yynode)->start_token)
-                                                                (*yynode)->start_token = __node_384->start_token;
-                                                              (*yynode)->delegate_declaration = __node_384;
+                                                              if (__node_385->start_token < (*yynode)->start_token)
+                                                                (*yynode)->start_token = __node_385->start_token;
+                                                              (*yynode)->delegate_declaration = __node_385;
                                                             }
                                                           else
                                                             {
@@ -13979,8 +14014,8 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          namespace_or_type_name_ast *__node_385 = 0;
-                                                          if (!parse_namespace_or_type_name(&__node_385))
+                                                          namespace_or_type_name_ast *__node_386 = 0;
+                                                          if (!parse_namespace_or_type_name(&__node_386))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_namespace_or_type_name, "namespace_or_type_name");
                                                             }
@@ -14014,8 +14049,8 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          namespace_or_type_name_safe_ast *__node_386 = 0;
-                                                          if (!parse_namespace_or_type_name_safe(&__node_386))
+                                                          namespace_or_type_name_safe_ast *__node_387 = 0;
+                                                          if (!parse_namespace_or_type_name_safe(&__node_387))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_namespace_or_type_name_safe, "namespace_or_type_name_safe");
                                                             }
@@ -14052,19 +14087,19 @@ namespace csharp
                                                         {
                                                           while (yytoken == Token_LBRACKET)
                                                             {
-                                                              attribute_section_ast *__node_387 = 0;
-                                                              if (!parse_attribute_section(&__node_387))
+                                                              attribute_section_ast *__node_388 = 0;
+                                                              if (!parse_attribute_section(&__node_388))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_attribute_section, "attribute_section");
                                                                 }
-                                                              (*yynode)->attribute_sequence = snoc((*yynode)->attribute_sequence, __node_387, memory_pool);
+                                                              (*yynode)->attribute_sequence = snoc((*yynode)->attribute_sequence, __node_388, memory_pool);
                                                             }
-                                                          identifier_ast *__node_388 = 0;
-                                                          if (!parse_identifier(&__node_388))
+                                                          identifier_ast *__node_389 = 0;
+                                                          if (!parse_identifier(&__node_389))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                             }
-                                                          (*yynode)->parameter_name = __node_388;
+                                                          (*yynode)->parameter_name = __node_389;
                                                         }
                                                       else
                                                         {
@@ -14117,12 +14152,12 @@ namespace csharp
                                                               || yytoken == Token_ASSEMBLY
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              primary_or_secondary_constraint_ast *__node_389 = 0;
-                                                              if (!parse_primary_or_secondary_constraint(&__node_389))
+                                                              primary_or_secondary_constraint_ast *__node_390 = 0;
+                                                              if (!parse_primary_or_secondary_constraint(&__node_390))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_primary_or_secondary_constraint, "primary_or_secondary_constraint");
                                                                 }
-                                                              (*yynode)->primary_or_secondary_constraint = __node_389;
+                                                              (*yynode)->primary_or_secondary_constraint = __node_390;
                                                               if (yytoken == Token_COMMA)
                                                                 {
                                                                   if (yytoken != Token_COMMA)
@@ -14141,23 +14176,23 @@ namespace csharp
                                                                       || yytoken == Token_ASSEMBLY
                                                                       || yytoken == Token_IDENTIFIER)
                                                                     {
-                                                                      secondary_constraints_ast *__node_390 = 0;
-                                                                      if (!parse_secondary_constraints(&__node_390))
+                                                                      secondary_constraints_ast *__node_391 = 0;
+                                                                      if (!parse_secondary_constraints(&__node_391))
                                                                         {
                                                                           return yy_expected_symbol(ast_node::Kind_secondary_constraints, "secondary_constraints");
                                                                         }
-                                                                      (*yynode)->secondary_constraints = __node_390;
+                                                                      (*yynode)->secondary_constraints = __node_391;
                                                                       if (yytoken == Token_COMMA)
                                                                         {
                                                                           if (yytoken != Token_COMMA)
                                                                             return yy_expected_token(yytoken, Token_COMMA, ",");
                                                                           yylex();
-                                                                          constructor_constraint_ast *__node_391 = 0;
-                                                                          if (!parse_constructor_constraint(&__node_391))
+                                                                          constructor_constraint_ast *__node_392 = 0;
+                                                                          if (!parse_constructor_constraint(&__node_392))
                                                                             {
                                                                               return yy_expected_symbol(ast_node::Kind_constructor_constraint, "constructor_constraint");
                                                                             }
-                                                                          (*yynode)->constructor_constraint = __node_391;
+                                                                          (*yynode)->constructor_constraint = __node_392;
                                                                         }
                                                                       else if (true /*epsilon*/)
                                                                       {}
@@ -14168,12 +14203,12 @@ namespace csharp
                                                                     }
                                                                   else if (yytoken == Token_NEW)
                                                                     {
-                                                                      constructor_constraint_ast *__node_392 = 0;
-                                                                      if (!parse_constructor_constraint(&__node_392))
+                                                                      constructor_constraint_ast *__node_393 = 0;
+                                                                      if (!parse_constructor_constraint(&__node_393))
                                                                         {
                                                                           return yy_expected_symbol(ast_node::Kind_constructor_constraint, "constructor_constraint");
                                                                         }
-                                                                      (*yynode)->constructor_constraint = __node_392;
+                                                                      (*yynode)->constructor_constraint = __node_393;
                                                                     }
                                                                   else
                                                                     {
@@ -14200,23 +14235,23 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              secondary_constraints_ast *__node_393 = 0;
-                                                              if (!parse_secondary_constraints(&__node_393))
+                                                              secondary_constraints_ast *__node_394 = 0;
+                                                              if (!parse_secondary_constraints(&__node_394))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_secondary_constraints, "secondary_constraints");
                                                                 }
-                                                              (*yynode)->secondary_constraints = __node_393;
+                                                              (*yynode)->secondary_constraints = __node_394;
                                                               if (yytoken == Token_COMMA)
                                                                 {
                                                                   if (yytoken != Token_COMMA)
                                                                     return yy_expected_token(yytoken, Token_COMMA, ",");
                                                                   yylex();
-                                                                  constructor_constraint_ast *__node_394 = 0;
-                                                                  if (!parse_constructor_constraint(&__node_394))
+                                                                  constructor_constraint_ast *__node_395 = 0;
+                                                                  if (!parse_constructor_constraint(&__node_395))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_constructor_constraint, "constructor_constraint");
                                                                     }
-                                                                  (*yynode)->constructor_constraint = __node_394;
+                                                                  (*yynode)->constructor_constraint = __node_395;
                                                                 }
                                                               else if (true /*epsilon*/)
                                                               {}
@@ -14227,12 +14262,12 @@ namespace csharp
                                                             }
                                                           else if (yytoken == Token_NEW)
                                                             {
-                                                              constructor_constraint_ast *__node_395 = 0;
-                                                              if (!parse_constructor_constraint(&__node_395))
+                                                              constructor_constraint_ast *__node_396 = 0;
+                                                              if (!parse_constructor_constraint(&__node_396))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_constructor_constraint, "constructor_constraint");
                                                                 }
-                                                              (*yynode)->constructor_constraint = __node_395;
+                                                              (*yynode)->constructor_constraint = __node_396;
                                                             }
                                                           else
                                                             {
@@ -14260,21 +14295,21 @@ namespace csharp
                                                           if (yytoken != Token_WHERE)
                                                             return yy_expected_token(yytoken, Token_WHERE, "where");
                                                           yylex();
-                                                          identifier_ast *__node_396 = 0;
-                                                          if (!parse_identifier(&__node_396))
+                                                          identifier_ast *__node_397 = 0;
+                                                          if (!parse_identifier(&__node_397))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                             }
-                                                          (*yynode)->type_parameter = __node_396;
+                                                          (*yynode)->type_parameter = __node_397;
                                                           if (yytoken != Token_COLON)
                                                             return yy_expected_token(yytoken, Token_COLON, ":");
                                                           yylex();
-                                                          type_parameter_constraints_ast *__node_397 = 0;
-                                                          if (!parse_type_parameter_constraints(&__node_397))
+                                                          type_parameter_constraints_ast *__node_398 = 0;
+                                                          if (!parse_type_parameter_constraints(&__node_398))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_type_parameter_constraints, "type_parameter_constraints");
                                                             }
-                                                          (*yynode)->constraints = __node_397;
+                                                          (*yynode)->constraints = __node_398;
                                                         }
                                                       else
                                                         {
@@ -14299,29 +14334,29 @@ namespace csharp
                                                           yylex();
                                                           int currentLtLevel = _M_ltCounter;
                                                           _M_ltCounter++;
-                                                          type_parameter_ast *__node_398 = 0;
-                                                          if (!parse_type_parameter(&__node_398))
+                                                          type_parameter_ast *__node_399 = 0;
+                                                          if (!parse_type_parameter(&__node_399))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_type_parameter, "type_parameter");
                                                             }
-                                                          (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_398, memory_pool);
+                                                          (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_399, memory_pool);
                                                           while (yytoken == Token_COMMA)
                                                             {
                                                               if (yytoken != Token_COMMA)
                                                                 return yy_expected_token(yytoken, Token_COMMA, ",");
                                                               yylex();
-                                                              type_parameter_ast *__node_399 = 0;
-                                                              if (!parse_type_parameter(&__node_399))
+                                                              type_parameter_ast *__node_400 = 0;
+                                                              if (!parse_type_parameter(&__node_400))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_parameter, "type_parameter");
                                                                 }
-                                                              (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_399, memory_pool);
+                                                              (*yynode)->type_parameter_sequence = snoc((*yynode)->type_parameter_sequence, __node_400, memory_pool);
                                                             }
                                                           if (yytoken == Token_GREATER_THAN
                                                               || yytoken == Token_RSHIFT)
                                                             {
-                                                              type_arguments_or_parameters_end_ast *__node_400 = 0;
-                                                              if (!parse_type_arguments_or_parameters_end(&__node_400))
+                                                              type_arguments_or_parameters_end_ast *__node_401 = 0;
+                                                              if (!parse_type_arguments_or_parameters_end(&__node_401))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type_arguments_or_parameters_end, "type_arguments_or_parameters_end");
                                                                 }
@@ -14384,12 +14419,12 @@ namespace csharp
                                                                                                          && (lookahead_is_unbound_type_name() == true)
                                                                                                        ))
                                                             {
-                                                              unbound_type_name_ast *__node_401 = 0;
-                                                              if (!parse_unbound_type_name(&__node_401))
+                                                              unbound_type_name_ast *__node_402 = 0;
+                                                              if (!parse_unbound_type_name(&__node_402))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unbound_type_name, "unbound_type_name");
                                                                 }
-                                                              (*yynode)->unbound_type_name = __node_401;
+                                                              (*yynode)->unbound_type_name = __node_402;
                                                               (*yynode)->typeof_type = typeof_expression::type_unbound_type_name;
                                                             }
                                                           else if (yytoken == Token_BOOL
@@ -14421,12 +14456,12 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              type_ast *__node_402 = 0;
-                                                              if (!parse_type(&__node_402))
+                                                              type_ast *__node_403 = 0;
+                                                              if (!parse_type(&__node_403))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->other_type = __node_402;
+                                                              (*yynode)->other_type = __node_403;
                                                               (*yynode)->typeof_type = typeof_expression::type_type;
                                                             }
                                                           else
@@ -14511,12 +14546,12 @@ namespace csharp
                                                               if (yytoken != Token_INCREMENT)
                                                                 return yy_expected_token(yytoken, Token_INCREMENT, "++");
                                                               yylex();
-                                                              unary_expression_ast *__node_403 = 0;
-                                                              if (!parse_unary_expression(&__node_403))
+                                                              unary_expression_ast *__node_404 = 0;
+                                                              if (!parse_unary_expression(&__node_404))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->unary_expression = __node_403;
+                                                              (*yynode)->unary_expression = __node_404;
                                                               (*yynode)->rule_type = unary_expression::type_incremented_expression;
                                                             }
                                                           else if (yytoken == Token_DECREMENT)
@@ -14524,12 +14559,12 @@ namespace csharp
                                                               if (yytoken != Token_DECREMENT)
                                                                 return yy_expected_token(yytoken, Token_DECREMENT, "--");
                                                               yylex();
-                                                              unary_expression_ast *__node_404 = 0;
-                                                              if (!parse_unary_expression(&__node_404))
+                                                              unary_expression_ast *__node_405 = 0;
+                                                              if (!parse_unary_expression(&__node_405))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->unary_expression = __node_404;
+                                                              (*yynode)->unary_expression = __node_405;
                                                               (*yynode)->rule_type = unary_expression::type_decremented_expression;
                                                             }
                                                           else if (yytoken == Token_MINUS)
@@ -14537,12 +14572,12 @@ namespace csharp
                                                               if (yytoken != Token_MINUS)
                                                                 return yy_expected_token(yytoken, Token_MINUS, "-");
                                                               yylex();
-                                                              unary_expression_ast *__node_405 = 0;
-                                                              if (!parse_unary_expression(&__node_405))
+                                                              unary_expression_ast *__node_406 = 0;
+                                                              if (!parse_unary_expression(&__node_406))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->unary_expression = __node_405;
+                                                              (*yynode)->unary_expression = __node_406;
                                                               (*yynode)->rule_type = unary_expression::type_unary_minus_expression;
                                                             }
                                                           else if (yytoken == Token_PLUS)
@@ -14550,12 +14585,12 @@ namespace csharp
                                                               if (yytoken != Token_PLUS)
                                                                 return yy_expected_token(yytoken, Token_PLUS, "+");
                                                               yylex();
-                                                              unary_expression_ast *__node_406 = 0;
-                                                              if (!parse_unary_expression(&__node_406))
+                                                              unary_expression_ast *__node_407 = 0;
+                                                              if (!parse_unary_expression(&__node_407))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->unary_expression = __node_406;
+                                                              (*yynode)->unary_expression = __node_407;
                                                               (*yynode)->rule_type = unary_expression::type_unary_plus_expression;
                                                             }
                                                           else if (yytoken == Token_TILDE)
@@ -14563,12 +14598,12 @@ namespace csharp
                                                               if (yytoken != Token_TILDE)
                                                                 return yy_expected_token(yytoken, Token_TILDE, "~");
                                                               yylex();
-                                                              unary_expression_ast *__node_407 = 0;
-                                                              if (!parse_unary_expression(&__node_407))
+                                                              unary_expression_ast *__node_408 = 0;
+                                                              if (!parse_unary_expression(&__node_408))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->bitwise_not_expression = __node_407;
+                                                              (*yynode)->unary_expression = __node_408;
                                                               (*yynode)->rule_type = unary_expression::type_bitwise_not_expression;
                                                             }
                                                           else if (yytoken == Token_BANG)
@@ -14576,22 +14611,22 @@ namespace csharp
                                                               if (yytoken != Token_BANG)
                                                                 return yy_expected_token(yytoken, Token_BANG, "!");
                                                               yylex();
-                                                              unary_expression_ast *__node_408 = 0;
-                                                              if (!parse_unary_expression(&__node_408))
+                                                              unary_expression_ast *__node_409 = 0;
+                                                              if (!parse_unary_expression(&__node_409))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->logical_not_expression = __node_408;
+                                                              (*yynode)->unary_expression = __node_409;
                                                               (*yynode)->rule_type = unary_expression::type_logical_not_expression;
                                                             }
                                                           else if ((yytoken == Token_LPAREN) && ( lookahead_is_cast_expression() == true ))
                                                             {
-                                                              cast_expression_ast *__node_409 = 0;
-                                                              if (!parse_cast_expression(&__node_409))
+                                                              cast_expression_ast *__node_410 = 0;
+                                                              if (!parse_cast_expression(&__node_410))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_cast_expression, "cast_expression");
                                                                 }
-                                                              (*yynode)->cast_expression = __node_409;
+                                                              (*yynode)->cast_expression = __node_410;
                                                               (*yynode)->rule_type = unary_expression::type_cast_expression;
                                                             }
                                                           else if (yytoken == Token_BASE
@@ -14639,12 +14674,12 @@ namespace csharp
                                                                    || yytoken == Token_STRING_LITERAL
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              primary_expression_ast *__node_410 = 0;
-                                                              if (!parse_primary_expression(&__node_410))
+                                                              primary_expression_ast *__node_411 = 0;
+                                                              if (!parse_primary_expression(&__node_411))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_primary_expression, "primary_expression");
                                                                 }
-                                                              (*yynode)->primary_expression = __node_410;
+                                                              (*yynode)->primary_expression = __node_411;
                                                               (*yynode)->rule_type = unary_expression::type_primary_expression;
                                                             }
                                                           else if (yytoken == Token_STAR)
@@ -14652,12 +14687,12 @@ namespace csharp
                                                               if (yytoken != Token_STAR)
                                                                 return yy_expected_token(yytoken, Token_STAR, "*");
                                                               yylex();
-                                                              unary_expression_ast *__node_411 = 0;
-                                                              if (!parse_unary_expression(&__node_411))
+                                                              unary_expression_ast *__node_412 = 0;
+                                                              if (!parse_unary_expression(&__node_412))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->pointer_indirection_expression = __node_411;
+                                                              (*yynode)->unary_expression = __node_412;
                                                               (*yynode)->rule_type = unary_expression::type_pointer_indirection_expression;
                                                             }
                                                           else if (yytoken == Token_BIT_AND)
@@ -14665,12 +14700,12 @@ namespace csharp
                                                               if (yytoken != Token_BIT_AND)
                                                                 return yy_expected_token(yytoken, Token_BIT_AND, "&");
                                                               yylex();
-                                                              unary_expression_ast *__node_412 = 0;
-                                                              if (!parse_unary_expression(&__node_412))
+                                                              unary_expression_ast *__node_413 = 0;
+                                                              if (!parse_unary_expression(&__node_413))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
                                                                 }
-                                                              (*yynode)->addressof_expression = __node_412;
+                                                              (*yynode)->unary_expression = __node_413;
                                                               (*yynode)->rule_type = unary_expression::type_addressof_expression;
                                                             }
                                                           else
@@ -14724,27 +14759,27 @@ namespace csharp
                                                               || yytoken == Token_TRUE
                                                               || yytoken == Token_FALSE)
                                                             {
-                                                              overloadable_unary_only_operator_ast *__node_413 = 0;
-                                                              if (!parse_overloadable_unary_only_operator(&__node_413, &(*yynode)->overloadable_operator_type))
+                                                              overloadable_unary_only_operator_ast *__node_414 = 0;
+                                                              if (!parse_overloadable_unary_only_operator(&__node_414, &(*yynode)->overloadable_operator_type))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_overloadable_unary_only_operator, "overloadable_unary_only_operator");
                                                                 }
-                                                              unary_op = __node_413;
+                                                              unary_op = __node_414;
                                                               if (yytoken != Token_LPAREN)
                                                                 return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                               yylex();
-                                                              type_ast *__node_414 = 0;
-                                                              if (!parse_type(&__node_414))
+                                                              type_ast *__node_415 = 0;
+                                                              if (!parse_type(&__node_415))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->source1_type = __node_414;
-                                                              identifier_ast *__node_415 = 0;
-                                                              if (!parse_identifier(&__node_415))
+                                                              (*yynode)->source1_type = __node_415;
+                                                              identifier_ast *__node_416 = 0;
+                                                              if (!parse_identifier(&__node_416))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->source1_name = __node_415;
+                                                              (*yynode)->source1_name = __node_416;
                                                               if (yytoken != Token_RPAREN)
                                                                 return yy_expected_token(yytoken, Token_RPAREN, ")");
                                                               yylex();
@@ -14766,42 +14801,42 @@ namespace csharp
                                                                    || yytoken == Token_LSHIFT
                                                                    || yytoken == Token_RSHIFT)
                                                             {
-                                                              overloadable_binary_only_operator_ast *__node_416 = 0;
-                                                              if (!parse_overloadable_binary_only_operator(&__node_416, &(*yynode)->overloadable_operator_type))
+                                                              overloadable_binary_only_operator_ast *__node_417 = 0;
+                                                              if (!parse_overloadable_binary_only_operator(&__node_417, &(*yynode)->overloadable_operator_type))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_overloadable_binary_only_operator, "overloadable_binary_only_operator");
                                                                 }
-                                                              binary_op = __node_416;
+                                                              binary_op = __node_417;
                                                               if (yytoken != Token_LPAREN)
                                                                 return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                               yylex();
-                                                              type_ast *__node_417 = 0;
-                                                              if (!parse_type(&__node_417))
+                                                              type_ast *__node_418 = 0;
+                                                              if (!parse_type(&__node_418))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->source1_type = __node_417;
-                                                              identifier_ast *__node_418 = 0;
-                                                              if (!parse_identifier(&__node_418))
+                                                              (*yynode)->source1_type = __node_418;
+                                                              identifier_ast *__node_419 = 0;
+                                                              if (!parse_identifier(&__node_419))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->source1_name = __node_418;
+                                                              (*yynode)->source1_name = __node_419;
                                                               if (yytoken != Token_COMMA)
                                                                 return yy_expected_token(yytoken, Token_COMMA, ",");
                                                               yylex();
-                                                              type_ast *__node_419 = 0;
-                                                              if (!parse_type(&__node_419))
+                                                              type_ast *__node_420 = 0;
+                                                              if (!parse_type(&__node_420))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->source2_type = __node_419;
-                                                              identifier_ast *__node_420 = 0;
-                                                              if (!parse_identifier(&__node_420))
+                                                              (*yynode)->source2_type = __node_420;
+                                                              identifier_ast *__node_421 = 0;
+                                                              if (!parse_identifier(&__node_421))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->source2_name = __node_420;
+                                                              (*yynode)->source2_name = __node_421;
                                                               if (yytoken != Token_RPAREN)
                                                                 return yy_expected_token(yytoken, Token_RPAREN, ")");
                                                               yylex();
@@ -14811,45 +14846,45 @@ namespace csharp
                                                           else if (yytoken == Token_PLUS
                                                                    || yytoken == Token_MINUS)
                                                             {
-                                                              overloadable_unary_or_binary_operator_ast *__node_421 = 0;
-                                                              if (!parse_overloadable_unary_or_binary_operator(&__node_421, &(*yynode)->overloadable_operator_type))
+                                                              overloadable_unary_or_binary_operator_ast *__node_422 = 0;
+                                                              if (!parse_overloadable_unary_or_binary_operator(&__node_422, &(*yynode)->overloadable_operator_type))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_overloadable_unary_or_binary_operator, "overloadable_unary_or_binary_operator");
                                                                 }
-                                                              unary_or_binary_op = __node_421;
+                                                              unary_or_binary_op = __node_422;
                                                               (*yynode)->overloadable_operator_token = unary_or_binary_op->op;
                                                               if (yytoken != Token_LPAREN)
                                                                 return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                               yylex();
-                                                              type_ast *__node_422 = 0;
-                                                              if (!parse_type(&__node_422))
+                                                              type_ast *__node_423 = 0;
+                                                              if (!parse_type(&__node_423))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                 }
-                                                              (*yynode)->source1_type = __node_422;
-                                                              identifier_ast *__node_423 = 0;
-                                                              if (!parse_identifier(&__node_423))
+                                                              (*yynode)->source1_type = __node_423;
+                                                              identifier_ast *__node_424 = 0;
+                                                              if (!parse_identifier(&__node_424))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->source1_name = __node_423;
+                                                              (*yynode)->source1_name = __node_424;
                                                               if (yytoken == Token_COMMA)
                                                                 {
                                                                   if (yytoken != Token_COMMA)
                                                                     return yy_expected_token(yytoken, Token_COMMA, ",");
                                                                   yylex();
-                                                                  type_ast *__node_424 = 0;
-                                                                  if (!parse_type(&__node_424))
+                                                                  type_ast *__node_425 = 0;
+                                                                  if (!parse_type(&__node_425))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_type, "type");
                                                                     }
-                                                                  (*yynode)->source2_type = __node_424;
-                                                                  identifier_ast *__node_425 = 0;
-                                                                  if (!parse_identifier(&__node_425))
+                                                                  (*yynode)->source2_type = __node_425;
+                                                                  identifier_ast *__node_426 = 0;
+                                                                  if (!parse_identifier(&__node_426))
                                                                     {
                                                                       return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                     }
-                                                                  (*yynode)->source2_name = __node_425;
+                                                                  (*yynode)->source2_name = __node_426;
                                                                   (*yynode)->unary_or_binary = overloadable_operator::type_binary;
                                                                 }
                                                               else if (true /*epsilon*/)
@@ -14870,12 +14905,12 @@ namespace csharp
                                                             }
                                                           if (yytoken == Token_LBRACE)
                                                             {
-                                                              block_ast *__node_426 = 0;
-                                                              if (!parse_block(&__node_426))
+                                                              block_ast *__node_427 = 0;
+                                                              if (!parse_block(&__node_427))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_block, "block");
                                                                 }
-                                                              (*yynode)->body = __node_426;
+                                                              (*yynode)->body = __node_427;
                                                             }
                                                           else if (yytoken == Token_SEMICOLON)
                                                             {
@@ -14930,12 +14965,12 @@ namespace csharp
                                                                || yytoken == Token_ASSEMBLY
                                                                || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
                                                             {
-                                                              identifier_ast *__node_427 = 0;
-                                                              if (!parse_identifier(&__node_427))
+                                                              identifier_ast *__node_428 = 0;
+                                                              if (!parse_identifier(&__node_428))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->qualified_alias_label = __node_427;
+                                                              (*yynode)->qualified_alias_label = __node_428;
                                                               if (yytoken != Token_SCOPE)
                                                                 return yy_expected_token(yytoken, Token_SCOPE, "::");
                                                               yylex();
@@ -14946,23 +14981,23 @@ namespace csharp
                                                             {
                                                               return false;
                                                             }
-                                                          unbound_type_name_part_ast *__node_428 = 0;
-                                                          if (!parse_unbound_type_name_part(&__node_428))
+                                                          unbound_type_name_part_ast *__node_429 = 0;
+                                                          if (!parse_unbound_type_name_part(&__node_429))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_unbound_type_name_part, "unbound_type_name_part");
                                                             }
-                                                          (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_428, memory_pool);
+                                                          (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_429, memory_pool);
                                                           while (yytoken == Token_DOT)
                                                             {
                                                               if (yytoken != Token_DOT)
                                                                 return yy_expected_token(yytoken, Token_DOT, ".");
                                                               yylex();
-                                                              unbound_type_name_part_ast *__node_429 = 0;
-                                                              if (!parse_unbound_type_name_part(&__node_429))
+                                                              unbound_type_name_part_ast *__node_430 = 0;
+                                                              if (!parse_unbound_type_name_part(&__node_430))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_unbound_type_name_part, "unbound_type_name_part");
                                                                 }
-                                                              (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_429, memory_pool);
+                                                              (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_430, memory_pool);
                                                             }
                                                         }
                                                       else
@@ -14994,20 +15029,20 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          identifier_ast *__node_430 = 0;
-                                                          if (!parse_identifier(&__node_430))
+                                                          identifier_ast *__node_431 = 0;
+                                                          if (!parse_identifier(&__node_431))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                             }
-                                                          (*yynode)->identifier = __node_430;
+                                                          (*yynode)->identifier = __node_431;
                                                           if (yytoken == Token_LESS_THAN)
                                                             {
-                                                              generic_dimension_specifier_ast *__node_431 = 0;
-                                                              if (!parse_generic_dimension_specifier(&__node_431))
+                                                              generic_dimension_specifier_ast *__node_432 = 0;
+                                                              if (!parse_generic_dimension_specifier(&__node_432))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_generic_dimension_specifier, "generic_dimension_specifier");
                                                                 }
-                                                              (*yynode)->generic_dimension_specifier = __node_431;
+                                                              (*yynode)->generic_dimension_specifier = __node_432;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -15037,12 +15072,12 @@ namespace csharp
                                                           if (yytoken != Token_UNCHECKED)
                                                             return yy_expected_token(yytoken, Token_UNCHECKED, "unchecked");
                                                           yylex();
-                                                          block_ast *__node_432 = 0;
-                                                          if (!parse_block(&__node_432))
+                                                          block_ast *__node_433 = 0;
+                                                          if (!parse_block(&__node_433))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_block, "block");
                                                             }
-                                                          (*yynode)->body = __node_432;
+                                                          (*yynode)->body = __node_433;
                                                         }
                                                       else
                                                         {
@@ -15118,12 +15153,12 @@ namespace csharp
                                                               || yytoken == Token_ASSEMBLY
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              managed_type_ast *__node_433 = 0;
-                                                              if (!parse_managed_type(&__node_433))
+                                                              managed_type_ast *__node_434 = 0;
+                                                              if (!parse_managed_type(&__node_434))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_managed_type, "managed_type");
                                                                 }
-                                                              (*yynode)->regular_type = __node_433;
+                                                              (*yynode)->regular_type = __node_434;
                                                               (*yynode)->type = pointer_type::type_regular;
                                                             }
                                                           else if (yytoken == Token_VOID)
@@ -15170,12 +15205,12 @@ namespace csharp
                                                           if (yytoken != Token_UNSAFE)
                                                             return yy_expected_token(yytoken, Token_UNSAFE, "unsafe");
                                                           yylex();
-                                                          block_ast *__node_434 = 0;
-                                                          if (!parse_block(&__node_434))
+                                                          block_ast *__node_435 = 0;
+                                                          if (!parse_block(&__node_435))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_block, "block");
                                                             }
-                                                          (*yynode)->body = __node_434;
+                                                          (*yynode)->body = __node_435;
                                                         }
                                                       else
                                                         {
@@ -15211,21 +15246,21 @@ namespace csharp
                                                                || yytoken == Token_ASSEMBLY
                                                                || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_ASSIGN ))
                                                             {
-                                                              identifier_ast *__node_435 = 0;
-                                                              if (!parse_identifier(&__node_435))
+                                                              identifier_ast *__node_436 = 0;
+                                                              if (!parse_identifier(&__node_436))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                                 }
-                                                              (*yynode)->alias = __node_435;
+                                                              (*yynode)->alias = __node_436;
                                                               if (yytoken != Token_ASSIGN)
                                                                 return yy_expected_token(yytoken, Token_ASSIGN, "=");
                                                               yylex();
-                                                              namespace_or_type_name_ast *__node_436 = 0;
-                                                              if (!parse_namespace_or_type_name(&__node_436))
+                                                              namespace_or_type_name_ast *__node_437 = 0;
+                                                              if (!parse_namespace_or_type_name(&__node_437))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_namespace_or_type_name, "namespace_or_type_name");
                                                                 }
-                                                              (*yynode)->namespace_or_type_name = __node_436;
+                                                              (*yynode)->namespace_or_type_name = __node_437;
                                                             }
                                                           else if (yytoken == Token_ADD
                                                                    || yytoken == Token_ALIAS
@@ -15240,12 +15275,12 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              namespace_or_type_name_ast *__node_437 = 0;
-                                                              if (!parse_namespace_or_type_name(&__node_437))
+                                                              namespace_or_type_name_ast *__node_438 = 0;
+                                                              if (!parse_namespace_or_type_name(&__node_438))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_namespace_or_type_name, "namespace_or_type_name");
                                                                 }
-                                                              (*yynode)->namespace_name = __node_437;
+                                                              (*yynode)->namespace_name = __node_438;
                                                             }
                                                           else
                                                             {
@@ -15279,21 +15314,21 @@ namespace csharp
                                                           if (yytoken != Token_LPAREN)
                                                             return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                           yylex();
-                                                          resource_acquisition_ast *__node_438 = 0;
-                                                          if (!parse_resource_acquisition(&__node_438))
+                                                          resource_acquisition_ast *__node_439 = 0;
+                                                          if (!parse_resource_acquisition(&__node_439))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_resource_acquisition, "resource_acquisition");
                                                             }
-                                                          (*yynode)->resource_acquisition = __node_438;
+                                                          (*yynode)->resource_acquisition = __node_439;
                                                           if (yytoken != Token_RPAREN)
                                                             return yy_expected_token(yytoken, Token_RPAREN, ")");
                                                           yylex();
-                                                          embedded_statement_ast *__node_439 = 0;
-                                                          if (!parse_embedded_statement(&__node_439))
+                                                          embedded_statement_ast *__node_440 = 0;
+                                                          if (!parse_embedded_statement(&__node_440))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_embedded_statement, "embedded_statement");
                                                             }
-                                                          (*yynode)->body = __node_439;
+                                                          (*yynode)->body = __node_440;
                                                         }
                                                       else
                                                         {
@@ -15360,23 +15395,23 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          identifier_ast *__node_440 = 0;
-                                                          if (!parse_identifier(&__node_440))
+                                                          identifier_ast *__node_441 = 0;
+                                                          if (!parse_identifier(&__node_441))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_identifier, "identifier");
                                                             }
-                                                          (*yynode)->variable_name = __node_440;
+                                                          (*yynode)->variable_name = __node_441;
                                                           if (yytoken == Token_ASSIGN)
                                                             {
                                                               if (yytoken != Token_ASSIGN)
                                                                 return yy_expected_token(yytoken, Token_ASSIGN, "=");
                                                               yylex();
-                                                              variable_initializer_ast *__node_441 = 0;
-                                                              if (!parse_variable_initializer(&__node_441))
+                                                              variable_initializer_ast *__node_442 = 0;
+                                                              if (!parse_variable_initializer(&__node_442))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_variable_initializer, "variable_initializer");
                                                                 }
-                                                              (*yynode)->variable_initializer = __node_441;
+                                                              (*yynode)->variable_initializer = __node_442;
                                                             }
                                                           else if (true /*epsilon*/)
                                                           {}
@@ -15509,30 +15544,30 @@ namespace csharp
                                                               || yytoken == Token_STRING_LITERAL
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              expression_ast *__node_442 = 0;
-                                                              if (!parse_expression(&__node_442))
+                                                              expression_ast *__node_443 = 0;
+                                                              if (!parse_expression(&__node_443))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                                                 }
-                                                              (*yynode)->expression = __node_442;
+                                                              (*yynode)->expression = __node_443;
                                                             }
                                                           else if (yytoken == Token_LBRACE)
                                                             {
-                                                              array_initializer_ast *__node_443 = 0;
-                                                              if (!parse_array_initializer(&__node_443))
+                                                              array_initializer_ast *__node_444 = 0;
+                                                              if (!parse_array_initializer(&__node_444))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_array_initializer, "array_initializer");
                                                                 }
-                                                              (*yynode)->array_initializer = __node_443;
+                                                              (*yynode)->array_initializer = __node_444;
                                                             }
                                                           else if (yytoken == Token_STACKALLOC)
                                                             {
-                                                              stackalloc_initializer_ast *__node_444 = 0;
-                                                              if (!parse_stackalloc_initializer(&__node_444))
+                                                              stackalloc_initializer_ast *__node_445 = 0;
+                                                              if (!parse_stackalloc_initializer(&__node_445))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_stackalloc_initializer, "stackalloc_initializer");
                                                                 }
-                                                              (*yynode)->stackalloc_initializer = __node_444;
+                                                              (*yynode)->stackalloc_initializer = __node_445;
                                                             }
                                                           else
                                                             {
@@ -15563,21 +15598,21 @@ namespace csharp
                                                           if (yytoken != Token_LPAREN)
                                                             return yy_expected_token(yytoken, Token_LPAREN, "(");
                                                           yylex();
-                                                          boolean_expression_ast *__node_445 = 0;
-                                                          if (!parse_boolean_expression(&__node_445))
+                                                          boolean_expression_ast *__node_446 = 0;
+                                                          if (!parse_boolean_expression(&__node_446))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_boolean_expression, "boolean_expression");
                                                             }
-                                                          (*yynode)->condition = __node_445;
+                                                          (*yynode)->condition = __node_446;
                                                           if (yytoken != Token_RPAREN)
                                                             return yy_expected_token(yytoken, Token_RPAREN, ")");
                                                           yylex();
-                                                          embedded_statement_ast *__node_446 = 0;
-                                                          if (!parse_embedded_statement(&__node_446))
+                                                          embedded_statement_ast *__node_447 = 0;
+                                                          if (!parse_embedded_statement(&__node_447))
                                                             {
                                                               return yy_expected_symbol(ast_node::Kind_embedded_statement, "embedded_statement");
                                                             }
-                                                          (*yynode)->body = __node_446;
+                                                          (*yynode)->body = __node_447;
                                                         }
                                                       else
                                                         {
@@ -15605,12 +15640,12 @@ namespace csharp
                                                               if (yytoken != Token_RETURN)
                                                                 return yy_expected_token(yytoken, Token_RETURN, "return");
                                                               yylex();
-                                                              expression_ast *__node_447 = 0;
-                                                              if (!parse_expression(&__node_447))
+                                                              expression_ast *__node_448 = 0;
+                                                              if (!parse_expression(&__node_448))
                                                                 {
                                                                   return yy_expected_symbol(ast_node::Kind_expression, "expression");
                                                                 }
-                                                              (*yynode)->return_expression = __node_447;
+                                                              (*yynode)->return_expression = __node_448;
                                                               (*yynode)->yield_type = yield_statement::type_yield_return;
                                                             }
                                                           else if (yytoken == Token_BREAK)
@@ -15746,6 +15781,7 @@ namespace csharp
                                                           reinterpret_cast<parser_fun_t>(&visitor::visit_non_nullable_type),
                                                           reinterpret_cast<parser_fun_t>(&visitor::visit_null_coalescing_expression),
                                                           reinterpret_cast<parser_fun_t>(&visitor::visit_numeric_type),
+                                                          reinterpret_cast<parser_fun_t>(&visitor::visit_object_or_delegate_creation_expression_rest),
                                                           reinterpret_cast<parser_fun_t>(&visitor::visit_optional_argument_list),
                                                           reinterpret_cast<parser_fun_t>(&visitor::visit_optional_modifiers),
                                                           reinterpret_cast<parser_fun_t>(&visitor::visit_optionally_nullable_type),

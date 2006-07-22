@@ -52,7 +52,7 @@
 --    at all, only kdevelop-pg thinks it does. Code segments...
 --    (done right by default, 1 conflict)
 --  - The LBRACKET conflict in managed_type, for which new_expression
---    with its array_creation_expression_rest part is to blame.
+--    with its array_creation_expression part is to blame.
 --    Caused by the fact that array_creation_expression can't be seperated.
 --    As a consequence, all rank specifiers are checked for safety, always.
 --    (manually resolved, 1 conflict)
@@ -72,7 +72,7 @@
 --    (manually resolved, 1 conflict)
 --  - The COMMA conflict in array_initializer, another one of those.
 --    (manually resolved, 1 conflict)
---  - The LBRACKET conflict in array_creation_expression_rest, similar to the
+--  - The LBRACKET conflict in array_creation_expression, similar to the
 --    one in managed_type, only that it's triggered by primary_suffix instead.
 --    Caused by the fact that array_creation_expression can't be seperated.
 --    (manually resolved, 1 conflict)
@@ -2363,11 +2363,18 @@ namespace csharp_pp
 -- a good idea to try to tell them apart. Also, object creation and
 -- delegate creation can derive the exact same token sequence.
 
-   NEW type=type
-   (  array_creation_expression_rest=array_creation_expression_rest
-    | LPAREN expression_or_argument_list=optional_argument_list RPAREN
+   NEW type:type
+   (  array_creation_expression=array_creation_expression_rest[type]
+    | object_or_delegate_creation_expression=object_or_delegate_creation_expression_rest[type]
    )
 -> new_expression ;;
+
+-- The rest of object/delegate or array creation expressions.
+
+   LPAREN argument_list_or_expression=optional_argument_list RPAREN
+-> object_or_delegate_creation_expression_rest [
+     argument member node type: type;
+] ;;
 
  (
    array_initializer=array_initializer
@@ -2381,7 +2388,9 @@ namespace csharp_pp
    )*
    (array_initializer=array_initializer | 0)
  )
--> array_creation_expression_rest ;;
+-> array_creation_expression_rest [
+     argument member node type: type;
+] ;;
 
 
 -- The TYPEOF EXPRESSION is nasty, because it either needs LL(k) lookahead
@@ -2480,7 +2489,7 @@ namespace csharp_pp
    ( 0 [: if (LA(2).kind != Token_COMMA && LA(2).kind != Token_RBRACKET)
             { break; }
         :] -- avoids swallowing the LBRACKETs in
-           -- new_expression/array_creation_expression_rest.
+           -- new_expression/array_creation_expression.
      #rank_specifier=rank_specifier
    )*
 -> managed_type ;;

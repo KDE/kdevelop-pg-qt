@@ -117,11 +117,17 @@ bool lookahead::is_unbound_type_name()
               if (_M_token != parser::Token_LESS_THAN)
                 return false;
               fetch_next_token();
+
+              if (_M_token == parser::Token_GREATER_THAN)
+                {
+                  return true; // only unbound type names have empty "<>" lists
+                }
               while (_M_token == parser::Token_COMMA)
                 {
                   return true; // when there's a comma, there's no doubt
-                                // that this should be an unbound type name
+                               // that this should be an unbound type name
                 }
+
               if (_M_token != parser::Token_GREATER_THAN)
                 return false;
               fetch_next_token();

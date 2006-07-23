@@ -47,7 +47,13 @@ java::parser* _G_parser;
 
 #define YY_USER_INIT \
 _G_token_begin = _G_token_end = 0; \
-_G_current_offset = 0;
+_G_current_offset = 0; \
+\
+unsigned char *contents = (unsigned char *) _G_contents; \
+if (contents[0] == 0xEF && contents[1] == 0xBB && contents[2] == 0xBF) { \
+  _G_token_begin = _G_token_end = 3; \
+  _G_current_offset = 3; \
+} // check for and ignore the UTF-8 byte order mark
 
 #define YY_USER_ACTION \
 _G_token_begin = _G_token_end; \

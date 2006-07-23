@@ -1256,6 +1256,7 @@ namespace csharp_pp
 -- The INDEXER DECLARATION rest.
 
    THIS LBRACKET formal_parameters=formal_parameter_list RBRACKET
+   LBRACE accessor_declarations=accessor_declarations RBRACE
 -> indexer_declaration [
      argument member node #attribute:     attribute_section;
      argument member node modifiers:      optional_modifiers;
@@ -1410,7 +1411,7 @@ namespace csharp_pp
 
 -- The INTERFACE PROPERTY DECLARATION.
 
-   RBRACE interface_accessors=interface_accessors RBRACE
+   LBRACE interface_accessors=interface_accessors RBRACE
 -> interface_property_declaration [
      argument member node #attribute:    attribute_section;
      argument member variable decl_new:  bool;
@@ -2347,11 +2348,14 @@ namespace csharp_pp
 ] ;;
 
 
-   DELEGATE LPAREN
-   (#anonymous_method_parameter=anonymous_method_parameter @ COMMA)
-   RPAREN
+   DELEGATE (anonymous_method_signature=anonymous_method_signature | 0)
    body=block
 -> anonymous_method_expression ;;
+
+   LPAREN
+   ( (#anonymous_method_parameter=anonymous_method_parameter @ COMMA) | 0 )
+   RPAREN
+-> anonymous_method_signature ;;
 
    (modifier=parameter_modifier | 0) type=type variable_name=identifier
 -> anonymous_method_parameter ;;

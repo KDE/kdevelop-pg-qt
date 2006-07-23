@@ -58,7 +58,13 @@ void cleanup();
 
 #define YY_USER_INIT \
 _G_token_begin = _G_token_end = 0; \
-_G_current_offset = 0;
+_G_current_offset = 0; \
+\
+unsigned char *contents = (unsigned char *) _G_contents; \
+if (contents[0] == 0xEF && contents[1] == 0xBB && contents[2] == 0xBF) { \
+  _G_token_begin = _G_token_end = 3; \
+  _G_current_offset = 3; \
+} // check for and ignore the UTF-8 byte order mark
 
 #define YY_USER_ACTION \
 _G_token_begin = _G_token_end; \
@@ -458,8 +464,11 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 
 <PP_SKIPPED_SECTION_PART>{
-{Whitespace}?([^#\r\n][^\r\n]*)?{NewLine}  /* skip */ ;
-.                   return csharp::parser::Token_INVALID;
+ /* splitting the line at "#" keeps the token shorter than real directives, */
+ /* so that those are recognized and not taken as skipped text as well.     */
+[^#\r\n]*           /* skip */ ;
+"#"                 /* skip */ ;
+{NewLine}           /* skip */ ;
 }
 
 <PP_LINE>{

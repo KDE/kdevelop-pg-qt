@@ -19,6 +19,7 @@ namespace csharp
   struct additive_expression_rest_ast;
   struct anonymous_method_expression_ast;
   struct anonymous_method_parameter_ast;
+  struct anonymous_method_signature_ast;
   struct argument_ast;
   struct array_creation_expression_rest_ast;
   struct array_initializer_ast;
@@ -563,174 +564,175 @@ namespace csharp
                         Kind_additive_expression_rest = 1003,
                         Kind_anonymous_method_expression = 1004,
                         Kind_anonymous_method_parameter = 1005,
-                        Kind_argument = 1006,
-                        Kind_array_creation_expression_rest = 1007,
-                        Kind_array_initializer = 1008,
-                        Kind_array_type = 1009,
-                        Kind_attribute = 1010,
-                        Kind_attribute_arguments = 1011,
-                        Kind_attribute_section = 1012,
-                        Kind_attribute_target = 1013,
-                        Kind_base_access = 1014,
-                        Kind_bit_and_expression = 1015,
-                        Kind_bit_or_expression = 1016,
-                        Kind_bit_xor_expression = 1017,
-                        Kind_block = 1018,
-                        Kind_block_statement = 1019,
-                        Kind_boolean_expression = 1020,
-                        Kind_break_statement = 1021,
-                        Kind_builtin_class_type = 1022,
-                        Kind_cast_expression = 1023,
-                        Kind_catch_clauses = 1024,
-                        Kind_checked_statement = 1025,
-                        Kind_class_base = 1026,
-                        Kind_class_body = 1027,
-                        Kind_class_declaration = 1028,
-                        Kind_class_member_declaration = 1029,
-                        Kind_class_or_struct_member_declaration = 1030,
-                        Kind_class_type = 1031,
-                        Kind_compilation_unit = 1032,
-                        Kind_conditional_expression = 1033,
-                        Kind_constant_declaration = 1034,
-                        Kind_constant_declaration_data = 1035,
-                        Kind_constant_declarator = 1036,
-                        Kind_constant_expression = 1037,
-                        Kind_constructor_constraint = 1038,
-                        Kind_constructor_declaration = 1039,
-                        Kind_constructor_initializer = 1040,
-                        Kind_continue_statement = 1041,
-                        Kind_conversion_operator_declaration = 1042,
-                        Kind_delegate_declaration = 1043,
-                        Kind_do_while_statement = 1044,
-                        Kind_embedded_statement = 1045,
-                        Kind_enum_base = 1046,
-                        Kind_enum_body = 1047,
-                        Kind_enum_declaration = 1048,
-                        Kind_enum_member_declaration = 1049,
-                        Kind_equality_expression = 1050,
-                        Kind_equality_expression_rest = 1051,
-                        Kind_event_accessor_declarations = 1052,
-                        Kind_event_declaration = 1053,
-                        Kind_expression = 1054,
-                        Kind_extern_alias_directive = 1055,
-                        Kind_finalizer_declaration = 1056,
-                        Kind_fixed_pointer_declarator = 1057,
-                        Kind_fixed_statement = 1058,
-                        Kind_floating_point_type = 1059,
-                        Kind_for_control = 1060,
-                        Kind_for_statement = 1061,
-                        Kind_foreach_statement = 1062,
-                        Kind_formal_parameter = 1063,
-                        Kind_formal_parameter_list = 1064,
-                        Kind_general_catch_clause = 1065,
-                        Kind_generic_dimension_specifier = 1066,
-                        Kind_global_attribute_section = 1067,
-                        Kind_goto_statement = 1068,
-                        Kind_identifier = 1069,
-                        Kind_if_statement = 1070,
-                        Kind_indexer_declaration = 1071,
-                        Kind_integral_type = 1072,
-                        Kind_interface_accessors = 1073,
-                        Kind_interface_base = 1074,
-                        Kind_interface_body = 1075,
-                        Kind_interface_declaration = 1076,
-                        Kind_interface_event_declaration = 1077,
-                        Kind_interface_indexer_declaration = 1078,
-                        Kind_interface_member_declaration = 1079,
-                        Kind_interface_method_declaration = 1080,
-                        Kind_interface_property_declaration = 1081,
-                        Kind_keyword = 1082,
-                        Kind_labeled_statement = 1083,
-                        Kind_literal = 1084,
-                        Kind_local_constant_declaration = 1085,
-                        Kind_local_variable_declaration = 1086,
-                        Kind_lock_statement = 1087,
-                        Kind_logical_and_expression = 1088,
-                        Kind_logical_or_expression = 1089,
-                        Kind_managed_type = 1090,
-                        Kind_method_declaration = 1091,
-                        Kind_multiplicative_expression = 1092,
-                        Kind_multiplicative_expression_rest = 1093,
-                        Kind_named_argument = 1094,
-                        Kind_namespace_body = 1095,
-                        Kind_namespace_declaration = 1096,
-                        Kind_namespace_member_declaration = 1097,
-                        Kind_namespace_name = 1098,
-                        Kind_namespace_or_type_name = 1099,
-                        Kind_namespace_or_type_name_part = 1100,
-                        Kind_namespace_or_type_name_safe = 1101,
-                        Kind_new_expression = 1102,
-                        Kind_non_array_type = 1103,
-                        Kind_non_nullable_type = 1104,
-                        Kind_null_coalescing_expression = 1105,
-                        Kind_numeric_type = 1106,
-                        Kind_object_or_delegate_creation_expression_rest = 1107,
-                        Kind_optional_argument_list = 1108,
-                        Kind_optional_modifiers = 1109,
-                        Kind_optionally_nullable_type = 1110,
-                        Kind_overloadable_binary_only_operator = 1111,
-                        Kind_overloadable_unary_only_operator = 1112,
-                        Kind_overloadable_unary_or_binary_operator = 1113,
-                        Kind_parameter_array = 1114,
-                        Kind_parameter_modifier = 1115,
-                        Kind_pointer_type = 1116,
-                        Kind_positional_argument = 1117,
-                        Kind_predefined_type = 1118,
-                        Kind_primary_atom = 1119,
-                        Kind_primary_expression = 1120,
-                        Kind_primary_or_secondary_constraint = 1121,
-                        Kind_primary_suffix = 1122,
-                        Kind_property_declaration = 1123,
-                        Kind_qualified_identifier = 1124,
-                        Kind_rank_specifier = 1125,
-                        Kind_relational_expression = 1126,
-                        Kind_relational_expression_rest = 1127,
-                        Kind_resource_acquisition = 1128,
-                        Kind_return_statement = 1129,
-                        Kind_return_type = 1130,
-                        Kind_secondary_constraints = 1131,
-                        Kind_shift_expression = 1132,
-                        Kind_shift_expression_rest = 1133,
-                        Kind_simple_name_or_member_access = 1134,
-                        Kind_simple_type = 1135,
-                        Kind_specific_catch_clause = 1136,
-                        Kind_stackalloc_initializer = 1137,
-                        Kind_statement_expression = 1138,
-                        Kind_struct_body = 1139,
-                        Kind_struct_declaration = 1140,
-                        Kind_struct_interfaces = 1141,
-                        Kind_struct_member_declaration = 1142,
-                        Kind_switch_label = 1143,
-                        Kind_switch_section = 1144,
-                        Kind_switch_statement = 1145,
-                        Kind_throw_statement = 1146,
-                        Kind_try_statement = 1147,
-                        Kind_type = 1148,
-                        Kind_type_arguments = 1149,
-                        Kind_type_arguments_or_parameters_end = 1150,
-                        Kind_type_declaration = 1151,
-                        Kind_type_declaration_rest = 1152,
-                        Kind_type_name = 1153,
-                        Kind_type_name_safe = 1154,
-                        Kind_type_parameter = 1155,
-                        Kind_type_parameter_constraints = 1156,
-                        Kind_type_parameter_constraints_clauses = 1157,
-                        Kind_type_parameters = 1158,
-                        Kind_typeof_expression = 1159,
-                        Kind_unary_expression = 1160,
-                        Kind_unary_or_binary_operator_declaration = 1161,
-                        Kind_unbound_type_name = 1162,
-                        Kind_unbound_type_name_part = 1163,
-                        Kind_unchecked_statement = 1164,
-                        Kind_unmanaged_type = 1165,
-                        Kind_unsafe_statement = 1166,
-                        Kind_using_directive = 1167,
-                        Kind_using_statement = 1168,
-                        Kind_variable_declaration_data = 1169,
-                        Kind_variable_declarator = 1170,
-                        Kind_variable_initializer = 1171,
-                        Kind_while_statement = 1172,
-                        Kind_yield_statement = 1173,
+                        Kind_anonymous_method_signature = 1006,
+                        Kind_argument = 1007,
+                        Kind_array_creation_expression_rest = 1008,
+                        Kind_array_initializer = 1009,
+                        Kind_array_type = 1010,
+                        Kind_attribute = 1011,
+                        Kind_attribute_arguments = 1012,
+                        Kind_attribute_section = 1013,
+                        Kind_attribute_target = 1014,
+                        Kind_base_access = 1015,
+                        Kind_bit_and_expression = 1016,
+                        Kind_bit_or_expression = 1017,
+                        Kind_bit_xor_expression = 1018,
+                        Kind_block = 1019,
+                        Kind_block_statement = 1020,
+                        Kind_boolean_expression = 1021,
+                        Kind_break_statement = 1022,
+                        Kind_builtin_class_type = 1023,
+                        Kind_cast_expression = 1024,
+                        Kind_catch_clauses = 1025,
+                        Kind_checked_statement = 1026,
+                        Kind_class_base = 1027,
+                        Kind_class_body = 1028,
+                        Kind_class_declaration = 1029,
+                        Kind_class_member_declaration = 1030,
+                        Kind_class_or_struct_member_declaration = 1031,
+                        Kind_class_type = 1032,
+                        Kind_compilation_unit = 1033,
+                        Kind_conditional_expression = 1034,
+                        Kind_constant_declaration = 1035,
+                        Kind_constant_declaration_data = 1036,
+                        Kind_constant_declarator = 1037,
+                        Kind_constant_expression = 1038,
+                        Kind_constructor_constraint = 1039,
+                        Kind_constructor_declaration = 1040,
+                        Kind_constructor_initializer = 1041,
+                        Kind_continue_statement = 1042,
+                        Kind_conversion_operator_declaration = 1043,
+                        Kind_delegate_declaration = 1044,
+                        Kind_do_while_statement = 1045,
+                        Kind_embedded_statement = 1046,
+                        Kind_enum_base = 1047,
+                        Kind_enum_body = 1048,
+                        Kind_enum_declaration = 1049,
+                        Kind_enum_member_declaration = 1050,
+                        Kind_equality_expression = 1051,
+                        Kind_equality_expression_rest = 1052,
+                        Kind_event_accessor_declarations = 1053,
+                        Kind_event_declaration = 1054,
+                        Kind_expression = 1055,
+                        Kind_extern_alias_directive = 1056,
+                        Kind_finalizer_declaration = 1057,
+                        Kind_fixed_pointer_declarator = 1058,
+                        Kind_fixed_statement = 1059,
+                        Kind_floating_point_type = 1060,
+                        Kind_for_control = 1061,
+                        Kind_for_statement = 1062,
+                        Kind_foreach_statement = 1063,
+                        Kind_formal_parameter = 1064,
+                        Kind_formal_parameter_list = 1065,
+                        Kind_general_catch_clause = 1066,
+                        Kind_generic_dimension_specifier = 1067,
+                        Kind_global_attribute_section = 1068,
+                        Kind_goto_statement = 1069,
+                        Kind_identifier = 1070,
+                        Kind_if_statement = 1071,
+                        Kind_indexer_declaration = 1072,
+                        Kind_integral_type = 1073,
+                        Kind_interface_accessors = 1074,
+                        Kind_interface_base = 1075,
+                        Kind_interface_body = 1076,
+                        Kind_interface_declaration = 1077,
+                        Kind_interface_event_declaration = 1078,
+                        Kind_interface_indexer_declaration = 1079,
+                        Kind_interface_member_declaration = 1080,
+                        Kind_interface_method_declaration = 1081,
+                        Kind_interface_property_declaration = 1082,
+                        Kind_keyword = 1083,
+                        Kind_labeled_statement = 1084,
+                        Kind_literal = 1085,
+                        Kind_local_constant_declaration = 1086,
+                        Kind_local_variable_declaration = 1087,
+                        Kind_lock_statement = 1088,
+                        Kind_logical_and_expression = 1089,
+                        Kind_logical_or_expression = 1090,
+                        Kind_managed_type = 1091,
+                        Kind_method_declaration = 1092,
+                        Kind_multiplicative_expression = 1093,
+                        Kind_multiplicative_expression_rest = 1094,
+                        Kind_named_argument = 1095,
+                        Kind_namespace_body = 1096,
+                        Kind_namespace_declaration = 1097,
+                        Kind_namespace_member_declaration = 1098,
+                        Kind_namespace_name = 1099,
+                        Kind_namespace_or_type_name = 1100,
+                        Kind_namespace_or_type_name_part = 1101,
+                        Kind_namespace_or_type_name_safe = 1102,
+                        Kind_new_expression = 1103,
+                        Kind_non_array_type = 1104,
+                        Kind_non_nullable_type = 1105,
+                        Kind_null_coalescing_expression = 1106,
+                        Kind_numeric_type = 1107,
+                        Kind_object_or_delegate_creation_expression_rest = 1108,
+                        Kind_optional_argument_list = 1109,
+                        Kind_optional_modifiers = 1110,
+                        Kind_optionally_nullable_type = 1111,
+                        Kind_overloadable_binary_only_operator = 1112,
+                        Kind_overloadable_unary_only_operator = 1113,
+                        Kind_overloadable_unary_or_binary_operator = 1114,
+                        Kind_parameter_array = 1115,
+                        Kind_parameter_modifier = 1116,
+                        Kind_pointer_type = 1117,
+                        Kind_positional_argument = 1118,
+                        Kind_predefined_type = 1119,
+                        Kind_primary_atom = 1120,
+                        Kind_primary_expression = 1121,
+                        Kind_primary_or_secondary_constraint = 1122,
+                        Kind_primary_suffix = 1123,
+                        Kind_property_declaration = 1124,
+                        Kind_qualified_identifier = 1125,
+                        Kind_rank_specifier = 1126,
+                        Kind_relational_expression = 1127,
+                        Kind_relational_expression_rest = 1128,
+                        Kind_resource_acquisition = 1129,
+                        Kind_return_statement = 1130,
+                        Kind_return_type = 1131,
+                        Kind_secondary_constraints = 1132,
+                        Kind_shift_expression = 1133,
+                        Kind_shift_expression_rest = 1134,
+                        Kind_simple_name_or_member_access = 1135,
+                        Kind_simple_type = 1136,
+                        Kind_specific_catch_clause = 1137,
+                        Kind_stackalloc_initializer = 1138,
+                        Kind_statement_expression = 1139,
+                        Kind_struct_body = 1140,
+                        Kind_struct_declaration = 1141,
+                        Kind_struct_interfaces = 1142,
+                        Kind_struct_member_declaration = 1143,
+                        Kind_switch_label = 1144,
+                        Kind_switch_section = 1145,
+                        Kind_switch_statement = 1146,
+                        Kind_throw_statement = 1147,
+                        Kind_try_statement = 1148,
+                        Kind_type = 1149,
+                        Kind_type_arguments = 1150,
+                        Kind_type_arguments_or_parameters_end = 1151,
+                        Kind_type_declaration = 1152,
+                        Kind_type_declaration_rest = 1153,
+                        Kind_type_name = 1154,
+                        Kind_type_name_safe = 1155,
+                        Kind_type_parameter = 1156,
+                        Kind_type_parameter_constraints = 1157,
+                        Kind_type_parameter_constraints_clauses = 1158,
+                        Kind_type_parameters = 1159,
+                        Kind_typeof_expression = 1160,
+                        Kind_unary_expression = 1161,
+                        Kind_unary_or_binary_operator_declaration = 1162,
+                        Kind_unbound_type_name = 1163,
+                        Kind_unbound_type_name_part = 1164,
+                        Kind_unchecked_statement = 1165,
+                        Kind_unmanaged_type = 1166,
+                        Kind_unsafe_statement = 1167,
+                        Kind_using_directive = 1168,
+                        Kind_using_statement = 1169,
+                        Kind_variable_declaration_data = 1170,
+                        Kind_variable_declarator = 1171,
+                        Kind_variable_initializer = 1172,
+                        Kind_while_statement = 1173,
+                        Kind_yield_statement = 1174,
                         AST_NODE_KIND_COUNT
                       };
 
@@ -795,7 +797,7 @@ namespace csharp
         KIND = Kind_anonymous_method_expression
       };
 
-      const list_node<anonymous_method_parameter_ast *> *anonymous_method_parameter_sequence;
+      anonymous_method_signature_ast *anonymous_method_signature;
       block_ast *body;
     };
 
@@ -809,6 +811,16 @@ namespace csharp
       parameter_modifier_ast *modifier;
       type_ast *type;
       identifier_ast *variable_name;
+    };
+
+  struct anonymous_method_signature_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_anonymous_method_signature
+      };
+
+      const list_node<anonymous_method_parameter_ast *> *anonymous_method_parameter_sequence;
     };
 
   struct argument_ast: public ast_node
@@ -1595,6 +1607,7 @@ namespace csharp
       type_ast *type;
       type_name_safe_ast *interface_type;
       formal_parameter_list_ast *formal_parameters;
+      accessor_declarations_ast *accessor_declarations;
     };
 
   struct integral_type_ast: public ast_node
@@ -3049,6 +3062,7 @@ namespace csharp
       bool parse_additive_expression_rest(additive_expression_rest_ast **yynode);
       bool parse_anonymous_method_expression(anonymous_method_expression_ast **yynode);
       bool parse_anonymous_method_parameter(anonymous_method_parameter_ast **yynode);
+      bool parse_anonymous_method_signature(anonymous_method_signature_ast **yynode);
       bool parse_argument(argument_ast **yynode);
       bool parse_array_creation_expression_rest(array_creation_expression_rest_ast **yynode, type_ast *type);
       bool parse_array_initializer(array_initializer_ast **yynode);
@@ -3242,6 +3256,8 @@ namespace csharp
       virtual void visit_anonymous_method_expression(anonymous_method_expression_ast *)
       {}
       virtual void visit_anonymous_method_parameter(anonymous_method_parameter_ast *)
+      {}
+      virtual void visit_anonymous_method_signature(anonymous_method_signature_ast *)
       {}
       virtual void visit_argument(argument_ast *)
       {}
@@ -3637,6 +3653,19 @@ namespace csharp
 
       virtual void visit_anonymous_method_expression(anonymous_method_expression_ast *node)
       {
+        visit_node(node->anonymous_method_signature);
+        visit_node(node->body);
+      }
+
+      virtual void visit_anonymous_method_parameter(anonymous_method_parameter_ast *node)
+      {
+        visit_node(node->modifier);
+        visit_node(node->type);
+        visit_node(node->variable_name);
+      }
+
+      virtual void visit_anonymous_method_signature(anonymous_method_signature_ast *node)
+      {
         if (node->anonymous_method_parameter_sequence)
           {
             const list_node<anonymous_method_parameter_ast*> *__it = node->anonymous_method_parameter_sequence->to_front(), *__end = __it;
@@ -3647,14 +3676,6 @@ namespace csharp
               }
             while (__it != __end);
           }
-        visit_node(node->body);
-      }
-
-      virtual void visit_anonymous_method_parameter(anonymous_method_parameter_ast *node)
-      {
-        visit_node(node->modifier);
-        visit_node(node->type);
-        visit_node(node->variable_name);
       }
 
       virtual void visit_argument(argument_ast *node)
@@ -4460,6 +4481,7 @@ namespace csharp
             while (__it != __end);
           }
         visit_node(node->formal_parameters);
+        visit_node(node->accessor_declarations);
       }
 
       virtual void visit_integral_type(integral_type_ast *node)

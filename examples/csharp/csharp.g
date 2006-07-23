@@ -1133,7 +1133,7 @@ namespace csharp_pp
       (#variable_declarator=variable_declarator @ COMMA) SEMICOLON
     |
       event_name=type_name
-      LPAREN event_accessor_declarations=event_accessor_declarations RPAREN
+      LBRACE event_accessor_declarations=event_accessor_declarations RBRACE
    )
 -> event_declaration [
      argument member node #attribute: attribute_section;
@@ -1579,8 +1579,11 @@ namespace csharp_pp
 -- Type parameter CONSTRAINTS CLAUSES also belong to C#'s generics,
 -- and can narrow down the allowed types given as type arguments.
 
-   WHERE type_parameter=identifier COLON constraints=type_parameter_constraints
+   (#clause=type_parameter_constraints_clause)+
 -> type_parameter_constraints_clauses ;;
+
+   WHERE type_parameter=identifier COLON constraints=type_parameter_constraints
+-> type_parameter_constraints_clause ;;
 
  (
    primary_or_secondary_constraint=primary_or_secondary_constraint
@@ -2384,7 +2387,7 @@ namespace csharp_pp
    array_initializer=array_initializer
  |
    LBRACKET (#expression=expression @ COMMA) RBRACKET
-   ( 0 [: if (LA(2).kind != Token_COMMA || LA(2).kind != Token_RBRACKET)
+   ( 0 [: if (LA(2).kind != Token_COMMA && LA(2).kind != Token_RBRACKET)
             { break; }
         :] -- avoids swallowing the LBRACKETs in
            -- primary_suffix's element access part.

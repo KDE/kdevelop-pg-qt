@@ -78,6 +78,10 @@ private:
 
     // Counter variable for type arguments nesting
     int _M_ltCounter;
+
+    // Flag to remember if a type rule is something like "a.b.c" or a built-in
+    // type. Helps to improve correctness for cast expression lookaheads.
+    bool _M_is_type_name;
 };
 
 } // end of namespace csharp

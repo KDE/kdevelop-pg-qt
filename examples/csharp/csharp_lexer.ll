@@ -140,7 +140,7 @@ UnicodeNewLine  [\xE2][\x80][\xA8-\xA9]
  /* non-Unicode stuff */
 
 Whitespace      [ \t\v\f]+
-NewLine         "\r\n"|\r|\n
+NewLine         ("\r\n"|\r|\n)
 LineComment     "//"[^\r\n]*
 
 DecimalDigit    [0-9]
@@ -151,26 +151,26 @@ LongUnicodeEscape   [\\][U]{HexDigit}{HexDigit}{HexDigit}{HexDigit}{HexDigit}{He
 UnicodeEscape   {ShortUnicodeEscape}|{LongUnicodeEscape}
 HexEscape       [\\][x]{HexDigit}{HexDigit}?{HexDigit}?{HexDigit}?
 SimpleEscape    [\\]([']|["]|[\\]|[0abfnrtv])
-Escape          {SimpleEscape}|{UnicodeEscape}|{HexEscape}
+Escape          ({SimpleEscape}|{UnicodeEscape}|{HexEscape})
 
-IntegerSuffix   ([Ll][Uu]?)|([Uu][Ll]?)
+IntegerSuffix   (([Ll][Uu]?)|([Uu][Ll]?))
 DecimalLiteral  {DecimalDigit}+{IntegerSuffix}?
 HexLiteral      [0][xX]{HexDigit}+{IntegerSuffix}?
-IntegerLiteral  {DecimalLiteral}|{HexLiteral}
+IntegerLiteral  ({DecimalLiteral}|{HexLiteral})
 
 Sign            [+-]
-RealSuffix      [fF]|[dD]|[mM]
+RealSuffix      ([fF]|[dD]|[mM])
 Exponent        [eE]{Sign}?{DecimalDigit}+
 Real1           {DecimalDigit}+[\.]{DecimalDigit}+{Exponent}?{RealSuffix}?
 Real2           [\.]{DecimalDigit}+{Exponent}?{RealSuffix}?
 Real3           {DecimalDigit}+{Exponent}{RealSuffix}?
 Real4           {DecimalDigit}+{RealSuffix}
-RealLiteral     {Real1}|{Real2}|{Real3}|{Real4}
+RealLiteral     ({Real1}|{Real2}|{Real3}|{Real4})
 InvalidReal     {DecimalDigit}+[\.]{Exponent}?{RealSuffix}?
 
 AvailableIdentifier {Letter}({Letter}|{DecimalDigit})*
 VerbatimIdentifier  [@]{Letter}({Letter}|{DecimalDigit})*
-Identifier      {AvailableIdentifier}|{VerbatimIdentifier}
+Identifier      ({AvailableIdentifier}|{VerbatimIdentifier})
 
 ppPrefix        ^{Whitespace}?[#]{Whitespace}?
 ppNewLine       {Whitespace}?{LineComment}?{NewLine}
@@ -425,7 +425,11 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 
 <PP_EXPECT_NEW_LINE,PP_DECLARATION,PP_IF_CLAUSE,PP_LINE,PP_MESSAGE,PP_PRAGMA>{
-<<EOF>>  return csharp_pp::parser::Token_EOF;
+<<EOF>> {
+    _G_parser->report_problem( csharp::parser::warning,
+      "No newline at the end of the file" );
+    return csharp_pp::parser::Token_PP_NEW_LINE;
+}
 }
 
 

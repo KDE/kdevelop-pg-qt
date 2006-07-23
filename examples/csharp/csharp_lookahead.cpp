@@ -167,11 +167,17 @@ bool lookahead::is_unbound_type_name()
                   if (_M_token != parser::Token_LESS_THAN)
                     return false;
                   fetch_next_token();
+
+                  if (_M_token == parser::Token_GREATER_THAN)
+                    {
+                      return true; // only unbound type names have empty "<>" lists
+                    }
                   while (_M_token == parser::Token_COMMA)
                     {
                       return true; // when there's a comma, there's no doubt
-                                   // that this should be an unbound type name
+                                  // that this should be an unbound type name
                     }
+
                   if (_M_token != parser::Token_GREATER_THAN)
                     return false;
                   fetch_next_token();
@@ -194,7 +200,7 @@ bool lookahead::is_unbound_type_name()
       return false;
     }
 
-  return true;
+  return false;
 }
 
 
@@ -258,15 +264,24 @@ bool lookahead::is_cast_expression_start()
       if (_M_token != parser::Token_LPAREN)
         return false;
       fetch_next_token();
+
       if (!is_type())
         {
           return false;
         }
+
       if (_M_token != parser::Token_RPAREN)
         return false;
       fetch_next_token();
 
-      if (_M_token == parser::Token_BASE
+      if (_M_is_type_name == false) // has been set by is_non_nullable_type()
+        {
+          // only "a.b.c" names are still ambiguous here, not builtin types
+          return true;
+        }
+
+      if (_M_token == parser::Token_IDENTIFIER
+          || _M_token == parser::Token_BASE
           || _M_token == parser::Token_BOOL
           || _M_token == parser::Token_BYTE
           || _M_token == parser::Token_CHAR
@@ -316,8 +331,7 @@ bool lookahead::is_cast_expression_start()
           || _M_token == parser::Token_INTEGER_LITERAL
           || _M_token == parser::Token_REAL_LITERAL
           || _M_token == parser::Token_CHARACTER_LITERAL
-          || _M_token == parser::Token_STRING_LITERAL
-          || _M_token == parser::Token_IDENTIFIER)
+          || _M_token == parser::Token_STRING_LITERAL)
         {
           return true;
         }
@@ -337,6 +351,8 @@ bool lookahead::is_cast_expression_start()
 // This is directly is_unmanaged_type, as is_type just redirects
 bool lookahead::is_type()
 {
+  _M_is_type_name = false; // will be set by is_non_nullable_type()
+
   if (_M_token == parser::Token_BOOL
       || _M_token == parser::Token_BYTE
       || _M_token == parser::Token_CHAR
@@ -625,6 +641,7 @@ bool lookahead::is_non_nullable_type()
             {
               return false;
             }
+          _M_is_type_name = true;
         }
       else if (_M_token == parser::Token_BOOL
                || _M_token == parser::Token_BYTE
@@ -644,6 +661,7 @@ bool lookahead::is_non_nullable_type()
             {
               return false;
             }
+          _M_is_type_name = false;
         }
       else
         {

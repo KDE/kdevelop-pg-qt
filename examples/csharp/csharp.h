@@ -171,6 +171,7 @@ namespace csharp
   struct type_name_safe_ast;
   struct type_parameter_ast;
   struct type_parameter_constraints_ast;
+  struct type_parameter_constraints_clause_ast;
   struct type_parameter_constraints_clauses_ast;
   struct type_parameters_ast;
   struct typeof_expression_ast;
@@ -716,23 +717,24 @@ namespace csharp
                         Kind_type_name_safe = 1155,
                         Kind_type_parameter = 1156,
                         Kind_type_parameter_constraints = 1157,
-                        Kind_type_parameter_constraints_clauses = 1158,
-                        Kind_type_parameters = 1159,
-                        Kind_typeof_expression = 1160,
-                        Kind_unary_expression = 1161,
-                        Kind_unary_or_binary_operator_declaration = 1162,
-                        Kind_unbound_type_name = 1163,
-                        Kind_unbound_type_name_part = 1164,
-                        Kind_unchecked_statement = 1165,
-                        Kind_unmanaged_type = 1166,
-                        Kind_unsafe_statement = 1167,
-                        Kind_using_directive = 1168,
-                        Kind_using_statement = 1169,
-                        Kind_variable_declaration_data = 1170,
-                        Kind_variable_declarator = 1171,
-                        Kind_variable_initializer = 1172,
-                        Kind_while_statement = 1173,
-                        Kind_yield_statement = 1174,
+                        Kind_type_parameter_constraints_clause = 1158,
+                        Kind_type_parameter_constraints_clauses = 1159,
+                        Kind_type_parameters = 1160,
+                        Kind_typeof_expression = 1161,
+                        Kind_unary_expression = 1162,
+                        Kind_unary_or_binary_operator_declaration = 1163,
+                        Kind_unbound_type_name = 1164,
+                        Kind_unbound_type_name_part = 1165,
+                        Kind_unchecked_statement = 1166,
+                        Kind_unmanaged_type = 1167,
+                        Kind_unsafe_statement = 1168,
+                        Kind_using_directive = 1169,
+                        Kind_using_statement = 1170,
+                        Kind_variable_declaration_data = 1171,
+                        Kind_variable_declarator = 1172,
+                        Kind_variable_initializer = 1173,
+                        Kind_while_statement = 1174,
+                        Kind_yield_statement = 1175,
                         AST_NODE_KIND_COUNT
                       };
 
@@ -2570,6 +2572,17 @@ namespace csharp
       constructor_constraint_ast *constructor_constraint;
     };
 
+  struct type_parameter_constraints_clause_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_type_parameter_constraints_clause
+      };
+
+      identifier_ast *type_parameter;
+      type_parameter_constraints_ast *constraints;
+    };
+
   struct type_parameter_constraints_clauses_ast: public ast_node
     {
       enum
@@ -2577,8 +2590,7 @@ namespace csharp
         KIND = Kind_type_parameter_constraints_clauses
       };
 
-      identifier_ast *type_parameter;
-      type_parameter_constraints_ast *constraints;
+      const list_node<type_parameter_constraints_clause_ast *> *clause_sequence;
     };
 
   struct type_parameters_ast: public ast_node
@@ -3214,6 +3226,7 @@ namespace csharp
       bool parse_type_name_safe(type_name_safe_ast **yynode);
       bool parse_type_parameter(type_parameter_ast **yynode);
       bool parse_type_parameter_constraints(type_parameter_constraints_ast **yynode);
+      bool parse_type_parameter_constraints_clause(type_parameter_constraints_clause_ast **yynode);
       bool parse_type_parameter_constraints_clauses(type_parameter_constraints_clauses_ast **yynode);
       bool parse_type_parameters(type_parameters_ast **yynode);
       bool parse_typeof_expression(typeof_expression_ast **yynode);
@@ -3560,6 +3573,8 @@ namespace csharp
                                                         virtual void visit_type_parameter(type_parameter_ast *)
                                                         {}
                                                         virtual void visit_type_parameter_constraints(type_parameter_constraints_ast *)
+                                                        {}
+                                                        virtual void visit_type_parameter_constraints_clause(type_parameter_constraints_clause_ast *)
                                                         {}
                                                         virtual void visit_type_parameter_constraints_clauses(type_parameter_constraints_clauses_ast *)
                                                         {}
@@ -5294,10 +5309,24 @@ namespace csharp
                                                           visit_node(node->constructor_constraint);
                                                         }
 
-                                                        virtual void visit_type_parameter_constraints_clauses(type_parameter_constraints_clauses_ast *node)
+                                                        virtual void visit_type_parameter_constraints_clause(type_parameter_constraints_clause_ast *node)
                                                         {
                                                           visit_node(node->type_parameter);
                                                           visit_node(node->constraints);
+                                                        }
+
+                                                        virtual void visit_type_parameter_constraints_clauses(type_parameter_constraints_clauses_ast *node)
+                                                        {
+                                                          if (node->clause_sequence)
+                                                            {
+                                                              const list_node<type_parameter_constraints_clause_ast*> *__it = node->clause_sequence->to_front(), *__end = __it;
+                                                              do
+                                                                {
+                                                                  visit_node(__it->element);
+                                                                  __it = __it->next;
+                                                                }
+                                                              while (__it != __end);
+                                                            }
                                                         }
 
                                                         virtual void visit_type_parameters(type_parameters_ast *node)

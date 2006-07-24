@@ -407,7 +407,7 @@ namespace csharp_pp
        * and any parse_*() method can be called. Alternatively, the end of file
        * has been reached and we have to issue an error.
        */
-      bool tokenize();
+      void tokenize(bool &encountered_eof);
 
       /**
        * Add the currently lexed token into the token stream, using the

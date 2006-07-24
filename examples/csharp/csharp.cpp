@@ -2922,6 +2922,7 @@ namespace csharp
                || yytoken == Token_EVENT
                || yytoken == Token_EXPLICIT
                || yytoken == Token_EXTERN
+               || yytoken == Token_FIXED
                || yytoken == Token_FLOAT
                || yytoken == Token_IMPLICIT
                || yytoken == Token_INT
@@ -3103,6 +3104,7 @@ namespace csharp
         || yytoken == Token_EVENT
         || yytoken == Token_EXPLICIT
         || yytoken == Token_EXTERN
+        || yytoken == Token_FIXED
         || yytoken == Token_FLOAT
         || yytoken == Token_IMPLICIT
         || yytoken == Token_INT
@@ -3630,6 +3632,7 @@ namespace csharp
         || yytoken == Token_DELEGATE
         || yytoken == Token_ENUM
         || yytoken == Token_EXTERN
+        || yytoken == Token_FIXED
         || yytoken == Token_INTERFACE
         || yytoken == Token_INTERNAL
         || yytoken == Token_NAMESPACE
@@ -3683,6 +3686,7 @@ namespace csharp
                || yytoken == Token_DELEGATE
                || yytoken == Token_ENUM
                || yytoken == Token_EXTERN
+               || yytoken == Token_FIXED
                || yytoken == Token_INTERFACE
                || yytoken == Token_INTERNAL
                || yytoken == Token_NAMESPACE
@@ -9328,6 +9332,7 @@ namespace csharp
                || yytoken == Token_DELEGATE
                || yytoken == Token_ENUM
                || yytoken == Token_EXTERN
+               || yytoken == Token_FIXED
                || yytoken == Token_INTERFACE
                || yytoken == Token_INTERNAL
                || yytoken == Token_NAMESPACE
@@ -9424,6 +9429,7 @@ namespace csharp
         || yytoken == Token_DELEGATE
         || yytoken == Token_ENUM
         || yytoken == Token_EXTERN
+        || yytoken == Token_FIXED
         || yytoken == Token_INTERFACE
         || yytoken == Token_INTERNAL
         || yytoken == Token_NAMESPACE
@@ -9456,6 +9462,7 @@ namespace csharp
                  || yytoken == Token_DELEGATE
                  || yytoken == Token_ENUM
                  || yytoken == Token_EXTERN
+                 || yytoken == Token_FIXED
                  || yytoken == Token_INTERFACE
                  || yytoken == Token_INTERNAL
                  || yytoken == Token_NEW
@@ -10323,6 +10330,7 @@ namespace csharp
 
     if (yytoken == Token_ABSTRACT
         || yytoken == Token_EXTERN
+        || yytoken == Token_FIXED
         || yytoken == Token_INTERNAL
         || yytoken == Token_NEW
         || yytoken == Token_OVERRIDE
@@ -10375,6 +10383,7 @@ namespace csharp
       {
         while (yytoken == Token_ABSTRACT
                || yytoken == Token_EXTERN
+               || yytoken == Token_FIXED
                || yytoken == Token_INTERNAL
                || yytoken == Token_NEW
                || yytoken == Token_OVERRIDE
@@ -10485,6 +10494,13 @@ namespace csharp
                   return yy_expected_token(yytoken, Token_UNSAFE, "unsafe");
                 yylex();
                 (*yynode)->modifiers |= modifiers::mod_unsafe;
+              }
+            else if (yytoken == Token_FIXED)
+              {
+                if (yytoken != Token_FIXED)
+                  return yy_expected_token(yytoken, Token_FIXED, "fixed");
+                yylex();
+                (*yynode)->modifiers |= modifiers::mod_fixed;
               }
             else
               {
@@ -13077,6 +13093,7 @@ namespace csharp
                                                                  || yytoken == Token_EVENT
                                                                  || yytoken == Token_EXPLICIT
                                                                  || yytoken == Token_EXTERN
+                                                                 || yytoken == Token_FIXED
                                                                  || yytoken == Token_FLOAT
                                                                  || yytoken == Token_IMPLICIT
                                                                  || yytoken == Token_INT
@@ -13297,6 +13314,7 @@ namespace csharp
                                                           || yytoken == Token_EVENT
                                                           || yytoken == Token_EXPLICIT
                                                           || yytoken == Token_EXTERN
+                                                          || yytoken == Token_FIXED
                                                           || yytoken == Token_FLOAT
                                                           || yytoken == Token_IMPLICIT
                                                           || yytoken == Token_INT
@@ -13911,6 +13929,7 @@ namespace csharp
                                                           || yytoken == Token_DELEGATE
                                                           || yytoken == Token_ENUM
                                                           || yytoken == Token_EXTERN
+                                                          || yytoken == Token_FIXED
                                                           || yytoken == Token_INTERFACE
                                                           || yytoken == Token_INTERNAL
                                                           || yytoken == Token_NEW

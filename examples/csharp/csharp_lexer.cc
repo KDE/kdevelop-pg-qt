@@ -3974,7 +3974,7 @@ case YY_STATE_EOF(PP_PRAGMA):
 {
     _G_parser->report_problem( csharp::parser::warning,
       "No newline at the end of the file" );
-    return csharp_pp::parser::Token_PP_NEW_LINE;
+    return csharp_pp::parser::Token_EOF;
 }
 	YY_BREAK
 

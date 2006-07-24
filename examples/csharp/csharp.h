@@ -345,6 +345,7 @@ namespace csharp
       mod_override     = 2048,
       mod_extern       = 4096,
       mod_unsafe       = 8192,
+      mod_fixed        = 16384,
     };
   }
 

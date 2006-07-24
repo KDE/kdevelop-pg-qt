@@ -21,18 +21,11 @@ namespace csharp_pp
       return parser::result_invalid;
 
     _M_scope = scope;
+    bool encountered_eof;
 
     // 1) tokenize
     add_token(first_token);
-    if (tokenize() == parser::Token_EOF)
-      {
-        if (_M_scope->csharp_parser() != 0)
-          {
-            _M_scope->csharp_parser()->report_problem( ::csharp::parser::error,
-                "Encountered unexpected end of file in a pre-processor directive");
-          }
-        return parser::result_eof;
-      }
+    tokenize(encountered_eof);
 
     // 2) parse
     pp_directive_ast* pp_directive_node = 0;
@@ -50,7 +43,10 @@ namespace csharp_pp
         return parser::result_invalid;
       }
 
-    return parser::result_ok;
+    if (encountered_eof)
+      return parser::result_eof;
+    else
+      return parser::result_ok;
   }
 
 

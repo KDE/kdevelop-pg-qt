@@ -27,7 +27,7 @@
 -----------------------------------------------------------------------------
 
 
--- 16 first/follow conflicts:
+-- 15 first/follow conflicts:
 --  - The EXTERN conflicts in compilation_unit. They would be gone if
 --    type_declaration used optional_type_modifiers instead of
 --    broader optional_modifiers, but we stick with the latter one in order
@@ -47,22 +47,6 @@
 --    (done right by default, 1 conflict)
 --  - The COMMA conflict in enum_body, also similar to the above.
 --    (manually resolved, 1 conflict)
---  - The STAR conflict in unmanaged_type:
---    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
---    at all, only kdevelop-pg thinks it does. Code segments...
---    (done right by default, 1 conflict)
---  - The LBRACKET conflict in managed_type, for which new_expression
---    with its array_creation_expression part is to blame.
---    Caused by the fact that array_creation_expression can't be seperated.
---    As a consequence, all rank specifiers are checked for safety, always.
---    (manually resolved, 1 conflict)
---  - The DOT conflict in namespace_or_type_name:
---    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
---    at all, only kdevelop-pg thinks it does. Code segments...
---    (done right by default, 1 conflict)
---  - The DOT conflict in namespace_or_type_name_safe,
---    which actually stems from indexer_declaration.
---    (manually resolved, 1 conflict)
 --  - The COMMA conflict in type_arguments:
 --    the approach for catching ">" signs works this way, and the conflict
 --    is resolved by the trailing condition at the end of the rule.
@@ -72,9 +56,28 @@
 --    (manually resolved, 1 conflict)
 --  - The COMMA conflict in array_initializer, another one of those.
 --    (manually resolved, 1 conflict)
---  - The LBRACKET conflict in array_creation_expression, similar to the
---    one in managed_type, only that it's triggered by primary_suffix instead.
+--  - The STAR conflict in unmanaged_type:
+--    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
+--    at all, only kdevelop-pg thinks it does. Code segments...
+--    (done right by default, 1 conflict)
+--  - The LBRACKET conflict in array_creation_expression, for which new_expression
+--    with its array_creation_expression part is to blame.
 --    Caused by the fact that array_creation_expression can't be seperated.
+--    (manually resolved, 1 conflict)
+--  - The LBRACKET, STAR conflict in unmanaged_type, similar to the one
+--    in array_creation_expression, only that it's triggered by the
+--    rank specifiers instead. The LBRACKET conflict is caused by the fact
+--    that array_creation_expression can't be seperated.
+--    As a consequence, all rank specifiers are checked for safety, always.
+--    The star conflict is caused by the may-end-with-epsilon type_arguments.
+--    It doesn't apply at all, only kdevelop-pg thinks it does. Code segments...
+--    (manually resolved, 1 conflict)
+--  - The DOT conflict in namespace_or_type_name:
+--    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
+--    at all, only kdevelop-pg thinks it does. Code segments...
+--    (done right by default, 1 conflict)
+--  - The DOT conflict in namespace_or_type_name_safe,
+--    which actually stems from indexer_declaration.
 --    (manually resolved, 1 conflict)
 
 -- 17 first/first conflicts:
@@ -141,7 +144,7 @@
 --    Needs LL(k), solved by lookahead_is_unbound_type_name().
 --    (1 conflict)
 
--- Total amount of conflicts: 33
+-- Total amount of conflicts: 32
 
 
 
@@ -257,6 +260,7 @@ namespace csharp_pp
     mod_override     = 2048,
     mod_extern       = 4096,
     mod_unsafe       = 8192,
+    mod_fixed        = 16384,
   };
 :]
 
@@ -2695,6 +2699,8 @@ namespace csharp_pp
  | EXTERN     [: (*yynode)->modifiers |= modifiers::mod_extern;    :]
  -- unsafe grammar extension: "unsafe" keyword
  | UNSAFE     [: (*yynode)->modifiers |= modifiers::mod_unsafe;    :]
+ -- unspecified unsafe modifier, but used by MS and Mono, so accept it here as well:
+ | FIXED      [: (*yynode)->modifiers |= modifiers::mod_fixed;     :]
  )*
 -> optional_modifiers [
   member variable modifiers: int; -- using the modifier_enum values

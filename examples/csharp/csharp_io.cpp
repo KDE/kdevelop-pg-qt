@@ -113,8 +113,9 @@ bool parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 namespace csharp_pp
 {
 
-bool parser::tokenize()
+void parser::tokenize(bool &encountered_eof)
 {
+  encountered_eof = false;
   int kind = parser::Token_EOF;
   do
     {
@@ -128,7 +129,11 @@ bool parser::tokenize()
       t.text = _G_contents;
 
       if (kind == parser::Token_EOF)
-        return false; // we neither want nor expect this in a preprocessor line
+        {
+          t.kind = parser::Token_PP_NEW_LINE;
+          encountered_eof = true;
+          break;
+        }
     }
   while (kind != parser::Token_PP_NEW_LINE);
 

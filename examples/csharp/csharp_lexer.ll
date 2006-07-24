@@ -432,6 +432,11 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 }
 
+<PP_EXPECT_NEW_LINE,PP_DECLARATION,PP_IF_CLAUSE,PP_LINE>{
+{Whitespace}        /* skip */ ;
+{LineComment}       /* before an unexpected EOF, skip */ ;
+}
+
 
 <PP_EXPECT_NEW_LINE>{
 {ppNewLine}         return csharp_pp::parser::Token_PP_NEW_LINE;
@@ -439,7 +444,6 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 
 <PP_DECLARATION>{
-{Whitespace}        /* skip */ ;
 "true"|"false" {
     _G_parser->report_problem( csharp::parser::error,
       "You may not define ``true'' or ``false'' with #define or #undef" );
@@ -452,7 +456,6 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 
 <PP_IF_CLAUSE>{
-{Whitespace}        /* skip */ ;
 "=="                return csharp_pp::parser::Token_PP_EQUAL;
 "!="                return csharp_pp::parser::Token_PP_NOT_EQUAL;
 "&&"                return csharp_pp::parser::Token_PP_LOG_AND;
@@ -476,7 +479,6 @@ ppNewLine       {Whitespace}?{LineComment}?{NewLine}
 }
 
 <PP_LINE>{
-{Whitespace}        /* skip */ ;
 {ppNewLine}         return csharp_pp::parser::Token_PP_NEW_LINE;
 {DecimalDigit}+     return csharp_pp::parser::Token_PP_LINE_NUMBER;
 ["][^\"\r\n]+["]    return csharp_pp::parser::Token_PP_FILE_NAME;

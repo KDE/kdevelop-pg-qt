@@ -47,6 +47,7 @@ public:
     bool is_local_variable_declaration_start();
     bool is_cast_expression_start();
     bool is_type();
+    bool is_unmanaged_type_suffix();
     bool is_managed_type();
     bool is_non_array_type();
     bool is_optionally_nullable_type();

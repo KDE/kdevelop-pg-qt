@@ -368,6 +368,7 @@ bool lookahead::is_type()
       || _M_token == parser::Token_UINT
       || _M_token == parser::Token_ULONG
       || _M_token == parser::Token_USHORT
+      || _M_token == parser::Token_VOID
       || _M_token == parser::Token_ADD
       || _M_token == parser::Token_ALIAS
       || _M_token == parser::Token_GET
@@ -381,29 +382,101 @@ bool lookahead::is_type()
       || _M_token == parser::Token_ASSEMBLY
       || _M_token == parser::Token_IDENTIFIER)
     {
-      if (!is_managed_type())
+      if (_M_token == parser::Token_BOOL
+          || _M_token == parser::Token_BYTE
+          || _M_token == parser::Token_CHAR
+          || _M_token == parser::Token_DECIMAL
+          || _M_token == parser::Token_DOUBLE
+          || _M_token == parser::Token_FLOAT
+          || _M_token == parser::Token_INT
+          || _M_token == parser::Token_LONG
+          || _M_token == parser::Token_OBJECT
+          || _M_token == parser::Token_SBYTE
+          || _M_token == parser::Token_SHORT
+          || _M_token == parser::Token_STRING
+          || _M_token == parser::Token_UINT
+          || _M_token == parser::Token_ULONG
+          || _M_token == parser::Token_USHORT
+          || _M_token == parser::Token_ADD
+          || _M_token == parser::Token_ALIAS
+          || _M_token == parser::Token_GET
+          || _M_token == parser::Token_GLOBAL
+          || _M_token == parser::Token_PARTIAL
+          || _M_token == parser::Token_REMOVE
+          || _M_token == parser::Token_SET
+          || _M_token == parser::Token_VALUE
+          || _M_token == parser::Token_WHERE
+          || _M_token == parser::Token_YIELD
+          || _M_token == parser::Token_ASSEMBLY
+          || _M_token == parser::Token_IDENTIFIER)
+        {
+          if (!is_non_array_type())
+            {
+              return false;
+            }
+        }
+      else if (_M_token == parser::Token_VOID)
+        {
+          if (_M_token != parser::Token_VOID)
+            return false;
+          fetch_next_token();
+          if (_M_token != parser::Token_STAR)
+            return false;
+          fetch_next_token();
+        }
+      else
         {
           return false;
         }
-    }
-  else if (_M_token == parser::Token_VOID)
-    {
-      if (_M_token != parser::Token_VOID)
-        return false;
-      fetch_next_token();
-      if (_M_token != parser::Token_STAR)
-        return false;
-      fetch_next_token();
+      while (_M_token == parser::Token_LBRACKET
+             || _M_token == parser::Token_STAR)
+        {
+          if (_M_token == parser::Token_LBRACKET
+              && _M_parser->LA(_M_count + 1).kind != parser::Token_COMMA
+              && _M_parser->LA(_M_count + 1).kind != parser::Token_RBRACKET)
+            {
+              break;
+            }
+          if (!is_unmanaged_type_suffix())
+            {
+              return false;
+            }
+        }
     }
   else
     {
       return false;
     }
-  while (_M_token == parser::Token_STAR)
+
+  return true;
+}
+
+bool lookahead::is_unmanaged_type_suffix()
+{
+  if (_M_token == parser::Token_LBRACKET
+      || _M_token == parser::Token_STAR)
     {
-      if (_M_token != parser::Token_STAR)
-        return false;
-      fetch_next_token();
+      if (_M_token == parser::Token_STAR)
+        {
+          if (_M_token != parser::Token_STAR)
+            return false;
+          fetch_next_token();
+        }
+      else if (_M_token == parser::Token_LBRACKET)
+        {
+          if (!is_rank_specifier())
+            {
+              return false;
+            }
+        }
+      else
+        {
+          return false;
+        }
+    }
+  else
+    {
+      return false;
     }
 
   return true;
@@ -1059,7 +1132,7 @@ bool lookahead::is_rank_specifier()
   return true;
 }
 
-// modified to accept almost anything within <...>
+
 bool lookahead::is_type_arguments()
 {
   if (_M_token == parser::Token_LESS_THAN)

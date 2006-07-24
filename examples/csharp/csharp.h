@@ -181,6 +181,7 @@ namespace csharp
   struct unbound_type_name_part_ast;
   struct unchecked_statement_ast;
   struct unmanaged_type_ast;
+  struct unmanaged_type_suffix_ast;
   struct unsafe_statement_ast;
   struct using_directive_ast;
   struct using_statement_ast;
@@ -414,7 +415,7 @@ namespace csharp
     {
     enum pointer_type_enum {
       type_regular,
-      type_void,
+      type_void_star,
     };
   }
 
@@ -544,6 +545,14 @@ namespace csharp
                       type_primary_expression,
                       type_pointer_indirection_expression,
                       type_addressof_expression,
+                    };
+                  }
+
+                  namespace unmanaged_type_suffix
+                    {
+                    enum suffix_type {
+                      type_star,
+                      type_rank_specifier
                     };
                   }
 
@@ -727,14 +736,15 @@ namespace csharp
                         Kind_unbound_type_name_part = 1165,
                         Kind_unchecked_statement = 1166,
                         Kind_unmanaged_type = 1167,
-                        Kind_unsafe_statement = 1168,
-                        Kind_using_directive = 1169,
-                        Kind_using_statement = 1170,
-                        Kind_variable_declaration_data = 1171,
-                        Kind_variable_declarator = 1172,
-                        Kind_variable_initializer = 1173,
-                        Kind_while_statement = 1174,
-                        Kind_yield_statement = 1175,
+                        Kind_unmanaged_type_suffix = 1168,
+                        Kind_unsafe_statement = 1169,
+                        Kind_using_directive = 1170,
+                        Kind_using_statement = 1171,
+                        Kind_variable_declaration_data = 1172,
+                        Kind_variable_declarator = 1173,
+                        Kind_variable_initializer = 1174,
+                        Kind_while_statement = 1175,
+                        Kind_yield_statement = 1176,
                         AST_NODE_KIND_COUNT
                       };
 
@@ -2121,7 +2131,8 @@ namespace csharp
 
       pointer_type::pointer_type_enum type;
       int star_count;
-      managed_type_ast *regular_type;
+      non_array_type_ast *regular_type;
+      const list_node<unmanaged_type_suffix_ast *> *unmanaged_type_suffix_sequence;
     };
 
   struct positional_argument_ast: public ast_node
@@ -2688,8 +2699,19 @@ namespace csharp
       };
 
       pointer_type::pointer_type_enum type;
-      int star_count;
-      managed_type_ast *regular_type;
+      non_array_type_ast *regular_type;
+      const list_node<unmanaged_type_suffix_ast *> *unmanaged_type_suffix_sequence;
+    };
+
+  struct unmanaged_type_suffix_ast: public ast_node
+    {
+      enum
+      {
+        KIND = Kind_unmanaged_type_suffix
+      };
+
+      unmanaged_type_suffix::suffix_type type;
+      rank_specifier_ast *rank_specifier;
     };
 
   struct unsafe_statement_ast: public ast_node
@@ -3236,6 +3258,7 @@ namespace csharp
       bool parse_unbound_type_name_part(unbound_type_name_part_ast **yynode);
       bool parse_unchecked_statement(unchecked_statement_ast **yynode);
       bool parse_unmanaged_type(unmanaged_type_ast **yynode);
+      bool parse_unmanaged_type_suffix(unmanaged_type_suffix_ast **yynode);
       bool parse_unsafe_statement(unsafe_statement_ast **yynode);
       bool parse_using_directive(using_directive_ast **yynode);
       bool parse_using_statement(using_statement_ast **yynode);
@@ -3593,6 +3616,8 @@ namespace csharp
                                                         virtual void visit_unchecked_statement(unchecked_statement_ast *)
                                                         {}
                                                         virtual void visit_unmanaged_type(unmanaged_type_ast *)
+                                                        {}
+                                                        virtual void visit_unmanaged_type_suffix(unmanaged_type_suffix_ast *)
                                                         {}
                                                         virtual void visit_unsafe_statement(unsafe_statement_ast *)
                                                         {}
@@ -4940,6 +4965,16 @@ namespace csharp
       virtual void visit_pointer_type(pointer_type_ast *node)
       {
         visit_node(node->regular_type);
+        if (node->unmanaged_type_suffix_sequence)
+          {
+            const list_node<unmanaged_type_suffix_ast*> *__it = node->unmanaged_type_suffix_sequence->to_front(), *__end = __it;
+            do
+              {
+                visit_node(__it->element);
+                __it = __it->next;
+              }
+            while (__it != __end);
+          }
       }
 
       virtual void visit_positional_argument(positional_argument_ast *node)
@@ -5406,6 +5441,21 @@ namespace csharp
                                                         virtual void visit_unmanaged_type(unmanaged_type_ast *node)
                                                         {
                                                           visit_node(node->regular_type);
+                                                          if (node->unmanaged_type_suffix_sequence)
+                                                            {
+                                                              const list_node<unmanaged_type_suffix_ast*> *__it = node->unmanaged_type_suffix_sequence->to_front(), *__end = __it;
+                                                              do
+                                                                {
+                                                                  visit_node(__it->element);
+                                                                  __it = __it->next;
+                                                                }
+                                                              while (__it != __end);
+                                                            }
+                                                        }
+
+                                                        virtual void visit_unmanaged_type_suffix(unmanaged_type_suffix_ast *node)
+                                                        {
+                                                          visit_node(node->rank_specifier);
                                                         }
 
                                                         virtual void visit_unsafe_statement(unsafe_statement_ast *node)

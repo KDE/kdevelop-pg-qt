@@ -532,7 +532,15 @@ namespace csharp_pp
 [:
   enum pointer_type_enum {
     type_regular,
-    type_void,
+    type_void_star,
+  };
+:]
+
+%namespace unmanaged_type_suffix
+[:
+  enum suffix_type {
+    type_star,
+    type_rank_specifier
   };
 :]
 
@@ -2471,25 +2479,45 @@ namespace csharp_pp
 -> type ;;
 
    -- unsafe grammar extension: unmanaged type (includes all of the managed one)
-   0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = pointer_type::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type::type_void;    :]
+   (  regular_type=non_array_type
+        [: (*yynode)->type = pointer_type::type_regular;   :]
+    | VOID STAR
+        [: (*yynode)->type = pointer_type::type_void_star; :]
    )
-   ( STAR [: (*yynode)->star_count++; :] )*
+   ( 0 [: if (yytoken == Token_LBRACKET &&
+              LA(2).kind != Token_COMMA && LA(2).kind != Token_RBRACKET)
+            { break; }
+        :] -- prevents rank_specifier from swallowing the LBRACKETs in
+           -- new_expression/array_creation_expression.
+     #unmanaged_type_suffix=unmanaged_type_suffix
+   )*
 -> unmanaged_type [
+     member variable type: pointer_type::pointer_type_enum;
+] ;;
+
+   -- unsafe grammar extension: pointer type
+   (  regular_type=non_array_type
+      #unmanaged_type_suffix=unmanaged_type_suffix
+        [: (*yynode)->type = pointer_type::type_regular;   :]
+    | VOID STAR
+        [: (*yynode)->type = pointer_type::type_void_star; :]
+   )
+   ( 0 [: if (yytoken == Token_LBRACKET &&
+              LA(2).kind != Token_COMMA && LA(2).kind != Token_RBRACKET)
+            { break; }
+        :] -- prevents rank_specifier from swallowing the LBRACKETs in
+           -- new_expression/array_creation_expression.
+     #unmanaged_type_suffix=unmanaged_type_suffix
+   )*
+-> pointer_type [
      member variable type: pointer_type::pointer_type_enum;
      member variable star_count: int;
 ] ;;
 
-   -- unsafe grammar extension: pointer type
-   0 [: (*yynode)->star_count = 0; :]
-   (  regular_type=managed_type          [: (*yynode)->type = pointer_type::type_regular; :]
-    | VOID STAR [: (*yynode)->star_count++; (*yynode)->type = pointer_type::type_void;    :]
-   )
-   ( STAR [: (*yynode)->star_count++; :] )+
--> pointer_type [
-     member variable type: pointer_type::pointer_type_enum;
-     member variable star_count: int;
+   STAR                            [: (*yynode)->type = unmanaged_type_suffix::type_star;           :]
+ | rank_specifier=rank_specifier   [: (*yynode)->type = unmanaged_type_suffix::type_rank_specifier; :]
+-> unmanaged_type_suffix [
+     member variable type: unmanaged_type_suffix::suffix_type;
 ] ;;
 
    non_array_type=non_array_type

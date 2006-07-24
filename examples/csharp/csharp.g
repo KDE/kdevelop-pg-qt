@@ -56,10 +56,20 @@
 --    (manually resolved, 1 conflict)
 --  - The COMMA conflict in array_initializer, another one of those.
 --    (manually resolved, 1 conflict)
+--  - The BIT_AND conflict in bit_and_expression and
+--    the PLUS, MINUS conflict in additive expression.
+--    They originate in the rather hackish solution to make expressions like
+--    "a is sometype ? if_exp : else_exp" work (see conditional_expression)
+--    and can be ignored, because the condition does the necessary check.
+--    (manually resolved, 2 conflicts)
 --  - The STAR conflict in unmanaged_type:
 --    Caused by the may-end-with-epsilon type_arguments. It doesn't apply
 --    at all, only kdevelop-pg thinks it does. Code segments...
 --    (done right by default, 1 conflict)
+--  - The LPAREN, INCREMENT, DECREMENT conflict in primary_expression is
+--    the same one as the BIT_AND and PLUS, MINUS conflicts further above,
+--    and can also be ignored.
+--    (manually resolved, 1 conflict)
 --  - The LBRACKET conflict in array_creation_expression, for which new_expression
 --    with its array_creation_expression part is to blame.
 --    Caused by the fact that array_creation_expression can't be seperated.
@@ -224,6 +234,13 @@ namespace csharp_pp
   // This way, also RSHIFT (">>") can be used to close type arguments rules,
   // in addition to GREATER_THAN (">").
   int _M_ltCounter;
+
+  // Rather hackish solution for recognizing expressions like
+  // "a is sometype ? if_exp : else_exp", see conditional_expression.
+  bool is_nullable_type(type_ast *type);
+  void unset_nullable_type(type_ast *type);
+  type_ast *last_relational_expression_rest_type(
+    null_coalescing_expression_ast *null_coalescing_expression);
 
   // Lookahead hacks
   bool lookahead_is_local_variable_declaration();
@@ -2068,9 +2085,17 @@ namespace csharp_pp
 
 
    null_coalescing_expression=null_coalescing_expression
-   (  QUESTION if_expression=expression
-      COLON    else_expression=expression
-    | 0
+   (
+      QUESTION if_expression=expression COLON else_expression=expression
+    |
+      -- this rather hackish solution prevents false errors for expressions
+      -- like "a is sometype ? if_exp : else_exp", where nullable_type steals
+      -- the question mark from conditional_expression.
+      ?[: is_nullable_type(last_relational_expression_rest_type((*yynode)->null_coalescing_expression)) :]
+      0 [: unset_nullable_type(last_relational_expression_rest_type((*yynode)->null_coalescing_expression)); :]
+      if_expression=expression COLON else_expression=expression
+    |
+      0
    )
 -> conditional_expression ;;
 
@@ -2700,7 +2725,8 @@ namespace csharp_pp
  -- unsafe grammar extension: "unsafe" keyword
  | UNSAFE     [: (*yynode)->modifiers |= modifiers::mod_unsafe;    :]
  -- unspecified unsafe modifier, but used by MS and Mono, so accept it here as well:
- | FIXED      [: (*yynode)->modifiers |= modifiers::mod_fixed;     :]
+ | ?[: compatibility_mode() >= csharp20_compatibility :]
+   FIXED      [: (*yynode)->modifiers |= modifiers::mod_fixed;     :]
  )*
 -> optional_modifiers [
   member variable modifiers: int; -- using the modifier_enum values
@@ -2804,6 +2830,56 @@ void parser::pp_undefine_symbol( std::string symbol_name )
 bool parser::pp_is_symbol_defined( std::string symbol_name )
 {
   return (_M_pp_defined_symbols.find(symbol_name) != _M_pp_defined_symbols.end());
+}
+
+
+// Rather hackish solution for recognizing expressions like
+// "a is sometype ? if_exp : else_exp", see conditional_expression.
+// Needs three methods to fix parsing for about 0.2% of all C# source files.
+
+bool parser::is_nullable_type(type_ast *type)
+{
+  if (!type)
+    return false;
+  else if (!type->unmanaged_type)
+    return false;
+  else if (!type->unmanaged_type->regular_type || type->unmanaged_type->unmanaged_type_suffix_sequence)
+    return false;
+  else if (!type->unmanaged_type->regular_type->optionally_nullable_type)
+    return false;
+  else if (type->unmanaged_type->regular_type->optionally_nullable_type->nullable == false)
+    return false;
+  else // if (optionally_nullable_type->nullable == true)
+    return true;
+}
+
+// This method is only to be called after is_nullable_type(type) returns true,
+// and therefore expects all the appropriate members not to be 0.
+void parser::unset_nullable_type(type_ast *type)
+{
+  type->unmanaged_type->regular_type->optionally_nullable_type->nullable = false;
+}
+
+// This method expects null_coalescing_expression to be fully parsed and valid.
+// (Otherwise, this method is not called at all.
+type_ast *parser::last_relational_expression_rest_type(
+  null_coalescing_expression_ast *null_coalescing_expression)
+{
+  relational_expression_ast *relexp =
+    null_coalescing_expression
+    ->expression_sequence->to_back()->element // gets a logical_or_expression
+    ->expression_sequence->to_back()->element // gets a logical_and_expression
+    ->expression_sequence->to_back()->element // gets a bit_or_expression
+    ->expression_sequence->to_back()->element // gets a bit_xor_expression
+    ->expression_sequence->to_back()->element // gets a bit_and_expression
+    ->expression_sequence->to_back()->element // gets an equality_expression
+    ->expression                              // gets a relational_expression
+  ;
+
+  if (relexp->additional_expression_sequence != 0)
+    return relexp->additional_expression_sequence->to_back()->element->type;
+  else
+    return 0;
 }
 
 

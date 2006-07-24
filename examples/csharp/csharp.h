@@ -3071,6 +3071,13 @@ namespace csharp
       // in addition to GREATER_THAN (">").
       int _M_ltCounter;
 
+      // Rather hackish solution for recognizing expressions like
+      // "a is sometype ? if_exp : else_exp", see conditional_expression.
+      bool is_nullable_type(type_ast *type);
+      void unset_nullable_type(type_ast *type);
+      type_ast *last_relational_expression_rest_type(
+        null_coalescing_expression_ast *null_coalescing_expression);
+
       // Lookahead hacks
       bool lookahead_is_local_variable_declaration();
       bool lookahead_is_cast_expression();

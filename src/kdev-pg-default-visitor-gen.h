@@ -54,5 +54,19 @@ protected:
   virtual void visit_variable_declaration(model::variable_declaration_item *node);
 };
 
+class has_member_nodes: protected default_visitor
+{
+  bool &has_members;
+
+public:
+  has_member_nodes(bool &result): has_members(result)
+  {}
+
+  void operator()(model::symbol_item *sym);
+
+protected:
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+};
+
 
 #endif // KDEV_PG_DEFAULT_VISITORGEN_H

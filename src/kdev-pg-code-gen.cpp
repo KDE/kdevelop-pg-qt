@@ -664,7 +664,7 @@ void generate_parser_decls::operator()()
       out << std::endl << "public:" << std::endl;
     }
 
-  out << "parser()" << "{" << std::endl;
+  out << "parser() {" << std::endl;
   if (_G_system.generate_ast)
     {
       out << "memory_pool = 0;" << std::endl;
@@ -683,15 +683,18 @@ void generate_parser_decls::operator()()
 
   out << "}" << std::endl << std::endl;
 
+  out << "virtual ~parser() {";
+
   if (_G_system.parserclass_members.destructor_code.empty() == false)
     {
-      out << "virtual ~parser()" << "{" << std::endl
+      out << std::endl
           << "// user defined destructor code:" << std::endl;
       std::for_each(_G_system.parserclass_members.destructor_code.begin(),
                     _G_system.parserclass_members.destructor_code.end(),
                     gen_member_code(out, settings::member_item::destructor_code));
-      out << "}" << std::endl << std::endl;
     }
+
+  out << "}" << std::endl << std::endl;
 
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_forward_parser_rule(out));
 

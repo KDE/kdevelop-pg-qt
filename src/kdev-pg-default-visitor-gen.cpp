@@ -41,8 +41,13 @@ void gen_default_visitor_rule::operator()(std::pair<std::string,
 
   model::symbol_item *sym = __it.second;
 
+  bool has_members = false;
+  has_member_nodes hms(has_members);
+  hms(sym);
+
   out << "virtual void visit_" << sym->_M_name
-      << "(" << sym->_M_name << "_ast *node) {" << std::endl;
+      << "(" << sym->_M_name << "_ast *" << (has_members ? "node" : "")
+      << ") {" << std::endl;
 
   world::environment::iterator it = _G_system.env.find(sym);
   while (it != _G_system.env.end())
@@ -94,3 +99,29 @@ void gen_default_visitor_rule::visit_variable_declaration(model::variable_declar
   _M_variable_declarations.push_back(node);
 }
 
+
+void has_member_nodes::operator()(model::symbol_item *sym)
+{
+  has_members = false;
+
+  world::environment::iterator it = _G_system.env.find(sym);
+  while (it != _G_system.env.end())
+    {
+      model::evolve_item *e = (*it).second;
+      if ((*it).first != sym)
+        break;
+
+      ++it;
+
+      visit_node(e);
+    }
+}
+
+void has_member_nodes::visit_variable_declaration(model::variable_declaration_item *node)
+{
+  if (node->_M_storage_type == model::variable_declaration_item::storage_ast_member
+      && node->_M_variable_type == model::variable_declaration_item::type_node)
+    {
+      has_members = true;
+    }
+}

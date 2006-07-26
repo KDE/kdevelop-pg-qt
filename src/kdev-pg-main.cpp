@@ -137,6 +137,11 @@ int main(int, char *argv[])
         {
           debug_rules = true;
         }
+      else if (!strncmp(arg, "--adapt-to=", 11))
+        {
+          char const *adapt_to = arg + 11;
+          _G_system.adapt_to_kdevelop = (strcmp("kdevelop", adapt_to) == 0);
+        }
       else if (file == stdin)
         {
           file = fopen(arg, "r");
@@ -236,6 +241,13 @@ int main(int, char *argv[])
 
     if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
       s << "#include \"kdev-pg-token-stream.h\"" << std::endl;
+
+    if (_G_system.adapt_to_kdevelop)
+      {
+        s << std::endl
+          << "#include <kdevast.h>" << std::endl
+          << std::endl;
+      }
 
     s << "#include <cassert>" << std::endl
       << std::endl;

@@ -77,7 +77,7 @@ struct world
 
   world()
     : token_stream("kdev_pg_token_stream"), decl(0), bits(0), generate_ast(true),
-      start(0), _M_zero(0)
+      start(0), _M_zero(0), adapt_to_kdevelop(false)
   {}
 
   // options
@@ -179,6 +179,8 @@ struct world
   member_code parserclass_members;
 
   environment env;
+
+  bool adapt_to_kdevelop;
 
 private:
   first_set FIRST_K;

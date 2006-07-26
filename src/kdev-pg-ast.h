@@ -40,12 +40,13 @@ namespace model
     node_kind_alternative = 6,
     node_kind_cons = 7,
     node_kind_evolve = 8,
-    node_kind_alias = 9,
-    node_kind_terminal = 10,
-    node_kind_nonterminal = 11,
-    node_kind_annotation = 12,
-    node_kind_condition = 13,
-    node_kind_variable_declaration = 14,
+    node_kind_recovery = 9,
+    node_kind_alias = 10,
+    node_kind_terminal = 11,
+    node_kind_nonterminal = 12,
+    node_kind_annotation = 13,
+    node_kind_condition = 14,
+    node_kind_variable_declaration = 15,
 
     node_kind_LAST
   };
@@ -105,6 +106,13 @@ namespace model
 
     node *_M_left;
     node *_M_right;
+  };
+
+  struct recovery_item: public node
+  {
+    PG_NODE(recovery)
+
+    node *_M_item;
   };
 
   struct alias_item: public node

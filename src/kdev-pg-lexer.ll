@@ -86,6 +86,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "@"                     return '@';
 "|"                     return '|';
 
+"recover"               return T_RECOVER;
+
 "%token"                return T_TOKEN_DECLARATION;
 "%token_stream"         return T_TOKEN_STREAM_DECLARATION;
 "%namespace"            return T_NAMESPACE_DECLARATION;

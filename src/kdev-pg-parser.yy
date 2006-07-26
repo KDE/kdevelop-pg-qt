@@ -38,7 +38,7 @@ extern void yyerror(char const *msg);
     model::variable_declaration_item::variable_type_enum    variable_type;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_RECOVER ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
 %token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
 %token T_CONSTRUCTOR T_DESTRUCTOR T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY
@@ -111,6 +111,7 @@ rules
 primary_item
     : '0'                               { $$ = _G_system.zero(); }
     | '(' option_item ')'               { $$ = $2; }
+    | T_RECOVER '(' option_item ')'     { $$ = pg::recovery($3); }
     | primary_atom                      { $$ = $1; }
     | name scope primary_atom           { $$ = pg::annotation($1, $3, false, $2); }
     | '#' name scope primary_atom       { $$ = pg::annotation($2, $4, true, $3);  }

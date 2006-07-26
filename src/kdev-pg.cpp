@@ -87,6 +87,13 @@ model::evolve_item *pg::evolve(
   return node;
 }
 
+model::recovery_item *pg::recovery(model::node *item)
+{
+  model::recovery_item *node = create_node<model::recovery_item>();
+  node->_M_item = item;
+  return node;
+}
+
 model::alias_item *pg::alias(char const *code, model::symbol_item *symbol)
 {
   model::alias_item *node = create_node<model::alias_item>();

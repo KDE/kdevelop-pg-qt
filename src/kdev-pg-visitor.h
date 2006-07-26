@@ -43,6 +43,7 @@ protected:
   virtual void visit_alternative(model::alternative_item *) {}
   virtual void visit_cons(model::cons_item *) {}
   virtual void visit_evolve(model::evolve_item *) {}
+  virtual void visit_recovery(model::recovery_item *) {}
   virtual void visit_alias(model::alias_item *) {}
   virtual void visit_terminal(model::terminal_item *) {}
   virtual void visit_nonterminal(model::nonterminal_item *) {}

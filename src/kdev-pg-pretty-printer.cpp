@@ -110,6 +110,13 @@ void pretty_printer::visit_evolve(model::evolve_item *node)
   visit_node(node->_M_symbol);
 }
 
+void pretty_printer::visit_recovery(model::recovery_item *node)
+{
+  out << "recover(";
+  visit_node(node->_M_item);
+  out << ")";
+}
+
 void pretty_printer::visit_alias(model::alias_item *node)
 {
   assert(0); // ### not implemented yet

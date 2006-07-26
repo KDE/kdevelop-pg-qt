@@ -90,6 +90,11 @@ void initialize_FIRST::visit_evolve(model::evolve_item *node)
   default_visitor::visit_evolve(node);
 }
 
+void initialize_FIRST::visit_recovery(model::recovery_item *node)
+{
+  default_visitor::visit_recovery(node);
+}
+
 void initialize_FIRST::visit_alias(model::alias_item *node)
 {
   default_visitor::visit_alias(node);
@@ -232,6 +237,13 @@ void next_FIRST::visit_evolve(model::evolve_item *node)
   merge(node, node->_M_item);
 
   merge(node->_M_symbol, node);
+}
+
+void next_FIRST::visit_recovery(model::recovery_item *node)
+{
+  default_visitor::visit_recovery(node);
+
+  merge(node, node->_M_item);
 }
 
 void next_FIRST::visit_alias(model::alias_item *node)

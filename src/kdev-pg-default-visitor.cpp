@@ -68,6 +68,11 @@ void default_visitor::visit_evolve(model::evolve_item *node)
   visit_node(node->_M_symbol);
 }
 
+void default_visitor::visit_recovery(model::recovery_item *node)
+{
+  visit_node(node->_M_item);
+}
+
 void default_visitor::visit_alias(model::alias_item *node)
 {
   visit_node(node->_M_symbol);

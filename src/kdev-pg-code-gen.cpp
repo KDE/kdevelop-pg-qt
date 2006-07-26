@@ -58,7 +58,7 @@ namespace
     gen_condition(s, out);
   }
 
-  std::string gen_parser_call(model::nonterminal_item *node, std::ostream &out)
+  std::string gen_parser_call(model::nonterminal_item *node, int recovery_id, std::ostream &out)
   {
     static int __id = 0;
     static char __var[1024];
@@ -74,20 +74,55 @@ namespace
         if (node->_M_arguments[0] != '\0') // read: if (_M_arguments != "")
             out << ", " << node->_M_arguments;
 
-        out << "))"
-            << "{ return yy_expected_symbol(" << "ast_node::Kind_"
-            << symbol_name << ", \"" << symbol_name << "\"" << "); }"
-            << std::endl;
+        out << "))" << std::endl;
       }
     else
       {
         out << "if (!parse_" << symbol_name << "(" << node->_M_arguments << "))"
-            << "{ return yy_expected_symbol(" << "ast_node::Kind_"
-            << symbol_name << ", \"" << symbol_name << "\"" << "); }"
             << std::endl;
       }
 
+    if (!recovery_id)
+      {
+        out << "{ return yy_expected_symbol(ast_node::Kind_" << symbol_name
+            << ", \"" << symbol_name << "\"" << "); }" << std::endl;
+      }
+    else
+      {
+        out << "{ goto __recovery_" << recovery_id << "; }" << std::endl;
+      }
+
     return __var;
+  }
+
+  void gen_recovery(model::node *node, int recovery_id, std::ostream &out)
+  {
+    world::node_set s = _G_system.FOLLOW(node);
+    model::node *item = _G_system.zero();
+
+    out << "if (false) // recovery section: the only way to enter is goto" << std::endl
+        << "{" << std::endl
+        << "__recovery_" << recovery_id << ":" << std::endl
+        << "if (start_recovery_" << recovery_id
+        << " == token_stream->index() - 1)" << std::endl
+        << "yylex();" << std::endl
+        << std::endl;
+
+    out << "while (yytoken != Token_EOF";
+
+    world::node_set::iterator it = s.begin();
+    while (it != s.end())
+      {
+        item = *it++;
+
+        if (model::terminal_item *t = node_cast<model::terminal_item*>(item))
+          out << std::endl << "&& yytoken != Token_" << t->_M_name;
+      }
+
+    out << ")" << std::endl
+        << "{ yylex(); }" << std::endl // end of while loop
+        << "}" << std::endl // end of if(false)
+        << std::endl;
   }
 
 
@@ -112,15 +147,25 @@ void code_generator::visit_symbol(model::symbol_item *node)
 
 void code_generator::visit_nonterminal(model::nonterminal_item *node)
 {
-  gen_parser_call(node, out);
+  gen_parser_call(node, _M_current_recovery, out);
 }
 
 void code_generator::visit_terminal(model::terminal_item *node)
 {
-  out << "if (yytoken != Token_" << node->_M_name << ")"
-      << "return yy_expected_token(yytoken, Token_" << node->_M_name << ", \"" << node->_M_description << "\");"
-      << std::endl
-      << "yylex();" << std::endl;
+  out << "if (yytoken != Token_" << node->_M_name << ")";
+
+  if (!_M_current_recovery)
+    {
+      out << "return yy_expected_token(yytoken, Token_" << node->_M_name
+          << ", \"" << node->_M_description << "\");" << std::endl;
+    }
+  else
+    {
+      out << "goto __recovery_" << _M_current_recovery << ";" << std::endl;
+    }
+
+  out << "yylex();" << std::endl
+      << std::endl;
 }
 
 void code_generator::visit_plus(model::plus_item *node)
@@ -200,9 +245,14 @@ void code_generator::visit_alternative(model::alternative_item *node)
         out << "else ";
       else
         {
-          out << "else {" << std::endl
-              << "  return false;" << std::endl
-              << "}" << std::endl;
+          out << "else {" << std::endl;
+
+          if (!_M_current_recovery)
+              out << "return false;" << std::endl;
+          else
+              out << "goto __recovery_" << _M_current_recovery << ";";
+
+          out << "}" << std::endl;
         }
     }
 }
@@ -247,6 +297,28 @@ void code_generator::visit_evolve(model::evolve_item *node)
   out << "}" << std::endl;
 }
 
+void code_generator::visit_recovery(model::recovery_item *node)
+{
+  static int recovery_counter = 0;
+  int previous_recovery = set_recovery(++recovery_counter);
+
+  out << "std::size_t start_recovery_" << _M_current_recovery
+      << " = token_stream->index() - 1;" << std::endl
+      << std::endl;
+
+  visit_node(node->_M_item);
+  gen_recovery(node, _M_current_recovery, out);
+
+  set_recovery(previous_recovery);
+}
+
+int code_generator::set_recovery(int recovery_id)
+{
+  int previous = _M_current_recovery;
+  _M_current_recovery = recovery_id;
+  return previous;
+}
+
 void code_generator::visit_alias(model::alias_item *node)
 {
   assert(0); // ### not implemented yet
@@ -279,18 +351,20 @@ void code_generator::visit_annotation(model::annotation_item *node)
 
           out << target << " = snoc(" << target << ", "
               << "token_stream->index() - 1, memory_pool);" << std::endl
-              << "yylex();" << std::endl;
+              << "yylex();" << std::endl
+              << std::endl;
         }
       else
         {
           out << "(*yynode)->" << node->_M_declaration->_M_name
               << " = token_stream->index() - 1;" << std::endl
-              << "yylex();" << std::endl;
+              << "yylex();" << std::endl
+              << std::endl;
         }
     }
   else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
     {
-      std::string __var = gen_parser_call(nt, out);
+      std::string __var = gen_parser_call(nt, _M_current_recovery, out);
 
       bool check_start_token = false;
       world::environment::iterator it = _G_system.env.find(nt->_M_symbol);
@@ -359,11 +433,13 @@ void code_generator::visit_annotation(model::annotation_item *node)
           target += "_sequence";
 
           out << target << " = " << "snoc(" << target << ", "
-              << __var << ", memory_pool);" << std::endl;
+              << __var << ", memory_pool);" << std::endl
+              << std::endl;
         }
       else
         {
-          out << target << " = " << __var << ";" << std::endl;
+          out << target << " = " << __var << ";" << std::endl
+              << std::endl;
         }
     }
   else

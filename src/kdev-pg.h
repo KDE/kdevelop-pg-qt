@@ -42,6 +42,7 @@ namespace pg
       model::node *item, model::symbol_item *symbol,
       model::variable_declaration_item *declarations, char const *code
   );
+  model::recovery_item *recovery(model::node *item);
   model::alias_item *alias(char const *code, model::symbol_item *symbol);
   model::terminal_item *terminal(char const *name, char const *description);
   model::nonterminal_item *nonterminal(model::symbol_item *symbol, char const *arguments);

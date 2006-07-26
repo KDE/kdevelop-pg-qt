@@ -111,6 +111,16 @@ void clone_tree::visit_evolve(model::evolve_item *node)
   _M_temps.push(pg::evolve(item, node->_M_symbol, node->_M_declarations, node->_M_code));
 }
 
+void clone_tree::visit_recovery(model::recovery_item *node)
+{
+  visit_node(node->_M_item);
+
+  model::node *item = _M_temps.top();
+  _M_temps.pop();
+
+  _M_temps.push(pg::recovery(item));
+}
+
 void clone_tree::visit_alias(model::alias_item *node)
 {
   assert(0); // ### not implemented yet

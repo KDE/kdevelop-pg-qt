@@ -3995,8 +3995,8 @@ namespace csharp
 
       virtual void visit_class_declaration(class_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->class_name);
         visit_node(node->type_parameters);
         visit_node(node->class_base);
@@ -4088,6 +4088,9 @@ namespace csharp
 
       virtual void visit_constant_declaration_data(constant_declaration_data_ast *node)
       {
+        visit_node(node->attributes);
+        visit_node(node->modifiers);
+        visit_node(node->type);
         if (node->constant_declarator_sequence)
           {
             const list_node<constant_declarator_ast*> *__it = node->constant_declarator_sequence->to_front(), *__end = __it;
@@ -4098,9 +4101,6 @@ namespace csharp
               }
             while (__it != __end);
           }
-        visit_node(node->type);
-        visit_node(node->modifiers);
-        visit_node(node->attributes);
       }
 
       virtual void visit_constant_declarator(constant_declarator_ast *node)
@@ -4119,8 +4119,8 @@ namespace csharp
 
       virtual void visit_constructor_declaration(constructor_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->class_name);
         visit_node(node->formal_parameters);
         visit_node(node->constructor_initializer);
@@ -4137,8 +4137,8 @@ namespace csharp
 
       virtual void visit_conversion_operator_declaration(conversion_operator_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->target_type);
         visit_node(node->source_type);
         visit_node(node->source_name);
@@ -4147,8 +4147,8 @@ namespace csharp
 
       virtual void visit_delegate_declaration(delegate_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->return_type);
         visit_node(node->delegate_name);
         visit_node(node->type_parameters);
@@ -4208,8 +4208,8 @@ namespace csharp
 
       virtual void visit_enum_declaration(enum_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->enum_name);
         visit_node(node->enum_base);
         visit_node(node->body);
@@ -4252,8 +4252,8 @@ namespace csharp
 
       virtual void visit_event_declaration(event_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->type);
         if (node->variable_declarator_sequence)
           {
@@ -4282,8 +4282,8 @@ namespace csharp
 
       virtual void visit_finalizer_declaration(finalizer_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->class_name);
         visit_node(node->finalizer_body);
       }
@@ -4407,10 +4407,10 @@ namespace csharp
 
       virtual void visit_indexer_declaration(indexer_declaration_ast *node)
       {
-        visit_node(node->interface_type);
-        visit_node(node->type);
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
+        visit_node(node->type);
+        visit_node(node->interface_type);
         visit_node(node->formal_parameters);
         visit_node(node->accessor_declarations);
       }
@@ -4454,8 +4454,8 @@ namespace csharp
 
       virtual void visit_interface_declaration(interface_declaration_ast *node)
       {
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
         visit_node(node->interface_name);
         visit_node(node->type_parameters);
         visit_node(node->interface_base);
@@ -4472,8 +4472,8 @@ namespace csharp
 
       virtual void visit_interface_indexer_declaration(interface_indexer_declaration_ast *node)
       {
-        visit_node(node->type);
         visit_node(node->attributes);
+        visit_node(node->type);
         visit_node(node->formal_parameters);
         visit_node(node->interface_accessors);
       }
@@ -4488,9 +4488,9 @@ namespace csharp
 
       virtual void visit_interface_method_declaration(interface_method_declaration_ast *node)
       {
-        visit_node(node->method_name);
-        visit_node(node->return_type);
         visit_node(node->attributes);
+        visit_node(node->return_type);
+        visit_node(node->method_name);
         visit_node(node->type_parameters);
         visit_node(node->formal_parameters);
         visit_node(node->type_parameter_constraints_clauses);
@@ -4498,9 +4498,9 @@ namespace csharp
 
       virtual void visit_interface_property_declaration(interface_property_declaration_ast *node)
       {
-        visit_node(node->property_name);
-        visit_node(node->type);
         visit_node(node->attributes);
+        visit_node(node->type);
+        visit_node(node->property_name);
         visit_node(node->interface_accessors);
       }
 
@@ -4576,10 +4576,10 @@ namespace csharp
 
       virtual void visit_method_declaration(method_declaration_ast *node)
       {
-        visit_node(node->method_name);
-        visit_node(node->return_type);
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
+        visit_node(node->return_type);
+        visit_node(node->method_name);
         visit_node(node->type_parameters);
         visit_node(node->formal_parameters);
         visit_node(node->type_parameter_constraints_clauses);
@@ -4884,10 +4884,10 @@ namespace csharp
 
       virtual void visit_property_declaration(property_declaration_ast *node)
       {
-        visit_node(node->property_name);
-        visit_node(node->type);
-        visit_node(node->modifiers);
         visit_node(node->attributes);
+        visit_node(node->modifiers);
+        visit_node(node->type);
+        visit_node(node->property_name);
         visit_node(node->accessor_declarations);
       }
 
@@ -5025,8 +5025,8 @@ namespace csharp
 
                                                         virtual void visit_struct_declaration(struct_declaration_ast *node)
                                                         {
-                                                          visit_node(node->modifiers);
                                                           visit_node(node->attributes);
+                                                          visit_node(node->modifiers);
                                                           visit_node(node->struct_name);
                                                           visit_node(node->type_parameters);
                                                           visit_node(node->struct_interfaces);
@@ -5199,9 +5199,9 @@ namespace csharp
 
                                                         virtual void visit_unary_or_binary_operator_declaration(unary_or_binary_operator_declaration_ast *node)
                                                         {
-                                                          visit_node(node->return_type);
-                                                          visit_node(node->modifiers);
                                                           visit_node(node->attributes);
+                                                          visit_node(node->modifiers);
+                                                          visit_node(node->return_type);
                                                           visit_node(node->source1_type);
                                                           visit_node(node->source1_name);
                                                           visit_node(node->source2_type);
@@ -5275,6 +5275,9 @@ namespace csharp
 
                                                         virtual void visit_variable_declaration_data(variable_declaration_data_ast *node)
                                                         {
+                                                          visit_node(node->attributes);
+                                                          visit_node(node->modifiers);
+                                                          visit_node(node->type);
                                                           if (node->variable_declarator_sequence)
                                                             {
                                                               const list_node<variable_declarator_ast*> *__it = node->variable_declarator_sequence->to_front(), *__end = __it;
@@ -5285,9 +5288,6 @@ namespace csharp
                                                                 }
                                                               while (__it != __end);
                                                             }
-                                                          visit_node(node->type);
-                                                          visit_node(node->modifiers);
-                                                          visit_node(node->attributes);
                                                         }
 
                                                         virtual void visit_variable_declarator(variable_declarator_ast *node)

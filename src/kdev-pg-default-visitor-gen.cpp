@@ -66,37 +66,42 @@ void gen_default_visitor_rule::operator()(std::pair<std::string,
 
 void gen_default_visitor_rule::visit_variable_declaration(model::variable_declaration_item *node)
 {
+  do
+  {
+    if (node->_M_storage_type != model::variable_declaration_item::storage_ast_member)
+      break;
+
+    if (node->_M_variable_type != model::variable_declaration_item::type_node)
+      break; // nothing to do
+
+    if (_M_names.find(node->_M_name) != _M_names.end())
+      break;
+
+    std::string base_type = std::string(node->_M_type) + "_ast*";
+
+    if (node->_M_is_sequence)
+      {
+        out << "if (" << "node->" << node->_M_name << "_sequence" << ") {"
+            << "const list_node<" << base_type << "> *__it = "
+            << "node->" << node->_M_name << "_sequence" << "->to_front()"
+            << ", *__end = __it;" << std::endl
+            << "do {" << std::endl
+            << "visit_node(__it->element);" << std::endl
+            << "__it = __it->next;" << std::endl
+            << "} while (__it != __end);" << std::endl
+            << "}" << std::endl;
+      }
+    else
+      {
+        out << "visit_node(" << "node->" << node->_M_name << ")" << ";" << std::endl;
+      }
+
+    _M_names.insert(node->_M_name);
+    _M_variable_declarations.push_back(node);
+
+  } while(false);
+
   default_visitor::visit_variable_declaration(node);
-
-  if (node->_M_storage_type != model::variable_declaration_item::storage_ast_member)
-    return;
-
-  if (node->_M_variable_type != model::variable_declaration_item::type_node)
-    return; // nothing to do
-
-  if (_M_names.find(node->_M_name) != _M_names.end())
-    return;
-
-  std::string base_type = std::string(node->_M_type) + "_ast*";
-
-  if (node->_M_is_sequence)
-    {
-      out << "if (" << "node->" << node->_M_name << "_sequence" << ") {"
-          << "const list_node<" << base_type << "> *__it = " << "node->" << node->_M_name << "_sequence" << "->to_front()"
-          << ", *__end = __it;" << std::endl
-          << "do {" << std::endl
-          << "visit_node(__it->element);" << std::endl
-          << "__it = __it->next;" << std::endl
-          << "} while (__it != __end);" << std::endl
-          << "}" << std::endl;
-    }
-  else
-    {
-      out << "visit_node(" << "node->" << node->_M_name << ")" << ";" << std::endl;
-    }
-
-  _M_names.insert(node->_M_name);
-  _M_variable_declarations.push_back(node);
 }
 
 

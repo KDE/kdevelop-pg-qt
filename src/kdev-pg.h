@@ -42,7 +42,7 @@ namespace pg
       model::node *item, model::symbol_item *symbol,
       model::variable_declaration_item *declarations, char const *code
   );
-  model::recovery_item *recovery(model::node *item);
+  model::try_catch_item *try_catch(model::node *try_item, model::node *catch_item);
   model::alias_item *alias(char const *code, model::symbol_item *symbol);
   model::terminal_item *terminal(char const *name, char const *description);
   model::nonterminal_item *nonterminal(model::symbol_item *symbol, char const *arguments);
@@ -78,7 +78,7 @@ struct world
 
   world()
     : token_stream("kdev_pg_token_stream"), decl(0), bits(0), generate_ast(true),
-      start(0), _M_zero(0), adapt_to_kdevelop(false)
+      start(0), _M_zero(0), need_state_management(false), adapt_to_kdevelop(false)
   {}
 
   // options
@@ -181,6 +181,7 @@ struct world
 
   environment env;
 
+  bool need_state_management;
   bool adapt_to_kdevelop;
 
 private:

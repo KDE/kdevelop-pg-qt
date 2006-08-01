@@ -106,11 +106,14 @@ void next_FOLLOW::visit_action(model::action_item *node)
   default_visitor::visit_action(node);
 }
 
-void next_FOLLOW::visit_recovery(model::recovery_item *node)
+void next_FOLLOW::visit_try_catch(model::try_catch_item *node)
 {
-  merge(node->_M_item, _G_system.FOLLOW(node));
+  merge(node->_M_try_item, _G_system.FOLLOW(node));
 
-  default_visitor::visit_recovery(node);
+  if (node->_M_catch_item)
+    merge(node->_M_catch_item, _G_system.FOLLOW(node));
+
+  default_visitor::visit_try_catch(node);
 }
 
 void next_FOLLOW::visit_annotation(model::annotation_item *node)

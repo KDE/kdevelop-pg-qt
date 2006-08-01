@@ -111,14 +111,24 @@ void clone_tree::visit_evolve(model::evolve_item *node)
   _M_temps.push(pg::evolve(item, node->_M_symbol, node->_M_declarations, node->_M_code));
 }
 
-void clone_tree::visit_recovery(model::recovery_item *node)
+void clone_tree::visit_try_catch(model::try_catch_item *node)
 {
-  visit_node(node->_M_item);
+  visit_node(node->_M_try_item);
 
-  model::node *item = _M_temps.top();
+  model::node *try_item = _M_temps.top();
   _M_temps.pop();
 
-  _M_temps.push(pg::recovery(item));
+  model::node *catch_item = 0;
+
+  if (node->_M_catch_item)
+    {
+      visit_node(node->_M_catch_item);
+
+      catch_item = _M_temps.top();
+      _M_temps.pop();
+    }
+
+  _M_temps.push(pg::try_catch(try_item, catch_item));
 }
 
 void clone_tree::visit_alias(model::alias_item *node)

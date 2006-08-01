@@ -58,7 +58,7 @@ namespace
     gen_condition(s, out);
   }
 
-  std::string gen_parser_call(model::nonterminal_item *node, int recovery_id, std::ostream &out)
+  std::string gen_parser_call(model::nonterminal_item *node, int catch_id, std::ostream &out)
   {
     static int __id = 0;
     static char __var[1024];
@@ -82,28 +82,61 @@ namespace
             << std::endl;
       }
 
-    if (!recovery_id)
+    if (!catch_id)
       {
-        out << "{ return yy_expected_symbol(ast_node::Kind_" << symbol_name
-            << ", \"" << symbol_name << "\"" << "); }" << std::endl;
+        out << "{" << std::endl;
+
+        if (_G_system.need_state_management)
+          out <<   "if (!yy_block_errors) {" << std::endl;
+
+        out << "yy_expected_symbol(ast_node::Kind_" << symbol_name
+            << ", \"" << symbol_name << "\"" << ");" << std::endl;
+
+        if (_G_system.need_state_management)
+          out << "}" << std::endl;
+
+        out << "return false;" << std::endl
+            << "}" << std::endl;
       }
     else
       {
-        out << "{ goto __recovery_" << recovery_id << "; }" << std::endl;
+        out << "{ goto __catch_" << catch_id << "; }" << std::endl;
       }
 
     return __var;
   }
 
-  void gen_recovery(model::node *node, int recovery_id, std::ostream &out)
+  void gen_token_test(model::terminal_item *node, int catch_id, std::ostream &out)
+  {
+    out << "if (yytoken != Token_" << node->_M_name << ")" << std::endl;
+    if (!catch_id)
+      {
+        out << "{" << std::endl;
+
+        if (_G_system.need_state_management)
+          out << "if (!yy_block_errors) {" << std::endl;
+
+        out << "yy_expected_token(yytoken, Token_" << node->_M_name
+            << ", \"" << node->_M_description << "\");" << std::endl;
+
+        if (_G_system.need_state_management)
+          out << "}" << std::endl;
+
+        out << "return false;" << std::endl
+            << "}" << std::endl;
+      }
+    else
+      {
+        out << "goto __catch_" << catch_id << ";" << std::endl;
+      }
+  }
+
+  void gen_recovery(model::node *node, int catch_id, std::ostream &out)
   {
     world::node_set s = _G_system.FOLLOW(node);
     model::node *item = _G_system.zero();
 
-    out << "if (false) // recovery section: the only way to enter is goto" << std::endl
-        << "{" << std::endl
-        << "__recovery_" << recovery_id << ":" << std::endl
-        << "if (start_recovery_" << recovery_id
+    out << "if (try_start_token_" << catch_id
         << " == token_stream->index() - 1)" << std::endl
         << "yylex();" << std::endl
         << std::endl;
@@ -120,9 +153,7 @@ namespace
       }
 
     out << ")" << std::endl
-        << "{ yylex(); }" << std::endl // end of while loop
-        << "}" << std::endl // end of if(false)
-        << std::endl;
+        << "{ yylex(); }" << std::endl;
   }
 
 
@@ -147,22 +178,12 @@ void code_generator::visit_symbol(model::symbol_item *node)
 
 void code_generator::visit_nonterminal(model::nonterminal_item *node)
 {
-  gen_parser_call(node, _M_current_recovery, out);
+  gen_parser_call(node, _M_current_catch_id, out);
 }
 
 void code_generator::visit_terminal(model::terminal_item *node)
 {
-  out << "if (yytoken != Token_" << node->_M_name << ")";
-
-  if (!_M_current_recovery)
-    {
-      out << "return yy_expected_token(yytoken, Token_" << node->_M_name
-          << ", \"" << node->_M_description << "\");" << std::endl;
-    }
-  else
-    {
-      out << "goto __recovery_" << _M_current_recovery << ";" << std::endl;
-    }
+  gen_token_test(node, _M_current_catch_id, out);
 
   out << "yylex();" << std::endl
       << std::endl;
@@ -247,10 +268,10 @@ void code_generator::visit_alternative(model::alternative_item *node)
         {
           out << "else {" << std::endl;
 
-          if (!_M_current_recovery)
+          if (!_M_current_catch_id)
               out << "return false;" << std::endl;
           else
-              out << "goto __recovery_" << _M_current_recovery << ";";
+              out << "goto __catch_" << _M_current_catch_id << ";";
 
           out << "}" << std::endl;
         }
@@ -297,25 +318,78 @@ void code_generator::visit_evolve(model::evolve_item *node)
   out << "}" << std::endl;
 }
 
-void code_generator::visit_recovery(model::recovery_item *node)
+void code_generator::visit_try_catch(model::try_catch_item *node)
 {
-  static int recovery_counter = 0;
-  int previous_recovery = set_recovery(++recovery_counter);
+  static int try_catch_counter = 0;
+  int previous_catch_id = set_catch_id(++try_catch_counter);
 
-  out << "std::size_t start_recovery_" << _M_current_recovery
-      << " = token_stream->index() - 1;" << std::endl
+  if (node->_M_catch_item) // node is a try/rollback block
+    {
+      out << "bool block_errors_" << _M_current_catch_id
+          << " = block_errors(true);" << std::endl;
+    }
+
+  out << "std::size_t try_start_token_" << _M_current_catch_id
+      << " = token_stream->index() - 1;" << std::endl;
+
+  if (!node->_M_unsafe)
+    {
+      out << "parser_state *try_start_state_" << _M_current_catch_id
+          << " = copy_current_state();" << std::endl;
+    }
+
+  out << "{" << std::endl;
+  visit_node(node->_M_try_item);
+  out << "}" << std::endl;
+
+  if (node->_M_catch_item)
+    {
+      out << "block_errors(block_errors_" << _M_current_catch_id << ");" << std::endl;
+    }
+
+  if (!node->_M_unsafe)
+    {
+      out << "if (try_start_state_" << _M_current_catch_id << ")" << std::endl
+          << "delete try_start_state_" <<  _M_current_catch_id << ";" << std::endl
+          << std::endl;
+    }
+
+  out << "if (false) // the only way to enter here is using goto" << std::endl
+      << "{" << std::endl
+      << "__catch_" << _M_current_catch_id << ":" << std::endl;
+
+  if (!node->_M_unsafe)
+    {
+      out << "if (try_start_state_" << _M_current_catch_id << ")" << std::endl
+          << "{" << std::endl
+          << "restore_state(try_start_state_" <<  _M_current_catch_id << ");" << std::endl
+          << "delete try_start_state_" <<  _M_current_catch_id << ";" << std::endl
+          << "}" << std::endl;
+    }
+
+  if (!node->_M_catch_item)
+    {
+      gen_recovery(node, _M_current_catch_id, out);
+      set_catch_id(previous_catch_id);
+    }
+  else
+    {
+      out << "block_errors(block_errors_" << _M_current_catch_id << ");" << std::endl
+          << "rewind(try_start_token_" << _M_current_catch_id << ");" << std::endl
+          << std::endl;
+
+      set_catch_id(previous_catch_id);
+      visit_node(node->_M_catch_item);
+    }
+
+  out << "}" << std::endl
       << std::endl;
-
-  visit_node(node->_M_item);
-  gen_recovery(node, _M_current_recovery, out);
-
-  set_recovery(previous_recovery);
 }
 
-int code_generator::set_recovery(int recovery_id)
+int code_generator::set_catch_id(int catch_id)
 {
-  int previous = _M_current_recovery;
-  _M_current_recovery = recovery_id;
+  int previous = _M_current_catch_id;
+  _M_current_catch_id = catch_id;
   return previous;
 }
 
@@ -335,9 +409,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
 
   if (model::terminal_item *t = node_cast<model::terminal_item*>(node->_M_item))
     {
-      out << "if (yytoken != Token_" << t->_M_name << ") "
-          << "return yy_expected_token(yytoken, Token_" << t->_M_name
-          << ", \"" << t->_M_description << "\");" << std::endl;
+      gen_token_test(t, _M_current_catch_id, out);
 
       if (node->_M_declaration->_M_is_sequence)
         {
@@ -364,7 +436,7 @@ void code_generator::visit_annotation(model::annotation_item *node)
     }
   else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
     {
-      std::string __var = gen_parser_call(nt, _M_current_recovery, out);
+      std::string __var = gen_parser_call(nt, _M_current_catch_id, out);
 
       bool check_start_token = false;
       world::environment::iterator it = _G_system.env.find(nt->_M_symbol);
@@ -691,6 +763,10 @@ void generate_parser_decls::operator()()
       << "inline int yylex() {" << std::endl
       << "return (yytoken = token_stream->next_token());" << std::endl
       << "}" << std::endl
+      << "inline void rewind(std::size_t index) {" << std::endl
+      << "token_stream->rewind(index);" << std::endl
+      << "yylex();" << std::endl
+      << "}" << std::endl
       << std::endl;
 
   out << "// token stream" << std::endl
@@ -698,10 +774,18 @@ void generate_parser_decls::operator()()
       << "{ token_stream = s; }" << std::endl
       << std::endl;
 
-  out << "// error recovery" << std::endl
-      << "bool yy_expected_symbol(int kind, char const *name);" << std::endl
-      << "bool yy_expected_token(int kind, std::size_t token, char const *name);" << std::endl
-      << std::endl;
+  out << "// error handling" << std::endl
+      << "void yy_expected_symbol(int kind, char const *name);" << std::endl
+      << "void yy_expected_token(int kind, std::size_t token, char const *name);" << std::endl
+      << std::endl
+      << "bool yy_block_errors;" << std::endl
+      << "inline bool block_errors(bool block) {" << std::endl
+      << "bool previous = yy_block_errors;" << std::endl
+      << "yy_block_errors = block;" << std::endl
+      << "return previous;" << std::endl
+      << "}" << std::endl;
+
+  out << std::endl;
 
     if (_G_system.generate_ast)
       {
@@ -740,6 +824,22 @@ void generate_parser_decls::operator()()
       out << std::endl << "public:" << std::endl;
     }
 
+  if (_G_system.need_state_management)
+    {
+      out << "// The copy_current_state() and restore_state() methods are only declared" << std::endl
+          << "// if you are using try blocks in your grammar, and have to be" << std::endl
+          << "// implemented by yourself, and you also have to define a" << std::endl
+          << "// \"struct parser_state\" inside a %parserclass directive." << std::endl
+          << std::endl
+          << "// This method should create a new parser_state object and return it," << std::endl
+          << "// or return 0 if no state variables need to be saved." << std::endl
+          << "parser_state *copy_current_state();" << std::endl
+          << std::endl
+          << "// This method is only called for parser_state objects != 0" << std::endl
+          << "// and should restore the parser state given as argument." << std::endl
+          << "void restore_state(parser_state *state);" << std::endl;
+    }
+
   out << "parser() {" << std::endl;
   if (_G_system.generate_ast)
     {
@@ -747,7 +847,8 @@ void generate_parser_decls::operator()()
     }
 
   out << "token_stream = 0;" << std::endl
-      << "yytoken = Token_EOF;" << std::endl;
+      << "yytoken = Token_EOF;" << std::endl
+      << "yy_block_errors = false;" << std::endl;
 
   if (_G_system.parserclass_members.constructor_code.empty() == false)
     {

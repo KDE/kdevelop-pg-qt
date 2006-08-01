@@ -30,7 +30,7 @@ visitor::visitor_fun_ptr visitor::_S_table[model::node_kind_LAST] = {
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_alternative),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_cons),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_evolve),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_recovery),
+  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_try_catch),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_alias),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_terminal),
   reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_nonterminal),

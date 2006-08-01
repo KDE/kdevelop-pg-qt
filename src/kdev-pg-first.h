@@ -31,18 +31,6 @@ protected:
   virtual void visit_node(model::node *node);
   virtual void visit_zero(model::zero_item *node);
   virtual void visit_terminal(model::terminal_item *node);
-  virtual void visit_nonterminal(model::nonterminal_item *node);
-  virtual void visit_symbol(model::symbol_item *node);
-  virtual void visit_plus(model::plus_item *node);
-  virtual void visit_star(model::star_item *node);
-  virtual void visit_action(model::action_item *node);
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_cons(model::cons_item *node);
-  virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_recovery(model::recovery_item *node);
-  virtual void visit_alias(model::alias_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
-  virtual void visit_condition(model::condition_item *node);
 };
 
 struct next_FIRST: protected default_visitor
@@ -67,7 +55,7 @@ protected:
   virtual void visit_alternative(model::alternative_item *node);
   virtual void visit_cons(model::cons_item *node);
   virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_recovery(model::recovery_item *node);
+  virtual void visit_try_catch(model::try_catch_item *node);
   virtual void visit_alias(model::alias_item *node);
   virtual void visit_annotation(model::annotation_item *node);
   virtual void visit_condition(model::condition_item* node);

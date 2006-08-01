@@ -45,65 +45,6 @@ void initialize_FIRST::visit_terminal(model::terminal_item *node)
   _G_system.FIRST(node).insert(node);
 }
 
-void initialize_FIRST::visit_nonterminal(model::nonterminal_item *node)
-{
-  default_visitor::visit_nonterminal(node);
-}
-
-void initialize_FIRST::visit_condition(model::condition_item *node)
-{
-  default_visitor::visit_condition(node);
-}
-
-void initialize_FIRST::visit_symbol(model::symbol_item *node)
-{
-  default_visitor::visit_symbol(node);
-}
-
-void initialize_FIRST::visit_plus(model::plus_item *node)
-{
-  default_visitor::visit_plus(node);
-}
-
-void initialize_FIRST::visit_star(model::star_item *node)
-{
-  default_visitor::visit_star(node);
-}
-
-void initialize_FIRST::visit_action(model::action_item *node)
-{
-  default_visitor::visit_action(node);
-}
-
-void initialize_FIRST::visit_alternative(model::alternative_item *node)
-{
-  default_visitor::visit_alternative(node);
-}
-
-void initialize_FIRST::visit_cons(model::cons_item *node)
-{
-  default_visitor::visit_cons(node);
-}
-
-void initialize_FIRST::visit_evolve(model::evolve_item *node)
-{
-  default_visitor::visit_evolve(node);
-}
-
-void initialize_FIRST::visit_recovery(model::recovery_item *node)
-{
-  default_visitor::visit_recovery(node);
-}
-
-void initialize_FIRST::visit_alias(model::alias_item *node)
-{
-  default_visitor::visit_alias(node);
-}
-
-void initialize_FIRST::visit_annotation(model::annotation_item *node)
-{
-  default_visitor::visit_annotation(node);
-}
 
 next_FIRST::next_FIRST(bool &changed): _M_changed(changed)
 {
@@ -239,11 +180,14 @@ void next_FIRST::visit_evolve(model::evolve_item *node)
   merge(node->_M_symbol, node);
 }
 
-void next_FIRST::visit_recovery(model::recovery_item *node)
+void next_FIRST::visit_try_catch(model::try_catch_item *node)
 {
-  default_visitor::visit_recovery(node);
+  default_visitor::visit_try_catch(node);
 
-  merge(node, node->_M_item);
+  merge(node, node->_M_try_item);
+
+  if (node->_M_catch_item)
+    merge(node, node->_M_catch_item);
 }
 
 void next_FIRST::visit_alias(model::alias_item *node)

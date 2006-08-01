@@ -87,10 +87,12 @@ model::evolve_item *pg::evolve(
   return node;
 }
 
-model::recovery_item *pg::recovery(model::node *item)
+model::try_catch_item *pg::try_catch(model::node *try_item, model::node *catch_item)
 {
-  model::recovery_item *node = create_node<model::recovery_item>();
-  node->_M_item = item;
+  model::try_catch_item *node = create_node<model::try_catch_item>();
+  node->_M_try_item = try_item;
+  node->_M_catch_item = catch_item;
+  node->_M_unsafe = false;
   return node;
 }
 
@@ -221,6 +223,11 @@ bool reduces_to_epsilon(model::node *node)
   else if (model::condition_item *c = node_cast<model::condition_item*>(node))
     {
       return reduces_to_epsilon(c->_M_item);
+    }
+  else if (model::try_catch_item *t = node_cast<model::try_catch_item*>(node))
+    {
+      return reduces_to_epsilon(t->_M_try_item)
+             || (t->_M_catch_item && reduces_to_epsilon(t->_M_catch_item));
     }
   else if (model::annotation_item *a = node_cast<model::annotation_item*>(node))
     {

@@ -86,7 +86,9 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "@"                     return '@';
 "|"                     return '|';
 
-"recover"               return T_RECOVER;
+"try/recover"           return T_TRY_RECOVER;
+"try/rollback"          return T_TRY_ROLLBACK;
+"catch"                 return T_CATCH;
 
 "%token"                return T_TOKEN_DECLARATION;
 "%token_stream"         return T_TOKEN_STREAM_DECLARATION;

@@ -110,11 +110,18 @@ void pretty_printer::visit_evolve(model::evolve_item *node)
   visit_node(node->_M_symbol);
 }
 
-void pretty_printer::visit_recovery(model::recovery_item *node)
+void pretty_printer::visit_try_catch(model::try_catch_item *node)
 {
-  out << "recover(";
-  visit_node(node->_M_item);
+  out << "try/" << (node->_M_catch_item ? "rollback" : "recover") << "(";
+  visit_node(node->_M_try_item);
   out << ")";
+
+  if (node->_M_catch_item)
+    {
+      out << " catch(";
+      visit_node(node->_M_catch_item);
+      out << ")";
+    }
 }
 
 void pretty_printer::visit_alias(model::alias_item *node)

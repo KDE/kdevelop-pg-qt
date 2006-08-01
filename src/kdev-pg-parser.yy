@@ -38,15 +38,16 @@ extern void yyerror(char const *msg);
     model::variable_declaration_item::variable_type_enum    variable_type;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_RECOVER ';'
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
 %token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
-%token T_CONSTRUCTOR T_DESTRUCTOR T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY
-%token T_ARGUMENT T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE
+%token T_CONSTRUCTOR T_DESTRUCTOR T_TRY_RECOVER T_TRY_ROLLBACK T_CATCH
+%token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT
+%token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
-%type<item> item primary_item primary_atom unary_item question question_item
+%type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<item> member_declaration_rest variable_declarations variable_declaration
 %type<declaration_type> declaration_type_opt
@@ -111,7 +112,7 @@ rules
 primary_item
     : '0'                               { $$ = _G_system.zero(); }
     | '(' option_item ')'               { $$ = $2; }
-    | T_RECOVER '(' option_item ')'     { $$ = pg::recovery($3); }
+    | try_item                    { $$ = $1; }
     | primary_atom                      { $$ = $1; }
     | name scope primary_atom           { $$ = pg::annotation($1, $3, false, $2); }
     | '#' name scope primary_atom       { $$ = pg::annotation($2, $4, true, $3);  }
@@ -121,6 +122,18 @@ primary_atom
     : T_IDENTIFIER rule_arguments_opt   { $$ = pg::nonterminal(_G_system.push_symbol($1), $2); }
     | T_TERMINAL                        { $$ = _G_system.terminal($1); }
     ;
+
+try_item
+    : T_TRY_RECOVER '(' option_item ')'
+        {
+          _G_system.need_state_management = true;
+          $$ = pg::try_catch($3, 0);
+        }
+    | T_TRY_ROLLBACK '(' option_item ')' T_CATCH '(' option_item ')'
+        {
+          _G_system.need_state_management = true;
+          $$ = pg::try_catch($3, $7);
+        }
 
 rule_arguments_opt
     : /* empty */                       { $$ = ""; }
@@ -149,16 +162,6 @@ unary_item
 /*    | '?' primary_item                  { $$ = pg::alternative($2, _G_system.zero()); } */
     ;
 
-question
-    : question_item                     { $$ = $1; }
-    | question question_item            { $$ = pg::cons($1, $2); }
-    ;
-
-question_item
-    : T_IDENTIFIER rule_arguments_opt   { $$ = pg::nonterminal(_G_system.push_symbol($1), $2); }
-    | T_TERMINAL                        { $$ = _G_system.terminal($1); }
-    ;
-
 postfix_item
     : unary_item                        { $$ = $1; }
     | postfix_item '@' primary_item
@@ -177,11 +180,6 @@ item_sequence
 conditional_item
     : item_sequence                     { $$ = $1; }
     | '?' T_CODE item_sequence          { $$ = pg::condition($2, $3); }
-    | '?' '(' question ')' item_sequence
-        {
-          $$ = $5;
-          fprintf(stderr, "** WARNING ``question'' not implemented!!\n");
-        }
     ;
 
 option_item

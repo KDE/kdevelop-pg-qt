@@ -40,7 +40,7 @@ namespace model
     node_kind_alternative = 6,
     node_kind_cons = 7,
     node_kind_evolve = 8,
-    node_kind_recovery = 9,
+    node_kind_try_catch = 9,
     node_kind_alias = 10,
     node_kind_terminal = 11,
     node_kind_nonterminal = 12,
@@ -108,11 +108,13 @@ namespace model
     node *_M_right;
   };
 
-  struct recovery_item: public node
+  struct try_catch_item: public node
   {
-    PG_NODE(recovery)
+    PG_NODE(try_catch)
 
-    node *_M_item;
+    node *_M_try_item;
+    node *_M_catch_item; // contains 0 for "catch(recover)"
+    bool _M_unsafe;
   };
 
   struct alias_item: public node

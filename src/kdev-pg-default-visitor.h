@@ -36,7 +36,7 @@ protected:
   virtual void visit_alternative(model::alternative_item *node);
   virtual void visit_cons(model::cons_item *node);
   virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_recovery(model::recovery_item *node);
+  virtual void visit_try_catch(model::try_catch_item *node);
   virtual void visit_alias(model::alias_item *node);
   virtual void visit_annotation(model::annotation_item *node);
   virtual void visit_condition(model::condition_item *node);

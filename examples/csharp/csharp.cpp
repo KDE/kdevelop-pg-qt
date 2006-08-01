@@ -2375,13 +2375,22 @@ namespace csharp
             std::size_t try_start_token_2 = token_stream->index() - 1;
             parser_state *try_start_state_2 = copy_current_state();
             {
-              type_arguments_ast *__node_46 = 0;
-              if (!parse_type_arguments(&__node_46))
+              if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
+                {
+                  type_arguments_ast *__node_46 = 0;
+                  if (!parse_type_arguments(&__node_46))
+                    {
+                      goto __catch_2;
+                    }
+                  (*yynode)->type_arguments = __node_46;
+
+                }
+              else if (true /*epsilon*/)
+              {}
+              else
                 {
                   goto __catch_2;
                 }
-              (*yynode)->type_arguments = __node_46;
-
             }
             block_errors(block_errors_2);
             if (try_start_state_2)
@@ -14181,26 +14190,44 @@ namespace csharp
           }
         (*yynode)->identifier = __node_281;
 
-        if (yytoken == Token_LESS_THAN)
+        bool block_errors_22 = block_errors(true);
+        std::size_t try_start_token_22 = token_stream->index() - 1;
+        parser_state *try_start_state_22 = copy_current_state();
+        {
+          if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
+            {
+              type_arguments_ast *__node_282 = 0;
+              if (!parse_type_arguments(&__node_282))
+                {
+                  goto __catch_22;
+                }
+              (*yynode)->type_arguments = __node_282;
+
+            }
+          else if (true /*epsilon*/)
+          {}
+          else
+            {
+              goto __catch_22;
+            }
+        }
+        block_errors(block_errors_22);
+        if (try_start_state_22)
+          delete try_start_state_22;
+
+        if (false) // the only way to enter here is using goto
           {
-            type_arguments_ast *__node_282 = 0;
-            if (!parse_type_arguments(&__node_282))
+          __catch_22:
+            if (try_start_state_22)
               {
-                if (!yy_block_errors)
-                  {
-                    yy_expected_symbol(ast_node::Kind_type_arguments, "type_arguments");
-                  }
-                return false;
+                restore_state(try_start_state_22);
+                delete try_start_state_22;
               }
-            (*yynode)->type_arguments = __node_282;
+            block_errors(block_errors_22);
+            rewind(try_start_token_22);
 
           }
-        else if (true /*epsilon*/)
-        {}
-        else
-          {
-            return false;
-          }
+
       }
     else
       {
@@ -14957,43 +14984,43 @@ namespace csharp
             || yytoken == Token_STRING_LITERAL
             || yytoken == Token_IDENTIFIER)
           {
-            std::size_t try_start_token_22 = token_stream->index() - 1;
-            parser_state *try_start_state_22 = copy_current_state();
+            std::size_t try_start_token_23 = token_stream->index() - 1;
+            parser_state *try_start_state_23 = copy_current_state();
             {
               argument_ast *__node_298 = 0;
               if (!parse_argument(&__node_298))
                 {
-                  goto __catch_22;
+                  goto __catch_23;
                 }
               (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_298, memory_pool);
 
               while (yytoken == Token_COMMA)
                 {
                   if (yytoken != Token_COMMA)
-                    goto __catch_22;
+                    goto __catch_23;
                   yylex();
 
                   argument_ast *__node_299 = 0;
                   if (!parse_argument(&__node_299))
                     {
-                      goto __catch_22;
+                      goto __catch_23;
                     }
                   (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_299, memory_pool);
 
                 }
             }
-            if (try_start_state_22)
-              delete try_start_state_22;
+            if (try_start_state_23)
+              delete try_start_state_23;
 
             if (false) // the only way to enter here is using goto
               {
-              __catch_22:
-                if (try_start_state_22)
+              __catch_23:
+                if (try_start_state_23)
                   {
-                    restore_state(try_start_state_22);
-                    delete try_start_state_22;
+                    restore_state(try_start_state_23);
+                    delete try_start_state_23;
                   }
-                if (try_start_token_22 == token_stream->index() - 1)
+                if (try_start_token_23 == token_stream->index() - 1)
                   yylex();
 
                 while (yytoken != Token_EOF
@@ -15086,29 +15113,29 @@ namespace csharp
       {
         while (yytoken == Token_LBRACKET)
           {
-            std::size_t try_start_token_23 = token_stream->index() - 1;
-            parser_state *try_start_state_23 = copy_current_state();
+            std::size_t try_start_token_24 = token_stream->index() - 1;
+            parser_state *try_start_state_24 = copy_current_state();
             {
               attribute_section_ast *__node_300 = 0;
               if (!parse_attribute_section(&__node_300))
                 {
-                  goto __catch_23;
+                  goto __catch_24;
                 }
               (*yynode)->attribute_sequence = snoc((*yynode)->attribute_sequence, __node_300, memory_pool);
 
             }
-            if (try_start_state_23)
-              delete try_start_state_23;
+            if (try_start_state_24)
+              delete try_start_state_24;
 
             if (false) // the only way to enter here is using goto
               {
-              __catch_23:
-                if (try_start_state_23)
+              __catch_24:
+                if (try_start_state_24)
                   {
-                    restore_state(try_start_state_23);
-                    delete try_start_state_23;
+                    restore_state(try_start_state_24);
+                    delete try_start_state_24;
                   }
-                if (try_start_token_23 == token_stream->index() - 1)
+                if (try_start_token_24 == token_stream->index() - 1)
                   yylex();
 
                 while (yytoken != Token_EOF
@@ -15498,29 +15525,29 @@ namespace csharp
       {
         while (yytoken == Token_WHERE)
           {
-            std::size_t try_start_token_24 = token_stream->index() - 1;
-            parser_state *try_start_state_24 = copy_current_state();
+            std::size_t try_start_token_25 = token_stream->index() - 1;
+            parser_state *try_start_state_25 = copy_current_state();
             {
               type_parameter_constraints_clause_ast *__node_301 = 0;
               if (!parse_type_parameter_constraints_clause(&__node_301))
                 {
-                  goto __catch_24;
+                  goto __catch_25;
                 }
               (*yynode)->clause_sequence = snoc((*yynode)->clause_sequence, __node_301, memory_pool);
 
             }
-            if (try_start_state_24)
-              delete try_start_state_24;
+            if (try_start_state_25)
+              delete try_start_state_25;
 
             if (false) // the only way to enter here is using goto
               {
-              __catch_24:
-                if (try_start_state_24)
+              __catch_25:
+                if (try_start_state_25)
                   {
-                    restore_state(try_start_state_24);
-                    delete try_start_state_24;
+                    restore_state(try_start_state_25);
+                    delete try_start_state_25;
                   }
-                if (try_start_token_24 == token_stream->index() - 1)
+                if (try_start_token_25 == token_stream->index() - 1)
                   yylex();
 
                 while (yytoken != Token_EOF
@@ -17254,32 +17281,41 @@ namespace csharp
               }
             (*yynode)->member_name = __node_323;
 
-            bool block_errors_25 = block_errors(true);
-            std::size_t try_start_token_25 = token_stream->index() - 1;
-            parser_state *try_start_state_25 = copy_current_state();
+            bool block_errors_26 = block_errors(true);
+            std::size_t try_start_token_26 = token_stream->index() - 1;
+            parser_state *try_start_state_26 = copy_current_state();
             {
-              type_arguments_ast *__node_324 = 0;
-              if (!parse_type_arguments(&__node_324))
+              if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                 {
-                  goto __catch_25;
-                }
-              (*yynode)->type_arguments = __node_324;
+                  type_arguments_ast *__node_324 = 0;
+                  if (!parse_type_arguments(&__node_324))
+                    {
+                      goto __catch_26;
+                    }
+                  (*yynode)->type_arguments = __node_324;
 
+                }
+              else if (true /*epsilon*/)
+              {}
+              else
+                {
+                  goto __catch_26;
+                }
             }
-            block_errors(block_errors_25);
-            if (try_start_state_25)
-              delete try_start_state_25;
+            block_errors(block_errors_26);
+            if (try_start_state_26)
+              delete try_start_state_26;
 
             if (false) // the only way to enter here is using goto
               {
-              __catch_25:
-                if (try_start_state_25)
+              __catch_26:
+                if (try_start_state_26)
                   {
-                    restore_state(try_start_state_25);
-                    delete try_start_state_25;
+                    restore_state(try_start_state_26);
+                    delete try_start_state_26;
                   }
-                block_errors(block_errors_25);
-                rewind(try_start_token_25);
+                block_errors(block_errors_26);
+                rewind(try_start_token_26);
 
               }
 
@@ -17430,32 +17466,41 @@ namespace csharp
               }
             (*yynode)->member_name = __node_328;
 
-            bool block_errors_26 = block_errors(true);
-            std::size_t try_start_token_26 = token_stream->index() - 1;
-            parser_state *try_start_state_26 = copy_current_state();
+            bool block_errors_27 = block_errors(true);
+            std::size_t try_start_token_27 = token_stream->index() - 1;
+            parser_state *try_start_state_27 = copy_current_state();
             {
-              type_arguments_ast *__node_329 = 0;
-              if (!parse_type_arguments(&__node_329))
+              if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                 {
-                  goto __catch_26;
-                }
-              (*yynode)->type_arguments = __node_329;
+                  type_arguments_ast *__node_329 = 0;
+                  if (!parse_type_arguments(&__node_329))
+                    {
+                      goto __catch_27;
+                    }
+                  (*yynode)->type_arguments = __node_329;
 
+                }
+              else if (true /*epsilon*/)
+              {}
+              else
+                {
+                  goto __catch_27;
+                }
             }
-            block_errors(block_errors_26);
-            if (try_start_state_26)
-              delete try_start_state_26;
+            block_errors(block_errors_27);
+            if (try_start_state_27)
+              delete try_start_state_27;
 
             if (false) // the only way to enter here is using goto
               {
-              __catch_26:
-                if (try_start_state_26)
+              __catch_27:
+                if (try_start_state_27)
                   {
-                    restore_state(try_start_state_26);
-                    delete try_start_state_26;
+                    restore_state(try_start_state_27);
+                    delete try_start_state_27;
                   }
-                block_errors(block_errors_26);
-                rewind(try_start_token_26);
+                block_errors(block_errors_27);
+                rewind(try_start_token_27);
 
               }
 
@@ -17973,32 +18018,32 @@ namespace csharp
         || yytoken == Token_STRING_LITERAL
         || yytoken == Token_IDENTIFIER)
       {
-        bool block_errors_27 = block_errors(true);
-        std::size_t try_start_token_27 = token_stream->index() - 1;
-        parser_state *try_start_state_27 = copy_current_state();
+        bool block_errors_28 = block_errors(true);
+        std::size_t try_start_token_28 = token_stream->index() - 1;
+        parser_state *try_start_state_28 = copy_current_state();
         {
           local_variable_declaration_ast *__node_337 = 0;
           if (!parse_local_variable_declaration(&__node_337))
             {
-              goto __catch_27;
+              goto __catch_28;
             }
           (*yynode)->local_variable_declaration = __node_337;
 
         }
-        block_errors(block_errors_27);
-        if (try_start_state_27)
-          delete try_start_state_27;
+        block_errors(block_errors_28);
+        if (try_start_state_28)
+          delete try_start_state_28;
 
         if (false) // the only way to enter here is using goto
           {
-          __catch_27:
-            if (try_start_state_27)
+          __catch_28:
+            if (try_start_state_28)
               {
-                restore_state(try_start_state_27);
-                delete try_start_state_27;
+                restore_state(try_start_state_28);
+                delete try_start_state_28;
               }
-            block_errors(block_errors_27);
-            rewind(try_start_token_27);
+            block_errors(block_errors_28);
+            rewind(try_start_token_28);
 
             expression_ast *__node_338 = 0;
             if (!parse_expression(&__node_338))
@@ -18567,32 +18612,41 @@ namespace csharp
                                                                 }
                                                               (*yynode)->member_name = __node_347;
 
-                                                              bool block_errors_28 = block_errors(true);
-                                                              std::size_t try_start_token_28 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_28 = copy_current_state();
+                                                              bool block_errors_29 = block_errors(true);
+                                                              std::size_t try_start_token_29 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_29 = copy_current_state();
                                                               {
-                                                                type_arguments_ast *__node_348 = 0;
-                                                                if (!parse_type_arguments(&__node_348))
+                                                                if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                                                                   {
-                                                                    goto __catch_28;
-                                                                  }
-                                                                (*yynode)->type_arguments = __node_348;
+                                                                    type_arguments_ast *__node_348 = 0;
+                                                                    if (!parse_type_arguments(&__node_348))
+                                                                      {
+                                                                        goto __catch_29;
+                                                                      }
+                                                                    (*yynode)->type_arguments = __node_348;
 
+                                                                  }
+                                                                else if (true /*epsilon*/)
+                                                                {}
+                                                                else
+                                                                  {
+                                                                    goto __catch_29;
+                                                                  }
                                                               }
-                                                              block_errors(block_errors_28);
-                                                              if (try_start_state_28)
-                                                                delete try_start_state_28;
+                                                              block_errors(block_errors_29);
+                                                              if (try_start_state_29)
+                                                                delete try_start_state_29;
 
                                                               if (false) // the only way to enter here is using goto
                                                                 {
-                                                                __catch_28:
-                                                                  if (try_start_state_28)
+                                                                __catch_29:
+                                                                  if (try_start_state_29)
                                                                     {
-                                                                      restore_state(try_start_state_28);
-                                                                      delete try_start_state_28;
+                                                                      restore_state(try_start_state_29);
+                                                                      delete try_start_state_29;
                                                                     }
-                                                                  block_errors(block_errors_28);
-                                                                  rewind(try_start_token_28);
+                                                                  block_errors(block_errors_29);
+                                                                  rewind(try_start_token_29);
 
                                                                 }
 
@@ -18645,32 +18699,41 @@ namespace csharp
                                                                 }
                                                               (*yynode)->member_name = __node_350;
 
-                                                              bool block_errors_29 = block_errors(true);
-                                                              std::size_t try_start_token_29 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_29 = copy_current_state();
+                                                              bool block_errors_30 = block_errors(true);
+                                                              std::size_t try_start_token_30 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_30 = copy_current_state();
                                                               {
-                                                                type_arguments_ast *__node_351 = 0;
-                                                                if (!parse_type_arguments(&__node_351))
+                                                                if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                                                                   {
-                                                                    goto __catch_29;
-                                                                  }
-                                                                (*yynode)->type_arguments = __node_351;
+                                                                    type_arguments_ast *__node_351 = 0;
+                                                                    if (!parse_type_arguments(&__node_351))
+                                                                      {
+                                                                        goto __catch_30;
+                                                                      }
+                                                                    (*yynode)->type_arguments = __node_351;
 
+                                                                  }
+                                                                else if (true /*epsilon*/)
+                                                                {}
+                                                                else
+                                                                  {
+                                                                    goto __catch_30;
+                                                                  }
                                                               }
-                                                              block_errors(block_errors_29);
-                                                              if (try_start_state_29)
-                                                                delete try_start_state_29;
+                                                              block_errors(block_errors_30);
+                                                              if (try_start_state_30)
+                                                                delete try_start_state_30;
 
                                                               if (false) // the only way to enter here is using goto
                                                                 {
-                                                                __catch_29:
-                                                                  if (try_start_state_29)
+                                                                __catch_30:
+                                                                  if (try_start_state_30)
                                                                     {
-                                                                      restore_state(try_start_state_29);
-                                                                      delete try_start_state_29;
+                                                                      restore_state(try_start_state_30);
+                                                                      delete try_start_state_30;
                                                                     }
-                                                                  block_errors(block_errors_29);
-                                                                  rewind(try_start_token_29);
+                                                                  block_errors(block_errors_30);
+                                                                  rewind(try_start_token_30);
 
                                                                 }
 
@@ -19089,29 +19152,29 @@ namespace csharp
                                                                  || yytoken == Token_LBRACKET
                                                                  || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              std::size_t try_start_token_30 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_30 = copy_current_state();
+                                                              std::size_t try_start_token_31 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_31 = copy_current_state();
                                                               {
                                                                 struct_member_declaration_ast *__node_359 = 0;
                                                                 if (!parse_struct_member_declaration(&__node_359))
                                                                   {
-                                                                    goto __catch_30;
+                                                                    goto __catch_31;
                                                                   }
                                                                 (*yynode)->member_declaration_sequence = snoc((*yynode)->member_declaration_sequence, __node_359, memory_pool);
 
                                                               }
-                                                              if (try_start_state_30)
-                                                                delete try_start_state_30;
+                                                              if (try_start_state_31)
+                                                                delete try_start_state_31;
 
                                                               if (false) // the only way to enter here is using goto
                                                                 {
-                                                                __catch_30:
-                                                                  if (try_start_state_30)
+                                                                __catch_31:
+                                                                  if (try_start_state_31)
                                                                     {
-                                                                      restore_state(try_start_state_30);
-                                                                      delete try_start_state_30;
+                                                                      restore_state(try_start_state_31);
+                                                                      delete try_start_state_31;
                                                                     }
-                                                                  if (try_start_token_30 == token_stream->index() - 1)
+                                                                  if (try_start_token_31 == token_stream->index() - 1)
                                                                     yylex();
 
                                                                   while (yytoken != Token_EOF
@@ -19236,29 +19299,29 @@ namespace csharp
 
                                                           if ((yytoken == Token_LESS_THAN) && ( compatibility_mode() >= csharp20_compatibility ))
                                                             {
-                                                              std::size_t try_start_token_31 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_31 = copy_current_state();
+                                                              std::size_t try_start_token_32 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_32 = copy_current_state();
                                                               {
                                                                 type_parameters_ast *__node_361 = 0;
                                                                 if (!parse_type_parameters(&__node_361))
                                                                   {
-                                                                    goto __catch_31;
+                                                                    goto __catch_32;
                                                                   }
                                                                 (*yynode)->type_parameters = __node_361;
 
                                                               }
-                                                              if (try_start_state_31)
-                                                                delete try_start_state_31;
+                                                              if (try_start_state_32)
+                                                                delete try_start_state_32;
 
                                                               if (false) // the only way to enter here is using goto
                                                                 {
-                                                                __catch_31:
-                                                                  if (try_start_state_31)
+                                                                __catch_32:
+                                                                  if (try_start_state_32)
                                                                     {
-                                                                      restore_state(try_start_state_31);
-                                                                      delete try_start_state_31;
+                                                                      restore_state(try_start_state_32);
+                                                                      delete try_start_state_32;
                                                                     }
-                                                                  if (try_start_token_31 == token_stream->index() - 1)
+                                                                  if (try_start_token_32 == token_stream->index() - 1)
                                                                     yylex();
 
                                                                   while (yytoken != Token_EOF
@@ -19782,29 +19845,29 @@ namespace csharp
                                                           while (yytoken == Token_CASE
                                                                  || yytoken == Token_DEFAULT)
                                                             {
-                                                              std::size_t try_start_token_32 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_32 = copy_current_state();
+                                                              std::size_t try_start_token_33 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_33 = copy_current_state();
                                                               {
                                                                 switch_section_ast *__node_374 = 0;
                                                                 if (!parse_switch_section(&__node_374))
                                                                   {
-                                                                    goto __catch_32;
+                                                                    goto __catch_33;
                                                                   }
                                                                 (*yynode)->switch_section_sequence = snoc((*yynode)->switch_section_sequence, __node_374, memory_pool);
 
                                                               }
-                                                              if (try_start_state_32)
-                                                                delete try_start_state_32;
+                                                              if (try_start_state_33)
+                                                                delete try_start_state_33;
 
                                                               if (false) // the only way to enter here is using goto
                                                                 {
-                                                                __catch_32:
-                                                                  if (try_start_state_32)
+                                                                __catch_33:
+                                                                  if (try_start_state_33)
                                                                     {
-                                                                      restore_state(try_start_state_32);
-                                                                      delete try_start_state_32;
+                                                                      restore_state(try_start_state_33);
+                                                                      delete try_start_state_33;
                                                                     }
-                                                                  if (try_start_token_32 == token_stream->index() - 1)
+                                                                  if (try_start_token_33 == token_stream->index() - 1)
                                                                     yylex();
 
                                                                   while (yytoken != Token_EOF
@@ -21068,6 +21131,78 @@ namespace csharp
 
                                                               (*yynode)->typeof_type = typeof_expression::type_void;
                                                             }
+                                                          else if ((yytoken == Token_BOOL
+                                                                    || yytoken == Token_BYTE
+                                                                    || yytoken == Token_CHAR
+                                                                    || yytoken == Token_DECIMAL
+                                                                    || yytoken == Token_DOUBLE
+                                                                    || yytoken == Token_FLOAT
+                                                                    || yytoken == Token_INT
+                                                                    || yytoken == Token_LONG
+                                                                    || yytoken == Token_OBJECT
+                                                                    || yytoken == Token_SBYTE
+                                                                    || yytoken == Token_SHORT
+                                                                    || yytoken == Token_STRING
+                                                                    || yytoken == Token_UINT
+                                                                    || yytoken == Token_ULONG
+                                                                    || yytoken == Token_USHORT
+                                                                    || yytoken == Token_VOID
+                                                                    || yytoken == Token_ADD
+                                                                    || yytoken == Token_ALIAS
+                                                                    || yytoken == Token_GET
+                                                                    || yytoken == Token_GLOBAL
+                                                                    || yytoken == Token_PARTIAL
+                                                                    || yytoken == Token_REMOVE
+                                                                    || yytoken == Token_SET
+                                                                    || yytoken == Token_VALUE
+                                                                    || yytoken == Token_WHERE
+                                                                    || yytoken == Token_YIELD
+                                                                    || yytoken == Token_ASSEMBLY
+                                                                    || yytoken == Token_IDENTIFIER) && ( compatibility_mode() >= csharp20_compatibility ))
+                                                            {
+                                                              bool block_errors_34 = block_errors(true);
+                                                              std::size_t try_start_token_34 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_34 = copy_current_state();
+                                                              {
+                                                                unbound_type_name_ast *__node_411 = 0;
+                                                                if (!parse_unbound_type_name(&__node_411))
+                                                                  {
+                                                                    goto __catch_34;
+                                                                  }
+                                                                (*yynode)->unbound_type_name = __node_411;
+
+                                                                (*yynode)->typeof_type = typeof_expression::type_unbound_type_name;
+                                                              }
+                                                              block_errors(block_errors_34);
+                                                              if (try_start_state_34)
+                                                                delete try_start_state_34;
+
+                                                              if (false) // the only way to enter here is using goto
+                                                                {
+                                                                __catch_34:
+                                                                  if (try_start_state_34)
+                                                                    {
+                                                                      restore_state(try_start_state_34);
+                                                                      delete try_start_state_34;
+                                                                    }
+                                                                  block_errors(block_errors_34);
+                                                                  rewind(try_start_token_34);
+
+                                                                  type_ast *__node_412 = 0;
+                                                                  if (!parse_type(&__node_412))
+                                                                    {
+                                                                      if (!yy_block_errors)
+                                                                        {
+                                                                          yy_expected_symbol(ast_node::Kind_type, "type");
+                                                                        }
+                                                                      return false;
+                                                                    }
+                                                                  (*yynode)->other_type = __node_412;
+
+                                                                  (*yynode)->typeof_type = typeof_expression::type_type;
+                                                                }
+
+                                                            }
                                                           else if (yytoken == Token_BOOL
                                                                    || yytoken == Token_BYTE
                                                                    || yytoken == Token_CHAR
@@ -21097,68 +21232,18 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              bool block_errors_33 = block_errors(true);
-                                                              std::size_t try_start_token_33 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_33 = copy_current_state();
-                                                              {
-                                                                type_ast *__node_411 = 0;
-                                                                if (!parse_type(&__node_411))
-                                                                  {
-                                                                    goto __catch_33;
-                                                                  }
-                                                                (*yynode)->other_type = __node_411;
-
-                                                                (*yynode)->typeof_type = typeof_expression::type_type;
-                                                              }
-                                                              block_errors(block_errors_33);
-                                                              if (try_start_state_33)
-                                                                delete try_start_state_33;
-
-                                                              if (false) // the only way to enter here is using goto
+                                                              type_ast *__node_413 = 0;
+                                                              if (!parse_type(&__node_413))
                                                                 {
-                                                                __catch_33:
-                                                                  if (try_start_state_33)
+                                                                  if (!yy_block_errors)
                                                                     {
-                                                                      restore_state(try_start_state_33);
-                                                                      delete try_start_state_33;
+                                                                      yy_expected_symbol(ast_node::Kind_type, "type");
                                                                     }
-                                                                  block_errors(block_errors_33);
-                                                                  rewind(try_start_token_33);
-
-                                                                  if ((yytoken == Token_ADD
-                                                                       || yytoken == Token_ALIAS
-                                                                       || yytoken == Token_GET
-                                                                       || yytoken == Token_GLOBAL
-                                                                       || yytoken == Token_PARTIAL
-                                                                       || yytoken == Token_REMOVE
-                                                                       || yytoken == Token_SET
-                                                                       || yytoken == Token_VALUE
-                                                                       || yytoken == Token_WHERE
-                                                                       || yytoken == Token_YIELD
-                                                                       || yytoken == Token_ASSEMBLY
-                                                                       || yytoken == Token_IDENTIFIER) && ( compatibility_mode() >= csharp20_compatibility ))
-                                                                    {
-                                                                      unbound_type_name_ast *__node_412 = 0;
-                                                                      if (!parse_unbound_type_name(&__node_412))
-                                                                        {
-                                                                          if (!yy_block_errors)
-                                                                            {
-                                                                              yy_expected_symbol(ast_node::Kind_unbound_type_name, "unbound_type_name");
-                                                                            }
-                                                                          return false;
-                                                                        }
-                                                                      (*yynode)->unbound_type_name = __node_412;
-
-                                                                      (*yynode)->typeof_type = typeof_expression::type_unbound_type_name;
-                                                                    }
-                                                                  else if (true /*epsilon*/)
-                                                                  {}
-                                                                  else
-                                                                    {
-                                                                      return false;
-                                                                    }
+                                                                  return false;
                                                                 }
+                                                              (*yynode)->other_type = __node_413;
 
+                                                              (*yynode)->typeof_type = typeof_expression::type_type;
                                                             }
                                                           else
                                                             {
@@ -21256,31 +21341,6 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              unary_expression_ast *__node_413 = 0;
-                                                              if (!parse_unary_expression(&__node_413))
-                                                                {
-                                                                  if (!yy_block_errors)
-                                                                    {
-                                                                      yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
-                                                                    }
-                                                                  return false;
-                                                                }
-                                                              (*yynode)->unary_expression = __node_413;
-
-                                                              (*yynode)->rule_type = unary_expression::type_incremented_expression;
-                                                            }
-                                                          else if (yytoken == Token_DECREMENT)
-                                                            {
-                                                              if (yytoken != Token_DECREMENT)
-                                                                {
-                                                                  if (!yy_block_errors)
-                                                                    {
-                                                                      yy_expected_token(yytoken, Token_DECREMENT, "--");
-                                                                    }
-                                                                  return false;
-                                                                }
-                                                              yylex();
-
                                                               unary_expression_ast *__node_414 = 0;
                                                               if (!parse_unary_expression(&__node_414))
                                                                 {
@@ -21292,15 +21352,15 @@ namespace csharp
                                                                 }
                                                               (*yynode)->unary_expression = __node_414;
 
-                                                              (*yynode)->rule_type = unary_expression::type_decremented_expression;
+                                                              (*yynode)->rule_type = unary_expression::type_incremented_expression;
                                                             }
-                                                          else if (yytoken == Token_MINUS)
+                                                          else if (yytoken == Token_DECREMENT)
                                                             {
-                                                              if (yytoken != Token_MINUS)
+                                                              if (yytoken != Token_DECREMENT)
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
-                                                                      yy_expected_token(yytoken, Token_MINUS, "-");
+                                                                      yy_expected_token(yytoken, Token_DECREMENT, "--");
                                                                     }
                                                                   return false;
                                                                 }
@@ -21317,15 +21377,15 @@ namespace csharp
                                                                 }
                                                               (*yynode)->unary_expression = __node_415;
 
-                                                              (*yynode)->rule_type = unary_expression::type_unary_minus_expression;
+                                                              (*yynode)->rule_type = unary_expression::type_decremented_expression;
                                                             }
-                                                          else if (yytoken == Token_PLUS)
+                                                          else if (yytoken == Token_MINUS)
                                                             {
-                                                              if (yytoken != Token_PLUS)
+                                                              if (yytoken != Token_MINUS)
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
-                                                                      yy_expected_token(yytoken, Token_PLUS, "+");
+                                                                      yy_expected_token(yytoken, Token_MINUS, "-");
                                                                     }
                                                                   return false;
                                                                 }
@@ -21342,15 +21402,15 @@ namespace csharp
                                                                 }
                                                               (*yynode)->unary_expression = __node_416;
 
-                                                              (*yynode)->rule_type = unary_expression::type_unary_plus_expression;
+                                                              (*yynode)->rule_type = unary_expression::type_unary_minus_expression;
                                                             }
-                                                          else if (yytoken == Token_TILDE)
+                                                          else if (yytoken == Token_PLUS)
                                                             {
-                                                              if (yytoken != Token_TILDE)
+                                                              if (yytoken != Token_PLUS)
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
-                                                                      yy_expected_token(yytoken, Token_TILDE, "~");
+                                                                      yy_expected_token(yytoken, Token_PLUS, "+");
                                                                     }
                                                                   return false;
                                                                 }
@@ -21367,15 +21427,15 @@ namespace csharp
                                                                 }
                                                               (*yynode)->unary_expression = __node_417;
 
-                                                              (*yynode)->rule_type = unary_expression::type_bitwise_not_expression;
+                                                              (*yynode)->rule_type = unary_expression::type_unary_plus_expression;
                                                             }
-                                                          else if (yytoken == Token_BANG)
+                                                          else if (yytoken == Token_TILDE)
                                                             {
-                                                              if (yytoken != Token_BANG)
+                                                              if (yytoken != Token_TILDE)
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
-                                                                      yy_expected_token(yytoken, Token_BANG, "!");
+                                                                      yy_expected_token(yytoken, Token_TILDE, "~");
                                                                     }
                                                                   return false;
                                                                 }
@@ -21391,6 +21451,31 @@ namespace csharp
                                                                   return false;
                                                                 }
                                                               (*yynode)->unary_expression = __node_418;
+
+                                                              (*yynode)->rule_type = unary_expression::type_bitwise_not_expression;
+                                                            }
+                                                          else if (yytoken == Token_BANG)
+                                                            {
+                                                              if (yytoken != Token_BANG)
+                                                                {
+                                                                  if (!yy_block_errors)
+                                                                    {
+                                                                      yy_expected_token(yytoken, Token_BANG, "!");
+                                                                    }
+                                                                  return false;
+                                                                }
+                                                              yylex();
+
+                                                              unary_expression_ast *__node_419 = 0;
+                                                              if (!parse_unary_expression(&__node_419))
+                                                                {
+                                                                  if (!yy_block_errors)
+                                                                    {
+                                                                      yy_expected_symbol(ast_node::Kind_unary_expression, "unary_expression");
+                                                                    }
+                                                                  return false;
+                                                                }
+                                                              (*yynode)->unary_expression = __node_419;
 
                                                               (*yynode)->rule_type = unary_expression::type_logical_not_expression;
                                                             }
@@ -21439,36 +21524,36 @@ namespace csharp
                                                                    || yytoken == Token_STRING_LITERAL
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              bool block_errors_34 = block_errors(true);
-                                                              std::size_t try_start_token_34 = token_stream->index() - 1;
-                                                              parser_state *try_start_state_34 = copy_current_state();
+                                                              bool block_errors_35 = block_errors(true);
+                                                              std::size_t try_start_token_35 = token_stream->index() - 1;
+                                                              parser_state *try_start_state_35 = copy_current_state();
                                                               {
-                                                                cast_expression_ast *__node_419 = 0;
-                                                                if (!parse_cast_expression(&__node_419))
+                                                                cast_expression_ast *__node_420 = 0;
+                                                                if (!parse_cast_expression(&__node_420))
                                                                   {
-                                                                    goto __catch_34;
+                                                                    goto __catch_35;
                                                                   }
-                                                                (*yynode)->cast_expression = __node_419;
+                                                                (*yynode)->cast_expression = __node_420;
 
                                                                 (*yynode)->rule_type = unary_expression::type_cast_expression;
                                                               }
-                                                              block_errors(block_errors_34);
-                                                              if (try_start_state_34)
-                                                                delete try_start_state_34;
+                                                              block_errors(block_errors_35);
+                                                              if (try_start_state_35)
+                                                                delete try_start_state_35;
 
                                                               if (false) // the only way to enter here is using goto
                                                                 {
-                                                                __catch_34:
-                                                                  if (try_start_state_34)
+                                                                __catch_35:
+                                                                  if (try_start_state_35)
                                                                     {
-                                                                      restore_state(try_start_state_34);
-                                                                      delete try_start_state_34;
+                                                                      restore_state(try_start_state_35);
+                                                                      delete try_start_state_35;
                                                                     }
-                                                                  block_errors(block_errors_34);
-                                                                  rewind(try_start_token_34);
+                                                                  block_errors(block_errors_35);
+                                                                  rewind(try_start_token_35);
 
-                                                                  primary_expression_ast *__node_420 = 0;
-                                                                  if (!parse_primary_expression(&__node_420))
+                                                                  primary_expression_ast *__node_421 = 0;
+                                                                  if (!parse_primary_expression(&__node_421))
                                                                     {
                                                                       if (!yy_block_errors)
                                                                         {
@@ -21476,7 +21561,7 @@ namespace csharp
                                                                         }
                                                                       return false;
                                                                     }
-                                                                  (*yynode)->primary_expression = __node_420;
+                                                                  (*yynode)->primary_expression = __node_421;
 
                                                                   (*yynode)->rule_type = unary_expression::type_primary_expression;
                                                                 }
@@ -21494,8 +21579,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              unary_expression_ast *__node_421 = 0;
-                                                              if (!parse_unary_expression(&__node_421))
+                                                              unary_expression_ast *__node_422 = 0;
+                                                              if (!parse_unary_expression(&__node_422))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21503,7 +21588,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->unary_expression = __node_421;
+                                                              (*yynode)->unary_expression = __node_422;
 
                                                               (*yynode)->rule_type = unary_expression::type_pointer_indirection_expression;
                                                             }
@@ -21519,8 +21604,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              unary_expression_ast *__node_422 = 0;
-                                                              if (!parse_unary_expression(&__node_422))
+                                                              unary_expression_ast *__node_423 = 0;
+                                                              if (!parse_unary_expression(&__node_423))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21528,7 +21613,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->unary_expression = __node_422;
+                                                              (*yynode)->unary_expression = __node_423;
 
                                                               (*yynode)->rule_type = unary_expression::type_addressof_expression;
                                                             }
@@ -21590,8 +21675,8 @@ namespace csharp
                                                               || yytoken == Token_TRUE
                                                               || yytoken == Token_FALSE)
                                                             {
-                                                              overloadable_unary_only_operator_ast *__node_423 = 0;
-                                                              if (!parse_overloadable_unary_only_operator(&__node_423, &(*yynode)->overloadable_operator_type))
+                                                              overloadable_unary_only_operator_ast *__node_424 = 0;
+                                                              if (!parse_overloadable_unary_only_operator(&__node_424, &(*yynode)->overloadable_operator_type))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21599,7 +21684,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              unary_op = __node_423;
+                                                              unary_op = __node_424;
 
                                                               if (yytoken != Token_LPAREN)
                                                                 {
@@ -21611,8 +21696,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              type_ast *__node_424 = 0;
-                                                              if (!parse_type(&__node_424))
+                                                              type_ast *__node_425 = 0;
+                                                              if (!parse_type(&__node_425))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21620,10 +21705,10 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source1_type = __node_424;
+                                                              (*yynode)->source1_type = __node_425;
 
-                                                              identifier_ast *__node_425 = 0;
-                                                              if (!parse_identifier(&__node_425))
+                                                              identifier_ast *__node_426 = 0;
+                                                              if (!parse_identifier(&__node_426))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21631,7 +21716,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source1_name = __node_425;
+                                                              (*yynode)->source1_name = __node_426;
 
                                                               if (yytoken != Token_RPAREN)
                                                                 {
@@ -21661,8 +21746,8 @@ namespace csharp
                                                                    || yytoken == Token_LSHIFT
                                                                    || yytoken == Token_RSHIFT)
                                                             {
-                                                              overloadable_binary_only_operator_ast *__node_426 = 0;
-                                                              if (!parse_overloadable_binary_only_operator(&__node_426, &(*yynode)->overloadable_operator_type))
+                                                              overloadable_binary_only_operator_ast *__node_427 = 0;
+                                                              if (!parse_overloadable_binary_only_operator(&__node_427, &(*yynode)->overloadable_operator_type))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21670,7 +21755,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              binary_op = __node_426;
+                                                              binary_op = __node_427;
 
                                                               if (yytoken != Token_LPAREN)
                                                                 {
@@ -21682,8 +21767,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              type_ast *__node_427 = 0;
-                                                              if (!parse_type(&__node_427))
+                                                              type_ast *__node_428 = 0;
+                                                              if (!parse_type(&__node_428))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21691,10 +21776,10 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source1_type = __node_427;
+                                                              (*yynode)->source1_type = __node_428;
 
-                                                              identifier_ast *__node_428 = 0;
-                                                              if (!parse_identifier(&__node_428))
+                                                              identifier_ast *__node_429 = 0;
+                                                              if (!parse_identifier(&__node_429))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21702,7 +21787,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source1_name = __node_428;
+                                                              (*yynode)->source1_name = __node_429;
 
                                                               if (yytoken != Token_COMMA)
                                                                 {
@@ -21714,8 +21799,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              type_ast *__node_429 = 0;
-                                                              if (!parse_type(&__node_429))
+                                                              type_ast *__node_430 = 0;
+                                                              if (!parse_type(&__node_430))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21723,10 +21808,10 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source2_type = __node_429;
+                                                              (*yynode)->source2_type = __node_430;
 
-                                                              identifier_ast *__node_430 = 0;
-                                                              if (!parse_identifier(&__node_430))
+                                                              identifier_ast *__node_431 = 0;
+                                                              if (!parse_identifier(&__node_431))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21734,7 +21819,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source2_name = __node_430;
+                                                              (*yynode)->source2_name = __node_431;
 
                                                               if (yytoken != Token_RPAREN)
                                                                 {
@@ -21752,8 +21837,8 @@ namespace csharp
                                                           else if (yytoken == Token_PLUS
                                                                    || yytoken == Token_MINUS)
                                                             {
-                                                              overloadable_unary_or_binary_operator_ast *__node_431 = 0;
-                                                              if (!parse_overloadable_unary_or_binary_operator(&__node_431, &(*yynode)->overloadable_operator_type))
+                                                              overloadable_unary_or_binary_operator_ast *__node_432 = 0;
+                                                              if (!parse_overloadable_unary_or_binary_operator(&__node_432, &(*yynode)->overloadable_operator_type))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21761,7 +21846,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              unary_or_binary_op = __node_431;
+                                                              unary_or_binary_op = __node_432;
 
                                                               (*yynode)->overloadable_operator_token = unary_or_binary_op->op;
                                                               if (yytoken != Token_LPAREN)
@@ -21774,8 +21859,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              type_ast *__node_432 = 0;
-                                                              if (!parse_type(&__node_432))
+                                                              type_ast *__node_433 = 0;
+                                                              if (!parse_type(&__node_433))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21783,10 +21868,10 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source1_type = __node_432;
+                                                              (*yynode)->source1_type = __node_433;
 
-                                                              identifier_ast *__node_433 = 0;
-                                                              if (!parse_identifier(&__node_433))
+                                                              identifier_ast *__node_434 = 0;
+                                                              if (!parse_identifier(&__node_434))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21794,7 +21879,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->source1_name = __node_433;
+                                                              (*yynode)->source1_name = __node_434;
 
                                                               if (yytoken == Token_COMMA)
                                                                 {
@@ -21808,8 +21893,8 @@ namespace csharp
                                                                     }
                                                                   yylex();
 
-                                                                  type_ast *__node_434 = 0;
-                                                                  if (!parse_type(&__node_434))
+                                                                  type_ast *__node_435 = 0;
+                                                                  if (!parse_type(&__node_435))
                                                                     {
                                                                       if (!yy_block_errors)
                                                                         {
@@ -21817,10 +21902,10 @@ namespace csharp
                                                                         }
                                                                       return false;
                                                                     }
-                                                                  (*yynode)->source2_type = __node_434;
+                                                                  (*yynode)->source2_type = __node_435;
 
-                                                                  identifier_ast *__node_435 = 0;
-                                                                  if (!parse_identifier(&__node_435))
+                                                                  identifier_ast *__node_436 = 0;
+                                                                  if (!parse_identifier(&__node_436))
                                                                     {
                                                                       if (!yy_block_errors)
                                                                         {
@@ -21828,7 +21913,7 @@ namespace csharp
                                                                         }
                                                                       return false;
                                                                     }
-                                                                  (*yynode)->source2_name = __node_435;
+                                                                  (*yynode)->source2_name = __node_436;
 
                                                                   (*yynode)->unary_or_binary = overloadable_operator::type_binary;
                                                                 }
@@ -21857,8 +21942,8 @@ namespace csharp
                                                             }
                                                           if (yytoken == Token_LBRACE)
                                                             {
-                                                              block_ast *__node_436 = 0;
-                                                              if (!parse_block(&__node_436))
+                                                              block_ast *__node_437 = 0;
+                                                              if (!parse_block(&__node_437))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21866,7 +21951,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->body = __node_436;
+                                                              (*yynode)->body = __node_437;
 
                                                             }
                                                           else if (yytoken == Token_SEMICOLON)
@@ -21929,8 +22014,8 @@ namespace csharp
                                                                || yytoken == Token_ASSEMBLY
                                                                || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_SCOPE ))
                                                             {
-                                                              identifier_ast *__node_437 = 0;
-                                                              if (!parse_identifier(&__node_437))
+                                                              identifier_ast *__node_438 = 0;
+                                                              if (!parse_identifier(&__node_438))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21938,7 +22023,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->qualified_alias_label = __node_437;
+                                                              (*yynode)->qualified_alias_label = __node_438;
 
                                                               if (yytoken != Token_SCOPE)
                                                                 {
@@ -21957,8 +22042,8 @@ namespace csharp
                                                             {
                                                               return false;
                                                             }
-                                                          unbound_type_name_part_ast *__node_438 = 0;
-                                                          if (!parse_unbound_type_name_part(&__node_438))
+                                                          unbound_type_name_part_ast *__node_439 = 0;
+                                                          if (!parse_unbound_type_name_part(&__node_439))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -21966,7 +22051,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_438, memory_pool);
+                                                          (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_439, memory_pool);
 
                                                           while (yytoken == Token_DOT)
                                                             {
@@ -21980,8 +22065,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              unbound_type_name_part_ast *__node_439 = 0;
-                                                              if (!parse_unbound_type_name_part(&__node_439))
+                                                              unbound_type_name_part_ast *__node_440 = 0;
+                                                              if (!parse_unbound_type_name_part(&__node_440))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -21989,7 +22074,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_439, memory_pool);
+                                                              (*yynode)->name_part_sequence = snoc((*yynode)->name_part_sequence, __node_440, memory_pool);
 
                                                             }
                                                         }
@@ -22022,8 +22107,8 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          identifier_ast *__node_440 = 0;
-                                                          if (!parse_identifier(&__node_440))
+                                                          identifier_ast *__node_441 = 0;
+                                                          if (!parse_identifier(&__node_441))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22031,10 +22116,10 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->identifier = __node_440;
+                                                          (*yynode)->identifier = __node_441;
 
-                                                          generic_dimension_specifier_ast *__node_441 = 0;
-                                                          if (!parse_generic_dimension_specifier(&__node_441))
+                                                          generic_dimension_specifier_ast *__node_442 = 0;
+                                                          if (!parse_generic_dimension_specifier(&__node_442))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22042,7 +22127,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->generic_dimension_specifier = __node_441;
+                                                          (*yynode)->generic_dimension_specifier = __node_442;
 
                                                         }
                                                       else
@@ -22073,8 +22158,8 @@ namespace csharp
                                                             }
                                                           yylex();
 
-                                                          block_ast *__node_442 = 0;
-                                                          if (!parse_block(&__node_442))
+                                                          block_ast *__node_443 = 0;
+                                                          if (!parse_block(&__node_443))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22082,7 +22167,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->body = __node_442;
+                                                          (*yynode)->body = __node_443;
 
                                                         }
                                                       else
@@ -22158,8 +22243,8 @@ namespace csharp
                                                               || yytoken == Token_ASSEMBLY
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              non_array_type_ast *__node_443 = 0;
-                                                              if (!parse_non_array_type(&__node_443))
+                                                              non_array_type_ast *__node_444 = 0;
+                                                              if (!parse_non_array_type(&__node_444))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22167,7 +22252,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->regular_type = __node_443;
+                                                              (*yynode)->regular_type = __node_444;
 
                                                               (*yynode)->type = pointer_type::type_regular;
                                                             }
@@ -22207,8 +22292,8 @@ namespace csharp
                                                                 {
                                                                   break;
                                                                 }
-                                                              unmanaged_type_suffix_ast *__node_444 = 0;
-                                                              if (!parse_unmanaged_type_suffix(&__node_444))
+                                                              unmanaged_type_suffix_ast *__node_445 = 0;
+                                                              if (!parse_unmanaged_type_suffix(&__node_445))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22216,7 +22301,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->unmanaged_type_suffix_sequence = snoc((*yynode)->unmanaged_type_suffix_sequence, __node_444, memory_pool);
+                                                              (*yynode)->unmanaged_type_suffix_sequence = snoc((*yynode)->unmanaged_type_suffix_sequence, __node_445, memory_pool);
 
                                                             }
                                                         }
@@ -22255,8 +22340,8 @@ namespace csharp
                                                             }
                                                           else if (yytoken == Token_LBRACKET)
                                                             {
-                                                              rank_specifier_ast *__node_445 = 0;
-                                                              if (!parse_rank_specifier(&__node_445))
+                                                              rank_specifier_ast *__node_446 = 0;
+                                                              if (!parse_rank_specifier(&__node_446))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22264,7 +22349,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->rank_specifier = __node_445;
+                                                              (*yynode)->rank_specifier = __node_446;
 
                                                               (*yynode)->type = unmanaged_type_suffix::type_rank_specifier;
                                                             }
@@ -22301,8 +22386,8 @@ namespace csharp
                                                             }
                                                           yylex();
 
-                                                          block_ast *__node_446 = 0;
-                                                          if (!parse_block(&__node_446))
+                                                          block_ast *__node_447 = 0;
+                                                          if (!parse_block(&__node_447))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22310,7 +22395,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->body = __node_446;
+                                                          (*yynode)->body = __node_447;
 
                                                         }
                                                       else
@@ -22354,8 +22439,8 @@ namespace csharp
                                                                || yytoken == Token_ASSEMBLY
                                                                || yytoken == Token_IDENTIFIER) && ( LA(2).kind == Token_ASSIGN ))
                                                             {
-                                                              identifier_ast *__node_447 = 0;
-                                                              if (!parse_identifier(&__node_447))
+                                                              identifier_ast *__node_448 = 0;
+                                                              if (!parse_identifier(&__node_448))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22363,7 +22448,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->alias = __node_447;
+                                                              (*yynode)->alias = __node_448;
 
                                                               if (yytoken != Token_ASSIGN)
                                                                 {
@@ -22375,8 +22460,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              namespace_or_type_name_ast *__node_448 = 0;
-                                                              if (!parse_namespace_or_type_name(&__node_448))
+                                                              namespace_or_type_name_ast *__node_449 = 0;
+                                                              if (!parse_namespace_or_type_name(&__node_449))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22384,7 +22469,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->namespace_or_type_name = __node_448;
+                                                              (*yynode)->namespace_or_type_name = __node_449;
 
                                                             }
                                                           else if (yytoken == Token_ADD
@@ -22400,8 +22485,8 @@ namespace csharp
                                                                    || yytoken == Token_ASSEMBLY
                                                                    || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              namespace_or_type_name_ast *__node_449 = 0;
-                                                              if (!parse_namespace_or_type_name(&__node_449))
+                                                              namespace_or_type_name_ast *__node_450 = 0;
+                                                              if (!parse_namespace_or_type_name(&__node_450))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22409,7 +22494,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->namespace_name = __node_449;
+                                                              (*yynode)->namespace_name = __node_450;
 
                                                             }
                                                           else
@@ -22465,8 +22550,8 @@ namespace csharp
                                                             }
                                                           yylex();
 
-                                                          resource_acquisition_ast *__node_450 = 0;
-                                                          if (!parse_resource_acquisition(&__node_450))
+                                                          resource_acquisition_ast *__node_451 = 0;
+                                                          if (!parse_resource_acquisition(&__node_451))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22474,7 +22559,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->resource_acquisition = __node_450;
+                                                          (*yynode)->resource_acquisition = __node_451;
 
                                                           if (yytoken != Token_RPAREN)
                                                             {
@@ -22486,8 +22571,8 @@ namespace csharp
                                                             }
                                                           yylex();
 
-                                                          embedded_statement_ast *__node_451 = 0;
-                                                          if (!parse_embedded_statement(&__node_451))
+                                                          embedded_statement_ast *__node_452 = 0;
+                                                          if (!parse_embedded_statement(&__node_452))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22495,7 +22580,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->body = __node_451;
+                                                          (*yynode)->body = __node_452;
 
                                                         }
                                                       else
@@ -22617,8 +22702,8 @@ namespace csharp
                                                           || yytoken == Token_ASSEMBLY
                                                           || yytoken == Token_IDENTIFIER)
                                                         {
-                                                          identifier_ast *__node_452 = 0;
-                                                          if (!parse_identifier(&__node_452))
+                                                          identifier_ast *__node_453 = 0;
+                                                          if (!parse_identifier(&__node_453))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22626,7 +22711,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->variable_name = __node_452;
+                                                          (*yynode)->variable_name = __node_453;
 
                                                           if (yytoken == Token_ASSIGN)
                                                             {
@@ -22640,8 +22725,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              variable_initializer_ast *__node_453 = 0;
-                                                              if (!parse_variable_initializer(&__node_453))
+                                                              variable_initializer_ast *__node_454 = 0;
+                                                              if (!parse_variable_initializer(&__node_454))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22649,7 +22734,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->variable_initializer = __node_453;
+                                                              (*yynode)->variable_initializer = __node_454;
 
                                                             }
                                                           else if (true /*epsilon*/)
@@ -22783,8 +22868,8 @@ namespace csharp
                                                               || yytoken == Token_STRING_LITERAL
                                                               || yytoken == Token_IDENTIFIER)
                                                             {
-                                                              expression_ast *__node_454 = 0;
-                                                              if (!parse_expression(&__node_454))
+                                                              expression_ast *__node_455 = 0;
+                                                              if (!parse_expression(&__node_455))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22792,13 +22877,13 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->expression = __node_454;
+                                                              (*yynode)->expression = __node_455;
 
                                                             }
                                                           else if (yytoken == Token_LBRACE)
                                                             {
-                                                              array_initializer_ast *__node_455 = 0;
-                                                              if (!parse_array_initializer(&__node_455))
+                                                              array_initializer_ast *__node_456 = 0;
+                                                              if (!parse_array_initializer(&__node_456))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22806,13 +22891,13 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->array_initializer = __node_455;
+                                                              (*yynode)->array_initializer = __node_456;
 
                                                             }
                                                           else if (yytoken == Token_STACKALLOC)
                                                             {
-                                                              stackalloc_initializer_ast *__node_456 = 0;
-                                                              if (!parse_stackalloc_initializer(&__node_456))
+                                                              stackalloc_initializer_ast *__node_457 = 0;
+                                                              if (!parse_stackalloc_initializer(&__node_457))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22820,7 +22905,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->stackalloc_initializer = __node_456;
+                                                              (*yynode)->stackalloc_initializer = __node_457;
 
                                                             }
                                                           else
@@ -22866,8 +22951,8 @@ namespace csharp
                                                             }
                                                           yylex();
 
-                                                          boolean_expression_ast *__node_457 = 0;
-                                                          if (!parse_boolean_expression(&__node_457))
+                                                          boolean_expression_ast *__node_458 = 0;
+                                                          if (!parse_boolean_expression(&__node_458))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22875,7 +22960,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->condition = __node_457;
+                                                          (*yynode)->condition = __node_458;
 
                                                           if (yytoken != Token_RPAREN)
                                                             {
@@ -22887,8 +22972,8 @@ namespace csharp
                                                             }
                                                           yylex();
 
-                                                          embedded_statement_ast *__node_458 = 0;
-                                                          if (!parse_embedded_statement(&__node_458))
+                                                          embedded_statement_ast *__node_459 = 0;
+                                                          if (!parse_embedded_statement(&__node_459))
                                                             {
                                                               if (!yy_block_errors)
                                                                 {
@@ -22896,7 +22981,7 @@ namespace csharp
                                                                 }
                                                               return false;
                                                             }
-                                                          (*yynode)->body = __node_458;
+                                                          (*yynode)->body = __node_459;
 
                                                         }
                                                       else
@@ -22939,8 +23024,8 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              expression_ast *__node_459 = 0;
-                                                              if (!parse_expression(&__node_459))
+                                                              expression_ast *__node_460 = 0;
+                                                              if (!parse_expression(&__node_460))
                                                                 {
                                                                   if (!yy_block_errors)
                                                                     {
@@ -22948,7 +23033,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->return_expression = __node_459;
+                                                              (*yynode)->return_expression = __node_460;
 
                                                               (*yynode)->yield_type = yield_statement::type_yield_return;
                                                             }

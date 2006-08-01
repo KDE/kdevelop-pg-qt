@@ -91,7 +91,7 @@
 --    which actually stems from indexer_declaration.
 --    (manually resolved, 1 conflict)
 
--- 13 first/first conflicts:
+-- 14 first/first conflicts:
 --  - The ADD, ALIAS, etc. (identifier) conflict in using_directive.
 --    (manually resolved, 1 conflict)
 --  - The ADD, ALIAS, etc. (identifier) conflicts in attribute_arguments,
@@ -134,10 +134,15 @@
 --    (manually resolved, 1 conflict)
 --  - The VOID conflict in typeof_expression.
 --    (manually resolved, 1 conflict)
+--  - The BOOL, BYTE, CHAR, etc. conflict in typeof_expression.
+--    That conflict is only naturally, because there's the same "type" rule
+--    in two branches of an alternative item. One for C# 2.0 or higher,
+--    and another one for C# 1.0. So, this is an artificial conflict.
+--    (manually resolved, 1 conflict)
 --  - The VOID conflict in return_type.
 --    (manually resolved, 1 conflict)
 
--- Total amount of conflicts: 34
+-- Total amount of conflicts: 35
 
 
 
@@ -2246,7 +2251,11 @@ namespace csharp_pp
  (
    -- this is the part of member_access that's not in primary_atom
    DOT member_name=identifier
-   try/rollback(type_arguments=type_arguments) catch(0)
+   try/rollback(
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   ) catch(0)
      [: (*yynode)->suffix_type = primary_suffix::type_member_access;   :]
  |
    -- the suffix part of invocation_expression
@@ -2265,7 +2274,11 @@ namespace csharp_pp
  |
    -- unsafe grammar extension: pointer access
    ARROW_RIGHT member_name=identifier
-   try/rollback(type_arguments=type_arguments) catch(0)
+   try/rollback(
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   ) catch(0)
      [: (*yynode)->suffix_type = primary_suffix::type_pointer_member_access; :]
  )
 -> primary_suffix [
@@ -2329,10 +2342,18 @@ namespace csharp_pp
     | 0
    )
    member_name=identifier
-   try/rollback(type_arguments=type_arguments) catch(0)
+   try/rollback(
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   ) catch(0)
  |
    predefined_type=predefined_type DOT member_name=identifier
-   try/rollback(type_arguments=type_arguments) catch(0)
+   try/rollback(
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   ) catch(0)
  )
 -> simple_name_or_member_access ;;
 
@@ -2360,7 +2381,11 @@ namespace csharp_pp
 
    BASE
    (  DOT identifier=identifier
-      try/rollback(type_arguments=type_arguments) catch(0)
+      try/rollback(
+         ?[: compatibility_mode() >= csharp20_compatibility :]
+         type_arguments=type_arguments
+       | 0
+      ) catch(0)
         [: (*yynode)->access_type = base_access::type_base_member_access;  :]
     |
       LBRACKET (#expression=expression @ COMMA) RBRACKET
@@ -2428,19 +2453,20 @@ namespace csharp_pp
    (
       ?[: LA(2).kind == Token_RPAREN :]
       VOID
-        [: (*yynode)->typeof_type = typeof_expression::type_void; :]
+        [: (*yynode)->typeof_type = typeof_expression::type_void;   :]
     |
+      ?[: compatibility_mode() >= csharp20_compatibility :]
       try/rollback(
-         other_type=type
-           [: (*yynode)->typeof_type = typeof_expression::type_type; :]
+        unbound_type_name=unbound_type_name
+          [: (*yynode)->typeof_type = typeof_expression::type_unbound_type_name; :]
       )
       catch(
-         ?[: compatibility_mode() >= csharp20_compatibility :]
-         unbound_type_name=unbound_type_name
-           [: (*yynode)->typeof_type = typeof_expression::type_unbound_type_name; :]
-       |
-         0
+        other_type=type
+          [: (*yynode)->typeof_type = typeof_expression::type_type; :]
       )
+    |
+      other_type=type
+        [: (*yynode)->typeof_type = typeof_expression::type_type;   :]
    )
    RPAREN
 -> typeof_expression [
@@ -2650,7 +2676,12 @@ namespace csharp_pp
    #name_part=namespace_or_type_name_part @ DOT
 -> namespace_or_type_name ;;
 
-   identifier=identifier (type_arguments=type_arguments | 0)
+   identifier=identifier
+   try/rollback(
+      ?[: compatibility_mode() >= csharp20_compatibility :]
+      type_arguments=type_arguments
+    | 0
+   ) catch(0)
 -> namespace_or_type_name_part ;;
 
    namespace_or_type_name_safe

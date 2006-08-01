@@ -2647,8 +2647,8 @@ namespace csharp
       };
 
       typeof_expression::typeof_expression_enum typeof_type;
-      type_ast *other_type;
       unbound_type_name_ast *unbound_type_name;
+      type_ast *other_type;
     };
 
   struct unary_expression_ast: public ast_node
@@ -5230,8 +5230,8 @@ namespace csharp
 
                                                         virtual void visit_typeof_expression(typeof_expression_ast *node)
                                                         {
-                                                          visit_node(node->other_type);
                                                           visit_node(node->unbound_type_name);
+                                                          visit_node(node->other_type);
                                                         }
 
                                                         virtual void visit_unary_expression(unary_expression_ast *node)

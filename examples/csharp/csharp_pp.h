@@ -308,6 +308,11 @@ namespace csharp_pp
       {
         return (yytoken = token_stream->next_token());
       }
+      inline void rewind(std::size_t index)
+      {
+        token_stream->rewind(index);
+        yylex();
+      }
 
       // token stream
       void set_token_stream(kdev_pg_token_stream *s)
@@ -315,9 +320,9 @@ namespace csharp_pp
         token_stream = s;
       }
 
-      // error recovery
-      bool yy_expected_symbol(int kind, char const *name);
-      bool yy_expected_token(int kind, std::size_t token, char const *name);
+      // error handling
+      void yy_expected_symbol(int kind, char const *name);
+      void yy_expected_token(int kind, std::size_t token, char const *name);
 
       // memory pool
       typedef kdev_pg_memory_pool memory_pool_type;

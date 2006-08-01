@@ -285,7 +285,6 @@ namespace cool
 namespace cool
   {
 
-
   class parser
     {
     public:
@@ -302,6 +301,11 @@ namespace cool
       {
         return (yytoken = token_stream->next_token());
       }
+      inline void rewind(std::size_t index)
+      {
+        token_stream->rewind(index);
+        yylex();
+      }
 
       // token stream
       void set_token_stream(kdev_pg_token_stream *s)
@@ -309,9 +313,17 @@ namespace cool
         token_stream = s;
       }
 
-      // error recovery
-      bool yy_expected_symbol(int kind, char const *name);
-      bool yy_expected_token(int kind, std::size_t token, char const *name);
+      // error handling
+      void yy_expected_symbol(int kind, char const *name);
+      void yy_expected_token(int kind, std::size_t token, char const *name);
+
+      bool yy_block_errors;
+      inline bool block_errors(bool block)
+      {
+        bool previous = yy_block_errors;
+        yy_block_errors = block;
+        return previous;
+      }
 
       // memory pool
       typedef kdev_pg_memory_pool memory_pool_type;
@@ -403,7 +415,11 @@ namespace cool
         memory_pool = 0;
         token_stream = 0;
         yytoken = Token_EOF;
+        yy_block_errors = false;
       }
+
+      virtual ~parser()
+      {}
 
       bool parse_additive_expression(additive_expression_ast **yynode);
       bool parse_block_expression(block_expression_ast **yynode);
@@ -560,7 +576,7 @@ namespace cool
         visit_node(node->expression);
       }
 
-      virtual void visit_formal(formal_ast *node)
+      virtual void visit_formal(formal_ast *)
     {}
 
       virtual void visit_if_expression(if_expression_ast *node)

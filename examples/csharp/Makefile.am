@@ -7,7 +7,6 @@ csharp_SOURCES = \
 	csharp_pp.cpp \
 	csharp_lexer.ll \
 	csharp_io.cpp \
-	csharp_lookahead.cpp \
 	csharp_pp_scope.cpp \
 	csharp_pp_handler_visitor.cpp \
 	main.cpp
@@ -15,7 +14,6 @@ csharp_SOURCES = \
 noinst_HEADERS = \
 	csharp.h \
 	csharp_pp.h \
-	csharp_lookahead.h \
 	csharp_pp_scope.h \
 	csharp_pp_handler_visitor.h
 

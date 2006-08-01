@@ -4,7 +4,6 @@ bin_PROGRAMS = java
 java_SOURCES = \
 	decoder.cpp \
 	java.cpp \
-	java_lookahead.cpp \
 	java_lexer.ll \
 	java_io.cpp \
 	main.cpp

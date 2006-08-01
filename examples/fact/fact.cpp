@@ -16,21 +16,35 @@ namespace fact
     if (yytoken == Token_IDENTIFIER)
       {
         if (yytoken != Token_IDENTIFIER)
-          return yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+          {
+            yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+            return false;
+          }
         (*yynode)->id = token_stream->index() - 1;
         yylex();
+
         if (yytoken != Token_ASSIGN)
-          return yy_expected_token(yytoken, Token_ASSIGN, "=");
+          {
+            yy_expected_token(yytoken, Token_ASSIGN, "=");
+            return false;
+          }
         yylex();
+
         expression_ast *__node_0 = 0;
         if (!parse_expression(&__node_0))
           {
-            return yy_expected_symbol(ast_node::Kind_expression, "expression");
+            yy_expected_symbol(ast_node::Kind_expression, "expression");
+            return false;
           }
         (*yynode)->expr = __node_0;
+
         if (yytoken != Token_SEMICOLON)
-          return yy_expected_token(yytoken, Token_SEMICOLON, ";");
+          {
+            yy_expected_token(yytoken, Token_SEMICOLON, ";");
+            return false;
+          }
         yylex();
+
       }
     else
       {
@@ -51,8 +65,12 @@ namespace fact
     if (yytoken == Token_LBRACE)
       {
         if (yytoken != Token_LBRACE)
-          return yy_expected_token(yytoken, Token_LBRACE, "{");
+          {
+            yy_expected_token(yytoken, Token_LBRACE, "{");
+            return false;
+          }
         yylex();
+
         while (yytoken == Token_IF
                || yytoken == Token_RETURN
                || yytoken == Token_LBRACE
@@ -61,13 +79,19 @@ namespace fact
             statement_ast *__node_1 = 0;
             if (!parse_statement(&__node_1))
               {
-                return yy_expected_symbol(ast_node::Kind_statement, "statement");
+                yy_expected_symbol(ast_node::Kind_statement, "statement");
+                return false;
               }
             (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_1, memory_pool);
+
           }
         if (yytoken != Token_RBRACE)
-          return yy_expected_token(yytoken, Token_RBRACE, "}");
+          {
+            yy_expected_token(yytoken, Token_RBRACE, "}");
+            return false;
+          }
         yylex();
+
       }
     else
       {
@@ -88,16 +112,22 @@ namespace fact
     if (yytoken == Token_LBRACE)
       {
         if (yytoken != Token_LBRACE)
-          return yy_expected_token(yytoken, Token_LBRACE, "{");
+          {
+            yy_expected_token(yytoken, Token_LBRACE, "{");
+            return false;
+          }
         yylex();
+
         while (yytoken == Token_VAR)
           {
             declaration_ast *__node_2 = 0;
             if (!parse_declaration(&__node_2))
               {
-                return yy_expected_symbol(ast_node::Kind_declaration, "declaration");
+                yy_expected_symbol(ast_node::Kind_declaration, "declaration");
+                return false;
               }
             (*yynode)->decl_sequence = snoc((*yynode)->decl_sequence, __node_2, memory_pool);
+
           }
         while (yytoken == Token_IF
                || yytoken == Token_RETURN
@@ -107,13 +137,19 @@ namespace fact
             statement_ast *__node_3 = 0;
             if (!parse_statement(&__node_3))
               {
-                return yy_expected_symbol(ast_node::Kind_statement, "statement");
+                yy_expected_symbol(ast_node::Kind_statement, "statement");
+                return false;
               }
             (*yynode)->stmt_sequence = snoc((*yynode)->stmt_sequence, __node_3, memory_pool);
+
           }
         if (yytoken != Token_RBRACE)
-          return yy_expected_token(yytoken, Token_RBRACE, "}");
+          {
+            yy_expected_token(yytoken, Token_RBRACE, "}");
+            return false;
+          }
         yylex();
+
       }
     else
       {
@@ -137,18 +173,26 @@ namespace fact
         expression_ast *__node_4 = 0;
         if (!parse_expression(&__node_4))
           {
-            return yy_expected_symbol(ast_node::Kind_expression, "expression");
+            yy_expected_symbol(ast_node::Kind_expression, "expression");
+            return false;
           }
         (*yynode)->left_expr = __node_4;
+
         if (yytoken != Token_EQUAL)
-          return yy_expected_token(yytoken, Token_EQUAL, "==");
+          {
+            yy_expected_token(yytoken, Token_EQUAL, "==");
+            return false;
+          }
         yylex();
+
         expression_ast *__node_5 = 0;
         if (!parse_expression(&__node_5))
           {
-            return yy_expected_symbol(ast_node::Kind_expression, "expression");
+            yy_expected_symbol(ast_node::Kind_expression, "expression");
+            return false;
           }
         (*yynode)->right_expr = __node_5;
+
       }
     else
       {
@@ -169,29 +213,45 @@ namespace fact
     if (yytoken == Token_VAR)
       {
         if (yytoken != Token_VAR)
-          return yy_expected_token(yytoken, Token_VAR, "var");
+          {
+            yy_expected_token(yytoken, Token_VAR, "var");
+            return false;
+          }
         yylex();
+
         variable_ast *__node_6 = 0;
         if (!parse_variable(&__node_6))
           {
-            return yy_expected_symbol(ast_node::Kind_variable, "variable");
+            yy_expected_symbol(ast_node::Kind_variable, "variable");
+            return false;
           }
         (*yynode)->var = __node_6;
+
         while (yytoken == Token_COMMA)
           {
             if (yytoken != Token_COMMA)
-              return yy_expected_token(yytoken, Token_COMMA, ",");
+              {
+                yy_expected_token(yytoken, Token_COMMA, ",");
+                return false;
+              }
             yylex();
+
             variable_ast *__node_7 = 0;
             if (!parse_variable(&__node_7))
               {
-                return yy_expected_symbol(ast_node::Kind_variable, "variable");
+                yy_expected_symbol(ast_node::Kind_variable, "variable");
+                return false;
               }
             (*yynode)->var = __node_7;
+
           }
         if (yytoken != Token_SEMICOLON)
-          return yy_expected_token(yytoken, Token_SEMICOLON, ";");
+          {
+            yy_expected_token(yytoken, Token_SEMICOLON, ";");
+            return false;
+          }
         yylex();
+
       }
     else
       {
@@ -215,20 +275,28 @@ namespace fact
         mult_expression_ast *__node_8 = 0;
         if (!parse_mult_expression(&__node_8))
           {
-            return yy_expected_symbol(ast_node::Kind_mult_expression, "mult_expression");
+            yy_expected_symbol(ast_node::Kind_mult_expression, "mult_expression");
+            return false;
           }
         (*yynode)->left_expr = __node_8;
+
         while (yytoken == Token_MINUS)
           {
             if (yytoken != Token_MINUS)
-              return yy_expected_token(yytoken, Token_MINUS, "-");
+              {
+                yy_expected_token(yytoken, Token_MINUS, "-");
+                return false;
+              }
             yylex();
+
             mult_expression_ast *__node_9 = 0;
             if (!parse_mult_expression(&__node_9))
               {
-                return yy_expected_symbol(ast_node::Kind_mult_expression, "mult_expression");
+                yy_expected_symbol(ast_node::Kind_mult_expression, "mult_expression");
+                return false;
               }
             (*yynode)->right_expr = __node_9;
+
           }
       }
     else
@@ -250,30 +318,54 @@ namespace fact
     if (yytoken == Token_FUNCTION)
       {
         if (yytoken != Token_FUNCTION)
-          return yy_expected_token(yytoken, Token_FUNCTION, "function");
+          {
+            yy_expected_token(yytoken, Token_FUNCTION, "function");
+            return false;
+          }
         yylex();
+
         if (yytoken != Token_IDENTIFIER)
-          return yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+          {
+            yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+            return false;
+          }
         (*yynode)->id = token_stream->index() - 1;
         yylex();
+
         if (yytoken != Token_LPAREN)
-          return yy_expected_token(yytoken, Token_LPAREN, "(");
+          {
+            yy_expected_token(yytoken, Token_LPAREN, "(");
+            return false;
+          }
         yylex();
+
         if (yytoken == Token_IDENTIFIER)
           {
             if (yytoken != Token_IDENTIFIER)
-              return yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+              {
+                yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+                return false;
+              }
             (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
             yylex();
+
             while (yytoken == Token_COMMA)
               {
                 if (yytoken != Token_COMMA)
-                  return yy_expected_token(yytoken, Token_COMMA, ",");
+                  {
+                    yy_expected_token(yytoken, Token_COMMA, ",");
+                    return false;
+                  }
                 yylex();
+
                 if (yytoken != Token_IDENTIFIER)
-                  return yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+                  {
+                    yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+                    return false;
+                  }
                 (*yynode)->param_sequence = snoc((*yynode)->param_sequence, token_stream->index() - 1, memory_pool);
                 yylex();
+
               }
           }
         else if (true /*epsilon*/)
@@ -283,14 +375,20 @@ namespace fact
             return false;
           }
         if (yytoken != Token_RPAREN)
-          return yy_expected_token(yytoken, Token_RPAREN, ")");
+          {
+            yy_expected_token(yytoken, Token_RPAREN, ")");
+            return false;
+          }
         yylex();
+
         body_ast *__node_10 = 0;
         if (!parse_body(&__node_10))
           {
-            return yy_expected_symbol(ast_node::Kind_body, "body");
+            yy_expected_symbol(ast_node::Kind_body, "body");
+            return false;
           }
         (*yynode)->body = __node_10;
+
       }
     else
       {
@@ -311,37 +409,59 @@ namespace fact
     if (yytoken == Token_IF)
       {
         if (yytoken != Token_IF)
-          return yy_expected_token(yytoken, Token_IF, "if");
+          {
+            yy_expected_token(yytoken, Token_IF, "if");
+            return false;
+          }
         yylex();
+
         if (yytoken != Token_LPAREN)
-          return yy_expected_token(yytoken, Token_LPAREN, "(");
+          {
+            yy_expected_token(yytoken, Token_LPAREN, "(");
+            return false;
+          }
         yylex();
+
         condition_ast *__node_11 = 0;
         if (!parse_condition(&__node_11))
           {
-            return yy_expected_symbol(ast_node::Kind_condition, "condition");
+            yy_expected_symbol(ast_node::Kind_condition, "condition");
+            return false;
           }
         (*yynode)->cond = __node_11;
+
         if (yytoken != Token_RPAREN)
-          return yy_expected_token(yytoken, Token_RPAREN, ")");
+          {
+            yy_expected_token(yytoken, Token_RPAREN, ")");
+            return false;
+          }
         yylex();
+
         statement_ast *__node_12 = 0;
         if (!parse_statement(&__node_12))
           {
-            return yy_expected_symbol(ast_node::Kind_statement, "statement");
+            yy_expected_symbol(ast_node::Kind_statement, "statement");
+            return false;
           }
         (*yynode)->if_stmt = __node_12;
+
         if (yytoken == Token_ELSE)
           {
             if (yytoken != Token_ELSE)
-              return yy_expected_token(yytoken, Token_ELSE, "else");
+              {
+                yy_expected_token(yytoken, Token_ELSE, "else");
+                return false;
+              }
             yylex();
+
             statement_ast *__node_13 = 0;
             if (!parse_statement(&__node_13))
               {
-                return yy_expected_symbol(ast_node::Kind_statement, "statement");
+                yy_expected_symbol(ast_node::Kind_statement, "statement");
+                return false;
               }
             (*yynode)->else_stmt = __node_13;
+
           }
         else if (true /*epsilon*/)
         {}
@@ -372,20 +492,28 @@ namespace fact
         primary_ast *__node_14 = 0;
         if (!parse_primary(&__node_14))
           {
-            return yy_expected_symbol(ast_node::Kind_primary, "primary");
+            yy_expected_symbol(ast_node::Kind_primary, "primary");
+            return false;
           }
         (*yynode)->left_expr = __node_14;
+
         while (yytoken == Token_STAR)
           {
             if (yytoken != Token_STAR)
-              return yy_expected_token(yytoken, Token_STAR, "*");
+              {
+                yy_expected_token(yytoken, Token_STAR, "*");
+                return false;
+              }
             yylex();
+
             primary_ast *__node_15 = 0;
             if (!parse_primary(&__node_15))
               {
-                return yy_expected_symbol(ast_node::Kind_primary, "primary");
+                yy_expected_symbol(ast_node::Kind_primary, "primary");
+                return false;
               }
             (*yynode)->right_expr = __node_15;
+
           }
       }
     else
@@ -410,42 +538,66 @@ namespace fact
         if (yytoken == Token_NUMBER)
           {
             if (yytoken != Token_NUMBER)
-              return yy_expected_token(yytoken, Token_NUMBER, "integer literal");
+              {
+                yy_expected_token(yytoken, Token_NUMBER, "integer literal");
+                return false;
+              }
             (*yynode)->num = token_stream->index() - 1;
             yylex();
+
           }
         else if (yytoken == Token_IDENTIFIER)
           {
             if (yytoken != Token_IDENTIFIER)
-              return yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+              {
+                yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+                return false;
+              }
             (*yynode)->id = token_stream->index() - 1;
             yylex();
+
             if (yytoken == Token_LPAREN)
               {
                 if (yytoken != Token_LPAREN)
-                  return yy_expected_token(yytoken, Token_LPAREN, "(");
+                  {
+                    yy_expected_token(yytoken, Token_LPAREN, "(");
+                    return false;
+                  }
                 yylex();
+
                 expression_ast *__node_16 = 0;
                 if (!parse_expression(&__node_16))
                   {
-                    return yy_expected_symbol(ast_node::Kind_expression, "expression");
+                    yy_expected_symbol(ast_node::Kind_expression, "expression");
+                    return false;
                   }
                 (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_16, memory_pool);
+
                 while (yytoken == Token_COMMA)
                   {
                     if (yytoken != Token_COMMA)
-                      return yy_expected_token(yytoken, Token_COMMA, ",");
+                      {
+                        yy_expected_token(yytoken, Token_COMMA, ",");
+                        return false;
+                      }
                     yylex();
+
                     expression_ast *__node_17 = 0;
                     if (!parse_expression(&__node_17))
                       {
-                        return yy_expected_symbol(ast_node::Kind_expression, "expression");
+                        yy_expected_symbol(ast_node::Kind_expression, "expression");
+                        return false;
                       }
                     (*yynode)->argument_sequence = snoc((*yynode)->argument_sequence, __node_17, memory_pool);
+
                   }
                 if (yytoken != Token_RPAREN)
-                  return yy_expected_token(yytoken, Token_RPAREN, ")");
+                  {
+                    yy_expected_token(yytoken, Token_RPAREN, ")");
+                    return false;
+                  }
                 yylex();
+
               }
             else if (true /*epsilon*/)
             {}
@@ -482,9 +634,11 @@ namespace fact
             function_definition_ast *__node_18 = 0;
             if (!parse_function_definition(&__node_18))
               {
-                return yy_expected_symbol(ast_node::Kind_function_definition, "function_definition");
+                yy_expected_symbol(ast_node::Kind_function_definition, "function_definition");
+                return false;
               }
             (*yynode)->fun_sequence = snoc((*yynode)->fun_sequence, __node_18, memory_pool);
+
           }
         if (Token_EOF != yytoken)
           {
@@ -510,17 +664,27 @@ namespace fact
                              if (yytoken == Token_RETURN)
                                {
                                  if (yytoken != Token_RETURN)
-                                   return yy_expected_token(yytoken, Token_RETURN, "return");
+                                   {
+                                     yy_expected_token(yytoken, Token_RETURN, "return");
+                                     return false;
+                                   }
                                  yylex();
+
                                  expression_ast *__node_19 = 0;
                                  if (!parse_expression(&__node_19))
                                    {
-                                     return yy_expected_symbol(ast_node::Kind_expression, "expression");
+                                     yy_expected_symbol(ast_node::Kind_expression, "expression");
+                                     return false;
                                    }
                                  (*yynode)->expr = __node_19;
+
                                  if (yytoken != Token_SEMICOLON)
-                                   return yy_expected_token(yytoken, Token_SEMICOLON, ";");
+                                   {
+                                     yy_expected_token(yytoken, Token_SEMICOLON, ";");
+                                     return false;
+                                   }
                                  yylex();
+
                                }
                              else
                                {
@@ -548,36 +712,44 @@ namespace fact
                                      assignment_statement_ast *__node_20 = 0;
                                      if (!parse_assignment_statement(&__node_20))
                                        {
-                                         return yy_expected_symbol(ast_node::Kind_assignment_statement, "assignment_statement");
+                                         yy_expected_symbol(ast_node::Kind_assignment_statement, "assignment_statement");
+                                         return false;
                                        }
                                      (*yynode)->assign_stmt = __node_20;
+
                                    }
                                  else if (yytoken == Token_IF)
                                    {
                                      if_statement_ast *__node_21 = 0;
                                      if (!parse_if_statement(&__node_21))
                                        {
-                                         return yy_expected_symbol(ast_node::Kind_if_statement, "if_statement");
+                                         yy_expected_symbol(ast_node::Kind_if_statement, "if_statement");
+                                         return false;
                                        }
                                      (*yynode)->if_stmt = __node_21;
+
                                    }
                                  else if (yytoken == Token_LBRACE)
                                    {
                                      block_statement_ast *__node_22 = 0;
                                      if (!parse_block_statement(&__node_22))
                                        {
-                                         return yy_expected_symbol(ast_node::Kind_block_statement, "block_statement");
+                                         yy_expected_symbol(ast_node::Kind_block_statement, "block_statement");
+                                         return false;
                                        }
                                      (*yynode)->block_stmt = __node_22;
+
                                    }
                                  else if (yytoken == Token_RETURN)
                                    {
                                      return_statement_ast *__node_23 = 0;
                                      if (!parse_return_statement(&__node_23))
                                        {
-                                         return yy_expected_symbol(ast_node::Kind_return_statement, "return_statement");
+                                         yy_expected_symbol(ast_node::Kind_return_statement, "return_statement");
+                                         return false;
                                        }
                                      (*yynode)->return_stmt = __node_23;
+
                                    }
                                  else
                                    {
@@ -603,9 +775,13 @@ namespace fact
                              if (yytoken == Token_IDENTIFIER)
                                {
                                  if (yytoken != Token_IDENTIFIER)
-                                   return yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+                                   {
+                                     yy_expected_token(yytoken, Token_IDENTIFIER, "identifier");
+                                     return false;
+                                   }
                                  (*yynode)->id = token_stream->index() - 1;
                                  yylex();
+
                                }
                              else
                                {

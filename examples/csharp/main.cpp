@@ -57,23 +57,19 @@ int main(int argc, char *argv[])
     {
       if (!strncmp(arg, "--compatibility=", 16))
         {
-          /*
           char const* version = arg + 16;
 
           if (!strcmp("1.0", version)) {
             compatibility_mode = parser::csharp10_compatibility;
           }
           else if (!strcmp("2.0", version)) {
-          */
             compatibility_mode = parser::csharp20_compatibility;
-          /*
           }
           else {
             std::cerr << "Unsupported C# version: " << version << std::endl;
             usage(argv[0]);
             exit(EXIT_FAILURE);
           }
-          */
         }
       else if (!strncmp(arg, "--", 2))
         {
@@ -152,10 +148,10 @@ bool parse_file(char const *filename, parser::csharp_compatibility_mode compatib
 
 static void usage(char const* argv0)
 {
-  std::cerr << "usage: " << argv0 << " [options] file.cs [file2.cs ...]";
-     //<< std::endl << std::endl
-     //<< "Options:" << std::endl
-     //<< "  --compatibility=VERSION: Accept files of the given C# version. " << std::endl
-     //<< "                           VERSION is one of 1.0 or 2.0, "
-     //<<                            "default is 2.0." << std::endl;
+  std::cerr << "usage: " << argv0 << " [options] file.cs [file2.cs ...]"
+     << std::endl << std::endl
+     << "Options:" << std::endl
+     << "  --compatibility=VERSION: Accept files of the given C# version. " << std::endl
+     << "                           VERSION is one of 1.0 or 2.0, "
+     <<                            "default is 2.0." << std::endl;
 }

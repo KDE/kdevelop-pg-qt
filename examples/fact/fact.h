@@ -306,10 +306,6 @@ namespace fact
        */
       void tokenize();
 
-      struct parser_state
-        {}
-      ;
-
       enum problem_type {
         error,
         warning,

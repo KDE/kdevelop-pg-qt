@@ -119,7 +119,7 @@ struct world
     namespaces.insert(std::make_pair(name, code));
   }
 
-  void *push_parserclass_member(model::node *member)
+  void push_parserclass_member(model::node *member)
   {
     settings::member_item *m = node_cast<settings::member_item*>(member);
     assert(m != 0);

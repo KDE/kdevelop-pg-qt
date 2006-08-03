@@ -22903,7 +22903,7 @@ namespace csharp
                                                                     }
                                                                   return false;
                                                                 }
-                                                              (*yynode)->fixed_size = __node_453;
+                                                              (*yynode)->array_size = __node_453;
 
                                                               if (yytoken != Token_RBRACKET)
                                                                 {

@@ -2781,7 +2781,7 @@ namespace csharp
       };
 
       identifier_ast *variable_name;
-      expression_ast *fixed_size;
+      expression_ast *array_size;
       variable_initializer_ast *variable_initializer;
     };
 
@@ -5363,7 +5363,7 @@ namespace csharp
                                                         virtual void visit_variable_declarator(variable_declarator_ast *node)
                                                         {
                                                           visit_node(node->variable_name);
-                                                          visit_node(node->fixed_size);
+                                                          visit_node(node->array_size);
                                                           visit_node(node->variable_initializer);
                                                         }
 

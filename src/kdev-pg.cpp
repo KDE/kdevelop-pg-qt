@@ -140,6 +140,10 @@ model::annotation_item *pg::annotation(
       variable_type = model::variable_declaration_item::type_node;
       type = nt->_M_symbol->_M_name;
     }
+  else
+    {
+      assert(0); // ### item must either be a terminal or a nonterminal
+    }
 
   node->_M_declaration =
      pg::variable_declaration(model::variable_declaration_item::declaration_local,
@@ -177,13 +181,14 @@ settings::member_item *pg::member(settings::member_item::member_kind_enum kind, 
   settings::member_item *node = create_node<settings::member_item>();
   node->_M_member_kind = kind;
   node->_M_code = code;
+  return node;
 }
 
 std::ostream &operator << (std::ostream &out, model::node const *__node)
 {
   model::node *node = const_cast<model::node*>(__node);
 
-  if (model::zero_item *z = node_cast<model::zero_item*>(node))
+  if (node_cast<model::zero_item*>(node))
     return (out << "0");
   else if (model::symbol_item *s = node_cast<model::symbol_item *>(node))
     return (out << s->_M_name);
@@ -245,11 +250,11 @@ bool reduces_to_epsilon(model::node *node)
     {
       return reduces_to_epsilon(p->_M_item);
     }
-  else if (model::star_item *s = node_cast<model::star_item*>(node))
+  else if (node_cast<model::star_item*>(node))
     {
       return true;
     }
-  else if (model::zero_item *z = node_cast<model::zero_item*>(node))
+  else if (node_cast<model::zero_item*>(node))
     {
       return true;
     }
@@ -279,7 +284,7 @@ bool is_zero(model::node *node)
     {
       return is_zero(s->_M_item);
     }
-  else if (model::zero_item *z = node_cast<model::zero_item*>(node))
+  else if (node_cast<model::zero_item*>(node))
     {
       return true;
     }

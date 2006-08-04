@@ -1,5 +1,6 @@
+#line 2 "java_lexer.cc"
 
-#line 3 "java_lexer.cc"
+#line 4 "java_lexer.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -2762,7 +2763,7 @@ _G_token_end += yyleng;
 /* Any multi-byte Unicode character. Single-byte ones are just . in lex. */
 /* non-Unicode stuff */
 
-#line 2766 "java_lexer.cc"
+#line 2767 "java_lexer.cc"
 
 #define INITIAL 0
 #define IN_BLOCKCOMMENT 1
@@ -2919,7 +2920,7 @@ YY_DECL
 
  /* whitespace, newlines and comments */
 
-#line 2923 "java_lexer.cc"
+#line 2924 "java_lexer.cc"
 
 	if ( (yy_init) )
 		{
@@ -3654,7 +3655,7 @@ YY_RULE_SETUP
 #line 352 "java_lexer.ll"
 ECHO;
 	YY_BREAK
-#line 3658 "java_lexer.cc"
+#line 3659 "java_lexer.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

@@ -11,18 +11,40 @@ FIND_PROGRAM(FLEX_EXECUTABLE
     PATHS /usr/bin
     DOC "Flex executable")
 
+
+# Add command to generate the parser.
+ADD_CUSTOM_COMMAND(
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java.g"
+    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    ARGS    --output=java
+            "java.g"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java.cpp)
+
+SET_SOURCE_FILES_PROPERTIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/java.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/java.h
+    GENERATED
+    )
+
+
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"java_lexer.cc"
                 "java_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc
@@ -30,27 +52,8 @@ IF(FLEX_EXECUTABLE)
         )
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("Assuming existence of the generated lexer file java_lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
-
-
-# Add command to generate the parser.
-ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java.cpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java.g"
-            ${assembled_parser_srcs}
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
-    ARGS    --output=java
-            "java.g"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/java.cpp)
-
-SET_SOURCE_FILES_PROPERTIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}/java.cpp
-    GENERATED
-    )
 
 
 SET(assembled_parser_srcs
@@ -81,3 +84,4 @@ ADD_CUSTOM_COMMAND(TARGET parser/force
     COMMAND rm java.cpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
+

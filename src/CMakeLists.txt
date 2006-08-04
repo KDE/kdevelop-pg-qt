@@ -38,17 +38,40 @@ FIND_PROGRAM(BISON_EXECUTABLE
     PATHS /usr/bin
     DOC "bison executable")
 
+IF(BISON_EXECUTABLE)
+    # Add command to run the parser.
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
+                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
+        COMMAND ${BISON_EXECUTABLE}
+        ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
+                -d "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
+        )
+
+    SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
+    SET_SOURCE_FILES_PROPERTIES(
+        ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc
+        ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
+        GENERATED
+        )
+ELSE(BISON_EXECUTABLE)
+    MESSAGE("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
+ENDIF(BISON_EXECUTABLE)
+
 IF(FLEX_EXECUTABLE)
     # Add command to run the lexer.
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
+                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc ${parser_srcs})
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc
         GENERATED
@@ -57,27 +80,6 @@ ELSE(FLEX_EXECUTABLE)
     MESSAGE("Assuming existence of the generated lexer file kdev-pg-lexer.cc")
     SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc)
 ENDIF(FLEX_EXECUTABLE)
-
-IF(BISON_EXECUTABLE)
-    # Add command to run the parser.
-    ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
-                ${parser_srcs}
-        COMMAND ${BISON_EXECUTABLE}
-        ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
-                -d "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
-        )
-
-    SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
-    SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc
-        GENERATED
-        )
-ELSE(BISON_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated parser file kdev-pg-parser.cc")
-    SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
-ENDIF(BISON_EXECUTABLE)
 
 
 # add definitions, compiler switches, etc.

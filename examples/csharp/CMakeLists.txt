@@ -11,18 +11,53 @@ FIND_PROGRAM(FLEX_EXECUTABLE
     PATHS /usr/bin
     DOC "Flex executable")
 
+
+# Add commands to generate the parsers.
+ADD_CUSTOM_COMMAND(
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp.g"
+    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    ARGS    --output=csharp
+            "csharp.g"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+ADD_CUSTOM_COMMAND(
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.g"
+    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    ARGS    --output=csharp_pp
+            "csharp_pp.g"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+SET(parser_srcs
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp)
+
+SET_SOURCE_FILES_PROPERTIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h
+    GENERATED
+    )
+
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"csharp_lexer.cc"
                 "csharp_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc
@@ -32,38 +67,6 @@ ELSE(FLEX_EXECUTABLE)
     MESSAGE("Assuming existence of the generated lexer file csharp_lexer.cc")
     SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc)
 ENDIF(FLEX_EXECUTABLE)
-
-
-# Add commands to generate the parsers.
-ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp.g"
-            ${parser_srcs}
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
-    ARGS    --output=csharp
-            "csharp.g"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.g"
-            ${parser_srcs}
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
-    ARGS    --output=csharp_pp
-            "csharp_pp.g"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-SET(parser_srcs
-    ${parser_srcs}
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp)
-
-SET_SOURCE_FILES_PROPERTIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp
-    GENERATED
-    )
 
 
 SET(assembled_parser_srcs

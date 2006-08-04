@@ -11,18 +11,40 @@ FIND_PROGRAM(FLEX_EXECUTABLE
     PATHS /usr/bin
     DOC "Flex executable")
 
+
+# Add command to generate the parser.
+ADD_CUSTOM_COMMAND(
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/cool.h"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
+    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    ARGS    --output=cool
+            "cool.g"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp)
+
+SET_SOURCE_FILES_PROPERTIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/cool.h
+    GENERATED
+    )
+
+
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/cool.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"cool_lexer.cc"
                 "cool_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc
@@ -30,27 +52,8 @@ IF(FLEX_EXECUTABLE)
         )
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("Assuming existence of the generated lexer file cool_lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
-
-
-# Add command to generate the parser.
-ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
-            ${assembled_parser_srcs}
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
-    ARGS    --output=cool
-            "cool.g"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp)
-
-SET_SOURCE_FILES_PROPERTIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp
-    GENERATED
-    )
 
 
 SET(assembled_parser_srcs

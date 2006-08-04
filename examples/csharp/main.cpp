@@ -22,8 +22,8 @@ void print_token_environment(parser* parser)
 
     decoder dec(parser->token_stream);
 
-    int current_index = parser->token_stream->index() - 1;
-    for (int i = current_index - 5; i < current_index + 5; i++)
+    std::size_t current_index = parser->token_stream->index() - 1;
+    for (std::size_t i = current_index - 5; i < current_index + 5; i++)
       {
         if (i < 0 || i >= parser->token_stream->size())
           continue;
@@ -82,6 +82,8 @@ int main(int argc, char *argv[])
           exit(EXIT_FAILURE);
         }
     }
+
+  return EXIT_SUCCESS;
 }
 
 bool parse_file(char const *filename, parser::csharp_compatibility_mode compatibility_mode)

@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cstdio>
 #include "kdev-pg.h"
-#include "kdev-pg-parser.h"
+#include "kdev-pg-parser.hh"
 
 int inp();
 void append_linebuffer();

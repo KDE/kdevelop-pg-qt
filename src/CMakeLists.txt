@@ -17,6 +17,7 @@ SET(kdevpg_srcs
     kdev-pg-visitor-gen.cpp
     kdev-pg-visitor-bits-gen.cpp
     kdev-pg-default-visitor-gen.cpp
+    kdev-pg-serialize-visitor-gen.cpp
     kdev-pg-beautifier.cpp
     kdev-pg-checker.cpp
     kdev-pg-main.cpp

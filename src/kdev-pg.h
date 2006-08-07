@@ -78,7 +78,7 @@ struct world
 
   world()
     : token_stream("kdev_pg_token_stream"), decl(0), bits(0), generate_ast(true),
-      start(0), _M_zero(0), need_state_management(false), adapt_to_kdevelop(false)
+      need_state_management(false), adapt_to_kdevelop(false), start(0), _M_zero(0)
   {}
 
   // options
@@ -86,6 +86,8 @@ struct world
   char const *decl;
   char const *bits;
   bool generate_ast;
+  bool need_state_management;
+  bool adapt_to_kdevelop;
 
   model::zero_item *zero()
   {
@@ -180,9 +182,6 @@ struct world
   member_code parserclass_members;
 
   environment env;
-
-  bool need_state_management;
-  bool adapt_to_kdevelop;
 
 private:
   first_set FIRST_K;

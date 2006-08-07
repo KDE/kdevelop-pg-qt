@@ -31,6 +31,7 @@
 #include "kdev-pg-visitor-gen.h"
 #include "kdev-pg-visitor-bits-gen.h"
 #include "kdev-pg-default-visitor-gen.h"
+#include "kdev-pg-serialize-visitor-gen.h"
 #include "kdev-pg-beautifier.h"
 #include "kdev-pg-checker.h"
 
@@ -223,6 +224,7 @@ int main(int, char *argv[])
     generate_parser_decls __decls(s);
     generate_visitor __visitor(s);
     generate_default_visitor __default_visitor(s);
+    generate_serialize_visitor __serialize_visitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
@@ -251,6 +253,13 @@ int main(int, char *argv[])
 
     s << "#include <cassert>" << std::endl
       << std::endl;
+    s << "#include <iostream>" << std::endl
+      << std::endl;
+    s << "#include <fstream>" << std::endl
+      << std::endl;
+
+    if (_G_system.decl)
+      s << _G_system.decl << std::endl;
 
     if (_G_system.generate_ast)
       {
@@ -263,9 +272,6 @@ int main(int, char *argv[])
           << std::endl;
       }
 
-    if (_G_system.decl)
-      s << _G_system.decl << std::endl;
-
     s << "namespace " << parser << "{" << std::endl
       << std::endl;
 
@@ -275,6 +281,7 @@ int main(int, char *argv[])
       {
         __visitor();
         __default_visitor();
+        __serialize_visitor();
       }
 
     s << std::endl << "} // end of namespace " << parser << std::endl

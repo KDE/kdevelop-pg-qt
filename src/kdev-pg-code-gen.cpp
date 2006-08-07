@@ -428,7 +428,10 @@ void code_generator::visit_annotation(model::annotation_item *node)
         }
       else
         {
-          out << "(*yynode)->" << node->_M_declaration->_M_name
+          if (node->_M_declaration->_M_storage_type == model::variable_declaration_item::storage_ast_member)
+            out << "(*yynode)->";
+
+          out << node->_M_declaration->_M_name
               << " = token_stream->index() - 1;" << std::endl
               << "yylex();" << std::endl
               << std::endl;

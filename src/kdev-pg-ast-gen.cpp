@@ -99,18 +99,16 @@ void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const 
 
 void gen_ast_rule::visit_variable_declaration(model::variable_declaration_item *node)
 {
-  if (node->_M_storage_type == model::variable_declaration_item::storage_temporary)
-    return;
+  if (node->_M_storage_type != model::variable_declaration_item::storage_temporary
+      && _M_names.find(node->_M_name) == _M_names.end())
+    {
+      gen_variable_declaration gen_var_decl(out);
+      gen_var_decl(node);
 
-  if (_M_names.find(node->_M_name) != _M_names.end())
-    return;
+      out << ";" << std::endl;
 
-  gen_variable_declaration gen_var_decl(out);
-  gen_var_decl(node);
-
-  out << ";" << std::endl;
-
-  _M_names.insert(node->_M_name);
+      _M_names.insert(node->_M_name);
+    }
 
   default_visitor::visit_variable_declaration(node);
 }

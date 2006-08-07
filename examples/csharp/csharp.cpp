@@ -15812,7 +15812,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_star;
@@ -15827,7 +15826,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_slash;
@@ -15842,7 +15840,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_remainder;
@@ -15857,7 +15854,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_bit_and;
@@ -15872,7 +15868,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_bit_or;
@@ -15887,7 +15882,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_bit_xor;
@@ -15902,7 +15896,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_lshift;
@@ -15917,7 +15910,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_rshift;
@@ -15932,7 +15924,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_equal;
@@ -15947,7 +15938,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_not_equal;
@@ -15962,7 +15952,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_greater_than;
@@ -15977,7 +15966,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_less_than;
@@ -15992,7 +15980,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_greater_equal;
@@ -16007,7 +15994,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_less_equal;
@@ -16050,7 +16036,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_bang;
@@ -16065,7 +16050,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_tilde;
@@ -16080,7 +16064,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_increment;
@@ -16095,7 +16078,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_decrement;
@@ -16110,7 +16092,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_true;
@@ -16125,7 +16106,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_false;
@@ -16164,7 +16144,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_plus;
@@ -16179,7 +16158,6 @@ namespace csharp
                   }
                 return false;
               }
-            (*yynode)->op = token_stream->index() - 1;
             yylex();
 
             *op = overloadable_operator::op_minus;
@@ -21897,7 +21875,6 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              (*yynode)->overloadable_operator_token = unary_op->op;
                                                               (*yynode)->unary_or_binary = overloadable_operator::type_unary;
                                                             }
                                                           else if (yytoken == Token_EQUAL
@@ -22000,7 +21977,6 @@ namespace csharp
                                                                 }
                                                               yylex();
 
-                                                              (*yynode)->overloadable_operator_token = binary_op->op;
                                                               (*yynode)->unary_or_binary = overloadable_operator::type_binary;
                                                             }
                                                           else if (yytoken == Token_PLUS
@@ -22017,7 +21993,6 @@ namespace csharp
                                                                 }
                                                               unary_or_binary_op = __node_431;
 
-                                                              (*yynode)->overloadable_operator_token = unary_or_binary_op->op;
                                                               if (yytoken != Token_LPAREN)
                                                                 {
                                                                   if (!yy_block_errors)

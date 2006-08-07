@@ -83,6 +83,7 @@ ADD_DEFINITIONS(-Wall -O2)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(csharp-parser ${assembled_parser_srcs} main.cpp)
+ADD_EXECUTABLE(csharp-serializer ${assembled_parser_srcs} main_serialize.cpp)
 
 # in order to generate only the parser, call "make parser"
 ADD_CUSTOM_TARGET(parser echo "Generating the parser"

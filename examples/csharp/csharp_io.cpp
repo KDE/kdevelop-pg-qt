@@ -43,7 +43,7 @@ void parser::tokenize(char *contents)
   do
     {
       kind = lexer.yylex();
-      //std::cerr << lexer.token_text() << std::endl; //" "; // debug output
+      //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
 
       if (!kind) // when the lexer returns 0, the end of file is reached
         kind = parser::Token_EOF;
@@ -112,7 +112,7 @@ void parser::tokenize(bool &encountered_eof)
   do
     {
       kind = _M_lexer->yylex();
-      //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
+      //std::cerr << "pp: " << lexer.YYText() << std::endl; //" "; // debug output
 
       parser::token_type &t = this->token_stream->next();
       t.kind = kind;
@@ -140,7 +140,7 @@ void parser::tokenize(bool &encountered_eof)
 
 void parser::add_token(parser::token_type_enum token_kind)
 {
-  //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
+  //std::cerr << "pp: " << lexer.YYText() << std::endl; //" "; // debug output
   parser::token_type &t = this->token_stream->next();
   t.kind = token_kind;
   t.begin = _M_lexer->token_begin();

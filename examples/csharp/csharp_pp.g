@@ -33,6 +33,7 @@
 namespace csharp
 {
   class parser;
+  class Lexer;
 }
 :]
 
@@ -60,17 +61,19 @@ namespace csharp
    *
    * @param first_token  The first token of the pre-processor line.
    * @param scope  The currently active pre-processor state, stored as a scope.
+   * @param lexer  The lexer object which is currently processing the source file.
    * @return  csharp_pp::parser::result_ok if the line was processed correctly,
    *          csharp_pp::parser::result_invalid if there was a parsing error,
    *          or csharp_pp::parser::result_eof if the end of file was found (unexpectedly).
    */
   parser::pp_parse_result pp_parse_line(
-    parser::token_type_enum first_token, scope* scope );
+    parser::token_type_enum first_token, scope *scope, csharp::Lexer *lexer );
 :]
 
 %parserclass (private declaration)
 [:
-  scope* _M_scope;
+  scope *_M_scope;
+  csharp::Lexer *_M_lexer;
 
   /**
    * Transform the raw input into tokens.
@@ -85,7 +88,7 @@ namespace csharp
    * given token kind. Used by the pre-processor that has to bypass
    * the normal tokenizing process.
    */
-  void add_token( parser::token_type_enum token_kind );
+  void add_token(parser::token_type_enum token_kind);
 
   token_stream_type _M_token_stream;
   memory_pool_type _M_memory_pool;
@@ -307,7 +310,7 @@ namespace csharp_pp
 {
 
 parser::pp_parse_result parser::pp_parse_line(
-  parser::token_type_enum first_token, scope* scope )
+  parser::token_type_enum first_token, scope* scope, csharp::Lexer *lexer )
 {
   // 0) setup
   if (scope == 0)
@@ -317,6 +320,7 @@ parser::pp_parse_result parser::pp_parse_line(
   bool encountered_eof;
 
   // 1) tokenize
+  _M_lexer = lexer;
   add_token(first_token);
   tokenize(encountered_eof);
 

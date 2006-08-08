@@ -9,8 +9,6 @@
 
 using namespace csharp;
 
-char *_G_contents;
-
 static void usage(char const* argv0);
 static bool parse_file(char const* filename, parser::csharp_compatibility_mode compatibility_mode);
 
@@ -89,6 +87,7 @@ int main(int argc, char *argv[])
 
 bool parse_file(char const *filename, parser::csharp_compatibility_mode compatibility_mode)
 {
+  char *contents;
   std::ifstream filestr(filename);
 
   if (filestr.is_open())
@@ -104,12 +103,12 @@ bool parse_file(char const *filename, parser::csharp_compatibility_mode compatib
       pbuf->pubseekpos(0,std::ios::in);
 
       // allocate memory to contain file data
-      _G_contents=new char[size+1];
+      contents=new char[size+1];
 
       // get file data
-      pbuf->sgetn(_G_contents, size);
+      pbuf->sgetn(contents, size);
 
-      _G_contents[size] = '\0';
+      contents[size] = '\0';
 
       filestr.close();
     }
@@ -129,7 +128,7 @@ bool parse_file(char const *filename, parser::csharp_compatibility_mode compatib
   csharp_parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  csharp_parser.tokenize();
+  csharp_parser.tokenize(contents);
 
   // 2) parse
   compilation_unit_ast *ast = 0;
@@ -161,7 +160,7 @@ bool parse_file(char const *filename, parser::csharp_compatibility_mode compatib
       csharp_parser.yy_expected_symbol(ast_node::Kind_compilation_unit, "compilation_unit"); // ### remove me
     }
 
-  delete[] _G_contents;
+  delete[] contents;
 
   return matched;
 }

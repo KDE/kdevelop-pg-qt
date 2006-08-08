@@ -25,39 +25,34 @@
 
 #include "csharp.h"
 #include "csharp_pp.h"
+#include "csharp_lexer.h"
 
 #include <iostream>
 
-extern char *_G_contents;
-std::size_t _G_token_begin, _G_token_end;
-extern char* yytext;
-
-int yylex();
-void lexer_restart(csharp::parser* parser);
 void print_token_environment(csharp::parser* parser);
 
 
 namespace csharp
 {
 
-void parser::tokenize()
+void parser::tokenize(char *contents)
 {
-  ::lexer_restart(this);
+  Lexer lexer(this, contents);
 
   int kind = parser::Token_EOF;
   do
     {
-      kind = ::yylex();
-      //std::cerr << yytext << std::endl; //" "; // debug output
+      kind = lexer.yylex();
+      //std::cerr << lexer.token_text() << std::endl; //" "; // debug output
 
       if (!kind) // when the lexer returns 0, the end of file is reached
         kind = parser::Token_EOF;
 
       parser::token_type &t = this->token_stream->next();
       t.kind = kind;
-      t.begin = _G_token_begin;
-      t.end = _G_token_end;
-      t.text = _G_contents;
+      t.begin = lexer.token_begin();
+      t.end = lexer.token_end();
+      t.text = contents;
     }
   while (kind != parser::Token_EOF);
 
@@ -116,14 +111,14 @@ void parser::tokenize(bool &encountered_eof)
   int kind = parser::Token_EOF;
   do
     {
-      kind = ::yylex();
+      kind = _M_lexer->yylex();
       //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
 
       parser::token_type &t = this->token_stream->next();
       t.kind = kind;
-      t.begin = _G_token_begin;
-      t.end = _G_token_end;
-      t.text = _G_contents;
+      t.begin = _M_lexer->token_begin();
+      t.end = _M_lexer->token_end();
+      t.text = _M_lexer->contents();
 
       if (kind == parser::Token_EOF)
         {
@@ -136,21 +131,21 @@ void parser::tokenize(bool &encountered_eof)
 
   parser::token_type &t = this->token_stream->next();
   t.kind = parser::Token_EOF;
-  t.begin = _G_token_begin;
-  t.end = _G_token_end;
-  t.text = _G_contents;
+  t.begin = _M_lexer->token_begin();
+  t.end = _M_lexer->token_end();
+  t.text = _M_lexer->contents();
 
   this->yylex(); // produce the look ahead token
 }
 
-void parser::add_token( parser::token_type_enum token_kind )
+void parser::add_token(parser::token_type_enum token_kind)
 {
   //std::cerr << "pp: " << yytext << std::endl; //" "; // debug output
   parser::token_type &t = this->token_stream->next();
   t.kind = token_kind;
-  t.begin = _G_token_begin;
-  t.end = _G_token_end;
-  t.text = _G_contents;
+  t.begin = _M_lexer->token_begin();
+  t.end = _M_lexer->token_end();
+  t.text = _M_lexer->contents();
 }
 
 } // end of namespace csharp_pp

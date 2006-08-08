@@ -14,7 +14,7 @@ namespace csharp_pp
   {
 
   parser::pp_parse_result parser::pp_parse_line(
-    parser::token_type_enum first_token, scope* scope )
+    parser::token_type_enum first_token, scope* scope, csharp::Lexer *lexer )
   {
     // 0) setup
     if (scope == 0)
@@ -24,6 +24,7 @@ namespace csharp_pp
     bool encountered_eof;
 
     // 1) tokenize
+    _M_lexer = lexer;
     add_token(first_token);
     tokenize(encountered_eof);
 

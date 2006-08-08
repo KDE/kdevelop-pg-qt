@@ -50,25 +50,25 @@ SET_SOURCE_FILES_PROPERTIES(
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc"
+        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
         COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"csharp_lexer.cc"
+        ARGS    -o"csharp_lexer.cpp"
                 "csharp_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc ${parser_srcs})
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated lexer file csharp_lexer.cc")
-    SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cc)
+    MESSAGE("Assuming existence of the generated lexer file csharp_lexer.cpp")
+    SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp)
 ENDIF(FLEX_EXECUTABLE)
 
 

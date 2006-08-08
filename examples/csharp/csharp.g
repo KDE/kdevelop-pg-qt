@@ -173,7 +173,7 @@ namespace csharp_pp
    * When this method returns, the parser's token stream has been filled
    * and any parse_*() method can be called.
    */
-  void tokenize();
+  void tokenize(char *contents);
 
   /**
    * The compatibility_mode status variable tells which version of C#

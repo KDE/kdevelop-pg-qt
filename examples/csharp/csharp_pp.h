@@ -1,14 +1,22 @@
 // THIS FILE IS GENERATED
 // WARNING! All changes made in this file will be lost!
 
-#ifndef csharp_pp_h_INCLUDED
-#define csharp_pp_h_INCLUDED
+#ifndef csharp_pp_H_INCLUDED
+#define csharp_pp_H_INCLUDED
 
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-allocator.h"
 #include "kdev-pg-list.h"
 #include "kdev-pg-token-stream.h"
 #include <cassert>
+
+
+#include "csharp_pp_scope.h"
+
+namespace csharp
+  {
+  class parser;
+}
 
 namespace csharp_pp
   {
@@ -280,14 +288,6 @@ namespace csharp_pp
 
 
 } // end of namespace csharp_pp
-
-
-#include "csharp_pp_scope.h"
-
-namespace csharp
-  {
-  class parser;
-}
 
 namespace csharp_pp
   {

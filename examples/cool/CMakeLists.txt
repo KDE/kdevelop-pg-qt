@@ -17,7 +17,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/cool.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=cool
             "cool.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

@@ -16,9 +16,11 @@ FIND_PROGRAM(FLEX_EXECUTABLE
 ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_serialize_visitor.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp.g"
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=csharp
+            --serialize-visitor
             "csharp.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
@@ -26,7 +28,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.g"
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=csharp_pp
             "csharp_pp.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -39,6 +41,7 @@ SET(parser_srcs
 SET_SOURCE_FILES_PROPERTIES(
     ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/csharp.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_serialize_visitor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h
     GENERATED

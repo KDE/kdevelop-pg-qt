@@ -105,6 +105,7 @@ struct debug_rule
 
 int main(int, char *argv[])
 {
+  bool gen_serialize_visitor = false;
   bool dump_terminals = false;
   bool dump_symbols = false;
   bool debug_rules = false;
@@ -121,6 +122,10 @@ int main(int, char *argv[])
       else if (!strcmp("--no-ast", arg))
         {
           _G_system.generate_ast = false;
+        }
+      else if (!strcmp("--serialize-visitor", arg))
+        {
+          gen_serialize_visitor = true;
         }
       else if (!strcmp("--help", arg))
         {
@@ -224,14 +229,13 @@ int main(int, char *argv[])
     generate_parser_decls __decls(s);
     generate_visitor __visitor(s);
     generate_default_visitor __default_visitor(s);
-    generate_serialize_visitor __serialize_visitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl;
 
-    s << "#ifndef " << parser << "_h_INCLUDED" << std::endl
-      << "#define " << parser << "_h_INCLUDED" << std::endl
+    s << "#ifndef " << parser << "_H_INCLUDED" << std::endl
+      << "#define " << parser << "_H_INCLUDED" << std::endl
       << std::endl;
 
     if (_G_system.generate_ast)
@@ -252,10 +256,6 @@ int main(int, char *argv[])
       }
 
     s << "#include <cassert>" << std::endl
-      << std::endl;
-    s << "#include <iostream>" << std::endl
-      << std::endl;
-    s << "#include <fstream>" << std::endl
       << std::endl;
 
     if (_G_system.decl)
@@ -281,7 +281,6 @@ int main(int, char *argv[])
       {
         __visitor();
         __default_visitor();
-        __serialize_visitor();
       }
 
     s << std::endl << "} // end of namespace " << parser << std::endl
@@ -291,6 +290,45 @@ int main(int, char *argv[])
 
     std::string oname = parser;
     oname += ".h";
+
+    std::ofstream ofile;
+    ofile.open(oname.c_str(), std::ios::out);
+    format(s, ofile);
+  }
+
+  if (gen_serialize_visitor)
+  { // generate the serialization visitor
+    std::stringstream s;
+
+    generate_serialize_visitor __serialize_visitor(s);
+
+    s << "// THIS FILE IS GENERATED" << std::endl
+      << "// WARNING! All changes made in this file will be lost!" << std::endl
+      << std::endl;
+
+    s << "#ifndef " << parser << "_SERIALIZATION_H_INCLUDED" << std::endl
+      << "#define " << parser << "_SERIALIZATION_H_INCLUDED" << std::endl
+      << std::endl;
+
+    s << "#include \"" << parser << ".h\"" << std::endl
+      << std::endl;
+
+    s << "#include <iostream>" << std::endl
+      << "#include <fstream>" << std::endl
+      << std::endl;
+
+    s << "namespace " << parser << "{" << std::endl
+      << std::endl;
+
+    __serialize_visitor();
+
+    s << std::endl << "} // end of namespace " << parser << std::endl
+      << std::endl;
+
+    s << "#endif" << std::endl << std::endl;
+
+    std::string oname = parser;
+    oname += "_serialize_visitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);

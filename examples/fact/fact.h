@@ -1,14 +1,15 @@
 // THIS FILE IS GENERATED
 // WARNING! All changes made in this file will be lost!
 
-#ifndef fact_h_INCLUDED
-#define fact_h_INCLUDED
+#ifndef fact_H_INCLUDED
+#define fact_H_INCLUDED
 
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-allocator.h"
 #include "kdev-pg-list.h"
 #include "kdev-pg-token-stream.h"
 #include <cassert>
+
 
 namespace fact
   {
@@ -211,7 +212,6 @@ namespace fact
 
 
 } // end of namespace fact
-
 
 namespace fact
   {

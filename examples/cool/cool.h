@@ -1,14 +1,15 @@
 // THIS FILE IS GENERATED
 // WARNING! All changes made in this file will be lost!
 
-#ifndef cool_h_INCLUDED
-#define cool_h_INCLUDED
+#ifndef cool_H_INCLUDED
+#define cool_H_INCLUDED
 
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-allocator.h"
 #include "kdev-pg-list.h"
 #include "kdev-pg-token-stream.h"
 #include <cassert>
+
 
 namespace cool
   {
@@ -280,7 +281,6 @@ namespace cool
 
 
 } // end of namespace cool
-
 
 namespace cool
   {

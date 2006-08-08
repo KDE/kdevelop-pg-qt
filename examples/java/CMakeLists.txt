@@ -17,7 +17,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java.g"
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=java
             "java.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

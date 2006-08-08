@@ -224,11 +224,11 @@ variable_declaration
     : declaration_type_opt storage_type variable_type T_IDENTIFIER ':' T_IDENTIFIER
         { $$ = pg::variable_declaration($1, $2, $3, false, $4, $6); }
     | declaration_type_opt storage_type T_TOKEN       T_IDENTIFIER ';'
-        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, false, $4, "std::size_t"); }
+        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, false, $4, ""); }
     | declaration_type_opt storage_type variable_type '#' T_IDENTIFIER ':' T_IDENTIFIER
         { $$ = pg::variable_declaration($1, $2, $3, true, $5, $7); }
     | declaration_type_opt storage_type T_TOKEN       '#' T_IDENTIFIER ';'
-        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, true, $5, "std::size_t"); }
+        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, true, $5, ""); }
     ;
 
 declaration_type_opt

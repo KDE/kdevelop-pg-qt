@@ -42,7 +42,7 @@ void generate_serialize_visitor::operator()()
       << "ast_node *node, std::ifstream *i) : in(i), out(0) {" << std::endl
       << "memory_pool = p;" << std::endl
       << "if ( !node )" << std::endl
-      << "node = create<compilation_unit_ast>();" << std::endl
+      << "node = create<" << _G_system.start->_M_symbol->_M_name << "_ast>();" << std::endl
       << "visit_node( node );" << std::endl
       << "}" << std::endl << std::endl;
 
@@ -107,8 +107,6 @@ void generate_serialize_visitor::operator()()
       << "if (b) {" << std::endl
       << "t = create<T>();" << std::endl
 
-      << "in->read(reinterpret_cast<char*>(&t->kind)," << std::endl
-      << "sizeof(int));" << std::endl
       << "in->read(reinterpret_cast<char*>(&t->start_token)," << std::endl
       << "sizeof(std::size_t));" << std::endl
       << "in->read(reinterpret_cast<char*>(&t->end_token)," << std::endl
@@ -122,8 +120,6 @@ void generate_serialize_visitor::operator()()
       << "if (t) {" << std::endl
       << "bool b = true;" << std::endl
       << "out->write(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "out->write(reinterpret_cast<char*>(&t->kind)," << std::endl
-      << "sizeof(int));" << std::endl
       << "out->write(reinterpret_cast<char*>(&t->start_token)," << std::endl
       << "sizeof(std::size_t));" << std::endl
       << "out->write(reinterpret_cast<char*>(&t->end_token)," << std::endl
@@ -203,6 +199,9 @@ void gen_serialize_visitor_rule::visit_variable_declaration(model::variable_decl
 
     std::string type = std::string(node->_M_type) + ext;
     std::string name = std::string(node->_M_name);
+
+    if (node->_M_variable_type == model::variable_declaration_item::type_token)
+      type = "std::size_t";
 
     if (node->_M_is_sequence)
     {

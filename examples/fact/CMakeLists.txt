@@ -17,7 +17,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/fact.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact.g"
-    COMMAND ${CMAKE_BINARY_DIR}/src/kdev-pg
+    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=fact
             "fact.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

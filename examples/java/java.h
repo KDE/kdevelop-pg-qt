@@ -1,14 +1,17 @@
 // THIS FILE IS GENERATED
 // WARNING! All changes made in this file will be lost!
 
-#ifndef java_h_INCLUDED
-#define java_h_INCLUDED
+#ifndef java_H_INCLUDED
+#define java_H_INCLUDED
 
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-allocator.h"
 #include "kdev-pg-list.h"
 #include "kdev-pg-token-stream.h"
 #include <cassert>
+
+
+#include <string>
 
 namespace java
   {
@@ -1914,9 +1917,6 @@ namespace java
 
 
 } // end of namespace java
-
-
-#include <string>
 
 namespace java
   {

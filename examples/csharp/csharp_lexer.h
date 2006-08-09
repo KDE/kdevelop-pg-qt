@@ -57,10 +57,7 @@ protected:
 
   // dismisses any lexer output (which should not happen anyways)
   virtual void LexerOutput(const char * /*buf*/, int /*max_size*/) { return; }
-  virtual void LexerError(const char */*msg*/)
-  {
-    return;
-  }
+  virtual void LexerError(const char */*msg*/) { return; }
 
 protected:
   csharp::parser* _M_parser;

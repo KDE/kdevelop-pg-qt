@@ -8,8 +8,6 @@
 
 using namespace cool;
 
-char *_G_contents;
-
 static void usage(char const* argv0);
 static bool parse_file(char const* filename);
 
@@ -78,6 +76,7 @@ int main(int argc, char *argv[])
 
 bool parse_file(char const *filename)
 {
+  char *contents;
   std::ifstream filestr(filename);
 
   if (filestr.is_open())
@@ -86,19 +85,19 @@ bool parse_file(char const *filename)
       long size;
 
       // get pointer to associated buffer object
-      pbuf=filestr.rdbuf();
+      pbuf = filestr.rdbuf();
 
       // get file size using buffer's members
-      size=pbuf->pubseekoff(0,std::ios::end,std::ios::in);
+      size = pbuf->pubseekoff(0,std::ios::end,std::ios::in);
       pbuf->pubseekpos(0,std::ios::in);
 
       // allocate memory to contain file data
-      _G_contents=new char[size+1];
+      contents = new char[size+1];
 
       // get file data
-      pbuf->sgetn(_G_contents, size);
+      pbuf->sgetn(contents, size);
 
-      _G_contents[size] = '\0';
+      contents[size] = '\0';
 
       filestr.close();
     }
@@ -117,7 +116,7 @@ bool parse_file(char const *filename)
   cool_parser.set_memory_pool(&memory_pool);
 
   // 1) tokenize
-  cool_parser.tokenize();
+  cool_parser.tokenize(contents);
 
   // 2) parse
   program_ast *ast = 0;
@@ -132,7 +131,7 @@ bool parse_file(char const *filename)
       cool_parser.yy_expected_symbol(ast_node::Kind_program, "program"); // ### remove me
     }
 
-  delete[] _G_contents;
+  delete[] contents;
 
   return matched;
 }

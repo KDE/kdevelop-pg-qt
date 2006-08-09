@@ -10,7 +10,7 @@
    * When this method returns, the parser's token stream has been filled
    * and any parse_*() method can be called.
    */
-  void tokenize();
+  void tokenize(char *contents);
 
   enum problem_type {
     error,
@@ -138,3 +138,47 @@
 
    name=IDENTIFIER COLON type=TYPE ARROW_RIGHT expression=expression
 -> case_condition ;;
+
+
+
+
+-----------------------------------------------------------------
+-- Code segments copied to the implementation (.cpp) file.
+-- If existent, kdevelop-pg's current syntax requires this block
+-- to occur at the end of the file.
+-----------------------------------------------------------------
+
+[:
+#include "cool_lexer.h"
+
+
+namespace cool
+{
+
+void parser::tokenize(char *contents)
+{
+  Lexer lexer(this, contents);
+
+  int kind = parser::Token_EOF;
+  do
+    {
+      kind = lexer.yylex();
+      //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
+
+      if (!kind) // when the lexer returns 0, the end of file is reached
+        kind = parser::Token_EOF;
+
+      parser::token_type &t = this->token_stream->next();
+      t.kind = kind;
+      t.begin = lexer.token_begin();
+      t.end = lexer.token_end();
+      t.text = contents;
+    }
+  while (kind != parser::Token_EOF);
+
+  this->yylex(); // produce the look ahead token
+}
+
+} // end of namespace cool
+
+:]

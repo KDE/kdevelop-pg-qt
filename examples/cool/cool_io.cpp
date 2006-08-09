@@ -1,50 +1,20 @@
 
 // This file is meant to be specific to the framework in which the parser
 // operates, and is likely to be adapted for different environments.
-// For example, the text source in KDevelop might be different to the one in
-// a command line parser, and error output might not always go to std::cerr.
+// Specifically, the error output might not always go to std::cerr,
+// but will rather be placed as items inside some listbox.
 
 
 #include "cool.h"
+#include "cool_lexer.h"
 
 #include <iostream>
 
-extern char *_G_contents;
-std::size_t _G_token_begin, _G_token_end;
-extern char* yytext;
-
-int yylex();
-void lexer_restart(cool::parser* parser);
 void print_token_environment(cool::parser* parser);
 
 
 namespace cool
 {
-
-void parser::tokenize()
-{
-  ::lexer_restart(this);
-
-  int kind = parser::Token_EOF;
-  do
-    {
-      kind = ::yylex();
-      //std::cerr << yytext << std::endl; //" "; // debug output
-
-      if (!kind) // when the lexer returns 0, the end of file is reached
-        kind = parser::Token_EOF;
-
-      parser::token_type &t = this->token_stream->next();
-      t.kind = kind;
-      t.begin = _G_token_begin;
-      t.end = _G_token_end;
-      t.text = _G_contents;
-    }
-  while (kind != parser::Token_EOF);
-
-  this->yylex(); // produce the look ahead token
-}
-
 
 void parser::report_problem( parser::problem_type type, std::string message )
 {
@@ -63,7 +33,7 @@ void parser::report_problem( parser::problem_type type, const char* message )
 
 
 // custom error recovery
-void parser::yy_expected_token(int /*expected*/, std::size_t where, char const *name)
+void parser::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
 {
   print_token_environment(this);
   report_problem(
@@ -86,3 +56,4 @@ void parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
 }
 
 } // end of namespace cool
+

@@ -16,9 +16,12 @@ FIND_PROGRAM(FLEX_EXECUTABLE
 ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_serialize_visitor.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java.g"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=java
+            --serialize-visitor
             "java.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
@@ -35,24 +38,25 @@ SET_SOURCE_FILES_PROPERTIES(
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc"
+        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
         COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"java_lexer.cc"
+        ARGS    -o"java_lexer.cpp"
                 "java_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc ${parser_srcs})
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated lexer file java_lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cc ${parser_srcs})
+    MESSAGE("Assuming existence of the generated lexer file java_lexer.cpp")
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
 
 
@@ -68,6 +72,7 @@ ADD_DEFINITIONS(-Wall -O2)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(java-parser ${assembled_parser_srcs} main.cpp)
+ADD_EXECUTABLE(java-serializer ${assembled_parser_srcs} main_serialize.cpp)
 
 # in order to generate only the parser, call "make parser"
 ADD_CUSTOM_TARGET(parser echo "Generating the parser"
@@ -81,7 +86,7 @@ ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
     )
 ADD_CUSTOM_COMMAND(TARGET parser/force
     PRE_BUILD
-    COMMAND rm java.cpp
+    COMMAND rm -f java.cpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 

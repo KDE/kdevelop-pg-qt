@@ -96,14 +96,14 @@ bool parse_file(char const *filename, parser::csharp_compatibility_mode compatib
       long size;
 
       // get pointer to associated buffer object
-      pbuf=filestr.rdbuf();
+      pbuf = filestr.rdbuf();
 
       // get file size using buffer's members
-      size=pbuf->pubseekoff(0,std::ios::end,std::ios::in);
+      size = pbuf->pubseekoff(0,std::ios::end,std::ios::in);
       pbuf->pubseekpos(0,std::ios::in);
 
       // allocate memory to contain file data
-      contents=new char[size+1];
+      contents = new char[size+1];
 
       // get file data
       pbuf->sgetn(contents, size);

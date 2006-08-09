@@ -17,6 +17,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/cool.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
+            "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=cool
             "cool.g"
@@ -35,24 +36,25 @@ SET_SOURCE_FILES_PROPERTIES(
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc"
+        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/cool.h"
         COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"cool_lexer.cc"
+        ARGS    -o"cool_lexer.cpp"
                 "cool_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc ${parser_srcs})
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated lexer file cool_lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cc ${parser_srcs})
+    MESSAGE("Assuming existence of the generated lexer file cool_lexer.cpp")
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
 
 
@@ -81,6 +83,6 @@ ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
     )
 ADD_CUSTOM_COMMAND(TARGET parser/force
     PRE_BUILD
-    COMMAND rm cool.cpp
+    COMMAND rm -f cool.cpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )

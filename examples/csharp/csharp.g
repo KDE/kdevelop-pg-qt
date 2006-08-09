@@ -1,4 +1,4 @@
--- This file is part of KDevelop.
+-----------------------------------------------------------------------------
 -- Copyright (c) 2006 Jakob Petsovits <jpetso@gmx.at>
 --
 -- This grammar is free software; you can redistribute it and/or
@@ -15,6 +15,7 @@
 -- along with this library; see the file COPYING.LIB.  If not, write to
 -- the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 -- Boston, MA 02110-1301, USA.
+-----------------------------------------------------------------------------
 
 
 -----------------------------------------------------------------------------
@@ -2830,8 +2831,36 @@ namespace csharp_pp
 -----------------------------------------------------------------
 
 [:
+#include "csharp_lexer.h"
+
+
 namespace csharp
 {
+
+void parser::tokenize(char *contents)
+{
+  Lexer lexer(this, contents);
+
+  int kind = parser::Token_EOF;
+  do
+    {
+      kind = lexer.yylex();
+      //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
+
+      if (!kind) // when the lexer returns 0, the end of file is reached
+        kind = parser::Token_EOF;
+
+      parser::token_type &t = this->token_stream->next();
+      t.kind = kind;
+      t.begin = lexer.token_begin();
+      t.end = lexer.token_end();
+      t.text = contents;
+    }
+  while (kind != parser::Token_EOF);
+
+  this->yylex(); // produce the look ahead token
+}
+
 
 parser::csharp_compatibility_mode parser::compatibility_mode() {
   return _M_compatibility_mode;

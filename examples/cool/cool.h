@@ -398,7 +398,7 @@ namespace cool
        * When this method returns, the parser's token stream has been filled
        * and any parse_*() method can be called.
        */
-      void tokenize();
+      void tokenize(char *contents);
 
       enum problem_type {
         error,

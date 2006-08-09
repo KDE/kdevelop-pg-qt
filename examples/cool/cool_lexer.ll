@@ -1,39 +1,21 @@
 
+%option c++
+%option yyclass="cool::Lexer"
+%option noyywrap
+
+
 %{
-#include "cool.h"
 
-#include <iostream>
+#define DONT_INCLUDE_FLEXLEXER
+#include "cool_lexer.h"
 
-/* call this before calling yylex(): */
-void lexer_restart(cool::parser* parser);
-
-extern std::size_t _G_token_begin, _G_token_end;
-extern char *_G_contents;
-
-
-
-/* the rest of these declarations are internal to the lexer,
- * don't use them outside of this file. */
-
-std::size_t _G_current_offset;
-cool::parser* _G_parser;
-
-
-#define YY_INPUT(buf, result, max_size) \
-  { \
-    int c = _G_contents[_G_current_offset++]; \
-    result = c == 0 ? YY_NULL : (buf[0] = c, 1); \
-  }
-
-#define YY_USER_INIT \
-_G_token_begin = _G_token_end = 0; \
-_G_current_offset = 0;
 
 #define YY_USER_ACTION \
-_G_token_begin = _G_token_end; \
-_G_token_end += yyleng;
+_M_token_begin = _M_token_end; \
+_M_token_end += yyleng;
 
 %}
+
 
 Whitespace  [ \t\f\r\n]
 
@@ -49,7 +31,7 @@ Whitespace  [ \t\f\r\n]
 "(*"                    BEGIN(IN_BLOCKCOMMENT);
 <IN_BLOCKCOMMENT>{
 "*)"            BEGIN(INITIAL);
-<<EOF>>         return cool::parser::Token_EOF;
+<<EOF>>         return parser::Token_EOF;
 "\r\n"|\r|\n    /* advance */ ;
 .               /* advance */ ;
 }
@@ -57,75 +39,91 @@ Whitespace  [ \t\f\r\n]
 
  /* seperators */
 
-"("             return cool::parser::Token_LPAREN;
-")"             return cool::parser::Token_RPAREN;
-"{"             return cool::parser::Token_LBRACE;
-"}"             return cool::parser::Token_RBRACE;
-";"             return cool::parser::Token_SEMICOLON;
-","             return cool::parser::Token_COMMA;
-"."             return cool::parser::Token_DOT;
-"@"             return cool::parser::Token_AT;
+"("             return parser::Token_LPAREN;
+")"             return parser::Token_RPAREN;
+"{"             return parser::Token_LBRACE;
+"}"             return parser::Token_RBRACE;
+";"             return parser::Token_SEMICOLON;
+","             return parser::Token_COMMA;
+"."             return parser::Token_DOT;
+"@"             return parser::Token_AT;
 
 
  /* operators */
 
-"+"             return cool::parser::Token_PLUS;
-"-"             return cool::parser::Token_MINUS;
-"*"             return cool::parser::Token_STAR;
-"/"             return cool::parser::Token_SLASH;
-"="             return cool::parser::Token_EQUAL;
-"<="            return cool::parser::Token_LESS_EQUAL;
-"<"             return cool::parser::Token_LESS;
-":"             return cool::parser::Token_COLON;
-"<-"            return cool::parser::Token_ARROW_LEFT;
-"=>"            return cool::parser::Token_ARROW_RIGHT;
-"~"             return cool::parser::Token_TILDE;
-"not"           return cool::parser::Token_NOT;
-"isvoid"        return cool::parser::Token_ISVOID;
+"+"             return parser::Token_PLUS;
+"-"             return parser::Token_MINUS;
+"*"             return parser::Token_STAR;
+"/"             return parser::Token_SLASH;
+"="             return parser::Token_EQUAL;
+"<="            return parser::Token_LESS_EQUAL;
+"<"             return parser::Token_LESS;
+":"             return parser::Token_COLON;
+"<-"            return parser::Token_ARROW_LEFT;
+"=>"            return parser::Token_ARROW_RIGHT;
+"~"             return parser::Token_TILDE;
+"not"           return parser::Token_NOT;
+"isvoid"        return parser::Token_ISVOID;
 
 
  /* reserved words */
 
-"case"          return cool::parser::Token_CASE;
-"esac"          return cool::parser::Token_ESAC;
-"class"         return cool::parser::Token_CLASS;
-"Class"         return cool::parser::Token_CLASS;
-"else"          return cool::parser::Token_ELSE;
-"false"         return cool::parser::Token_FALSE;
-"if"            return cool::parser::Token_IF;
-"in"            return cool::parser::Token_IN;
-"fi"            return cool::parser::Token_FI;
-"inherits"      return cool::parser::Token_INHERITS;
-"let"           return cool::parser::Token_LET;
-"loop"          return cool::parser::Token_LOOP;
-"new"           return cool::parser::Token_NEW;
-"of"            return cool::parser::Token_OF;
-"pool"          return cool::parser::Token_POOL;
-"then"          return cool::parser::Token_THEN;
-"true"          return cool::parser::Token_TRUE;
-"while"         return cool::parser::Token_WHILE;
+"case"          return parser::Token_CASE;
+"esac"          return parser::Token_ESAC;
+"class"         return parser::Token_CLASS;
+"Class"         return parser::Token_CLASS;
+"else"          return parser::Token_ELSE;
+"false"         return parser::Token_FALSE;
+"if"            return parser::Token_IF;
+"in"            return parser::Token_IN;
+"fi"            return parser::Token_FI;
+"inherits"      return parser::Token_INHERITS;
+"let"           return parser::Token_LET;
+"loop"          return parser::Token_LOOP;
+"new"           return parser::Token_NEW;
+"of"            return parser::Token_OF;
+"pool"          return parser::Token_POOL;
+"then"          return parser::Token_THEN;
+"true"          return parser::Token_TRUE;
+"while"         return parser::Token_WHILE;
 
 
  /* literals */
 
-"\""([^"\\]|\\.)*"\""   return cool::parser::Token_STRING;
+"\""([^"\\]|\\.)*"\""   return parser::Token_STRING;
 
-[A-Z][a-zA-Z0-9_]*      return cool::parser::Token_TYPE;
-[a-z_][a-zA-Z0-9_]*     return cool::parser::Token_IDENTIFIER;
-[0-9]+          return cool::parser::Token_INTEGER;
+[A-Z][a-zA-Z0-9_]*      return parser::Token_TYPE;
+[a-z_][a-zA-Z0-9_]*     return parser::Token_IDENTIFIER;
+[0-9]+          return parser::Token_INTEGER;
 
 
  /* everything else is not a valid lexeme */
 
-.               return cool::parser::Token_INVALID;
+.               return parser::Token_INVALID;
 
 %%
 
-void lexer_restart(cool::parser* _parser) {
-  _G_parser = _parser;
+namespace cool
+{
+
+void Lexer::restart(parser *parser, char *contents)
+{
+  _M_parser = parser;
+  _M_contents = contents;
+  _M_token_begin = _M_token_end = 0;
+  _M_current_offset = 0;
+
+  // check for and ignore the UTF-8 byte order mark
+  unsigned char *ucontents = (unsigned char *) _M_contents;
+  if (ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF)
+    {
+      _M_token_begin = _M_token_end = 3;
+      _M_current_offset = 3;
+    }
+
   yyrestart(NULL);
   BEGIN(INITIAL); // is not set automatically by yyrestart()
-  YY_USER_INIT
 }
 
-int yywrap() { return 1; }
+} // end of namespace cool
+

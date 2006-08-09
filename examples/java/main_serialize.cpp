@@ -1,5 +1,6 @@
 
 #include "java.h"
+#include "java_serialize_visitor.h"
 #include "decoder.h"
 
 #include <cstdlib>
@@ -137,6 +138,23 @@ bool parse_file(char const *filename, parser::java_compatibility_mode compatibil
   bool matched = java_parser.parse_compilation_unit(&ast);
   if (matched)
     {
+      // This is how we save the AST to a file
+      std::ofstream out("persistent_out", std::ios::binary);
+      if (out.is_open())
+        {
+          serialize::write(ast, &out);
+          out.close();
+        }
+
+      // This is how we read the AST from a file
+      compilation_unit_ast *ast_read = 0;
+      std::ifstream in("persistent_out", std::ios::binary);
+      if (in.is_open())
+        {
+          serialize::read(&memory_pool, ast_read, &in);
+          in.close();
+        }
+
       default_visitor v;
       v.visit_node(ast);
     }

@@ -18,6 +18,7 @@ ADD_CUSTOM_COMMAND(
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp_serialize_visitor.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp.g"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=csharp
             --serialize-visitor
@@ -28,6 +29,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.g"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=csharp_pp
             "csharp_pp.g"
@@ -52,6 +54,7 @@ IF(FLEX_EXECUTABLE)
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
         COMMAND ${FLEX_EXECUTABLE}
@@ -108,6 +111,6 @@ ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
     )
 ADD_CUSTOM_COMMAND(TARGET parser/force
     PRE_BUILD
-    COMMAND rm csharp.cpp csharp_pp.cpp
+    COMMAND rm -f csharp.cpp csharp_pp.cpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )

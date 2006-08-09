@@ -17,6 +17,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/fact.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact.g"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=fact
             "fact.g"
@@ -35,24 +36,25 @@ SET_SOURCE_FILES_PROPERTIES(
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
     ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cc"
+        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/fact.h"
         COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"fact_lexer.cc"
+        ARGS    -o"fact_lexer.cpp"
                 "fact_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cc ${parser_srcs})
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated lexer file fact_lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cc ${parser_srcs})
+    MESSAGE("Assuming existence of the generated lexer file fact_lexer.cpp")
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
 
 
@@ -81,7 +83,7 @@ ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
     )
 ADD_CUSTOM_COMMAND(TARGET parser/force
     PRE_BUILD
-    COMMAND rm fact.cpp
+    COMMAND rm -f fact.cpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 

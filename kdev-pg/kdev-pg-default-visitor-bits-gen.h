@@ -1,7 +1,6 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
-   Copyright (C) 2006 Adam Treat <treat@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,35 +18,23 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_SERIALIZE_VISITORGEN_H
-#define KDEV_PG_SERIALIZE_VISITORGEN_H
+#ifndef KDEV_PG_DEFAULT_VISITOR_BITS_GEN_H
+#define KDEV_PG_DEFAULT_VISITOR_BITS_GEN_H
 
 #include "kdev-pg-default-visitor.h"
-#include "kdev-pg-default-visitor-bits-gen.h" // for the has_member_nodes class
 
 #include <set>
 #include <list>
 #include <string>
 
-class generate_serialize_visitor
-{
-  std::ostream &out;
-
-public:
-  generate_serialize_visitor(std::ostream &o): out(o)
-  {}
-
-  void operator()();
-};
-
-class gen_serialize_visitor_rule: protected default_visitor
+class gen_default_visitor_bits_rule: protected default_visitor
 {
   std::ostream &out;
   std::set<std::string> _M_names;
   std::list<model::variable_declaration_item*> _M_variable_declarations;
 
 public:
-  gen_serialize_visitor_rule(std::ostream &o): out(o)
+  gen_default_visitor_bits_rule(std::ostream &o): out(o)
   {}
 
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
@@ -56,6 +43,19 @@ protected:
   virtual void visit_variable_declaration(model::variable_declaration_item *node);
 };
 
-#endif // KDEV_PG_SERIALIZE_VISITORGEN_H
+class has_member_nodes: protected default_visitor
+{
+  bool &has_members;
 
-// kate: space-indent on; indent-width 2; tab-width 2; replace-tabs on
+public:
+  has_member_nodes(bool &result): has_members(result)
+  {}
+
+  void operator()(model::symbol_item *sym);
+
+protected:
+  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+};
+
+
+#endif // KDEV_PG_DEFAULT_VISITOR_BITS_GEN_H

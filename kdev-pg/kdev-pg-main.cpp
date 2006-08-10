@@ -26,21 +26,14 @@
 #include "kdev-pg-environment.h"
 #include "kdev-pg-first.h"
 #include "kdev-pg-follow.h"
-#include "kdev-pg-code-gen.h"
-#include "kdev-pg-ast-gen.h"
-#include "kdev-pg-visitor-gen.h"
-#include "kdev-pg-visitor-bits-gen.h"
-#include "kdev-pg-default-visitor-gen.h"
-#include "kdev-pg-serialize-visitor-gen.h"
-#include "kdev-pg-beautifier.h"
 #include "kdev-pg-checker.h"
+#include "kdev-pg-generate.h"
 
 #include <iterator>
 #include <algorithm>
 #include <memory>
 
 #include <iostream>
-#include <sstream>
 #include <fstream>
 
 #include <cassert>
@@ -105,11 +98,9 @@ struct debug_rule
 
 int main(int, char *argv[])
 {
-  bool gen_serialize_visitor = false;
   bool dump_terminals = false;
   bool dump_symbols = false;
   bool debug_rules = false;
-  char const *parser = 0;
 
   file = stdin;
 
@@ -117,7 +108,7 @@ int main(int, char *argv[])
     {
       if (!strncmp(arg, "--output=", 9))
         {
-          parser = arg + 9;
+          _G_system.language = arg + 9;
         }
       else if (!strcmp("--no-ast", arg))
         {
@@ -125,7 +116,7 @@ int main(int, char *argv[])
         }
       else if (!strcmp("--serialize-visitor", arg))
         {
-          gen_serialize_visitor = true;
+          _G_system.gen_serialize_visitor = true;
         }
       else if (!strcmp("--help", arg))
         {
@@ -217,160 +208,12 @@ int main(int, char *argv[])
                     debug_rule(std::cout));
       return EXIT_SUCCESS;
     }
-  else if (!parser)
+  else if (!_G_system.language)
     {
       usage();
     }
 
-  { // generate the decls
-    std::stringstream s;
-
-    generate_ast __ast(s);
-    generate_parser_decls __decls(s);
-    generate_visitor __visitor(s);
-    generate_default_visitor __default_visitor(s);
-
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl;
-
-    s << "#ifndef " << parser << "_H_INCLUDED" << std::endl
-      << "#define " << parser << "_H_INCLUDED" << std::endl
-      << std::endl;
-
-    if (_G_system.generate_ast)
-      {
-        s << "#include \"kdev-pg-memory-pool.h\"" << std::endl
-          << "#include \"kdev-pg-allocator.h\"" << std::endl
-          << "#include \"kdev-pg-list.h\"" << std::endl;
-      }
-
-    if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
-      s << "#include \"kdev-pg-token-stream.h\"" << std::endl;
-
-    if (_G_system.adapt_to_kdevelop)
-      {
-        s << std::endl
-          << "#include <kdevast.h>" << std::endl
-          << std::endl;
-      }
-
-    s << "#include <cassert>" << std::endl
-      << std::endl;
-
-    if (_G_system.decl)
-      s << _G_system.decl << std::endl;
-
-    if (_G_system.generate_ast)
-      {
-        s << "namespace " << parser << "{" << std::endl
-          << std::endl;
-
-        __ast();
-
-        s << std::endl << "} // end of namespace " << parser << std::endl
-          << std::endl;
-      }
-
-    s << "namespace " << parser << "{" << std::endl
-      << std::endl;
-
-    __decls();
-
-    if (_G_system.generate_ast)
-      {
-        __visitor();
-        __default_visitor();
-      }
-
-    s << std::endl << "} // end of namespace " << parser << std::endl
-      << std::endl;
-
-    s << "#endif" << std::endl << std::endl;
-
-    std::string oname = parser;
-    oname += ".h";
-
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
-  }
-
-  if (gen_serialize_visitor)
-  { // generate the serialization visitor
-    std::stringstream s;
-
-    generate_serialize_visitor __serialize_visitor(s);
-
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl;
-
-    s << "#ifndef " << parser << "_SERIALIZATION_H_INCLUDED" << std::endl
-      << "#define " << parser << "_SERIALIZATION_H_INCLUDED" << std::endl
-      << std::endl;
-
-    s << "#include \"" << parser << ".h\"" << std::endl
-      << std::endl;
-
-    s << "#include <iostream>" << std::endl
-      << "#include <fstream>" << std::endl
-      << std::endl;
-
-    s << "namespace " << parser << "{" << std::endl
-      << std::endl;
-
-    __serialize_visitor();
-
-    s << std::endl << "} // end of namespace " << parser << std::endl
-      << std::endl;
-
-    s << "#endif" << std::endl << std::endl;
-
-    std::string oname = parser;
-    oname += "_serialize_visitor.h";
-
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
-  }
-
-  { // generate the bits
-    std::stringstream s;
-
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl;
-
-    s << "#include \"" << parser << ".h\"" << std::endl
-      << std::endl;
-
-    if (_G_system.bits)
-      s << _G_system.bits << std::endl;
-
-    s << "namespace " << parser << "{" << std::endl
-      << std::endl;
-
-    generate_parser_bits __bits(s);
-    generate_visitor_bits __visitor_bits(s);
-
-    __bits();
-
-    if (_G_system.generate_ast)
-      {
-        __visitor_bits();
-      }
-
-    s << std::endl << "} // end of namespace " << parser << std::endl
-      << std::endl;
-
-    std::string oname = parser;
-    oname += ".cpp";
-
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
-  }
+  generate_output();
 
   return EXIT_SUCCESS;
 }

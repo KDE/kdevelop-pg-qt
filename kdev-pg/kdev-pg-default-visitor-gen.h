@@ -18,8 +18,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_DEFAULT_VISITORGEN_H
-#define KDEV_PG_DEFAULT_VISITORGEN_H
+#ifndef KDEV_PG_DEFAULT_VISITOR_GEN_H
+#define KDEV_PG_DEFAULT_VISITOR_GEN_H
 
 #include "kdev-pg-default-visitor.h"
 
@@ -41,32 +41,13 @@ public:
 class gen_default_visitor_rule: protected default_visitor
 {
   std::ostream &out;
-  std::set<std::string> _M_names;
-  std::list<model::variable_declaration_item*> _M_variable_declarations;
 
 public:
   gen_default_visitor_rule(std::ostream &o): out(o)
   {}
 
   void operator()(std::pair<std::string, model::symbol_item*> const &__it);
-
-protected:
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
-};
-
-class has_member_nodes: protected default_visitor
-{
-  bool &has_members;
-
-public:
-  has_member_nodes(bool &result): has_members(result)
-  {}
-
-  void operator()(model::symbol_item *sym);
-
-protected:
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
 };
 
 
-#endif // KDEV_PG_DEFAULT_VISITORGEN_H
+#endif // KDEV_PG_DEFAULT_VISITOR_GEN_H

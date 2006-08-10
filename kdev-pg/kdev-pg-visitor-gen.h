@@ -17,8 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_VISITORGEN_H
-#define KDEV_PG_VISITORGEN_H
+#ifndef KDEV_PG_VISITOR_GEN_H
+#define KDEV_PG_VISITOR_GEN_H
 
 #include "kdev-pg-default-visitor.h"
 
@@ -38,5 +38,5 @@ public:
 };
 
 
-#endif // KDEV_PG_VISITORGEN_H
+#endif // KDEV_PG_VISITOR_GEN_H
 

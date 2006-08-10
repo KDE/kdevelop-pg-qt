@@ -18,26 +18,9 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "kdev-pg-default-visitor-gen.h"
-#include "kdev-pg.h"
-#include <iostream>
+#ifndef KDEV_PG_GENERATE_H
+#define KDEV_PG_GENERATE_H
 
-void generate_default_visitor::operator()()
-{
-  out << "class default_visitor: public visitor {" << std::endl
-      << "public:" << std::endl;
+void generate_output();
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
-                gen_default_visitor_rule(out));
-
-  out << "};" << std::endl;
-}
-
-void gen_default_visitor_rule::operator()(std::pair<std::string,model::symbol_item*> const &__it)
-{
-  model::symbol_item *sym = __it.second;
-
-  out << "virtual void visit_" << sym->_M_name
-      << "(" << sym->_M_name << "_ast *node);" << std::endl;
-}
-
+#endif // KDEV_PG_GENERATE_H

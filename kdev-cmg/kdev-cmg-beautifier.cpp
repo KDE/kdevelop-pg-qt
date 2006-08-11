@@ -1,4 +1,4 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-cmg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
 
    This library is free software; you can redistribute it and/or

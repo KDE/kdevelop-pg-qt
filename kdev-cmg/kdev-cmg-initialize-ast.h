@@ -20,7 +20,7 @@
 #ifndef KDEV_CMG_INITIALIZE_AST_H
 #define KDEV_CMG_INITIALIZE_AST_H
 
-#include "kdevcmg.h"
+#include "kdevcmg_default_visitor.h"
 
 #include <set>
 

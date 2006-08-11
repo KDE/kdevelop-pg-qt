@@ -20,7 +20,7 @@
 #ifndef KDEVCMG_DECODER_H
 #define KDEVCMG_DECODER_H
 
-#include "kdevcmg.h"
+#include "kdevcmg_parser.h"
 
 #include <string>
 #include <cstdlib>

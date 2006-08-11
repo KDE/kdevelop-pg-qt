@@ -1,5 +1,6 @@
 
-#include "csharp.h"
+#include "csharp_parser.h"
+#include "csharp_default_visitor.h"
 #include "decoder.h"
 
 #include <cstdlib>

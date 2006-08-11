@@ -17,7 +17,7 @@
  * Boston, MA 02110-1301, USA.                                               *
  *****************************************************************************/
 
-#include "cool.h"
+#include "cool_parser.h"
 
 #include <iostream>
 

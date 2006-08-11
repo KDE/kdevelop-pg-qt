@@ -5,7 +5,7 @@
 // but will rather be placed as items inside some listbox.
 
 
-#include "cool.h"
+#include "cool_parser.h"
 #include "cool_lexer.h"
 
 #include <iostream>

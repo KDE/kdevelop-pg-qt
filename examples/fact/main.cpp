@@ -1,5 +1,6 @@
 
-#include "fact.h"
+#include "fact_parser.h"
+#include "fact_default_visitor.h"
 #include "decoder.h"
 
 #include <cstdlib>

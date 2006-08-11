@@ -1,4 +1,8 @@
 
+PROJECT(fact_parser)
+
+PROJECT(fact_parser)
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 
@@ -14,8 +18,13 @@ FIND_PROGRAM(FLEX_EXECUTABLE
 
 # Add command to generate the parser.
 ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact.h"
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact_ast.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.cpp"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact.g"
             "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
@@ -24,11 +33,19 @@ ADD_CUSTOM_COMMAND(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact.cpp)
+SET(parser_srcs
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.cpp")
 
 SET_SOURCE_FILES_PROPERTIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}/fact.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/fact.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_ast.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.cpp"
     GENERATED
     )
 
@@ -39,7 +56,7 @@ IF(FLEX_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/fact.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"fact_lexer.cpp"
                 "fact_lexer.ll"

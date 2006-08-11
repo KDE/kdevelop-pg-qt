@@ -1,7 +1,7 @@
 #ifndef FACT_DECODER_H
 #define FACT_DECODER_H
 
-#include "fact.h"
+#include "fact_parser.h"
 
 #include <string>
 #include <cstdlib>

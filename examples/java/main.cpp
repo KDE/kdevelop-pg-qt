@@ -1,5 +1,6 @@
 
-#include "java.h"
+#include "java_parser.h"
+#include "java_default_visitor.h"
 #include "decoder.h"
 
 #include <cstdlib>

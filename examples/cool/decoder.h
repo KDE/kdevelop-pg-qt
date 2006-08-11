@@ -1,7 +1,7 @@
 #ifndef COOL_DECODER_H
 #define COOL_DECODER_H
 
-#include "cool.h"
+#include "cool_parser.h"
 
 #include <string>
 #include <cstdlib>

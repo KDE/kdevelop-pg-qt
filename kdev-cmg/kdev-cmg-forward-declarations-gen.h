@@ -20,7 +20,7 @@
 #ifndef KDEV_CMG_FORWARD_DECLARATIONS_GEN_H
 #define KDEV_CMG_FORWARD_DECLARATIONS_GEN_H
 
-#include "kdevcmg.h"
+#include "kdevcmg_default_visitor.h"
 
 
 namespace kdevcmg

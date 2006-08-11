@@ -19,6 +19,7 @@
 */
 
 #include "kdev-cmg.h"
+#include "kdevcmg_parser.h"
 
 #include <iostream>
 

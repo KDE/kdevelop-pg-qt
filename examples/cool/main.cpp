@@ -1,5 +1,6 @@
 
-#include "cool.h"
+#include "cool_parser.h"
+#include "cool_default_visitor.h"
 #include "decoder.h"
 
 #include <cstdlib>

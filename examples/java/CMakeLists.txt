@@ -1,4 +1,6 @@
 
+PROJECT(java_parser)
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 
@@ -14,8 +16,13 @@ FIND_PROGRAM(FLEX_EXECUTABLE
 
 # Add command to generate the parser.
 ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java_ast.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_parser.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_parser.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_visitor.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_default_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/java_default_visitor.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/java_serialize_visitor.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java.g"
             "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.h"
@@ -26,11 +33,20 @@ ADD_CUSTOM_COMMAND(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java.cpp)
+SET(parser_srcs
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_default_visitor.cpp")
 
 SET_SOURCE_FILES_PROPERTIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}/java.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/java.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_ast.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_parser.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_default_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_default_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/java_serialize_visitor.h"
     GENERATED
     )
 
@@ -41,14 +57,14 @@ IF(FLEX_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/java.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/java_parser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"java_lexer.cpp"
                 "java_lexer.ll"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp ${parser_srcs})
+    SET(parser_srcs "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp" ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp
@@ -56,7 +72,7 @@ IF(FLEX_EXECUTABLE)
         )
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("Assuming existence of the generated lexer file java_lexer.cpp")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp ${parser_srcs})
+    SET(parser_srcs "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp" ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
 
 

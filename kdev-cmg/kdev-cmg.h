@@ -1,4 +1,4 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-cmg
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 #ifndef KDEV_CMG_H
 #define KDEV_CMG_H
 
-#include "kdevcmg.h" // the parser. it will be named differently soon, promised
+#include "kdevcmg_ast.h"
 
 #include <string>
 #include <map>

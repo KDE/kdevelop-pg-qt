@@ -33,8 +33,13 @@ FIND_PROGRAM(KDEVPG_EXECUTABLE
 IF(KDEVPG_EXECUTABLE)
     # Add command to run the parser.
     ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.h"
+        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_ast.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_visitor.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_visitor.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-parser.g"
         COMMAND ${KDEVPG_EXECUTABLE}
         ARGS    --output=kdevcmg
@@ -42,17 +47,28 @@ IF(KDEVPG_EXECUTABLE)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.cpp)
+    SET(parser_srcs
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_visitor.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.cpp")
+
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.h
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_ast.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_visitor.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_visitor.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.cpp"
         GENERATED
         )
 ELSE(KDEVPG_EXECUTABLE)
     MESSAGE("Assuming existence of the generated parser files kdevcmg.[h,cpp]")
     SET(parser_srcs
-        ${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.h)
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_visitor.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.cpp"
+        )
 ENDIF(KDEVPG_EXECUTABLE)
 
 IF(FLEX_EXECUTABLE)
@@ -60,7 +76,7 @@ IF(FLEX_EXECUTABLE)
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.ll"
-                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-cmg-lexer.cc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.ll"

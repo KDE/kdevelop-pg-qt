@@ -1,4 +1,6 @@
 
+PROJECT(csharp_parser)
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 
@@ -14,8 +16,13 @@ FIND_PROGRAM(FLEX_EXECUTABLE
 
 # Add commands to generate the parsers.
 ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_ast.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_parser.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_parser.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_visitor.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_default_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_default_visitor.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp_serialize_visitor.h"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp.g"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.h"
@@ -26,8 +33,13 @@ ADD_CUSTOM_COMMAND(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_ast.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_parser.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_parser.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_visitor.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_default_visitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_default_visitor.cpp"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.g"
             "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.h"
     COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
@@ -37,15 +49,29 @@ ADD_CUSTOM_COMMAND(
     )
 
 SET(parser_srcs
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp)
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_default_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_default_visitor.cpp")
 
 SET_SOURCE_FILES_PROPERTIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_serialize_visitor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_ast.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_parser.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_default_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_default_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_serialize_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_ast.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_parser.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_parser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_default_visitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_default_visitor.cpp"
     GENERATED
     )
 
@@ -55,8 +81,8 @@ IF(FLEX_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/csharp.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_parser.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_pp_parser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"csharp_lexer.cpp"
                 "csharp_lexer.ll"
@@ -66,7 +92,7 @@ IF(FLEX_EXECUTABLE)
     SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp ${parser_srcs})
 
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp"
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)

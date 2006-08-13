@@ -71,7 +71,7 @@ IF(FLEX_EXECUTABLE)
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated lexer file java_lexer.cpp")
+    MESSAGE("--- Assuming existence of the generated lexer file java_lexer.cpp")
     SET(parser_srcs "${CMAKE_CURRENT_SOURCE_DIR}/java_lexer.cpp" ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
 

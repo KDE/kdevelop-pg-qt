@@ -133,7 +133,7 @@ Space       ({Whitespace}|{Newline})
 <INITIAL>[_a-zA-Z0-9]+  return kdevcmg::parser::Token_IDENTIFIER;
 
 <TYPE>{
-[^\r\n{};]+              BEGIN(INITIAL); return kdevcmg::parser::Token_TYPE;
+[^\r\n{};\-]+           BEGIN(INITIAL); return kdevcmg::parser::Token_TYPE;
 <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     _G_parser->report_problem( kdevcmg::parser::error,
@@ -146,7 +146,7 @@ Space       ({Whitespace}|{Newline})
 
  /* everything else is not a valid lexeme */
 
-.                   return kdevcmg::parser::Token_INVALID;
+.                       return kdevcmg::parser::Token_INVALID;
 
 
 %%

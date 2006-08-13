@@ -55,18 +55,24 @@ void generate_output()
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl;
+      << std::endl
 
-    s << "#ifndef " << _G_system.language << "_CODEMODEL_FWD_H" << std::endl
+      << "#ifndef " << _G_system.language << "_CODEMODEL_FWD_H" << std::endl
       << "#define " << _G_system.language << "_CODEMODEL_FWD_H" << std::endl
-      << std::endl;
+      << std::endl
 
-    s << "#include \"kdevsharedptr.h\"" << std::endl
+      << "#include \"kdevsharedptr.h\"" << std::endl
       << std::endl
       << "#include <QtCore/QList>" << std::endl
       << std::endl;
 
+    s << "namespace " << _G_system.language << "{" << std::endl
+      << std::endl;
+
     __forward_decls();
+
+    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+      << std::endl;
 
     s << "#endif" << std::endl << std::endl;
 
@@ -86,13 +92,13 @@ void generate_output()
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl;
+      << std::endl
 
-    s << "#ifndef " << _G_system.language << "_CODEMODEL_H" << std::endl
+      << "#ifndef " << _G_system.language << "_CODEMODEL_H" << std::endl
       << "#define " << _G_system.language << "_CODEMODEL_H" << std::endl
-      << std::endl;
+      << std::endl
 
-    s << "#include \"kdevcodemodel.h\"" << std::endl
+      << "#include \"kdevcodemodel.h\"" << std::endl
       << std::endl
       << "#include \"" << _G_system.language << "_codemodel_fwd.h\"" << std::endl
       << std::endl
@@ -105,7 +111,13 @@ void generate_output()
 
     s << _G_system.declarations << std::endl;
 
+    s << "namespace " << _G_system.language << "{" << std::endl
+      << std::endl;
+
     __decls();
+
+    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+      << std::endl;
 
     s << "#endif" << std::endl << std::endl;
 
@@ -125,14 +137,20 @@ void generate_output()
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
+      << std::endl
+
+      << "#include \"" << _G_system.language << "_codemodel.h\"" << std::endl
       << std::endl;
 
-    s << "#include \"" << _G_system.language << "_codemodel.h\"" << std::endl
+    s << "namespace " << _G_system.language << "{" << std::endl
       << std::endl;
 
     s << _G_system.implementation << std::endl;
 
     __implementation();
+
+    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+      << std::endl;
 
     std::string oname = _G_system.language;
     oname += "_codemodel.cpp";

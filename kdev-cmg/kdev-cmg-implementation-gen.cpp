@@ -354,7 +354,7 @@ void generate_implementation::visit_member_item(member_item_ast *node)
       if (node->options && node->options->multihashed_member)
         {
           std::string hash_type = _G_system.type_of(
-            node->options->multihashed_member->identifier, current_class.substr(1) );
+            node->options->multihashed_member->identifier, node->type->type_name );
 
           out << "QMultiHash<" << hash_type << ", " << node->type->type_name << ">::Iterator it"
               << "= _M_" << string_tools::plural(node->name->identifier)
@@ -404,7 +404,7 @@ void generate_implementation::visit_member_item(member_item_ast *node)
       if (node->options && node->options->hashed_member)
         {
           std::string hash_type = _G_system.type_of(
-            node->options->hashed_member->identifier, current_class.substr(1) );
+            node->options->hashed_member->identifier, node->type->type_name );
 
           out << node->type->type_name << " " << current_class << "::"
               << string_tools::accessor_name("find", node->name->identifier)
@@ -420,7 +420,7 @@ void generate_implementation::visit_member_item(member_item_ast *node)
       else if (node->options && node->options->multihashed_member)
         {
           std::string hash_type = _G_system.type_of(
-            node->options->multihashed_member->identifier, current_class.substr(1) );
+            node->options->multihashed_member->identifier, node->type->type_name );
 
           out << node->type->raw_type_name << "List " << current_class << "::"
               << string_tools::accessor_name("find", string_tools::plural(node->name->identifier))

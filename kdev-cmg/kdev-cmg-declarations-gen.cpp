@@ -168,7 +168,7 @@ void generate_declarations::visit_item_declaration(item_declaration_ast *node)
   default_visitor::visit_item_declaration(node);
 
   generate_member_items __items(out);
-  __items(node, node->type->type_name);
+  __items(node);
 
   if (node->type->type_name == "CodeModelItem")
     {
@@ -210,7 +210,7 @@ void generate_declarations::visit_non_item_type_declaration(non_item_type_declar
   default_visitor::visit_non_item_type_declaration(node);
 
   generate_member_items __items(out);
-  __items(node, node->type->type_name);
+  __items(node);
 
   out << "};" << std::endl
       << std::endl;
@@ -236,9 +236,8 @@ void generate_declarations::visit_code_item(code_item_ast *node)
 }
 
 
-void generate_member_items::operator()(ast_node *node, std::string current)
+void generate_member_items::operator()(ast_node *node)
 {
-  current_class = current;
   out << "public:" << std::endl;
 
   mode = generate_accessors;
@@ -291,7 +290,7 @@ void generate_member_items::visit_member_item(member_item_ast *node)
           if (node->options && node->options->hashed_member)
             {
               std::string hash_type = _G_system.type_of(
-                node->options->hashed_member->identifier, current_class );
+                node->options->hashed_member->identifier, node->type->type_name );
 
               out << node->type->type_name << " "
                   << string_tools::accessor_name("find", node->name->identifier)
@@ -302,7 +301,7 @@ void generate_member_items::visit_member_item(member_item_ast *node)
           else if (node->options && node->options->multihashed_member)
             {
               std::string hash_type = _G_system.type_of(
-                node->options->multihashed_member->identifier, current_class );
+                node->options->multihashed_member->identifier, node->type->type_name );
 
               out << node->type->raw_type_name << "List "
                   << string_tools::accessor_name("find", string_tools::plural(node->name->identifier))
@@ -324,14 +323,14 @@ void generate_member_items::visit_member_item(member_item_ast *node)
       if (node->options->hashed_member)
         {
           hash_type = _G_system.type_of(
-            node->options->hashed_member->identifier, current_class );
+            node->options->hashed_member->identifier, node->type->type_name );
 
           out << "QHash";
         }
       else // if (node->options->multihashed_member)
         {
           hash_type = _G_system.type_of(
-            node->options->multihashed_member->identifier, current_class );
+            node->options->multihashed_member->identifier, node->type->type_name );
 
           out << "QMultiHash";
         }
@@ -351,14 +350,14 @@ void generate_member_items::visit_member_item(member_item_ast *node)
       if (node->options && node->options->hashed_member)
         {
           std::string hash_type = _G_system.type_of(
-            node->options->hashed_member->identifier, current_class );
+            node->options->hashed_member->identifier, node->type->type_name );
 
           out << "QHash<" << hash_type << ", ";
         }
       else if (node->options && node->options->multihashed_member)
         {
           std::string hash_type = _G_system.type_of(
-            node->options->multihashed_member->identifier, current_class );
+            node->options->multihashed_member->identifier, node->type->type_name );
 
           out << "QMultiHash<" << hash_type << ", ";
         }

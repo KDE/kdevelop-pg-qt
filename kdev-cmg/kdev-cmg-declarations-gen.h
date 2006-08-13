@@ -56,14 +56,13 @@ class generate_member_items : public default_visitor
   std::ostream &out;
   generator_mode mode;
   bool break_line;
-  std::string current_class;
 
 public:
   generate_member_items(std::ostream &o)
     : out(o), mode(generate_accessors), break_line(false)
   {}
 
-  void operator ()(ast_node *node, std::string current_class);
+  void operator ()(ast_node *node);
 
 protected:
   virtual void visit_member_item(member_item_ast *node);

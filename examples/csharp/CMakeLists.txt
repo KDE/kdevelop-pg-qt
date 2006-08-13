@@ -4,14 +4,21 @@ PROJECT(csharp_parser)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 
-# autogenerate the lexer and the two parsers (csharp and csharp_pp)
+# autogenerate the lexer, the two parsers (csharp and csharp_pp)
+# and the KDevelop codemodel
 
 SET(parser_srcs)
+SET(codemodel_srcs)
 
 FIND_PROGRAM(FLEX_EXECUTABLE
     NAMES flex
     PATHS /usr/bin
     DOC "Flex executable")
+
+FIND_PROGRAM(KDEVCMG_EXECUTABLE
+    NAMES kdev-cmg
+    PATHS ${CMAKE_BINARY_DIR}/kdev-cmg /usr/bin
+    DOC "kdev-cmg executable")
 
 
 # Add commands to generate the parsers.
@@ -96,9 +103,37 @@ IF(FLEX_EXECUTABLE)
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)
-    MESSAGE("Assuming existence of the generated lexer file csharp_lexer.cpp")
+    MESSAGE("--- Assuming existence of the generated lexer file csharp_lexer.cpp")
     SET(parser_srcs ${parser_srcs} ${CMAKE_CURRENT_SOURCE_DIR}/csharp_lexer.cpp)
 ENDIF(FLEX_EXECUTABLE)
+
+
+IF(KDEVCMG_EXECUTABLE)
+    # Add command to generate the code model
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_fwd.h"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cm"
+        COMMAND ${KDEVCMG_EXECUTABLE}
+        ARGS    --language=csharp
+                "csharp_codemodel.cm"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+
+    SET(codemodel_srcs "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp")
+
+    SET_SOURCE_FILES_PROPERTIES(
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_fwd.h"
+        GENERATED
+        )
+ELSE(KDEVCMG_EXECUTABLE)
+    MESSAGE("--- Assuming existence of the generated codemodel files")
+    SET(codemodel_srcs "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp")
+ENDIF(KDEVCMG_EXECUTABLE)
+
 
 
 SET(assembled_parser_srcs
@@ -108,6 +143,7 @@ SET(assembled_parser_srcs
     csharp_pp_scope.cpp
     csharp_pp_handler_visitor.cpp
 )
+
 
 
 # add definitions, compiler switches, etc.
@@ -123,20 +159,25 @@ ADD_CUSTOM_TARGET(parser echo "Generating the parser"
     )
 
 # if you want it generated even if the file hasn't changed (but kdev-pg has,
-# for example) then call "make parser/force"
-ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
-    COMMAND rm csharp.cpp csharp_pp.cpp
-    DEPENDS ${parser_srcs}
+# for example) then call "make parser-clean && make parser"
+ADD_CUSTOM_TARGET(parser-clean echo "Generating the parser")
+ADD_CUSTOM_COMMAND(TARGET parser-clean
+    PRE_BUILD
+    COMMAND rm -f ${parser_srcs}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-# if you want it generated even if the file hasn't changed (but kdev-pg has,
-# for example) then call "make parser/force"
-ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
-    DEPENDS ${parser_srcs}
+
+# in order to generate only the codemodel, call "make codemodel"
+ADD_CUSTOM_TARGET(codemodel echo "Generating the codemodel"
+    DEPENDS ${codemodel_srcs}
     )
-ADD_CUSTOM_COMMAND(TARGET parser/force
+
+# if you want it generated even if the file hasn't changed (but kdev-cmg has,
+# for example) then call "make codemodel-clean && make codemodel"
+ADD_CUSTOM_TARGET(codemodel-clean echo "Generating the codemodel")
+ADD_CUSTOM_COMMAND(TARGET codemodel-clean
     PRE_BUILD
-    COMMAND rm -f csharp.cpp csharp_pp.cpp
+    COMMAND rm -f ${codemodel_srcs}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )

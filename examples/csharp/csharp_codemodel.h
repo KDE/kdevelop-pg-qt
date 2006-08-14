@@ -17,7 +17,7 @@
 
 #include "csharp_ast.h"
 
-// #include "codedisplay.h"
+#include "codedisplay.h"
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
@@ -107,37 +107,33 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
         Kind_NamespaceDeclaration =  1 << 1 /*| Kind_Scope*/,
         Kind_TypeDeclaration =  1 << 2 /*| Kind_Scope*/,
         Kind_ClassLikeDeclaration =  1 << 3 /*| Kind_TypeDeclaration*/,
-        Kind_OperatorDeclaration =  1 << 4 /*| Kind_Scope*/,
-        Kind_TypeParameterConstraint =  1 << 5,
-        KindMask =  (1 << 6) -  1,
+        Kind_TypeParameterConstraint =  1 << 4,
+        KindMask =  (1 << 5) -  1,
 
         /* These are for classes that are not inherited from */
-        FirstKind =  1 << 6,
-        Kind_GlobalNamespaceDeclaration =  1 << 7 /*| Kind_NamespaceDeclaration*/,
-        Kind_ExternAliasDirective =  1 << 8,
-        Kind_UsingAliasDirective =  1 << 9,
-        Kind_UsingNamespaceDirective =  1 << 10,
-        Kind_ClassDeclaration =  1 << 11 /*| Kind_ClassLikeDeclaration*/,
-        Kind_StructDeclaration =  1 << 12 /*| Kind_ClassLikeDeclaration*/,
-        Kind_InterfaceDeclaration =  1 << 13 /*| Kind_ClassLikeDeclaration*/,
-        Kind_DelegateDeclaration =  1 << 14 /*| Kind_TypeDeclaration*/,
-        Kind_EnumDeclaration =  1 << 15 /*| Kind_TypeDeclaration*/,
-        Kind_EnumValue =  1 << 16,
-        Kind_EventDeclaration =  1 << 17 /*| Kind_Scope*/,
-        Kind_EventAccessorDeclaration =  1 << 18,
-        Kind_IndexerDeclaration =  1 << 19 /*| Kind_Scope*/,
-        Kind_PropertyDeclaration =  1 << 20 /*| Kind_Scope*/,
-        Kind_AccessorDeclaration =  1 << 21,
-        Kind_MethodDeclaration =  1 << 22 /*| Kind_Scope*/,
-        Kind_VariableDeclaration =  1 << 23,
-        Kind_ConversionOperatorDeclaration =  1 << 24 /*| Kind_OperatorDeclaration*/,
-        Kind_UnaryOperatorDeclaration =  1 << 25 /*| Kind_OperatorDeclaration*/,
-        Kind_BinaryOperatorDeclaration =  1 << 26 /*| Kind_OperatorDeclaration*/,
-        Kind_Parameter =  1 << 27,
-        Kind_TypeParameter =  1 << 28,
-        Kind_PrimaryOrSecondaryConstraint =  1 << 29 /*| Kind_TypeParameterConstraint*/,
-        Kind_ConstructorConstraint =  1 << 30 /*| Kind_TypeParameterConstraint*/,
-        Kind_AttributeSection =  1 << 31,
+        FirstKind =  1 << 5,
+        Kind_GlobalNamespaceDeclaration =  1 << 6 /*| Kind_NamespaceDeclaration*/,
+        Kind_ExternAliasDirective =  1 << 7,
+        Kind_UsingAliasDirective =  1 << 8,
+        Kind_UsingNamespaceDirective =  1 << 9,
+        Kind_ClassDeclaration =  1 << 10 /*| Kind_ClassLikeDeclaration*/,
+        Kind_StructDeclaration =  1 << 11 /*| Kind_ClassLikeDeclaration*/,
+        Kind_InterfaceDeclaration =  1 << 12 /*| Kind_ClassLikeDeclaration*/,
+        Kind_DelegateDeclaration =  1 << 13 /*| Kind_TypeDeclaration*/,
+        Kind_EnumDeclaration =  1 << 14 /*| Kind_TypeDeclaration*/,
+        Kind_EnumValue =  1 << 15,
+        Kind_EventDeclaration =  1 << 16 /*| Kind_Scope*/,
+        Kind_EventAccessorDeclaration =  1 << 17,
+        Kind_IndexerDeclaration =  1 << 18 /*| Kind_Scope*/,
+        Kind_PropertyDeclaration =  1 << 19 /*| Kind_Scope*/,
+        Kind_AccessorDeclaration =  1 << 20,
+        Kind_MethodDeclaration =  1 << 21 /*| Kind_Scope*/,
+        Kind_VariableDeclaration =  1 << 22,
+        Kind_Parameter =  1 << 23,
+        Kind_TypeParameter =  1 << 24,
+        Kind_PrimaryOrSecondaryConstraint =  1 << 25 /*| Kind_TypeParameterConstraint*/,
+        Kind_ConstructorConstraint =  1 << 26 /*| Kind_TypeParameterConstraint*/,
+        Kind_AttributeSection =  1 << 27,
       };
 
     public:
@@ -176,13 +172,11 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
     public:
       QStringList qualifiedName() const;
 
-      /*
       // TODO: These methods should be cached upon initialization
       QString display() const;
       QIcon decoration() const;
       QString toolTip() const;
       QString whatsThis() const;
-      */
 
     public:
       QString name() const;
@@ -239,6 +233,9 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       virtual ~_NamespaceDeclarationModelItem();
 
     public:
+      ITEM(NamespaceDeclaration) createNamespace(QStringList names);
+
+    public:
       NamespaceDeclarationList namespaces() const;
       void addNamespace(NamespaceDeclarationModelItem item);
       void removeNamespace(NamespaceDeclarationModelItem item);
@@ -257,7 +254,6 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       UsingNamespaceDirectiveList usingNamespaces() const;
       void addUsingNamespace(UsingNamespaceDirectiveModelItem item);
       void removeUsingNamespace(UsingNamespaceDirectiveModelItem item);
-      UsingNamespaceDirectiveModelItem findUsingNamespace(const QStringList &namespaceUsed) const;
 
       ClassDeclarationList classes() const;
       void addClass(ClassDeclarationModelItem item);
@@ -299,11 +295,6 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
           return  _M_usingAliases;
         }
 
-      inline QHash<QStringList,  UsingNamespaceDirectiveModelItem> usingNamespaceMap() const
-        {
-          return  _M_usingNamespaces;
-        }
-
       inline QHash<QString,  ClassDeclarationModelItem> classMap() const
         {
           return  _M_classes;
@@ -333,7 +324,7 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       QHash<QString,  NamespaceDeclarationModelItem> _M_namespaces;
       QHash<QString,  ExternAliasDirectiveModelItem> _M_externAliases;
       QHash<QString,  UsingAliasDirectiveModelItem> _M_usingAliases;
-      QHash<QStringList,  UsingNamespaceDirectiveModelItem> _M_usingNamespaces;
+      UsingNamespaceDirectiveList _M_usingNamespaces;
       QHash<QString,  ClassDeclarationModelItem> _M_classes;
       QHash<QString,  StructDeclarationModelItem> _M_structs;
       QHash<QString,  InterfaceDeclarationModelItem> _M_interfaces;
@@ -1236,139 +1227,6 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       void operator=(const _VariableDeclarationModelItem &other);
     };
 
-  class _OperatorDeclarationModelItem :  public _ScopeModelItem
-    {
-
-    public:
-      DECLARE_MODEL_NODE(OperatorDeclaration)
-
-      static OperatorDeclarationModelItem create(CodeModel *model);
-      virtual ~_OperatorDeclarationModelItem();
-
-    public:
-      AttributeSectionList attributes() const;
-      void addAttribute(AttributeSectionModelItem item);
-      void removeAttribute(AttributeSectionModelItem item);
-
-      TypeInfo sourceType() const;
-      void setSourceType(TypeInfo sourceType);
-
-      QString sourceName() const;
-      void setSourceName(QString sourceName);
-
-      bool isExtern() const;
-      void setExtern(bool isExtern);
-
-      bool isUnsafe() const;
-      void setUnsafe(bool isUnsafe);
-
-    private:
-      AttributeSectionList _M_attributes;
-      TypeInfo _M_sourceType;
-      QString _M_sourceName;
-      bool _M_isExtern;
-      bool _M_isUnsafe;
-
-    protected:
-      _OperatorDeclarationModelItem(CodeModel *model,  int kind =  __node_kind);
-
-    private:
-      _OperatorDeclarationModelItem(const _OperatorDeclarationModelItem &other);
-      void operator=(const _OperatorDeclarationModelItem &other);
-    };
-
-  class _ConversionOperatorDeclarationModelItem :  public _OperatorDeclarationModelItem
-    {
-
-    public:
-      DECLARE_MODEL_NODE(ConversionOperatorDeclaration)
-
-      static ConversionOperatorDeclarationModelItem create(CodeModel *model);
-      virtual ~_ConversionOperatorDeclarationModelItem();
-
-    public:
-      TypeInfo targetType() const;
-      void setTargetType(TypeInfo targetType);
-
-      conversion_operator_declaration::conversion_type_enum conversion() const;
-      void setConversion(conversion_operator_declaration::conversion_type_enum conversion);
-
-    private:
-      TypeInfo _M_targetType;
-      conversion_operator_declaration::conversion_type_enum _M_conversion;
-
-    protected:
-      _ConversionOperatorDeclarationModelItem(CodeModel *model,  int kind =  __node_kind);
-
-    private:
-      _ConversionOperatorDeclarationModelItem(const _ConversionOperatorDeclarationModelItem &other);
-      void operator=(const _ConversionOperatorDeclarationModelItem &other);
-    };
-
-  class _UnaryOperatorDeclarationModelItem :  public _OperatorDeclarationModelItem
-    {
-
-    public:
-      DECLARE_MODEL_NODE(UnaryOperatorDeclaration)
-
-      static UnaryOperatorDeclarationModelItem create(CodeModel *model);
-      virtual ~_UnaryOperatorDeclarationModelItem();
-
-    public:
-      TypeInfo returnType() const;
-      void setReturnType(TypeInfo returnType);
-
-      overloadable_operator::overloadable_operator_enum operator() const;
-      void setOperator(overloadable_operator::overloadable_operator_enum operator);
-
-    private:
-      TypeInfo _M_returnType;
-      overloadable_operator::overloadable_operator_enum _M_operator;
-
-    protected:
-      _UnaryOperatorDeclarationModelItem(CodeModel *model,  int kind =  __node_kind);
-
-    private:
-      _UnaryOperatorDeclarationModelItem(const _UnaryOperatorDeclarationModelItem &other);
-      void operator=(const _UnaryOperatorDeclarationModelItem &other);
-    };
-
-  class _BinaryOperatorDeclarationModelItem :  public _OperatorDeclarationModelItem
-    {
-
-    public:
-      DECLARE_MODEL_NODE(BinaryOperatorDeclaration)
-
-      static BinaryOperatorDeclarationModelItem create(CodeModel *model);
-      virtual ~_BinaryOperatorDeclarationModelItem();
-
-    public:
-      TypeInfo returnType() const;
-      void setReturnType(TypeInfo returnType);
-
-      overloadable_operator::overloadable_operator_enum operator() const;
-      void setOperator(overloadable_operator::overloadable_operator_enum operator);
-
-      TypeInfo source2Type() const;
-      void setSource2Type(TypeInfo source2Type);
-
-      QString source2Name() const;
-      void setSource2Name(QString source2Name);
-
-    private:
-      TypeInfo _M_returnType;
-      overloadable_operator::overloadable_operator_enum _M_operator;
-      TypeInfo _M_source2Type;
-      QString _M_source2Name;
-
-    protected:
-      _BinaryOperatorDeclarationModelItem(CodeModel *model,  int kind =  __node_kind);
-
-    private:
-      _BinaryOperatorDeclarationModelItem(const _BinaryOperatorDeclarationModelItem &other);
-      void operator=(const _BinaryOperatorDeclarationModelItem &other);
-    };
-
   class _ParameterModelItem :  public _CodeModelItem
     {
 
@@ -1389,14 +1247,14 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       bool isArray() const;
       void setArray(bool isArray);
 
-      parameter_type::parameter_type_enum parameterType() const;
-      void setParameterType(parameter_type::parameter_type_enum parameterType);
+      parameter::parameter_type_enum parameterType() const;
+      void setParameterType(parameter::parameter_type_enum parameterType);
 
     private:
       AttributeSectionList _M_attributes;
       TypeInfo _M_type;
       bool _M_isArray;
-      parameter_type::parameter_type_enum _M_parameterType;
+      parameter::parameter_type_enum _M_parameterType;
 
     protected:
       _ParameterModelItem(CodeModel *model,  int kind =  __node_kind);
@@ -1462,14 +1320,14 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       virtual ~_PrimaryOrSecondaryConstraintModelItem();
 
     public:
-      Type typeOrParameterName() const;
-      void setTypeOrParameterName(Type typeOrParameterName);
+      TypeInfo typeOrParameterName() const;
+      void setTypeOrParameterName(TypeInfo typeOrParameterName);
 
       primary_or_secondary_constraint::primary_or_secondary_constraint_enum constraint_type() const;
       void setConstraint_type(primary_or_secondary_constraint::primary_or_secondary_constraint_enum constraint_type);
 
     private:
-      Type _M_typeOrParameterName;
+      TypeInfo _M_typeOrParameterName;
       primary_or_secondary_constraint::primary_or_secondary_constraint_enum _M_constraint_type;
 
     protected:

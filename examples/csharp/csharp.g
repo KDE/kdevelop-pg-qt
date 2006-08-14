@@ -872,7 +872,7 @@ namespace csharp_pp
       try/recover(type_parameters=type_parameters)
     | 0
    )
-   (struct_interfaces=struct_interfaces | 0)
+   (struct_interfaces=interface_base | 0)
    (  ?[: compatibility_mode() >= csharp20_compatibility :]
       try/recover(#type_parameter_constraints=type_parameter_constraints_clause)+
     | 0
@@ -954,9 +954,6 @@ namespace csharp_pp
       #base_type=type_name @ COMMA
    )
 -> class_base ;;
-
-   COLON #interface_type=type_name @ COMMA
--> struct_interfaces ;;
 
    COLON #interface_type=type_name @ COMMA
 -> interface_base ;;
@@ -2736,7 +2733,8 @@ namespace csharp_pp
 -> namespace_or_type_name_safe ;;
 
 
--- QUALIFIED identifiers are either qualified ones or raw identifiers.
+-- QUALIFIED IDENTIFIERs are either qualified ones or raw identifiers.
+-- In the C# grammar, they're only used as namespace names.
 
    #name=identifier @ DOT
 -> qualified_identifier ;;

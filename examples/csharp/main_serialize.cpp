@@ -30,7 +30,7 @@ void print_token_environment(parser* parser)
         if (i == current_index)
           std::cerr << ">>";
 
-        std::cerr << dec.decode_id(i); // print out currently processed token
+        std::cerr << dec.decode_string(i); // print out currently processed token
 
         if (i == current_index)
           std::cerr << "<<";

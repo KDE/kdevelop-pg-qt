@@ -212,6 +212,15 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       virtual ~_ScopeModelItem();
 
     public:
+      QStringList context()
+      {
+        if  (name().isNull())
+          return  scope();
+        else
+          return  scope() <<  name();
+      }
+
+    public:
 
     private:
 
@@ -231,9 +240,6 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
 
       static NamespaceDeclarationModelItem create(CodeModel *model);
       virtual ~_NamespaceDeclarationModelItem();
-
-    public:
-      ITEM(NamespaceDeclaration) createNamespace(QStringList names);
 
     public:
       NamespaceDeclarationList namespaces() const;
@@ -504,9 +510,6 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       void addTypeParameterConstraint(TypeParameterConstraintModelItem item);
       void removeTypeParameterConstraint(TypeParameterConstraintModelItem item);
 
-      bool isPartial() const;
-      void setPartial(bool isPartial);
-
       bool isUnsafe() const;
       void setUnsafe(bool isUnsafe);
 
@@ -593,7 +596,6 @@ typedef KDevSharedPtr<k##ModelItem> Pointer;
       QMultiHash<QString,  MethodDeclarationModelItem> _M_methods;
       TypeParameterList _M_typeParameters;
       TypeParameterConstraintList _M_typeParameterConstraints;
-      bool _M_isPartial;
       bool _M_isUnsafe;
       QHash<QString,  ClassDeclarationModelItem> _M_classes;
       QHash<QString,  StructDeclarationModelItem> _M_structs;

@@ -82,7 +82,7 @@ namespace csharp
 
   // ---------------------------------------------------------------------------
 #define CLASS _CodeModelItem
-#define BASECLASS has_no_base_class!
+#define BASECLASS KDevCodeItem
 
   _CodeModelItem::_CodeModelItem(CodeModel *model,  int kind)
       :  KDevCodeItem( QString::null,  0 )
@@ -476,34 +476,6 @@ namespace csharp
       return  _M_delegates.value(name);
     }
 
-
-  ITEM(NamespaceDeclaration) CLASS::createNamespace(QStringList names)
-  {
-    if  (names.isEmpty())
-      return  this;
-    else
-      {
-        QString first =  names.takeFirst();
-        NamespaceDeclarationModelItem ns =  findNamespace(first);
-
-        if  (!ns)
-          {
-            ns =  model()->create<NamespaceDeclarationModelItem>();
-
-            QStringList childScope =  scope();
-
-            if  (!name().isNull())
-              childScope.append(name());
-
-            ns->setName(first);
-            ns->setScope(childScope);
-            addNamespace(ns);
-          }
-
-        return  ns->createNamespace(names);
-      }
-  }
-
 #undef CLASS
 #undef BASECLASS
 
@@ -678,7 +650,6 @@ namespace csharp
 
   _ClassLikeDeclarationModelItem::_ClassLikeDeclarationModelItem(CodeModel *model,  int kind)
       :  _TypeDeclarationModelItem(model,  kind)
-      ,  _M_isPartial( false )
       ,  _M_isUnsafe( false )
   {}
 
@@ -848,16 +819,6 @@ namespace csharp
     model()->beginRemoveItem(item);
     _M_typeParameterConstraints.removeAt(_M_typeParameterConstraints.indexOf(item));
     model()->endRemoveItem();
-  }
-
-  bool _ClassLikeDeclarationModelItem::isPartial() const
-    {
-      return  _M_isPartial;
-    }
-
-  void _ClassLikeDeclarationModelItem::setPartial(bool isPartial)
-  {
-    _M_isPartial =  isPartial;
   }
 
   bool _ClassLikeDeclarationModelItem::isUnsafe() const

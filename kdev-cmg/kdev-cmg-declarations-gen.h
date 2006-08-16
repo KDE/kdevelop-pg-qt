@@ -94,5 +94,5 @@ protected:
 
 } // end of namespace kdevcmg
 
-#endif // KDEV_DECLARATIONS_GEN_H
+#endif // KDEV_CMG_DECLARATIONS_GEN_H
 

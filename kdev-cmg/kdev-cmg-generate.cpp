@@ -26,6 +26,7 @@
 #include "kdev-cmg-forward-declarations-gen.h"
 #include "kdev-cmg-declarations-gen.h"
 #include "kdev-cmg-implementation-gen.h"
+#include "kdev-cmg-chameleon-gen.h"
 
 #include <iostream>
 #include <sstream>
@@ -130,6 +131,41 @@ void generate_output()
   }
 
 
+  { // generate the chameleon declarations
+    std::stringstream s;
+
+    generate_chameleon __chameleon_decls(s, generate_chameleon::declaration);
+
+    s << "// THIS FILE IS GENERATED" << std::endl
+      << "// WARNING! All changes made in this file will be lost!" << std::endl
+      << std::endl
+
+      << "#ifndef " << _G_system.language << "_CODEMODEL_CHAMELEON_H" << std::endl
+      << "#define " << _G_system.language << "_CODEMODEL_CHAMELEON_H" << std::endl
+      << std::endl
+
+      << "#include \"" << _G_system.language << "_codemodel.h\"" << std::endl
+      << std::endl;
+
+    s << "namespace " << _G_system.language << "{" << std::endl
+      << std::endl;
+
+    __chameleon_decls();
+
+    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+      << std::endl;
+
+    s << "#endif" << std::endl << std::endl;
+
+    std::string oname = _G_system.language;
+    oname += "_codemodel_chameleon.h";
+
+    std::ofstream ofile;
+    ofile.open(oname.c_str(), std::ios::out);
+    format(s, ofile);
+  }
+
+
   { // generate the implementation
     std::stringstream s;
 
@@ -154,6 +190,37 @@ void generate_output()
 
     std::string oname = _G_system.language;
     oname += "_codemodel.cpp";
+
+    std::ofstream ofile;
+    ofile.open(oname.c_str(), std::ios::out);
+    format(s, ofile);
+  }
+
+
+  { // generate the chameleon implementation
+    std::stringstream s;
+
+    generate_chameleon __chameleon_implementation(s, generate_chameleon::implementation);
+
+    s << "// THIS FILE IS GENERATED" << std::endl
+      << "// WARNING! All changes made in this file will be lost!" << std::endl
+      << std::endl
+
+      << "#include \"" << _G_system.language << "_codemodel_chameleon.h\"" << std::endl
+      << std::endl;
+
+    s << "namespace " << _G_system.language << "{" << std::endl
+      << std::endl;
+
+    s << _G_system.implementation << std::endl;
+
+    __chameleon_implementation();
+
+    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+      << std::endl;
+
+    std::string oname = _G_system.language;
+    oname += "_codemodel_chameleon.cpp";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);

@@ -114,7 +114,7 @@ void generate_implementation::visit_item_declaration(item_declaration_ast *node)
   current_class = "_" + node->type->type_name;
   out << "#define CLASS " << current_class << std::endl;
 
-  if (node->base_type && node->type->type_name == "CodeModelItem")
+  if (node->type->type_name == "CodeModelItem")
     out << "#define BASECLASS KDevCodeItem" << std::endl;
   else if (node->base_type)
     out << "#define BASECLASS _" << node->base_type->type_name << std::endl;

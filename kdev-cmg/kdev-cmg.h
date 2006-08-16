@@ -61,7 +61,7 @@ struct world
         if (typeit != (*clsit).second.end())
           return (*typeit).second;
       }
-    return "invalid_type!";
+    return "";
   }
 
 private:

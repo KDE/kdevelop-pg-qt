@@ -11,6 +11,7 @@ SET(kdevcmg_srcs
     kdev-cmg-forward-declarations-gen.cpp
     kdev-cmg-declarations-gen.cpp
     kdev-cmg-implementation-gen.cpp
+    kdev-cmg-chameleon-gen.cpp
     kdev-cmg-generate.cpp
     kdev-cmg-string-tools.cpp
     kdev-cmg-beautifier.cpp

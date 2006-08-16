@@ -37,7 +37,7 @@ ADD_CUSTOM_COMMAND(
             "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.h"
             "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_default_visitor.cpp"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-parser.g"
-    COMMAND ${KDEVPG_EXECUTABLE}
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg/kdev-pg
     ARGS    --output=kdevcmg
             "kdev-cmg-parser.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

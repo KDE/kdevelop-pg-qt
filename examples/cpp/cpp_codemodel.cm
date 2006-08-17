@@ -28,8 +28,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-
-#include <kurl.h>
 :]
 
 
@@ -139,10 +137,10 @@ TypeInfo
 
     bool CLASS::operator==(const TypeInfo &other)
     {
-      return _M_isConstant == other._M_isConstant
-        && _M_isReference == other._M_isReference
-        && _M_indirections == other._M_indirections
-        && _M_qualifiedName == other._M_qualifiedName;
+      return isConstant() == other.isConstant()
+        && isReference() == other.isReference()
+        && indirections() == other.indirections()
+        && qualifiedName() == other.qualifiedName();
     }
   :]
 }
@@ -198,19 +196,19 @@ Code
 
 Scope: Code
 {
-  #class:     Class     { hashed(name) };
-  #enum:      Enum      { hashed(name) };
+  #class:        Class     { hashed(name) };
+  #enum:         Enum      { hashed(name) };
   #functionDefinition: FunctionDefinition
     { multihashed(name),
       unique [: !existingItem->isSimilar( model_static_cast<ITEM(Code)>(item) ) :]
     };
-  #function:  Function
+  #function:     Function
     { multihashed(name),
       unique [: !existingItem->isSimilar( model_static_cast<ITEM(Code)>(item) ) :]
     };
-  #typeAlias: TypeAlias { hashed(name) };
-  #variable:  Variable  { hashed(name) };
-  #template:  Template  { multihashed(name) };
+  #typeAlias:    TypeAlias { hashed(name) };
+  #variable:     Variable  { hashed(name) };
+  #template:     Template  { multihashed(name) };
 
   public declaration
   [:
@@ -221,9 +219,9 @@ Scope: Code
   [:
     ITEM(Function) CLASS::declaredFunction(ITEM(Function) item)
     {
-      LIST(Function) function_list = findFunctions(item->name());
+      LIST(Function) functionList = findFunctions(item->name());
 
-      foreach (ITEM(Function) fun, function_list)
+      foreach (ITEM(Function) fun, functionList)
         {
           if (fun->isSimilar(model_static_cast<ITEM(Code)>(item),false))
             return fun;
@@ -236,8 +234,8 @@ Scope: Code
 
 Class: Scope
 {
-  baseClasses: QStringList;
-  classType:   CodeModel::ClassType { init[: CodeModel::Class :] };
+  baseClasses:   QStringList;
+  classType:     CodeModel::ClassType { init[: CodeModel::Class :] };
 
   public declaration
   [:
@@ -250,7 +248,7 @@ Class: Scope
 
 Namespace: Scope
 {
-  #namespace: Namespace { hashed(name) };
+  #namespace:    Namespace { hashed(name) };
 }
 
 File: Namespace
@@ -259,22 +257,22 @@ File: Namespace
 
 Argument: Code
 {
-  type: TypeInfo;
-  defaultValue: bool { init[: false :] };
+  type:          TypeInfo;
+  defaultValue:  bool { init[: false :] };
 }
 
 Member: Code
 {
-  isConstant:   bool { init[: false :] };
-  isVolatile:   bool { init[: false :] };
-  isStatic:     bool { init[: false :] };
-  isAuto:       bool { init[: false :] };
-  isFriend:     bool { init[: false :] };
-  isRegister:   bool { init[: false :] };
-  isExtern:     bool { init[: false :] };
-  isMutable:    bool { init[: false :] };
-  accessPolicy: CodeModel::AccessPolicy { init[: CodeModel::Public :] };
-  type:         TypeInfo;
+  isConstant:    bool { init[: false :] };
+  isVolatile:    bool { init[: false :] };
+  isStatic:      bool { init[: false :] };
+  isAuto:        bool { init[: false :] };
+  isFriend:      bool { init[: false :] };
+  isRegister:    bool { init[: false :] };
+  isExtern:      bool { init[: false :] };
+  isMutable:     bool { init[: false :] };
+  accessPolicy:  CodeModel::AccessPolicy { init[: CodeModel::Public :] };
+  type:          TypeInfo;
 }
 
 Function: Member
@@ -350,18 +348,18 @@ Variable: Member
 
 TypeAlias: Code
 {
-  type: TypeInfo;
+  type:         TypeInfo;
 }
 
 Enum: Code
 {
   accessPolicy: CodeModel::AccessPolicy { init[: CodeModel::Public :] };
-  #enumerator: Enumerator;
+  #enumerator:  Enumerator;
 }
 
 Enumerator: Code
 {
-  value: QString;
+  value:        QString;
 }
 
 TemplateParameter: Code
@@ -372,6 +370,6 @@ TemplateParameter: Code
 
 Template: Code
 {
-  #parameter:  TemplateParameter;
-  declaration: Code;
+  #parameter:   TemplateParameter;
+  declaration:  Code;
 }

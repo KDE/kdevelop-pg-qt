@@ -9,17 +9,12 @@
 #define DONT_INCLUDE_FLEXLEXER
 #include "fact_lexer.h"
 
-
-#define YY_USER_ACTION \
-_M_token_begin = _M_token_end; \
-_M_token_end += yyleng;
-
 %}
 
 
 Letter      [a-zA-Z_]
 Digit       [0-9]
-Whitespace  [ \t\f\r\n]
+Whitespace  [ \t\f\n]
 %%
 
 {Whitespace}+   /* skip */ ;
@@ -63,23 +58,57 @@ Whitespace  [ \t\f\r\n]
 namespace fact
 {
 
-void Lexer::restart(parser *parser, char *contents)
+Lexer::Lexer( parser *parser, char *contents )
 {
-  _M_parser = parser;
-  _M_contents = contents;
-  _M_token_begin = _M_token_end = 0;
-  _M_current_offset = 0;
+    restart( parser, contents );
+}
 
-  // check for and ignore the UTF-8 byte order mark
-  unsigned char *ucontents = (unsigned char *) _M_contents;
-  if (ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF)
+void Lexer::restart( parser *parser, char *contents )
+{
+    m_parser = parser;
+    m_lineTable = parser->token_stream->line_table();
+    m_contents = contents;
+    m_tokenBegin = m_tokenEnd = 0;
+    m_currentOffset = 0;
+
+    // check for and ignore the UTF-8 byte order mark
+    unsigned char *ucontents = (unsigned char *) m_contents;
+    if ( ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF )
     {
-      _M_token_begin = _M_token_end = 3;
-      _M_current_offset = 3;
+        m_tokenBegin = m_tokenEnd = 3;
+        m_currentOffset = 3;
     }
 
-  yyrestart(NULL);
-  BEGIN(INITIAL); // is not set automatically by yyrestart()
+    yyrestart(NULL);
+    BEGIN(INITIAL); // is not set automatically by yyrestart()
+}
+
+// reads a character, and returns 1 as the number of characters read
+// (or 0 when the end of the string is reached)
+int Lexer::LexerInput( char *buf, int /*max_size*/ )
+{
+    int c = m_contents[ m_currentOffset++ ];
+
+    switch(c)
+    {
+    case '\r':
+        c = '\n'; // only have one single line break character: '\n'
+        if ( m_contents[m_currentOffset + 1] == '\n' )
+        {
+            m_currentOffset++;
+            m_tokenEnd++;
+        }
+
+        // fall through
+    case '\n':
+        m_lineTable->newline( m_currentOffset );
+        break;
+
+    default:
+        break;
+    }
+
+    return (c == 0) ? 0 : (buf[0] = c, 1);
 }
 
 } // end of namespace fact

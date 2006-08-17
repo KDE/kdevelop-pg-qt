@@ -10,9 +10,9 @@
 namespace java
   {
 
-  void parser::tokenize(char *contents)
+  void parser::tokenize( char *contents )
   {
-    Lexer lexer(this, contents);
+    Lexer lexer( this, contents );
 
     int kind = parser::Token_EOF;
     do
@@ -20,16 +20,16 @@ namespace java
         kind = lexer.yylex();
         //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
 
-        if (!kind) // when the lexer returns 0, the end of file is reached
+        if ( !kind ) // when the lexer returns 0, the end of file is reached
           kind = parser::Token_EOF;
 
         parser::token_type &t = this->token_stream->next();
         t.kind = kind;
-        t.begin = lexer.token_begin();
-        t.end = lexer.token_end();
+        t.begin = lexer.tokenBegin();
+        t.end = lexer.tokenEnd();
         t.text = contents;
       }
-    while (kind != parser::Token_EOF);
+    while ( kind != parser::Token_EOF );
 
     this->yylex(); // produce the look ahead token
   }
@@ -51,7 +51,7 @@ namespace java
     return state;
   }
 
-  void parser::restore_state(parser::parser_state *state)
+  void parser::restore_state( parser::parser_state *state )
   {
     _M_state.ltCounter = state->ltCounter;
   }

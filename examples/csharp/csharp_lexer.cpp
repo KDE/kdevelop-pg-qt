@@ -5006,7 +5006,7 @@ void yyfree (void * ptr )
 namespace csharp
 {
 
-Lexer::Lexer( csharp::parser *parser, char *contents ) : m_ppRootScope(0)
+Lexer::Lexer( parser *parser, char *contents ) : m_ppRootScope(0)
 {
     restart( parser, contents );
 }

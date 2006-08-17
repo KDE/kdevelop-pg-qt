@@ -97,6 +97,7 @@ ADD_DEFINITIONS(-Wall -g)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-cmg ${assembled_parser_srcs} ${kdevcmg_srcs})
+INSTALL(TARGETS kdev-cmg DESTINATION bin )
 
 #TARGET_LINK_LIBRARIES(kdev-cmg ${QT_QTCORE_LIBRARY_DEBUG})
 #TARGET_LINK_LIBRARIES(kdev-cmg ${QT_QTCORE_LIBRARY_RELEASE})

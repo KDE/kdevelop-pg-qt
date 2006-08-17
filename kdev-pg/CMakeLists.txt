@@ -90,6 +90,7 @@ ADD_DEFINITIONS(-Wall -O2)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg ${parser_srcs} ${kdevpg_srcs})
+INSTALL(TARGETS kdev-pg DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"
 ADD_CUSTOM_TARGET(parser echo "Generating the parser"

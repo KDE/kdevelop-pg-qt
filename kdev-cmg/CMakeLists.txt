@@ -63,7 +63,7 @@ SET_SOURCE_FILES_PROPERTIES(
 IF(FLEX_EXECUTABLE)
     # Add command to run the lexer.
     ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.cc"
+        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-cmg-lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdevcmg_parser.h"
         COMMAND ${FLEX_EXECUTABLE}
@@ -72,11 +72,11 @@ IF(FLEX_EXECUTABLE)
         )
 
     SET(parser_srcs
-        ${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.cc
+        ${CMAKE_CURRENT_BINARY_DIR}/kdev-cmg-lexer.cc
         ${parser_srcs}
         )
     SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/kdev-cmg-lexer.cc
+        ${CMAKE_CURRENT_BINARY_DIR}/kdev-cmg-lexer.cc
         GENERATED
         )
 ELSE(FLEX_EXECUTABLE)

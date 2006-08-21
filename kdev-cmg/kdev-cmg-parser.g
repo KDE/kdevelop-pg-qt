@@ -85,8 +85,8 @@ namespace kdevcmg {
        CONSTRUCTOR ("constructor"), DESTRUCTOR ("destructor"),
        IMPLEMENTATION ("implementation"), CODE ("code segment (\"[: ... :]\")") ;;
 
-%token INIT ("init"), UNIQUE ("unique"),
-       HASHED ("hashed"), MULTIHASHED ("multihashed") ;;
+%token INIT ("init"), UNIQUE ("unique"), HASHED ("hashed"),
+       MULTIHASHED ("multihashed"), CHILDITEM ("childitem") ;;
 
 %token IDENTIFIER ("identifier"), TYPE ("type specification") ;;
 
@@ -172,9 +172,11 @@ namespace kdevcmg {
      member variable is_list: bool;
 ] ;;
 
-   0 [: (*yynode)->hashed = false; :]
+   0 [: (*yynode)->hashed = false; (*yynode)->childitem = false; :]
    (
-      (  INIT initialization_code=code
+      (  CHILDITEM
+           [: (*yynode)->childitem = true; :]
+       | INIT initialization_code=code
        | UNIQUE unique_condition=code
        |
          ?[: (*yynode)->multihashed_member == 0 :]
@@ -191,6 +193,7 @@ namespace kdevcmg {
    )
 -> options [
      member variable hashed: bool;
+     member variable childitem: bool;
 ] ;;
 
 

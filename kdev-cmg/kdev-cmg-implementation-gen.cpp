@@ -275,6 +275,11 @@ void generate_implementation::visit_member_item(member_item_ast *node)
     }
   else
     {
+      bool isChildItem = false;
+
+      if (node->options && node->options->childitem)
+        isChildItem = true;
+
       // getter
       out << node->type->raw_type_name << "List "
           << current_class << "::" << string_tools::plural(node->name->identifier)
@@ -322,8 +327,10 @@ void generate_implementation::visit_member_item(member_item_ast *node)
               << "(existingItem);" << std::endl;
         }
 
-      out << "model()->beginAppendItem(item, this);" << std::endl
-          << "_M_" << string_tools::plural(node->name->identifier);
+      if ( isChildItem )
+        out << "model()->beginAppendItem(item, this);" << std::endl;
+
+      out << "_M_" << string_tools::plural(node->name->identifier);
 
       if (node->options && node->options->hashed_member)
         {
@@ -342,8 +349,10 @@ void generate_implementation::visit_member_item(member_item_ast *node)
           out << ".append(item);" << std::endl;
         }
 
-      out << "model()->endAppendItem();" << std::endl
-          << "}" << std::endl;
+      if ( isChildItem )
+        out << "model()->endAppendItem();" << std::endl;
+
+      out << "}" << std::endl;
 
       // setter: remove
       out << "void " << current_class << "::"
@@ -375,8 +384,10 @@ void generate_implementation::visit_member_item(member_item_ast *node)
               << "{" << std::endl;
         }
 
-      out << "model()->beginRemoveItem(item);" << std::endl
-          << "_M_" << string_tools::plural(node->name->identifier);
+      if ( isChildItem )
+        out << "model()->beginRemoveItem(item);" << std::endl;
+
+      out << "_M_" << string_tools::plural(node->name->identifier);
 
       if (node->options && node->options->hashed_member)
         {
@@ -393,7 +404,8 @@ void generate_implementation::visit_member_item(member_item_ast *node)
              << ".indexOf(item));" << std::endl;
        }
 
-      out << "model()->endRemoveItem();" << std::endl;
+      if ( isChildItem )
+        out << "model()->endRemoveItem();" << std::endl;
 
       if (node->options && node->options->multihashed_member)
         out << "}" << std::endl;

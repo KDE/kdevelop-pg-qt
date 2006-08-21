@@ -109,6 +109,7 @@ Space       ({Whitespace}|{Newline})
 "hashed"                return kdevcmg::parser::Token_HASHED;
 "multihashed"           return kdevcmg::parser::Token_MULTIHASHED;
 "unique"                return kdevcmg::parser::Token_UNIQUE;
+"childitem"             return kdevcmg::parser::Token_CHILDITEM;
 
 
 "[:"                    BEGIN(CODE); _G_temp_begin = _G_token_begin;

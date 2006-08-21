@@ -81,6 +81,12 @@ void generate_forward_declarations::visit_non_item_type_declaration(non_item_typ
 {
   if (mode == class_forwards)
     out << "class " << node->type->type_name << ";" << std::endl;
+
+  else if (mode == list_typedef_forwards)
+    {
+      out << "typedef QList<" << node->type->type_name << "> "
+          << node->type->type_name << "List" << ";" << std::endl;
+    }
 }
 
 } // end of namespace kdevcmg

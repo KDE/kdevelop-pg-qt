@@ -114,6 +114,8 @@ IF(KDEVCMG_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_fwd.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_chameleon.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_chameleon.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cm"
         COMMAND ${KDEVCMG_EXECUTABLE}
         ARGS    --language=csharp
@@ -127,11 +129,15 @@ IF(KDEVCMG_EXECUTABLE)
         "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_fwd.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_chameleon.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_chameleon.cpp"
         GENERATED
         )
 ELSE(KDEVCMG_EXECUTABLE)
     MESSAGE("--- Assuming existence of the generated codemodel files")
-    SET(codemodel_srcs "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp")
+    SET(codemodel_srcs
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/csharp_codemodel_chameleon.cpp")
 ENDIF(KDEVCMG_EXECUTABLE)
 
 

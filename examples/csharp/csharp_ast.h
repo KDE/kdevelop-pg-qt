@@ -1967,6 +1967,7 @@ namespace csharp
         KIND = Kind_namespace_name
       };
 
+      namespace_or_type_name_ast *namespace_name;
     };
 
   struct namespace_or_type_name_ast: public ast_node
@@ -2564,6 +2565,7 @@ namespace csharp
         KIND = Kind_type_name
       };
 
+      namespace_or_type_name_ast *type_name;
     };
 
   struct type_name_safe_ast: public ast_node
@@ -2573,6 +2575,7 @@ namespace csharp
         KIND = Kind_type_name_safe
       };
 
+      namespace_or_type_name_safe_ast *type_name;
     };
 
   struct type_parameter_ast: public ast_node

@@ -130,7 +130,7 @@ namespace cool
       enum problem_type {
         error,
         warning,
-        info,
+        info
       };
       void report_problem( parser::problem_type type, const char* message );
       void report_problem( parser::problem_type type, std::string message );

@@ -205,7 +205,7 @@ namespace csharp
       access_protected,
       access_protected_internal,
       access_internal,
-      access_public,
+      access_public
     };
   }
 
@@ -214,7 +214,7 @@ namespace csharp
     enum accessor_type_enum {
       type_get,
       type_set,
-      type_none, // only possible for the second, optional accessor
+      type_none // only possible for the second, optional accessor
     };
   }
 
@@ -231,7 +231,7 @@ namespace csharp
     enum argument_type_enum {
       type_value_parameter,
       type_reference_parameter,
-      type_output_parameter,
+      type_output_parameter
     };
   }
 
@@ -239,7 +239,7 @@ namespace csharp
     {
     enum base_access_enum {
       type_base_member_access,
-      type_base_indexer_access,
+      type_base_indexer_access
     };
   }
 
@@ -247,7 +247,7 @@ namespace csharp
     {
     enum builtin_class_type_enum {
       type_object,
-      type_string,
+      type_string
     };
   }
 
@@ -255,7 +255,7 @@ namespace csharp
     {
     enum constructor_initializer_type_enum {
       type_base,
-      type_this,
+      type_this
     };
   }
 
@@ -263,7 +263,7 @@ namespace csharp
     {
     enum conversion_type_enum {
       conversion_implicit,
-      conversion_explicit,
+      conversion_explicit
     };
   }
 
@@ -271,7 +271,7 @@ namespace csharp
     {
     enum equality_operator_enum {
       op_equal,
-      op_not_equal,
+      op_not_equal
     };
   }
 
@@ -289,7 +289,7 @@ namespace csharp
       op_bit_or_assign,
       op_bit_xor_assign,
       op_lshift_assign,
-      op_rshift_assign,
+      op_rshift_assign
     };
   }
 
@@ -297,7 +297,7 @@ namespace csharp
     {
     enum floating_point_type_enum {
       type_float,
-      type_double,
+      type_double
     };
   }
 
@@ -306,7 +306,7 @@ namespace csharp
     enum goto_statement_enum {
       type_labeled_statement,
       type_switch_case,
-      type_switch_default,
+      type_switch_default
     };
   }
 
@@ -321,7 +321,7 @@ namespace csharp
       type_uint,
       type_long,
       type_ulong,
-      type_char,
+      type_char
     };
   }
 
@@ -351,7 +351,7 @@ namespace csharp
       mod_override     = 1 << 7,
       mod_extern       = 1 << 8,
       mod_unsafe       = 1 << 9,
-      mod_fixed        = 1 << 10,
+      mod_fixed        = 1 << 10
     };
   }
 
@@ -369,7 +369,7 @@ namespace csharp
     enum numeric_type_enum {
       type_integral,
       type_floating_point,
-      type_decimal,
+      type_decimal
     };
   }
 
@@ -377,7 +377,7 @@ namespace csharp
     {
     enum unary_or_binary_enum {
       type_unary,
-      type_binary,
+      type_binary
     };
 
     enum overloadable_operator_enum
@@ -406,7 +406,7 @@ namespace csharp
       op_greater_than,
       op_less_than,
       op_greater_equal,
-      op_less_equal,
+      op_less_equal
     };
   }
 
@@ -415,7 +415,7 @@ namespace csharp
     enum parameter_type_enum {
       value_parameter,
       reference_parameter,
-      output_parameter,
+      output_parameter
     };
   }
 
@@ -423,7 +423,7 @@ namespace csharp
     {
     enum pointer_type_enum {
       type_regular,
-      type_void_star,
+      type_void_star
     };
   }
 
@@ -444,7 +444,7 @@ namespace csharp
       type_string,
       type_uint,
       type_ulong,
-      type_ushort,
+      type_ushort
     };
   }
 
@@ -462,7 +462,7 @@ namespace csharp
       type_unchecked_expression,
       type_default_value_expression,
       type_anonymous_method_expression,
-      type_sizeof_expression,
+      type_sizeof_expression
     };
   }
 
@@ -471,7 +471,7 @@ namespace csharp
     enum primary_or_secondary_constraint_enum {
       type_type,
       type_class,
-      type_struct,
+      type_struct
     };
   }
 
@@ -483,7 +483,7 @@ namespace csharp
       type_invocation,
       type_element_access,
       type_increment,
-      type_decrement,
+      type_decrement
     };
   }
 
@@ -495,7 +495,7 @@ namespace csharp
       op_less_equal,
       op_greater_equal,
       op_is,
-      op_as,
+      op_as
     };
   }
 
@@ -503,7 +503,7 @@ namespace csharp
                     {
                     enum return_type_enum {
                                  type_regular,
-                                 type_void,
+                                 type_void
                                };
                   }
 
@@ -511,7 +511,7 @@ namespace csharp
                     {
                     enum shift_operator_enum {
                       op_lshift,
-                      op_rshift,
+                      op_rshift
                     };
                   }
 
@@ -519,7 +519,7 @@ namespace csharp
                     {
                     enum simple_type_enum {
                       type_numeric,
-                      type_bool,
+                      type_bool
                     };
                   }
 
@@ -536,7 +536,7 @@ namespace csharp
                     enum typeof_expression_enum {
                       type_void,
                       type_unbound_type_name,
-                      type_type,
+                      type_type
                     };
                   }
 
@@ -552,7 +552,7 @@ namespace csharp
                       type_cast_expression,
                       type_primary_expression,
                       type_pointer_indirection_expression,
-                      type_addressof_expression,
+                      type_addressof_expression
                     };
                   }
 
@@ -568,7 +568,7 @@ namespace csharp
                     {
                     enum yield_statement_enum {
                       type_yield_return,
-                      type_yield_break,
+                      type_yield_break
                     };
                   }
 

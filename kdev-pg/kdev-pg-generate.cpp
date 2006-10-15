@@ -28,6 +28,7 @@
 #include "kdev-pg-default-visitor-gen.h"
 #include "kdev-pg-default-visitor-bits-gen.h"
 #include "kdev-pg-serialize-visitor-gen.h"
+#include "kdev-pg-debug-visitor-gen.h"
 #include "kdev-pg-beautifier.h"
 
 #include <iostream>
@@ -235,6 +236,46 @@ void generate_output()
 
     std::string oname = _G_system.language;
     oname += "_serialize_visitor.h";
+
+    std::ofstream ofile;
+    ofile.open(oname.c_str(), std::ios::out);
+    format(s, ofile);
+  }
+
+  if (_G_system.gen_debug_visitor)
+  { // generate the debug visitor
+    std::stringstream s;
+
+    generate_debug_visitor __debug_visitor(s);
+
+    s << "// THIS FILE IS GENERATED" << std::endl
+      << "// WARNING! All changes made in this file will be lost!" << std::endl
+      << std::endl
+
+      << "#ifndef " << _G_system.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
+      << "#define " << _G_system.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
+      << std::endl
+
+      << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
+      << std::endl
+
+      << "#include <iostream>" << std::endl
+      << "#include <fstream>" << std::endl
+      << std::endl
+
+      << "namespace " << _G_system.language << "{" << std::endl
+      << std::endl;
+
+    __debug_visitor();
+
+    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+      << std::endl;
+
+    s << "#endif" << std::endl
+      << std::endl;
+
+    std::string oname = _G_system.language;
+    oname += "_debug_visitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);

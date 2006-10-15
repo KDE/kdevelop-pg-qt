@@ -118,6 +118,10 @@ int main(int, char *argv[])
         {
           _G_system.gen_serialize_visitor = true;
         }
+      else if (!strcmp("--debug-visitor", arg))
+        {
+          _G_system.gen_debug_visitor = true;
+        }
       else if (!strcmp("--help", arg))
         {
           usage();

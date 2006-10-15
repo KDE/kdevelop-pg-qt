@@ -78,7 +78,8 @@ struct world
 
   world()
     : token_stream("kdev_pg_token_stream"), language(0), decl(0), bits(0),
-      generate_ast(true), gen_serialize_visitor(false), need_state_management(false),
+      generate_ast(true), gen_serialize_visitor(false),
+      gen_debug_visitor(false), need_state_management(false),
       adapt_to_kdevelop(false), start(0), _M_zero(0)
   {}
 
@@ -89,6 +90,7 @@ struct world
   char const *bits;
   bool generate_ast;
   bool gen_serialize_visitor;
+  bool gen_debug_visitor;
   bool need_state_management;
   bool adapt_to_kdevelop;
 

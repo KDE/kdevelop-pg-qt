@@ -1,6 +1,7 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -39,6 +40,12 @@ struct next_FOLLOW: protected default_visitor
 
 protected:
   void merge(model::node *__dest, world::node_set const &source);
+  /**adds dependency between rule @p dep whose FIRST set is added to
+  @p dest FOLLOW set*/
+  void add_first_to_follow_dep(model::node *dest, model::node *dep);
+  /**adds dependency between rule @p dep whose FOLLOW set is added to
+  @p dest FOLLOW set*/
+  void add_follow_to_follow_dep(model::node *dest, model::node *dep);
 
   virtual void visit_plus(model::plus_item *node);
   virtual void visit_star(model::star_item *node);

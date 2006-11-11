@@ -1,6 +1,7 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,9 +20,36 @@
 */
 
 #include "kdev-pg-follow.h"
+#include "kdev-pg-pretty-printer.h"
 
 #include <cassert>
 #include <iostream>
+
+//uncomment this to see debug output for follow dependency calculation
+#define FOLLOW_DEP_DEBUG
+
+#ifdef FOLLOW_DEP_DEBUG
+void debug_follow_dep(model::node *dest, model::node *dep, const std::string &message)
+{
+  std::cerr << "=============================" << std::endl;
+  pretty_printer p(std::cerr);
+  std::cerr << "adding " << message << " ";
+  p(dep);
+  std::cerr << " to follow ";
+  p(dest);
+  std::cerr << std::endl;
+}
+
+void debug_first_to_follow_dep(model::node *dest, model::node *dep)
+{
+  debug_follow_dep(dest, dep, "first");
+}
+
+void debug_follow_to_follow_dep(model::node *dest, model::node *dep)
+{
+  debug_follow_dep(dest, dep, "follow");
+}
+#endif
 
 //
 // Calculating the FOLLOW set depends on the FIRST set being already available
@@ -56,15 +84,16 @@ void next_FOLLOW::merge(model::node*__dest, world::node_set const &source)
       return;
     }
 
+  pretty_printer p(std::cout);
+
   world::node_set &dest = _G_system.FOLLOW(__dest);
 
   for (world::node_set::const_iterator it = source.begin(); it != source.end(); ++it)
     {
       if (model::terminal_item *t = node_cast<model::terminal_item*>(*it))
-        {
           _M_changed |= dest.insert(t).second;
-        }
     }
+  std::cout << std::endl;
 }
 
 void next_FOLLOW::visit_evolve(model::evolve_item *node)
@@ -76,6 +105,7 @@ void next_FOLLOW::visit_evolve(model::evolve_item *node)
     }
 
   merge(node->_M_item, _G_system.FOLLOW(node->_M_symbol));
+  add_follow_to_follow_dep(node->_M_item, node->_M_symbol);
 
   default_visitor::visit_evolve(node);
 }
@@ -83,10 +113,16 @@ void next_FOLLOW::visit_evolve(model::evolve_item *node)
 void next_FOLLOW::visit_cons(model::cons_item *node)
 {
   merge(node->_M_right, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_right, node);
+
   merge(node->_M_left, _G_system.FIRST(node->_M_right));
+  add_first_to_follow_dep(node->_M_left, node->_M_right);
 
   if (reduces_to_epsilon(node->_M_right))
+  {
     merge(node->_M_left, _G_system.FOLLOW(node));
+    add_follow_to_follow_dep(node->_M_left, node);
+  }
 
   default_visitor::visit_cons(node);
 }
@@ -94,7 +130,9 @@ void next_FOLLOW::visit_cons(model::cons_item *node)
 void next_FOLLOW::visit_alternative(model::alternative_item *node)
 {
   merge(node->_M_left, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_left, node);
   merge(node->_M_right, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_right, node);
 
   default_visitor::visit_alternative(node);
 }
@@ -102,6 +140,7 @@ void next_FOLLOW::visit_alternative(model::alternative_item *node)
 void next_FOLLOW::visit_action(model::action_item *node)
 {
   merge(node->_M_item, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_item, node);
 
   default_visitor::visit_action(node);
 }
@@ -109,9 +148,13 @@ void next_FOLLOW::visit_action(model::action_item *node)
 void next_FOLLOW::visit_try_catch(model::try_catch_item *node)
 {
   merge(node->_M_try_item, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_try_item, node);
 
   if (node->_M_catch_item)
+  {
     merge(node->_M_catch_item, _G_system.FOLLOW(node));
+    add_follow_to_follow_dep(node->_M_catch_item, node);
+  }
 
   default_visitor::visit_try_catch(node);
 }
@@ -119,6 +162,7 @@ void next_FOLLOW::visit_try_catch(model::try_catch_item *node)
 void next_FOLLOW::visit_annotation(model::annotation_item *node)
 {
   merge(node->_M_item, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_item, node);
 
   default_visitor::visit_annotation(node);
 }
@@ -126,6 +170,7 @@ void next_FOLLOW::visit_annotation(model::annotation_item *node)
 void next_FOLLOW::visit_condition(model::condition_item *node)
 {
   merge(node->_M_item, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_item, node);
 
   default_visitor::visit_condition(node);
 }
@@ -133,7 +178,9 @@ void next_FOLLOW::visit_condition(model::condition_item *node)
 void next_FOLLOW::visit_plus(model::plus_item *node)
 {
   merge(node->_M_item, _G_system.FIRST(node->_M_item));
+  add_first_to_follow_dep(node->_M_item, node->_M_item);
   merge(node->_M_item, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_item, node);
 
   default_visitor::visit_plus(node);
 }
@@ -141,7 +188,9 @@ void next_FOLLOW::visit_plus(model::plus_item *node)
 void next_FOLLOW::visit_star(model::star_item *node)
 {
   merge(node->_M_item, _G_system.FIRST(node->_M_item));
+  add_first_to_follow_dep(node->_M_item, node->_M_item);
   merge(node->_M_item, _G_system.FOLLOW(node));
+  add_follow_to_follow_dep(node->_M_item, node);
 
   default_visitor::visit_star(node);
 }
@@ -149,8 +198,25 @@ void next_FOLLOW::visit_star(model::star_item *node)
 void next_FOLLOW::visit_nonterminal(model::nonterminal_item *node)
 {
   merge(node->_M_symbol, _G_system.FOLLOW(node));
+  add_first_to_follow_dep(node->_M_symbol, node);
 
   default_visitor::visit_nonterminal(node);
+}
+
+void next_FOLLOW::add_first_to_follow_dep(model::node *dest, model::node *dep)
+{
+  _G_system.FOLLOW_DEP(dest).first.insert(dep);
+#ifdef FOLLOW_DEP_DEBUG
+  debug_first_to_follow_dep(dest, dep);
+#endif
+}
+
+void next_FOLLOW::add_follow_to_follow_dep(model::node *dest, model::node *dep)
+{
+  _G_system.FOLLOW_DEP(dest).second.insert(dep);
+#ifdef FOLLOW_DEP_DEBUG
+  debug_follow_to_follow_dep(dest, dep);
+#endif
 }
 
 void compute_FOLLOW()
@@ -162,3 +228,5 @@ void compute_FOLLOW()
       std::for_each(_G_system.rules.begin(), _G_system.rules.end(), next_FOLLOW(changed));
     }
 }
+
+// kate: space-indent on; indent-width 2; tab-width 2; show-tabs on;

@@ -1,6 +1,7 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -124,7 +125,7 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
       std::cerr << "** WARNING found FIRST/FOLLOW conflict in "
                 << _M_symbol->_M_name << ":" << std::endl << "\tRule ``";
       p(node);
-      std::cerr << "''" << std::endl << "\tTerminals [";
+      std::cerr << "''" << std::endl << "\tTerminals [" << std::endl;
 
       std::deque<model::node*>::iterator it = U.begin();
       while (it != U.end())
@@ -133,13 +134,35 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
           if (is_zero(n))
             continue;
 
-          std::cerr << n;
+          std::cerr << "\t" << n << ": conflicts with the FIRST set of: ";
+          follow_dep_checker dep_check(n);
+          dep_check(node);
           if (it != U.end())
             std::cerr << ", ";
+          std::cerr << std::endl;
         }
-      std::cerr << "]" << std::endl << std::endl;
+      std::cerr << "\t" << "]" << std::endl << std::endl;
       problem_summary_printer::report_first_follow_conflict();
     }
+}
+
+void follow_dep_checker::operator()(model::node *node)
+{
+  world::follow_dep &D = _G_system.FOLLOW_DEP(node);
+  world::node_set FD = D.first;
+  pretty_printer p(std::cerr);
+  for (world::node_set::const_iterator it = FD.begin(); it != FD.end(); ++it)
+    {
+      world::node_set first = _G_system.FIRST(*it);
+      if (first.find(_M_terminal) != first.end())
+      {
+        std::cerr << " ";
+        p(*it);
+        std::cerr << ", ";
+      }
+    }
+  world::node_set FLD = D.second;
+  for_each(FLD.begin(), FLD.end(), follow_dep_checker(_M_terminal));
 }
 
 void FIRST_FOLLOW_conflict_checker::visit_alternative(model::alternative_item *node)
@@ -286,3 +309,5 @@ void problem_summary_printer::report_error()
 {
   _M_error_count++;
 }
+
+// kate: space-indent on; indent-width 2; tab-width 2; show-tabs on;

@@ -1,6 +1,7 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -86,6 +87,15 @@ private:
   model::symbol_item *_M_symbol;
 };
 
+struct follow_dep_checker
+{
+  follow_dep_checker(model::node *terminal): _M_terminal(terminal) {}
+  void operator()(model::node *node);
+
+private:
+  model::node *_M_terminal;
+};
+
 struct problem_summary_printer
 {
   void operator()();
@@ -102,3 +112,4 @@ private:
 
 #endif // KDEV_PG_CHECKER_H
 
+// kate: space-indent on; indent-width 2; tab-width 2; show-tabs on;

@@ -1,6 +1,7 @@
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -75,6 +76,13 @@ struct world
 
   typedef std::map<std::pair<model::node*, int>, node_set> first_set;
   typedef std::map<std::pair<model::node*, int>, node_set> follow_set;
+
+  /**pair: list of rules whose FIRST set is used to calculate FOLLOW,
+  list of rules whose FOLLOW set is used to calculate FOLLOW*/
+  typedef std::pair<node_set, node_set> follow_dep;
+  /**key: rule whose FOLLOW set has a dependency on other rules' FIRST and FOLLOW,
+  value: follow set dependency*/
+  typedef std::map<model::node*, follow_dep> follow_deps;
 
   world()
     : token_stream("kdev_pg_token_stream"), language(0), decl(0), bits(0),
@@ -171,6 +179,9 @@ struct world
   node_set &FOLLOW(model::node *node, int K = 1)
   { return FOLLOW_K[std::make_pair(node, K)]; }
 
+  follow_dep &FOLLOW_DEP(model::node *node)
+  { return FOLLOW_D[node]; }
+
   first_set::iterator find_in_FIRST(model::node *node, int K = 1)
   { return FIRST_K.find(std::make_pair(node, K)); }
 
@@ -191,6 +202,7 @@ struct world
 private:
   first_set FIRST_K;
   follow_set FOLLOW_K;
+  follow_deps FOLLOW_D;
 };
 
 bool reduces_to_epsilon(model::node *node);

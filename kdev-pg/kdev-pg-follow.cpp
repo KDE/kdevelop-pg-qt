@@ -26,7 +26,7 @@
 #include <iostream>
 
 //uncomment this to see debug output for follow dependency calculation
-#define FOLLOW_DEP_DEBUG
+//#define FOLLOW_DEP_DEBUG
 
 #ifdef FOLLOW_DEP_DEBUG
 void debug_follow_dep(model::node *dest, model::node *dep, const std::string &message)
@@ -93,7 +93,6 @@ void next_FOLLOW::merge(model::node*__dest, world::node_set const &source)
       if (model::terminal_item *t = node_cast<model::terminal_item*>(*it))
           _M_changed |= dest.insert(t).second;
     }
-  std::cout << std::endl;
 }
 
 void next_FOLLOW::visit_evolve(model::evolve_item *node)

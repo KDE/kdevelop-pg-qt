@@ -26,6 +26,9 @@
 #include <iterator>
 #include <algorithm>
 
+//uncomment this to see debug output for follow checker
+// #define FOLLOW_CHECKER_DEBUG
+
 int problem_summary_printer::_M_first_first_conflict_count = 0;
 int problem_summary_printer::_M_first_follow_conflict_count = 0;
 int problem_summary_printer::_M_error_count = 0;
@@ -123,8 +126,15 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
     {
       pretty_printer p(std::cerr);
       std::cerr << "** WARNING found FIRST/FOLLOW conflict in "
-                << _M_symbol->_M_name << ":" << std::endl << "\tRule ``";
+                << _M_symbol->_M_name;
+#ifdef FOLLOW_CHECKER_DEBUG
+      std::cerr << "(" << (uint*)_M_symbol << ")";
+#endif
+      std::cerr << ":" << std::endl << "\tRule ``";
       p(node);
+#ifdef FOLLOW_CHECKER_DEBUG
+      std::cerr << " [[" << (uint*)node << "]]";
+#endif
       std::cerr << "''" << std::endl << "\tTerminals [" << std::endl;
 
       std::deque<model::node*>::iterator it = U.begin();
@@ -151,9 +161,22 @@ void follow_dep_checker::operator()(model::node *node)
   world::follow_dep &D = _G_system.FOLLOW_DEP(node);
   world::node_set FD = D.first;
   pretty_printer p(std::cerr);
+#ifdef FOLLOW_CHECKER_DEBUG
+  std::cerr << "[["; p(node); std::cerr << " | " << (uint*)node << "]] ";
+  std::cerr << "{" << node->kind << "}";
+#endif
   for (world::node_set::const_iterator it = FD.begin(); it != FD.end(); ++it)
     {
       world::node_set first = _G_system.FIRST(*it);
+#ifdef FOLLOW_CHECKER_DEBUG
+      std::cerr << " <iterating first ";
+      for (world::node_set::const_iterator fit = first.begin(); fit != first.end(); ++fit)
+      {
+        p(*fit);
+        std::cerr << " ";
+      }
+      std::cerr << " >";
+#endif
       if (first.find(_M_terminal) != first.end())
       {
         std::cerr << " ";

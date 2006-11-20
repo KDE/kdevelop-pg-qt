@@ -26,7 +26,7 @@
 #include <iostream>
 
 //uncomment this to see debug output for follow dependency calculation
-//#define FOLLOW_DEP_DEBUG
+// #define FOLLOW_DEP_DEBUG
 
 #ifdef FOLLOW_DEP_DEBUG
 void debug_follow_dep(model::node *dest, model::node *dep, const std::string &message)
@@ -35,8 +35,17 @@ void debug_follow_dep(model::node *dest, model::node *dep, const std::string &me
   pretty_printer p(std::cerr);
   std::cerr << "adding " << message << " ";
   p(dep);
+  std::cerr << " (" << (uint*)dep << ")";
   std::cerr << " to follow ";
   p(dest);
+  std::cerr << " (" << (uint*)dest << ")";
+  std::cerr << "{" << dest->kind << "}";
+  if (dest->kind == model::node_kind_nonterminal)
+  {
+    model::symbol_item *s = ((model::nonterminal_item*)dest)->_M_symbol;
+    if (s)
+      std::cerr << "__"; p(s); std::cerr << "__";
+  }
   std::cerr << std::endl;
 }
 
@@ -204,7 +213,14 @@ void next_FOLLOW::visit_nonterminal(model::nonterminal_item *node)
 
 void next_FOLLOW::add_first_to_follow_dep(model::node *dest, model::node *dep)
 {
-  _G_system.FOLLOW_DEP(dest).first.insert(dep);
+  if (dest->kind == model::node_kind_nonterminal)
+  {
+    model::symbol_item *s = node_cast<model::nonterminal_item*>(dest)->_M_symbol;
+    if (s)
+      _G_system.FOLLOW_DEP(s).first.insert(dep);
+  }
+  else
+    _G_system.FOLLOW_DEP(dest).first.insert(dep);
 #ifdef FOLLOW_DEP_DEBUG
   debug_first_to_follow_dep(dest, dep);
 #endif

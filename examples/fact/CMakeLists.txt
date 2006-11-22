@@ -94,13 +94,10 @@ ADD_CUSTOM_TARGET(parser echo "Generating the parser"
     )
 
 # if you want it generated even if the file hasn't changed (but kdev-pg has,
-# for example) then call "make parser/force"
-ADD_CUSTOM_TARGET(parser/force echo "Generating the parser"
-    DEPENDS ${parser_srcs}
-    )
-ADD_CUSTOM_COMMAND(TARGET parser/force
+# for example) then call "make parser-clean && make parser"
+ADD_CUSTOM_TARGET(parser-clean echo "Cleaning up parser files")
+ADD_CUSTOM_COMMAND(TARGET parser-clean
     PRE_BUILD
-    COMMAND rm -f fact.cpp
+    COMMAND rm -f ${parser_srcs}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
-

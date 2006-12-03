@@ -52,7 +52,7 @@ void generate_output()
       << "#define " << _G_system.language << "_AST_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"kdev-pg-list.h\"" << std::endl
+      << "#include <kdev-pg-list.h>" << std::endl
       << std::endl;
 
     if (_G_system.adapt_to_kdevelop)
@@ -99,12 +99,12 @@ void generate_output()
     if (_G_system.generate_ast)
       {
         s << "#include \"" << _G_system.language << "_ast.h\"" << std::endl
-          << "#include \"kdev-pg-memory-pool.h\"" << std::endl
-          << "#include \"kdev-pg-allocator.h\"" << std::endl;
+          << "#include <kdev-pg-memory-pool.h>" << std::endl
+          << "#include <kdev-pg-allocator.h>" << std::endl;
       }
 
     if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
-      s << "#include \"kdev-pg-token-stream.h\"" << std::endl;
+      s << "#include <kdev-pg-token-stream.h>" << std::endl;
 
     s << std::endl;
 

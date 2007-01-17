@@ -43,11 +43,11 @@ void generate_implementation::visit_code_model_declaration(code_model_declaratio
 {
   current_class = "CodeModel";
   out << "#define CLASS " << current_class << std::endl
-      << "#define BASECLASS KDevCodeModel" << std::endl
+      << "#define BASECLASS Koncrete::CodeModel" << std::endl
       << std::endl
 
       << "CodeModel::CodeModel( QObject *parent )" << std::endl
-      << ": KDevCodeModel( parent )" << std::endl;
+      << ": Koncrete::CodeModel( parent )" << std::endl;
 
   generate_member_initializations __inits(out);
   __inits(node);
@@ -102,7 +102,7 @@ void generate_implementation::visit_root_item(root_item_ast *node)
       << "}" << std::endl
       << std::endl
 
-      << "KDevItemCollection *CodeModel::root() const" << std::endl
+      << "Koncrete::ItemCollection *CodeModel::root() const" << std::endl
       << "{" << std::endl
       << "return _M_" << node->item->name->identifier << ";" << std::endl
       << "}" << std::endl
@@ -115,7 +115,7 @@ void generate_implementation::visit_item_declaration(item_declaration_ast *node)
   out << "#define CLASS " << current_class << std::endl;
 
   if (node->type->type_name == "CodeModelItem")
-    out << "#define BASECLASS KDevCodeItem" << std::endl;
+    out << "#define BASECLASS Koncrete::CodeItem" << std::endl;
   else if (node->base_type)
     out << "#define BASECLASS _" << node->base_type->type_name << std::endl;
   else
@@ -128,7 +128,7 @@ void generate_implementation::visit_item_declaration(item_declaration_ast *node)
 
   if (node->type->type_name == "CodeModelItem")
     {
-      out << ": KDevCodeItem( QString::null, 0 )" << std::endl
+      out << ": Koncrete::CodeItem( QString::null, 0 )" << std::endl
           << ", _M_model(model)" << std::endl
           << ", _M_kind(kind)" << std::endl
           << ", _M_startLine(-1)" << std::endl
@@ -175,7 +175,7 @@ void generate_implementation::visit_item_declaration(item_declaration_ast *node)
     {
       out << "_CodeModelItem *_CodeModelItem::itemAt(int index) const" << std::endl
           << "{" << std::endl
-          << "return static_cast<_CodeModelItem*>(KDevItemCollection::itemAt(index));" << std::endl
+          << "return static_cast<_CodeModelItem*>(Koncrete::ItemCollection::itemAt(index));" << std::endl
           << "}" << std::endl
           << std::endl
 

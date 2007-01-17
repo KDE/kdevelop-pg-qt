@@ -32,7 +32,7 @@ void generate_declarations::operator()()
 {
   out << "#define DECLARE_MODEL_NODE(k) \\" << std::endl
       << "enum { __node_kind = Kind_##k }; \\" << std::endl
-      << "typedef KDevSharedPtr<k##ModelItem> Pointer;" << std::endl
+      << "typedef Koncrete::SharedPtr<k##ModelItem> Pointer;" << std::endl
       << std::endl
 
       << "#define ITEM(item) item##ModelItem" << std::endl
@@ -91,7 +91,7 @@ void generate_declarations::operator()()
 
 void generate_declarations::visit_code_model_declaration(code_model_declaration_ast *node)
 {
-  out << "class CodeModel : public KDevCodeModel" << std::endl
+  out << "class CodeModel : public Koncrete::CodeModel" << std::endl
       << "{" << std::endl
 
       << "public:" << std::endl
@@ -129,7 +129,7 @@ void generate_declarations::visit_root_item(root_item_ast *node)
   out << "public:" << std::endl
       << node->item->type->type_name << " "
       << node->item->name->identifier << "() const;" << std::endl
-      << "KDevItemCollection *root() const;" << std::endl
+      << "Koncrete::ItemCollection *root() const;" << std::endl
       << std::endl
 
       << "private:" << std::endl
@@ -143,7 +143,7 @@ void generate_declarations::visit_item_declaration(item_declaration_ast *node)
   out << "class _" << node->type->type_name;
 
   if (node->type->type_name == "CodeModelItem")
-    out << " : public KDevCodeItem";
+    out << " : public Koncrete::CodeItem";
   else if (node->base_type)
     out << " : public _" << node->base_type->type_name;
 

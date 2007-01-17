@@ -46,7 +46,7 @@ void generate_ast::operator()()
   out << "struct ast_node";
 
   if (_G_system.adapt_to_kdevelop)
-    out << ": public KDevAST";
+    out << ": public Koncrete::AST";
 
   out << "{" << std::endl
       << "enum ast_node_kind_enum {" << std::endl;

@@ -73,7 +73,7 @@ void generate_chameleon::operator()()
           << " * Instead, use the wrapper named ModelItemChameleon" << std::endl
           << " * which provides shared pointer abilities." << std::endl
           << " */" << std::endl
-          << "class _ModelItemChameleon : public KDevShared" << std::endl
+          << "class _ModelItemChameleon : public Koncrete::Shared" << std::endl
           << "{" << std::endl
 
           << "CodeModelItem _M_item;" << std::endl
@@ -103,7 +103,7 @@ void generate_chameleon::operator()()
           << "};" << std::endl
           << std::endl;
 
-      out << "class ModelItemChameleon : public KDevSharedPtr<_ModelItemChameleon>" << std::endl
+      out << "class ModelItemChameleon : public Koncrete::SharedPtr<_ModelItemChameleon>" << std::endl
           << "{" << std::endl
           << "public:" << std::endl;
 
@@ -224,13 +224,13 @@ void generate_chameleon_initializations::visit_item_declaration(item_declaration
   if (node->type->raw_type_name == "Code")
     {
       out << "ModelItemChameleon(CodeModelItem item)" << std::endl
-          << " : KDevSharedPtr<_ModelItemChameleon>(new _ModelItemChameleon(item))" << std::endl
+          << " : Koncrete::SharedPtr<_ModelItemChameleon>(new _ModelItemChameleon(item))" << std::endl
           << "{}" << std::endl;
     }
   else
     {
       out << "ModelItemChameleon(" << node->type->type_name << " item)" << std::endl
-          << " : KDevSharedPtr<_ModelItemChameleon>(" << std::endl
+          << " : Koncrete::SharedPtr<_ModelItemChameleon>(" << std::endl
           << "     new _ModelItemChameleon(model_static_cast<CodeModelItem>(item)) )" << std::endl
           << "{}" << std::endl;
     }

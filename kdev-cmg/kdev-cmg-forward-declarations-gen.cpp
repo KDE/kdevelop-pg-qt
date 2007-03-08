@@ -61,7 +61,7 @@ void generate_forward_declarations::visit_item_declaration(item_declaration_ast 
 
   else if (mode == item_typedef_forwards)
     {
-      out << "typedef Koncrete::SharedPtr<_" << node->type->type_name << "> "
+      out << "typedef KDevelop::SharedPtr<_" << node->type->type_name << "> "
           << node->type->type_name << ";" << std::endl;
     }
 

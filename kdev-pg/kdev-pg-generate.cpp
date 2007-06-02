@@ -57,8 +57,10 @@ void generate_output()
 
     if (_G_system.adapt_to_kdevelop)
       {
-        s << "#include <kdevast.h>" << std::endl
-          << std::endl;
+        // Replace kdevast.h with something more current,
+        // like a new duchain include or whatever is the current trend.
+        // s << "#include <kdevast.h>" << std::endl
+        //   << std::endl;
       }
 
     if (_G_system.decl)

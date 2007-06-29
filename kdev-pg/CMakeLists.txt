@@ -88,9 +88,6 @@ ELSE(FLEX_EXECUTABLE)
 ENDIF(FLEX_EXECUTABLE)
 
 
-# add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -O2)
-
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg ${parser_srcs} ${kdevpg_srcs})
 INSTALL(TARGETS kdev-pg DESTINATION bin )

@@ -54,9 +54,6 @@ endif( NOT KDEVPG_DIR )
 set(KDEVPG_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg include directory containing the headers")
 set( KDEVPG_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg" )
 
-message(STATUS "Using kdevelop-pg include dir: ${KDEVPG_INCLUDE_DIR}")
-message(STATUS "Using kdevelop-pg executable: ${KDEVPG_EXECUTABLE}")
-
 if( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)
 
@@ -70,14 +67,20 @@ if( KDEVPG_INCLUDE_DIR
 else( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)
 
-    message(STATUS "You can set KDEVPG_DIR to help cmake find KDevelop-PG")
     if( KDevelop-PG_FIND_REQUIRED)
         message(FATAL_ERROR "Couldn't find KDevelop-PG.")
     else( KDevelop-PG_FIND_REQUIRED)
         message(STATUS "Couldn't find KDevelop-PG.")
     endif( KDevelop-PG_FIND_REQUIRED)
+    message(STATUS "You can set KDEVPG_DIR to help cmake find KDevelop-PG")
     set(KDEVPG_FOUND FALSE)
 
 endif( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)
+
+if(KDEVPG_FOUND)
+message(STATUS "Using kdevelop-pg include dir: ${KDEVPG_INCLUDE_DIR}")
+message(STATUS "Using kdevelop-pg executable: ${KDEVPG_EXECUTABLE}")
+endif(KDEVPG_FOUND)
+
 

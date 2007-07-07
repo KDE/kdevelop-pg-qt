@@ -25,7 +25,7 @@
 
 void generate_serialize_visitor::operator()()
 {
-  out << "class serialize: public default_visitor {" << std::endl
+  out << "class KDEVPG_EXPORT serialize: public default_visitor {" << std::endl
       << "public:" << std::endl;
 
   out << "static void read(kdev_pg_memory_pool *p," << std::endl

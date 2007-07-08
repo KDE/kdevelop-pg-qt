@@ -34,7 +34,6 @@ public:
     int kind;
     std::size_t begin;
     std::size_t end;
-    char const *text;
   };
 
 public:

@@ -1,5 +1,11 @@
 project(kdevelop-pg)
 
+find_package(KDE4)
+
+if(NOT KDE4_FOUND)
+    set(DATA_INSTALL_DIR share)
+endif(NOT KDE4_FOUND)
+
 # Use colored output (since cmake 2.4.0)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
@@ -9,7 +15,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 add_subdirectory(cmake)
 add_subdirectory(include)
-ADD_SUBDIRECTORY(kdev-pg)
+add_subdirectory(kdev-pg)
 # cmg doesn't work anymore as KDevelop changed too much
 #ADD_SUBDIRECTORY(kdev-cmg)
-ADD_SUBDIRECTORY(examples EXCLUDE_FROM_ALL)
+add_subdirectory(examples EXCLUDE_FROM_ALL)

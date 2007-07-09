@@ -24,7 +24,7 @@
 
 void generate_default_visitor::operator()()
 {
-  out << "class KDEVPG_EXPORT default_visitor: public visitor {" << std::endl
+  out << "class default_visitor: public visitor {" << std::endl
       << "public:" << std::endl;
 
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),

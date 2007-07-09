@@ -66,12 +66,12 @@ void generate_output()
     if (_G_system.decl)
       s << _G_system.decl << std::endl;
 
-    s << "namespace " << _G_system.language << "{" << std::endl
+    s << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __ast();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
@@ -113,12 +113,12 @@ void generate_output()
     if (_G_system.decl && !_G_system.generate_ast)
       s << _G_system.decl << std::endl;
 
-    s << "namespace " << _G_system.language << "{" << std::endl
+    s << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __decls();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
@@ -149,12 +149,12 @@ void generate_output()
       << "#include \"" << _G_system.language << "_ast.h\"" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.language << "{" << std::endl
+      << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
@@ -185,12 +185,12 @@ void generate_output()
       << "#include \"" << _G_system.language << "_visitor.h\"" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.language << "{" << std::endl
+      << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __default_visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
@@ -225,12 +225,12 @@ void generate_output()
       << "#include <fstream>" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.language << "{" << std::endl
+      << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __serialize_visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl;
 
     s << "#endif" << std::endl
@@ -265,12 +265,12 @@ void generate_output()
       << "#include <fstream>" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.language << "{" << std::endl
+      << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __debug_visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl;
 
     s << "#endif" << std::endl
@@ -293,18 +293,19 @@ void generate_output()
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl;
 
-    s << "#include \"" << _G_system.language << "_parser.h\"" << std::endl
+    s << "#include \"" << _G_system.language << "_parser.h\"" 
+      << std::endl
       << std::endl;
 
     if (_G_system.bits)
       s << _G_system.bits << std::endl;
 
-    s << "namespace " << _G_system.language << "{" << std::endl
+    s << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __bits();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl;
 
     std::string oname = _G_system.language;
@@ -328,12 +329,12 @@ void generate_output()
       << "#include \"" << _G_system.language << "_visitor.h\"" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.language << "{" << std::endl
+      << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __visitor_bits();
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl;
 
     std::string oname = _G_system.language;
@@ -355,13 +356,13 @@ void generate_output()
       << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.language << "{" << std::endl
+      << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
                   gen_default_visitor_bits_rule(s));
 
-    s << std::endl << "} // end of namespace " << _G_system.language << std::endl
+    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
       << std::endl;
 
     std::string oname = _G_system.language;

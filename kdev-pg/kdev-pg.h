@@ -85,15 +85,16 @@ struct world
   typedef std::map<model::node*, follow_dep> follow_deps;
 
   world()
-    : token_stream("kdev_pg_token_stream"), language(0), decl(0), bits(0),
-      generate_ast(true), gen_serialize_visitor(false),
-      gen_debug_visitor(false), need_state_management(false),
+    : token_stream("kdev_pg_token_stream"), language(0), ns(0), decl(0), bits(0), 
+      generate_ast(true), gen_serialize_visitor(false), 
+      gen_debug_visitor(false), need_state_management(false), 
       adapt_to_kdevelop(false), start(0), _M_zero(0)
   {}
 
   // options
   char const *token_stream;
   char const *language;
+  char const *ns;
   char const *decl;
   char const *bits;
   bool generate_ast;

@@ -753,7 +753,7 @@ void gen_member_code::operator()(settings::member_item* m)
 
 void generate_parser_decls::operator()()
 {
-  out << "class KDEVPG_EXPORT parser {"
+  out << "class parser {"
       << "public:" << std::endl
       << "typedef " << _G_system.token_stream << " token_stream_type;" << std::endl
       << "typedef " << _G_system.token_stream << "::token_type token_type;" << std::endl

@@ -110,6 +110,10 @@ int main(int, char *argv[])
         {
           _G_system.language = arg + 9;
         }
+      else if (!strncmp(arg,"--namespace=",12))
+        {
+          _G_system.ns = arg + 12;
+	}
       else if (!strcmp("--no-ast", arg))
         {
           _G_system.generate_ast = false;
@@ -160,6 +164,9 @@ int main(int, char *argv[])
                     << std::endl;
         }
     }
+
+  if( !_G_system.ns )
+    _G_system.ns = _G_system.language;
 
   yyparse();
 

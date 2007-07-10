@@ -93,8 +93,8 @@ if( KDEVPG_INCLUDE_DIR
                     "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
                     "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.h"
                     "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp"
-            DEPENDS "${_grammarFile}"
-	            ${_depList}
+            MAIN-DEPENDECY "${_grammarFile}"
+	    DEPENDS ${_depList}
             COMMAND ${KDEVPG_EXECUTABLE}
             ARGS    --output=${_language} --namespace=${_namespace}
                     "${_grammarFile}"

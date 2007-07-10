@@ -86,13 +86,13 @@ if( KDEVPG_INCLUDE_DIR
             message(ERROR "No grammar file given to KDEVPG_GENERATE macro")
         endif(NOT _grammarFile)
         add_custom_command(
-            OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
-                    "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
-                    "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+            OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/${_language}_ast.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.cpp"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp"
             DEPENDS "${_grammarFile}"
 	            ${_depList}
             COMMAND ${KDEVPG_EXECUTABLE}
@@ -102,11 +102,10 @@ if( KDEVPG_INCLUDE_DIR
         )
     
         set( ${_srcVar}
-            "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp" )
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp" )
     endmacro(KDEVPG_GENERATE)
-
 
 else( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)

@@ -11,6 +11,10 @@
 #                              can be set by the user to select different include dirs
 # KDEVPG_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
+# KDEVPG_GENERATE(SRC_FILE_VAR GRAMMAR ADDITIONALDEPS)
+#     macro to add a custom target for the generation of the parser
+#     Note: The macro only exists when KDEVPG was found
+#
 # Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -63,6 +67,31 @@ if( KDEVPG_INCLUDE_DIR
 
 # if all modules found
     set(KDEVPG_FOUND TRUE)
+
+    macro(KDEVPG_GENERATE _srcVar _grammarFile)
+        set(_depList ${ARGN})
+        add_custom_command(
+            OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+            DEPENDS "${_grammarFile}"
+	            ${_depList}
+            COMMAND ${KDEVPG_EXECUTABLE}
+            ARGS    --output=python
+                    "${_grammarFile}"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        )
+    
+        set( _srcVar
+            "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp" )
+    endmacro(KDEVPG_GENERATE)
+
 
 else( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)

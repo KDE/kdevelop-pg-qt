@@ -74,14 +74,18 @@ if( KDEVPG_INCLUDE_DIR
         set(_depList ${ARGN})
 	list(GET _depList 0 _ns)
         set(_namespace ${ARGV1})
-	if( ${_ns} STREQUAL "NAMESPACE" )
+        if( ${_ns} STREQUAL "NAMESPACE" )
             list(GET _depList 1 _namespace)
-            list(GET _depList 2 _grammarFile)
-            list(REMOVE_AT _depList 0 1 2)
-        else( ${_ns} STREQUAL "NAMESPACE" )
-            list(GET _depList 0 _grammarFile)
+            list(REMOVE_AT _depList 0 1)
+        endif( ${_ns} STREQUAL "NAMESPACE" )
+	list(GET _depList 0 _dbg)
+	set(_dbgVisit)
+        if( ${_dbg} STREQUAL "DEBUG_VISITOR" )
             list(REMOVE_AT _depList 0)
-	endif( ${_ns} STREQUAL "NAMESPACE" )
+	    set(_dbgVisit "--debug-visitor")
+	endif(${_dbg} STREQUAL "DEBUG_VISITOR" )
+        list(GET _depList 0 _grammarFile)
+        list(REMOVE_AT _depList 0)
         if(NOT _grammarFile)
             message(ERROR "No grammar file given to KDEVPG_GENERATE macro")
         endif(NOT _grammarFile)
@@ -97,7 +101,7 @@ if( KDEVPG_INCLUDE_DIR
 	    DEPENDS ${_depList}
             COMMAND ${KDEVPG_EXECUTABLE}
             ARGS    --output=${_language} --namespace=${_namespace}
-                    "${_grammarFile}"
+                    ${_dbgVisit} "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
     

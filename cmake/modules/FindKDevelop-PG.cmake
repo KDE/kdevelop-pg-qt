@@ -11,8 +11,10 @@
 #                              can be set by the user to select different include dirs
 # KDEVPG_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
-# KDEVPG_GENERATE(SRC_FILE_VAR GRAMMAR ADDITIONALDEPS)
+# KDEVPG_GENERATE(SRC_FILE_VAR OUTPUT language [NAMESPACE ns] GRAMMARFILE ADDITIONALDEPS)
 #     macro to add a custom target for the generation of the parser
+#     OUTPUT will be given to kdev-pg as the --output parameter and thus sets the filename prefix
+#     NAMESPACE can be given to choose a namespace different from the OUTPUT value
 #     Note: The macro only exists when KDEVPG was found
 #
 # Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>
@@ -68,8 +70,21 @@ if( KDEVPG_INCLUDE_DIR
 # if all modules found
     set(KDEVPG_FOUND TRUE)
 
-    macro(KDEVPG_GENERATE _srcVar _grammarFile)
+    macro(KDEVPG_GENERATE _srcVar _language )
         set(_depList ${ARGN})
+	list(GET _depList 0 _ns)
+        set(_namespace ${ARGV1})
+	if( ${_ns} STREQUAL "NAMESPACE" )
+            list(GET _depList 1 _namespace)
+            list(GET _depList 2 _grammarFile)
+            list(REMOVE_AT _depList 0 1 2)
+        else( ${_ns} STREQUAL "NAMESPACE" )
+            list(GET _depList 0 _grammarFile)
+            list(REMOVE_AT _depList 0)
+	endif( ${_ns} STREQUAL "NAMESPACE" )
+        if(NOT _grammarFile)
+            message(ERROR "No grammar file given to KDEVPG_GENERATE macro")
+        endif(NOT _grammarFile)
         add_custom_command(
             OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
                     "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
@@ -81,12 +96,12 @@ if( KDEVPG_INCLUDE_DIR
             DEPENDS "${_grammarFile}"
 	            ${_depList}
             COMMAND ${KDEVPG_EXECUTABLE}
-            ARGS    --output=python
+            ARGS    --output=${_language} --namespace=${_namespace}
                     "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
     
-        set( _srcVar
+        set( ${_srcVar}
             "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
             "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
             "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp" )

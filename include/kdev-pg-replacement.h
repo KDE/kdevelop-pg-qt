@@ -1,6 +1,6 @@
 /*
   This file is part of kdev-pg
-  Copyright 2005, 2006 Roberto Raggi <roberto@kdevelop.org>
+  Copyright 2005, 2006, 2007 Roberto Raggi <roberto@kdevelop.org>
 
   Permission to use, copy, modify, distribute, and sell this software and its
   documentation for any purpose is hereby granted without fee, provided that
@@ -25,173 +25,149 @@
 #include <deque>
 #include <string>
 
-class replacement
-{
+#include "kdev-pg-token-stream.h"
+
+template <typename _String>
+class default_replacement {
 public:
-  virtual ~replacement() {}
+  typedef _String string_type;
+  
+  inline default_replacement():
+    _M_begin(0), _M_end(0) {}
 
-  virtual std::size_t start_position() const = 0;
-  virtual std::size_t size() const = 0;
-  virtual char const *text() const = 0;
-};
+  inline default_replacement(std::size_t begin, std::size_t end, string_type const &text):
+    _M_begin(begin), _M_end(end), _M_text(text) {}
 
-class text_replacement: public replacement
-{
-public:
-  inline text_replacement(std::size_t start_position,
-                          std::size_t size,
-                          char const *text)
-    : _M_start_position(start_position),
-      _M_size(size),
-      _M_text(text) {}
-
-  virtual std::size_t start_position() const
-  { return _M_start_position; }
-
-  virtual std::size_t size() const
-  { return _M_size; }
-
-  virtual char const *text() const
-  { return _M_text; }
+  std::size_t begin() const { return _M_begin; }
+  std::size_t end() const { return _M_end; }
+  string_type const &text() const { return _M_text; }
 
 private:
-  std::size_t _M_start_position;
-  std::size_t _M_size;
-  char const *_M_text;
+  std::size_t _M_begin;
+  std::size_t _M_end;
+  string_type _M_text;
 };
 
-template <class _Tp, class _Tp1>
-class replacement_list
-{
-  typedef _Tp1 token_t;
+template <class _Replacement = default_replacement<std::string>,
+	  class _TokenStream = kdev_pg_token_stream>
+class replacement_list: public std::deque<_Replacement> {
+  typedef std::deque<_Replacement> _Base;
 
 public:
-  replacement_list(std::deque<token_t> const &token_stream);
+  typedef _Replacement replacement_type;
+  typedef typename _Replacement::string_type string_type;
+  typedef typename _Base::iterator iterator;
+  typedef typename _Base::const_iterator const_iterator;
+
+  using _Base::begin;
+  using _Base::end;
+
+public:
+  replacement_list();
   ~replacement_list();
 
-  void set_contents(char const *contents)
-  { _M_contents = contents; }
+  _TokenStream *token_stream() const;
+  void set_token_stream(_TokenStream *token_stream);
 
-  void insert_text_before(_Tp *node, char const *text);
-  void insert_text_after(_Tp *node, char const *text);
+  template <class _Ast>
+  void insert_text_before(_Ast *node, string_type const &text);
 
-  void replace_text(_Tp *node, char const *text);
-  void replace_text(std::size_t position, std::size_t length,
-                    char const *text);
+  template <class _Ast>
+  void insert_text_after(_Ast *node, string_type const &text);
 
-  void remove_text(_Tp *node);
+  template <class _Ast>
+  void replace_text(_Ast *node, string_type const &text);
 
-  inline const std::deque<replacement*> &replacements() const
-  { return _M_replacements; }
+  void replace_text(std::size_t begin, std::size_t end, string_type const &text);
 
-  void clear();
-  std::string apply() const;
+  template <class _Ast>
+  void remove_text(_Ast *node);
+
+  template <typename _OutputIterator>
+  void operator()(string_type const &source, _OutputIterator out) const;
 
 private:
-  char const *_M_contents;
-  std::deque<token_t> const &_M_token_stream;
-  std::deque<replacement*> _M_replacements;
+  struct _Compare_replacement {
+    bool operator()(_Replacement const &a, std::size_t pos) const {
+      return a.begin() < pos;
+    }
+  };
+
+private:
+  _TokenStream *_M_token_stream;
 };
 
-template <class _Tp, class _Tp1>
-replacement_list<_Tp, _Tp1>::replacement_list(std::deque<token_t> const &token_stream)
-  : _M_contents(0), _M_token_stream(token_stream)
-{
+template <class _Replacement, class _TokenStream>
+replacement_list<_Replacement, _TokenStream>::replacement_list():
+  _M_token_stream(0) {}
+
+template <class _Replacement, class _TokenStream>
+replacement_list<_Replacement, _TokenStream>::~replacement_list() {}
+
+template <class _Replacement, class _TokenStream>
+_TokenStream *replacement_list<_Replacement, _TokenStream>::token_stream() const {
+  return _M_token_stream;
 }
 
-template <class _Tp, class _Tp1>
-replacement_list<_Tp, _Tp1>::~replacement_list()
-{
-  clear();
+template <class _Replacement, class _TokenStream>
+void replacement_list<_Replacement, _TokenStream>::set_token_stream(_TokenStream *token_stream) {
+  _M_token_stream = token_stream; 
 }
 
-template <class _Tp, class _Tp1>
-void replacement_list<_Tp, _Tp1>::clear()
-{
-  for (std::deque<replacement*>::iterator it = _M_replacements.begin();
-       it != _M_replacements.end(); ++it)
-    {
-      delete *it;
-    }
-
-  _M_replacements.clear();
+template <class _Replacement, class _TokenStream>
+template <class _Ast>
+void replacement_list<_Replacement, _TokenStream>::insert_text_before(_Ast *node,
+								      string_type const &text) {
+  std::size_t start_position = _M_token_stream->token(node->start_token).begin;
+  replace_text(start_position, start_position, text);
 }
 
-template <class _Tp, class _Tp1>
-void replacement_list<_Tp, _Tp1>::insert_text_before(_Tp *node,
-                                                     char const *text)
-{
-  std::size_t start_position = _M_token_stream[node->start_token].start;
-  replace_text(start_position, 0, text);
+template <class _Replacement, class _TokenStream>
+template <class _Ast>
+void replacement_list<_Replacement, _TokenStream>::insert_text_after(_Ast *node,
+								     string_type const &text) {
+  std::size_t end_position = _M_token_stream->token(node->end_token).begin;
+  replace_text(end_position, end_position, text);
 }
 
-template <class _Tp, class _Tp1>
-void replacement_list<_Tp, _Tp1>::insert_text_after(_Tp *node,
-                                                    char const *text)
-{
-  std::size_t end_position = _M_token_stream[node->end_token].start;
-  replace_text(end_position, 0, text);
+template <class _Replacement, class _TokenStream>
+template <class _Ast>
+void replacement_list<_Replacement, _TokenStream>::replace_text(_Ast *node,
+								string_type const &text) {
+  std::size_t start_position = _M_token_stream->token(node->start_token).begin;
+  std::size_t end_position = _M_token_stream->token(node->end_token).begin;
+
+  replace_text(start_position, end_position, text);
 }
 
-template <class _Tp, class _Tp1>
-void replacement_list<_Tp, _Tp1>::replace_text(_Tp *node, char const *text)
-{
-  std::size_t start_position = _M_token_stream[node->start_token].start;
-  std::size_t end_position = _M_token_stream[node->end_token].start;
-
-  replace_text(start_position, end_position - start_position, text);
+template <class _Replacement, class _TokenStream>
+void replacement_list<_Replacement, _TokenStream>::replace_text(std::size_t first,
+								std::size_t last,
+								string_type const &text) {
+  iterator __pos = std::lower_bound(begin(), end(), first, _Compare_replacement());
+  insert(__pos, _Replacement(first, last, text));
 }
 
-template <class _Tp, class _Tp1>
-void replacement_list<_Tp, _Tp1>::remove_text(_Tp *node)
-{
-  replace_text(node, "");
+template <class _Replacement, class _TokenStream>
+template <class _Ast>
+void replacement_list<_Replacement, _TokenStream>::remove_text(_Ast *node) {
+  replace_text(node, string_type());
 }
 
-namespace
-{
-  struct _Compare_replacement
-  {
-    bool operator()(replacement const *a, std::size_t start_position) const
-    { return a->start_position() < start_position; }
-  };
-}
-
-template <class _Tp, class _Tp1>
-void replacement_list<_Tp, _Tp1>::replace_text(std::size_t position,
-                                               std::size_t length, char const *text)
-{
-  std::deque<replacement*>::iterator __pos =
-    std::lower_bound(_M_replacements.begin(), _M_replacements.end(), position, _Compare_replacement());
-
-  replacement *r = new text_replacement(position, length, text);
-  _M_replacements.insert(__pos, r);
-}
-
-template <class _Tp, class _Tp1>
-std::string replacement_list<_Tp, _Tp1>::apply() const
-{
-  std::string source = _M_contents;
-  std::string result;
-
-  result.reserve(source.size() * 2);
-
+template <class _Replacement, class _TokenStream>
+template <typename _OutputIterator>
+void replacement_list<_Replacement, _TokenStream>::operator()(string_type const &source, _OutputIterator out) const {
   std::size_t pos = 0;
 
-  for (int i=0; i<_M_replacements.size(); ++i)
-    {
-      replacement *repl = _M_replacements[i];
+  for (const_iterator it = begin(); it != end(); ++it) {
+    _Replacement const &repl = *it;
 
-      result += std::string(source, pos, repl->start_position() - pos);
-      result += repl->text();
-      pos = repl->start_position() + repl->size();
-    }
-
-  assert(pos != 0);
-
-  result += std::string(source, pos);
-
-  return result;
+    std::copy(source.begin() + pos, source.begin() + (repl.begin() - pos), out);
+    std::copy(repl.text().begin(), repl.text().end(), out);
+    pos = repl.end();
+  }
+    
+  std::copy(source.begin() + pos, source.end(), out);
 }
 
 #endif // KDEV_PG_REPLACEMENT_H

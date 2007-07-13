@@ -115,7 +115,7 @@ public:
     return _M_location_table;
   }
 
-  inline void start_position(std::size_t index, int *line, int *column)
+  inline void start_position(std::size_t index, size_t *line, size_t *column)
   {
     if (!_M_location_table)
       {
@@ -125,7 +125,7 @@ public:
       _M_location_table->position_at(token(index).begin, line, column);
   }
 
-  inline void end_position(std::size_t index, int *line, int *column)
+  inline void end_position(std::size_t index, size_t *line, size_t *column)
   {
     if (!_M_location_table)
       {

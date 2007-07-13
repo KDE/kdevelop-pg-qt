@@ -22,6 +22,7 @@
 #ifndef KDEV_PG_LOCATION_TABLE_H
 #define KDEV_PG_LOCATION_TABLE_H
 
+#include <algorithm>
 #include <cstdlib>
 
 struct kdev_pg_location_table
@@ -30,6 +31,7 @@ struct kdev_pg_location_table
     : lines(0), line_count(0), current_line(0)
   {
     resize(size);
+    lines[current_line++] = 0;
   }
 
   inline ~kdev_pg_location_table()
@@ -50,35 +52,16 @@ struct kdev_pg_location_table
   /**
    * Returns the \a line and \a column of the given \a offset in this table.
    */
-  void position_at(std::size_t offset, int *line, int *column) const
+  void position_at(std::size_t offset, size_t *line, size_t *column) const
   {
-    int first = 0;
-    // len is assigned the position 1 past the current set position
-    int len = current_line;
-    int half;
-    int middle;
+    size_t *it = std::lower_bound(lines, lines + current_line, offset);
+    assert(it != lines + current_line);
 
-    while (len > 0)
-      {
-        // Half of the way through the array
-        half = len >> 1;
-        // The starting point
-        middle = first;
+    if (*it != offset)
+      --it;
 
-        middle += half;
-
-        if (lines[middle] < offset)
-          {
-            first = middle;
-            ++first;
-            len = len - half - 1;
-          }
-        else
-          len = half;
-      }
-
-    *line = std::max(first, 1);
-    *column = offset - lines[*line - 1] - 1;
+    *line = it - lines;
+    *column = offset - (*it + (it != lines));
   }
 
   /**

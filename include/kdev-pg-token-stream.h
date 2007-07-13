@@ -71,6 +71,13 @@ public:
     return _M_index;
   }
 
+  inline std::size_t yytoken_index() const
+  {
+    if( _M_index )
+      return _M_index - 1;
+    return _M_index;
+  }
+
   inline void rewind(std::size_t index)
   {
     _M_index = index;

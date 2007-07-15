@@ -19,6 +19,7 @@
   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+//krazy:exclude-all=inline
 #ifndef KDEV_PG_LIST_H
 #define KDEV_PG_LIST_H
 

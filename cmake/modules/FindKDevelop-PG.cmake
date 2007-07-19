@@ -11,10 +11,16 @@
 #                              can be set by the user to select different include dirs
 # KDEVPG_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
-# KDEVPG_GENERATE(SRC_FILE_VAR OUTPUT language [NAMESPACE ns] GRAMMARFILE ADDITIONALDEPS)
+# KDEVPG_GENERATE(SRC_FILE_VAR OUTPUT language 
+#                     [NAMESPACE ns] [DEBUG_VISITOR] [DUMP_INFO] 
+#                     GRAMMARFILE ADDITIONALDEPS)
 #     macro to add a custom target for the generation of the parser
 #     OUTPUT will be given to kdev-pg as the --output parameter and thus sets the filename prefix
 #     NAMESPACE can be given to choose a namespace different from the OUTPUT value
+#     DEBUG_VISITOR will run kdevelop-pg with the --debug-visitor argument to generate a simple
+#                   visitor that will print debug messages
+#     DUMP_INFO will tell kdevelop-pg to dump extra information about symbols, terminals and rules
+#               into files in the binary dir
 #     Note: The macro only exists when KDEVPG was found
 #
 # Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>
@@ -71,6 +77,15 @@ if( KDEVPG_INCLUDE_DIR
     set(KDEVPG_FOUND TRUE)
 
     macro(KDEVPG_GENERATE _srcVar _language )
+        set(_outputList 
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_ast.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp"
+        )
         set(_depList ${ARGN})
 	list(GET _depList 0 _ns)
         set(_namespace ${ARGV1})
@@ -83,25 +98,34 @@ if( KDEVPG_INCLUDE_DIR
         if( ${_dbg} STREQUAL "DEBUG_VISITOR" )
             list(REMOVE_AT _depList 0)
 	    set(_dbgVisit "--debug-visitor")
+	    set(_outputList ${_outputList}
+                "${CMAKE_CURRENT_BINARY_DIR}/${_language}_debug_visitor.h"
+            )
 	endif(${_dbg} STREQUAL "DEBUG_VISITOR" )
+	set(_dumpInfo)
+	list(GET _depList 0 _dump)
+	if( ${_dump} STREQUAL "DUMP_INFO" )
+            list(REMOVE_AT _depList 0)
+	    set(_dumpInfo --terminals --symbols --rules)
+	    set(_outputList ${_outputList} 
+                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-terminals"
+                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-symbols"
+                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-rules"
+            )
+	endif( ${_dump} STREQUAL "DUMP_INFO" )
+
         list(GET _depList 0 _grammarFile)
         list(REMOVE_AT _depList 0)
         if(NOT _grammarFile)
             message(ERROR "No grammar file given to KDEVPG_GENERATE macro")
         endif(NOT _grammarFile)
         add_custom_command(
-            OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/${_language}_ast.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.cpp"
-                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
-                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.h"
-                    "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp"
+            OUTPUT  ${_outputList}
             MAIN_DEPENDENCY "${_grammarFile}"
 	    DEPENDS ${_depList}
             COMMAND ${KDEVPG_EXECUTABLE}
             ARGS    --output=${_language} --namespace=${_namespace}
-                    ${_dbgVisit} "${_grammarFile}"
+                    ${_dbgVisit} ${_dumpInfo} "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
     
@@ -110,6 +134,7 @@ if( KDEVPG_INCLUDE_DIR
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp" )
     endmacro(KDEVPG_GENERATE)
+
 
 else( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)

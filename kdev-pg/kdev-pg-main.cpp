@@ -195,29 +195,32 @@ int main(int, char *argv[])
 
   problem_summary_printer()();
 
-  if (dump_terminals)
+  if (dump_terminals || dump_symbols || debug_rules)
     {
-      for (world::terminal_set::iterator it = _G_system.terminals.begin();
-           it != _G_system.terminals.end(); ++it)
+      if(dump_terminals)
         {
-          std::cout << (*it).first << std::endl;
+          std::ofstream ft("kdev-pg-terminals", std::ios_base::out | std::ios_base::trunc );
+          for (world::terminal_set::iterator it = _G_system.terminals.begin();
+               it != _G_system.terminals.end(); ++it)
+            {
+              ft << (*it).first << std::endl;
+            }
         }
-      return EXIT_SUCCESS;
-    }
-  else if (dump_symbols)
-    {
-      for (world::symbol_set::iterator it = _G_system.symbols.begin();
-           it != _G_system.symbols.end(); ++it)
+      if (dump_symbols)
+        { 
+          std::ofstream st("kdev-pg-symbols", std::ios_base::out | std::ios_base::trunc );
+          for (world::symbol_set::iterator it = _G_system.symbols.begin();
+               it != _G_system.symbols.end(); ++it)
+            {
+              st << (*it).first << std::endl;
+            }
+        }
+      if (debug_rules)
         {
-          std::cout << (*it).first << std::endl;
+          std::ofstream rt("kdev-pg-rules", std::ios_base::out | std::ios_base::trunc );
+          std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
+                        debug_rule(rt));
         }
-      return EXIT_SUCCESS;
-    }
-  else if (debug_rules)
-    {
-      std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                    debug_rule(std::cout));
-      return EXIT_SUCCESS;
     }
   else if (!_G_system.language)
     {

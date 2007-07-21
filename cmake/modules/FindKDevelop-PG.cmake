@@ -42,12 +42,16 @@ if( NOT KDEVPG_DIR )
         ${CMAKE_INSTALL_PREFIX}/include
         ${_KDEVPG_DIR}/include
     )
-    set(KDEVPG_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg)
+    if( _kdevpgIncDir )
+        set(KDEVPG_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg)
+    endif( _kdevpgIncDir )
     find_program( KDEVPG_EXECUTABLE NAMES kdev-pg
         PATHS
         ${CMAKE_INSTALL_PREFIX}/bin
         ${_KDEVPG_DIR}/bin
     )
+    set(KDEVPG_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg include directory containing the headers")
+    set( KDEVPG_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg" )
 else( NOT KDEVPG_DIR )
     find_path( _kdevpgIncDir kdevelop-pg/kdev-pg-token-stream.h
         PATHS
@@ -62,10 +66,9 @@ else( NOT KDEVPG_DIR )
         ${_KDEVPG_DIR}/bin
 	${KDEVPG_DIR}/bin
     )
+    set(KDEVPG_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg include directory containing the headers")
+    set( KDEVPG_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg" )
 endif( NOT KDEVPG_DIR )
-set(KDEVPG_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg include directory containing the headers")
-set( KDEVPG_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg" )
-
 if( KDEVPG_INCLUDE_DIR
  AND KDEVPG_EXECUTABLE)
 

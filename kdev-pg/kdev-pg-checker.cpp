@@ -145,8 +145,7 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
             continue;
 
           std::cerr << "\t" << n << ": conflicts with the FIRST set of: ";
-          follow_dep_checker dep_check(n);
-          dep_check(node);
+          follow_dep_checker(n).check(node);
           if (it != U.end())
             std::cerr << ", ";
           std::cerr << std::endl;
@@ -156,10 +155,16 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
     }
 }
 
-void follow_dep_checker::operator()(model::node *node)
+void follow_dep_checker::check(model::node *node)
 {
+  //avoid cyclical follow dependency check
+  if (_M_visited.find(node) != _M_visited.end())
+    return;
+  _M_visited.insert(node);
+
   world::follow_dep &D = _G_system.FOLLOW_DEP(node);
   world::node_set FD = D.first;
+  world::node_set FLD = D.second;
   pretty_printer p(std::cerr);
 #ifdef FOLLOW_CHECKER_DEBUG
   std::cerr << "[["; p(node); std::cerr << " | " << (uint*)node << "]] ";
@@ -179,13 +184,26 @@ void follow_dep_checker::operator()(model::node *node)
 #endif
       if (first.find(_M_terminal) != first.end())
       {
-        std::cerr << " ";
+        std::cerr << std::endl << "            ";
         p(*it);
+#ifdef FOLLOW_CHECKER_DEBUG
+        std::cerr << " ( in \"";
+        p(node);
+        std::cerr << " \" )";
+#endif
         std::cerr << ", ";
       }
     }
-  world::node_set FLD = D.second;
-  for_each(FLD.begin(), FLD.end(), follow_dep_checker(_M_terminal));
+ for (world::node_set::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
+  {
+      world::node_set first = _G_system.FIRST(*it);
+#ifdef FOLLOW_CHECKER_DEBUG
+      std::cerr << std::endl << "\t\t" << "in ";
+      p(*it);
+      std::cerr << std::endl;
+#endif
+      check(*it);
+  }
 }
 
 void FIRST_FOLLOW_conflict_checker::visit_alternative(model::alternative_item *node)

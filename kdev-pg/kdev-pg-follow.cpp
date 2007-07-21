@@ -206,7 +206,6 @@ void next_FOLLOW::visit_star(model::star_item *node)
 void next_FOLLOW::visit_nonterminal(model::nonterminal_item *node)
 {
   merge(node->_M_symbol, _G_system.FOLLOW(node));
-  add_first_to_follow_dep(node->_M_symbol, node);
 
   default_visitor::visit_nonterminal(node);
 }
@@ -228,7 +227,14 @@ void next_FOLLOW::add_first_to_follow_dep(model::node *dest, model::node *dep)
 
 void next_FOLLOW::add_follow_to_follow_dep(model::node *dest, model::node *dep)
 {
-  _G_system.FOLLOW_DEP(dest).second.insert(dep);
+  if (dest->kind == model::node_kind_nonterminal)
+  {
+    model::symbol_item *s = node_cast<model::nonterminal_item*>(dest)->_M_symbol;
+    if (s)
+      _G_system.FOLLOW_DEP(s).second.insert(dep);
+  }
+  else
+    _G_system.FOLLOW_DEP(dest).second.insert(dep);
 #ifdef FOLLOW_DEP_DEBUG
   debug_follow_to_follow_dep(dest, dep);
 #endif

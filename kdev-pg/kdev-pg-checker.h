@@ -64,6 +64,16 @@ private:
   model::symbol_item *_M_symbol;
 };
 
+struct follow_dep_checker
+{
+  follow_dep_checker(model::node *terminal): _M_terminal(terminal) {}
+  void check(model::node *n);
+
+private:
+  model::node *_M_terminal;
+  world::node_set _M_visited;
+};
+
 struct undefined_symbol_checker: protected default_visitor
 {
   void operator()(model::node *node);
@@ -85,15 +95,6 @@ protected:
 
 private:
   model::symbol_item *_M_symbol;
-};
-
-struct follow_dep_checker
-{
-  follow_dep_checker(model::node *terminal): _M_terminal(terminal) {}
-  void operator()(model::node *node);
-
-private:
-  model::node *_M_terminal;
 };
 
 struct problem_summary_printer

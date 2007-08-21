@@ -29,7 +29,7 @@ void generate_ast::operator()()
        it != _G_system.symbols.end(); ++it)
     {
       model::symbol_item *sym = (*it).second;
-      out << "struct " << sym->_M_name << "_ast;" << std::endl;
+      out << "struct " << _G_system.export_macro << " " << sym->_M_name << "_ast;" << std::endl;
     }
 
   out << std::endl;
@@ -43,7 +43,7 @@ void generate_ast::operator()()
 
   out << std::endl;
 
-  out << "struct ast_node";
+  out << "struct " << _G_system.export_macro << " ast_node";
 
   if (_G_system.adapt_to_kdevelop)
     out << ": public KDevelop::AST";
@@ -78,7 +78,7 @@ void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const 
   _M_in_cons = false;
 
   model::symbol_item *sym = __it.second;
-  out << "struct " << sym->_M_name << "_ast: public ast_node"
+  out << "struct " << _G_system.export_macro << " " << sym->_M_name << "_ast: public ast_node"
       << "{" << std::endl
       << "enum { KIND = Kind_" << sym->_M_name << "};" << std::endl << std::endl;
 

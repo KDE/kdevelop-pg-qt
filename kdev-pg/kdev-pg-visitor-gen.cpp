@@ -24,7 +24,7 @@
 
 void generate_visitor::operator()()
 {
-  out << "class visitor {" << std::endl
+  out << "class " << _G_system.export_macro << " visitor {" << std::endl
       << "typedef void (visitor::*parser_fun_t)(ast_node *);" << std::endl
       << "static parser_fun_t _S_parser_table[];" << std::endl
       << std::endl

@@ -23,7 +23,7 @@
 
 void generate_debug_visitor::operator()()
 {
-  out << "class debug_visitor: public default_visitor {" << std::endl
+  out << "class " << _G_system.export_macro << " debug_visitor: public default_visitor {" << std::endl
       << "public:" << std::endl;
 
   std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),

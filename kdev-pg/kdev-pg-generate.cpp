@@ -54,6 +54,9 @@ void generate_output()
 
       << "#include <kdev-pg-list.h>" << std::endl
       << std::endl;
+    if (_G_system.export_macro_header)
+      s << "#include <" << _G_system.export_macro_header << ">"
+        << std::endl;
 
     if (_G_system.adapt_to_kdevelop)
       {
@@ -109,6 +112,9 @@ void generate_output()
       s << "#include <kdev-pg-token-stream.h>" << std::endl;
 
     s << std::endl;
+    if (_G_system.export_macro_header)
+      s << "#include <" << _G_system.export_macro_header << ">"
+        << std::endl;
 
     if (_G_system.decl && !_G_system.generate_ast)
       s << _G_system.decl << std::endl;
@@ -147,9 +153,12 @@ void generate_output()
       << std::endl
 
       << "#include \"" << _G_system.language << "_ast.h\"" << std::endl
-      << std::endl
+      << std::endl;
+    if (_G_system.export_macro_header)
+      s << "#include <" << _G_system.export_macro_header << ">"
+        << std::endl;
 
-      << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __visitor();
@@ -183,9 +192,12 @@ void generate_output()
       << std::endl
 
       << "#include \"" << _G_system.language << "_visitor.h\"" << std::endl
-      << std::endl
+      << std::endl;
+    if (_G_system.export_macro_header)
+      s << "#include <" << _G_system.export_macro_header << ">"
+        << std::endl;
 
-      << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << _G_system.ns << "{" << std::endl
       << std::endl;
 
     __default_visitor();
@@ -219,9 +231,12 @@ void generate_output()
       << std::endl
 
       << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
-      << std::endl
+      << std::endl;
+    if (_G_system.export_macro_header)
+      s << "#include <" << _G_system.export_macro_header << ">"
+        << std::endl;
 
-      << "#include <iostream>" << std::endl
+    s << "#include <iostream>" << std::endl
       << "#include <fstream>" << std::endl
       << std::endl
 
@@ -259,9 +274,12 @@ void generate_output()
       << std::endl
 
       << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
-      << std::endl
+      << std::endl;
+    if (_G_system.export_macro_header)
+      s << "#include <" << _G_system.export_macro_header << ">"
+        << std::endl;
 
-      << "#include <iostream>" << std::endl
+    s << "#include <iostream>" << std::endl
       << "#include <fstream>" << std::endl
       << std::endl
 
@@ -293,7 +311,7 @@ void generate_output()
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl;
 
-    s << "#include \"" << _G_system.language << "_parser.h\"" 
+    s << "#include \"" << _G_system.language << "_parser.h\""
       << std::endl
       << std::endl;
 

@@ -42,8 +42,8 @@ extern void yyerror(char const *msg);
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
 %token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
 %token T_CONSTRUCTOR T_DESTRUCTOR T_TRY_RECOVER T_TRY_ROLLBACK T_CATCH
-%token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT
-%token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE
+%token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_EXPORT_MACRO
+%token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
@@ -75,6 +75,10 @@ declaration
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { _G_system.token_stream = $2;           }
     | namespace_declaration
+    | T_EXPORT_MACRO T_STRING
+        { _G_system.export_macro = $2;           }
+    | T_EXPORT_MACRO_HEADER T_STRING
+        { _G_system.export_macro_header = $2;   }
     ;
 
 member_declaration_rest

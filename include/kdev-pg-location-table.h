@@ -55,14 +55,23 @@ struct kdev_pg_location_table
    */
   void position_at(std::size_t offset, size_t *line, size_t *column) const
   {
-    size_t *it = std::lower_bound(lines, lines + current_line, offset);
-    assert(it != lines + current_line);
+    std::size_t idx = 0;
+    for( std::size_t i = 0; i < current_line; i++ )
+    {
+      if( lines[i] > offset )
+      {
+        idx = i-1;
+	break;
+      }else if( lines[i] == offset )
+      {
+        idx = i;
+        break;
+      }
 
-    if (*it != offset)
-      --it;
+    }
 
-    *line = it - lines;
-    *column = offset - (*it + (it != lines));
+    *line = idx;
+    *column = offset - lines[idx];
   }
 
   /**
@@ -74,7 +83,7 @@ struct kdev_pg_location_table
     if (current_line == line_count)
       resize(current_line * 2);
 
-    lines[current_line++] = offset;
+    lines[current_line++] = offset+1;
   }
 
   inline std::size_t &operator[](int index)

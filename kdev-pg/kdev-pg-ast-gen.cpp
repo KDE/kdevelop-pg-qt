@@ -29,7 +29,7 @@ void generate_ast::operator()()
        it != _G_system.symbols.end(); ++it)
     {
       model::symbol_item *sym = (*it).second;
-      out << "struct " << _G_system.export_macro << " " << sym->_M_name << "_ast;" << std::endl;
+      out << "struct " << sym->_M_name << "_ast;" << std::endl;
     }
 
   out << std::endl;

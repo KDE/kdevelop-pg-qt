@@ -25,6 +25,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <cassert>
 
 struct kdev_pg_location_table
 {

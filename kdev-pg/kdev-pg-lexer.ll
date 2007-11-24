@@ -93,10 +93,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "try/rollback"          return T_TRY_ROLLBACK;
 "catch"                 return T_CATCH;
 
-"%exportMacro"         return T_EXPORT_MACRO;
-"%exportMacroHeader"  return T_EXPORT_MACRO_HEADER;
+"%export_macro"         return T_EXPORT_MACRO;
+"%export_macro_header"  return T_EXPORT_MACRO_HEADER;
 "%token"                return T_TOKEN_DECLARATION;
-"%tokenStream"         return T_TOKEN_STREAM_DECLARATION;
+"%token_stream"         return T_TOKEN_STREAM_DECLARATION;
 "%namespace"            return T_NAMESPACE_DECLARATION;
 "%parserclass"          BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 

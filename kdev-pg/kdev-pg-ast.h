@@ -267,8 +267,8 @@ extern KDevPG::Allocator<char> globalMemoryPool;
 template <class _Tp>
 _Tp *createNode()
 {
-  _Tp *node = new _Tp();
-  //reinterpret_cast<_Tp*>(globalMemoryPool.allocate(sizeof(_Tp)));
+  _Tp *node = new (globalMemoryPool.allocate(sizeof(_Tp)))_Tp();
+  //reinterpret_cast<_Tp*>);
   node->kind = _Tp::NodeKind;
   return node;
 }

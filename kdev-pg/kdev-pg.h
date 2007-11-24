@@ -88,7 +88,7 @@ public:
   typedef QMap<Model::Node*, FollowDep> FollowDeps;
 
   World()
-    : tokenStream("kdev_pg_tokenStream"), language(0), ns(0), decl(0), bits(0),
+    : tokenStream("KDevPG::TokenStream"), language(0), ns(0), decl(0), bits(0),
       exportMacro(""), exportMacroHeader(0), GenerateAst(true),
       generateSerializeVisitor(false), generateDebugVisitor(false),
       needStateManagement(false), start(0), mZero(0)

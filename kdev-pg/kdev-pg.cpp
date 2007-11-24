@@ -173,6 +173,8 @@ Model::VariableDeclarationItem *variableDeclaration(
   Model::VariableDeclarationItem *node = createNode<Model::VariableDeclarationItem>();
   node->mName = name;
   node->mType = type;
+  node->mCapitalizedType = type;
+  node->mCapitalizedType.replace( 0, 1, type.at(0).toUpper() );
   node->mDeclarationType = declarationType;
   node->mStorageType     = storageType;
   node->mVariableType    = variableType;

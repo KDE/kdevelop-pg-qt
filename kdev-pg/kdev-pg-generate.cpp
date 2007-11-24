@@ -54,6 +54,7 @@ void generateOutput()
       << endl
 
       << "#include <QtCore/QList>" << endl
+      << "#include <kdev-pg-list.h>" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"

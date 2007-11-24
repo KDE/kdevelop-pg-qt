@@ -182,6 +182,7 @@ namespace Model
     };
 
     QString mType;
+    QString mCapitalizedType;
     QString mName;
 
     DeclarationType mDeclarationType;

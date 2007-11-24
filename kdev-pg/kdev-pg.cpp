@@ -24,237 +24,240 @@
 #include <cassert>
 #include <iostream>
 
-model::zero_item *pg::zero()
+namespace KDevPG
 {
-  model::zero_item *node = create_node<model::zero_item>();
+
+Model::ZeroItem *zero()
+{
+  Model::ZeroItem *node = createNode<Model::ZeroItem>();
   return node;
 }
 
-model::plus_item *pg::plus(model::node *item)
+Model::PlusItem *plus(Model::Node *item)
 {
-  model::plus_item *node = create_node<model::plus_item>();
-  node->_M_item = item;
+  Model::PlusItem *node = createNode<Model::PlusItem>();
+  node->mItem = item;
   return node;
 }
 
-model::star_item *pg::star(model::node *item)
+Model::StarItem *star(Model::Node *item)
 {
-  model::star_item *node = create_node<model::star_item>();
-  node->_M_item = item;
+  Model::StarItem *node = createNode<Model::StarItem>();
+  node->mItem = item;
   return node;
 }
 
-model::symbol_item *pg::symbol(char const *name)
+Model::SymbolItem *symbol(char const *name)
 {
-  model::symbol_item *node = create_node<model::symbol_item>();
-  node->_M_name = name;
+  Model::SymbolItem *node = createNode<Model::SymbolItem>();
+  node->mName = name;
   return node;
 }
 
-model::action_item *pg::action(model::node *item, char const *code)
+Model::ActionItem *action(Model::Node *item, char const *code)
 {
-  model::action_item *node = create_node<model::action_item>();
-  node->_M_item = item;
-  node->_M_code = code;
+  Model::ActionItem *node = createNode<Model::ActionItem>();
+  node->mItem = item;
+  node->mCode = code;
   return node;
 }
 
-model::alternative_item *pg::alternative(model::node *left, model::node *right)
+Model::AlternativeItem *alternative(Model::Node *left, Model::Node *right)
 {
-  model::alternative_item *node = create_node<model::alternative_item>();
-  node->_M_left = left;
-  node->_M_right = right;
+  Model::AlternativeItem *node = createNode<Model::AlternativeItem>();
+  node->mLeft = left;
+  node->mRight = right;
   return node;
 }
 
-model::cons_item *pg::cons(model::node *left, model::node *right)
+Model::ConsItem *cons(Model::Node *left, Model::Node *right)
 {
-  model::cons_item *node = create_node<model::cons_item>();
-  node->_M_left = left;
-  node->_M_right = right;
+  Model::ConsItem *node = createNode<Model::ConsItem>();
+  node->mLeft = left;
+  node->mRight = right;
   return node;
 }
 
-model::evolve_item *pg::evolve(
-    model::node *item, model::symbol_item *symbol,
-    model::variable_declaration_item *declarations, char const *code)
+Model::EvolveItem *evolve(
+    Model::Node *item, Model::SymbolItem *symbol,
+    Model::VariableDeclarationItem *declarations, char const *code)
 {
-  model::evolve_item *node = create_node<model::evolve_item>();
-  node->_M_item = item;
-  node->_M_symbol = symbol;
-  node->_M_declarations = declarations;
-  node->_M_code = code;
+  Model::EvolveItem *node = createNode<Model::EvolveItem>();
+  node->mItem = item;
+  node->mSymbol = symbol;
+  node->mDeclarations = declarations;
+  node->mCode = code;
   return node;
 }
 
-model::try_catch_item *pg::try_catch(model::node *try_item, model::node *catch_item)
+Model::TryCatchItem *tryCatch(Model::Node *try_item, Model::Node *catch_item)
 {
-  model::try_catch_item *node = create_node<model::try_catch_item>();
-  node->_M_try_item = try_item;
-  node->_M_catch_item = catch_item;
-  node->_M_unsafe = false;
+  Model::TryCatchItem *node = createNode<Model::TryCatchItem>();
+  node->mTryItem = try_item;
+  node->mCatchItem = catch_item;
+  node->mUnsafe = false;
   return node;
 }
 
-model::alias_item *pg::alias(char const *code, model::symbol_item *symbol)
+Model::AliasItem *alias(char const *code, Model::SymbolItem *symbol)
 {
-  model::alias_item *node = create_node<model::alias_item>();
-  node->_M_code = code;
-  node->_M_symbol = symbol;
+  Model::AliasItem *node = createNode<Model::AliasItem>();
+  node->mCode = code;
+  node->mSymbol = symbol;
   return node;
 }
 
-model::terminal_item *pg::terminal(char const *name, char const *description)
+Model::TerminalItem *terminal(char const *name, char const *description)
 {
-  model::terminal_item *node = create_node<model::terminal_item>();
-  node->_M_name = name;
-  node->_M_description = description;
+  Model::TerminalItem *node = createNode<Model::TerminalItem>();
+  node->mName = name;
+  node->mDescription = description;
   return node;
 }
 
-model::nonterminal_item *pg::nonterminal(model::symbol_item *symbol, char const *arguments)
+Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, char const *arguments)
 {
-  model::nonterminal_item *node = create_node<model::nonterminal_item>();
-  node->_M_symbol = symbol;
-  node->_M_arguments = arguments;
+  Model::NonTerminalItem *node = createNode<Model::NonTerminalItem>();
+  node->mSymbol = symbol;
+  node->mArguments = arguments;
   return node;
 }
 
-model::annotation_item *pg::annotation(
-    char const *name, model::node *item, bool is_sequence,
-    model::variable_declaration_item::storage_type_enum storage_type)
+Model::AnnotationItem *annotation(
+    char const *name, Model::Node *item, bool isSequence,
+    Model::VariableDeclarationItem::StorateType storageType)
 {
-  model::annotation_item *node = create_node<model::annotation_item>();
-  node->_M_item = item;
+  Model::AnnotationItem *node = createNode<Model::AnnotationItem>();
+  node->mItem = item;
 
-  model::variable_declaration_item::variable_type_enum variable_type;
+  Model::VariableDeclarationItem::VariableType variableType;
   char const *type;
 
-  if (model::terminal_item *t = node_cast<model::terminal_item*>(item))
+  if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
     {
-      variable_type = model::variable_declaration_item::type_token;
-      type = t->_M_name;
+      variableType = Model::VariableDeclarationItem::TypeToken;
+      type = t->mName;
     }
-  else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(item))
+  else if (Model::NonTerminalItem *nt = nodeCast<Model::NonTerminalItem*>(item))
     {
-      variable_type = model::variable_declaration_item::type_node;
-      type = nt->_M_symbol->_M_name;
+      variableType = Model::VariableDeclarationItem::TypeNode;
+      type = nt->mSymbol->mName;
     }
   else
     {
-      assert(0); // ### item must either be a terminal or a nonterminal
+      assert(0); // ### item must either be a terminal or a nonTerminal
     }
 
-  node->_M_declaration =
-     pg::variable_declaration(model::variable_declaration_item::declaration_local,
-                              storage_type, variable_type, is_sequence, name, type);
+  node->mDeclaration =
+     variableDeclaration(Model::VariableDeclarationItem::DeclarationLocal,
+                              storageType, variableType, isSequence, name, type);
   return node;
 }
 
-model::condition_item *pg::condition(char const *code, model::node *item)
+Model::ConditionItem *condition(char const *code, Model::Node *item)
 {
-  model::condition_item *node = create_node<model::condition_item>();
-  node->_M_code = code;
-  node->_M_item = item;
+  Model::ConditionItem *node = createNode<Model::ConditionItem>();
+  node->mCode = code;
+  node->mItem = item;
   return node;
 }
 
-model::variable_declaration_item *pg::variable_declaration(
-      model::variable_declaration_item::declaration_type_enum declaration_type,
-      model::variable_declaration_item::storage_type_enum     storage_type,
-      model::variable_declaration_item::variable_type_enum    variable_type,
-      bool is_sequence, char const* name, char const *type)
+Model::VariableDeclarationItem *variableDeclaration(
+      Model::VariableDeclarationItem::DeclarationType declarationType,
+      Model::VariableDeclarationItem::StorateType     storageType,
+      Model::VariableDeclarationItem::VariableType    variableType,
+      bool isSequence, char const* name, char const *type)
 {
-  model::variable_declaration_item *node = create_node<model::variable_declaration_item>();
-  node->_M_name = name;
-  node->_M_type = type;
-  node->_M_declaration_type = declaration_type;
-  node->_M_storage_type     = storage_type;
-  node->_M_variable_type    = variable_type;
-  node->_M_is_sequence      = is_sequence;
-  node->_M_next = 0;
+  Model::VariableDeclarationItem *node = createNode<Model::VariableDeclarationItem>();
+  node->mName = name;
+  node->mType = type;
+  node->mDeclarationType = declarationType;
+  node->mStorageType     = storageType;
+  node->mVariableType    = variableType;
+  node->mIsSequence      = isSequence;
+  node->mNext = 0;
   return node;
 }
 
-settings::member_item *pg::member(settings::member_item::member_kind_enum kind, char const *code)
+Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, char const *code)
 {
-  settings::member_item *node = create_node<settings::member_item>();
-  node->_M_member_kind = kind;
-  node->_M_code = code;
+  Settings::MemberItem *node = createNode<Settings::MemberItem>();
+  node->mMemberKind = kind;
+  node->mCode = code;
   return node;
 }
 
-std::ostream &operator << (std::ostream &out, model::node const *__node)
+std::ostream &operator << (std::ostream &out, Model::Node const *__node)
 {
-  model::node *node = const_cast<model::node*>(__node);
+  Model::Node *node = const_cast<Model::Node*>(__node);
 
-  if (node_cast<model::zero_item*>(node))
+  if (nodeCast<Model::ZeroItem*>(node))
     return (out << "0");
-  else if (model::symbol_item *s = node_cast<model::symbol_item *>(node))
-    return (out << s->_M_name);
-  else if (model::terminal_item *t = node_cast<model::terminal_item *>(node))
-    return (out << t->_M_name);
-  else if (model::annotation_item *a = node_cast<model::annotation_item *>(node))
-    return (out << ((a->_M_declaration->_M_is_sequence) ? "#" : "")
-                << a->_M_declaration->_M_name
-                << ((a->_M_declaration->_M_storage_type
-                     == model::variable_declaration_item::storage_temporary) ? ":" : "=")
-                << a->_M_item);
+  else if (Model::SymbolItem *s = nodeCast<Model::SymbolItem *>(node))
+    return (out << s->mName);
+  else if (Model::TerminalItem *t = nodeCast<Model::TerminalItem *>(node))
+    return (out << t->mName);
+  else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem *>(node))
+    return (out << ((a->mDeclaration->mIsSequence) ? "#" : "")
+                << a->mDeclaration->mName
+                << ((a->mDeclaration->mStorageType
+                     == Model::VariableDeclarationItem::StorageTemporary) ? ":" : "=")
+                << a->mItem);
 #if 0
 
   else
-    if (model::evolve_item *e = node_cast<model::evolve_item *>(node))
-      return (out << "evolve:" << e->_M_symbol->_M_name);
+    if (Model::EvolveItem *e = nodeCast<Model::EvolveItem *>(node))
+      return (out << "evolve:" << e->mSymbol->mName);
 #endif
 
   assert(0);
   return out;
 }
 
-bool reduces_to_epsilon(model::node *node)
+bool reducesToEpsilon(Model::Node *node)
 {
-  if (model::cons_item *c = node_cast<model::cons_item*>(node))
+  if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
     {
-      return reduces_to_epsilon(c->_M_left) && reduces_to_epsilon(c->_M_right);
+      return reducesToEpsilon(c->mLeft) && reducesToEpsilon(c->mRight);
     }
-  else if (model::alternative_item *a = node_cast<model::alternative_item*>(node))
+  else if (Model::AlternativeItem *a = nodeCast<Model::AlternativeItem*>(node))
     {
-      return reduces_to_epsilon(a->_M_left) || reduces_to_epsilon(a->_M_right);
+      return reducesToEpsilon(a->mLeft) || reducesToEpsilon(a->mRight);
     }
-  else if (model::action_item *a = node_cast<model::action_item*>(node))
+  else if (Model::ActionItem *a = nodeCast<Model::ActionItem*>(node))
     {
-      return reduces_to_epsilon(a->_M_item);
+      return reducesToEpsilon(a->mItem);
     }
-  else if (model::condition_item *c = node_cast<model::condition_item*>(node))
+  else if (Model::ConditionItem *c = nodeCast<Model::ConditionItem*>(node))
     {
-      return reduces_to_epsilon(c->_M_item);
+      return reducesToEpsilon(c->mItem);
     }
-  else if (model::try_catch_item *t = node_cast<model::try_catch_item*>(node))
+  else if (Model::TryCatchItem *t = nodeCast<Model::TryCatchItem*>(node))
     {
-      return reduces_to_epsilon(t->_M_try_item)
-             || (t->_M_catch_item && reduces_to_epsilon(t->_M_catch_item));
+      return reducesToEpsilon(t->mTryItem)
+             || (t->mCatchItem && reducesToEpsilon(t->mCatchItem));
     }
-  else if (model::annotation_item *a = node_cast<model::annotation_item*>(node))
+  else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem*>(node))
     {
-      return reduces_to_epsilon(a->_M_item);
+      return reducesToEpsilon(a->mItem);
     }
-  else if (model::nonterminal_item *n = node_cast<model::nonterminal_item*>(node))
+  else if (Model::NonTerminalItem *n = nodeCast<Model::NonTerminalItem*>(node))
     {
-      return reduces_to_epsilon(n->_M_symbol);
+      return reducesToEpsilon(n->mSymbol);
     }
-  else if (model::symbol_item *s = node_cast<model::symbol_item*>(node))
+  else if (Model::SymbolItem *s = nodeCast<Model::SymbolItem*>(node))
     {
-      return _G_system.FIRST(s).find(_G_system.zero()) != _G_system.FIRST(s).end(); // hmm
+      return globalSystem.first(s).find(globalSystem.zero()) != globalSystem.first(s).end(); // hmm
     }
-  else if (model::plus_item *p = node_cast<model::plus_item*>(node))
+  else if (Model::PlusItem *p = nodeCast<Model::PlusItem*>(node))
     {
-      return reduces_to_epsilon(p->_M_item);
+      return reducesToEpsilon(p->mItem);
     }
-  else if (node_cast<model::star_item*>(node))
+  else if (nodeCast<Model::StarItem*>(node))
     {
       return true;
     }
-  else if (node_cast<model::zero_item*>(node))
+  else if (nodeCast<Model::ZeroItem*>(node))
     {
       return true;
     }
@@ -262,33 +265,35 @@ bool reduces_to_epsilon(model::node *node)
   return false;
 }
 
-bool is_zero(model::node *node)
+bool isZero(Model::Node *node)
 {
-  if (model::action_item *a = node_cast<model::action_item*>(node))
+  if (Model::ActionItem *a = nodeCast<Model::ActionItem*>(node))
     {
-      return is_zero(a->_M_item);
+      return isZero(a->mItem);
     }
-  else if (model::condition_item *c = node_cast<model::condition_item*>(node))
+  else if (Model::ConditionItem *c = nodeCast<Model::ConditionItem*>(node))
     {
-      return is_zero(c->_M_item);
+      return isZero(c->mItem);
     }
-  else if (model::annotation_item *a = node_cast<model::annotation_item*>(node))
+  else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem*>(node))
     {
-      return is_zero(a->_M_item);
+      return isZero(a->mItem);
     }
-  else if (model::plus_item *p = node_cast<model::plus_item*>(node))
+  else if (Model::PlusItem *p = nodeCast<Model::PlusItem*>(node))
     {
-      return is_zero(p->_M_item);
+      return isZero(p->mItem);
     }
-  else if (model::star_item *s = node_cast<model::star_item*>(node))
+  else if (Model::StarItem *s = nodeCast<Model::StarItem*>(node))
     {
-      return is_zero(s->_M_item);
+      return isZero(s->mItem);
     }
-  else if (node_cast<model::zero_item*>(node))
+  else if (nodeCast<Model::ZeroItem*>(node))
     {
       return true;
     }
 
   return false;
+}
+
 }
 

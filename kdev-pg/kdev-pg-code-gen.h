@@ -23,148 +23,163 @@
 
 #include "kdev-pg-default-visitor.h"
 
-class code_generator: protected default_visitor
+namespace KDevPG
 {
+
+class CodeGenerator: protected DefaultVisitor
+{
+public:
   std::ostream &out;
-  model::evolve_item *_M_evolve;
-  std::set<std::string> *_M_names;
+  Model::EvolveItem *mEvolve;
+  std::set<std::string> *mNames;
 
 public:
-  code_generator(std::ostream &o, std::set<std::string> *names)
-    : out(o), _M_names(names), _M_current_catch_id(0)
+  CodeGenerator(std::ostream &o, std::set<std::string> *names)
+    : out(o), mNames(names), mCurrentCatchId(0)
   {}
 
-  void operator()(model::node *node);
+  void operator()(Model::Node *node);
 
 protected:
-  virtual void visit_zero(model::zero_item *node);
-  virtual void visit_symbol(model::symbol_item *node);
-  virtual void visit_nonterminal(model::nonterminal_item *node);
-  virtual void visit_terminal(model::terminal_item *node);
-  virtual void visit_plus(model::plus_item *node);
-  virtual void visit_star(model::star_item *node);
-  virtual void visit_action(model::action_item *node);
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_cons(model::cons_item *node);
-  virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_try_catch(model::try_catch_item *node);
-  virtual void visit_alias(model::alias_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
-  virtual void visit_condition(model::condition_item *node);
+  virtual void visitZero(Model::ZeroItem *node);
+  virtual void visitSymbol(Model::SymbolItem *node);
+  virtual void visitNonTerminal(Model::NonTerminalItem *node);
+  virtual void visitTerminal(Model::TerminalItem *node);
+  virtual void visitPlus(Model::PlusItem *node);
+  virtual void visitStar(Model::StarItem *node);
+  virtual void visitAction(Model::ActionItem *node);
+  virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitCons(Model::ConsItem *node);
+  virtual void visitEvolve(Model::EvolveItem *node);
+  virtual void visitTryCatch(Model::TryCatchItem *node);
+  virtual void visitAlias(Model::AliasItem *node);
+  virtual void visitAnnotation(Model::AnnotationItem *node);
+  virtual void visitCondition(Model::ConditionItem *node);
 
 private:
-  int _M_current_catch_id;
-  int set_catch_id(int catch_id);
+  int mCurrentCatchId;
+  int setCatchId(int catch_id);
 };
 
-class gen_forward_parser_rule
+class GenerateForwardParserRule
 {
+public:
   std::ostream &out;
 
 public:
-  gen_forward_parser_rule(std::ostream &o): out(o)
+  GenerateForwardParserRule(std::ostream &o): out(o)
   {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 };
 
-class gen_parser_rule
+class GenerateParserRule
 {
+public:
   std::ostream &out;
-  std::set<std::string> _M_names;
+  std::set<std::string> mNames;
 
 public:
-  gen_parser_rule(std::ostream &o): out(o)
+  GenerateParserRule(std::ostream &o): out(o)
   {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 };
 
-class gen_local_decls: protected default_visitor
+class GenerateLocalDeclarations: protected DefaultVisitor
 {
+public:
   std::ostream &out;
-  std::set<std::string> *_M_names;
+  std::set<std::string> *mNames;
 
 public:
-  gen_local_decls(std::ostream &o, std::set<std::string> *names)
-    : out(o), _M_names(names)
+  GenerateLocalDeclarations(std::ostream &o, std::set<std::string> *names)
+    : out(o), mNames(names)
   {}
 
-  void operator()(model::node *node);
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+  void operator()(Model::Node *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
-class gen_parse_method_signature: protected default_visitor
+class GenerateParseMethodSignature: protected DefaultVisitor
 {
+public:
   std::ostream &out;
-  bool first_parameter;
-  std::set<std::string> *_M_names;
+  bool firstParameter;
+  std::set<std::string> *mNames;
 
 public:
-  gen_parse_method_signature(std::ostream &o, std::set<std::string> *names)
-    : out(o), first_parameter(true), _M_names(names)
+  GenerateParseMethodSignature(std::ostream &o, std::set<std::string> *names)
+    : out(o), firstParameter(true), mNames(names)
   {}
 
-  void operator()(model::symbol_item *node);
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+  void operator()(Model::SymbolItem *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
-class gen_variable_declaration
+class GenerateVariableDeclaration
 {
+public:
   std::ostream &out;
 
 public:
-  gen_variable_declaration(std::ostream &o): out(o)
+  GenerateVariableDeclaration(std::ostream &o): out(o)
   {}
 
-  void operator()(model::variable_declaration_item *node);
+  void operator()(Model::VariableDeclarationItem *node);
 };
 
-class gen_token
+class GenerateToken
 {
+public:
   std::ostream &out;
-  int _M_token_value;
+  int mTokenValue;
 
 public:
-  gen_token(std::ostream &o): out(o), _M_token_value(1000)
+  GenerateToken(std::ostream &o): out(o), mTokenValue(1000)
   {}
 
-  void operator()(std::pair<std::string, model::terminal_item*> const &__it);
+  void operator()(std::pair<std::string, Model::TerminalItem*> const &__it);
 };
 
-class gen_member_code
+class GenerateMemberCode
 {
+public:
   std::ostream &out;
-  int _M_kind_mask;
+  int mKindMask;
 
 public:
-  gen_member_code(std::ostream &o, int kind_mask)
-  : out(o), _M_kind_mask(kind_mask)
+  GenerateMemberCode(std::ostream &o, int kind_mask)
+  : out(o), mKindMask(kind_mask)
   {}
 
-  void operator()(settings::member_item* m);
+  void operator()(Settings::MemberItem* m);
 };
 
-class generate_parser_decls
+class GenerateParserDeclarations
 {
+public:
   std::ostream &out;
 
 public:
-  generate_parser_decls(std::ostream &o): out(o)
+  GenerateParserDeclarations(std::ostream &o): out(o)
+  {}
+
+  void operator()();
+};
+
+class GenerateParserBits
+{
+public:
+  std::ostream &out;
+
+public:
+  GenerateParserBits(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
-class generate_parser_bits
-{
-  std::ostream &out;
-
-public:
-  generate_parser_bits(std::ostream &o): out(o)
-  {}
-
-  void operator()();
-};
+}
 
 #endif // KDEV_PG_CODEGEN_H

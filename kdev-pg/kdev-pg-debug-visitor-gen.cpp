@@ -21,35 +21,40 @@
 #include "kdev-pg.h"
 #include <iostream>
 
-void generate_debug_visitor::operator()()
+namespace KDevPG
 {
-  out << "class " << _G_system.export_macro << " debug_visitor: public default_visitor {" << std::endl
+
+void GenerateDebugVisitor::operator()()
+{
+  out << "class " << globalSystem.exportMacro << " debug_visitor: public DefaultVisitor {" << std::endl
       << "public:" << std::endl;
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
-                gen_debug_visitor_rule(out));
+  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
+                GenerateDebugVisitorRule(out));
 
   out << "};" << std::endl;
 }
 
-void gen_debug_visitor_rule::operator()(std::pair<std::string,
-                                          model::symbol_item*> const &__it)
+void GenerateDebugVisitorRule::operator()(std::pair<std::string,
+                                          Model::SymbolItem*> const &__it)
 {
-  model::symbol_item *sym = __it.second;
+  Model::SymbolItem *sym = __it.second;
 
   bool has_members = false;
-  has_member_nodes hms(has_members);
+  HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit_" << sym->_M_name
-      << "(" << sym->_M_name << "_ast *" << "node"
+  out << "virtual void visit_" << sym->mName
+      << "(" << sym->mName << "_ast *" << "node"
       << ") {" << std::endl;
 
-  out << "std::cout << \"" << sym->_M_name << "\" << std::endl; " << std::endl;
+  out << "std::cout << \"" << sym->mName << "\" << std::endl; " << std::endl;
 
-  out << "default_visitor::visit_" << sym->_M_name
+  out << "DefaultVisitor::visit_" << sym->mName
       << "(" << "node"
       << ");" << std::endl;
 
   out << "}" << std::endl << std::endl;
+}
+
 }

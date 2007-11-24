@@ -21,6 +21,8 @@
 #ifndef KDEV_PG_GENERATE_H
 #define KDEV_PG_GENERATE_H
 
-void generate_output();
-
+namespace KDevPG
+{
+void generateOutput();
+}
 #endif // KDEV_PG_GENERATE_H

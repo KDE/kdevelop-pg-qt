@@ -25,91 +25,103 @@
 #include "kdev-pg.h"
 #include "kdev-pg-default-visitor.h"
 
-struct empty_FIRST_checker: protected default_visitor
+namespace KDevPG
 {
-  void operator()(model::node *node);
+
+class EmptyFirstChecker: protected DefaultVisitor
+{
+public:
+  void operator()(Model::Node *node);
 
 protected:
-  virtual void visit_symbol(model::symbol_item *node);
+  virtual void visitSymbol(Model::SymbolItem *node);
 };
 
-struct FIRST_FIRST_conflict_checker: protected default_visitor
+class FirstFirstConflictChecker: protected DefaultVisitor
 {
-  void operator()(model::node *node);
+public:
+  void operator()(Model::Node *node);
 
 protected:
-  void check(model::node *left, model::node *right);
+  void check(Model::Node *left, Model::Node *right);
 
-  virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_alternative(model::alternative_item *node);
+  virtual void visitEvolve(Model::EvolveItem *node);
+  virtual void visitAlternative(Model::AlternativeItem *node);
 
 private:
-  model::symbol_item *_M_symbol;
-  model::node *_M_checked_node;
+  Model::SymbolItem *mSymbol;
+  Model::Node *mCheckedNode;
 };
 
-struct FIRST_FOLLOW_conflict_checker: protected default_visitor
+class FirstFollowConflictChecker: protected DefaultVisitor
 {
-  void operator()(model::node *node);
+public:
+  void operator()(Model::Node *node);
 
 protected:
-  void check(model::node *node, model::node *sym = 0);
+  void check(Model::Node *node, Model::Node *sym = 0);
 
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_cons(model::cons_item *node);
-  virtual void visit_plus(model::plus_item *node);
-  virtual void visit_star(model::star_item *node);
-
-private:
-  model::symbol_item *_M_symbol;
-};
-
-struct follow_dep_checker
-{
-  follow_dep_checker(model::node *terminal): _M_terminal(terminal) {}
-  void check(model::node *n);
+  virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitCons(Model::ConsItem *node);
+  virtual void visitPlus(Model::PlusItem *node);
+  virtual void visitStar(Model::StarItem *node);
 
 private:
-  model::node *_M_terminal;
-  world::node_set _M_visited;
+  Model::SymbolItem *mSymbol;
 };
 
-struct undefined_symbol_checker: protected default_visitor
+class FollowDepChecker
 {
-  void operator()(model::node *node);
+public:
+  FollowDepChecker(Model::Node *terminal): mTerminal(terminal) {}
+  void check(Model::Node *n);
+
+private:
+  Model::Node *mTerminal;
+  World::NodeSet mVisited;
+};
+
+class UndefinedSymbolChecker: protected DefaultVisitor
+{
+public:
+  void operator()(Model::Node *node);
 
 protected:
-  virtual void visit_symbol(model::symbol_item *node);
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+  virtual void visitSymbol(Model::SymbolItem *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 
 private:
-  model::symbol_item *_M_symbol;
+  Model::SymbolItem *mSymbol;
 };
 
-struct undefined_token_checker: protected default_visitor
+class UndefinedTokenChecker: protected DefaultVisitor
 {
-  void operator()(model::node *node);
+public:
+  void operator()(Model::Node *node);
 
 protected:
-  virtual void visit_terminal(model::terminal_item *node);
+  virtual void visitTerminal(Model::TerminalItem *node);
 
 private:
-  model::symbol_item *_M_symbol;
+  Model::SymbolItem *mSymbol;
 };
 
-struct problem_summary_printer
+class ProblemSummaryPrinter
 {
+public:
   void operator()();
 
-  static void report_first_first_conflict();
-  static void report_first_follow_conflict();
-  static void report_error();
+  static void reportFirstFirstConflict();
+  static void reportFirstFollowConflict();
+  static void reportError();
 
 private:
-  static int _M_first_first_conflict_count;
-  static int _M_first_follow_conflict_count;
-  static int _M_error_count;
+  static int mFirstFirstConflictCount;
+  static int mFirstFollowConflictCount;
+  static int mErrorCount;
 };
+
+}
 
 #endif // KDEV_PG_CHECKER_H
 

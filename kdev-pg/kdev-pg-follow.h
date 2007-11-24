@@ -25,44 +25,52 @@
 #include "kdev-pg.h"
 #include "kdev-pg-default-visitor.h"
 
-struct initialize_FOLLOW: protected default_visitor
+
+namespace KDevPG
 {
-  void operator()(model::node *node);
+
+class InitializeFollow: protected DefaultVisitor
+{
+public:
+  void operator()(Model::Node *node);
 protected:
-  virtual void visit_symbol(model::symbol_item *node);
+  virtual void visitSymbol(Model::SymbolItem *node);
 };
 
-struct next_FOLLOW: protected default_visitor
+class NextFollow: protected DefaultVisitor
 {
-  next_FOLLOW(bool &changed);
+public:
+  NextFollow(bool &changed);
 
-  void operator()(model::node *node);
+  void operator()(Model::Node *node);
 
 protected:
-  void merge(model::node *__dest, world::node_set const &source);
+  void merge(Model::Node *__dest, World::NodeSet const &source);
   /**adds dependency between rule @p dep whose FIRST set is added to
   @p dest FOLLOW set*/
-  void add_first_to_follow_dep(model::node *dest, model::node *dep);
+  void addFirstToFollowDep(Model::Node *dest, Model::Node *dep);
   /**adds dependency between rule @p dep whose FOLLOW set is added to
   @p dest FOLLOW set*/
-  void add_follow_to_follow_dep(model::node *dest, model::node *dep);
+  void addFollowToFollowDep(Model::Node *dest, Model::Node *dep);
 
-  virtual void visit_plus(model::plus_item *node);
-  virtual void visit_star(model::star_item *node);
-  virtual void visit_action(model::action_item *node);
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_cons(model::cons_item *node);
-  virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_try_catch(model::try_catch_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
-  virtual void visit_condition(model::condition_item *node);
-  virtual void visit_nonterminal(model::nonterminal_item *node);
+  virtual void visitPlus(Model::PlusItem *node);
+  virtual void visitStar(Model::StarItem *node);
+  virtual void visitAction(Model::ActionItem *node);
+  virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitCons(Model::ConsItem *node);
+  virtual void visitEvolve(Model::EvolveItem *node);
+  virtual void visitTryCatch(Model::TryCatchItem *node);
+  virtual void visitAnnotation(Model::AnnotationItem *node);
+  virtual void visitCondition(Model::ConditionItem *node);
+  virtual void visitNonTerminal(Model::NonTerminalItem *node);
 
 private:
-  bool &_M_changed;
-  model::symbol_item *_M_symbol;
+  bool &mChanged;
+  Model::SymbolItem *mSymbol;
 };
 
-void compute_FOLLOW();
+void computeFollow();
+
+}
 
 #endif // KDEV_PG_FOLLOW_H

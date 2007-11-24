@@ -21,139 +21,144 @@
 #include "kdev-pg-clone-tree.h"
 #include "kdev-pg.h"
 
-void clone_tree::visit_zero(model::zero_item *node)
+namespace KDevPG
 {
-  _M_temps.push(node);
+
+void CloneTree::visitZero(Model::ZeroItem *node)
+{
+  mTemps.push(node);
 }
 
-void clone_tree::visit_symbol(model::symbol_item *node)
+void CloneTree::visitSymbol(Model::SymbolItem *node)
 {
-  _M_temps.push(node);
+  mTemps.push(node);
 }
 
-void clone_tree::visit_terminal(model::terminal_item *node)
+void CloneTree::visitTerminal(Model::TerminalItem *node)
 {
-  _M_temps.push(node);
+  mTemps.push(node);
 }
 
-void clone_tree::visit_nonterminal(model::nonterminal_item *node)
+void CloneTree::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  _M_temps.push(pg::nonterminal(node->_M_symbol, node->_M_arguments));
+  mTemps.push(KDevPG::nonTerminal(node->mSymbol, node->mArguments));
 }
 
-void clone_tree::visit_plus(model::plus_item *node)
+void CloneTree::visitPlus(Model::PlusItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 
-  model::node *item = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *item = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::plus(item));
+  mTemps.push(KDevPG::plus(item));
 }
 
-void clone_tree::visit_star(model::star_item *node)
+void CloneTree::visitStar(Model::StarItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 
-  model::node *item = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *item = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::star(item));
+  mTemps.push(KDevPG::star(item));
 }
 
-void clone_tree::visit_action(model::action_item *node)
+void CloneTree::visitAction(Model::ActionItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 
-  model::node *item = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *item = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::action(item, node->_M_code));
+  mTemps.push(KDevPG::action(item, node->mCode));
 }
 
-void clone_tree::visit_alternative(model::alternative_item *node)
+void CloneTree::visitAlternative(Model::AlternativeItem *node)
 {
-  visit_node(node->_M_left);
+  visitNode(node->mLeft);
 
-  model::node *left = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *left = mTemps.top();
+  mTemps.pop();
 
-  visit_node(node->_M_right);
+  visitNode(node->mRight);
 
-  model::node *right = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *right = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::alternative(left, right));
+  mTemps.push(KDevPG::alternative(left, right));
 }
 
-void clone_tree::visit_cons(model::cons_item *node)
+void CloneTree::visitCons(Model::ConsItem *node)
 {
-  visit_node(node->_M_left);
+  visitNode(node->mLeft);
 
-  model::node *left = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *left = mTemps.top();
+  mTemps.pop();
 
-  visit_node(node->_M_right);
+  visitNode(node->mRight);
 
-  model::node *right = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *right = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::cons(left, right));
+  mTemps.push(KDevPG::cons(left, right));
 }
 
-void clone_tree::visit_evolve(model::evolve_item *node)
+void CloneTree::visitEvolve(Model::EvolveItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 
-  model::node *item = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *item = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::evolve(item, node->_M_symbol, node->_M_declarations, node->_M_code));
+  mTemps.push(KDevPG::evolve(item, node->mSymbol, node->mDeclarations, node->mCode));
 }
 
-void clone_tree::visit_try_catch(model::try_catch_item *node)
+void CloneTree::visitTryCatch(Model::TryCatchItem *node)
 {
-  visit_node(node->_M_try_item);
+  visitNode(node->mTryItem);
 
-  model::node *try_item = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *try_item = mTemps.top();
+  mTemps.pop();
 
-  model::node *catch_item = 0;
+  Model::Node *catch_item = 0;
 
-  if (node->_M_catch_item)
+  if (node->mCatchItem)
     {
-      visit_node(node->_M_catch_item);
+      visitNode(node->mCatchItem);
 
-      catch_item = _M_temps.top();
-      _M_temps.pop();
+      catch_item = mTemps.top();
+      mTemps.pop();
     }
 
-  _M_temps.push(pg::try_catch(try_item, catch_item));
+  mTemps.push(KDevPG::tryCatch(try_item, catch_item));
 }
 
-void clone_tree::visit_alias(model::alias_item *node)
+void CloneTree::visitAlias(Model::AliasItem *node)
 {
   assert(0); // ### not implemented yet
 }
 
-void clone_tree::visit_annotation(model::annotation_item *node)
+void CloneTree::visitAnnotation(Model::AnnotationItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 
-  model::node *item = _M_temps.top();
-  _M_temps.pop();
+  Model::Node *item = mTemps.top();
+  mTemps.pop();
 
-  _M_temps.push(pg::annotation(node->_M_declaration->_M_name, item,
-                               node->_M_declaration->_M_is_sequence,
-                               node->_M_declaration->_M_storage_type));
+  mTemps.push(KDevPG::annotation(node->mDeclaration->mName, item,
+                               node->mDeclaration->mIsSequence,
+                               node->mDeclaration->mStorageType));
 }
 
-model::node *clone_tree::clone(model::node *node)
+Model::Node *CloneTree::clone(Model::Node *node)
 {
-  _M_temps = std::stack<model::node*>();
-  visit_node(node);
-  model::node *n = _M_temps.top();
-  _M_temps.pop();
-  assert(_M_temps.empty());
+  mTemps = std::stack<Model::Node*>();
+  visitNode(node);
+  Model::Node *n = mTemps.top();
+  mTemps.pop();
+  assert(mTemps.empty());
   return n;
+}
+
 }

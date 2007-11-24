@@ -23,17 +23,20 @@
 #include "kdev-pg-default-visitor.h"
 #include "kdev-pg.h"
 
-struct initialize_environment: protected default_visitor
+namespace KDevPG
 {
-  void operator ()(model::node *node)
+class InitializeEnvironment: protected DefaultVisitor
+{
+public:
+  void operator ()(Model::Node *node)
   {
-    visit_node(node);
+    visitNode(node);
   }
 protected:
-  virtual void visit_evolve(model::evolve_item *node)
+  virtual void visitEvolve(Model::EvolveItem *node)
   {
-    _G_system.env.insert(std::make_pair(node->_M_symbol, node));
+    globalSystem.env.insert(std::make_pair(node->mSymbol, node));
   }
 };
-
+}
 #endif // KDEV_PG_ENVIRONMENT_H

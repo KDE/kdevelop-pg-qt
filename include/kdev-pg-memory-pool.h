@@ -27,9 +27,12 @@
 #include <cstdio>
 #include <cstdlib>
 
-struct block_t
+namespace KDevPG
 {
-  std::size_t _M_block_size;
+
+class BlockType
+{
+  std::size_t blockSize;
   block_t *chain;
   char *data;
   char *ptr;
@@ -37,9 +40,9 @@ struct block_t
 
   inline void init(int block_size = 256)
   {
-    _M_block_size = block_size;
+    blockSize = block_size;
     chain = 0;
-    data = (char*) malloc(block_size);
+    data = (char*) malloc(blockSize);
     ptr = data;
     end = data + block_size;
   }
@@ -67,7 +70,7 @@ struct block_t
 
       if (!chain) {
         chain = (block_t*) malloc(sizeof(block_t));
-        chain->init0(_M_block_size << 2);
+        chain->init0(blockSize << 2);
       }
 
       return chain->allocate(size, right_most);
@@ -84,16 +87,18 @@ struct block_t
 
 };
 
-struct kdev_pg_memory_pool
+class MemoryPool
 {
-  block_t blk;
-  block_t *right_most;
+  BlockType blk;
+  BlockType *rightMost;
 
-  inline kdev_pg_memory_pool() { blk.init0(); right_most = &blk; }
-  inline ~kdev_pg_memory_pool() { blk.destroy(); }
+  inline MemoryPool() { blk.init0(); rightMost = &blk; }
+  inline ~MemoryPool() { blk.destroy(); }
 
   inline void *allocate(size_t size)
-  { return right_most->allocate(size, &right_most); }
+  { return rightMost->allocate(size, &rightMost); }
 };
+
+}
 
 #endif

@@ -22,6 +22,11 @@
 
 #include <iostream>
 
+namespace KDevPG
+{
+
 void format(std::istream &in, std::ostream &out);
+
+}
 
 #endif // KDEV_PG_BEAUTIFIER_H

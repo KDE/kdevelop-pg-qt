@@ -25,54 +25,58 @@
 #include <iostream>
 #include <cassert>
 
-void pretty_printer::visit_zero(model::zero_item *node)
+
+namespace KDevPG
+{
+
+void PrettyPrinter::visitZero(Model::ZeroItem *node)
 {
   out << "0";
 }
 
-void pretty_printer::visit_plus(model::plus_item *node)
+void PrettyPrinter::visitPlus(Model::PlusItem *node)
 {
   out << "(";
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
   out << ")";
   out << "+";
 }
 
-void pretty_printer::visit_star(model::star_item *node)
+void PrettyPrinter::visitStar(Model::StarItem *node)
 {
   out << "(";
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
   out << ")";
   out << "*";
 }
 
-void pretty_printer::visit_symbol(model::symbol_item *node)
+void PrettyPrinter::visitSymbol(Model::SymbolItem *node)
 {
-  out << node->_M_name;
+  out << node->mName;
 }
 
-void pretty_printer::visit_action(model::action_item *node)
+void PrettyPrinter::visitAction(Model::ActionItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 }
 
-void pretty_printer::visit_alternative(model::alternative_item *node)
+void PrettyPrinter::visitAlternative(Model::AlternativeItem *node)
 {
-  std::list<model::node*> top_level_nodes;
+  std::list<Model::Node*> top_level_nodes;
 
-  std::stack<model::node*> working_list;
-  working_list.push(node->_M_right);
-  working_list.push(node->_M_left);
+  std::stack<Model::Node*> working_list;
+  working_list.push(node->mRight);
+  working_list.push(node->mLeft);
 
   while (!working_list.empty())
     {
-      model::node *n = working_list.top();
+      Model::Node *n = working_list.top();
       working_list.pop();
 
-      if (model::alternative_item *a = node_cast<model::alternative_item*>(n))
+      if (Model::AlternativeItem *a = nodeCast<Model::AlternativeItem*>(n))
         {
-          working_list.push(a->_M_right);
-          working_list.push(a->_M_left);
+          working_list.push(a->mRight);
+          working_list.push(a->mLeft);
         }
       else
         {
@@ -83,67 +87,69 @@ void pretty_printer::visit_alternative(model::alternative_item *node)
   bool initial = true;
 
   out << "(";
-  std::list<model::node*>::iterator it = top_level_nodes.begin();
+  std::list<Model::Node*>::iterator it = top_level_nodes.begin();
   while (it != top_level_nodes.end())
     {
       if (!initial)
         out << " | ";
 
-      model::node *n = *it++;
-      visit_node(n);
+      Model::Node *n = *it++;
+      visitNode(n);
       initial = false;
     }
   out << ")";
 }
 
-void pretty_printer::visit_cons(model::cons_item *node)
+void PrettyPrinter::visitCons(Model::ConsItem *node)
 {
-  visit_node(node->_M_left);
+  visitNode(node->mLeft);
   out << " ";
-  visit_node(node->_M_right);
+  visitNode(node->mRight);
 }
 
-void pretty_printer::visit_evolve(model::evolve_item *node)
+void PrettyPrinter::visitEvolve(Model::EvolveItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
   out << " -> ";
-  visit_node(node->_M_symbol);
+  visitNode(node->mSymbol);
 }
 
-void pretty_printer::visit_try_catch(model::try_catch_item *node)
+void PrettyPrinter::visitTryCatch(Model::TryCatchItem *node)
 {
-  out << "try/" << (node->_M_catch_item ? "rollback" : "recover") << "(";
-  visit_node(node->_M_try_item);
+  out << "try/" << (node->mCatchItem ? "rollback" : "recover") << "(";
+  visitNode(node->mTryItem);
   out << ")";
 
-  if (node->_M_catch_item)
+  if (node->mCatchItem)
     {
       out << " catch(";
-      visit_node(node->_M_catch_item);
+      visitNode(node->mCatchItem);
       out << ")";
     }
 }
 
-void pretty_printer::visit_alias(model::alias_item *node)
+void PrettyPrinter::visitAlias(Model::AliasItem *node)
 {
   assert(0); // ### not implemented yet
 }
 
-void pretty_printer::visit_terminal(model::terminal_item *node)
+void PrettyPrinter::visitTerminal(Model::TerminalItem *node)
 {
-  out << node->_M_name;
+  out << node->mName;
 }
 
-void pretty_printer::visit_nonterminal(model::nonterminal_item *node)
+void PrettyPrinter::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  visit_node(node->_M_symbol);
+  visitNode(node->mSymbol);
 }
 
-void pretty_printer::visit_annotation(model::annotation_item *node)
+void PrettyPrinter::visitAnnotation(Model::AnnotationItem *node)
 {
-  out << ((node->_M_declaration->_M_is_sequence) ? "#" : "")
-      << node->_M_declaration->_M_name
-      << ((node->_M_declaration->_M_storage_type
-           == model::variable_declaration_item::storage_temporary) ? ":" : "=");
-  visit_node(node->_M_item);
+  out << ((node->mDeclaration->mIsSequence) ? "#" : "")
+      << node->mDeclaration->mName
+      << ((node->mDeclaration->mStorageType
+           == Model::VariableDeclarationItem::StorageTemporary) ? ":" : "=");
+  visitNode(node->mItem);
+}
+
 }

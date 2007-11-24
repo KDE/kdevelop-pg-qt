@@ -1,4 +1,4 @@
-/*
+ /*
   This file is part of kdev-pg
   Copyright 2005, 2006 Roberto Raggi <roberto@kdevelop.org>
 
@@ -26,37 +26,40 @@
 #include <cstdlib>
 #include <memory>
 
+namespace KDevPG
+{
+
 template <class _Tp>
-class kdev_pg_allocator
+class Allocator
 {
 public:
-  typedef _Tp value_type;
+  typedef _Tp valueType;
   typedef _Tp* pointer;
-  typedef const _Tp* const_pointer;
+  typedef const _Tp* constPointer;
   typedef _Tp& reference;
-  typedef const _Tp& const_reference;
-  typedef std::size_t size_type;
-  typedef std::ptrdiff_t difference_type;
+  typedef const _Tp& constReference;
+  typedef std::size_t sizeType;
+  typedef std::ptrdiff_t differenceType;
 
-  static const size_type max_block_count = size_type( -1);
+  static const sizeType maxBlockCount = sizeType( -1);
 
-  kdev_pg_allocator()
+  Allocator()
   {
-    _S_ref++;
+    sReference++;
   }
 
-  ~kdev_pg_allocator()
+  ~Allocator()
   {
-    if (--_S_ref == 0)
+    if (--sReference == 0)
       {
-        ++_S_block_index;
+        ++sBlockIndex;
 
-        for (size_type index = 0; index < _S_block_index; ++index)
-          delete[] _S_storage[index];
+        for (sizeType index = 0; index < sBlockIndex; ++index)
+          delete[] sStorage[index];
 
-        --_S_block_index;
+        --sBlockIndex;
 
-        ::free(_S_storage);
+        ::free(sStorage);
       }
   }
 
@@ -64,47 +67,47 @@ public:
   {
     return &__val;
   }
-  const_pointer address(const_reference __val) const
+  constPointer address(constReference __val) const
   {
     return &__val;
   }
 
-  pointer allocate(size_type __n, const void* = 0)
+  pointer allocate(sizeType __n, const void* = 0)
   {
-    const size_type bytes = __n * sizeof(_Tp);
+    const sizeType bytes = __n * sizeof(_Tp);
 
-    if (_S_current_block == 0
-        || _S_block_size < _S_current_index + bytes)
+    if (sCurrentBlock == 0
+        || sBlockSize < sCurrentIndex + bytes)
       {
-        ++_S_block_index;
+        ++sBlockIndex;
 
-        _S_storage = reinterpret_cast<char**>
-          (::realloc(_S_storage, sizeof(char*) * (1 + _S_block_index)));
+        sStorage = reinterpret_cast<char**>
+          (::realloc(sStorage, sizeof(char*) * (1 + sBlockIndex)));
 
-        _S_current_block = _S_storage[_S_block_index] = reinterpret_cast<char*>
-          (new char[_S_block_size]);
+        sCurrentBlock = sStorage[sBlockIndex] = reinterpret_cast<char*>
+          (new char[sBlockSize]);
 
-        ::memset(_S_current_block, 0, _S_block_size);
-        _S_current_index = 0;
+        ::memset(sCurrentBlock, 0, sBlockSize);
+        sCurrentIndex = 0;
       }
 
     pointer p = reinterpret_cast<pointer>
-      (_S_current_block + _S_current_index);
+      (sCurrentBlock + sCurrentIndex);
 
-    _S_current_index += bytes;
+    sCurrentIndex += bytes;
 
     return p;
   }
 
-  void deallocate(pointer __p, size_type __n)
+  void deallocate(pointer __p, sizeType __n)
   {}
 
-  size_type max_size() const
+  sizeType maxSize() const
   {
-    return size_type( -1) / sizeof(_Tp);
+    return sizeType( -1) / sizeof(_Tp);
   }
 
-  void contruct(pointer __p, const_reference __val)
+  void contruct(pointer __p, constReference __val)
   {
     new (__p) _Tp(__val);
   }
@@ -115,46 +118,48 @@ public:
 
 private:
   template <class _Tp1>
-  struct rebind
+  class Rebind
   {
-    typedef kdev_pg_allocator<_Tp1> other;
+    typedef Allocator<_Tp1> other;
   };
 
   template <class _Tp1>
-  kdev_pg_allocator(const kdev_pg_allocator<_Tp1> &__o)
+  Allocator(const Allocator<_Tp1> &__o)
   {}
 
 private:
-  static size_type _S_ref;
-  static const size_type _S_block_size;
-  static size_type _S_block_index;
-  static size_type _S_current_index;
-  static char *_S_current_block;
-  static char **_S_storage;
+  static sizeType sReference;
+  static const sizeType sBlockSize;
+  static sizeType sBlockIndex;
+  static sizeType sCurrentIndex;
+  static char *sCurrentBlock;
+  static char **sStorage;
 };
 
 template <class _Tp>
-typename kdev_pg_allocator<_Tp>::size_type
-kdev_pg_allocator<_Tp>::_S_ref = 0;
+typename Allocator<_Tp>::sizeType
+Allocator<_Tp>::sReference = 0;
 
 template <class _Tp>
-const typename kdev_pg_allocator<_Tp>::size_type
-kdev_pg_allocator<_Tp>::_S_block_size = 1 << 16; // 64K
+const typename Allocator<_Tp>::sizeType
+Allocator<_Tp>::sBlockSize = 1 << 16; // 64K
 
 template <class _Tp>
-typename kdev_pg_allocator<_Tp>::size_type
-kdev_pg_allocator<_Tp>::_S_block_index = max_block_count;
+typename Allocator<_Tp>::sizeType
+Allocator<_Tp>::sBlockIndex = maxBlockCount;
 
 template <class _Tp>
-typename kdev_pg_allocator<_Tp>::size_type
-kdev_pg_allocator<_Tp>::_S_current_index = 0;
+typename Allocator<_Tp>::sizeType
+Allocator<_Tp>::sCurrentIndex = 0;
 
 template <class _Tp>
 char**
-kdev_pg_allocator<_Tp>::_S_storage = 0;
+Allocator<_Tp>::sStorage = 0;
 
 template <class _Tp>
 char*
-kdev_pg_allocator<_Tp>::_S_current_block = 0;
+Allocator<_Tp>::sCurrentBlock = 0;
+
+}
 
 #endif // KDEV_PG_ALLOCATOR_H

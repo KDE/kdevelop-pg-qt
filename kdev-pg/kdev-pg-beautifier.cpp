@@ -20,6 +20,9 @@
 #include "kdev-pg-beautifier.h"
 #include "astyle.h"
 
+namespace KDevPG
+{
+
 void format(std::istream &in, std::ostream &out)
 {
   astyle::ASFormatter f;
@@ -45,4 +48,6 @@ void format(std::istream &in, std::ostream &out)
       out << f.nextLine() << std::endl;
     }
   while (f.hasMoreLines());
+}
+
 }

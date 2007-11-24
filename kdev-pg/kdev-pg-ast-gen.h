@@ -27,36 +27,43 @@
 #include <list>
 #include <string>
 
-class generate_ast
+namespace KDevPG
 {
+
+class GenerateAst
+{
+public:
   std::ostream &out;
 
 public:
-  generate_ast(std::ostream &o): out(o)
+  GenerateAst(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
-class gen_ast_rule: protected default_visitor
+class GenerateAstRule: protected DefaultVisitor
 {
+public:
   std::ostream &out;
-  std::set<std::string> _M_names;
-  bool _M_in_alternative;
-  bool _M_in_cons;
+  std::set<std::string> mNames;
+  bool mInAlternative;
+  bool mInCons;
 
 public:
-  gen_ast_rule(std::ostream &o): out(o) {}
+  GenerateAstRule(std::ostream &o): out(o) {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 
 protected:
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
-  virtual void visit_cons(model::cons_item *node);
+  virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  virtual void visitCons(Model::ConsItem *node);
 
-  bool switch_alternative(bool alt);
-  bool switch_cons(bool c);
+  bool switchAlternative(bool alt);
+  bool switchCons(bool c);
 };
+
+}
 
 #endif // KDEV_PG_AST_GEN_H

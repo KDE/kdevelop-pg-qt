@@ -30,101 +30,100 @@
 #include <string>
 #include <cassert>
 
-namespace pg
+namespace KDevPG
 {
-  model::zero_item *zero();
-  model::plus_item *plus(model::node *item);
-  model::star_item *star(model::node *item);
-  model::symbol_item *symbol(char const *name);
-  model::action_item *action(model::node *item, char const *code);
-  model::alternative_item *alternative(model::node *left, model::node *right);
-  model::cons_item *cons(model::node *left, model::node *right);
-  model::evolve_item *evolve(
-      model::node *item, model::symbol_item *symbol,
-      model::variable_declaration_item *declarations, char const *code
+  Model::ZeroItem *zero();
+  Model::PlusItem *plus(Model::Node *item);
+  Model::StarItem *star(Model::Node *item);
+  Model::SymbolItem *symbol(char const *name);
+  Model::ActionItem *action(Model::Node *item, char const *code);
+  Model::AlternativeItem *alternative(Model::Node *left, Model::Node *right);
+  Model::ConsItem *cons(Model::Node *left, Model::Node *right);
+  Model::EvolveItem *evolve(
+      Model::Node *item, Model::SymbolItem *symbol,
+      Model::VariableDeclarationItem *declarations, char const *code
   );
-  model::try_catch_item *try_catch(model::node *try_item, model::node *catch_item);
-  model::alias_item *alias(char const *code, model::symbol_item *symbol);
-  model::terminal_item *terminal(char const *name, char const *description);
-  model::nonterminal_item *nonterminal(model::symbol_item *symbol, char const *arguments);
-  model::condition_item *condition(char const *code, model::node *item);
-  model::annotation_item *annotation(
-      char const *name, model::node *item, bool is_sequence,
-      model::variable_declaration_item::storage_type_enum storage_type
+  Model::TryCatchItem *tryCatch(Model::Node *try_item, Model::Node *catch_item);
+  Model::AliasItem *alias(char const *code, Model::SymbolItem *symbol);
+  Model::TerminalItem *terminal(char const *name, char const *description);
+  Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, char const *arguments);
+  Model::ConditionItem *condition(char const *code, Model::Node *item);
+  Model::AnnotationItem *annotation(
+      char const *name, Model::Node *item, bool isSequence,
+      Model::VariableDeclarationItem::StorateType storageType
   );
-  model::variable_declaration_item *variable_declaration(
-      model::variable_declaration_item::declaration_type_enum declaration_type,
-      model::variable_declaration_item::storage_type_enum     storage_type,
-      model::variable_declaration_item::variable_type_enum    variable_type,
-      bool is_sequence, char const* name, char const *type
+  Model::VariableDeclarationItem *variableDeclaration(
+      Model::VariableDeclarationItem::DeclarationType declarationType,
+      Model::VariableDeclarationItem::StorateType     storageType,
+      Model::VariableDeclarationItem::VariableType    variableType,
+      bool isSequence, char const* name, char const *type
   );
-  settings::member_item *member(settings::member_item::member_kind_enum kind, char const *code);
-} // namespace pg
+  Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, char const *code);
 
-struct world
+class World
 {
-  typedef struct member_code {
-    std::deque<settings::member_item*> declarations;
-    std::deque<settings::member_item*> constructor_code;
-    std::deque<settings::member_item*> destructor_code;
+public:
+  typedef struct MemberCode {
+    std::deque<Settings::MemberItem*> declarations;
+    std::deque<Settings::MemberItem*> constructorCode;
+    std::deque<Settings::MemberItem*> destructorCode;
   };
-  typedef std::set<model::node*> node_set;
-  typedef std::map<std::string, model::symbol_item*> symbol_set;
-  typedef std::map<std::string, model::terminal_item*> terminal_set;
-  typedef std::multimap<model::symbol_item*, model::evolve_item*> environment;
-  typedef std::multimap<std::string, std::string> namespace_set;
+  typedef std::set<Model::Node*> NodeSet;
+  typedef std::map<std::string, Model::SymbolItem*> SymbolSet;
+  typedef std::map<std::string, Model::TerminalItem*> TerminalSet;
+  typedef std::multimap<Model::SymbolItem*, Model::EvolveItem*> Environment;
+  typedef std::multimap<std::string, std::string> NamespaceSet;
 
-  typedef std::map<std::pair<model::node*, int>, node_set> first_set;
-  typedef std::map<std::pair<model::node*, int>, node_set> follow_set;
+  typedef std::map<std::pair<Model::Node*, int>, NodeSet> FirstSet;
+  typedef std::map<std::pair<Model::Node*, int>, NodeSet> FollowSet;
 
   /**pair: list of rules whose FIRST set is used to calculate FOLLOW,
   list of rules whose FOLLOW set is used to calculate FOLLOW*/
-  typedef std::pair<node_set, node_set> follow_dep;
+  typedef std::pair<NodeSet, NodeSet> FollowDep;
   /**key: rule whose FOLLOW set has a dependency on other rules' FIRST and FOLLOW,
   value: follow set dependency*/
-  typedef std::map<model::node*, follow_dep> follow_deps;
+  typedef std::map<Model::Node*, FollowDep> FollowDeps;
 
-  world()
-    : token_stream("kdev_pg_token_stream"), language(0), ns(0), decl(0), bits(0),
-      export_macro(""), export_macro_header(0), generate_ast(true),
-      gen_serialize_visitor(false), gen_debug_visitor(false),
-      need_state_management(false), adapt_to_kdevelop(false), start(0), _M_zero(0)
+  World()
+    : tokenStream("kdev_pg_tokenStream"), language(0), ns(0), decl(0), bits(0),
+      exportMacro(""), exportMacroHeader(0), GenerateAst(true),
+      generateSerializeVisitor(false), generateDebugVisitor(false),
+      needStateManagement(false), start(0), mZero(0)
   {}
 
   // options
-  char const *token_stream;
+  char const *tokenStream;
   char const *language;
   char const *ns;
   char const *decl;
   char const *bits;
-  char const *export_macro;
-  char const *export_macro_header;
-  bool generate_ast;
-  bool gen_serialize_visitor;
-  bool gen_debug_visitor;
-  bool need_state_management;
-  bool adapt_to_kdevelop;
+  char const *exportMacro;
+  char const *exportMacroHeader;
+  bool GenerateAst;
+  bool generateSerializeVisitor;
+  bool generateDebugVisitor;
+  bool needStateManagement;
 
-  model::zero_item *zero()
+  Model::ZeroItem *zero()
   {
-    if (!_M_zero)
-      _M_zero = pg::zero();
-    return _M_zero;
+    if (!mZero)
+      mZero = KDevPG::zero();
+    return mZero;
   }
 
-  model::terminal_item *terminal(char const *__name)
+  Model::TerminalItem *terminal(char const *__name)
   {
     std::string name = __name;
-    terminal_set::iterator it = terminals.find(name);
+    TerminalSet::iterator it = terminals.find(name);
     if (it == terminals.end())
-      return pg::terminal(__name, __name);
+      return KDevPG::terminal(__name, __name);
 
     return (*it).second;
   }
 
-  void push_rule(model::node *rule)
+  void pushRule(Model::Node *rule)
   {
-    model::evolve_item *e = node_cast<model::evolve_item*>(rule);
+    Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(rule);
     assert(e != 0);
 
     if (rules.empty())
@@ -132,87 +131,90 @@ struct world
     rules.push_back(e);
   }
 
-  void push_namespace(char const *name, char const *code)
+  void pushNamespace(char const *name, char const *code)
   {
     namespaces.insert(std::make_pair(name, code));
   }
 
-  void push_parserclass_member(model::node *member)
+  void pushParserClassMember(Model::Node *member)
   {
-    settings::member_item *m = node_cast<settings::member_item*>(member);
+    Settings::MemberItem *m = nodeCast<Settings::MemberItem*>(member);
     assert(m != 0);
 
-    if (m->_M_member_kind == settings::member_item::constructor_code)
-      parserclass_members.constructor_code.push_back(m);
-    else if (m->_M_member_kind == settings::member_item::destructor_code)
-      parserclass_members.destructor_code.push_back(m);
+    if (m->mMemberKind == Settings::MemberItem::ConstructorCode)
+      parserclassMembers.constructorCode.push_back(m);
+    else if (m->mMemberKind == Settings::MemberItem::DestructorCode)
+      parserclassMembers.destructorCode.push_back(m);
     else // public, protected or private declaration
-      parserclass_members.declarations.push_back(m);
+      parserclassMembers.declarations.push_back(m);
   }
 
-  model::terminal_item *push_terminal(char const *__name, char const *__description)
+  Model::TerminalItem *pushTerminal(char const *__name, char const *__description)
   {
     std::string name = __name;
-    terminal_set::iterator it = terminals.find(name);
+    TerminalSet::iterator it = terminals.find(name);
     if (it == terminals.end())
-      it = terminals.insert(std::make_pair(name, pg::terminal(__name, __description))).first;
+      it = terminals.insert(std::make_pair(name, KDevPG::terminal(__name, __description))).first;
 
     return (*it).second;
   }
 
-  model::symbol_item *push_symbol(char const *__name)
+  Model::SymbolItem *pushSymbol(char const *__name)
   {
     std::string name = __name;
-    symbol_set::iterator it = symbols.find(name);
+    SymbolSet::iterator it = symbols.find(name);
     if (it == symbols.end())
-      it = symbols.insert(std::make_pair(name, pg::symbol(__name))).first;
+      it = symbols.insert(std::make_pair(name, KDevPG::symbol(__name))).first;
 
     return (*it).second;
   }
 
-  first_set::iterator FIRST_begin() { return FIRST_K.begin(); }
-  first_set::iterator FIRST_end() { return FIRST_K.end(); }
+  FirstSet::iterator firstBegin() { return firstSet.begin(); }
+  FirstSet::iterator firstEnd() { return firstSet.end(); }
 
-  follow_set::iterator FOLLOW_begin() { return FOLLOW_K.begin(); }
-  follow_set::iterator FOLLOW_end() { return FOLLOW_K.end(); }
+  FollowSet::iterator followBegin() { return followSet.begin(); }
+  FollowSet::iterator followEnd() { return followSet.end(); }
 
-  node_set &FIRST(model::node *node, int K = 1)
-  { return FIRST_K[std::make_pair(node, K)]; }
+  NodeSet &first(Model::Node *node, int K = 1)
+  { return firstSet[std::make_pair(node, K)]; }
 
-  node_set &FOLLOW(model::node *node, int K = 1)
-  { return FOLLOW_K[std::make_pair(node, K)]; }
+  NodeSet &follow(Model::Node *node, int K = 1)
+  { return followSet[std::make_pair(node, K)]; }
 
-  follow_dep &FOLLOW_DEP(model::node *node)
-  { return FOLLOW_D[node]; }
+  FollowDep &followDep(Model::Node *node)
+  { return followDeps[node]; }
 
-  first_set::iterator find_in_FIRST(model::node *node, int K = 1)
-  { return FIRST_K.find(std::make_pair(node, K)); }
+  FirstSet::iterator findInFirst(Model::Node *node, int K = 1)
+  { return firstSet.find(std::make_pair(node, K)); }
 
-  follow_set::iterator find_in_FOLLOW(model::node *node, int K = 1)
-  { return FOLLOW_K.find(std::make_pair(node, K)); }
+  FollowSet::iterator findInFollow(Model::Node *node, int K = 1)
+  { return followSet.find(std::make_pair(node, K)); }
 
-  model::evolve_item *start;
-  model::zero_item *_M_zero;
+  Model::EvolveItem *start;
+  Model::ZeroItem *mZero;
 
-  symbol_set symbols;
-  terminal_set terminals;
-  std::deque<model::node*> rules;
-  namespace_set namespaces;
-  member_code parserclass_members;
+  SymbolSet symbols;
+  TerminalSet terminals;
+  std::deque<Model::Node*> rules;
+  NamespaceSet namespaces;
+  MemberCode parserclassMembers;
 
-  environment env;
+  Environment env;
 
 private:
-  first_set FIRST_K;
-  follow_set FOLLOW_K;
-  follow_deps FOLLOW_D;
+  FirstSet firstSet;
+  FollowSet followSet;
+  FollowDeps followDeps;
 };
 
-bool reduces_to_epsilon(model::node *node);
-bool is_zero(model::node *node);
-std::ostream &operator << (std::ostream &out, model::node const *__node);
 
-extern world _G_system;
+bool reducesToEpsilon(Model::Node *node);
+bool isZero(Model::Node *node);
+std::ostream &operator << (std::ostream &out, Model::Node const *__node);
+
+}
+
+extern KDevPG::World globalSystem;
 extern FILE *file;
 
 #endif // KDEV_PG_H

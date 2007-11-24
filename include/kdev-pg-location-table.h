@@ -27,37 +27,40 @@
 #include <cstdlib>
 #include <cassert>
 
-struct kdev_pg_location_table
+namespace KDevPG
 {
-  inline kdev_pg_location_table(std::size_t size = 1024)
-    : lines(0), line_count(0), current_line(0)
+
+class LocationTable
+{
+  inline LocationTable(std::size_t size = 1024)
+    : lines(0), lineCount(0), currentLine(0)
   {
     resize(size);
-    lines[current_line++] = 0;
+    lines[currentLine++] = 0;
   }
 
-  inline ~kdev_pg_location_table()
+  inline ~LocationTable()
   {
     free(lines);
   }
 
   inline std::size_t size() const
-  { return line_count; }
+  { return lineCount; }
 
   void resize(std::size_t size)
   {
     assert(size > 0);
     lines = (std::size_t*) ::realloc(lines, sizeof(std::size_t) * size);
-    line_count = size;
+    lineCount = size;
   }
 
   /**
    * Returns the \a line and \a column of the given \a offset in this table.
    */
-  void position_at(std::size_t offset, size_t *line, size_t *column) const
+  void positionAt(std::size_t offset, size_t *line, size_t *column) const
   {
     std::size_t idx = 0;
-    for( std::size_t i = 0; i < current_line; i++ )
+    for( std::size_t i = 0; i < currentLine; i++ )
     {
       if( lines[i] > offset )
       {
@@ -77,14 +80,14 @@ struct kdev_pg_location_table
 
   /**
    * Marks an \a offset as the character before the first one in the next line.
-   * The position_at() function relies on newline() being called properly.
+   * The positionAt() function relies on newline() being called properly.
    */
   inline void newline(std::size_t offset)
   {
-    if (current_line == line_count)
-      resize(current_line * 2);
+    if (current_line == lineCount)
+      resize(currentLine * 2);
 
-    lines[current_line++] = offset+1;
+    lines[currentLine++] = offset+1;
   }
 
   inline std::size_t &operator[](int index)
@@ -94,15 +97,16 @@ private:
   /// An array of input buffer offsets
   std::size_t *lines;
   /// The size of the allocated array
-  std::size_t line_count;
+  std::size_t lineCount;
   /// The index to the next index in the lines array
-  std::size_t current_line;
+  std::size_t currentLine;
 
 private:
-  kdev_pg_location_table(kdev_pg_location_table const &other);
-  void operator=(kdev_pg_location_table const &other);
+  LocationTable(LocationTable const &other);
+  void operator=(LocationTable const &other);
 };
 
+}
 
 #endif // KDEV_PG_LOCATION_TABLE_H
 

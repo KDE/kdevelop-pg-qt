@@ -23,50 +23,57 @@
 #include "kdev-pg.h"
 #include "kdev-pg-default-visitor.h"
 
-struct initialize_FIRST: protected default_visitor
+namespace KDevPG
 {
-  void operator ()(model::node *node);
+
+class InitializeFirst: protected DefaultVisitor
+{
+public:
+  void operator ()(Model::Node *node);
 
 protected:
-  virtual void visit_node(model::node *node);
-  virtual void visit_zero(model::zero_item *node);
-  virtual void visit_terminal(model::terminal_item *node);
+  virtual void visitNode(Model::Node *node);
+  virtual void visitZero(Model::ZeroItem *node);
+  virtual void visitTerminal(Model::TerminalItem *node);
 };
 
-struct next_FIRST: protected default_visitor
+class NextFirst: protected DefaultVisitor
 {
-  next_FIRST(bool &changed);
+public:
+  NextFirst(bool &changed);
 
-  void operator ()(model::node *node);
+  void operator ()(Model::Node *node);
 
 protected:
-  bool block_merge(bool block);
-  bool block_zero_merge(bool block);
-  void merge(model::node *__dest, model::node *__source, int K = 1);
+  bool blockMerge(bool block);
+  bool blockZeroMerge(bool block);
+  void merge(Model::Node *__dest, Model::Node *__source, int K = 1);
 
-  virtual void visit_node(model::node *node);
-  virtual void visit_zero(model::zero_item *node);
-  virtual void visit_terminal(model::terminal_item *node);
-  virtual void visit_nonterminal(model::nonterminal_item *node);
-  virtual void visit_symbol(model::symbol_item *node);
-  virtual void visit_plus(model::plus_item *node);
-  virtual void visit_star(model::star_item *node);
-  virtual void visit_action(model::action_item *node);
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_cons(model::cons_item *node);
-  virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_try_catch(model::try_catch_item *node);
-  virtual void visit_alias(model::alias_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
-  virtual void visit_condition(model::condition_item* node);
+  virtual void visitNode(Model::Node *node);
+  virtual void visitZero(Model::ZeroItem *node);
+  virtual void visitTerminal(Model::TerminalItem *node);
+  virtual void visitNonTerminal(Model::NonTerminalItem *node);
+  virtual void visitSymbol(Model::SymbolItem *node);
+  virtual void visitPlus(Model::PlusItem *node);
+  virtual void visitStar(Model::StarItem *node);
+  virtual void visitAction(Model::ActionItem *node);
+  virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitCons(Model::ConsItem *node);
+  virtual void visitEvolve(Model::EvolveItem *node);
+  virtual void visitTryCatch(Model::TryCatchItem *node);
+  virtual void visitAlias(Model::AliasItem *node);
+  virtual void visitAnnotation(Model::AnnotationItem *node);
+  virtual void visitCondition(Model::ConditionItem* node);
 
 private:
-  model::node *_M_item;
-  bool _M_merge_blocked;
-  bool _M_merge_zero_blocked;
-  bool &_M_changed;
+  Model::Node *mItem;
+  bool mMergeBlocked;
+  bool mMergeZeroBlocked;
+  bool &mChanged;
 };
 
-void compute_FIRST();
+void computeFirst();
+
+}
 
 #endif // KDEV_PG_FIRST_H

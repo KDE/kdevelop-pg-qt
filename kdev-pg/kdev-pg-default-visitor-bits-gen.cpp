@@ -22,99 +22,104 @@
 #include "kdev-pg.h"
 #include <iostream>
 
-void gen_default_visitor_bits_rule::operator()(std::pair<std::string,model::symbol_item*> const &__it)
+namespace KDevPG
 {
-  _M_names.clear();
-  _M_variable_declarations.clear();
 
-  model::symbol_item *sym = __it.second;
+void GenerateDefaultVisitorBitsRule::operator()(std::pair<std::string,Model::SymbolItem*> const &__it)
+{
+  mNames.clear();
+  mVariableDeclarations.clear();
+
+  Model::SymbolItem *sym = __it.second;
 
   bool has_members = false;
-  has_member_nodes hms(has_members);
+  HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "void default_visitor::visit_" << sym->_M_name
-      << "(" << sym->_M_name << "_ast *" << (has_members ? "node" : "")
+  out << "void DefaultVisitor::visit_" << sym->mName
+      << "(" << sym->mName << "_ast *" << (has_members ? "node" : "")
       << ") {" << std::endl;
 
-  world::environment::iterator it = _G_system.env.find(sym);
-  while (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  while (it != globalSystem.env.end())
     {
-      model::evolve_item *e = (*it).second;
+      Model::EvolveItem *e = (*it).second;
       if ((*it).first != sym)
         break;
 
       ++it;
 
-      visit_node(e);
+      visitNode(e);
     }
 
   out << "}" << std::endl << std::endl;
 }
 
-void gen_default_visitor_bits_rule::visit_variable_declaration(model::variable_declaration_item *node)
+void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
   do
   {
-    if (node->_M_storage_type != model::variable_declaration_item::storage_ast_member)
+    if (node->mStorageType != Model::VariableDeclarationItem::StorageAstMember)
       break;
 
-    if (node->_M_variable_type != model::variable_declaration_item::type_node)
+    if (node->mVariableType != Model::VariableDeclarationItem::TypeNode)
       break; // nothing to do
 
-    if (_M_names.find(node->_M_name) != _M_names.end())
+    if (mNames.find(node->mName) != mNames.end())
       break;
 
-    std::string base_type = std::string(node->_M_type) + "_ast*";
+    std::string base_type = std::string(node->mType) + "_ast*";
 
-    if (node->_M_is_sequence)
+    if (node->mIsSequence)
       {
-        out << "if (" << "node->" << node->_M_name << "_sequence" << ") {"
+        out << "if (" << "node->" << node->mName << "_sequence" << ") {"
             << "const list_node<" << base_type << "> *__it = "
-            << "node->" << node->_M_name << "_sequence" << "->to_front()"
+            << "node->" << node->mName << "_sequence" << "->to_front()"
             << ", *__end = __it;" << std::endl
             << "do {" << std::endl
-            << "visit_node(__it->element);" << std::endl
+            << "visitNode(__it->element);" << std::endl
             << "__it = __it->next;" << std::endl
             << "} while (__it != __end);" << std::endl
             << "}" << std::endl;
       }
     else
       {
-        out << "visit_node(" << "node->" << node->_M_name << ")" << ";" << std::endl;
+        out << "visitNode(" << "node->" << node->mName << ")" << ";" << std::endl;
       }
 
-    _M_names.insert(node->_M_name);
-    _M_variable_declarations.push_back(node);
+    mNames.insert(node->mName);
+    mVariableDeclarations.push_back(node);
 
   } while(false);
 
-  default_visitor::visit_variable_declaration(node);
+  DefaultVisitor::visitVariableDeclaration(node);
 }
 
 
-void has_member_nodes::operator()(model::symbol_item *sym)
+void HasMemberNodes::operator()(Model::SymbolItem *sym)
 {
   has_members = false;
 
-  world::environment::iterator it = _G_system.env.find(sym);
-  while (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  while (it != globalSystem.env.end())
     {
-      model::evolve_item *e = (*it).second;
+      Model::EvolveItem *e = (*it).second;
       if ((*it).first != sym)
         break;
 
       ++it;
 
-      visit_node(e);
+      visitNode(e);
     }
 }
 
-void has_member_nodes::visit_variable_declaration(model::variable_declaration_item *node)
+void HasMemberNodes::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
-  if (node->_M_storage_type == model::variable_declaration_item::storage_ast_member
-      && node->_M_variable_type == model::variable_declaration_item::type_node)
+  if (node->mStorageType == Model::VariableDeclarationItem::StorageAstMember
+      && node->mVariableType == Model::VariableDeclarationItem::TypeNode)
     {
       has_members = true;
     }
+}
+
 }

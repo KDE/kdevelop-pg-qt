@@ -26,13 +26,17 @@
 #include <iostream>
 
 //uncomment this to see debug output for follow dependency calculation
-// #define FOLLOW_DEP_DEBUG
+// #define followDepsEP_DEBUG
 
-#ifdef FOLLOW_DEP_DEBUG
-void debug_follow_dep(model::node *dest, model::node *dep, const std::string &message)
+
+namespace KDevPG
+{
+
+#ifdef FOLLOWDEP_DEBUG
+void DebugFollowDep(Model::Node *dest, Model::Node *dep, const std::string &message)
 {
   std::cerr << "=============================" << std::endl;
-  pretty_printer p(std::cerr);
+  PrettyPrinter p(std::cerr);
   std::cerr << "adding " << message << " ";
   p(dep);
   std::cerr << " (" << (uint*)dep << ")";
@@ -40,214 +44,216 @@ void debug_follow_dep(model::node *dest, model::node *dep, const std::string &me
   p(dest);
   std::cerr << " (" << (uint*)dest << ")";
   std::cerr << "{" << dest->kind << "}";
-  if (dest->kind == model::node_kind_nonterminal)
+  if (dest->kind == Model::Node_kind_nonTerminal)
   {
-    model::symbol_item *s = ((model::nonterminal_item*)dest)->_M_symbol;
+    Model::SymbolItem *s = ((Model::NonTerminalItem*)dest)->mSymbol;
     if (s)
       std::cerr << "__"; p(s); std::cerr << "__";
   }
   std::cerr << std::endl;
 }
 
-void debug_first_to_follow_dep(model::node *dest, model::node *dep)
+void debug_first_to_FollowDep(Model::Node *dest, Model::Node *dep)
 {
-  debug_follow_dep(dest, dep, "first");
+  DebugFollowDep(dest, dep, "first");
 }
 
-void debug_follow_to_follow_dep(model::node *dest, model::node *dep)
+void debug_follow_to_FollowDep(Model::Node *dest, Model::Node *dep)
 {
-  debug_follow_dep(dest, dep, "follow");
+  DebugFollowDep(dest, dep, "follow");
 }
 #endif
 
 //
-// Calculating the FOLLOW set depends on the FIRST set being already available
+// Calculating the FOLLOW set depends on the first set being already available
 // and is in principle quite easy. There are only a few simple rules:
 //
 // 1. Put EOF at the end of the start rule
 // 2. For every rule "items -> rulename", put FOLLOW(rulename) into FOLLOW(items)
-// 3. For every item sequence "item1 item2", put FIRST(item2) into FOLLOW(item1)
+// 3. For every item sequence "item1 item2", put first(item2) into FOLLOW(item1)
 // 4. For every rule "item1 item2 -> rulename", put FOLLOW(rulename)
 //    into FOLLOW(item1) if item2 can derive to epsilon ("0").
 // 5. Propagate the FOLLOW sets down to the symbols where appropriate.
 // 6. Loop for all rules until there are no changes in any FOLLOW set anymore.
 //
 
-next_FOLLOW::next_FOLLOW(bool &changed)
-  : _M_changed(changed)
+NextFollow::NextFollow(bool &changed)
+  : mChanged(changed)
 {}
 
-void next_FOLLOW::operator()(model::node *node)
+void NextFollow::operator()(Model::Node *node)
 {
-  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
   assert(e != 0);
-  _M_symbol = e->_M_symbol;
-  visit_node(node);
+  mSymbol = e->mSymbol;
+  visitNode(node);
 }
 
-void next_FOLLOW::merge(model::node*__dest, world::node_set const &source)
+void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
 {
-  if (node_cast<model::zero_item*>(__dest) != 0
-      || node_cast<model::terminal_item*>(__dest) != 0)
+  if (nodeCast<Model::ZeroItem*>(__dest) != 0
+      || nodeCast<Model::TerminalItem*>(__dest) != 0)
     {
       return;
     }
 
-  pretty_printer p(std::cout);
+  PrettyPrinter p(std::cout);
 
-  world::node_set &dest = _G_system.FOLLOW(__dest);
+  World::NodeSet &dest = globalSystem.follow(__dest);
 
-  for (world::node_set::const_iterator it = source.begin(); it != source.end(); ++it)
+  for (World::NodeSet::const_iterator it = source.begin(); it != source.end(); ++it)
     {
-      if (model::terminal_item *t = node_cast<model::terminal_item*>(*it))
-          _M_changed |= dest.insert(t).second;
+      if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(*it))
+          mChanged |= dest.insert(t).second;
     }
 }
 
-void next_FOLLOW::visit_evolve(model::evolve_item *node)
+void NextFollow::visitEvolve(Model::EvolveItem *node)
 {
-  model::terminal_item *teof = _G_system.push_terminal("EOF", "end of file");
-  if (node == _G_system.start && _G_system.FOLLOW(node->_M_symbol).insert(teof).second)
+  Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
+  if (node == globalSystem.start && globalSystem.follow(node->mSymbol).insert(teof).second)
     {
-      _M_changed = true;
+      mChanged = true;
     }
 
-  merge(node->_M_item, _G_system.FOLLOW(node->_M_symbol));
-  add_follow_to_follow_dep(node->_M_item, node->_M_symbol);
+  merge(node->mItem, globalSystem.follow(node->mSymbol));
+  addFollowToFollowDep(node->mItem, node->mSymbol);
 
-  default_visitor::visit_evolve(node);
+  DefaultVisitor::visitEvolve(node);
 }
 
-void next_FOLLOW::visit_cons(model::cons_item *node)
+void NextFollow::visitCons(Model::ConsItem *node)
 {
-  merge(node->_M_right, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_right, node);
+  merge(node->mRight, globalSystem.follow(node));
+  addFollowToFollowDep(node->mRight, node);
 
-  merge(node->_M_left, _G_system.FIRST(node->_M_right));
-  add_first_to_follow_dep(node->_M_left, node->_M_right);
+  merge(node->mLeft, globalSystem.first(node->mRight));
+  addFirstToFollowDep(node->mLeft, node->mRight);
 
-  if (reduces_to_epsilon(node->_M_right))
+  if (reducesToEpsilon(node->mRight))
   {
-    merge(node->_M_left, _G_system.FOLLOW(node));
-    add_follow_to_follow_dep(node->_M_left, node);
+    merge(node->mLeft, globalSystem.follow(node));
+    addFollowToFollowDep(node->mLeft, node);
   }
 
-  default_visitor::visit_cons(node);
+  DefaultVisitor::visitCons(node);
 }
 
-void next_FOLLOW::visit_alternative(model::alternative_item *node)
+void NextFollow::visitAlternative(Model::AlternativeItem *node)
 {
-  merge(node->_M_left, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_left, node);
-  merge(node->_M_right, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_right, node);
+  merge(node->mLeft, globalSystem.follow(node));
+  addFollowToFollowDep(node->mLeft, node);
+  merge(node->mRight, globalSystem.follow(node));
+  addFollowToFollowDep(node->mRight, node);
 
-  default_visitor::visit_alternative(node);
+  DefaultVisitor::visitAlternative(node);
 }
 
-void next_FOLLOW::visit_action(model::action_item *node)
+void NextFollow::visitAction(Model::ActionItem *node)
 {
-  merge(node->_M_item, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_item, node);
+  merge(node->mItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mItem, node);
 
-  default_visitor::visit_action(node);
+  DefaultVisitor::visitAction(node);
 }
 
-void next_FOLLOW::visit_try_catch(model::try_catch_item *node)
+void NextFollow::visitTryCatch(Model::TryCatchItem *node)
 {
-  merge(node->_M_try_item, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_try_item, node);
+  merge(node->mTryItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mTryItem, node);
 
-  if (node->_M_catch_item)
+  if (node->mCatchItem)
   {
-    merge(node->_M_catch_item, _G_system.FOLLOW(node));
-    add_follow_to_follow_dep(node->_M_catch_item, node);
+    merge(node->mCatchItem, globalSystem.follow(node));
+    addFollowToFollowDep(node->mCatchItem, node);
   }
 
-  default_visitor::visit_try_catch(node);
+  DefaultVisitor::visitTryCatch(node);
 }
 
-void next_FOLLOW::visit_annotation(model::annotation_item *node)
+void NextFollow::visitAnnotation(Model::AnnotationItem *node)
 {
-  merge(node->_M_item, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_item, node);
+  merge(node->mItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mItem, node);
 
-  default_visitor::visit_annotation(node);
+  DefaultVisitor::visitAnnotation(node);
 }
 
-void next_FOLLOW::visit_condition(model::condition_item *node)
+void NextFollow::visitCondition(Model::ConditionItem *node)
 {
-  merge(node->_M_item, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_item, node);
+  merge(node->mItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mItem, node);
 
-  default_visitor::visit_condition(node);
+  DefaultVisitor::visitCondition(node);
 }
 
-void next_FOLLOW::visit_plus(model::plus_item *node)
+void NextFollow::visitPlus(Model::PlusItem *node)
 {
-  merge(node->_M_item, _G_system.FIRST(node->_M_item));
-  add_first_to_follow_dep(node->_M_item, node->_M_item);
-  merge(node->_M_item, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_item, node);
+  merge(node->mItem, globalSystem.first(node->mItem));
+  addFirstToFollowDep(node->mItem, node->mItem);
+  merge(node->mItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mItem, node);
 
-  default_visitor::visit_plus(node);
+  DefaultVisitor::visitPlus(node);
 }
 
-void next_FOLLOW::visit_star(model::star_item *node)
+void NextFollow::visitStar(Model::StarItem *node)
 {
-  merge(node->_M_item, _G_system.FIRST(node->_M_item));
-  add_first_to_follow_dep(node->_M_item, node->_M_item);
-  merge(node->_M_item, _G_system.FOLLOW(node));
-  add_follow_to_follow_dep(node->_M_item, node);
+  merge(node->mItem, globalSystem.first(node->mItem));
+  addFirstToFollowDep(node->mItem, node->mItem);
+  merge(node->mItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mItem, node);
 
-  default_visitor::visit_star(node);
+  DefaultVisitor::visitStar(node);
 }
 
-void next_FOLLOW::visit_nonterminal(model::nonterminal_item *node)
+void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  merge(node->_M_symbol, _G_system.FOLLOW(node));
+  merge(node->mSymbol, globalSystem.follow(node));
 
-  default_visitor::visit_nonterminal(node);
+  DefaultVisitor::visitNonTerminal(node);
 }
 
-void next_FOLLOW::add_first_to_follow_dep(model::node *dest, model::node *dep)
+void NextFollow::addFirstToFollowDep(Model::Node *dest, Model::Node *dep)
 {
-  if (dest->kind == model::node_kind_nonterminal)
+  if (dest->kind == Model::NodeKindNonTerminal)
   {
-    model::symbol_item *s = node_cast<model::nonterminal_item*>(dest)->_M_symbol;
+    Model::SymbolItem *s = nodeCast<Model::NonTerminalItem*>(dest)->mSymbol;
     if (s)
-      _G_system.FOLLOW_DEP(s).first.insert(dep);
+      globalSystem.followDep(s).first.insert(dep);
   }
   else
-    _G_system.FOLLOW_DEP(dest).first.insert(dep);
-#ifdef FOLLOW_DEP_DEBUG
-  debug_first_to_follow_dep(dest, dep);
+    globalSystem.followDep(dest).first.insert(dep);
+#ifdef FOLLOWDEP_DEBUG
+  debug_first_to_FollowDep(dest, dep);
 #endif
 }
 
-void next_FOLLOW::add_follow_to_follow_dep(model::node *dest, model::node *dep)
+void NextFollow::addFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 {
-  if (dest->kind == model::node_kind_nonterminal)
+  if (dest->kind == Model::NodeKindNonTerminal)
   {
-    model::symbol_item *s = node_cast<model::nonterminal_item*>(dest)->_M_symbol;
+    Model::SymbolItem *s = nodeCast<Model::NonTerminalItem*>(dest)->mSymbol;
     if (s)
-      _G_system.FOLLOW_DEP(s).second.insert(dep);
+      globalSystem.followDep(s).second.insert(dep);
   }
   else
-    _G_system.FOLLOW_DEP(dest).second.insert(dep);
-#ifdef FOLLOW_DEP_DEBUG
-  debug_follow_to_follow_dep(dest, dep);
+    globalSystem.followDep(dest).second.insert(dep);
+#ifdef FOLLOWDEP_DEBUG
+  debug_follow_to_FollowDep(dest, dep);
 #endif
 }
 
-void compute_FOLLOW()
+void computeFollow()
 {
   bool changed = true;
   while (changed)
     {
       changed = false;
-      std::for_each(_G_system.rules.begin(), _G_system.rules.end(), next_FOLLOW(changed));
+      std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(), NextFollow(changed));
     }
+}
+
 }
 
 // kate: space-indent on; indent-width 2; tab-width 2; show-tabs on;

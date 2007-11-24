@@ -22,22 +22,27 @@
 #include "kdev-pg.h"
 #include <iostream>
 
-void generate_default_visitor::operator()()
+
+namespace KDevPG
 {
-  out << "class " << _G_system.export_macro << " default_visitor: public visitor {" << std::endl
+
+void GenerateDefaultVisitor::operator()()
+{
+  out << "class " << globalSystem.exportMacro << " DefaultVisitor: public visitor {" << std::endl
       << "public:" << std::endl;
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
-                gen_default_visitor_rule(out));
+  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
+                GenerateDefaultVisitorRule(out));
 
   out << "};" << std::endl;
 }
 
-void gen_default_visitor_rule::operator()(std::pair<std::string,model::symbol_item*> const &__it)
+void GenerateDefaultVisitorRule::operator()(std::pair<std::string,Model::SymbolItem*> const &__it)
 {
-  model::symbol_item *sym = __it.second;
+  Model::SymbolItem *sym = __it.second;
 
-  out << "virtual void visit_" << sym->_M_name
-      << "(" << sym->_M_name << "_ast *node);" << std::endl;
+  out << "virtual void visit_" << sym->mName
+      << "(" << sym->mName << "_ast *node);" << std::endl;
 }
 
+}

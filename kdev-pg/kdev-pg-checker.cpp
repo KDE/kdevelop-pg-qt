@@ -29,94 +29,97 @@
 //uncomment this to see debug output for follow checker
 // #define FOLLOW_CHECKER_DEBUG
 
-int problem_summary_printer::_M_first_first_conflict_count = 0;
-int problem_summary_printer::_M_first_follow_conflict_count = 0;
-int problem_summary_printer::_M_error_count = 0;
-
-void FIRST_FIRST_conflict_checker::operator()(model::node *node)
+namespace KDevPG
 {
-  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+
+int ProblemSummaryPrinter::mFirstFirstConflictCount = 0;
+int ProblemSummaryPrinter::mFirstFollowConflictCount = 0;
+int ProblemSummaryPrinter::mErrorCount = 0;
+
+void FirstFirstConflictChecker::operator()(Model::Node *node)
+{
+  Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
   assert(e != 0);
-  _M_symbol = e->_M_symbol;
-  visit_node(node);
+  mSymbol = e->mSymbol;
+  visitNode(node);
 }
 
-void FIRST_FIRST_conflict_checker::visit_alternative(model::alternative_item *node)
+void FirstFirstConflictChecker::visitAlternative(Model::AlternativeItem *node)
 {
-  default_visitor::visit_alternative(node);
+  DefaultVisitor::visitAlternative(node);
 
-  _M_checked_node = node;
-  check(node->_M_left, node->_M_right);
+  mCheckedNode = node;
+  check(node->mLeft, node->mRight);
 }
 
-void FIRST_FIRST_conflict_checker::check(model::node *left, model::node *right)
+void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
 {
-  world::node_set const &left_first = _G_system.FIRST(left);
-  world::node_set const &right_first = _G_system.FIRST(right);
+  World::NodeSet const &left_first = globalSystem.first(left);
+  World::NodeSet const &right_first = globalSystem.first(right);
 
-  std::deque<model::node*> U;
+  std::deque<Model::Node*> U;
   std::set_intersection(left_first.begin(), left_first.end(),
                         right_first.begin(), right_first.end(), std::back_inserter(U));
 
   if (!U.empty())
     {
-      pretty_printer p(std::cerr);
+      PrettyPrinter p(std::cerr);
       std::cerr << "** WARNING found FIRST/FIRST conflict in "
-                << _M_symbol->_M_name << ":" << std::endl << "\tRule ``";
-      p(_M_checked_node);
+                << mSymbol->mName << ":" << std::endl << "\tRule ``";
+      p(mCheckedNode);
       //      p(left);
       std::cerr << "''" << std::endl << "\tTerminals [";
 
-      std::deque<model::node*>::iterator it = U.begin();
+      std::deque<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
         {
-          model::node *n = *it++;
+          Model::Node *n = *it++;
 
           std::cerr << n;
           if (it != U.end())
             std::cerr << ", ";
         }
       std::cerr << "]" << std::endl << std::endl;
-      problem_summary_printer::report_first_first_conflict();
+      ProblemSummaryPrinter::reportFirstFirstConflict();
     }
 }
 
-void FIRST_FIRST_conflict_checker::visit_evolve(model::evolve_item *node)
+void FirstFirstConflictChecker::visitEvolve(Model::EvolveItem *node)
 {
-  default_visitor::visit_evolve(node);
+  DefaultVisitor::visitEvolve(node);
 
-  world::environment::iterator it = _G_system.env.find(node->_M_symbol);
-  while (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(node->mSymbol);
+  while (it != globalSystem.env.end())
     {
-      model::symbol_item *sym = (*it).first;
-      model::evolve_item *e = (*it).second;
+      Model::SymbolItem *sym = (*it).first;
+      Model::EvolveItem *e = (*it).second;
       ++it;
 
-      if (sym != node->_M_symbol || node == e)
+      if (sym != node->mSymbol || node == e)
         continue;
 
-      _M_checked_node = node;
+      mCheckedNode = node;
       check(e, node);
     }
 }
 
-void FIRST_FOLLOW_conflict_checker::operator()(model::node *node)
+void FirstFollowConflictChecker::operator()(Model::Node *node)
 {
-  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
   assert(e != 0);
-  _M_symbol = e->_M_symbol;
-  visit_node(node);
+  mSymbol = e->mSymbol;
+  visitNode(node);
 }
 
-void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
+void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
 {
   if (!sym)
     sym = node;
 
-  world::node_set const &first = _G_system.FIRST(node);
-  world::node_set const &follow = _G_system.FOLLOW(sym);
+  World::NodeSet const &first = globalSystem.first(node);
+  World::NodeSet const &follow = globalSystem.follow(sym);
 
-  std::deque<model::node*> U;
+  std::deque<Model::Node*> U;
 
   std::set_intersection(first.begin(), first.end(),
                         follow.begin(), follow.end(),
@@ -124,11 +127,11 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
 
   if (!U.empty())
     {
-      pretty_printer p(std::cerr);
+      PrettyPrinter p(std::cerr);
       std::cerr << "** WARNING found FIRST/FOLLOW conflict in "
-                << _M_symbol->_M_name;
+                << mSymbol->mName;
 #ifdef FOLLOW_CHECKER_DEBUG
-      std::cerr << "(" << (uint*)_M_symbol << ")";
+      std::cerr << "(" << (uint*)mSymbol << ")";
 #endif
       std::cerr << ":" << std::endl << "\tRule ``";
       p(node);
@@ -137,52 +140,52 @@ void FIRST_FOLLOW_conflict_checker::check(model::node *node, model::node *sym)
 #endif
       std::cerr << "''" << std::endl << "\tTerminals [" << std::endl;
 
-      std::deque<model::node*>::iterator it = U.begin();
+      std::deque<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
         {
-          model::node *n = *it++;
-          if (is_zero(n))
+          Model::Node *n = *it++;
+          if (isZero(n))
             continue;
 
           std::cerr << "\t" << n << ": conflicts with the FIRST set of: ";
-          follow_dep_checker(n).check(node);
+          FollowDepChecker(n).check(node);
           if (it != U.end())
             std::cerr << ", ";
           std::cerr << std::endl;
         }
       std::cerr << "\t" << "]" << std::endl << std::endl;
-      problem_summary_printer::report_first_follow_conflict();
+      ProblemSummaryPrinter::reportFirstFollowConflict();
     }
 }
 
-void follow_dep_checker::check(model::node *node)
+void FollowDepChecker::check(Model::Node *node)
 {
   //avoid cyclical follow dependency check
-  if (_M_visited.find(node) != _M_visited.end())
+  if (mVisited.find(node) != mVisited.end())
     return;
-  _M_visited.insert(node);
+  mVisited.insert(node);
 
-  world::follow_dep &D = _G_system.FOLLOW_DEP(node);
-  world::node_set FD = D.first;
-  world::node_set FLD = D.second;
-  pretty_printer p(std::cerr);
+  World::FollowDep &D = globalSystem.followDep(node);
+  World::NodeSet FD = D.first;
+  World::NodeSet FLD = D.second;
+  PrettyPrinter p(std::cerr);
 #ifdef FOLLOW_CHECKER_DEBUG
   std::cerr << "[["; p(node); std::cerr << " | " << (uint*)node << "]] ";
   std::cerr << "{" << node->kind << "}";
 #endif
-  for (world::node_set::const_iterator it = FD.begin(); it != FD.end(); ++it)
+  for (World::NodeSet::const_iterator it = FD.begin(); it != FD.end(); ++it)
     {
-      world::node_set first = _G_system.FIRST(*it);
+      World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
       std::cerr << " <iterating first ";
-      for (world::node_set::const_iterator fit = first.begin(); fit != first.end(); ++fit)
+      for (World::NodeSet::const_iterator fit = first.begin(); fit != first.end(); ++fit)
       {
         p(*fit);
         std::cerr << " ";
       }
       std::cerr << " >";
 #endif
-      if (first.find(_M_terminal) != first.end())
+      if (first.find(mTerminal) != first.end())
       {
         std::cerr << std::endl << "            ";
         p(*it);
@@ -194,9 +197,9 @@ void follow_dep_checker::check(model::node *node)
         std::cerr << ", ";
       }
     }
- for (world::node_set::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
+ for (World::NodeSet::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
   {
-      world::node_set first = _G_system.FIRST(*it);
+      World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
       std::cerr << std::endl << "\t\t" << "in ";
       p(*it);
@@ -206,149 +209,151 @@ void follow_dep_checker::check(model::node *node)
   }
 }
 
-void FIRST_FOLLOW_conflict_checker::visit_alternative(model::alternative_item *node)
+void FirstFollowConflictChecker::visitAlternative(Model::AlternativeItem *node)
 {
-  default_visitor::visit_alternative(node);
+  DefaultVisitor::visitAlternative(node);
 
-  if (is_zero(node->_M_right))
+  if (isZero(node->mRight))
     return;
 
-  if (reduces_to_epsilon(node))
+  if (reducesToEpsilon(node))
     check(node);
 }
 
-void FIRST_FOLLOW_conflict_checker::visit_cons(model::cons_item *node)
+void FirstFollowConflictChecker::visitCons(Model::ConsItem *node)
 {
-  default_visitor::visit_cons(node);
+  DefaultVisitor::visitCons(node);
 
-  if (reduces_to_epsilon(node))
+  if (reducesToEpsilon(node))
     check(node);
 }
 
-void FIRST_FOLLOW_conflict_checker::visit_plus(model::plus_item *node)
+void FirstFollowConflictChecker::visitPlus(Model::PlusItem *node)
 {
-  default_visitor::visit_plus(node);
+  DefaultVisitor::visitPlus(node);
 
-  if (reduces_to_epsilon(node))
+  if (reducesToEpsilon(node))
     check(node);
 }
 
-void FIRST_FOLLOW_conflict_checker::visit_star(model::star_item *node)
+void FirstFollowConflictChecker::visitStar(Model::StarItem *node)
 {
-  default_visitor::visit_star(node);
+  DefaultVisitor::visitStar(node);
 
   check(node);
 }
 
-void undefined_symbol_checker::operator()(model::node *node)
+void UndefinedSymbolChecker::operator()(Model::Node *node)
 {
-  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
   assert(e != 0);
-  _M_symbol = e->_M_symbol;
-  visit_node(node);
+  mSymbol = e->mSymbol;
+  visitNode(node);
 }
 
-void undefined_symbol_checker::visit_symbol(model::symbol_item *node)
+void UndefinedSymbolChecker::visitSymbol(Model::SymbolItem *node)
 {
-  if (_G_system.env.count(node) == 0)
+  if (globalSystem.env.count(node) == 0)
     {
-      std::cerr << "** ERROR Undefined symbol ``" << node->_M_name << "'' in "
-                << _M_symbol->_M_name << std::endl;
-      problem_summary_printer::report_error();
+      std::cerr << "** ERROR Undefined symbol ``" << node->mName << "'' in "
+                << mSymbol->mName << std::endl;
+      ProblemSummaryPrinter::reportError();
     }
 }
 
-void undefined_symbol_checker::visit_variable_declaration(model::variable_declaration_item *node)
+void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
-  if (node->_M_variable_type != model::variable_declaration_item::type_node)
+  if (node->mVariableType != Model::VariableDeclarationItem::TypeNode)
     return;
 
-  model::symbol_item *sym;
+  Model::SymbolItem *sym;
 
-  std::string name = node->_M_type;
-  world::symbol_set::iterator it = _G_system.symbols.find(name);
-  if (it == _G_system.symbols.end())
+  std::string name = node->mType;
+  World::SymbolSet::iterator it = globalSystem.symbols.find(name);
+  if (it == globalSystem.symbols.end())
     {
       std::cerr << "** ERROR Undefined symbol ``" << name
                 << "'' (rule parameter declaration) in "
-                << _M_symbol->_M_name << std::endl;
-      problem_summary_printer::report_error();
+                << mSymbol->mName << std::endl;
+      ProblemSummaryPrinter::reportError();
       return;
     }
   else
     sym = (*it).second;
 
-  if (_G_system.env.count(sym) == 0)
+  if (globalSystem.env.count(sym) == 0)
     {
-      std::cerr << "** ERROR Undefined symbol ``" << node->_M_name
+      std::cerr << "** ERROR Undefined symbol ``" << node->mName
                 << "'' (rule parameter declaration) in "
-                << _M_symbol->_M_name << std::endl;
-      problem_summary_printer::report_error();
+                << mSymbol->mName << std::endl;
+      ProblemSummaryPrinter::reportError();
     }
 }
 
-void undefined_token_checker::operator()(model::node *node)
+void UndefinedTokenChecker::operator()(Model::Node *node)
 {
-  model::evolve_item *e = node_cast<model::evolve_item*>(node);
+  Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
   assert(e != 0);
-  _M_symbol = e->_M_symbol;
-  visit_node(node);
+  mSymbol = e->mSymbol;
+  visitNode(node);
 }
 
-void undefined_token_checker::visit_terminal(model::terminal_item *node)
+void UndefinedTokenChecker::visitTerminal(Model::TerminalItem *node)
 {
-  std::string name = node->_M_name;
-  if (_G_system.terminals.find(name) == _G_system.terminals.end())
+  std::string name = node->mName;
+  if (globalSystem.terminals.find(name) == globalSystem.terminals.end())
     {
-      std::cerr << "** ERROR Undefined token ``" << node->_M_name << "'' in "
-                << _M_symbol->_M_name << std::endl;
-      problem_summary_printer::report_error();
+      std::cerr << "** ERROR Undefined token ``" << node->mName << "'' in "
+                << mSymbol->mName << std::endl;
+      ProblemSummaryPrinter::reportError();
     }
 }
 
-void empty_FIRST_checker::operator()(model::node *node)
+void EmptyFirstChecker::operator()(Model::Node *node)
 {
-  visit_node(node);
+  visitNode(node);
 }
 
-void empty_FIRST_checker::visit_symbol(model::symbol_item *node)
+void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
 {
-  if (_G_system.FIRST(node).empty())
+  if (globalSystem.first(node).empty())
     {
-      std::cerr << "** ERROR Empty FIRST set for ``" << node->_M_name
+      std::cerr << "** ERROR Empty FIRST set for ``" << node->mName
                 << "''" << std::endl;
-      problem_summary_printer::report_error();
+      ProblemSummaryPrinter::reportError();
     }
 }
 
-void problem_summary_printer::operator()()
+void ProblemSummaryPrinter::operator()()
 {
-  std::cerr << (_M_first_first_conflict_count + _M_first_follow_conflict_count)
-            << " conflicts total: " << _M_first_follow_conflict_count
-            << " FIRST/FOLLOW conflicts, " << _M_first_first_conflict_count
+  std::cerr << (mFirstFirstConflictCount + mFirstFollowConflictCount)
+            << " conflicts total: " << mFirstFollowConflictCount
+            << " FIRST/FOLLOW conflicts, " << mFirstFirstConflictCount
             << " FIRST/FIRST conflicts." << std::endl;
 
-  if (_M_error_count > 0)
+  if (mErrorCount > 0)
     {
-      std::cerr << _M_error_count << " fatal errors found, exiting."
+      std::cerr << mErrorCount << " fatal errors found, exiting."
                 << std::endl;
       exit(EXIT_FAILURE);
     }
 }
 
-void problem_summary_printer::report_first_first_conflict()
+void ProblemSummaryPrinter::reportFirstFirstConflict()
 {
-  _M_first_first_conflict_count++;
+  mFirstFirstConflictCount++;
 }
 
-void problem_summary_printer::report_first_follow_conflict()
+void ProblemSummaryPrinter::reportFirstFollowConflict()
 {
-  _M_first_follow_conflict_count++;
+  mFirstFollowConflictCount++;
 }
 
-void problem_summary_printer::report_error()
+void ProblemSummaryPrinter::reportError()
 {
-  _M_error_count++;
+  mErrorCount++;
+}
+
 }
 
 // kate: space-indent on; indent-width 2; tab-width 2; show-tabs on;

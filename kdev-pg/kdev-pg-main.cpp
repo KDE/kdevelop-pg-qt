@@ -48,27 +48,28 @@ void usage()
   exit(EXIT_SUCCESS);
 }
 
-struct debug_rule
+class DebugRule
 {
+public:
   std::ostream &out;
 
-  debug_rule(std::ostream &o): out(o)
+  DebugRule(std::ostream &o): out(o)
   {}
 
-  void operator()(model::node *node)
+  void operator()(KDevPG::Model::Node *node)
   {
-    model::evolve_item *e = node_cast<model::evolve_item*>(node);
+    KDevPG::Model::EvolveItem *e = KDevPG::nodeCast<KDevPG::Model::EvolveItem*>(node);
 
     out << std::endl;
-    pretty_printer p(out);
+    KDevPG::PrettyPrinter p(out);
     p(e);
 
     bool initial = true;
-    world::node_set::iterator it;
+    KDevPG::World::NodeSet::iterator it;
 
     out << std::endl;
     out << " FIRST:[";
-    for (it = _G_system.FIRST(e).begin(); it != _G_system.FIRST(e).end(); it++)
+    for (it = globalSystem.first(e).begin(); it != globalSystem.first(e).end(); it++)
       {
         if (!initial)
           out << ",";
@@ -82,8 +83,8 @@ struct debug_rule
 
     out << std::endl;
     out << " FOLLOW:[";
-    for (it = _G_system.FOLLOW(e->_M_symbol).begin();
-         it != _G_system.FOLLOW(e->_M_symbol).end(); it++)
+    for (it = globalSystem.follow(e->mSymbol).begin();
+         it != globalSystem.follow(e->mSymbol).end(); it++)
       {
         if (!initial)
           out << ",";
@@ -100,7 +101,7 @@ int main(int, char *argv[])
 {
   bool dump_terminals = false;
   bool dump_symbols = false;
-  bool debug_rules = false;
+  bool DebugRules = false;
 
   file = stdin;
 
@@ -108,23 +109,23 @@ int main(int, char *argv[])
     {
       if (!strncmp(arg, "--output=", 9))
         {
-          _G_system.language = arg + 9;
+          globalSystem.language = arg + 9;
         }
       else if (!strncmp(arg,"--namespace=",12))
         {
-          _G_system.ns = arg + 12;
-	}
+          globalSystem.ns = arg + 12;
+    }
       else if (!strcmp("--no-ast", arg))
         {
-          _G_system.generate_ast = false;
+          globalSystem.GenerateAst = false;
         }
       else if (!strcmp("--serialize-visitor", arg))
         {
-          _G_system.gen_serialize_visitor = true;
+          globalSystem.generateSerializeVisitor = true;
         }
       else if (!strcmp("--debug-visitor", arg))
         {
-          _G_system.gen_debug_visitor = true;
+          globalSystem.generateDebugVisitor = true;
         }
       else if (!strcmp("--help", arg))
         {
@@ -140,12 +141,7 @@ int main(int, char *argv[])
         }
       else if (!strcmp("--rules", arg))
         {
-          debug_rules = true;
-        }
-      else if (!strncmp(arg, "--adapt-to=", 11))
-        {
-          char const *adapt_to = arg + 11;
-          _G_system.adapt_to_kdevelop = (strcmp("kdevelop", adapt_to) == 0);
+          DebugRules = true;
         }
       else if (file == stdin)
         {
@@ -165,69 +161,69 @@ int main(int, char *argv[])
         }
     }
 
-  if( !_G_system.ns )
-    _G_system.ns = _G_system.language;
+  if( !globalSystem.ns )
+    globalSystem.ns = globalSystem.language;
 
   yyparse();
 
   fclose(file);
 
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                initialize_environment());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                KDevPG::InitializeEnvironment());
 
-  compute_FIRST();
-  compute_FOLLOW();
+  KDevPG::computeFirst();
+  KDevPG::computeFollow();
 
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                FIRST_FOLLOW_conflict_checker());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                KDevPG::FirstFollowConflictChecker());
 
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                FIRST_FIRST_conflict_checker());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                KDevPG::FirstFirstConflictChecker());
 
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                empty_FIRST_checker());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                KDevPG::EmptyFirstChecker());
 
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                undefined_symbol_checker());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                KDevPG::UndefinedSymbolChecker());
 
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                undefined_token_checker());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                KDevPG::UndefinedTokenChecker());
 
-  problem_summary_printer()();
+  KDevPG::ProblemSummaryPrinter()();
 
-  if (dump_terminals || dump_symbols || debug_rules)
+  if (dump_terminals || dump_symbols || DebugRules)
     {
       if(dump_terminals)
         {
           std::ofstream ft("kdev-pg-terminals", std::ios_base::out | std::ios_base::trunc );
-          for (world::terminal_set::iterator it = _G_system.terminals.begin();
-               it != _G_system.terminals.end(); ++it)
+          for (KDevPG::World::TerminalSet::iterator it = globalSystem.terminals.begin();
+               it != globalSystem.terminals.end(); ++it)
             {
               ft << (*it).first << std::endl;
             }
         }
       if (dump_symbols)
-        { 
+        {
           std::ofstream st("kdev-pg-symbols", std::ios_base::out | std::ios_base::trunc );
-          for (world::symbol_set::iterator it = _G_system.symbols.begin();
-               it != _G_system.symbols.end(); ++it)
+          for (KDevPG::World::SymbolSet::iterator it = globalSystem.symbols.begin();
+               it != globalSystem.symbols.end(); ++it)
             {
               st << (*it).first << std::endl;
             }
         }
-      if (debug_rules)
+      if (DebugRules)
         {
           std::ofstream rt("kdev-pg-rules", std::ios_base::out | std::ios_base::trunc );
-          std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                        debug_rule(rt));
+          std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                        DebugRule(rt));
         }
     }
-  else if (!_G_system.language)
+  else if (!globalSystem.language)
     {
       usage();
     }
 
-  generate_output();
+  KDevPG::generateOutput();
 
   return EXIT_SUCCESS;
 }

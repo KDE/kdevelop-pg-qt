@@ -106,11 +106,11 @@
 typedef union YYSTYPE
 #line 33 "/home/andreas/KDE-work/4.0/kdevelop-pg/kdev-pg/kdev-pg-parser.yy"
 {
-    model::node *item;
+    Model::Node *item;
     char* str;
-    model::variable_declaration_item::declaration_type_enum declaration_type;
-    model::variable_declaration_item::storage_type_enum     storage_type;
-    model::variable_declaration_item::variable_type_enum    variable_type;
+    Model::VariableDeclarationItem::DeclarationType declarationType;
+    Model::VariableDeclarationItem::StorateType     storageType;
+    Model::VariableDeclarationItem::VariableType    variableType;
 }
 /* Line 1489 of yacc.c.  */
 #line 117 "/home/andreas/KDE-work/4.0/build/kdevelop-pg/kdev-pg/kdev-pg-parser.hh"

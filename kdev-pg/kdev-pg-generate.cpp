@@ -35,52 +35,45 @@
 #include <sstream>
 #include <fstream>
 
-
-void generate_output()
+namespace KDevPG
 {
-  if (_G_system.generate_ast)
+void generateOutput()
+{
+  if (globalSystem.GenerateAst)
   { // generate the ast
     std::stringstream s;
 
-    generate_ast __ast(s);
+    GenerateAst __ast(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#ifndef " << _G_system.language << "_AST_H_INCLUDED" << std::endl
-      << "#define " << _G_system.language << "_AST_H_INCLUDED" << std::endl
+      << "#ifndef " << globalSystem.language << "_AST_H_INCLUDED" << std::endl
+      << "#define " << globalSystem.language << "_AST_H_INCLUDED" << std::endl
       << std::endl
 
       << "#include <kdev-pg-list.h>" << std::endl
       << std::endl;
-    if (_G_system.export_macro_header)
-      s << "#include <" << _G_system.export_macro_header << ">"
+    if (globalSystem.exportMacroHeader)
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
         << std::endl;
 
-    if (_G_system.adapt_to_kdevelop)
-      {
-        // Replace kdevast.h with something more current,
-        // like a new duchain include or whatever is the current trend.
-        // s << "#include <kdevast.h>" << std::endl
-        //   << std::endl;
-      }
+    if (globalSystem.decl)
+      s << globalSystem.decl << std::endl;
 
-    if (_G_system.decl)
-      s << _G_system.decl << std::endl;
-
-    s << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __ast();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_ast.h";
 
     std::ofstream ofile;
@@ -91,46 +84,46 @@ void generate_output()
   { // generate the parser decls
     std::stringstream s;
 
-    generate_parser_decls __decls(s);
+    GenerateParserDeclarations __decls(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#ifndef " << _G_system.language << "_H_INCLUDED" << std::endl
-      << "#define " << _G_system.language << "_H_INCLUDED" << std::endl
+      << "#ifndef " << globalSystem.language << "_H_INCLUDED" << std::endl
+      << "#define " << globalSystem.language << "_H_INCLUDED" << std::endl
       << std::endl;
 
-    if (_G_system.generate_ast)
+    if (globalSystem.GenerateAst)
       {
-        s << "#include \"" << _G_system.language << "_ast.h\"" << std::endl
+        s << "#include \"" << globalSystem.language << "_ast.h\"" << std::endl
           << "#include <kdev-pg-memory-pool.h>" << std::endl
           << "#include <kdev-pg-allocator.h>" << std::endl;
       }
 
-    if (!strcmp(_G_system.token_stream, "kdev_pg_token_stream"))
+    if (!strcmp(globalSystem.tokenStream, "kdev_pg_tokenStream"))
       s << "#include <kdev-pg-token-stream.h>" << std::endl;
 
     s << std::endl;
-    if (_G_system.export_macro_header)
-      s << "#include <" << _G_system.export_macro_header << ">"
+    if (globalSystem.exportMacroHeader)
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
         << std::endl;
 
-    if (_G_system.decl && !_G_system.generate_ast)
-      s << _G_system.decl << std::endl;
+    if (globalSystem.decl && !globalSystem.GenerateAst)
+      s << globalSystem.decl << std::endl;
 
-    s << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __decls();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_parser.h";
 
     std::ofstream ofile;
@@ -138,38 +131,38 @@ void generate_output()
     format(s, ofile);
   }
 
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
   { // generate the visitor decls
     std::stringstream s;
 
-    generate_visitor __visitor(s);
+    GenerateVisitor __visitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#ifndef " << _G_system.language << "_VISITOR_H_INCLUDED" << std::endl
-      << "#define " << _G_system.language << "_VISITOR_H_INCLUDED" << std::endl
+      << "#ifndef " << globalSystem.language << "_VISITOR_H_INCLUDED" << std::endl
+      << "#define " << globalSystem.language << "_VISITOR_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << _G_system.language << "_ast.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "_ast.h\"" << std::endl
       << std::endl;
-    if (_G_system.export_macro_header)
-      s << "#include <" << _G_system.export_macro_header << ">"
+    if (globalSystem.exportMacroHeader)
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
         << std::endl;
 
-    s << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_visitor.h";
 
     std::ofstream ofile;
@@ -177,81 +170,81 @@ void generate_output()
     format(s, ofile);
   }
 
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
   { // generate the default visitor
     std::stringstream s;
 
-    generate_default_visitor __default_visitor(s);
+    GenerateDefaultVisitor __DefaultVisitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#ifndef " << _G_system.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
-      << "#define " << _G_system.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
+      << "#ifndef " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
+      << "#define " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << _G_system.language << "_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "_visitor.h\"" << std::endl
       << std::endl;
-    if (_G_system.export_macro_header)
-      s << "#include <" << _G_system.export_macro_header << ">"
+    if (globalSystem.exportMacroHeader)
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
         << std::endl;
 
-    s << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
-    __default_visitor();
+    __DefaultVisitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl
 
       << "#endif" << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
-    oname += "_default_visitor.h";
+    std::string oname = globalSystem.language;
+    oname += "_DefaultVisitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
     format(s, ofile);
   }
 
-  if (_G_system.gen_serialize_visitor)
+  if (globalSystem.generateSerializeVisitor)
   { // generate the serialization visitor
     std::stringstream s;
 
-    generate_serialize_visitor __serialize_visitor(s);
+    GenerateSerializeVisitor __serialize_visitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#ifndef " << _G_system.language << "_SERIALIZATION_H_INCLUDED" << std::endl
-      << "#define " << _G_system.language << "_SERIALIZATION_H_INCLUDED" << std::endl
+      << "#ifndef " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << std::endl
+      << "#define " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "_DefaultVisitor.h\"" << std::endl
       << std::endl;
-    if (_G_system.export_macro_header)
-      s << "#include <" << _G_system.export_macro_header << ">"
+    if (globalSystem.exportMacroHeader)
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
         << std::endl;
 
     s << "#include <iostream>" << std::endl
       << "#include <fstream>" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.ns << "{" << std::endl
+      << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __serialize_visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl;
 
     s << "#endif" << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_serialize_visitor.h";
 
     std::ofstream ofile;
@@ -259,42 +252,42 @@ void generate_output()
     format(s, ofile);
   }
 
-  if (_G_system.gen_debug_visitor)
+  if (globalSystem.generateDebugVisitor)
   { // generate the debug visitor
     std::stringstream s;
 
-    generate_debug_visitor __debug_visitor(s);
+    GenerateDebugVisitor __debug_visitor(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#ifndef " << _G_system.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
-      << "#define " << _G_system.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
+      << "#ifndef " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
+      << "#define " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "_DefaultVisitor.h\"" << std::endl
       << std::endl;
-    if (_G_system.export_macro_header)
-      s << "#include <" << _G_system.export_macro_header << ">"
+    if (globalSystem.exportMacroHeader)
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
         << std::endl;
 
     s << "#include <iostream>" << std::endl
       << "#include <fstream>" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.ns << "{" << std::endl
+      << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __debug_visitor();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl;
 
     s << "#endif" << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_debug_visitor.h";
 
     std::ofstream ofile;
@@ -305,28 +298,28 @@ void generate_output()
   { // generate the parser bits
     std::stringstream s;
 
-    generate_parser_bits __bits(s);
+    GenerateParserBits __bits(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl;
 
-    s << "#include \"" << _G_system.language << "_parser.h\""
+    s << "#include \"" << globalSystem.language << "_parser.h\""
       << std::endl
       << std::endl;
 
-    if (_G_system.bits)
-      s << _G_system.bits << std::endl;
+    if (globalSystem.bits)
+      s << globalSystem.bits << std::endl;
 
-    s << "namespace " << _G_system.ns << "{" << std::endl
+    s << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __bits();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_parser.cpp";
 
     std::ofstream ofile;
@@ -334,28 +327,28 @@ void generate_output()
     format(s, ofile);
   }
 
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
   { // generate the visitor bits
     std::stringstream s;
 
-    generate_visitor_bits __visitor_bits(s);
+    GenerateVisitorBits __visitor_bits(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#include \"" << _G_system.language << "_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "_visitor.h\"" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.ns << "{" << std::endl
+      << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
     __visitor_bits();
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
+    std::string oname = globalSystem.language;
     oname += "_visitor.cpp";
 
     std::ofstream ofile;
@@ -363,7 +356,7 @@ void generate_output()
     format(s, ofile);
   }
 
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
   { // generate the default visitor bits
     std::stringstream s;
 
@@ -371,20 +364,20 @@ void generate_output()
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#include \"" << _G_system.language << "_default_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "_DefaultVisitor.h\"" << std::endl
       << std::endl
 
-      << "namespace " << _G_system.ns << "{" << std::endl
+      << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
-    std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
-                  gen_default_visitor_bits_rule(s));
+    std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
+                  GenerateDefaultVisitorBitsRule(s));
 
-    s << std::endl << "} // end of namespace " << _G_system.ns << std::endl
+    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl;
 
-    std::string oname = _G_system.language;
-    oname += "_default_visitor.cpp";
+    std::string oname = globalSystem.language;
+    oname += "_DefaultVisitor.cpp";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -392,5 +385,5 @@ void generate_output()
   }
 }
 
-
+}
 

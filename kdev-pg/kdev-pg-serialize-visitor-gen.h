@@ -23,39 +23,45 @@
 #define KDEV_PG_SERIALIZE_VISITORGEN_H
 
 #include "kdev-pg-default-visitor.h"
-#include "kdev-pg-default-visitor-bits-gen.h" // for the has_member_nodes class
+#include "kdev-pg-default-visitor-bits-gen.h" // for the HasMemberNodes class
 
 #include <set>
 #include <list>
 #include <string>
 
-class generate_serialize_visitor
+
+namespace KDevPG
 {
+
+class GenerateSerializeVisitor
+{
+public:
   std::ostream &out;
 
 public:
-  generate_serialize_visitor(std::ostream &o): out(o)
+  GenerateSerializeVisitor(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
-class gen_serialize_visitor_rule: protected default_visitor
+class GenerateSerializeVisitorRule: protected DefaultVisitor
 {
+public:
   std::ostream &out;
-  std::set<std::string> _M_names;
-  std::list<model::variable_declaration_item*> _M_variable_declarations;
+  std::set<std::string> mNames;
+  std::list<Model::VariableDeclarationItem*> mVariableDeclarations;
 
 public:
-  gen_serialize_visitor_rule(std::ostream &o): out(o)
+  GenerateSerializeVisitorRule(std::ostream &o): out(o)
   {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 
 protected:
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
-#endif // KDEV_PG_SERIALIZE_VISITORGEN_H
+}
 
-// kate: space-indent on; indent-width 2; tab-width 2; replace-tabs on
+#endif // KDEV_PG_SERIALIZE_VISITORGEN_H

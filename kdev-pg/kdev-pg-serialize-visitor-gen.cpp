@@ -23,12 +23,16 @@
 #include "kdev-pg.h"
 #include <iostream>
 
-void generate_serialize_visitor::operator()()
+
+namespace KDevPG
 {
-  out << "class " << _G_system.export_macro << " serialize: public default_visitor {" << std::endl
+
+void GenerateSerializeVisitor::operator()()
+{
+  out << "class " << globalSystem.exportMacro << " serialize: public DefaultVisitor {" << std::endl
       << "public:" << std::endl;
 
-  out << "static void read(kdev_pg_memory_pool *p," << std::endl
+  out << "static void read(KDevPG::MemoryPool *p," << std::endl
       << "ast_node *node, std::ifstream *i) { " << std::endl
       << "serialize(p, node, i); " << std::endl
       << "}" << std::endl << std::endl;
@@ -38,24 +42,24 @@ void generate_serialize_visitor::operator()()
       << "}" << std::endl << std::endl;
 
   out << "private:" << std::endl;
-  out << "serialize(kdev_pg_memory_pool *p," << std::endl
+  out << "serialize(KDevPG::MemoryPool *p," << std::endl
       << "ast_node *node, std::ifstream *i) : in(i), out(0) {" << std::endl
       << "memory_pool = p;" << std::endl
       << "if ( !node )" << std::endl
-      << "node = create<" << _G_system.start->_M_symbol->_M_name << "_ast>();" << std::endl
-      << "visit_node( node );" << std::endl
+      << "node = create<" << globalSystem.start->mSymbol->mName << "_ast>();" << std::endl
+      << "visitNode( node );" << std::endl
       << "}" << std::endl << std::endl;
 
   out << "serialize(ast_node *node, std::ofstream *o) : in(0), out(o) {" << std::endl
-      << "visit_node( node );" << std::endl
+      << "visitNode( node );" << std::endl
       << "}" << std::endl << std::endl;
 
   out << "std::ifstream *in;" << std::endl;
   out << "std::ofstream *out;" << std::endl << std::endl;
 
   out << "// memory pool" << std::endl
-      << "typedef kdev_pg_memory_pool memory_pool_type;" << std::endl
-      << "kdev_pg_memory_pool *memory_pool;" << std::endl
+      << "typedef KDevPG::MemoryPool memory_pool_type;" << std::endl
+      << "KDevPG::MemoryPool *memory_pool;" << std::endl
       << "template <class T>" << std::endl
       << "inline T *create() {" << std::endl
       << "T *node = new (memory_pool->allocate(sizeof(T))) T();" << std::endl
@@ -142,80 +146,80 @@ void generate_serialize_visitor::operator()()
       << "}" << std::endl
       << "}" << std::endl << std::endl;
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(),
-                gen_serialize_visitor_rule(out));
+  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
+                GenerateSerializeVisitorRule(out));
 
   out << "};" << std::endl;
 }
 
-void gen_serialize_visitor_rule::operator()(std::pair<std::string,
-                                          model::symbol_item*> const &__it)
+void GenerateSerializeVisitorRule::operator()(std::pair<std::string,
+                                          Model::SymbolItem*> const &__it)
 {
-  _M_names.clear();
-  _M_variable_declarations.clear();
+  mNames.clear();
+  mVariableDeclarations.clear();
 
-  model::symbol_item *sym = __it.second;
+  Model::SymbolItem *sym = __it.second;
 
   bool has_members = false;
-  has_member_nodes hms(has_members);
+  HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit_" << sym->_M_name
-      << "(" << sym->_M_name << "_ast *" << "node"
+  out << "virtual void visit_" << sym->mName
+      << "(" << sym->mName << "_ast *" << "node"
       << ") {" << std::endl;
 
-  world::environment::iterator it = _G_system.env.find(sym);
-  while (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  while (it != globalSystem.env.end())
     {
-      model::evolve_item *e = (*it).second;
+      Model::EvolveItem *e = (*it).second;
       if ((*it).first != sym)
         break;
 
       ++it;
 
-      visit_node(e);
+      visitNode(e);
     }
 
-  out << "default_visitor::visit_" << sym->_M_name
+  out << "DefaultVisitor::visit_" << sym->mName
       << "(" << "node"
       << ");" << std::endl;
 
   out << "}" << std::endl << std::endl;
 }
 
-void gen_serialize_visitor_rule::visit_variable_declaration(model::variable_declaration_item *node)
+void GenerateSerializeVisitorRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
   do
   {
-    if (node->_M_storage_type != model::variable_declaration_item::storage_ast_member)
+    if (node->mStorageType != Model::VariableDeclarationItem::StorageAstMember)
       break;
 
-    if (_M_names.find(node->_M_name) != _M_names.end())
+    if (mNames.find(node->mName) != mNames.end())
       break;
 
     std::string ext =
-        ( node->_M_variable_type == model::variable_declaration_item::type_node ?
+        ( node->mVariableType == Model::VariableDeclarationItem::TypeNode ?
         "_ast" : "");
 
-    std::string type = std::string(node->_M_type) + ext;
-    std::string name = std::string(node->_M_name);
+    std::string type = std::string(node->mType) + ext;
+    std::string name = std::string(node->mName);
 
-    if (node->_M_variable_type == model::variable_declaration_item::type_token)
+    if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
       type = "std::size_t";
 
-    if (node->_M_is_sequence)
+    if (node->mIsSequence)
     {
       out << "{" << std::endl
           << type << " *e = 0;" << std::endl
           << "handle_list_node(node->" << name << "_sequence, e);" << std::endl
           << "}" << std::endl;
     }
-    else if (node->_M_variable_type == model::variable_declaration_item::type_node)
+    else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
     {
       out << "handle_ast_node(node->" << name << ");" << std::endl;
     }
-    else if (node->_M_variable_type == model::variable_declaration_item::type_variable
-             || node->_M_variable_type == model::variable_declaration_item::type_token)
+    else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable
+             || node->mVariableType == Model::VariableDeclarationItem::TypeToken)
     {
       out << "handle_variable(&node->" << name << ");" << std::endl;
     }
@@ -224,10 +228,12 @@ void gen_serialize_visitor_rule::visit_variable_declaration(model::variable_decl
       assert(0); // every variable type must be supported
     }
 
-    _M_names.insert(node->_M_name);
-    _M_variable_declarations.push_back(node);
+    mNames.insert(node->mName);
+    mVariableDeclarations.push_back(node);
 
   } while(false);
 
-  default_visitor::visit_variable_declaration(node);
+  DefaultVisitor::visitVariableDeclaration(node);
+}
+
 }

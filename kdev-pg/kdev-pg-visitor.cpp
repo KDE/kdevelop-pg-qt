@@ -20,21 +20,26 @@
 
 #include "kdev-pg-visitor.h"
 
-visitor::visitor_fun_ptr visitor::_S_table[model::node_kind_LAST] = {
+namespace KDevPG
+{
+
+Visitor::VisitorFuncPointer Visitor::sTable[Model::NodeKindLast] = {
   0,
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_zero),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_plus),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_star),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_symbol),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_action),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_alternative),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_cons),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_evolve),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_try_catch),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_alias),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_terminal),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_nonterminal),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_annotation),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_condition),
-  reinterpret_cast<visitor::visitor_fun_ptr>(&visitor::visit_variable_declaration),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitZero),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitPlus),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitStar),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitSymbol),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitAction),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitAlternative),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitCons),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitEvolve),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitTryCatch),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitAlias),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitTerminal),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitNonTerminal),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitAnnotation),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitCondition),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitVariableDeclaration),
 };
+
+}

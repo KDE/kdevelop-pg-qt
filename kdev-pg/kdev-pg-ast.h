@@ -24,229 +24,252 @@
 #include "kdev-pg-allocator.h"
 
 #define PG_NODE(k) \
-    enum { node_kind = node_kind_##k };
+    enum { NodeKind = NodeKind##k };
 
-// the kdev-pg calculus
-namespace model
+namespace KDevPG
 {
 
-  enum node_kind_enum {
-    node_kind_item = 0,
-    node_kind_zero = 1,
-    node_kind_plus = 2,
-    node_kind_star = 3,
-    node_kind_symbol = 4,
-    node_kind_action = 5,
-    node_kind_alternative = 6,
-    node_kind_cons = 7,
-    node_kind_evolve = 8,
-    node_kind_try_catch = 9,
-    node_kind_alias = 10,
-    node_kind_terminal = 11,
-    node_kind_nonterminal = 12,
-    node_kind_annotation = 13,
-    node_kind_condition = 14,
-    node_kind_variable_declaration = 15,
+// the kdev-pg calculus
+namespace Model
+{
 
-    node_kind_LAST
+  enum NodeKind {
+    NodeKindItem = 0,
+    NodeKindZero = 1,
+    NodeKindPlus = 2,
+    NodeKindStar = 3,
+    NodeKindSymbol = 4,
+    NodeKindAction = 5,
+    NodeKindAlternative = 6,
+    NodeKindCons = 7,
+    NodeKindEvolve = 8,
+    NodeKindTryCatch = 9,
+    NodeKindAlias = 10,
+    NodeKindTerminal = 11,
+    NodeKindNonTerminal = 12,
+    NodeKindAnnotation = 13,
+    NodeKindCondition = 14,
+    NodeKindVariableDeclaration = 15,
+
+    NodeKindLast
   };
 
-  struct node
+  class Node
   {
-    PG_NODE(item)
+  public:
+    PG_NODE(Item)
 
     int kind;
   };
 
-  struct zero_item: public node
+  class ZeroItem: public Node
   {
-    PG_NODE(zero)
+  public:
+    PG_NODE(Zero)
   };
 
-  struct plus_item: public node
+  class PlusItem: public Node
   {
-    PG_NODE(plus)
+  public:
+    PG_NODE(Plus)
 
-    node *_M_item;
+    Node *mItem;
   };
 
-  struct star_item: public node
+  class StarItem: public Node
   {
-    PG_NODE(star)
+  public:
+    PG_NODE(Star)
 
-    node *_M_item;
+    Node *mItem;
   };
 
-  struct symbol_item: public node
+  class SymbolItem: public Node
   {
-    PG_NODE(symbol)
+  public:
+    PG_NODE(Symbol)
 
-    char const *_M_name;
+    char const *mName;
   };
 
-  struct action_item: public node
+  class ActionItem: public Node
   {
-    PG_NODE(action)
+  public:
+    PG_NODE(Action)
 
-    node *_M_item;
-    char const *_M_code;
+    Node *mItem;
+    char const *mCode;
   };
 
-  struct alternative_item: public node
+  class AlternativeItem: public Node
   {
-    PG_NODE(alternative)
+  public:
+    PG_NODE(Alternative)
 
-    node *_M_left;
-    node *_M_right;
+    Node *mLeft;
+    Node *mRight;
   };
 
-  struct cons_item: public node
+  class ConsItem: public Node
   {
-    PG_NODE(cons)
+  public:
+    PG_NODE(Cons)
 
-    node *_M_left;
-    node *_M_right;
+    Node *mLeft;
+    Node *mRight;
   };
 
-  struct try_catch_item: public node
+  class TryCatchItem: public Node
   {
-    PG_NODE(try_catch)
+  public:
+    PG_NODE(TryCatch)
 
-    node *_M_try_item;
-    node *_M_catch_item; // contains 0 for "catch(recover)"
-    bool _M_unsafe;
+    Node *mTryItem;
+    Node *mCatchItem; // contains 0 for "catch(recover)"
+    bool mUnsafe;
   };
 
-  struct alias_item: public node
+  class AliasItem: public Node
   {
-    PG_NODE(alias)
+  public:
+    PG_NODE(Alias)
 
-    char const *_M_code;
-    symbol_item *_M_symbol;
+    char const *mCode;
+    SymbolItem *mSymbol;
   };
 
-  struct terminal_item: public node
+  class TerminalItem: public Node
   {
-    PG_NODE(terminal)
+  public:
+    PG_NODE(Terminal)
 
-    char const *_M_name;
-    char const *_M_description;
+    char const *mName;
+    char const *mDescription;
   };
 
-  struct nonterminal_item: public node
+  class NonTerminalItem: public Node
   {
-    PG_NODE(nonterminal)
+  public:
+    PG_NODE(NonTerminal)
 
-    symbol_item *_M_symbol;
-    char const *_M_arguments;
+    SymbolItem *mSymbol;
+    char const *mArguments;
   };
 
-  struct variable_declaration_item: public node
+  class VariableDeclarationItem: public Node
   {
-    PG_NODE(variable_declaration)
+  public:
+    PG_NODE(VariableDeclaration)
 
-    enum declaration_type_enum {
-      declaration_argument,
-      declaration_local,
+    enum DeclarationType {
+      DeclarationArgument,
+      DeclarationLocal,
     };
 
-    enum storage_type_enum {
-      storage_ast_member,
-      storage_temporary,
+    enum StorateType {
+      StorageAstMember,
+      StorageTemporary,
     };
 
-    enum variable_type_enum {
-      type_node,
-      type_token,
-      type_variable,
+    enum VariableType {
+      TypeNode,
+      TypeToken,
+      TypeVariable,
     };
 
-    char const *_M_type;
-    char const *_M_name;
+    char const *mType;
+    char const *mName;
 
-    declaration_type_enum _M_declaration_type;
-    storage_type_enum     _M_storage_type;
-    variable_type_enum    _M_variable_type;
-    bool                  _M_is_sequence;
+    DeclarationType mDeclarationType;
+    StorateType     mStorageType;
+    VariableType    mVariableType;
+    bool                  mIsSequence;
 
-    variable_declaration_item *_M_next;
+    VariableDeclarationItem *mNext;
   };
 
-  struct annotation_item: public node
+  class AnnotationItem: public Node
   {
-    PG_NODE(annotation)
+  public:
+    PG_NODE(Annotation)
 
-    node *_M_item;
-    variable_declaration_item *_M_declaration;
+    Node *mItem;
+    VariableDeclarationItem *mDeclaration;
   };
 
-  struct condition_item: public node
+  class ConditionItem: public Node
   {
-    PG_NODE(condition)
+  public:
+    PG_NODE(Condition)
 
-    char const *_M_code;
-    node *_M_item;
+    char const *mCode;
+    Node *mItem;
   };
 
-  struct evolve_item: public node
+  class EvolveItem: public Node
   {
-    PG_NODE(evolve)
+  public:
+    PG_NODE(Evolve)
 
-    node *_M_item;
-    symbol_item *_M_symbol;
-    variable_declaration_item *_M_declarations;
-    char const *_M_code;
+    Node *mItem;
+    SymbolItem *mSymbol;
+    VariableDeclarationItem *mDeclarations;
+    char const *mCode;
   };
 
 } // namespace model
 
 
 // configuration stuff outside the model
-namespace settings
+namespace Settings
 {
 
-  enum node_kind_enum {
-    node_kind_member = 30,
+  enum NodeKind {
+    NodeKindMember = 30,
 
-    node_kind_LAST
+    NodeKindLast
   };
 
-  struct member_item: public model::node
+  class MemberItem: public Model::Node
   {
-    PG_NODE(member)
+  public:
+    PG_NODE(Member)
 
-    enum member_kind_enum {
-      public_declaration    = 1,
-      protected_declaration = 2,
-      private_declaration   = 4,
-      constructor_code      = 8,
-      destructor_code       = 16,
+    enum MemberKind {
+      PublicDeclaration    = 1,
+      ProtectedDeclaration = 2,
+      PrivateDeclaration   = 4,
+      ConstructorCode      = 8,
+      DestructorCode       = 16,
     };
 
-    member_kind_enum _M_member_kind;
-    char const *_M_code;
+    MemberKind mMemberKind;
+    char const *mCode;
   };
 
 } // namespace settings
 
-
 template <class _Tp>
-_Tp node_cast(model::node *item)
+_Tp nodeCast(Model::Node *item)
 {
-  if (static_cast<_Tp>(0)->node_kind == item->kind)
+  if (static_cast<_Tp>(0)->NodeKind == item->kind)
     return static_cast<_Tp>(item);
 
   return 0;
 }
 
-extern kdev_pg_allocator<char> _G_memory_pool;
+extern KDevPG::Allocator<char> globalMemoryPool;
 
 template <class _Tp>
-_Tp *create_node()
+_Tp *createNode()
 {
-  _Tp *node = reinterpret_cast<_Tp*>(_G_memory_pool.allocate(sizeof(_Tp)));
-  node->kind = _Tp::node_kind;
+  _Tp *node = reinterpret_cast<_Tp*>(globalMemoryPool.allocate(sizeof(_Tp)));
+  node->kind = _Tp::NodeKind;
   return node;
 }
+
+
+}
+
 
 #endif // KDEV_PG_AST_H

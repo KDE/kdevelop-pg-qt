@@ -31,11 +31,11 @@ extern void yyerror(char const *msg);
 %}
 
 %union {
-    model::node *item;
+    KDevPG::Model::Node *item;
     char* str;
-    model::variable_declaration_item::declaration_type_enum declaration_type;
-    model::variable_declaration_item::storage_type_enum     storage_type;
-    model::variable_declaration_item::variable_type_enum    variable_type;
+    KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
+    KDevPG::Model::VariableDeclarationItem::StorateType     storageType;
+    KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
@@ -49,18 +49,18 @@ extern void yyerror(char const *msg);
 %type<str> name code_opt rule_arguments_opt
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
-%type<item> member_declaration_rest variable_declarations variable_declaration
-%type<declaration_type> declaration_type_opt
-%type<storage_type>     scope storage_type
-%type<variable_type>    variable_type
+%type<item> member_declaration_rest variableDeclarations variableDeclaration
+%type<declarationType> declarationType_opt
+%type<storageType>     scope storageType
+%type<variableType>    variableType
 
 %%
 
 system
-    : code_opt { _G_system.decl = $1; }
+    : code_opt { globalSystem.decl = $1; }
       declarations
       rules
-      code_opt { _G_system.bits = $5; }
+      code_opt { globalSystem.bits = $5; }
     ;
 
 declarations
@@ -70,73 +70,73 @@ declarations
 
 declaration
     : T_PARSERCLASS_DECLARATION member_declaration_rest
-        { _G_system.push_parserclass_member($2); }
+        { globalSystem.pushParserClassMember($2); }
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
-        { _G_system.token_stream = $2;           }
+        { globalSystem.tokenStream = $2;           }
     | namespace_declaration
     | T_EXPORT_MACRO T_STRING
-        { _G_system.export_macro = $2;           }
+        { globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING
-        { _G_system.export_macro_header = $2;   }
+        { globalSystem.exportMacroHeader = $2;   }
     ;
 
 member_declaration_rest
     : '(' T_PUBLIC T_DECLARATION ')' T_CODE
-        { $$ = pg::member(settings::member_item::public_declaration, $5);    }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, $5);    }
     | '(' T_PROTECTED T_DECLARATION ')' T_CODE
-        { $$ = pg::member(settings::member_item::protected_declaration, $5); }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, $5); }
     | '(' T_PRIVATE T_DECLARATION ')' T_CODE
-        { $$ = pg::member(settings::member_item::private_declaration, $5);   }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, $5);   }
     | '(' T_CONSTRUCTOR ')' T_CODE
-        { $$ = pg::member(settings::member_item::constructor_code, $4);      }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, $4);      }
     | '(' T_DESTRUCTOR ')' T_CODE
-        { $$ = pg::member(settings::member_item::destructor_code, $4);       }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, $4);       }
     ;
 
 namespace_declaration
     : T_NAMESPACE_DECLARATION T_IDENTIFIER T_CODE
-        { _G_system.push_namespace($2, $3); }
+        { globalSystem.pushNamespace($2, $3); }
     ;
 
 declared_tokens
-    : T_TERMINAL                        { _G_system.push_terminal($1,$1); }
-    | T_TERMINAL '(' T_STRING ')'       { _G_system.push_terminal($1,$3); }
-    | declared_tokens ',' T_TERMINAL    { _G_system.push_terminal($3,$3); }
+    : T_TERMINAL                        { globalSystem.pushTerminal($1,$1); }
+    | T_TERMINAL '(' T_STRING ')'       { globalSystem.pushTerminal($1,$3); }
+    | declared_tokens ',' T_TERMINAL    { globalSystem.pushTerminal($3,$3); }
     | declared_tokens ',' T_TERMINAL '(' T_STRING ')'
-                                        { _G_system.push_terminal($3,$5); }
+                                        { globalSystem.pushTerminal($3,$5); }
     ;
 
 rules
-    : item ';'                          { _G_system.push_rule($1); }
-    | rules item ';'                    { _G_system.push_rule($2); }
+    : item ';'                          { globalSystem.pushRule($1); }
+    | rules item ';'                    { globalSystem.pushRule($2); }
     | rules namespace_declaration
     ;
 
 primary_item
-    : '0'                               { $$ = _G_system.zero(); }
+    : '0'                               { $$ = globalSystem.zero(); }
     | '(' option_item ')'               { $$ = $2; }
     | try_item                    { $$ = $1; }
     | primary_atom                      { $$ = $1; }
-    | name scope primary_atom           { $$ = pg::annotation($1, $3, false, $2); }
-    | '#' name scope primary_atom       { $$ = pg::annotation($2, $4, true, $3);  }
+    | name scope primary_atom           { $$ = KDevPG::annotation($1, $3, false, $2); }
+    | '#' name scope primary_atom       { $$ = KDevPG::annotation($2, $4, true, $3);  }
     ;
 
 primary_atom
-    : T_IDENTIFIER rule_arguments_opt   { $$ = pg::nonterminal(_G_system.push_symbol($1), $2); }
-    | T_TERMINAL                        { $$ = _G_system.terminal($1); }
+    : T_IDENTIFIER rule_arguments_opt   { $$ = KDevPG::nonTerminal(globalSystem.pushSymbol($1), $2); }
+    | T_TERMINAL                        { $$ = globalSystem.terminal($1); }
     ;
 
 try_item
     : T_TRY_RECOVER '(' option_item ')'
         {
-          _G_system.need_state_management = true;
-          $$ = pg::try_catch($3, 0);
+          globalSystem.needStateManagement = true;
+          $$ = KDevPG::tryCatch($3, 0);
         }
     | T_TRY_ROLLBACK '(' option_item ')' T_CATCH '(' option_item ')'
         {
-          _G_system.need_state_management = true;
-          $$ = pg::try_catch($3, $7);
+          globalSystem.needStateManagement = true;
+          $$ = KDevPG::tryCatch($3, $7);
         }
 
 rule_arguments_opt
@@ -155,55 +155,55 @@ name
     ;
 
 scope
-    : '=' { $$ = model::variable_declaration_item::storage_ast_member; }
-    | ':' { $$ = model::variable_declaration_item::storage_temporary;  }
+    : '=' { $$ = KDevPG::Model::VariableDeclarationItem::StorageAstMember; }
+    | ':' { $$ = KDevPG::Model::VariableDeclarationItem::StorageTemporary;  }
     ;
 
 unary_item
-    : primary_item '+'                  { $$ = pg::plus($1); }
-    | primary_item '*'                  { $$ = pg::star($1); }
+    : primary_item '+'                  { $$ = KDevPG::plus($1); }
+    | primary_item '*'                  { $$ = KDevPG::star($1); }
     | primary_item                      { $$ = $1; }
-/*    | '?' primary_item                  { $$ = pg::alternative($2, _G_system.zero()); } */
+/*    | '?' primary_item                  { $$ = KDevPG::alternative($2, globalSystem.zero()); } */
     ;
 
 postfix_item
     : unary_item                        { $$ = $1; }
     | postfix_item '@' primary_item
         {
-          clone_tree cl;
-          $$ = pg::cons($1, pg::star(pg::cons(cl.clone($3), cl.clone($1))));
+          KDevPG::CloneTree cl;
+          $$ = KDevPG::cons($1, KDevPG::star(KDevPG::cons(cl.clone($3), cl.clone($1))));
         }
-    | postfix_item T_CODE               { $$ = pg::action($1, $2); }
+    | postfix_item T_CODE               { $$ = KDevPG::action($1, $2); }
     ;
 
 item_sequence
     : postfix_item                      { $$ = $1; }
-    | item_sequence postfix_item        { $$ = pg::cons($1, $2); }
+    | item_sequence postfix_item        { $$ = KDevPG::cons($1, $2); }
     ;
 
 conditional_item
     : item_sequence                     { $$ = $1; }
-    | '?' T_CODE item_sequence          { $$ = pg::condition($2, $3); }
+    | '?' T_CODE item_sequence          { $$ = KDevPG::condition($2, $3); }
     ;
 
 option_item
     : conditional_item                  { $$ = $1; }
-    | option_item '|' conditional_item  { $$ = pg::alternative($1, $3); }
+    | option_item '|' conditional_item  { $$ = KDevPG::alternative($1, $3); }
     ;
 
 item
-    : option_item T_ARROW T_IDENTIFIER T_CODE '[' variable_declarations ']'
+    : option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
         {
-          $$ = pg::evolve($1, _G_system.push_symbol($3),
-                          (model::variable_declaration_item*) $6, $4);
+          $$ = KDevPG::evolve($1, globalSystem.pushSymbol($3),
+                          (KDevPG::Model::VariableDeclarationItem*) $6, $4);
         }
-    | option_item T_ARROW T_IDENTIFIER '[' variable_declarations ']' code_opt
+    | option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
         {
-          $$ = pg::evolve($1, _G_system.push_symbol($3),
-                          (model::variable_declaration_item*) $5, $7);
+          $$ = KDevPG::evolve($1, globalSystem.pushSymbol($3),
+                          (KDevPG::Model::VariableDeclarationItem*) $5, $7);
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
-        { $$ = pg::evolve($1, _G_system.push_symbol($3), 0, $4); }
+        { $$ = KDevPG::evolve($1, globalSystem.pushSymbol($3), 0, $4); }
     ;
 
 code_opt
@@ -211,43 +211,43 @@ code_opt
     | T_CODE                            { $$ = $1; }
     ;
 
-variable_declarations
-    : variable_declaration              { $$ = $1; }
-    | variable_declarations variable_declaration
+variableDeclarations
+    : variableDeclaration              { $$ = $1; }
+    | variableDeclarations variableDeclaration
         {
-          model::variable_declaration_item *last = (model::variable_declaration_item*) $1;
-          while (last->_M_next != 0) {
-            last = last->_M_next;
+          KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) $1;
+          while (last->mNext != 0) {
+            last = last->mNext;
           }
-          last->_M_next = (model::variable_declaration_item*) $2;
+          last->mNext = (KDevPG::Model::VariableDeclarationItem*) $2;
           $$ = $1;
         }
     ;
 
-variable_declaration
-    : declaration_type_opt storage_type variable_type T_IDENTIFIER ':' T_IDENTIFIER
-        { $$ = pg::variable_declaration($1, $2, $3, false, $4, $6); }
-    | declaration_type_opt storage_type T_TOKEN       T_IDENTIFIER ';'
-        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, false, $4, ""); }
-    | declaration_type_opt storage_type variable_type '#' T_IDENTIFIER ':' T_IDENTIFIER
-        { $$ = pg::variable_declaration($1, $2, $3, true, $5, $7); }
-    | declaration_type_opt storage_type T_TOKEN       '#' T_IDENTIFIER ';'
-        { $$ = pg::variable_declaration($1, $2, model::variable_declaration_item::type_token, true, $5, ""); }
+variableDeclaration
+    : declarationType_opt storageType variableType T_IDENTIFIER ':' T_IDENTIFIER
+        { $$ = KDevPG::variableDeclaration($1, $2, $3, false, $4, $6); }
+    | declarationType_opt storageType T_TOKEN       T_IDENTIFIER ';'
+        { $$ = KDevPG::variableDeclaration($1, $2, KDevPG::Model::VariableDeclarationItem::TypeToken, false, $4, ""); }
+    | declarationType_opt storageType variableType '#' T_IDENTIFIER ':' T_IDENTIFIER
+        { $$ = KDevPG::variableDeclaration($1, $2, $3, true, $5, $7); }
+    | declarationType_opt storageType T_TOKEN       '#' T_IDENTIFIER ';'
+        { $$ = KDevPG::variableDeclaration($1, $2, KDevPG::Model::VariableDeclarationItem::TypeToken, true, $5, ""); }
     ;
 
-declaration_type_opt
-    : /* empty */       { $$ = model::variable_declaration_item::declaration_local;     }
-    | T_ARGUMENT        { $$ = model::variable_declaration_item::declaration_argument;  }
+declarationType_opt
+    : /* empty */       { $$ = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     }
+    | T_ARGUMENT        { $$ = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  }
     ;
 
-storage_type
-    : T_MEMBER          { $$ = model::variable_declaration_item::storage_ast_member;    }
-    | T_TEMPORARY       { $$ = model::variable_declaration_item::storage_temporary;     }
+storageType
+    : T_MEMBER          { $$ = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    }
+    | T_TEMPORARY       { $$ = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     }
     ;
 
-variable_type
-    : T_NODE            { $$ = model::variable_declaration_item::type_node;             }
-    | T_VARIABLE        { $$ = model::variable_declaration_item::type_variable;         }
+variableType
+    : T_NODE            { $$ = KDevPG::Model::VariableDeclarationItem::TypeNode;             }
+    | T_VARIABLE        { $$ = KDevPG::Model::VariableDeclarationItem::TypeVariable;         }
     ;
 
 %%

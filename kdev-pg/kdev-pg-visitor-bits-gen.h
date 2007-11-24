@@ -26,17 +26,22 @@
 #include <list>
 #include <string>
 
-class generate_visitor_bits
+namespace KDevPG
 {
+
+class GenerateVisitorBits
+{
+public:
   std::ostream &out;
 
 public:
-  generate_visitor_bits(std::ostream &o): out(o)
+  GenerateVisitorBits(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
+}
 
 #endif // KDEV_PG_VISITORGEN_H
 

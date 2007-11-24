@@ -23,38 +23,44 @@
 
 #include "kdev-pg-ast.h"
 
-struct visitor
+namespace KDevPG
 {
-  virtual ~visitor()
+
+class Visitor
+{
+public:
+  virtual ~Visitor()
   {}
 
-  virtual void visit_node(model::node *node)
+  virtual void visitNode(Model::Node *node)
   {
     if (node)
-      (this->*_S_table[node->kind])(node);
+      (this->*sTable[node->kind])(node);
   }
 
 protected:
-  virtual void visit_zero(model::zero_item *) {}
-  virtual void visit_plus(model::plus_item *) {}
-  virtual void visit_star(model::star_item *) {}
-  virtual void visit_symbol(model::symbol_item *) {}
-  virtual void visit_action(model::action_item *) {}
-  virtual void visit_alternative(model::alternative_item *) {}
-  virtual void visit_cons(model::cons_item *) {}
-  virtual void visit_evolve(model::evolve_item *) {}
-  virtual void visit_try_catch(model::try_catch_item *) {}
-  virtual void visit_alias(model::alias_item *) {}
-  virtual void visit_terminal(model::terminal_item *) {}
-  virtual void visit_nonterminal(model::nonterminal_item *) {}
-  virtual void visit_annotation(model::annotation_item *) {}
-  virtual void visit_condition(model::condition_item *) {}
-  virtual void visit_variable_declaration(model::variable_declaration_item *) {}
+  virtual void visitZero(Model::ZeroItem *) {}
+  virtual void visitPlus(Model::PlusItem *) {}
+  virtual void visitStar(Model::StarItem *) {}
+  virtual void visitSymbol(Model::SymbolItem *) {}
+  virtual void visitAction(Model::ActionItem *) {}
+  virtual void visitAlternative(Model::AlternativeItem *) {}
+  virtual void visitCons(Model::ConsItem *) {}
+  virtual void visitEvolve(Model::EvolveItem *) {}
+  virtual void visitTryCatch(Model::TryCatchItem *) {}
+  virtual void visitAlias(Model::AliasItem *) {}
+  virtual void visitTerminal(Model::TerminalItem *) {}
+  virtual void visitNonTerminal(Model::NonTerminalItem *) {}
+  virtual void visitAnnotation(Model::AnnotationItem *) {}
+  virtual void visitCondition(Model::ConditionItem *) {}
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *) {}
 
 private:
-  typedef void (visitor::*visitor_fun_ptr)(model::node *item);
-  static visitor_fun_ptr _S_table[];
+  typedef void (Visitor::*VisitorFuncPointer)(Model::Node *item);
+  static Visitor::VisitorFuncPointer sTable[];
 };
+
+}
 
 #endif // KDEV_PG_VISITOR_H
 

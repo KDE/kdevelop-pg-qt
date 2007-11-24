@@ -26,59 +26,59 @@
 #include <iostream>
 #include <cassert>
 
-namespace
+namespace KDevPG
 {
-  void gen_condition(world::node_set const &s, std::ostream &out)
+  void generateCondition(World::NodeSet const &s, std::ostream &out)
   {
     bool initial = true;
-    model::node *item = _G_system.zero();
+    Model::Node *item = globalSystem.zero();
 
-    world::node_set::iterator it = s.begin();
+    World::NodeSet::iterator it = s.begin();
     while (it != s.end())
       {
         item = *it++;
 
-        if (model::terminal_item *t = node_cast<model::terminal_item*>(item))
+        if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
           {
             if (!initial)
               out << std::endl << "|| ";
 
-            out << "yytoken == Token_" << t->_M_name;
+            out << "yytoken == Token_" << t->mName;
             initial = false;
           }
       }
 
-    if (initial && is_zero(item))
+    if (initial && isZero(item))
       out << "true /*epsilon*/";
   }
 
-  void gen_test_condition(model::node *node, std::ostream &out)
+  void generateTestCondition(Model::Node *node, std::ostream &out)
   {
-    world::node_set s = _G_system.FIRST(node);
-    gen_condition(s, out);
+    World::NodeSet s = globalSystem.first(node);
+    generateCondition(s, out);
   }
 
-  std::string gen_parser_call(model::nonterminal_item *node, int catch_id, std::ostream &out)
+  std::string generateParserCall(Model::NonTerminalItem *node, int catch_id, std::ostream &out)
   {
     static int __id = 0;
     static char __var[1024];
-    char const *symbol_name = node->_M_symbol->_M_name;
+    char const *symbol_name = node->mSymbol->mName;
 
-    if (_G_system.generate_ast)
+    if (globalSystem.GenerateAst)
       {
         sprintf(__var, "__node_%d", __id++);
 
         out << symbol_name << "_ast *" << __var << " = 0;" << std::endl
             << "if (!parse_" << symbol_name << "(&" << __var;
 
-        if (node->_M_arguments[0] != '\0') // read: if (_M_arguments != "")
-            out << ", " << node->_M_arguments;
+        if (node->mArguments[0] != '\0') // read: if (mArguments != "")
+            out << ", " << node->mArguments;
 
         out << "))" << std::endl;
       }
     else
       {
-        out << "if (!parse_" << symbol_name << "(" << node->_M_arguments << "))"
+        out << "if (!parse_" << symbol_name << "(" << node->mArguments << "))"
             << std::endl;
       }
 
@@ -86,13 +86,13 @@ namespace
       {
         out << "{" << std::endl;
 
-        if (_G_system.need_state_management)
+        if (globalSystem.needStateManagement)
           out <<   "if (!yy_block_errors) {" << std::endl;
 
         out << "yy_expected_symbol(ast_node::Kind_" << symbol_name
             << ", \"" << symbol_name << "\"" << ");" << std::endl;
 
-        if (_G_system.need_state_management)
+        if (globalSystem.needStateManagement)
           out << "}" << std::endl;
 
         out << "return false;" << std::endl
@@ -106,20 +106,20 @@ namespace
     return __var;
   }
 
-  void gen_token_test(model::terminal_item *node, int catch_id, std::ostream &out)
+  void generateTokenTest(Model::TerminalItem *node, int catch_id, std::ostream &out)
   {
-    out << "if (yytoken != Token_" << node->_M_name << ")" << std::endl;
+    out << "if (yytoken != Token_" << node->mName << ")" << std::endl;
     if (!catch_id)
       {
         out << "{" << std::endl;
 
-        if (_G_system.need_state_management)
+        if (globalSystem.needStateManagement)
           out << "if (!yy_block_errors) {" << std::endl;
 
-        out << "yy_expected_token(yytoken, Token_" << node->_M_name
-            << ", \"" << node->_M_description << "\");" << std::endl;
+        out << "yy_expected_token(yytoken, Token_" << node->mName
+            << ", \"" << node->mDescription << "\");" << std::endl;
 
-        if (_G_system.need_state_management)
+        if (globalSystem.needStateManagement)
           out << "}" << std::endl;
 
         out << "return false;" << std::endl
@@ -131,25 +131,25 @@ namespace
       }
   }
 
-  void gen_recovery(model::node *node, int catch_id, std::ostream &out)
+  void generateRecovery(Model::Node *node, int catch_id, std::ostream &out)
   {
-    world::node_set s = _G_system.FOLLOW(node);
-    model::node *item = _G_system.zero();
+    World::NodeSet s = globalSystem.follow(node);
+    Model::Node *item = globalSystem.zero();
 
     out << "if (try_start_token_" << catch_id
-        << " == token_stream->index() - 1)" << std::endl
+        << " == tokenStream->index() - 1)" << std::endl
         << "yylex();" << std::endl
         << std::endl;
 
     out << "while (yytoken != Token_EOF";
 
-    world::node_set::iterator it = s.begin();
+    World::NodeSet::iterator it = s.begin();
     while (it != s.end())
       {
         item = *it++;
 
-        if (model::terminal_item *t = node_cast<model::terminal_item*>(item))
-          out << std::endl << "&& yytoken != Token_" << t->_M_name;
+        if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
+          out << std::endl << "&& yytoken != Token_" << t->mName;
       }
 
     out << ")" << std::endl
@@ -157,84 +157,82 @@ namespace
   }
 
 
-} // namespace
-
-void code_generator::operator()(model::node *node)
+void CodeGenerator::operator()(Model::Node *node)
 {
-  _M_evolve = node_cast<model::evolve_item*>(node);
-  assert(_M_evolve != 0);
-  visit_node(node);
+  mEvolve = nodeCast<Model::EvolveItem*>(node);
+  assert(mEvolve != 0);
+  visitNode(node);
 }
 
-void code_generator::visit_zero(model::zero_item *node)
+void CodeGenerator::visitZero(Model::ZeroItem *node)
 {
   // out << " /* nothing to do */" << std::endl;
 }
 
-void code_generator::visit_symbol(model::symbol_item *node)
+void CodeGenerator::visitSymbol(Model::SymbolItem *node)
 {
   // out << " /* nothing to do */" << std::endl;
 }
 
-void code_generator::visit_nonterminal(model::nonterminal_item *node)
+void CodeGenerator::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  gen_parser_call(node, _M_current_catch_id, out);
+  generateParserCall(node, mCurrentCatchId, out);
 }
 
-void code_generator::visit_terminal(model::terminal_item *node)
+void CodeGenerator::visitTerminal(Model::TerminalItem *node)
 {
-  gen_token_test(node, _M_current_catch_id, out);
+  generateTokenTest(node, mCurrentCatchId, out);
 
   out << "yylex();" << std::endl
       << std::endl;
 }
 
-void code_generator::visit_plus(model::plus_item *node)
+void CodeGenerator::visitPlus(Model::PlusItem *node)
 {
   out << "do {" << std::endl;
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
   out << "} while (";
-  gen_test_condition(node, out);
+  generateTestCondition(node, out);
   out << ");" << std::endl;
 }
 
-void code_generator::visit_star(model::star_item *node)
+void CodeGenerator::visitStar(Model::StarItem *node)
 {
   out << "while (";
-  gen_test_condition(node, out);
+  generateTestCondition(node, out);
   out << ") {" << std::endl;
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
   out << "}" << std::endl;
 }
 
-void code_generator::visit_action(model::action_item *node)
+void CodeGenerator::visitAction(Model::ActionItem *node)
 {
-  default_visitor::visit_action(node);
-  out << node->_M_code;
+  DefaultVisitor::visitAction(node);
+  out << node->mCode;
 }
 
-void code_generator::visit_condition(model::condition_item *node)
+void CodeGenerator::visitCondition(Model::ConditionItem *node)
 {
-  default_visitor::visit_condition(node);
+  DefaultVisitor::visitCondition(node);
 }
 
-void code_generator::visit_alternative(model::alternative_item *node)
+void CodeGenerator::visitAlternative(Model::AlternativeItem *node)
 {
-  std::list<model::node*> top_level_nodes;
+  std::list<Model::Node*> top_level_nodes;
 
-  std::stack<model::node*> working_list;
-  working_list.push(node->_M_right);
-  working_list.push(node->_M_left);
+  std::stack<Model::Node*> working_list;
+  working_list.push(node->mRight);
+  working_list.push(node->mLeft);
 
   while (!working_list.empty())
     {
-      model::node *n = working_list.top();
+      Model::Node *n = working_list.top();
       working_list.pop();
 
-      if (model::alternative_item *a = node_cast<model::alternative_item*>(n))
+      if (Model::AlternativeItem *a = nodeCast<Model::AlternativeItem*>(n))
         {
-          working_list.push(a->_M_right);
-          working_list.push(a->_M_left);
+          working_list.push(a->mRight);
+          working_list.push(a->mLeft);
         }
       else
         {
@@ -242,24 +240,24 @@ void code_generator::visit_alternative(model::alternative_item *node)
         }
     }
 
-  std::list<model::node*>::iterator it = top_level_nodes.begin();
+  std::list<Model::Node*>::iterator it = top_level_nodes.begin();
   while (it != top_level_nodes.end())
     {
-      model::node *n = *it++;
-      model::condition_item *cond = node_cast<model::condition_item*>(n);
+      Model::Node *n = *it++;
+      Model::ConditionItem *cond = nodeCast<Model::ConditionItem*>(n);
 
       out << "if (";
 
       if (cond)
         out << "(";
 
-      gen_test_condition(n, out);
+      generateTestCondition(n, out);
 
       if (cond)
-        out << ") && (" << cond->_M_code << ")";
+        out << ") && (" << cond->mCode << ")";
 
       out << ") {" << std::endl;
-      visit_node(n);
+      visitNode(n);
       out << "}";
 
       if (it != top_level_nodes.end())
@@ -268,226 +266,226 @@ void code_generator::visit_alternative(model::alternative_item *node)
         {
           out << "else {" << std::endl;
 
-          if (!_M_current_catch_id)
+          if (!mCurrentCatchId)
               out << "return false;" << std::endl;
           else
-              out << "goto __catch_" << _M_current_catch_id << ";";
+              out << "goto __catch_" << mCurrentCatchId << ";";
 
           out << "}" << std::endl;
         }
     }
 }
 
-void code_generator::visit_cons(model::cons_item *node)
+void CodeGenerator::visitCons(Model::ConsItem *node)
 {
-  default_visitor::visit_cons(node);
+  DefaultVisitor::visitCons(node);
 }
 
-void code_generator::visit_evolve(model::evolve_item *node)
+void CodeGenerator::visitEvolve(Model::EvolveItem *node)
 {
   out << "if (";
 
-  model::condition_item *cond = node_cast<model::condition_item*>(node->_M_item);
+  Model::ConditionItem *cond = nodeCast<Model::ConditionItem*>(node->mItem);
 
   if (cond)
     out << "(";
 
-  gen_test_condition(node, out);
+  generateTestCondition(node, out);
 
-  if (reduces_to_epsilon(node->_M_item))
+  if (reducesToEpsilon(node->mItem))
     {
       out << " || ";
-      gen_condition(_G_system.FOLLOW(node->_M_symbol), out);
+      generateCondition(globalSystem.follow(node->mSymbol), out);
     }
 
   if (cond)
-    out << ") && (" << cond->_M_code << ")";
+    out << ") && (" << cond->mCode << ")";
 
   out << ") {" << std::endl;
 
-  gen_local_decls gen_locals(out, _M_names);
-  gen_locals(node->_M_item);
+  GenerateLocalDeclarations gen_locals(out, mNames);
+  gen_locals(node->mItem);
 
-  out << node->_M_code;
+  out << node->mCode;
 
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 
-  if (node == _G_system.start)
+  if (node == globalSystem.start)
     out << "if (Token_EOF != yytoken) { return false; }" << std::endl;
 
   out << "}" << std::endl;
 }
 
-void code_generator::visit_try_catch(model::try_catch_item *node)
+void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
 {
-  static int try_catch_counter = 0;
-  int previous_catch_id = set_catch_id(++try_catch_counter);
+  static int tryCatch_counter = 0;
+  int previous_catch_id = setCatchId(++tryCatch_counter);
 
-  if (node->_M_catch_item) // node is a try/rollback block
+  if (node->mCatchItem) // node is a try/rollback block
     {
-      out << "bool block_errors_" << _M_current_catch_id
+      out << "bool block_errors_" << mCurrentCatchId
           << " = block_errors(true);" << std::endl;
     }
 
-  out << "std::size_t try_start_token_" << _M_current_catch_id
-      << " = token_stream->index() - 1;" << std::endl;
+  out << "std::size_t try_start_token_" << mCurrentCatchId
+      << " = tokenStream->index() - 1;" << std::endl;
 
-  if (!node->_M_unsafe)
+  if (!node->mUnsafe)
     {
-      out << "parser_state *try_start_state_" << _M_current_catch_id
+      out << "parser_state *try_start_state_" << mCurrentCatchId
           << " = copy_current_state();" << std::endl;
     }
 
   out << "{" << std::endl;
-  visit_node(node->_M_try_item);
+  visitNode(node->mTryItem);
   out << "}" << std::endl;
 
-  if (node->_M_catch_item)
+  if (node->mCatchItem)
     {
-      out << "block_errors(block_errors_" << _M_current_catch_id << ");" << std::endl;
+      out << "block_errors(block_errors_" << mCurrentCatchId << ");" << std::endl;
     }
 
-  if (!node->_M_unsafe)
+  if (!node->mUnsafe)
     {
-      out << "if (try_start_state_" << _M_current_catch_id << ")" << std::endl
-          << "delete try_start_state_" <<  _M_current_catch_id << ";" << std::endl
+      out << "if (try_start_state_" << mCurrentCatchId << ")" << std::endl
+          << "delete try_start_state_" <<  mCurrentCatchId << ";" << std::endl
           << std::endl;
     }
 
   out << "if (false) // the only way to enter here is using goto" << std::endl
       << "{" << std::endl
-      << "__catch_" << _M_current_catch_id << ":" << std::endl;
+      << "__catch_" << mCurrentCatchId << ":" << std::endl;
 
-  if (!node->_M_unsafe)
+  if (!node->mUnsafe)
     {
-      out << "if (try_start_state_" << _M_current_catch_id << ")" << std::endl
+      out << "if (try_start_state_" << mCurrentCatchId << ")" << std::endl
           << "{" << std::endl
-          << "restore_state(try_start_state_" <<  _M_current_catch_id << ");" << std::endl
-          << "delete try_start_state_" <<  _M_current_catch_id << ";" << std::endl
+          << "restore_state(try_start_state_" <<  mCurrentCatchId << ");" << std::endl
+          << "delete try_start_state_" <<  mCurrentCatchId << ";" << std::endl
           << "}" << std::endl;
     }
 
-  if (!node->_M_catch_item)
+  if (!node->mCatchItem)
     {
-      gen_recovery(node, _M_current_catch_id, out);
-      set_catch_id(previous_catch_id);
+      generateRecovery(node, mCurrentCatchId, out);
+      setCatchId(previous_catch_id);
     }
   else
     {
-      out << "block_errors(block_errors_" << _M_current_catch_id << ");" << std::endl
-          << "rewind(try_start_token_" << _M_current_catch_id << ");" << std::endl
+      out << "block_errors(block_errors_" << mCurrentCatchId << ");" << std::endl
+          << "rewind(try_start_token_" << mCurrentCatchId << ");" << std::endl
           << std::endl;
 
-      set_catch_id(previous_catch_id);
-      visit_node(node->_M_catch_item);
+      setCatchId(previous_catch_id);
+      visitNode(node->mCatchItem);
     }
 
   out << "}" << std::endl
       << std::endl;
 }
 
-int code_generator::set_catch_id(int catch_id)
+int CodeGenerator::setCatchId(int catch_id)
 {
-  int previous = _M_current_catch_id;
-  _M_current_catch_id = catch_id;
+  int previous = mCurrentCatchId;
+  mCurrentCatchId = catch_id;
   return previous;
 }
 
-void code_generator::visit_alias(model::alias_item *node)
+void CodeGenerator::visitAlias(Model::AliasItem *node)
 {
   assert(0); // ### not implemented yet
 }
 
-void code_generator::visit_annotation(model::annotation_item *node)
+void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
 {
-  if (!_G_system.generate_ast)
+  if (!globalSystem.GenerateAst)
     {
       // std::cerr << "** WARNING annotation ignored" << std::endl;
-      visit_node(node->_M_item);
+      visitNode(node->mItem);
       return;
     }
 
-  if (model::terminal_item *t = node_cast<model::terminal_item*>(node->_M_item))
+  if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(node->mItem))
     {
-      gen_token_test(t, _M_current_catch_id, out);
+      generateTokenTest(t, mCurrentCatchId, out);
 
-      if (node->_M_declaration->_M_is_sequence)
+      if (node->mDeclaration->mIsSequence)
         {
           std::string target;
 
-          if (node->_M_declaration->_M_storage_type == model::variable_declaration_item::storage_ast_member)
+          if (node->mDeclaration->mStorageType == Model::VariableDeclarationItem::StorageAstMember)
             target += "(*yynode)->";
 
-          target += node->_M_declaration->_M_name;
+          target += node->mDeclaration->mName;
           target += "_sequence";
 
           out << target << " = snoc(" << target << ", "
-              << "token_stream->index() - 1, memory_pool);" << std::endl
+              << "tokenStream->index() - 1, memory_pool);" << std::endl
               << "yylex();" << std::endl
               << std::endl;
         }
       else
         {
-          if (node->_M_declaration->_M_storage_type == model::variable_declaration_item::storage_ast_member)
+          if (node->mDeclaration->mStorageType == Model::VariableDeclarationItem::StorageAstMember)
             out << "(*yynode)->";
 
-          out << node->_M_declaration->_M_name
-              << " = token_stream->index() - 1;" << std::endl
+          out << node->mDeclaration->mName
+              << " = tokenStream->index() - 1;" << std::endl
               << "yylex();" << std::endl
               << std::endl;
         }
     }
-  else if (model::nonterminal_item *nt = node_cast<model::nonterminal_item*>(node->_M_item))
+  else if (Model::NonTerminalItem *nt = nodeCast<Model::NonTerminalItem*>(node->mItem))
     {
-      std::string __var = gen_parser_call(nt, _M_current_catch_id, out);
+      std::string __var = generateParserCall(nt, mCurrentCatchId, out);
 
       bool check_start_token = false;
-      world::environment::iterator it = _G_system.env.find(nt->_M_symbol);
-      while (it != _G_system.env.end())
+      World::Environment::iterator it = globalSystem.env.find(nt->mSymbol);
+      while (it != globalSystem.env.end())
         {
-          model::evolve_item *e = (*it).second;
-          if ((*it).first != nt->_M_symbol)
+          Model::EvolveItem *e = (*it).second;
+          if ((*it).first != nt->mSymbol)
             break;
 
           ++it;
 
-          model::variable_declaration_item *current_decl = e->_M_declarations;
+          Model::VariableDeclarationItem *current_decl = e->mDeclarations;
           while (current_decl)
             {
-              if ((current_decl->_M_declaration_type
-                   == model::variable_declaration_item::declaration_argument)
+              if ((current_decl->mDeclarationType
+                   == Model::VariableDeclarationItem::DeclarationArgument)
                   &&
-                  (current_decl->_M_variable_type
-                   != model::variable_declaration_item::type_variable))
+                  (current_decl->mVariableType
+                   != Model::VariableDeclarationItem::TypeVariable))
                 {
                   check_start_token = true;
                   break;
                 }
 
-              current_decl = current_decl->_M_next;
+              current_decl = current_decl->mNext;
             }
         }
 
       if (check_start_token == true)
         {
           check_start_token = false;
-          model::variable_declaration_item *current_decl = _M_evolve->_M_declarations;
+          Model::VariableDeclarationItem *current_decl = mEvolve->mDeclarations;
           while (current_decl)
             {
-              if ((current_decl->_M_storage_type
-                   == model::variable_declaration_item::storage_temporary)
+              if ((current_decl->mStorageType
+                   == Model::VariableDeclarationItem::StorageTemporary)
                   &&
-                  (current_decl->_M_variable_type
-                   != model::variable_declaration_item::type_variable)
+                  (current_decl->mVariableType
+                   != Model::VariableDeclarationItem::TypeVariable)
                   &&
-                  (current_decl->_M_declaration_type
-                   == model::variable_declaration_item::declaration_argument))
+                  (current_decl->mDeclarationType
+                   == Model::VariableDeclarationItem::DeclarationArgument))
                 {
                   check_start_token = true;
                   break;
                 }
 
-              current_decl = current_decl->_M_next;
+              current_decl = current_decl->mNext;
             }
         }
 
@@ -498,12 +496,12 @@ void code_generator::visit_annotation(model::annotation_item *node)
         }
 
       std::string target;
-      if (node->_M_declaration->_M_storage_type == model::variable_declaration_item::storage_ast_member)
+      if (node->mDeclaration->mStorageType == Model::VariableDeclarationItem::StorageAstMember)
         target += "(*yynode)->";
 
-      target += node->_M_declaration->_M_name;
+      target += node->mDeclaration->mName;
 
-      if (node->_M_declaration->_M_is_sequence)
+      if (node->mDeclaration->mIsSequence)
         {
           target += "_sequence";
 
@@ -522,56 +520,56 @@ void code_generator::visit_annotation(model::annotation_item *node)
 }
 
 
-void gen_forward_parser_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
+void GenerateForwardParserRule::operator()(std::pair<std::string, Model::SymbolItem*> const &__it)
 {
-  model::symbol_item *sym = __it.second;
-  out << "bool" << " " << "parse_" << sym->_M_name << "(";
+  Model::SymbolItem *sym = __it.second;
+  out << "bool" << " " << "parse_" << sym->mName << "(";
 
-  gen_parse_method_signature gen_signature(out, 0);
+  GenerateParseMethodSignature gen_signature(out, 0);
   gen_signature(sym);
 
   out << ");" << std::endl;
 }
 
-void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
+void GenerateParserRule::operator()(std::pair<std::string, Model::SymbolItem*> const &__it)
 {
-  _M_names.clear();
-  model::symbol_item *sym = __it.second;
-  code_generator cg(out, &_M_names);
+  mNames.clear();
+  Model::SymbolItem *sym = __it.second;
+  CodeGenerator cg(out, &mNames);
 
-  out << "bool parser::parse_" << sym->_M_name << "(";
+  out << "bool parser::parse_" << sym->mName << "(";
 
-  gen_parse_method_signature gen_signature(out, &_M_names);
+  GenerateParseMethodSignature gen_signature(out, &mNames);
   gen_signature(sym);
 
   out << ")" << std::endl
       << "{" << std::endl;
 
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
     {
-      out << "*yynode = create<" << sym->_M_name << "_ast" << ">();" << std::endl << std::endl
-          << "(*yynode)->start_token = token_stream->index() - 1;" << std::endl
+      out << "*yynode = create<" << sym->mName << "_ast" << ">();" << std::endl << std::endl
+          << "(*yynode)->start_token = tokenStream->index() - 1;" << std::endl
           << std::endl;
     }
 
-  world::environment::iterator it = _G_system.env.find(sym);
-  while (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  while (it != globalSystem.env.end())
     {
-      model::evolve_item *e = (*it).second;
+      Model::EvolveItem *e = (*it).second;
       if ((*it).first != sym)
         break;
 
       ++it;
 
-      gen_local_decls gen_locals(out, &_M_names);
-      gen_locals(e->_M_declarations);
+      GenerateLocalDeclarations gen_locals(out, &mNames);
+      gen_locals(e->mDeclarations);
     }
 
-  it = _G_system.env.find(sym);
+  it = globalSystem.env.find(sym);
   bool initial = true;
-  while (it != _G_system.env.end())
+  while (it != globalSystem.env.end())
     {
-      model::evolve_item *e = (*it).second;
+      Model::EvolveItem *e = (*it).second;
       if ((*it).first != sym)
         break;
 
@@ -588,9 +586,9 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
       << std::endl;
 
 
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
     {
-      out << "(*yynode)->end_token = token_stream->index() - 1;" << std::endl
+      out << "(*yynode)->end_token = tokenStream->index() - 1;" << std::endl
           << std::endl;
     }
 
@@ -599,62 +597,62 @@ void gen_parser_rule::operator()(std::pair<std::string, model::symbol_item*> con
       << std::endl;
 }
 
-void gen_local_decls::operator()(model::node *node)
+void GenerateLocalDeclarations::operator()(Model::Node *node)
 {
-  visit_node(node);
+  visitNode(node);
 }
 
-void gen_local_decls::visit_variable_declaration(model::variable_declaration_item *node)
+void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
   // normal declarations for local variables
-  if (node->_M_storage_type == model::variable_declaration_item::storage_temporary
-      && node->_M_declaration_type == model::variable_declaration_item::declaration_local)
+  if (node->mStorageType == Model::VariableDeclarationItem::StorageTemporary
+      && node->mDeclarationType == Model::VariableDeclarationItem::DeclarationLocal)
     {
-      if ((_M_names == 0) || _M_names->find(node->_M_name) == _M_names->end())
+      if ((mNames == 0) || mNames->find(node->mName) == mNames->end())
         {
-          gen_variable_declaration gen_var_decl(out);
+          GenerateVariableDeclaration gen_var_decl(out);
           gen_var_decl(node);
 
-          if (node->_M_variable_type == model::variable_declaration_item::type_token
-              || node->_M_variable_type == model::variable_declaration_item::type_node
-              || node->_M_is_sequence)
+          if (node->mVariableType == Model::VariableDeclarationItem::TypeToken
+              || node->mVariableType == Model::VariableDeclarationItem::TypeNode
+              || node->mIsSequence)
             {
               out << " = 0";
             }
 
           out << ";" << std::endl << std::endl;
 
-          if (_M_names != 0)
-            _M_names->insert(node->_M_name);
+          if (mNames != 0)
+            mNames->insert(node->mName);
         }
     }
 
   // for argument member nodes and tokens, check if their index precedes the current one
-  else if (node->_M_storage_type == model::variable_declaration_item::storage_ast_member
-           && node->_M_declaration_type == model::variable_declaration_item::declaration_argument
-           && _G_system.generate_ast)
+  else if (node->mStorageType == Model::VariableDeclarationItem::StorageAstMember
+           && node->mDeclarationType == Model::VariableDeclarationItem::DeclarationArgument
+           && globalSystem.GenerateAst)
     {
-      char const *sequence_suffix = (node->_M_is_sequence) ? "_sequence" : "";
+      char const *sequence_suffix = (node->mIsSequence) ? "_sequence" : "";
 
-      out << "(*yynode)->" << node->_M_name << sequence_suffix << " = "
-          << node->_M_name << sequence_suffix << ";" << std::endl;
+      out << "(*yynode)->" << node->mName << sequence_suffix << " = "
+          << node->mName << sequence_suffix << ";" << std::endl;
 
-      if (node->_M_variable_type != model::variable_declaration_item::type_variable)
+      if (node->mVariableType != Model::VariableDeclarationItem::TypeVariable)
         {
-          std::string argument_start_token = node->_M_name;
-          if (node->_M_is_sequence)
+          std::string argument_start_token = node->mName;
+          if (node->mIsSequence)
             argument_start_token += "_sequence->to_front()->element";
 
-          if (node->_M_variable_type == model::variable_declaration_item::type_node)
+          if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
             argument_start_token += "->start_token";
 
           out << "if (";
 
           // check that the variable is not null
-          if (node->_M_variable_type == model::variable_declaration_item::type_node
-              || node->_M_is_sequence)
+          if (node->mVariableType == Model::VariableDeclarationItem::TypeNode
+              || node->mIsSequence)
             {
-              out << node->_M_name << sequence_suffix << " && ";
+              out << node->mName << sequence_suffix << " && ";
             }
 
           out << argument_start_token << " < (*yynode)->start_token)" << std::endl
@@ -663,118 +661,118 @@ void gen_local_decls::visit_variable_declaration(model::variable_declaration_ite
         }
     }
 
-  default_visitor::visit_variable_declaration(node);
+  DefaultVisitor::visitVariableDeclaration(node);
 }
 
-void gen_parse_method_signature::operator()(model::symbol_item* sym)
+void GenerateParseMethodSignature::operator()(Model::SymbolItem* sym)
 {
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
     {
-      out << sym->_M_name << "_ast **yynode";
-      first_parameter = false;
+      out << sym->mName << "_ast **yynode";
+      firstParameter = false;
     }
 
-  world::environment::iterator it = _G_system.env.find(sym);
-  if (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  if (it != globalSystem.env.end())
     {
       // this creates the method signature using just the first of
       // possibly multiple rules with the same name.
-      model::evolve_item *e = (*it).second;
-      if (e->_M_declarations)
-        visit_node(e->_M_declarations);
+      Model::EvolveItem *e = (*it).second;
+      if (e->mDeclarations)
+        visitNode(e->mDeclarations);
     }
 }
 
-void gen_parse_method_signature::visit_variable_declaration(model::variable_declaration_item *node)
+void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
-  if (node->_M_declaration_type == model::variable_declaration_item::declaration_argument)
+  if (node->mDeclarationType == Model::VariableDeclarationItem::DeclarationArgument)
     {
-      if (_G_system.generate_ast || (node->_M_storage_type != model::variable_declaration_item::storage_ast_member))
+      if (globalSystem.GenerateAst || (node->mStorageType != Model::VariableDeclarationItem::StorageAstMember))
         {
-          if (first_parameter)
-            first_parameter = false;
+          if (firstParameter)
+            firstParameter = false;
           else
             out << ", ";
 
-          gen_variable_declaration gen_var_decl(out);
+          GenerateVariableDeclaration gen_var_decl(out);
           gen_var_decl(node);
 
-          if (_M_names != 0)
-            _M_names->insert(node->_M_name);
+          if (mNames != 0)
+            mNames->insert(node->mName);
         }
     }
 
-  default_visitor::visit_variable_declaration(node);
+  DefaultVisitor::visitVariableDeclaration(node);
 }
 
-void gen_variable_declaration::operator()(model::variable_declaration_item *node)
+void GenerateVariableDeclaration::operator()(Model::VariableDeclarationItem *node)
 {
-  if (node->_M_is_sequence)
+  if (node->mIsSequence)
     out << "const list_node<";
 
-  if (node->_M_variable_type == model::variable_declaration_item::type_token)
+  if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
     out << "std::size_t ";
-  else if (node->_M_variable_type == model::variable_declaration_item::type_node)
-    out << node->_M_type << "_ast *";
-  else if (node->_M_variable_type == model::variable_declaration_item::type_variable)
-    out << node->_M_type << " ";
+  else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
+    out << node->mType << "_ast *";
+  else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable)
+    out << node->mType << " ";
   else
     assert(0); // ### not supported
 
-  if (node->_M_is_sequence)
+  if (node->mIsSequence)
     out << "> *";
 
-  out << node->_M_name;
+  out << node->mName;
 
-  if (node->_M_is_sequence)
+  if (node->mIsSequence)
     out << "_sequence";
 }
 
-void gen_token::operator()(std::pair<std::string, model::terminal_item*> const &__it)
+void GenerateToken::operator()(std::pair<std::string, Model::TerminalItem*> const &__it)
 {
-  model::terminal_item *t = __it.second;
-  out << "Token_" << t->_M_name << " = " << _M_token_value++ << "," << std::endl;
+  Model::TerminalItem *t = __it.second;
+  out << "Token_" << t->mName << " = " << mTokenValue++ << "," << std::endl;
 }
 
-void gen_member_code::operator()(settings::member_item* m)
+void GenerateMemberCode::operator()(Settings::MemberItem* m)
 {
-  if ((_M_kind_mask & m->_M_member_kind) != 0)
+  if ((mKindMask & m->mMemberKind) != 0)
     {
-      if (m->_M_member_kind == settings::member_item::public_declaration)
+      if (m->mMemberKind == Settings::MemberItem::PublicDeclaration)
         out << "public:" << std::endl;
-      else if (m->_M_member_kind == settings::member_item::protected_declaration)
+      else if (m->mMemberKind == Settings::MemberItem::ProtectedDeclaration)
         out << "protected:" << std::endl;
-      else if (m->_M_member_kind == settings::member_item::private_declaration)
+      else if (m->mMemberKind == Settings::MemberItem::PrivateDeclaration)
         out << "private:" << std::endl;
 
-      out << m->_M_code << std::endl;
+      out << m->mCode << std::endl;
     }
 }
 
-void generate_parser_decls::operator()()
+void GenerateParserDeclarations::operator()()
 {
-  out << "class " << _G_system.export_macro << " parser {"
+  out << "class " << globalSystem.exportMacro << " parser {"
       << "public:" << std::endl
-      << "typedef " << _G_system.token_stream << " token_stream_type;" << std::endl
-      << "typedef " << _G_system.token_stream << "::token_type token_type;" << std::endl
-      << _G_system.token_stream << " *token_stream;" << std::endl
+      << "typedef " << globalSystem.tokenStream << " tokenStream_type;" << std::endl
+      << "typedef " << globalSystem.tokenStream << "::token_type token_type;" << std::endl
+      << globalSystem.tokenStream << " *tokenStream;" << std::endl
       << "int yytoken;" << std::endl
       << std::endl
       << "inline token_type LA(std::size_t k = 1) const" << std::endl
-      << "{ return token_stream->token(token_stream->index() - 1 + k - 1); }"
+      << "{ return tokenStream->token(tokenStream->index() - 1 + k - 1); }"
       << std::endl
       << "inline int yylex() {" << std::endl
-      << "return (yytoken = token_stream->next_token());" << std::endl
+      << "return (yytoken = tokenStream->next_token());" << std::endl
       << "}" << std::endl
       << "inline void rewind(std::size_t index) {" << std::endl
-      << "token_stream->rewind(index);" << std::endl
+      << "tokenStream->rewind(index);" << std::endl
       << "yylex();" << std::endl
       << "}" << std::endl
       << std::endl;
 
   out << "// token stream" << std::endl
-      << "void set_token_stream(" << _G_system.token_stream << " *s)" << std::endl
-      << "{ token_stream = s; }" << std::endl
+      << "void set_tokenStream(" << globalSystem.tokenStream << " *s)" << std::endl
+      << "{ tokenStream = s; }" << std::endl
       << std::endl;
 
   out << "// error handling" << std::endl
@@ -790,13 +788,13 @@ void generate_parser_decls::operator()()
 
   out << std::endl;
 
-    if (_G_system.generate_ast)
+    if (globalSystem.GenerateAst)
       {
         out << "// memory pool" << std::endl
-            << "typedef kdev_pg_memory_pool memory_pool_type;" << std::endl
+            << "typedef KDevPG::MemoryPool memory_pool_type;" << std::endl
             << std::endl
-            << "kdev_pg_memory_pool *memory_pool;" << std::endl
-            << "void set_memory_pool(kdev_pg_memory_pool *p)" << std::endl
+            << "KDevPG::MemoryPool *memory_pool;" << std::endl
+            << "void set_memory_pool(KDevPG::MemoryPool *p)" << std::endl
             << "{ memory_pool = p; }" << std::endl
             << "template <class T>" << std::endl
             << "inline T *create()" << std::endl
@@ -809,25 +807,25 @@ void generate_parser_decls::operator()()
 
 
   out << "enum token_type_enum" << std::endl << "{" << std::endl;
-  std::for_each(_G_system.terminals.begin(), _G_system.terminals.end(), gen_token(out));
+  std::for_each(globalSystem.terminals.begin(), globalSystem.terminals.end(), GenerateToken(out));
   out << "token_type_size" << std::endl
       << "}; // token_type_enum" << std::endl
       << std::endl;
 
 
-  if (_G_system.parserclass_members.declarations.empty() == false)
+  if (globalSystem.parserclassMembers.declarations.empty() == false)
     {
       out << "// user defined declarations:" << std::endl;
-      std::for_each(_G_system.parserclass_members.declarations.begin(),
-                    _G_system.parserclass_members.declarations.end(),
-                    gen_member_code(out, settings::member_item::public_declaration
-                                         | settings::member_item::protected_declaration
-                                         | settings::member_item::private_declaration)
+      std::for_each(globalSystem.parserclassMembers.declarations.begin(),
+                    globalSystem.parserclassMembers.declarations.end(),
+                    GenerateMemberCode(out, Settings::MemberItem::PublicDeclaration
+                                         | Settings::MemberItem::ProtectedDeclaration
+                                         | Settings::MemberItem::PrivateDeclaration)
                    );
       out << std::endl << "public:" << std::endl;
     }
 
-  if (_G_system.need_state_management)
+  if (globalSystem.needStateManagement)
     {
       out << "// The copy_current_state() and restore_state() methods are only declared" << std::endl
           << "// if you are using try blocks in your grammar, and have to be" << std::endl
@@ -844,45 +842,47 @@ void generate_parser_decls::operator()()
     }
 
   out << "parser() {" << std::endl;
-  if (_G_system.generate_ast)
+  if (globalSystem.GenerateAst)
     {
       out << "memory_pool = 0;" << std::endl;
     }
 
-  out << "token_stream = 0;" << std::endl
+  out << "tokenStream = 0;" << std::endl
       << "yytoken = Token_EOF;" << std::endl
       << "yy_block_errors = false;" << std::endl;
 
-  if (_G_system.parserclass_members.constructor_code.empty() == false)
+  if (globalSystem.parserclassMembers.constructorCode.empty() == false)
     {
       out << std::endl << "// user defined constructor code:" << std::endl;
-      std::for_each(_G_system.parserclass_members.constructor_code.begin(),
-                    _G_system.parserclass_members.constructor_code.end(),
-                    gen_member_code(out, settings::member_item::constructor_code));
+      std::for_each(globalSystem.parserclassMembers.constructorCode.begin(),
+                    globalSystem.parserclassMembers.constructorCode.end(),
+                    GenerateMemberCode(out, Settings::MemberItem::ConstructorCode));
     }
 
   out << "}" << std::endl << std::endl;
 
   out << "virtual ~parser() {";
 
-  if (_G_system.parserclass_members.destructor_code.empty() == false)
+  if (globalSystem.parserclassMembers.destructorCode.empty() == false)
     {
       out << std::endl
           << "// user defined destructor code:" << std::endl;
-      std::for_each(_G_system.parserclass_members.destructor_code.begin(),
-                    _G_system.parserclass_members.destructor_code.end(),
-                    gen_member_code(out, settings::member_item::destructor_code));
+      std::for_each(globalSystem.parserclassMembers.destructorCode.begin(),
+                    globalSystem.parserclassMembers.destructorCode.end(),
+                    GenerateMemberCode(out, Settings::MemberItem::DestructorCode));
     }
 
   out << "}" << std::endl << std::endl;
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_forward_parser_rule(out));
+  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(), GenerateForwardParserRule(out));
 
   out << "};" << std::endl;
 }
 
-void generate_parser_bits::operator()()
+void GenerateParserBits::operator()()
 {
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_parser_rule(out));
+  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(), GenerateParserRule(out));
 }
 
+
+} // namespace KDevPG

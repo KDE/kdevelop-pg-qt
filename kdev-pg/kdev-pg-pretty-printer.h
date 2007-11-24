@@ -22,32 +22,38 @@
 
 #include "kdev-pg-default-visitor.h"
 
-struct pretty_printer: protected default_visitor
+namespace KDevPG
 {
+
+class PrettyPrinter: protected DefaultVisitor
+{
+public:
   std::ostream &out;
 
-  pretty_printer(std::ostream &o): out(o)
+  PrettyPrinter(std::ostream &o): out(o)
   {}
 
-  void operator()(model::node *node)
+  void operator()(Model::Node *node)
   {
-    visit_node(node);
+    visitNode(node);
   }
 
 protected:
-  virtual void visit_zero(model::zero_item *node);
-  virtual void visit_plus(model::plus_item *node);
-  virtual void visit_star(model::star_item *node);
-  virtual void visit_symbol(model::symbol_item *node);
-  virtual void visit_action(model::action_item *node);
-  virtual void visit_alternative(model::alternative_item *node);
-  virtual void visit_cons(model::cons_item *node);
-  virtual void visit_evolve(model::evolve_item *node);
-  virtual void visit_try_catch(model::try_catch_item *node);
-  virtual void visit_alias(model::alias_item *node);
-  virtual void visit_terminal(model::terminal_item *node);
-  virtual void visit_nonterminal(model::nonterminal_item *node);
-  virtual void visit_annotation(model::annotation_item *node);
+  virtual void visitZero(Model::ZeroItem *node);
+  virtual void visitPlus(Model::PlusItem *node);
+  virtual void visitStar(Model::StarItem *node);
+  virtual void visitSymbol(Model::SymbolItem *node);
+  virtual void visitAction(Model::ActionItem *node);
+  virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitCons(Model::ConsItem *node);
+  virtual void visitEvolve(Model::EvolveItem *node);
+  virtual void visitTryCatch(Model::TryCatchItem *node);
+  virtual void visitAlias(Model::AliasItem *node);
+  virtual void visitTerminal(Model::TerminalItem *node);
+  virtual void visitNonTerminal(Model::NonTerminalItem *node);
+  virtual void visitAnnotation(Model::AnnotationItem *node);
 };
+
+}
 
 #endif // KDEV_PG_PRETTY_PRINTER_H

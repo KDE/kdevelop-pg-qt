@@ -27,10 +27,13 @@
 
 #include "kdev-pg-location-table.h"
 
-class kdev_pg_token_stream
+namespace KDevPG
+{
+
+class TokenStream
 {
 public:
-  struct token_type
+  class TokenType
   {
     int kind;
     std::size_t begin;
@@ -38,123 +41,124 @@ public:
   };
 
 public:
-  kdev_pg_token_stream()
-    : _M_token_buffer(0),
-      _M_token_buffer_size(0),
-      _M_index(0),
-      _M_token_count(0),
-      _M_location_table(0)
+  TokenStream()
+    : mTokenBuffer(0),
+      mTokenBufferSize(0),
+      mIndex(0),
+      mTokenCount(0),
+      mLocationTable(0)
   {
     reset();
   }
 
-  ~kdev_pg_token_stream()
+  ~TokenStream()
   {
-    if (_M_token_buffer)
-      ::free(_M_token_buffer);
-    if (_M_location_table)
-      delete _M_location_table;
+    if (mTokenBuffer)
+      ::free(mTokenBuffer);
+    if (mLocationTable)
+      delete mLocationTable;
   }
 
   inline void reset()
   {
-    _M_index = 0;
-    _M_token_count = 0;
+    mIndex = 0;
+    mTokenCount = 0;
   }
 
   inline std::size_t size() const
   {
-    return _M_token_count;
+    return mTokenCount;
   }
 
   inline std::size_t index() const
   {
-    return _M_index;
+    return mIndex;
   }
 
-  inline std::size_t yytoken_index() const
+  inline std::size_t yytokenIndex() const
   {
-    if( _M_index )
-      return _M_index - 1;
-    return _M_index;
+    if( mIndex )
+      return mIndex - 1;
+    return mIndex;
   }
 
   inline void rewind(std::size_t index)
   {
-    _M_index = index;
+    mIndex = index;
   }
 
-  inline token_type const &token(std::size_t index) const
+  inline TokenType const &token(std::size_t index) const
   {
-    return _M_token_buffer[index];
+    return mTokenBuffer[index];
   }
 
-  inline token_type &token(std::size_t index)
+  inline TokenType &token(std::size_t index)
   {
-    return _M_token_buffer[index];
+    return mTokenBuffer[index];
   }
 
-  inline int next_token()
+  inline int nextToken()
   {
-    return _M_token_buffer[_M_index++].kind;
+    return mTokenBuffer[mIndex++].kind;
   }
 
-  inline token_type &next()
+  inline TokenType &next()
   {
-    if (_M_token_count == _M_token_buffer_size)
+    if (mTokenCount == mTokenBufferSize)
       {
-        if (_M_token_buffer_size == 0)
-          _M_token_buffer_size = 1024;
+        if (mTokenBufferSize == 0)
+          mTokenBufferSize = 1024;
 
-        _M_token_buffer_size <<= 2;
+        mTokenBufferSize <<= 2;
 
-        _M_token_buffer = reinterpret_cast<token_type*>
-          (::realloc(_M_token_buffer, _M_token_buffer_size * sizeof(token_type)));
+        mTokenBuffer = reinterpret_cast<TokenType*>
+          (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(TokenType)));
       }
 
-    return _M_token_buffer[_M_token_count++];
+    return mTokenBuffer[mTokenCount++];
   }
 
-  inline kdev_pg_location_table *location_table()
+  inline LocationTable *location_table()
   {
-    if (!_M_location_table)
-      _M_location_table = new kdev_pg_location_table();
+    if (!mLocationTable)
+      mLocationTable = new LocationTable();
 
-    return _M_location_table;
+    return mLocationTable;
   }
 
-  inline void start_position(std::size_t index, size_t *line, size_t *column)
+  inline void startPosition(std::size_t index, size_t *line, size_t *column)
   {
-    if (!_M_location_table)
-      {
-        *line = 0; *column = 0;
-      }
-    else
-      _M_location_table->position_at(token(index).begin, line, column);
-  }
-
-  inline void end_position(std::size_t index, size_t *line, size_t *column)
-  {
-    if (!_M_location_table)
+    if (!mLocationTable)
       {
         *line = 0; *column = 0;
       }
     else
-      _M_location_table->position_at(token(index).end, line, column);
+      mLocationTable->positionAt(token(index).begin, line, column);
+  }
+
+  inline void endPosition(std::size_t index, size_t *line, size_t *column)
+  {
+    if (!mLocationTable)
+      {
+        *line = 0; *column = 0;
+      }
+    else
+      mLocationTable->positionAt(token(index).end, line, column);
   }
 
 private:
-  token_type *_M_token_buffer;
-  std::size_t _M_token_buffer_size;
-  std::size_t _M_index;
-  std::size_t _M_token_count;
-  kdev_pg_location_table *_M_location_table;
+  TokenType *mTokenBuffer;
+  std::size_t mTokenBufferSize;
+  std::size_t mIndex;
+  std::size_t mTokenCount;
+  LocationTable *mLocationTable;
 
 private:
-  kdev_pg_token_stream(kdev_pg_token_stream const &other);
-  void operator = (kdev_pg_token_stream const &other);
+  TokenStream(TokenStream const &other);
+  void operator = (TokenStream const &other);
 };
 
+}
 
 #endif // KDEV_PG_TOKEN_STREAM_H
 

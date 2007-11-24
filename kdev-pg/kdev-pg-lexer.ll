@@ -24,7 +24,7 @@
 #include "kdev-pg-parser.hh"
 
 int inp();
-void append_linebuffer();
+void appendLineBuffer();
 void newline();
 void yyerror(char const *);
 
@@ -34,7 +34,7 @@ void yyerror(char const *);
     result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
   }
 
-#define YY_USER_ACTION  append_linebuffer();
+#define YY_USER_ACTION  appendLineBuffer();
 
 #define COPY_TO_YYLVAL(string, len) \
   yylval.str = (char*) calloc(yyleng+1, sizeof(char)); \
@@ -42,12 +42,12 @@ void yyerror(char const *);
   yylval.str[len] = '\0';
 
 namespace {
-  enum rule_position_enum {
-    rule_body,
-    rule_footer,
+  enum RulePosition {
+    RuleBody,
+    RuleFooter,
   };
-  rule_position_enum rule_position = rule_body;
-  int open_brackets; // for rule arguments usage
+  RulePosition rulePosition = RuleBody;
+  int openBrackets; // for rule arguments usage
 }
 
 %}
@@ -69,8 +69,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 {Newline}               newline();
 "--"[^\r\n]*            /* line comments, skip */ ;
 
-";;"                    rule_position = rule_body;   return ';';
-"->"                    rule_position = rule_footer; return T_ARROW;
+";;"                    rulePosition = RuleBody;   return ';';
+"->"                    rulePosition = RuleFooter; return T_ARROW;
 
 "("                     return '(';
 ")"                     return ')';
@@ -90,10 +90,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "try/rollback"          return T_TRY_ROLLBACK;
 "catch"                 return T_CATCH;
 
-"%export_macro"         return T_EXPORT_MACRO;
-"%export_macro_header"  return T_EXPORT_MACRO_HEADER;
+"%exportMacro"         return T_EXPORT_MACRO;
+"%exportMacroHeader"  return T_EXPORT_MACRO_HEADER;
 "%token"                return T_TOKEN_DECLARATION;
-"%token_stream"         return T_TOKEN_STREAM_DECLARATION;
+"%tokenStream"         return T_TOKEN_STREAM_DECLARATION;
 "%namespace"            return T_NAMESPACE_DECLARATION;
 "%parserclass"          BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 
@@ -114,11 +114,11 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 
 "[" {
-    if (rule_position == rule_body) { /* use the arguments in a rule call */
-      open_brackets = 0;
+    if (rulePosition == RuleBody) { /* use the arguments in a rule call */
+      openBrackets = 0;
       BEGIN(RULE_ARGUMENTS);
     }
-    else if (rule_position == rule_footer) { /* declare the arguments */
+    else if (rulePosition == RuleFooter) { /* declare the arguments */
       BEGIN(RULE_PARAMETERS_HEADER); return '[';
     }
 }
@@ -128,10 +128,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 {String}                yymore(); /* this and... */
 ["]                     yymore(); /* ...this prevent brackets inside strings to be counted */
 [^\[\]\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
-"["                     open_brackets++; yymore();
+"["                     openBrackets++; yymore();
 "]" {
-    open_brackets--;
-    if (open_brackets < 0) {
+    openBrackets--;
+    if (openBrackets < 0) {
       COPY_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
       BEGIN(INITIAL);
       return T_RULE_ARGUMENTS;
@@ -229,9 +229,9 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 extern FILE *file;
 
 int ch = 0;
-int yy_line = 1, current_offset = 0;
-bool end_of_line = false;
-char yy_text_line[256 * 1024];
+int yyLine = 1, currentOffset = 0;
+bool endOfLine = false;
+char yyTextLine[256 * 1024];
 
 int inp()
 {
@@ -240,38 +240,38 @@ int inp()
 
 void newline()
 {
-  yy_line++;
-  end_of_line = true;
+  yyLine++;
+  endOfLine = true;
 }
 
 /* initialize the line buffer */
-void clear_linebuffer()
+void clearLineBuffer()
 {
-  yy_text_line[0] = '\0';
-  current_offset = 0;
-  end_of_line = false;
+  yyTextLine[0] = '\0';
+  currentOffset = 0;
+  endOfLine = false;
 }
 
  /* add the current token to the current line */
-void append_linebuffer()
+void appendLineBuffer()
 {
-  if (end_of_line == true)
-    clear_linebuffer();
+  if (endOfLine == true)
+    clearLineBuffer();
 
-  current_offset = strlen(yy_text_line); /* start of current */
-  strcpy(yy_text_line+current_offset, yytext); /* append current */
+  currentOffset = strlen(yyTextLine); /* start of current */
+  strcpy(yyTextLine+currentOffset, yytext); /* append current */
   /* strcpy is faster than strcat */
 }
 
 void yyerror(char const *)
 {
-  std::cerr << "** SYNTAX ERROR at line " << yy_line << " column " << current_offset << std::endl;
+  std::cerr << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << std::endl;
 
-  char *current_end = yy_text_line + strlen(yy_text_line);
+  char *current_end = yyTextLine + strlen(yyTextLine);
   char *p;
 
   /* get the rest of the line if we are not already at the end */
-  if(!end_of_line)
+  if(!endOfLine)
     {
       p = current_end;
       int c = ch;
@@ -286,17 +286,17 @@ void yyerror(char const *)
       *p = 0;
     }
 
-  /* yy_text_line[] now has the whole line, with the current token */
-  /* at current_offset */
+  /* yyTextLine[] now has the whole line, with the current token */
+  /* at currentOffset */
 
   /* print error message and current line */
-  std::cerr << yy_text_line;
+  std::cerr << yyTextLine;
 
   /* print a ^ under the most recent token */
-  for (int i = 0; i < current_offset; i++)
+  for (int i = 0; i < currentOffset; i++)
     std::cerr << " ";
 
-  std::cout << "^" << std::endl; /* current_offset spaces, then ^ */
+  std::cout << "^" << std::endl; /* currentOffset spaces, then ^ */
 
   exit(EXIT_FAILURE);
 }

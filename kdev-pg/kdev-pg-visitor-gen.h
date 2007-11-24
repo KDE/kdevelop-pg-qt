@@ -26,17 +26,22 @@
 #include <list>
 #include <string>
 
-class generate_visitor
+namespace KDevPG
 {
+
+class GenerateVisitor
+{
+public:
   std::ostream &out;
 
 public:
-  generate_visitor(std::ostream &o): out(o)
+  GenerateVisitor(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
+}
 
 #endif // KDEV_PG_VISITOR_GEN_H
 

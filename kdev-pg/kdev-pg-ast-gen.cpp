@@ -23,19 +23,21 @@
 #include "kdev-pg.h"
 #include <iostream>
 
-void generate_ast::operator()()
+namespace KDevPG
 {
-  for (std::map<std::string, model::symbol_item*>::iterator it = _G_system.symbols.begin();
-       it != _G_system.symbols.end(); ++it)
+void GenerateAst::operator()()
+{
+  for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); ++it)
     {
-      model::symbol_item *sym = (*it).second;
-      out << "struct " << sym->_M_name << "_ast;" << std::endl;
+      Model::SymbolItem *sym = (*it).second;
+      out << "struct " << sym->mName << "_ast;" << std::endl;
     }
 
   out << std::endl;
 
-  for (world::namespace_set::iterator it = _G_system.namespaces.begin();
-       it != _G_system.namespaces.end(); ++it)
+  for (World::NamespaceSet::iterator it = globalSystem.namespaces.begin();
+       it != globalSystem.namespaces.end(); ++it)
     {
       out << "namespace " << (*it).first
           << "{" << (*it).second << "}" << std::endl << std::endl;
@@ -43,20 +45,17 @@ void generate_ast::operator()()
 
   out << std::endl;
 
-  out << "struct " << _G_system.export_macro << " ast_node";
-
-  if (_G_system.adapt_to_kdevelop)
-    out << ": public KDevelop::AST";
+  out << "struct " << globalSystem.exportMacro << " ast_node";
 
   out << "{" << std::endl
       << "enum ast_node_kind_enum {" << std::endl;
 
   int node_id = 1000;
-  for (std::map<std::string, model::symbol_item*>::iterator it = _G_system.symbols.begin();
-       it != _G_system.symbols.end(); ++it)
+  for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); ++it)
     {
-      model::symbol_item *sym = (*it).second;
-      out << "Kind_" << sym->_M_name << " = " << node_id++ << "," << std::endl;
+      Model::SymbolItem *sym = (*it).second;
+      out << "Kind_" << sym->mName << " = " << node_id++ << "," << std::endl;
     }
 
   out << "AST_NODE_KIND_COUNT" << std::endl
@@ -67,80 +66,80 @@ void generate_ast::operator()()
       << "};" << std::endl
       << std::endl;
 
-  std::for_each(_G_system.symbols.begin(), _G_system.symbols.end(), gen_ast_rule(out));
+  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(), GenerateAstRule(out));
   out << std::endl;
 }
 
-void gen_ast_rule::operator()(std::pair<std::string, model::symbol_item*> const &__it)
+void GenerateAstRule::operator()(std::pair<std::string, Model::SymbolItem*> const &__it)
 {
-  _M_names.clear();
-  _M_in_alternative = false;
-  _M_in_cons = false;
+  mNames.clear();
+  mInAlternative = false;
+  mInCons = false;
 
-  model::symbol_item *sym = __it.second;
-  out << "struct " << _G_system.export_macro << " " << sym->_M_name << "_ast: public ast_node"
+  Model::SymbolItem *sym = __it.second;
+  out << "struct " << globalSystem.exportMacro << " " << sym->mName << "_ast: public ast_node"
       << "{" << std::endl
-      << "enum { KIND = Kind_" << sym->_M_name << "};" << std::endl << std::endl;
+      << "enum { KIND = Kind_" << sym->mName << "};" << std::endl << std::endl;
 
-  world::environment::iterator it = _G_system.env.find(sym);
-  while (it != _G_system.env.end())
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  while (it != globalSystem.env.end())
     {
-      model::evolve_item *e = (*it).second;
+      Model::EvolveItem *e = (*it).second;
       if ((*it).first != sym)
         break;
 
       ++it;
 
-      visit_node(e);
+      visitNode(e);
     }
 
   out << "};" << std::endl << std::endl;
 }
 
-void gen_ast_rule::visit_variable_declaration(model::variable_declaration_item *node)
+void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
-  if (node->_M_storage_type != model::variable_declaration_item::storage_temporary
-      && _M_names.find(node->_M_name) == _M_names.end())
+  if (node->mStorageType != Model::VariableDeclarationItem::StorageTemporary
+      && mNames.find(node->mName) == mNames.end())
     {
-      gen_variable_declaration gen_var_decl(out);
+      GenerateVariableDeclaration gen_var_decl(out);
       gen_var_decl(node);
 
       out << ";" << std::endl;
 
-      _M_names.insert(node->_M_name);
+      mNames.insert(node->mName);
     }
 
-  default_visitor::visit_variable_declaration(node);
+  DefaultVisitor::visitVariableDeclaration(node);
 }
 
-void gen_ast_rule::visit_alternative(model::alternative_item *node)
+void GenerateAstRule::visitAlternative(Model::AlternativeItem *node)
 {
-  bool in_alternative = switch_alternative(true);
+  bool in_alternative = switchAlternative(true);
 
 #if defined(AST_OPT_BRANCH)
   if (!in_alternative)
     {
       out << "union" << std::endl
           << "{" << std::endl
-          << "ast_node *__node_cast;" << std::endl
+          << "ast_node *__nodeCast;" << std::endl
           << "std::size_t __token_cast;" << std::endl
           << std::endl;
     }
 #endif
 
-  default_visitor::visit_alternative(node);
+  DefaultVisitor::visitAlternative(node);
 
 #if defined(AST_OPT_BRANCH)
   if (!in_alternative)
     out << "}; // union" << std::endl;
 #endif
 
-  switch_alternative(in_alternative);
+  switchAlternative(in_alternative);
 }
 
-void gen_ast_rule::visit_cons(model::cons_item *node)
+void GenerateAstRule::visitCons(Model::ConsItem *node)
 {
-  bool in_cons = switch_cons(true);
+  bool in_cons = switchCons(true);
 
 #if defined(AST_OPT_BRANCH)
   if (!in_cons)
@@ -150,29 +149,31 @@ void gen_ast_rule::visit_cons(model::cons_item *node)
     }
 #endif
 
-  default_visitor::visit_cons(node);
+  DefaultVisitor::visitCons(node);
 
 #if defined(AST_OPT_BRANCH)
   if (!in_cons)
     {
       out << "}; // struct" << std::endl;
-      _M_names.clear();
+      mNames.clear();
     }
 #endif
 
-  switch_cons(in_cons);
+  switchCons(in_cons);
 }
 
-bool gen_ast_rule::switch_alternative(bool alt)
+bool GenerateAstRule::switchAlternative(bool alt)
 {
-  bool old = _M_in_alternative;
-  _M_in_alternative = alt;
+  bool old = mInAlternative;
+  mInAlternative = alt;
   return old;
 }
 
-bool gen_ast_rule::switch_cons(bool c)
+bool GenerateAstRule::switchCons(bool c)
 {
-  bool old = _M_in_cons;
-  _M_in_cons = c;
+  bool old = mInCons;
+  mInCons = c;
   return old;
+}
+
 }

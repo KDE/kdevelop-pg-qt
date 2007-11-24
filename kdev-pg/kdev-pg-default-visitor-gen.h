@@ -27,27 +27,34 @@
 #include <list>
 #include <string>
 
-class generate_default_visitor
+
+namespace KDevPG
 {
+
+class GenerateDefaultVisitor
+{
+public:
   std::ostream &out;
 
 public:
-  generate_default_visitor(std::ostream &o): out(o)
+  GenerateDefaultVisitor(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
-class gen_default_visitor_rule: protected default_visitor
+class GenerateDefaultVisitorRule: protected DefaultVisitor
 {
+public:
   std::ostream &out;
 
 public:
-  gen_default_visitor_rule(std::ostream &o): out(o)
+  GenerateDefaultVisitorRule(std::ostream &o): out(o)
   {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 };
 
+}
 
 #endif // KDEV_PG_DEFAULT_VISITOR_GEN_H

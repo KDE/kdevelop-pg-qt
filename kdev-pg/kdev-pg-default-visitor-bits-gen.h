@@ -27,35 +27,41 @@
 #include <list>
 #include <string>
 
-class gen_default_visitor_bits_rule: protected default_visitor
+namespace KDevPG
 {
+
+class GenerateDefaultVisitorBitsRule: protected DefaultVisitor
+{
+public:
   std::ostream &out;
-  std::set<std::string> _M_names;
-  std::list<model::variable_declaration_item*> _M_variable_declarations;
+  std::set<std::string> mNames;
+  std::list<Model::VariableDeclarationItem*> mVariableDeclarations;
 
 public:
-  gen_default_visitor_bits_rule(std::ostream &o): out(o)
+  GenerateDefaultVisitorBitsRule(std::ostream &o): out(o)
   {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 
 protected:
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
-class has_member_nodes: protected default_visitor
+class HasMemberNodes: protected DefaultVisitor
 {
+public:
   bool &has_members;
 
 public:
-  has_member_nodes(bool &result): has_members(result)
+  HasMemberNodes(bool &result): has_members(result)
   {}
 
-  void operator()(model::symbol_item *sym);
+  void operator()(Model::SymbolItem *sym);
 
 protected:
-  virtual void visit_variable_declaration(model::variable_declaration_item *node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
+}
 
 #endif // KDEV_PG_DEFAULT_VISITOR_BITS_GEN_H

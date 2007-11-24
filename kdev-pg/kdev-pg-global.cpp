@@ -23,6 +23,6 @@
 #include <cstdio>
 
 FILE *file;
-kdev_pg_allocator<char> _G_memory_pool;
-world _G_system;
+KDevPG::Allocator<char> globalMemoryPool;
+KDevPG::World globalSystem;
 

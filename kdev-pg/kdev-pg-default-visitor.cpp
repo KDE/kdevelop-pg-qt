@@ -20,77 +20,82 @@
 
 #include "kdev-pg-default-visitor.h"
 
-void default_visitor::visit_zero(model::zero_item *node)
+namespace KDevPG
+{
+
+void DefaultVisitor::visitZero(Model::ZeroItem *node)
 {}
 
-void default_visitor::visit_symbol(model::symbol_item *node)
+void DefaultVisitor::visitSymbol(Model::SymbolItem *node)
 {}
 
-void default_visitor::visit_terminal(model::terminal_item *node)
+void DefaultVisitor::visitTerminal(Model::TerminalItem *node)
 {}
 
-void default_visitor::visit_nonterminal(model::nonterminal_item *node)
+void DefaultVisitor::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  visit_node(node->_M_symbol);
+  visitNode(node->mSymbol);
 }
 
-void default_visitor::visit_plus(model::plus_item *node)
+void DefaultVisitor::visitPlus(Model::PlusItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 }
 
-void default_visitor::visit_star(model::star_item *node)
+void DefaultVisitor::visitStar(Model::StarItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 }
 
-void default_visitor::visit_action(model::action_item *node)
+void DefaultVisitor::visitAction(Model::ActionItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 }
 
-void default_visitor::visit_alternative(model::alternative_item *node)
+void DefaultVisitor::visitAlternative(Model::AlternativeItem *node)
 {
-  visit_node(node->_M_left);
-  visit_node(node->_M_right);
+  visitNode(node->mLeft);
+  visitNode(node->mRight);
 }
 
-void default_visitor::visit_cons(model::cons_item *node)
+void DefaultVisitor::visitCons(Model::ConsItem *node)
 {
-  visit_node(node->_M_left);
-  visit_node(node->_M_right);
+  visitNode(node->mLeft);
+  visitNode(node->mRight);
 }
 
-void default_visitor::visit_evolve(model::evolve_item *node)
+void DefaultVisitor::visitEvolve(Model::EvolveItem *node)
 {
-  visit_node(node->_M_declarations);
-  visit_node(node->_M_item);
-  visit_node(node->_M_symbol);
+  visitNode(node->mDeclarations);
+  visitNode(node->mItem);
+  visitNode(node->mSymbol);
 }
 
-void default_visitor::visit_try_catch(model::try_catch_item *node)
+void DefaultVisitor::visitTryCatch(Model::TryCatchItem *node)
 {
-  visit_node(node->_M_try_item);
-  visit_node(node->_M_catch_item);
+  visitNode(node->mTryItem);
+  visitNode(node->mCatchItem);
 }
 
-void default_visitor::visit_alias(model::alias_item *node)
+void DefaultVisitor::visitAlias(Model::AliasItem *node)
 {
-  visit_node(node->_M_symbol);
+  visitNode(node->mSymbol);
 }
 
-void default_visitor::visit_annotation(model::annotation_item *node)
+void DefaultVisitor::visitAnnotation(Model::AnnotationItem *node)
 {
-  visit_node(node->_M_declaration);
-  visit_node(node->_M_item);
+  visitNode(node->mDeclaration);
+  visitNode(node->mItem);
 }
 
-void default_visitor::visit_condition(model::condition_item *node)
+void DefaultVisitor::visitCondition(Model::ConditionItem *node)
 {
-  visit_node(node->_M_item);
+  visitNode(node->mItem);
 }
 
-void default_visitor::visit_variable_declaration(model::variable_declaration_item *node)
+void DefaultVisitor::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
-  visit_node(node->_M_next);
+  visitNode(node->mNext);
+}
+
 }

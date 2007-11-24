@@ -22,204 +22,210 @@
 
 #include <cassert>
 
-void initialize_FIRST::operator ()(model::node *node)
+
+namespace KDevPG
 {
-  return visit_node(node);
+
+void InitializeFirst::operator ()(Model::Node *node)
+{
+  return visitNode(node);
 }
 
-void initialize_FIRST::visit_node(model::node *node)
+void InitializeFirst::visitNode(Model::Node *node)
 {
-  if (_G_system.find_in_FIRST(node) != _G_system.FIRST_end())
+  if (globalSystem.findInFirst(node) != globalSystem.firstEnd())
     return ; // nothing to do
 
-  default_visitor::visit_node(node);
+  DefaultVisitor::visitNode(node);
 }
 
-void initialize_FIRST::visit_zero(model::zero_item *node)
+void InitializeFirst::visitZero(Model::ZeroItem *node)
 {
-  _G_system.FIRST(node).insert(node);
+  globalSystem.first(node).insert(node);
 }
 
-void initialize_FIRST::visit_terminal(model::terminal_item *node)
+void InitializeFirst::visitTerminal(Model::TerminalItem *node)
 {
-  _G_system.FIRST(node).insert(node);
+  globalSystem.first(node).insert(node);
 }
 
 
-next_FIRST::next_FIRST(bool &changed): _M_changed(changed)
+NextFirst::NextFirst(bool &changed): mChanged(changed)
 {
 }
 
-void next_FIRST::operator ()(model::node *node)
+void NextFirst::operator ()(Model::Node *node)
 {
-  assert(node_cast<model::evolve_item*>(node));
-  _M_merge_blocked = false;
-  _M_merge_zero_blocked = false;
-  _M_item = node;
-  visit_node(node);
+  assert(nodeCast<Model::EvolveItem*>(node));
+  mMergeBlocked = false;
+  mMergeZeroBlocked = false;
+  mItem = node;
+  visitNode(node);
 }
 
-bool next_FIRST::block_merge(bool block)
+bool NextFirst::blockMerge(bool block)
 {
-  bool old = _M_merge_blocked;
-  _M_merge_blocked = block;
+  bool old = mMergeBlocked;
+  mMergeBlocked = block;
   return old;
 }
 
-bool next_FIRST::block_zero_merge(bool block)
+bool NextFirst::blockZeroMerge(bool block)
 {
-  bool old = _M_merge_zero_blocked;
-  _M_merge_zero_blocked = block;
+  bool old = mMergeZeroBlocked;
+  mMergeZeroBlocked = block;
   return old;
 }
 
-void next_FIRST::merge(model::node *__dest, model::node *__source, int K)
+void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
 {
-  world::node_set &dest = _G_system.FIRST(__dest, K);
-  world::node_set &source = _G_system.FIRST(__source, K);
+  World::NodeSet &dest = globalSystem.first(__dest, K);
+  World::NodeSet &source = globalSystem.first(__source, K);
 
-  for (world::node_set::iterator it = source.begin(); it != source.end(); ++it)
+  for (World::NodeSet::iterator it = source.begin(); it != source.end(); ++it)
     {
-      if (_M_merge_zero_blocked == true && node_cast<model::zero_item*>(*it))
+      if (mMergeZeroBlocked == true && nodeCast<Model::ZeroItem*>(*it))
         {
           continue;
         }
 
-      _M_changed |= dest.insert(*it).second;
+      mChanged |= dest.insert(*it).second;
     }
 }
 
-void next_FIRST::visit_node(model::node *node)
+void NextFirst::visitNode(Model::Node *node)
 {
-  default_visitor::visit_node(node);
+  DefaultVisitor::visitNode(node);
 
-  if (!_M_merge_blocked)
+  if (!mMergeBlocked)
     {
-      merge(_M_item, node);
+      merge(mItem, node);
     }
 }
 
-void next_FIRST::visit_zero(model::zero_item *)
+void NextFirst::visitZero(Model::ZeroItem *)
 {
 }
 
-void next_FIRST::visit_terminal(model::terminal_item *)
+void NextFirst::visitTerminal(Model::TerminalItem *)
 {
 }
 
-void next_FIRST::visit_nonterminal(model::nonterminal_item *node)
+void NextFirst::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  default_visitor::visit_nonterminal(node);
+  DefaultVisitor::visitNonTerminal(node);
 
-  merge(node, node->_M_symbol);
+  merge(node, node->mSymbol);
 }
 
-void next_FIRST::visit_symbol(model::symbol_item *)
+void NextFirst::visitSymbol(Model::SymbolItem *)
 {
 }
 
-void next_FIRST::visit_plus(model::plus_item *node)
+void NextFirst::visitPlus(Model::PlusItem *node)
 {
-  default_visitor::visit_plus(node);
+  DefaultVisitor::visitPlus(node);
 
-  merge(node, node->_M_item);
+  merge(node, node->mItem);
 }
 
-void next_FIRST::visit_star(model::star_item *node)
+void NextFirst::visitStar(Model::StarItem *node)
 {
-  default_visitor::visit_star(node);
+  DefaultVisitor::visitStar(node);
 
-  if (_G_system.FIRST(node).insert(_G_system.zero()).second)
-    _M_changed = true;
+  if (globalSystem.first(node).insert(globalSystem.zero()).second)
+    mChanged = true;
 
-  merge(node, node->_M_item);
+  merge(node, node->mItem);
 }
 
-void next_FIRST::visit_action(model::action_item *node)
+void NextFirst::visitAction(Model::ActionItem *node)
 {
-  default_visitor::visit_action(node);
+  DefaultVisitor::visitAction(node);
 
-  merge(node, node->_M_item);
+  merge(node, node->mItem);
 }
 
-void next_FIRST::visit_alternative(model::alternative_item *node)
+void NextFirst::visitAlternative(Model::AlternativeItem *node)
 {
-  default_visitor::visit_alternative(node);
+  DefaultVisitor::visitAlternative(node);
 
-  merge(node, node->_M_left);
-  merge(node, node->_M_right);
+  merge(node, node->mLeft);
+  merge(node, node->mRight);
 }
 
-void next_FIRST::visit_cons(model::cons_item *node)
+void NextFirst::visitCons(Model::ConsItem *node)
 {
-  bool blocked = block_merge(true);
-  visit_node(node->_M_right);
-  block_merge(blocked);
+  bool blocked = blockMerge(true);
+  visitNode(node->mRight);
+  blockMerge(blocked);
 
-  bool zero_blocked = _M_merge_zero_blocked;
-  if (!reduces_to_epsilon(node->_M_right))
-    zero_blocked = block_zero_merge(true);
+  bool zero_blocked = mMergeZeroBlocked;
+  if (!reducesToEpsilon(node->mRight))
+    zero_blocked = blockZeroMerge(true);
 
-  visit_node(node->_M_left);
-  merge(node, node->_M_left);
+  visitNode(node->mLeft);
+  merge(node, node->mLeft);
 
-  if (reduces_to_epsilon(node->_M_left))
+  if (reducesToEpsilon(node->mLeft))
     {
-      visit_node(node->_M_right);
-      merge(node, node->_M_right);
+      visitNode(node->mRight);
+      merge(node, node->mRight);
     }
 
-  block_zero_merge(zero_blocked);
+  blockZeroMerge(zero_blocked);
 }
 
-void next_FIRST::visit_evolve(model::evolve_item *node)
+void NextFirst::visitEvolve(Model::EvolveItem *node)
 {
-  visit_node(node->_M_item);
-  merge(node, node->_M_item);
+  visitNode(node->mItem);
+  merge(node, node->mItem);
 
-  merge(node->_M_symbol, node);
+  merge(node->mSymbol, node);
 }
 
-void next_FIRST::visit_try_catch(model::try_catch_item *node)
+void NextFirst::visitTryCatch(Model::TryCatchItem *node)
 {
-  default_visitor::visit_try_catch(node);
+  DefaultVisitor::visitTryCatch(node);
 
-  merge(node, node->_M_try_item);
+  merge(node, node->mTryItem);
 
-  if (node->_M_catch_item)
-    merge(node, node->_M_catch_item);
+  if (node->mCatchItem)
+    merge(node, node->mCatchItem);
 }
 
-void next_FIRST::visit_alias(model::alias_item *node)
+void NextFirst::visitAlias(Model::AliasItem *node)
 {
-  default_visitor::visit_alias(node);
+  DefaultVisitor::visitAlias(node);
   assert(0); // ### not implemented yet
 }
 
-void next_FIRST::visit_annotation(model::annotation_item *node)
+void NextFirst::visitAnnotation(Model::AnnotationItem *node)
 {
-  default_visitor::visit_annotation(node);
+  DefaultVisitor::visitAnnotation(node);
 
-  merge(node, node->_M_item);
+  merge(node, node->mItem);
 }
 
-void next_FIRST::visit_condition(model::condition_item* node)
+void NextFirst::visitCondition(Model::ConditionItem* node)
 {
-  default_visitor::visit_condition(node);
+  DefaultVisitor::visitCondition(node);
 
-  merge(node, node->_M_item);
+  merge(node, node->mItem);
 }
 
-void compute_FIRST() // the closure of the FIRST sets
+void computeFirst() // the closure of the FIRST sets
 {
-  std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                initialize_FIRST());
+  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                InitializeFirst());
 
   bool changed = true;
   while (changed)
     {
       changed = false;
-      std::for_each(_G_system.rules.begin(), _G_system.rules.end(),
-                    next_FIRST(changed));
+      std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
+                    NextFirst(changed));
     }
+}
+
 }

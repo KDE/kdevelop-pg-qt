@@ -21,33 +21,39 @@
 #define KDEV_PG_DEBUG_VISITORGEN_H
 
 #include "kdev-pg-default-visitor.h"
-#include "kdev-pg-default-visitor-bits-gen.h" // for the has_member_nodes class
+#include "kdev-pg-default-visitor-bits-gen.h" // for the HasMemberNodes class
 
 #include <set>
 #include <list>
 #include <string>
 
-class generate_debug_visitor
+namespace KDevPG
 {
+
+class GenerateDebugVisitor
+{
+public:
   std::ostream &out;
 
 public:
-  generate_debug_visitor(std::ostream &o): out(o)
+  GenerateDebugVisitor(std::ostream &o): out(o)
   {}
 
   void operator()();
 };
 
-class gen_debug_visitor_rule: protected default_visitor
+class GenerateDebugVisitorRule: protected DefaultVisitor
 {
   std::ostream &out;
 
 public:
-  gen_debug_visitor_rule(std::ostream &o): out(o)
+  GenerateDebugVisitorRule(std::ostream &o): out(o)
   {}
 
-  void operator()(std::pair<std::string, model::symbol_item*> const &__it);
+  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
 };
+
+}
 
 #endif // KDEV_PG_DEBUG_VISITORGEN_H
 

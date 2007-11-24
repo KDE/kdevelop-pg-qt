@@ -22,27 +22,31 @@
 #include "kdev-pg.h"
 #include <iostream>
 
-void generate_visitor::operator()()
+namespace KDevPG
 {
-  out << "class " << _G_system.export_macro << " visitor {" << std::endl
+
+void GenerateVisitor::operator()()
+{
+  out << "class " << globalSystem.exportMacro << " visitor {" << std::endl
       << "typedef void (visitor::*parser_fun_t)(ast_node *);" << std::endl
       << "static parser_fun_t _S_parser_table[];" << std::endl
       << std::endl
       << "public:" << std::endl
       << "virtual ~visitor() {}" << std::endl;
 
-  out << "virtual void visit_node(ast_node *node) { "
+  out << "virtual void visitNode(ast_node *node) { "
       << "if (node) (this->*_S_parser_table[node->kind - 1000])(node); "
       << "}" << std::endl;
 
-  for (std::map<std::string, model::symbol_item*>::iterator it = _G_system.symbols.begin();
-       it != _G_system.symbols.end(); ++it)
+  for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); ++it)
     {
-      model::symbol_item *sym = (*it).second;
-      out << "virtual void visit_" << sym->_M_name
-          << "(" << sym->_M_name << "_ast *) {}" << std::endl;
+      Model::SymbolItem *sym = (*it).second;
+      out << "virtual void visit_" << sym->mName
+          << "(" << sym->mName << "_ast *) {}" << std::endl;
     }
 
   out << "};" << std::endl;
 }
 
+}

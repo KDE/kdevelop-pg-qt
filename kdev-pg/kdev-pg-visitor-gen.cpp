@@ -27,23 +27,23 @@ namespace KDevPG
 
 void GenerateVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " visitor {" << std::endl
-      << "typedef void (visitor::*parser_fun_t)(ast_node *);" << std::endl
-      << "static parser_fun_t _S_parser_table[];" << std::endl
+  out << "class " << globalSystem.exportMacro << " Visitor {" << std::endl
+      << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << std::endl
+      << "static ParserFuncType sParserTable[];" << std::endl
       << std::endl
       << "public:" << std::endl
-      << "virtual ~visitor() {}" << std::endl;
+      << "virtual ~Visitor() {}" << std::endl;
 
-  out << "virtual void visitNode(ast_node *node) { "
-      << "if (node) (this->*_S_parser_table[node->kind - 1000])(node); "
+  out << "virtual void visitNode(AstNode *node) { "
+      << "if (node) (this->*sParserTable[node->kind - 1000])(node); "
       << "}" << std::endl;
 
   for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = (*it).second;
-      out << "virtual void visit_" << sym->mName
-          << "(" << sym->mName << "_ast *) {}" << std::endl;
+      out << "virtual void visit" << sym->mName
+          << "(" << sym->mName << "Ast *) {}" << std::endl;
     }
 
   out << "};" << std::endl;

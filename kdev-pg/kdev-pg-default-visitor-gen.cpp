@@ -28,7 +28,7 @@ namespace KDevPG
 
 void GenerateDefaultVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " DefaultVisitor: public visitor {" << std::endl
+  out << "class " << globalSystem.exportMacro << " DefaultVisitor: public Visitor {" << std::endl
       << "public:" << std::endl;
 
   std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
@@ -41,8 +41,8 @@ void GenerateDefaultVisitorRule::operator()(std::pair<std::string,Model::SymbolI
 {
   Model::SymbolItem *sym = __it.second;
 
-  out << "virtual void visit_" << sym->mName
-      << "(" << sym->mName << "_ast *node);" << std::endl;
+  out << "virtual void visit" << sym->mName
+      << "(" << sym->mName << "Ast *node);" << std::endl;
 }
 
 }

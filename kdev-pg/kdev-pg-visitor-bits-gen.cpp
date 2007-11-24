@@ -29,13 +29,13 @@ namespace KDevPG
 
 void GenerateVisitorBits::operator()()
 {
-  out << "visitor::parser_fun_t visitor::_S_parser_table[] = {" << std::endl;
+  out << "Visitor::ParserFuncType visitor::sParserTable[] = {" << std::endl;
 
   std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
   while (it != globalSystem.symbols.end())
     {
       Model::SymbolItem *sym = (*it++).second;
-      out << "reinterpret_cast<parser_fun_t>(&visitor::visit_" << sym->mName << ")";
+      out << "reinterpret_cast<ParserFuncType>(&Visitor::visit" << sym->mName << ")";
 
       if (it != globalSystem.symbols.end())
         out << ",";
@@ -43,7 +43,7 @@ void GenerateVisitorBits::operator()()
       out << std::endl;
     }
 
-  out << "}; // _S_parser_table[]" << std::endl;
+  out << "}; // sParserTable[]" << std::endl;
 }
 
 }

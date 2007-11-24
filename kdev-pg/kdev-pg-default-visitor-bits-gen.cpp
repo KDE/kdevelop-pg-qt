@@ -36,8 +36,8 @@ void GenerateDefaultVisitorBitsRule::operator()(std::pair<std::string,Model::Sym
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "void DefaultVisitor::visit_" << sym->mName
-      << "(" << sym->mName << "_ast *" << (has_members ? "node" : "")
+  out << "void DefaultVisitor::visit" << sym->mName
+      << "(" << sym->mName << "Ast *" << (has_members ? "node" : "")
       << ") {" << std::endl;
 
   World::Environment::iterator it = globalSystem.env.find(sym);
@@ -68,11 +68,11 @@ void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDec
     if (mNames.find(node->mName) != mNames.end())
       break;
 
-    std::string base_type = std::string(node->mType) + "_ast*";
+    std::string base_type = std::string(node->mType) + "Ast*";
 
     if (node->mIsSequence)
       {
-        out << "if (" << "node->" << node->mName << "_sequence" << ") {"
+        out << "if (" << "node->" << node->mName << "Sequence" << ") {"
             << "const list_node<" << base_type << "> *__it = "
             << "node->" << node->mName << "_sequence" << "->to_front()"
             << ", *__end = __it;" << std::endl

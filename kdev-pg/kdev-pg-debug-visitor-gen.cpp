@@ -26,7 +26,7 @@ namespace KDevPG
 
 void GenerateDebugVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " debug_visitor: public DefaultVisitor {" << std::endl
+  out << "class " << globalSystem.exportMacro << " DebugVisitor: public DefaultVisitor {" << std::endl
       << "public:" << std::endl;
 
   std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
@@ -44,13 +44,13 @@ void GenerateDebugVisitorRule::operator()(std::pair<std::string,
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit_" << sym->mName
-      << "(" << sym->mName << "_ast *" << "node"
+  out << "virtual void visit" << sym->mName
+      << "(" << sym->mName << "Ast *" << "node"
       << ") {" << std::endl;
 
   out << "std::cout << \"" << sym->mName << "\" << std::endl; " << std::endl;
 
-  out << "DefaultVisitor::visit_" << sym->mName
+  out << "DefaultVisitor::visit" << sym->mName
       << "(" << "node"
       << ");" << std::endl;
 

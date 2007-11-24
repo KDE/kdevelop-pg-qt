@@ -31,7 +31,7 @@ void GenerateAst::operator()()
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = (*it).second;
-      out << "struct " << sym->mName << "_ast;" << std::endl;
+      out << "struct " << sym->mName << "Ast;" << std::endl;
     }
 
   out << std::endl;
@@ -45,24 +45,24 @@ void GenerateAst::operator()()
 
   out << std::endl;
 
-  out << "struct " << globalSystem.exportMacro << " ast_node";
+  out << "struct " << globalSystem.exportMacro << " AstNode";
 
   out << "{" << std::endl
-      << "enum ast_node_kind_enum {" << std::endl;
+      << "enum AstNodeKind {" << std::endl;
 
   int node_id = 1000;
   for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = (*it).second;
-      out << "Kind_" << sym->mName << " = " << node_id++ << "," << std::endl;
+      out << sym->mName << "Kind" << " = " << node_id++ << "," << std::endl;
     }
 
   out << "AST_NODE_KIND_COUNT" << std::endl
       << "};" << std::endl << std::endl
       << "int kind;" << std::endl
-      << "std::size_t start_token;" << std::endl
-      << "std::size_t end_token;" << std::endl
+      << "std::size_t startToken;" << std::endl
+      << "std::size_t endToken;" << std::endl
       << "};" << std::endl
       << std::endl;
 
@@ -77,9 +77,9 @@ void GenerateAstRule::operator()(std::pair<std::string, Model::SymbolItem*> cons
   mInCons = false;
 
   Model::SymbolItem *sym = __it.second;
-  out << "struct " << globalSystem.exportMacro << " " << sym->mName << "_ast: public ast_node"
+  out << "struct " << globalSystem.exportMacro << " " << sym->mName << "Ast: public AstNode"
       << "{" << std::endl
-      << "enum { KIND = Kind_" << sym->mName << "};" << std::endl << std::endl;
+      << "enum { KIND = " << sym->mName << "Kind };" << std::endl << std::endl;
 
   World::Environment::iterator it = globalSystem.env.find(sym);
   while (it != globalSystem.env.end())
@@ -121,7 +121,7 @@ void GenerateAstRule::visitAlternative(Model::AlternativeItem *node)
     {
       out << "union" << std::endl
           << "{" << std::endl
-          << "ast_node *__nodeCast;" << std::endl
+          << "AstNode *__nodeCast;" << std::endl
           << "std::size_t __token_cast;" << std::endl
           << std::endl;
     }

@@ -43,7 +43,7 @@ void generateOutput()
   { // generate the ast
     std::stringstream s;
 
-    GenerateAst __ast(s);
+    GenerateAst _Ast(s);
 
     s << "// THIS FILE IS GENERATED" << std::endl
       << "// WARNING! All changes made in this file will be lost!" << std::endl
@@ -65,7 +65,7 @@ void generateOutput()
     s << "namespace " << globalSystem.ns << "{" << std::endl
       << std::endl;
 
-    __ast();
+    _Ast();
 
     s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
       << std::endl
@@ -74,7 +74,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_ast.h";
+    oname += "ast.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -96,12 +96,12 @@ void generateOutput()
 
     if (globalSystem.GenerateAst)
       {
-        s << "#include \"" << globalSystem.language << "_ast.h\"" << std::endl
+        s << "#include \"" << globalSystem.language << "Ast.h\"" << std::endl
           << "#include <kdev-pg-memory-pool.h>" << std::endl
           << "#include <kdev-pg-allocator.h>" << std::endl;
       }
 
-    if (!strcmp(globalSystem.tokenStream, "kdev_pg_tokenStream"))
+    if (!strcmp(globalSystem.tokenStream, "KDevPG::tokenStream"))
       s << "#include <kdev-pg-token-stream.h>" << std::endl;
 
     s << std::endl;
@@ -124,7 +124,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_parser.h";
+    oname += "parser.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -145,7 +145,7 @@ void generateOutput()
       << "#define " << globalSystem.language << "_VISITOR_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << globalSystem.language << "_ast.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "Ast.h\"" << std::endl
       << std::endl;
     if (globalSystem.exportMacroHeader)
       s << "#include <" << globalSystem.exportMacroHeader << ">"
@@ -163,7 +163,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_visitor.h";
+    oname += "visitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -184,7 +184,7 @@ void generateOutput()
       << "#define " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << globalSystem.language << "_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "visitor.h\"" << std::endl
       << std::endl;
     if (globalSystem.exportMacroHeader)
       s << "#include <" << globalSystem.exportMacroHeader << ">"
@@ -202,7 +202,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_DefaultVisitor.h";
+    oname += "defaultvisitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -223,7 +223,7 @@ void generateOutput()
       << "#define " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << globalSystem.language << "_DefaultVisitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << std::endl
       << std::endl;
     if (globalSystem.exportMacroHeader)
       s << "#include <" << globalSystem.exportMacroHeader << ">"
@@ -245,7 +245,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_serialize_visitor.h";
+    oname += "serializevisitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -266,7 +266,7 @@ void generateOutput()
       << "#define " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
       << std::endl
 
-      << "#include \"" << globalSystem.language << "_DefaultVisitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << std::endl
       << std::endl;
     if (globalSystem.exportMacroHeader)
       s << "#include <" << globalSystem.exportMacroHeader << ">"
@@ -288,7 +288,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_debug_visitor.h";
+    oname += "debugvisitor.h";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -304,7 +304,7 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl;
 
-    s << "#include \"" << globalSystem.language << "_parser.h\""
+    s << "#include \"" << globalSystem.language << "parser.h\""
       << std::endl
       << std::endl;
 
@@ -320,7 +320,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_parser.cpp";
+    oname += "parser.cpp";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -337,7 +337,7 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#include \"" << globalSystem.language << "_visitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "visitor.h\"" << std::endl
       << std::endl
 
       << "namespace " << globalSystem.ns << "{" << std::endl
@@ -349,7 +349,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_visitor.cpp";
+    oname += "visitor.cpp";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);
@@ -364,7 +364,7 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << std::endl
       << std::endl
 
-      << "#include \"" << globalSystem.language << "_DefaultVisitor.h\"" << std::endl
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << std::endl
       << std::endl
 
       << "namespace " << globalSystem.ns << "{" << std::endl
@@ -377,7 +377,7 @@ void generateOutput()
       << std::endl;
 
     std::string oname = globalSystem.language;
-    oname += "_DefaultVisitor.cpp";
+    oname += "defaultvisitor.cpp";
 
     std::ofstream ofile;
     ofile.open(oname.c_str(), std::ios::out);

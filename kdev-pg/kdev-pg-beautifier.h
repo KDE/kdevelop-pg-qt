@@ -22,8 +22,22 @@
 
 #include <QtCore/QTextStream>
 
+#include "astyle.h"
+
+#include <string>
+
 namespace KDevPG
 {
+
+class IteratorQTextStream : public astyle::ASSourceIterator
+{
+public:
+  IteratorQTextStream( QTextStream& stream );
+  virtual bool hasMoreLines() const;
+  virtual std::string nextLine();
+private:
+  QTextStream& strm;
+};
 
 void format(QTextStream &in, QTextStream& out);
 

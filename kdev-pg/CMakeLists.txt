@@ -7,6 +7,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 SET(kdevpg_srcs
     ASBeautifier.cpp
     ASFormatter.cpp
+    ASResource.cpp
+    ASEnhancer.cpp
     kdev-pg.cpp
     kdev-pg-visitor.cpp
     kdev-pg-default-visitor.cpp

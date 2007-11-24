@@ -18,36 +18,53 @@
 */
 
 #include "kdev-pg-beautifier.h"
-#include "astyle.h"
+
 
 namespace KDevPG
 {
 
+IteratorQTextStream::IteratorQTextStream( QTextStream& stream )
+  : strm(stream)
+{
+  strcpy(outputEOL, "\n");
+}
+bool IteratorQTextStream::hasMoreLines() const
+{
+  return !strm.atEnd();
+}
+std::string IteratorQTextStream::nextLine()
+{
+  return strm.readLine().toStdString();
+}
+
 void format(QTextStream& in, QTextStream& out)
 {
-//   astyle::ASFormatter f;
-//
-//   f.sourceStyle = astyle::STYLE_C;
-//
-//   f.blockIndent = true;
-//   f.bracketIndent = false;
-//   f.indentLength = 2;
-//   f.indentString = "  ";
-//   f.minConditionalIndent = f.indentLength * 2;
-//   f.bracketFormatMode = astyle::BREAK_MODE;
-//   f.classIndent = false;
-//   f.switchIndent = false;
-//   f.namespaceIndent = false;
-//   f.breakElseIfs = false;
-//   f.padParen = false;
-//   f.emptyLineIndent = false;
-//   f.init(in);
+  astyle::ASFormatter f;
+
+  f.setCStyle();
+
+  f.setBlockIndent(false);
+  f.setBracketIndent(false);
+  f.setSpaceIndentation(4);
+  f.setTabSpaceConversionMode(true);
+  f.setMinConditionalIndentLength(f.getIndentLength());
+  f.setMaxInStatementIndentLength(40);
+  f.setOperatorPaddingMode(false);
+  f.setBracketFormatMode(astyle::BREAK_MODE);
+  f.setClassIndent(false);
+  f.setSwitchIndent(false);
+  f.setNamespaceIndent(false);
+  f.setBreakElseIfsMode(false);
+  f.setParensUnPaddingMode(false);
+  f.setEmptyLineFill(false);
+  IteratorQTextStream strm(in);
+  f.init(&strm);
 
   do
-    {
-      out << in.readLine() << endl;
-    }
-  while (!in.atEnd());
+  {
+    out << QString::fromStdString( f.nextLine() ) << endl;
+  }
+  while (f.hasMoreLines());
 }
 
 }

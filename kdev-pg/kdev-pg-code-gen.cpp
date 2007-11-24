@@ -23,8 +23,6 @@
 
 #include <QtCore/QList>
 #include <QtCore/QStack>
-// #include <iostream>
-// #include <cassert>
 
 namespace KDevPG
 {
@@ -539,7 +537,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
   Model::SymbolItem *sym = __it.second;
   CodeGenerator cg(out, &mNames);
 
-  out << "bool parser::parse" << sym->mCapitalizedName << "(";
+  out << "bool Parser::parse" << sym->mCapitalizedName << "(";
 
   GenerateParseMethodSignature gen_signature(out, &mNames);
   gen_signature(sym);
@@ -754,7 +752,7 @@ void GenerateMemberCode::operator()(Settings::MemberItem* m)
 
 void GenerateParserDeclarations::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " parser {"
+  out << "class " << globalSystem.exportMacro << " Parser {"
       << "public:" << endl
       << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
       << "typedef " << globalSystem.tokenStream << "::TokenType tokenType;" << endl
@@ -816,7 +814,7 @@ void GenerateParserDeclarations::operator()()
     gen(qMakePair(it.key(), *it));
   }
   out << "TokenTypeSize" << endl
-      << "}; // token_type_enum" << endl
+      << "}; // tokenType" << endl
       << endl;
 
 
@@ -850,7 +848,7 @@ void GenerateParserDeclarations::operator()()
           << "void restore_state(parser_state *state);" << endl;
     }
 
-  out << "parser() {" << endl;
+  out << "Parser() {" << endl;
   if (globalSystem.GenerateAst)
     {
       out << "memoryPool = 0;" << endl;
@@ -874,7 +872,7 @@ void GenerateParserDeclarations::operator()()
 
   out << "}" << endl << endl;
 
-  out << "virtual ~parser() {";
+  out << "virtual ~Parser() {";
 
   if (globalSystem.parserclassMembers.destructorCode.empty() == false)
     {

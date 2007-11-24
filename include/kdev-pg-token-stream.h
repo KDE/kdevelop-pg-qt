@@ -35,6 +35,7 @@ class TokenStream
 public:
   class TokenType
   {
+  public:
     int kind;
     qint64 begin;
     qint64 end;

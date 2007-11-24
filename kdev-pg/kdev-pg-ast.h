@@ -22,6 +22,7 @@
 #define KDEV_PG_AST_H
 
 #include "kdev-pg-allocator.h"
+#include "kdev-pg-memory-pool.h"
 
 #include <QtCore/QString>
 
@@ -267,7 +268,7 @@ template <class _Tp>
 _Tp *createNode()
 {
   _Tp *node = new _Tp();
-      //reinterpret_cast<_Tp*>(globalMemoryPool.allocate(sizeof(_Tp)));
+  //reinterpret_cast<_Tp*>(globalMemoryPool.allocate(sizeof(_Tp)));
   node->kind = _Tp::NodeKind;
   return node;
 }

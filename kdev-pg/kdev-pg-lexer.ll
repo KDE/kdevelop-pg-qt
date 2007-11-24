@@ -229,7 +229,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 %%
 
+namespace KDevPG
+{
 extern QFile file;
+}
 
 int ch;
 int yyLine = 1, currentOffset = 0;
@@ -238,9 +241,9 @@ char yyTextLine[256 * 1024];
 
 int inp()
 {
-  if( file.atEnd() )
+  if( KDevPG::file.atEnd() )
     return EOF;
-  file.getChar( (char*)&ch );
+  KDevPG::file.getChar( (char*)&ch );
   return ch;
 }
 

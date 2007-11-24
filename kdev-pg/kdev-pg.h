@@ -214,10 +214,11 @@ private:
 bool reducesToEpsilon(Model::Node *node);
 bool isZero(Model::Node *node);
 
+extern KDevPG::World globalSystem;
+extern QFile file;
+
 }
 QTextStream& operator << (QTextStream& out, KDevPG::Model::Node const *__node);
 
-extern KDevPG::World globalSystem;
-extern QFile file;
 
 #endif // KDEV_PG_H

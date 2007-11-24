@@ -27,6 +27,7 @@ namespace KDevPG
 
 class BlockType
 {
+public:
   qint64 blockSize;
   BlockType *chain;
   char *data;
@@ -58,13 +59,13 @@ class BlockType
     free(data);
   }
 
-  inline void *allocate(size_t size, block_t **right_most)
+  inline void *allocate(size_t size, BlockType **right_most)
   {
     if (end < ptr + size) {
       //            assert( size < block_size );
 
       if (!chain) {
-        chain = (block_t*) malloc(sizeof(block_t));
+        chain = (BlockType*) malloc(sizeof(BlockType));
         chain->init0(blockSize << 2);
       }
 
@@ -84,6 +85,7 @@ class BlockType
 
 class MemoryPool
 {
+public:
   BlockType blk;
   BlockType *rightMost;
 

@@ -57,10 +57,10 @@ extern void yyerror(const char* msg);
 %%
 
 system
-    : code_opt { globalSystem.decl = $1; }
+    : code_opt { KDevPG::globalSystem.decl = $1; }
       declarations
       rules
-      code_opt { globalSystem.bits = $5; }
+      code_opt { KDevPG::globalSystem.bits = $5; }
     ;
 
 declarations
@@ -70,15 +70,15 @@ declarations
 
 declaration
     : T_PARSERCLASS_DECLARATION member_declaration_rest
-        { globalSystem.pushParserClassMember($2); }
+        { KDevPG::globalSystem.pushParserClassMember($2); }
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
-        { globalSystem.tokenStream = $2;           }
+        { KDevPG::globalSystem.tokenStream = $2;           }
     | namespace_declaration
     | T_EXPORT_MACRO T_STRING
-        { globalSystem.exportMacro = $2;           }
+        { KDevPG::globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING
-        { globalSystem.exportMacroHeader = $2;   }
+        { KDevPG::globalSystem.exportMacroHeader = $2;   }
     ;
 
 member_declaration_rest
@@ -96,25 +96,25 @@ member_declaration_rest
 
 namespace_declaration
     : T_NAMESPACE_DECLARATION T_IDENTIFIER T_CODE
-        { globalSystem.pushNamespace($2, $3); }
+        { KDevPG::globalSystem.pushNamespace($2, $3); }
     ;
 
 declared_tokens
-    : T_TERMINAL                        { globalSystem.pushTerminal($1,$1); }
-    | T_TERMINAL '(' T_STRING ')'       { globalSystem.pushTerminal($1,$3); }
-    | declared_tokens ',' T_TERMINAL    { globalSystem.pushTerminal($3,$3); }
+    : T_TERMINAL                        { KDevPG::globalSystem.pushTerminal($1,$1); }
+    | T_TERMINAL '(' T_STRING ')'       { KDevPG::globalSystem.pushTerminal($1,$3); }
+    | declared_tokens ',' T_TERMINAL    { KDevPG::globalSystem.pushTerminal($3,$3); }
     | declared_tokens ',' T_TERMINAL '(' T_STRING ')'
-                                        { globalSystem.pushTerminal($3,$5); }
+                                        { KDevPG::globalSystem.pushTerminal($3,$5); }
     ;
 
 rules
-    : item ';'                          { globalSystem.pushRule($1); }
-    | rules item ';'                    { globalSystem.pushRule($2); }
+    : item ';'                          { KDevPG::globalSystem.pushRule($1); }
+    | rules item ';'                    { KDevPG::globalSystem.pushRule($2); }
     | rules namespace_declaration
     ;
 
 primary_item
-    : '0'                               { $$ = globalSystem.zero(); }
+    : '0'                               { $$ = KDevPG::globalSystem.zero(); }
     | '(' option_item ')'               { $$ = $2; }
     | try_item                    { $$ = $1; }
     | primary_atom                      { $$ = $1; }
@@ -123,19 +123,19 @@ primary_item
     ;
 
 primary_atom
-    : T_IDENTIFIER rule_arguments_opt   { $$ = KDevPG::nonTerminal(globalSystem.pushSymbol($1), $2); }
-    | T_TERMINAL                        { $$ = globalSystem.terminal($1); }
+    : T_IDENTIFIER rule_arguments_opt   { $$ = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol($1), $2); }
+    | T_TERMINAL                        { $$ = KDevPG::globalSystem.terminal($1); }
     ;
 
 try_item
     : T_TRY_RECOVER '(' option_item ')'
         {
-          globalSystem.needStateManagement = true;
+          KDevPG::globalSystem.needStateManagement = true;
           $$ = KDevPG::tryCatch($3, 0);
         }
     | T_TRY_ROLLBACK '(' option_item ')' T_CATCH '(' option_item ')'
         {
-          globalSystem.needStateManagement = true;
+          KDevPG::globalSystem.needStateManagement = true;
           $$ = KDevPG::tryCatch($3, $7);
         }
 
@@ -163,7 +163,7 @@ unary_item
     : primary_item '+'                  { $$ = KDevPG::plus($1); }
     | primary_item '*'                  { $$ = KDevPG::star($1); }
     | primary_item                      { $$ = $1; }
-/*    | '?' primary_item                  { $$ = KDevPG::alternative($2, globalSystem.zero()); } */
+/*    | '?' primary_item                  { $$ = KDevPG::alternative($2, KDevPG::globalSystem.zero()); } */
     ;
 
 postfix_item
@@ -194,16 +194,16 @@ option_item
 item
     : option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
         {
-          $$ = KDevPG::evolve($1, globalSystem.pushSymbol($3),
+          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
                           (KDevPG::Model::VariableDeclarationItem*) $6, $4);
         }
     | option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
         {
-          $$ = KDevPG::evolve($1, globalSystem.pushSymbol($3),
+          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
                           (KDevPG::Model::VariableDeclarationItem*) $5, $7);
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
-        { $$ = KDevPG::evolve($1, globalSystem.pushSymbol($3), 0, $4); }
+        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
     ;
 
 code_opt

@@ -104,16 +104,16 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 33 "/home/andreas/KDE-work/4.0/kdevelop-pg/kdev-pg/kdev-pg-parser.yy"
+#line 33 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 {
-    Model::Node *item;
+    KDevPG::Model::Node *item;
     char* str;
-    Model::VariableDeclarationItem::DeclarationType declarationType;
-    Model::VariableDeclarationItem::StorateType     storageType;
-    Model::VariableDeclarationItem::VariableType    variableType;
+    KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
+    KDevPG::Model::VariableDeclarationItem::StorateType     storageType;
+    KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 /* Line 1489 of yacc.c.  */
-#line 117 "/home/andreas/KDE-work/4.0/build/kdevelop-pg/kdev-pg/kdev-pg-parser.hh"
+#line 117 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

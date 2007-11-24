@@ -35,7 +35,7 @@ public:
 protected:
   virtual void visitEvolve(Model::EvolveItem *node)
   {
-    globalSystem.env.insert(std::make_pair(node->mSymbol, node));
+    globalSystem.env.insert(node->mSymbol, node);
   }
 };
 }

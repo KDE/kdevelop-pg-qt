@@ -20,8 +20,8 @@
 
 #include "kdev-pg-pretty-printer.h"
 
-#include <list>
-#include <stack>
+#include <QtCore/QList>
+#include <QtCore/QStack>
 #include <iostream>
 #include <cassert>
 
@@ -62,9 +62,9 @@ void PrettyPrinter::visitAction(Model::ActionItem *node)
 
 void PrettyPrinter::visitAlternative(Model::AlternativeItem *node)
 {
-  std::list<Model::Node*> top_level_nodes;
+  QList<Model::Node*> top_level_nodes;
 
-  std::stack<Model::Node*> working_list;
+  QStack<Model::Node*> working_list;
   working_list.push(node->mRight);
   working_list.push(node->mLeft);
 
@@ -87,7 +87,7 @@ void PrettyPrinter::visitAlternative(Model::AlternativeItem *node)
   bool initial = true;
 
   out << "(";
-  std::list<Model::Node*>::iterator it = top_level_nodes.begin();
+  QList<Model::Node*>::iterator it = top_level_nodes.begin();
   while (it != top_level_nodes.end())
     {
       if (!initial)

@@ -31,9 +31,8 @@
 #include "kdev-pg-debug-visitor-gen.h"
 #include "kdev-pg-beautifier.h"
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
+#include <QtCore/QTextStream>
+#include <QtCore/QFile>
 
 namespace KDevPG
 {
@@ -41,347 +40,370 @@ void generateOutput()
 {
   if (globalSystem.GenerateAst)
   { // generate the ast
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateAst _Ast(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#ifndef " << globalSystem.language << "_AST_H_INCLUDED" << std::endl
-      << "#define " << globalSystem.language << "_AST_H_INCLUDED" << std::endl
-      << std::endl
+      << "#ifndef " << globalSystem.language << "_AST_H_INCLUDED" << endl
+      << "#define " << globalSystem.language << "_AST_H_INCLUDED" << endl
+      << endl
 
-      << "#include <kdev-pg-list.h>" << std::endl
-      << std::endl;
-    if (globalSystem.exportMacroHeader)
+      << "#include <QtCore/QList>" << endl
+      << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
-        << std::endl;
+        << endl;
 
-    if (globalSystem.decl)
-      s << globalSystem.decl << std::endl;
+    if (!globalSystem.decl.isEmpty())
+      s << globalSystem.decl << endl;
 
-    s << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+    s << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     _Ast();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
 
-      << "#endif" << std::endl
-      << std::endl;
+      << "#endif" << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "ast.h";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   { // generate the parser decls
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateParserDeclarations __decls(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#ifndef " << globalSystem.language << "_H_INCLUDED" << std::endl
-      << "#define " << globalSystem.language << "_H_INCLUDED" << std::endl
-      << std::endl;
+      << "#ifndef " << globalSystem.language << "_H_INCLUDED" << endl
+      << "#define " << globalSystem.language << "_H_INCLUDED" << endl
+      << endl;
 
     if (globalSystem.GenerateAst)
       {
-        s << "#include \"" << globalSystem.language << "Ast.h\"" << std::endl
-          << "#include <kdev-pg-memory-pool.h>" << std::endl
-          << "#include <kdev-pg-allocator.h>" << std::endl;
+        s << "#include \"" << globalSystem.language << "Ast.h\"" << endl
+          << "#include <kdev-pg-memory-pool.h>" << endl
+          << "#include <kdev-pg-allocator.h>" << endl;
       }
 
-    if (!strcmp(globalSystem.tokenStream, "KDevPG::tokenStream"))
-      s << "#include <kdev-pg-token-stream.h>" << std::endl;
+    if (globalSystem.tokenStream == "KDevPG::TokenStream")
+      s << "#include <kdev-pg-token-stream.h>" << endl;
 
-    s << std::endl;
-    if (globalSystem.exportMacroHeader)
+    s << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
-        << std::endl;
+        << endl;
 
-    if (globalSystem.decl && !globalSystem.GenerateAst)
-      s << globalSystem.decl << std::endl;
+    if (!globalSystem.decl.isEmpty() && !globalSystem.GenerateAst)
+      s << globalSystem.decl << endl;
 
-    s << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+    s << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __decls();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
 
-      << "#endif" << std::endl
-      << std::endl;
+      << "#endif" << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "parser.h";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   if (globalSystem.GenerateAst)
   { // generate the visitor decls
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateVisitor __visitor(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#ifndef " << globalSystem.language << "_VISITOR_H_INCLUDED" << std::endl
-      << "#define " << globalSystem.language << "_VISITOR_H_INCLUDED" << std::endl
-      << std::endl
+      << "#ifndef " << globalSystem.language << "_VISITOR_H_INCLUDED" << endl
+      << "#define " << globalSystem.language << "_VISITOR_H_INCLUDED" << endl
+      << endl
 
-      << "#include \"" << globalSystem.language << "Ast.h\"" << std::endl
-      << std::endl;
-    if (globalSystem.exportMacroHeader)
+      << "#include \"" << globalSystem.language << "Ast.h\"" << endl
+      << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
-        << std::endl;
+        << endl;
 
-    s << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+    s << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __visitor();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
 
-      << "#endif" << std::endl
-      << std::endl;
+      << "#endif" << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "visitor.h";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   if (globalSystem.GenerateAst)
   { // generate the default visitor
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateDefaultVisitor __DefaultVisitor(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#ifndef " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
-      << "#define " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << std::endl
-      << std::endl
+      << "#ifndef " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
+      << "#define " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
+      << endl
 
-      << "#include \"" << globalSystem.language << "visitor.h\"" << std::endl
-      << std::endl;
-    if (globalSystem.exportMacroHeader)
+      << "#include \"" << globalSystem.language << "visitor.h\"" << endl
+      << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
-        << std::endl;
+        << endl;
 
-    s << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+    s << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __DefaultVisitor();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
 
-      << "#endif" << std::endl
-      << std::endl;
+      << "#endif" << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "defaultvisitor.h";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   if (globalSystem.generateSerializeVisitor)
   { // generate the serialization visitor
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateSerializeVisitor __serialize_visitor(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#ifndef " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << std::endl
-      << "#define " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << std::endl
-      << std::endl
+      << "#ifndef " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << endl
+      << "#define " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << endl
+      << endl
 
-      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << std::endl
-      << std::endl;
-    if (globalSystem.exportMacroHeader)
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
+      << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
-        << std::endl;
+        << endl;
 
-    s << "#include <iostream>" << std::endl
-      << "#include <fstream>" << std::endl
-      << std::endl
+    s << "#include <QtCore/QTextStream>" << endl
+      << "#include <QtCore/QFile>" << endl
+      << endl
 
-      << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+      << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __serialize_visitor();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl;
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
 
-    s << "#endif" << std::endl
-      << std::endl;
+    s << "#endif" << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "serializevisitor.h";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   if (globalSystem.generateDebugVisitor)
   { // generate the debug visitor
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateDebugVisitor __debug_visitor(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#ifndef " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
-      << "#define " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << std::endl
-      << std::endl
+      << "#ifndef " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << endl
+      << "#define " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << endl
+      << endl
 
-      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << std::endl
-      << std::endl;
-    if (globalSystem.exportMacroHeader)
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
+      << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
-        << std::endl;
+        << endl;
 
-    s << "#include <iostream>" << std::endl
-      << "#include <fstream>" << std::endl
-      << std::endl
+    s << "#include <QtCore/QTextStream>" << endl
+      << "#include <QtCore/QDebug>" << endl
+      << endl
 
-      << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+      << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __debug_visitor();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl;
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
 
-    s << "#endif" << std::endl
-      << std::endl;
+    s << "#endif" << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "debugvisitor.h";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   { // generate the parser bits
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateParserBits __bits(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl;
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl;
 
     s << "#include \"" << globalSystem.language << "parser.h\""
-      << std::endl
-      << std::endl;
+      << endl
+      << endl;
 
-    if (globalSystem.bits)
-      s << globalSystem.bits << std::endl;
+    if (!globalSystem.bits.isEmpty())
+      s << globalSystem.bits << endl;
 
-    s << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+    s << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __bits();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl;
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "parser.cpp";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   if (globalSystem.GenerateAst)
   { // generate the visitor bits
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
     GenerateVisitorBits __visitor_bits(s);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#include \"" << globalSystem.language << "visitor.h\"" << std::endl
-      << std::endl
+      << "#include \"" << globalSystem.language << "visitor.h\"" << endl
+      << endl
 
-      << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+      << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
     __visitor_bits();
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl;
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
 
-    std::string oname = globalSystem.language;
+    QString oname = globalSystem.language;
     oname += "visitor.cpp";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 
   if (globalSystem.GenerateAst)
   { // generate the default visitor bits
-    std::stringstream s;
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
-    s << "// THIS FILE IS GENERATED" << std::endl
-      << "// WARNING! All changes made in this file will be lost!" << std::endl
-      << std::endl
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
 
-      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << std::endl
-      << std::endl
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
+      << endl
 
-      << "namespace " << globalSystem.ns << "{" << std::endl
-      << std::endl;
+      << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
 
-    std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
-                  GenerateDefaultVisitorBitsRule(s));
 
-    s << std::endl << "} // end of namespace " << globalSystem.ns << std::endl
-      << std::endl;
+    for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+        it != globalSystem.symbols.end(); it++ )
+    {
+      GenerateDefaultVisitorBitsRule gen(s);
+      gen(qMakePair(it.key(), *it));
+    }
 
-    std::string oname = globalSystem.language;
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
+
+    QString oname = globalSystem.language;
     oname += "defaultvisitor.cpp";
 
-    std::ofstream ofile;
-    ofile.open(oname.c_str(), std::ios::out);
-    format(s, ofile);
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
   }
 }
 

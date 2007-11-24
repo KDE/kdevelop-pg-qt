@@ -21,7 +21,7 @@
 #define KDEV_PG_CLONE_TREE_H
 
 #include "kdev-pg-default-visitor.h"
-#include <stack>
+#include <QtCore/QStack>
 
 namespace KDevPG
 {
@@ -29,7 +29,7 @@ namespace KDevPG
 class CloneTree: public DefaultVisitor
 {
 public:
-  std::stack<Model::Node*> mTemps;
+  QStack<Model::Node*> mTemps;
 
 public:
   Model::Node *clone(Model::Node *node);

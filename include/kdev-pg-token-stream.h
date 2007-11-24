@@ -23,7 +23,7 @@
 #ifndef KDEV_PG_TOKEN_STREAM_H
 #define KDEV_PG_TOKEN_STREAM_H
 
-#include <cstdlib>
+#include <QtCore/QtGlobal>
 
 #include "kdev-pg-location-table.h"
 
@@ -36,8 +36,8 @@ public:
   class TokenType
   {
     int kind;
-    std::size_t begin;
-    std::size_t end;
+    qint64 begin;
+    qint64 end;
   };
 
 public:
@@ -65,34 +65,34 @@ public:
     mTokenCount = 0;
   }
 
-  inline std::size_t size() const
+  inline qint64 size() const
   {
     return mTokenCount;
   }
 
-  inline std::size_t index() const
+  inline qint64 index() const
   {
     return mIndex;
   }
 
-  inline std::size_t yytokenIndex() const
+  inline qint64 yytokenIndex() const
   {
     if( mIndex )
       return mIndex - 1;
     return mIndex;
   }
 
-  inline void rewind(std::size_t index)
+  inline void rewind(qint64 index)
   {
     mIndex = index;
   }
 
-  inline TokenType const &token(std::size_t index) const
+  inline TokenType const &token(qint64 index) const
   {
     return mTokenBuffer[index];
   }
 
-  inline TokenType &token(std::size_t index)
+  inline TokenType &token(qint64 index)
   {
     return mTokenBuffer[index];
   }
@@ -126,7 +126,7 @@ public:
     return mLocationTable;
   }
 
-  inline void startPosition(std::size_t index, size_t *line, size_t *column)
+  inline void startPosition(qint64 index, size_t *line, size_t *column)
   {
     if (!mLocationTable)
       {
@@ -136,7 +136,7 @@ public:
       mLocationTable->positionAt(token(index).begin, line, column);
   }
 
-  inline void endPosition(std::size_t index, size_t *line, size_t *column)
+  inline void endPosition(qint64 index, size_t *line, size_t *column)
   {
     if (!mLocationTable)
       {
@@ -148,9 +148,9 @@ public:
 
 private:
   TokenType *mTokenBuffer;
-  std::size_t mTokenBufferSize;
-  std::size_t mIndex;
-  std::size_t mTokenCount;
+  qint64 mTokenBufferSize;
+  qint64 mIndex;
+  qint64 mTokenCount;
   LocationTable *mLocationTable;
 
 private:

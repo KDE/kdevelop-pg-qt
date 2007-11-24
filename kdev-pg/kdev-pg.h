@@ -24,65 +24,68 @@
 
 #include "kdev-pg-ast.h"
 
-#include <set>
-#include <map>
-#include <deque>
-#include <string>
-#include <cassert>
+#include <QtCore/QSet>
+#include <QtCore/QMap>
+#include <QtCore/QList>
+#include <QtCore/QFile>
+#include <QtCore/QString>
+#include <QtCore/QMultiMap>
+#include <QtCore/QtGlobal>
+#include <QtCore/QTextStream>
 
 namespace KDevPG
 {
   Model::ZeroItem *zero();
   Model::PlusItem *plus(Model::Node *item);
   Model::StarItem *star(Model::Node *item);
-  Model::SymbolItem *symbol(char const *name);
-  Model::ActionItem *action(Model::Node *item, char const *code);
+  Model::SymbolItem *symbol(const QString& name);
+  Model::ActionItem *action(Model::Node *item, const QString& code);
   Model::AlternativeItem *alternative(Model::Node *left, Model::Node *right);
   Model::ConsItem *cons(Model::Node *left, Model::Node *right);
   Model::EvolveItem *evolve(
       Model::Node *item, Model::SymbolItem *symbol,
-      Model::VariableDeclarationItem *declarations, char const *code
+      Model::VariableDeclarationItem *declarations, const QString& code
   );
   Model::TryCatchItem *tryCatch(Model::Node *try_item, Model::Node *catch_item);
-  Model::AliasItem *alias(char const *code, Model::SymbolItem *symbol);
-  Model::TerminalItem *terminal(char const *name, char const *description);
-  Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, char const *arguments);
-  Model::ConditionItem *condition(char const *code, Model::Node *item);
+  Model::AliasItem *alias(const QString& code, Model::SymbolItem *symbol);
+  Model::TerminalItem *terminal(const QString& name, const QString& description);
+  Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, const QString& arguments);
+  Model::ConditionItem *condition(const QString& code, Model::Node *item);
   Model::AnnotationItem *annotation(
-      char const *name, Model::Node *item, bool isSequence,
+      const QString& name, Model::Node *item, bool isSequence,
       Model::VariableDeclarationItem::StorateType storageType
   );
   Model::VariableDeclarationItem *variableDeclaration(
       Model::VariableDeclarationItem::DeclarationType declarationType,
       Model::VariableDeclarationItem::StorateType     storageType,
       Model::VariableDeclarationItem::VariableType    variableType,
-      bool isSequence, char const* name, char const *type
+      bool isSequence, const QString& name, const QString& type
   );
-  Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, char const *code);
+  Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QString& code);
 
 class World
 {
 public:
   typedef struct MemberCode {
-    std::deque<Settings::MemberItem*> declarations;
-    std::deque<Settings::MemberItem*> constructorCode;
-    std::deque<Settings::MemberItem*> destructorCode;
+    QList<Settings::MemberItem*> declarations;
+    QList<Settings::MemberItem*> constructorCode;
+    QList<Settings::MemberItem*> destructorCode;
   };
-  typedef std::set<Model::Node*> NodeSet;
-  typedef std::map<std::string, Model::SymbolItem*> SymbolSet;
-  typedef std::map<std::string, Model::TerminalItem*> TerminalSet;
-  typedef std::multimap<Model::SymbolItem*, Model::EvolveItem*> Environment;
-  typedef std::multimap<std::string, std::string> NamespaceSet;
+  typedef QSet<Model::Node*> NodeSet;
+  typedef QMap<QString, Model::SymbolItem*> SymbolSet;
+  typedef QMap<QString, Model::TerminalItem*> TerminalSet;
+  typedef QMultiMap<Model::SymbolItem*, Model::EvolveItem*> Environment;
+  typedef QMultiMap<QString, QString> NamespaceSet;
 
-  typedef std::map<std::pair<Model::Node*, int>, NodeSet> FirstSet;
-  typedef std::map<std::pair<Model::Node*, int>, NodeSet> FollowSet;
+  typedef QMap<QPair<Model::Node*, int>, NodeSet> FirstSet;
+  typedef QMap<QPair<Model::Node*, int>, NodeSet> FollowSet;
 
   /**pair: list of rules whose FIRST set is used to calculate FOLLOW,
   list of rules whose FOLLOW set is used to calculate FOLLOW*/
-  typedef std::pair<NodeSet, NodeSet> FollowDep;
+  typedef QPair<NodeSet, NodeSet> FollowDep;
   /**key: rule whose FOLLOW set has a dependency on other rules' FIRST and FOLLOW,
   value: follow set dependency*/
-  typedef std::map<Model::Node*, FollowDep> FollowDeps;
+  typedef QMap<Model::Node*, FollowDep> FollowDeps;
 
   World()
     : tokenStream("kdev_pg_tokenStream"), language(0), ns(0), decl(0), bits(0),
@@ -92,13 +95,13 @@ public:
   {}
 
   // options
-  char const *tokenStream;
-  char const *language;
-  char const *ns;
-  char const *decl;
-  char const *bits;
-  char const *exportMacro;
-  char const *exportMacroHeader;
+  QString tokenStream;
+  QString language;
+  QString ns;
+  QString decl;
+  QString bits;
+  QString exportMacro;
+  QString exportMacroHeader;
   bool GenerateAst;
   bool generateSerializeVisitor;
   bool generateDebugVisitor;
@@ -111,35 +114,35 @@ public:
     return mZero;
   }
 
-  Model::TerminalItem *terminal(char const *__name)
+  Model::TerminalItem *terminal(QString __name)
   {
-    std::string name = __name;
+    QString name = __name;
     TerminalSet::iterator it = terminals.find(name);
     if (it == terminals.end())
       return KDevPG::terminal(__name, __name);
 
-    return (*it).second;
+    return (*it);
   }
 
   void pushRule(Model::Node *rule)
   {
     Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(rule);
-    assert(e != 0);
+    Q_ASSERT(e != 0);
 
     if (rules.empty())
       start = e;
     rules.push_back(e);
   }
 
-  void pushNamespace(char const *name, char const *code)
+  void pushNamespace(QString name, QString code)
   {
-    namespaces.insert(std::make_pair(name, code));
+    namespaces.insert(name, code);
   }
 
   void pushParserClassMember(Model::Node *member)
   {
     Settings::MemberItem *m = nodeCast<Settings::MemberItem*>(member);
-    assert(m != 0);
+    Q_ASSERT(m != 0);
 
     if (m->mMemberKind == Settings::MemberItem::ConstructorCode)
       parserclassMembers.constructorCode.push_back(m);
@@ -149,24 +152,24 @@ public:
       parserclassMembers.declarations.push_back(m);
   }
 
-  Model::TerminalItem *pushTerminal(char const *__name, char const *__description)
+  Model::TerminalItem *pushTerminal(QString __name, QString __description)
   {
-    std::string name = __name;
+    QString name = __name;
     TerminalSet::iterator it = terminals.find(name);
     if (it == terminals.end())
-      it = terminals.insert(std::make_pair(name, KDevPG::terminal(__name, __description))).first;
+      it = terminals.insert(name, KDevPG::terminal(__name, __description));
 
-    return (*it).second;
+    return (*it);
   }
 
-  Model::SymbolItem *pushSymbol(char const *__name)
+  Model::SymbolItem *pushSymbol(QString __name)
   {
-    std::string name = __name;
+    QString name = __name;
     SymbolSet::iterator it = symbols.find(name);
     if (it == symbols.end())
-      it = symbols.insert(std::make_pair(name, KDevPG::symbol(__name))).first;
+      it = symbols.insert(name, KDevPG::symbol(__name));
 
-    return (*it).second;
+    return (*it);
   }
 
   FirstSet::iterator firstBegin() { return firstSet.begin(); }
@@ -176,26 +179,26 @@ public:
   FollowSet::iterator followEnd() { return followSet.end(); }
 
   NodeSet &first(Model::Node *node, int K = 1)
-  { return firstSet[std::make_pair(node, K)]; }
+  { return firstSet[qMakePair(node, K)]; }
 
   NodeSet &follow(Model::Node *node, int K = 1)
-  { return followSet[std::make_pair(node, K)]; }
+  { return followSet[qMakePair(node, K)]; }
 
   FollowDep &followDep(Model::Node *node)
   { return followDeps[node]; }
 
   FirstSet::iterator findInFirst(Model::Node *node, int K = 1)
-  { return firstSet.find(std::make_pair(node, K)); }
+  { return firstSet.find(qMakePair(node, K)); }
 
   FollowSet::iterator findInFollow(Model::Node *node, int K = 1)
-  { return followSet.find(std::make_pair(node, K)); }
+  { return followSet.find(qMakePair(node, K)); }
 
   Model::EvolveItem *start;
   Model::ZeroItem *mZero;
 
   SymbolSet symbols;
   TerminalSet terminals;
-  std::deque<Model::Node*> rules;
+  QList<Model::Node*> rules;
   NamespaceSet namespaces;
   MemberCode parserclassMembers;
 
@@ -210,11 +213,11 @@ private:
 
 bool reducesToEpsilon(Model::Node *node);
 bool isZero(Model::Node *node);
-std::ostream &operator << (std::ostream &out, Model::Node const *__node);
 
 }
+QTextStream& operator << (QTextStream& out, KDevPG::Model::Node const *__node);
 
 extern KDevPG::World globalSystem;
-extern FILE *file;
+extern QFile file;
 
 #endif // KDEV_PG_H

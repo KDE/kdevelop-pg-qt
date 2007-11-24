@@ -25,9 +25,10 @@
 #include "kdev-pg-default-visitor.h"
 #include "kdev-pg-default-visitor-bits-gen.h" // for the HasMemberNodes class
 
-#include <set>
-#include <list>
-#include <string>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QTextStream>
 
 
 namespace KDevPG
@@ -36,10 +37,10 @@ namespace KDevPG
 class GenerateSerializeVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateSerializeVisitor(std::ostream &o): out(o)
+  GenerateSerializeVisitor(QTextStream& o): out(o)
   {}
 
   void operator()();
@@ -48,15 +49,15 @@ public:
 class GenerateSerializeVisitorRule: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
-  std::set<std::string> mNames;
-  std::list<Model::VariableDeclarationItem*> mVariableDeclarations;
+  QTextStream& out;
+  QSet<QString> mNames;
+  QList<Model::VariableDeclarationItem*> mVariableDeclarations;
 
 public:
-  GenerateSerializeVisitorRule(std::ostream &o): out(o)
+  GenerateSerializeVisitorRule(QTextStream& o): out(o)
   {}
 
-  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
+  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 
 protected:
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);

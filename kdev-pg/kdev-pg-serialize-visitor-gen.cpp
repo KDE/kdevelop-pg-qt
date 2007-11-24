@@ -21,138 +21,133 @@
 
 #include "kdev-pg-serialize-visitor-gen.h"
 #include "kdev-pg.h"
-#include <iostream>
-
 
 namespace KDevPG
 {
 
 void GenerateSerializeVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Serialize: public DefaultVisitor {" << std::endl
-      << "public:" << std::endl;
+  out << "class " << globalSystem.exportMacro << " Serialize: public DefaultVisitor {" << endl
+      << "public:" << endl;
 
-  out << "static void read(KDevPG::MemoryPool *p," << std::endl
-      << "AstNode *node, std::ifstream *i) { " << std::endl
-      << "serialize(p, node, i); " << std::endl
-      << "}" << std::endl << std::endl;
+  out << "static void read(KDevPG::MemoryPool *p," << endl
+      << "AstNode *node, QIODevice* i) { " << endl
+      << "Serialize(p, node, i); " << endl
+      << "}" << endl << endl;
 
-  out << "static void write(AstNode *node, std::ofstream *o) { " << std::endl
-      << "serialize(node, o); " << std::endl
-      << "}" << std::endl << std::endl;
+  out << "static void write(AstNode *node, QIODevice* o) { " << endl
+      << "Serialize(node, o); " << endl
+      << "}" << endl << endl;
 
-  out << "private:" << std::endl;
-  out << "serialize(KDevPG::MemoryPool *p," << std::endl
-      << "AstNode *node, std::ifstream *i) : in(i), out(0) {" << std::endl
-      << "memoryPool = p;" << std::endl
-      << "if ( !node )" << std::endl
-      << "node = create<" << globalSystem.start->mSymbol->mName << "Ast>();" << std::endl
-      << "visitNode( node );" << std::endl
-      << "}" << std::endl << std::endl;
+  out << "private:" << endl;
+  out << "Serialize(KDevPG::MemoryPool *p," << endl
+      << "AstNode *node, QIODevice* i) : in(i) {" << endl
+      << "memoryPool = p;" << endl
+      << "if ( !node )" << endl
+      << "node = create<" << globalSystem.start->mSymbol->mCapitalizedName << "Ast>();" << endl
+      << "visitNode( node );" << endl
+      << "}" << endl << endl;
 
-  out << "serialize(AstNode *node, std::ofstream *o) : in(0), out(o) {" << std::endl
-      << "visitNode( node );" << std::endl
-      << "}" << std::endl << std::endl;
+  out << "Serialize(AstNode *node, QIODevice *o) : out(o) {" << endl
+      << "visitNode( node );" << endl
+      << "}" << endl << endl;
 
-  out << "std::ifstream *in;" << std::endl;
-  out << "std::ofstream *out;" << std::endl << std::endl;
+  out << "QDataStream in;" << endl;
+  out << "QDataStream out;" << endl << endl;
 
-  out << "// memory pool" << std::endl
-      << "typedef KDevPG::MemoryPool memoryPoolType;" << std::endl
-      << "KDevPG::MemoryPool *memoryPool;" << std::endl
-      << "template <class T>" << std::endl
-      << "inline T *create() {" << std::endl
-      << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << std::endl
-      << "node->kind = T::KIND;" << std::endl
-      << "return node;" << std::endl
-      << "}" << std::endl;
+  out << "// memory pool" << endl
+      << "typedef KDevPG::MemoryPool memoryPoolType;" << endl
+      << "KDevPG::MemoryPool *memoryPool;" << endl
+      << "template <class T>" << endl
+      << "inline T *create() {" << endl
+      << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << endl
+      << "node->kind = T::KIND;" << endl
+      << "return node;" << endl
+      << "}" << endl;
 
-  out << "template <class T, class E>" << std::endl
-      << "void handleListNode(const list_node<T> *t, E *e) {" << std::endl
-      << "if (in) {" << std::endl
+  out << "template <class T, class E>" << endl
+      << "void handleListNode(const KDevPG::ListNode<T> *t, E *e) {" << endl
+      << "if (in) {" << endl
 
       //list in
-      << "bool b;" << std::endl
-      << "in->read(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "if (b) {" << std::endl
-      << "int count;" << std::endl
-      << "in->read(reinterpret_cast<char*>(&count), sizeof(int));" << std::endl
-      << "for ( int i = 0; i < count; ++i ) {" << std::endl
-      << "    e = create<E>();" << std::endl // FIXME: what about token
-      << "    t = snoc(t, e, memoryPool);" << std::endl
-      << "}" << std::endl
-      << "}" << std::endl
+      << "bool b;" << endl
+      << "in >> b;" << endl
+      << "if (b) {" << endl
+      << "qint64 count;" << endl
+      << "in >> count;" << endl
+      << "for ( qint64 i = 0; i < count; ++i ) {" << endl
+      << "    e = create<E>();" << endl // FIXME: what about token
+      << "    t = KDevPG::snoc(t, e, memoryPool);" << endl
+      << "}" << endl
+      << "}" << endl
       //end list in
 
-      << "} else if (out) {" << std::endl
+      << "} else if (out) {" << endl
 
       //list out
-      <<"if (t) {" << std::endl
-      << "bool b = true;" << std::endl
-      << "out->write(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "int c = t->count();" << std::endl
-      << "out->write(reinterpret_cast<char*>(&c), sizeof(int));" << std::endl
-      << "} else {" << std::endl
-      << "bool b = false;" << std::endl
-      << "out->write(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "}" << std::endl << std::endl
+      <<"if (t) {" << endl
+      << "out << true;" << endl
+      << "out << t->count();" << endl
+      << "} else {" << endl
+      << "out << false;" << endl
+      << "}" << endl << endl
       //end list out
 
-      << "}" << std::endl
-      << "}" << std::endl << std::endl;
+      << "}" << endl
+      << "}" << endl << endl;
 
-  out << "template <class T>" << std::endl
-      << "void handleAstNode(T *t) {" << std::endl
-      << "if (in) {" << std::endl
+  out << "template <class T>" << endl
+      << "void handleAstNode(T *t) {" << endl
+      << "if (in) {" << endl
 
       //ast in
-      << "bool b;" << std::endl
-      << "in->read(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "if (b) {" << std::endl
-      << "t = create<T>();" << std::endl
+      << "bool b;" << endl
+      << "in >> b;" << endl
+      << "if (b) {" << endl
+      << "t = create<T>();" << endl
 
-      << "in->read(reinterpret_cast<char*>(&t->startToken)," << std::endl
-      << "sizeof(std::size_t));" << std::endl
-      << "in->read(reinterpret_cast<char*>(&t->endToken)," << std::endl
-      << "sizeof(std::size_t));" << std::endl
-      << "}" << std::endl
+      << "in >> t->startToken;" << endl
+      << "in >> t->endToken;" << endl
+      << "}" << endl
       //end ast in
 
-      << "} else if (out) {" << std::endl
+      << "} else if (out) {" << endl
 
       //ast out
-      << "if (t) {" << std::endl
-      << "bool b = true;" << std::endl
-      << "out->write(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "out->write(reinterpret_cast<char*>(&t->startToken)," << std::endl
-      << "sizeof(std::size_t));" << std::endl
-      << "out->write(reinterpret_cast<char*>(&t->endToken)," << std::endl
-      << "sizeof(std::size_t));" << std::endl
-      << "} else {" << std::endl
-      << "bool b = false;" << std::endl
-      << "out->write(reinterpret_cast<char*>(&b), sizeof(bool));" << std::endl
-      << "}" << std::endl << std::endl
+      << "if (t) {" << endl
+      << "bool b = true;" << endl
+      << "out << true;" << endl
+      << "out << t->startToken;" << endl
+      << "out << t->endToken;" << endl
+      << "} else {" << endl
+      << "out << false;" << endl
+      << "}" << endl << endl
       //end ast out
 
-      << "}" << std::endl
-      << "}" << std::endl << std::endl;
+      << "}" << endl
+      << "}" << endl << endl;
 
-  out << "template <class T>" << std::endl
-      << "void handleVariable(T *t) {" << std::endl
-      << "if (in) {" << std::endl
-      << "in->read( reinterpret_cast<char*>(t), sizeof(T));" << std::endl
-      << "} else if (out) {" << std::endl
-      << "out->write( reinterpret_cast<char*>(t), sizeof(T));" << std::endl
-      << "}" << std::endl
-      << "}" << std::endl << std::endl;
+  out << "template <class T>" << endl
+      << "void handleVariable(T *t) {" << endl
+      << "if (in) {" << endl
+      << "in >> t;" << endl
+      << "} else if (out) {" << endl
+      << "out << t;" << endl
+      << "}" << endl
+      << "}" << endl << endl;
 
-  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
-                GenerateSerializeVisitorRule(out));
 
-  out << "};" << std::endl;
+  for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); it++ )
+  {
+    GenerateSerializeVisitorRule gen(out);
+    gen(qMakePair(it.key(), *it));
+  }
+
+  out << "};" << endl;
 }
 
-void GenerateSerializeVisitorRule::operator()(std::pair<std::string,
+void GenerateSerializeVisitorRule::operator()(QPair<QString,
                                           Model::SymbolItem*> const &__it)
 {
   mNames.clear();
@@ -164,15 +159,15 @@ void GenerateSerializeVisitorRule::operator()(std::pair<std::string,
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit" << sym->mName
-      << "(" << sym->mName << "Ast *" << "node"
-      << ") {" << std::endl;
+  out << "virtual void visit" << sym->mCapitalizedName
+      << "(" << sym->mCapitalizedName << "Ast *" << "node"
+      << ") {" << endl;
 
   World::Environment::iterator it = globalSystem.env.find(sym);
   while (it != globalSystem.env.end())
     {
-      Model::EvolveItem *e = (*it).second;
-      if ((*it).first != sym)
+      Model::EvolveItem *e = (*it);
+      if (it.key() != sym)
         break;
 
       ++it;
@@ -180,11 +175,11 @@ void GenerateSerializeVisitorRule::operator()(std::pair<std::string,
       visitNode(e);
     }
 
-  out << "DefaultVisitor::visit" << sym->mName
+  out << "DefaultVisitor::visit" << sym->mCapitalizedName
       << "(" << "node"
-      << ");" << std::endl;
+      << ");" << endl;
 
-  out << "}" << std::endl << std::endl;
+  out << "}" << endl << endl;
 }
 
 void GenerateSerializeVisitorRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
@@ -197,35 +192,35 @@ void GenerateSerializeVisitorRule::visitVariableDeclaration(Model::VariableDecla
     if (mNames.find(node->mName) != mNames.end())
       break;
 
-    std::string ext =
+    QString ext =
         ( node->mVariableType == Model::VariableDeclarationItem::TypeNode ?
         "Ast" : "");
 
-    std::string type = std::string(node->mType) + ext;
-    std::string name = std::string(node->mName);
+    QString type = node->mType + ext;
+    QString name = node->mName;
 
     if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
-      type = "std::size_t";
+      type = "qint64";
 
     if (node->mIsSequence)
     {
-      out << "{" << std::endl
-          << type << " *e = 0;" << std::endl
-          << "handleListNode(node->" << name << "_sequence, e);" << std::endl
-          << "}" << std::endl;
+      out << "{" << endl
+          << type << " *e = 0;" << endl
+          << "handleListNode(node->" << name << "Sequence, e);" << endl
+          << "}" << endl;
     }
     else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
     {
-      out << "handleAstNode(node->" << name << ");" << std::endl;
+      out << "handleAstNode(node->" << name << ");" << endl;
     }
     else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable
              || node->mVariableType == Model::VariableDeclarationItem::TypeToken)
     {
-      out << "handleVariable(&node->" << name << ");" << std::endl;
+      out << "handleVariable(&node->" << name << ");" << endl;
     }
     else
     {
-      assert(0); // every variable type must be supported
+      Q_ASSERT(0); // every variable type must be supported
     }
 
     mNames.insert(node->mName);

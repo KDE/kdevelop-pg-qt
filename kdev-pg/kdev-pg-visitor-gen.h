@@ -22,9 +22,10 @@
 
 #include "kdev-pg-default-visitor.h"
 
-#include <set>
-#include <list>
-#include <string>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QTextStream>
 
 namespace KDevPG
 {
@@ -32,10 +33,10 @@ namespace KDevPG
 class GenerateVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateVisitor(std::ostream &o): out(o)
+  GenerateVisitor(QTextStream& o): out(o)
   {}
 
   void operator()();

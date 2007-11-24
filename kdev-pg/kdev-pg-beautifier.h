@@ -20,12 +20,12 @@
 #ifndef KDEV_PG_BEAUTIFIER_H
 #define KDEV_PG_BEAUTIFIER_H
 
-#include <iostream>
+#include <QtCore/QTextStream>
 
 namespace KDevPG
 {
 
-void format(std::istream &in, std::ostream &out);
+void format(QTextStream &in, QTextStream& out);
 
 }
 

@@ -23,6 +23,8 @@
 
 #include "kdev-pg-allocator.h"
 
+#include <QtCore/QString>
+
 #define PG_NODE(k) \
     enum { NodeKind = NodeKind##k };
 
@@ -89,7 +91,8 @@ namespace Model
   public:
     PG_NODE(Symbol)
 
-    char const *mName;
+    QString mName;
+    QString mCapitalizedName;
   };
 
   class ActionItem: public Node
@@ -98,7 +101,7 @@ namespace Model
     PG_NODE(Action)
 
     Node *mItem;
-    char const *mCode;
+    QString mCode;
   };
 
   class AlternativeItem: public Node
@@ -134,7 +137,7 @@ namespace Model
   public:
     PG_NODE(Alias)
 
-    char const *mCode;
+    QString mCode;
     SymbolItem *mSymbol;
   };
 
@@ -143,8 +146,8 @@ namespace Model
   public:
     PG_NODE(Terminal)
 
-    char const *mName;
-    char const *mDescription;
+    QString mName;
+    QString mDescription;
   };
 
   class NonTerminalItem: public Node
@@ -153,7 +156,7 @@ namespace Model
     PG_NODE(NonTerminal)
 
     SymbolItem *mSymbol;
-    char const *mArguments;
+    QString mArguments;
   };
 
   class VariableDeclarationItem: public Node
@@ -177,13 +180,13 @@ namespace Model
       TypeVariable,
     };
 
-    char const *mType;
-    char const *mName;
+    QString mType;
+    QString mName;
 
     DeclarationType mDeclarationType;
     StorateType     mStorageType;
     VariableType    mVariableType;
-    bool                  mIsSequence;
+    bool            mIsSequence;
 
     VariableDeclarationItem *mNext;
   };
@@ -202,7 +205,7 @@ namespace Model
   public:
     PG_NODE(Condition)
 
-    char const *mCode;
+    QString mCode;
     Node *mItem;
   };
 
@@ -214,7 +217,7 @@ namespace Model
     Node *mItem;
     SymbolItem *mSymbol;
     VariableDeclarationItem *mDeclarations;
-    char const *mCode;
+    QString mCode;
   };
 
 } // namespace model
@@ -244,7 +247,7 @@ namespace Settings
     };
 
     MemberKind mMemberKind;
-    char const *mCode;
+    QString mCode;
   };
 
 } // namespace settings
@@ -263,7 +266,8 @@ extern KDevPG::Allocator<char> globalMemoryPool;
 template <class _Tp>
 _Tp *createNode()
 {
-  _Tp *node = reinterpret_cast<_Tp*>(globalMemoryPool.allocate(sizeof(_Tp)));
+  _Tp *node = new _Tp();
+      //reinterpret_cast<_Tp*>(globalMemoryPool.allocate(sizeof(_Tp)));
   node->kind = _Tp::NodeKind;
   return node;
 }

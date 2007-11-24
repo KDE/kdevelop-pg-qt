@@ -28,21 +28,25 @@ namespace KDevPG
 
 void GenerateDefaultVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " DefaultVisitor: public Visitor {" << std::endl
-      << "public:" << std::endl;
+  out << "class " << globalSystem.exportMacro << " DefaultVisitor: public Visitor {" << endl
+      << "public:" << endl;
 
-  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
-                GenerateDefaultVisitorRule(out));
+  for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); it++ )
+  {
+    GenerateDefaultVisitorRule gen(out);
+    gen(qMakePair(it.key(), *it));
+  }
 
-  out << "};" << std::endl;
+  out << "};" << endl;
 }
 
-void GenerateDefaultVisitorRule::operator()(std::pair<std::string,Model::SymbolItem*> const &__it)
+void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> const &__it)
 {
   Model::SymbolItem *sym = __it.second;
 
-  out << "virtual void visit" << sym->mName
-      << "(" << sym->mName << "Ast *node);" << std::endl;
+  out << "virtual void visit" << sym->mCapitalizedName
+      << "(" << sym->mCapitalizedName << "Ast *node);" << endl;
 }
 
 }

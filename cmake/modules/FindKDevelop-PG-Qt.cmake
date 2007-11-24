@@ -1,17 +1,17 @@
 #
 # Find the KDevelop Parser Generator and set various variables accordingly
 #
-# KDEVPG_DIR and can be set to adjust the directory where the kdevelop-pg
+# KDEVPG_DIR and can be set to adjust the directory where the kdevelop-pg-qt
 # headers and executable are searched. This should point to the installation
-# directory of kdevelop-pg
+# directory of kdevelop-pg-qt
 #
-# KDEVPG_FOUND - set to TRUE if KDevelop-PG was found FALSE otherwise
+# KDEVPGQT_FOUND - set to TRUE if KDevelop-PG was found FALSE otherwise
 #
-# KDEVPG_INCLUDE_DIR         - include dir of kdevelop-pg, for example /usr/include/kdevelop-pg
+# KDEVPGQT_INCLUDE_DIR         - include dir of kdevelop-pg, for example /usr/include/kdevelop-pg
 #                              can be set by the user to select different include dirs
-# KDEVPG_EXECUTABLE          - the absolute path to the kdevelop-pg executable
+# KDEVPGQT_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
-# KDEVPG_GENERATE(SRC_FILE_VAR OUTPUT language 
+# KDEVPGQT_GENERATE(SRC_FILE_VAR OUTPUT language 
 #                     [NAMESPACE ns] [DEBUG_VISITOR] [DUMP_INFO] 
 #                     GRAMMARFILE ADDITIONALDEPS)
 #     macro to add a custom target for the generation of the parser
@@ -27,59 +27,59 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-if( KDEVPG_INCLUDE_DIR AND KDEVPG_EXECUTABLE )
-    set(KDevelop-PG_FIND_QUIETLY TRUE)
-endif( KDEVPG_INCLUDE_DIR AND KDEVPG_EXECUTABLE )
+if( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE )
+    set(KDevelop-PG-Qt_FIND_QUIETLY TRUE)
+endif( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE )
 
 if(WIN32)
     file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
-    set(_KDEVPG_DIR ${_progFiles}/kdevelop-pg)
+    set(_KDEVPGQT_DIR ${_progFiles}/kdevelop-pg-qt)
 endif(WIN32)
 
-if( NOT KDEVPG_DIR )
-    find_path( _kdevpgIncDir kdevelop-pg/kdev-pg-token-stream.h
+if( NOT KDEVPGQT_DIR )
+    find_path( _kdevpgqtIncDir kdevelop-pg-qt/kdev-pg-token-stream.h
         PATHS
         ${CMAKE_INSTALL_PREFIX}/include
         ${_KDEVPG_DIR}/include
     )
-    if( _kdevpgIncDir )
-        set(KDEVPG_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg)
-    endif( _kdevpgIncDir )
-    find_program( KDEVPG_EXECUTABLE NAMES kdev-pg
+    if( _kdevpgqtIncDir )
+        set(KDEVPGQT_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg-qt)
+    endif( _kdevpgqtIncDir )
+    find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
         PATHS
         ${CMAKE_INSTALL_PREFIX}/bin
         ${_KDEVPG_DIR}/bin
     )
-    set(KDEVPG_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg include directory containing the headers")
-    set( KDEVPG_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg" )
-else( NOT KDEVPG_DIR )
-    find_path( _kdevpgIncDir kdevelop-pg/kdev-pg-token-stream.h
+    set(KDEVPGQT_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
+    set( KDEVPGQT_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
+else( NOT KDEVPGQT_DIR )
+    find_path( _kdevpgqtIncDir kdevelop-pg-qt/kdev-pg-token-stream.h
         PATHS
         ${CMAKE_INSTALL_PREFIX}/include
         ${_KDEVPG_DIR}/include
-	${KDEVPG_DIR}/include
+	${KDEVPGQT_DIR}/include
     )
-    set(KDEVPG_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg)
-    find_program( KDEVPG_EXECUTABLE NAMES kdev-pg
+    set(KDEVPGQT_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg-qt)
+    find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
         PATHS
         ${CMAKE_INSTALL_PREFIX}/bin
         ${_KDEVPG_DIR}/bin
-	${KDEVPG_DIR}/bin
+	${KDEVPGQT_DIR}/bin
     )
-    set(KDEVPG_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg include directory containing the headers")
-    set( KDEVPG_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg" )
-endif( NOT KDEVPG_DIR )
-if( KDEVPG_INCLUDE_DIR
- AND KDEVPG_EXECUTABLE)
+    set(KDEVPGQT_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
+    set( KDEVPGQT_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
+endif( NOT KDEVPGQT_DIR )
+if( KDEVPGQT_INCLUDE_DIR
+ AND KDEVPGQT_EXECUTABLE)
 
-    if( NOT KDevelop-PG_FIND_QUIETLY )
-        message(STATUS "Found KDevelop-PG")
-    endif( NOT KDevelop-PG_FIND_QUIETLY )
+    if( NOT KDevelop-PG-Qt_FIND_QUIETLY )
+        message(STATUS "Found KDevelop-PG-Qt")
+    endif( NOT KDevelop-PG-Qt_FIND_QUIETLY )
 
 # if all modules found
-    set(KDEVPG_FOUND TRUE)
+    set(KDEVPGQT_FOUND TRUE)
 
-    macro(KDEVPG_GENERATE _srcVar _language )
+    macro(KDEVPGQT_GENERATE _srcVar _language )
         set(_outputList 
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}_ast.h"
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.h"
@@ -139,23 +139,23 @@ if( KDEVPG_INCLUDE_DIR
     endmacro(KDEVPG_GENERATE)
 
 
-else( KDEVPG_INCLUDE_DIR
- AND KDEVPG_EXECUTABLE)
+else( KDEVPGQT_INCLUDE_DIR
+ AND KDEVPGQT_EXECUTABLE)
 
-    if( KDevelop-PG_FIND_REQUIRED)
-        message(FATAL_ERROR "Couldn't find KDevelop-PG.")
-    else( KDevelop-PG_FIND_REQUIRED)
-        message(STATUS "Couldn't find KDevelop-PG.")
-    endif( KDevelop-PG_FIND_REQUIRED)
-    message(STATUS "You can set KDEVPG_DIR to help cmake find KDevelop-PG")
-    set(KDEVPG_FOUND FALSE)
+    if( KDevelop-PG-Qt_FIND_REQUIRED)
+        message(FATAL_ERROR "Couldn't find KDevelop-PG-Qt.")
+    else( KDevelop-PG-Qt_FIND_REQUIRED)
+        message(STATUS "Couldn't find KDevelop-PG-Qt.")
+    endif( KDevelop-PG-Qt_FIND_REQUIRED)
+    message(STATUS "You can set KDEVPGQT_DIR to help cmake find KDevelop-PG")
+    set(KDEVPGQT_FOUND FALSE)
 
-endif( KDEVPG_INCLUDE_DIR
- AND KDEVPG_EXECUTABLE)
+endif( KDEVPGQT_INCLUDE_DIR
+ AND KDEVPGQT_EXECUTABLE)
 
-if(KDEVPG_FOUND)
-message(STATUS "Using kdevelop-pg include dir: ${KDEVPG_INCLUDE_DIR}")
-message(STATUS "Using kdevelop-pg executable: ${KDEVPG_EXECUTABLE}")
-endif(KDEVPG_FOUND)
+if(KDEVPGQT_FOUND)
+message(STATUS "Using kdevelop-pg-qt include dir: ${KDEVPGQT_INCLUDE_DIR}")
+message(STATUS "Using kdevelop-pg-qt executable: ${KDEVPGQT_EXECUTABLE}")
+endif(KDEVPGQT_FOUND)
 
 

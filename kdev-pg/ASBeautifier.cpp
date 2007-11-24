@@ -33,7 +33,7 @@
 #include "astyle.h"
 
 #include <vector>
-#include <string>
+#include <QtCore/QString>
 #include <cctype>
 #include <algorithm>
 #include <iostream>

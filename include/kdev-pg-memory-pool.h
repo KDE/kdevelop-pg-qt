@@ -22,18 +22,13 @@
 #ifndef KDEV_PG_MEMORY_POOL
 #define KDEV_PG_MEMORY_POOL
 
-#include <cassert>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-
 namespace KDevPG
 {
 
 class BlockType
 {
-  std::size_t blockSize;
-  block_t *chain;
+  qint64 blockSize;
+  BlockType *chain;
   char *data;
   char *ptr;
   char *end;

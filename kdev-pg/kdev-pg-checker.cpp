@@ -22,9 +22,7 @@
 #include "kdev-pg-checker.h"
 #include "kdev-pg-pretty-printer.h"
 
-#include <iostream>
-#include <iterator>
-#include <algorithm>
+#include <QtCore/QDebug>
 
 //uncomment this to see debug output for follow checker
 // #define FOLLOW_CHECKER_DEBUG
@@ -39,7 +37,7 @@ int ProblemSummaryPrinter::mErrorCount = 0;
 void FirstFirstConflictChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  assert(e != 0);
+  Q_ASSERT(e != 0);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -57,29 +55,29 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
   World::NodeSet const &left_first = globalSystem.first(left);
   World::NodeSet const &right_first = globalSystem.first(right);
 
-  std::deque<Model::Node*> U;
-  std::set_intersection(left_first.begin(), left_first.end(),
-                        right_first.begin(), right_first.end(), std::back_inserter(U));
+  QSet<Model::Node*> U = left_first;
+  U.intersect( right_first );
 
   if (!U.empty())
     {
-      PrettyPrinter p(std::cerr);
-      std::cerr << "** WARNING found FIRST/FIRST conflict in "
-                << mSymbol->mName << ":" << std::endl << "\tRule ``";
-      p(mCheckedNode);
+      QTextStream str( stderr );
+      PrettyPrinter printer(str);
+      qDebug() << "** WARNING found FIRST/FIRST conflict in "
+                << mSymbol->mName << ":" << endl << "\tRule ``";
+      printer(mCheckedNode);
       //      p(left);
-      std::cerr << "''" << std::endl << "\tTerminals [";
+      qDebug() << "''" << endl << "\tTerminals [";
 
-      std::deque<Model::Node*>::iterator it = U.begin();
+      QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
         {
           Model::Node *n = *it++;
 
-          std::cerr << n;
+          qDebug() << n;
           if (it != U.end())
-            std::cerr << ", ";
+            qDebug() << ", ";
         }
-      std::cerr << "]" << std::endl << std::endl;
+      qDebug() << "]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFirstConflict();
     }
 }
@@ -91,8 +89,8 @@ void FirstFirstConflictChecker::visitEvolve(Model::EvolveItem *node)
   World::Environment::iterator it = globalSystem.env.find(node->mSymbol);
   while (it != globalSystem.env.end())
     {
-      Model::SymbolItem *sym = (*it).first;
-      Model::EvolveItem *e = (*it).second;
+      Model::SymbolItem *sym = it.key();
+      Model::EvolveItem *e = (*it);
       ++it;
 
       if (sym != node->mSymbol || node == e)
@@ -106,7 +104,7 @@ void FirstFirstConflictChecker::visitEvolve(Model::EvolveItem *node)
 void FirstFollowConflictChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  assert(e != 0);
+  Q_ASSERT(e != 0);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -119,41 +117,40 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
   World::NodeSet const &first = globalSystem.first(node);
   World::NodeSet const &follow = globalSystem.follow(sym);
 
-  std::deque<Model::Node*> U;
+  QSet<Model::Node*> U = first;
 
-  std::set_intersection(first.begin(), first.end(),
-                        follow.begin(), follow.end(),
-                        std::back_inserter(U));
+  U.intersect(follow);
 
   if (!U.empty())
     {
-      PrettyPrinter p(std::cerr);
-      std::cerr << "** WARNING found FIRST/FOLLOW conflict in "
+      QTextStream str(stderr);
+      PrettyPrinter p(str);
+      qDebug() << "** WARNING found FIRST/FOLLOW conflict in "
                 << mSymbol->mName;
 #ifdef FOLLOW_CHECKER_DEBUG
-      std::cerr << "(" << (uint*)mSymbol << ")";
+      qDebug() << "(" << (uint*)mSymbol << ")";
 #endif
-      std::cerr << ":" << std::endl << "\tRule ``";
+      qDebug() << ":" << endl << "\tRule ``";
       p(node);
 #ifdef FOLLOW_CHECKER_DEBUG
-      std::cerr << " [[" << (uint*)node << "]]";
+      qDebug() << " [[" << (uint*)node << "]]";
 #endif
-      std::cerr << "''" << std::endl << "\tTerminals [" << std::endl;
+      qDebug() << "''" << endl << "\tTerminals [" << endl;
 
-      std::deque<Model::Node*>::iterator it = U.begin();
+      QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
         {
           Model::Node *n = *it++;
           if (isZero(n))
             continue;
 
-          std::cerr << "\t" << n << ": conflicts with the FIRST set of: ";
+          qDebug() << "\t" << n << ": conflicts with the FIRST set of: ";
           FollowDepChecker(n).check(node);
           if (it != U.end())
-            std::cerr << ", ";
-          std::cerr << std::endl;
+            qDebug() << ", ";
+          qDebug() << endl;
         }
-      std::cerr << "\t" << "]" << std::endl << std::endl;
+      qDebug() << "\t" << "]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFollowConflict();
     }
 }
@@ -168,42 +165,43 @@ void FollowDepChecker::check(Model::Node *node)
   World::FollowDep &D = globalSystem.followDep(node);
   World::NodeSet FD = D.first;
   World::NodeSet FLD = D.second;
-  PrettyPrinter p(std::cerr);
+  QTextStream str(stderr);
+  PrettyPrinter p(str);
 #ifdef FOLLOW_CHECKER_DEBUG
-  std::cerr << "[["; p(node); std::cerr << " | " << (uint*)node << "]] ";
-  std::cerr << "{" << node->kind << "}";
+  qDebug() << "[["; p(node); qDebug() << " | " << (uint*)node << "]] ";
+  qDebug() << "{" << node->kind << "}";
 #endif
   for (World::NodeSet::const_iterator it = FD.begin(); it != FD.end(); ++it)
     {
       World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
-      std::cerr << " <iterating first ";
+      qDebug() << " <iterating first ";
       for (World::NodeSet::const_iterator fit = first.begin(); fit != first.end(); ++fit)
       {
         p(*fit);
-        std::cerr << " ";
+        qDebug() << " ";
       }
-      std::cerr << " >";
+      qDebug() << " >";
 #endif
       if (first.find(mTerminal) != first.end())
       {
-        std::cerr << std::endl << "            ";
+        qDebug() << endl << "            ";
         p(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
-        std::cerr << " ( in \"";
+        qDebug() << " ( in \"";
         p(node);
-        std::cerr << " \" )";
+        qDebug() << " \" )";
 #endif
-        std::cerr << ", ";
+        qDebug() << ", ";
       }
     }
  for (World::NodeSet::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
   {
       World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
-      std::cerr << std::endl << "\t\t" << "in ";
+      qDebug() << endl << "\t\t" << "in ";
       p(*it);
-      std::cerr << std::endl;
+      qDebug() << endl;
 #endif
       check(*it);
   }
@@ -246,7 +244,7 @@ void FirstFollowConflictChecker::visitStar(Model::StarItem *node)
 void UndefinedSymbolChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  assert(e != 0);
+  Q_ASSERT(e != 0);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -255,8 +253,8 @@ void UndefinedSymbolChecker::visitSymbol(Model::SymbolItem *node)
 {
   if (globalSystem.env.count(node) == 0)
     {
-      std::cerr << "** ERROR Undefined symbol ``" << node->mName << "'' in "
-                << mSymbol->mName << std::endl;
+      qDebug() << "** ERROR Undefined symbol ``" << node->mName << "'' in "
+                << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
     }
 }
@@ -268,24 +266,24 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
 
   Model::SymbolItem *sym;
 
-  std::string name = node->mType;
+  QString name = node->mType;
   World::SymbolSet::iterator it = globalSystem.symbols.find(name);
   if (it == globalSystem.symbols.end())
     {
-      std::cerr << "** ERROR Undefined symbol ``" << name
+      qDebug() << "** ERROR Undefined symbol ``" << name
                 << "'' (rule parameter declaration) in "
-                << mSymbol->mName << std::endl;
+                << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
       return;
     }
   else
-    sym = (*it).second;
+    sym = (*it);
 
   if (globalSystem.env.count(sym) == 0)
     {
-      std::cerr << "** ERROR Undefined symbol ``" << node->mName
+      qDebug() << "** ERROR Undefined symbol ``" << node->mName
                 << "'' (rule parameter declaration) in "
-                << mSymbol->mName << std::endl;
+                << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
     }
 }
@@ -293,18 +291,18 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
 void UndefinedTokenChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  assert(e != 0);
+  Q_ASSERT(e != 0);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
 
 void UndefinedTokenChecker::visitTerminal(Model::TerminalItem *node)
 {
-  std::string name = node->mName;
+  QString name = node->mName;
   if (globalSystem.terminals.find(name) == globalSystem.terminals.end())
     {
-      std::cerr << "** ERROR Undefined token ``" << node->mName << "'' in "
-                << mSymbol->mName << std::endl;
+      qDebug() << "** ERROR Undefined token ``" << node->mName << "'' in "
+                << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
     }
 }
@@ -318,23 +316,23 @@ void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
 {
   if (globalSystem.first(node).empty())
     {
-      std::cerr << "** ERROR Empty FIRST set for ``" << node->mName
-                << "''" << std::endl;
+      qDebug() << "** ERROR Empty FIRST set for ``" << node->mName
+                << "''" << endl;
       ProblemSummaryPrinter::reportError();
     }
 }
 
 void ProblemSummaryPrinter::operator()()
 {
-  std::cerr << (mFirstFirstConflictCount + mFirstFollowConflictCount)
+  qDebug() << (mFirstFirstConflictCount + mFirstFollowConflictCount)
             << " conflicts total: " << mFirstFollowConflictCount
             << " FIRST/FOLLOW conflicts, " << mFirstFirstConflictCount
-            << " FIRST/FIRST conflicts." << std::endl;
+            << " FIRST/FIRST conflicts." << endl;
 
   if (mErrorCount > 0)
     {
-      std::cerr << mErrorCount << " fatal errors found, exiting."
-                << std::endl;
+      qDebug() << mErrorCount << " fatal errors found, exiting."
+                << endl;
       exit(EXIT_FAILURE);
     }
 }

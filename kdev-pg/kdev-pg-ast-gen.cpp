@@ -21,71 +21,76 @@
 #include "kdev-pg-ast-gen.h"
 #include "kdev-pg-code-gen.h"
 #include "kdev-pg.h"
-#include <iostream>
+
+#include <QtCore/QMap>
 
 namespace KDevPG
 {
 void GenerateAst::operator()()
 {
-  for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+  for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)
     {
-      Model::SymbolItem *sym = (*it).second;
-      out << "struct " << sym->mName << "Ast;" << std::endl;
+      Model::SymbolItem *sym = *it;
+      out << "struct " << sym->mCapitalizedName << "Ast;" << endl;
     }
 
-  out << std::endl;
+  out << endl;
 
   for (World::NamespaceSet::iterator it = globalSystem.namespaces.begin();
        it != globalSystem.namespaces.end(); ++it)
     {
-      out << "namespace " << (*it).first
-          << "{" << (*it).second << "}" << std::endl << std::endl;
+      out << "namespace " << it.key()
+          << "{" << (*it) << "}" << endl << endl;
     }
 
-  out << std::endl;
+  out << endl;
 
   out << "struct " << globalSystem.exportMacro << " AstNode";
 
-  out << "{" << std::endl
-      << "enum AstNodeKind {" << std::endl;
+  out << "{" << endl
+      << "enum AstNodeKind {" << endl;
 
   int node_id = 1000;
-  for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+  for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)
     {
-      Model::SymbolItem *sym = (*it).second;
-      out << sym->mName << "Kind" << " = " << node_id++ << "," << std::endl;
+      Model::SymbolItem *sym = (*it);
+      out << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
     }
 
-  out << "AST_NODE_KIND_COUNT" << std::endl
-      << "};" << std::endl << std::endl
-      << "int kind;" << std::endl
-      << "std::size_t startToken;" << std::endl
-      << "std::size_t endToken;" << std::endl
-      << "};" << std::endl
-      << std::endl;
+  out << "AST_NODE_KIND_COUNT" << endl
+      << "};" << endl << endl
+      << "int kind;" << endl
+      << "qint64 startToken;" << endl
+      << "qint64 endToken;" << endl
+      << "};" << endl
+      << endl;
 
-  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(), GenerateAstRule(out));
-  out << std::endl;
+  for( World::SymbolSet::const_iterator it = globalSystem.symbols.begin(); it != globalSystem.symbols.end(); it++ )
+  {
+    GenerateAstRule gen(out);
+    gen(qMakePair( it.key(), *it ));
+  }
+  out << endl;
 }
 
-void GenerateAstRule::operator()(std::pair<std::string, Model::SymbolItem*> const &__it)
+void GenerateAstRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
 {
   mNames.clear();
   mInAlternative = false;
   mInCons = false;
 
   Model::SymbolItem *sym = __it.second;
-  out << "struct " << globalSystem.exportMacro << " " << sym->mName << "Ast: public AstNode"
-      << "{" << std::endl
-      << "enum { KIND = " << sym->mName << "Kind };" << std::endl << std::endl;
+  out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public AstNode"
+      << "{" << endl
+      << "enum { KIND = " << sym->mCapitalizedName << "Kind };" << endl << endl;
 
   World::Environment::iterator it = globalSystem.env.find(sym);
   while (it != globalSystem.env.end())
     {
-      Model::EvolveItem *e = (*it).second;
-      if ((*it).first != sym)
+      Model::EvolveItem *e = *it;
+      if (it.key() != sym)
         break;
 
       ++it;
@@ -93,7 +98,7 @@ void GenerateAstRule::operator()(std::pair<std::string, Model::SymbolItem*> cons
       visitNode(e);
     }
 
-  out << "};" << std::endl << std::endl;
+  out << "};" << endl << endl;
 }
 
 void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
@@ -104,7 +109,7 @@ void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *n
       GenerateVariableDeclaration gen_var_decl(out);
       gen_var_decl(node);
 
-      out << ";" << std::endl;
+      out << ";" << endl;
 
       mNames.insert(node->mName);
     }
@@ -119,11 +124,11 @@ void GenerateAstRule::visitAlternative(Model::AlternativeItem *node)
 #if defined(AST_OPT_BRANCH)
   if (!in_alternative)
     {
-      out << "union" << std::endl
-          << "{" << std::endl
-          << "AstNode *__nodeCast;" << std::endl
-          << "std::size_t __token_cast;" << std::endl
-          << std::endl;
+      out << "union" << endl
+          << "{" << endl
+          << "AstNode *__nodeCast;" << endl
+          << "qint64 __token_cast;" << endl
+          << endl;
     }
 #endif
 
@@ -131,7 +136,7 @@ void GenerateAstRule::visitAlternative(Model::AlternativeItem *node)
 
 #if defined(AST_OPT_BRANCH)
   if (!in_alternative)
-    out << "}; // union" << std::endl;
+    out << "}; // union" << endl;
 #endif
 
   switchAlternative(in_alternative);
@@ -144,8 +149,8 @@ void GenerateAstRule::visitCons(Model::ConsItem *node)
 #if defined(AST_OPT_BRANCH)
   if (!in_cons)
     {
-      out << "struct" << std::endl
-          << "{" << std::endl;
+      out << "struct" << endl
+          << "{" << endl;
     }
 #endif
 
@@ -154,7 +159,7 @@ void GenerateAstRule::visitCons(Model::ConsItem *node)
 #if defined(AST_OPT_BRANCH)
   if (!in_cons)
     {
-      out << "}; // struct" << std::endl;
+      out << "}; // struct" << endl;
       mNames.clear();
     }
 #endif

@@ -32,7 +32,7 @@
 
 #include "astyle.h"
 
-#include <string>
+#include <QtCore/QString>
 #include <cctype>
 #include <vector>
 #include <algorithm>

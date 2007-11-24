@@ -136,7 +136,7 @@ void CloneTree::visitTryCatch(Model::TryCatchItem *node)
 
 void CloneTree::visitAlias(Model::AliasItem *node)
 {
-  assert(0); // ### not implemented yet
+  Q_ASSERT(0); // ### not implemented yet
 }
 
 void CloneTree::visitAnnotation(Model::AnnotationItem *node)
@@ -153,11 +153,11 @@ void CloneTree::visitAnnotation(Model::AnnotationItem *node)
 
 Model::Node *CloneTree::clone(Model::Node *node)
 {
-  mTemps = std::stack<Model::Node*>();
+  mTemps = QStack<Model::Node*>();
   visitNode(node);
   Model::Node *n = mTemps.top();
   mTemps.pop();
-  assert(mTemps.empty());
+  Q_ASSERT(mTemps.empty());
   return n;
 }
 

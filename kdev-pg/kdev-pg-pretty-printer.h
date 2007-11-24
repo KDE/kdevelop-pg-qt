@@ -22,15 +22,17 @@
 
 #include "kdev-pg-default-visitor.h"
 
+#include <QtCore/QTextStream>
+
 namespace KDevPG
 {
 
 class PrettyPrinter: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
-  PrettyPrinter(std::ostream &o): out(o)
+  PrettyPrinter(QTextStream& o): out(o)
   {}
 
   void operator()(Model::Node *node)

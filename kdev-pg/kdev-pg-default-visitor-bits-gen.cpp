@@ -25,7 +25,7 @@
 namespace KDevPG
 {
 
-void GenerateDefaultVisitorBitsRule::operator()(std::pair<std::string,Model::SymbolItem*> const &__it)
+void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*> const &__it)
 {
   mNames.clear();
   mVariableDeclarations.clear();
@@ -36,15 +36,15 @@ void GenerateDefaultVisitorBitsRule::operator()(std::pair<std::string,Model::Sym
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "void DefaultVisitor::visit" << sym->mName
-      << "(" << sym->mName << "Ast *" << (has_members ? "node" : "")
-      << ") {" << std::endl;
+  out << "void DefaultVisitor::visit" << sym->mCapitalizedName
+      << "(" << sym->mCapitalizedName << "Ast *" << (has_members ? "node" : "")
+      << ") {" << endl;
 
   World::Environment::iterator it = globalSystem.env.find(sym);
   while (it != globalSystem.env.end())
     {
-      Model::EvolveItem *e = (*it).second;
-      if ((*it).first != sym)
+      Model::EvolveItem *e = (*it);
+      if (it.key() != sym)
         break;
 
       ++it;
@@ -52,7 +52,7 @@ void GenerateDefaultVisitorBitsRule::operator()(std::pair<std::string,Model::Sym
       visitNode(e);
     }
 
-  out << "}" << std::endl << std::endl;
+  out << "}" << endl << endl;
 }
 
 void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
@@ -68,23 +68,23 @@ void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDec
     if (mNames.find(node->mName) != mNames.end())
       break;
 
-    std::string base_type = std::string(node->mType) + "Ast*";
+    QString base_type = node->mType + "Ast*";
 
     if (node->mIsSequence)
       {
         out << "if (" << "node->" << node->mName << "Sequence" << ") {"
-            << "const list_node<" << base_type << "> *__it = "
-            << "node->" << node->mName << "_sequence" << "->to_front()"
-            << ", *__end = __it;" << std::endl
-            << "do {" << std::endl
-            << "visitNode(__it->element);" << std::endl
-            << "__it = __it->next;" << std::endl
-            << "} while (__it != __end);" << std::endl
-            << "}" << std::endl;
+            << "const KDevPG::ListNode<" << base_type << "> *__it = "
+            << "node->" << node->mName << "Sequence" << "->front()"
+            << ", *__end = __it;" << endl
+            << "do {" << endl
+            << "visitNode(__it->element);" << endl
+            << "__it = __it->next;" << endl
+            << "} while (__it != __end);" << endl
+            << "}" << endl;
       }
     else
       {
-        out << "visitNode(" << "node->" << node->mName << ")" << ";" << std::endl;
+        out << "visitNode(" << "node->" << node->mName << ")" << ";" << endl;
       }
 
     mNames.insert(node->mName);
@@ -103,8 +103,8 @@ void HasMemberNodes::operator()(Model::SymbolItem *sym)
   World::Environment::iterator it = globalSystem.env.find(sym);
   while (it != globalSystem.env.end())
     {
-      Model::EvolveItem *e = (*it).second;
-      if ((*it).first != sym)
+      Model::EvolveItem *e = (*it);
+      if (it.key() != sym)
         break;
 
       ++it;

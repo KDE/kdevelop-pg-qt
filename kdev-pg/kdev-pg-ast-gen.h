@@ -23,9 +23,11 @@
 
 #include "kdev-pg-default-visitor.h"
 
-#include <set>
-#include <list>
-#include <string>
+#include <QtCore/QTextStream>
+#include <QtCore/QSet>
+#include <QtCore/QPair>
+#include <QtCore/QList>
+#include <QtCore/QString>
 
 namespace KDevPG
 {
@@ -33,10 +35,10 @@ namespace KDevPG
 class GenerateAst
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateAst(std::ostream &o): out(o)
+  GenerateAst(QTextStream& o): out(o)
   {}
 
   void operator()();
@@ -45,15 +47,15 @@ public:
 class GenerateAstRule: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
-  std::set<std::string> mNames;
+  QTextStream& out;
+  QSet<QString> mNames;
   bool mInAlternative;
   bool mInCons;
 
 public:
-  GenerateAstRule(std::ostream &o): out(o) {}
+  GenerateAstRule(QTextStream& o): out(o) {}
 
-  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
+  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 
 protected:
   virtual void visitAlternative(Model::AlternativeItem *node);

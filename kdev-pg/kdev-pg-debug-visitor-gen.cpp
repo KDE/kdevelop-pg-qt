@@ -26,16 +26,21 @@ namespace KDevPG
 
 void GenerateDebugVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " DebugVisitor: public DefaultVisitor {" << std::endl
-      << "public:" << std::endl;
+  out << "class " << globalSystem.exportMacro << " DebugVisitor: public DefaultVisitor {" << endl
+      << "public:" << endl;
 
-  std::for_each(globalSystem.symbols.begin(), globalSystem.symbols.end(),
-                GenerateDebugVisitorRule(out));
 
-  out << "};" << std::endl;
+  for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); it++ )
+  {
+    GenerateDebugVisitorRule gen(out);
+    gen(qMakePair(it.key(), *it));
+  }
+
+  out << "};" << endl;
 }
 
-void GenerateDebugVisitorRule::operator()(std::pair<std::string,
+void GenerateDebugVisitorRule::operator()(QPair<QString,
                                           Model::SymbolItem*> const &__it)
 {
   Model::SymbolItem *sym = __it.second;
@@ -44,17 +49,17 @@ void GenerateDebugVisitorRule::operator()(std::pair<std::string,
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit" << sym->mName
-      << "(" << sym->mName << "Ast *" << "node"
-      << ") {" << std::endl;
+  out << "virtual void visit" << sym->mCapitalizedName
+      << "(" << sym->mCapitalizedName << "Ast *" << "node"
+      << ") {" << endl;
 
-  out << "std::cout << \"" << sym->mName << "\" << std::endl; " << std::endl;
+  out << "qDebug() << \"" << sym->mName << "\" << endl; " << endl;
 
-  out << "DefaultVisitor::visit" << sym->mName
+  out << "DefaultVisitor::visit" << sym->mCapitalizedName
       << "(" << "node"
-      << ");" << std::endl;
+      << ");" << endl;
 
-  out << "}" << std::endl << std::endl;
+  out << "}" << endl << endl;
 }
 
 }

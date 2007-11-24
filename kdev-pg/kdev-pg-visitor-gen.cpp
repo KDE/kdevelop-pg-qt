@@ -27,26 +27,26 @@ namespace KDevPG
 
 void GenerateVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Visitor {" << std::endl
-      << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << std::endl
-      << "static ParserFuncType sParserTable[];" << std::endl
-      << std::endl
-      << "public:" << std::endl
-      << "virtual ~Visitor() {}" << std::endl;
+  out << "class " << globalSystem.exportMacro << " Visitor {" << endl
+      << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << endl
+      << "static ParserFuncType sParserTable[];" << endl
+      << endl
+      << "public:" << endl
+      << "virtual ~Visitor() {}" << endl;
 
   out << "virtual void visitNode(AstNode *node) { "
       << "if (node) (this->*sParserTable[node->kind - 1000])(node); "
-      << "}" << std::endl;
+      << "}" << endl;
 
-  for (std::map<std::string, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+  for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)
     {
-      Model::SymbolItem *sym = (*it).second;
-      out << "virtual void visit" << sym->mName
-          << "(" << sym->mName << "Ast *) {}" << std::endl;
+      Model::SymbolItem *sym = (*it);
+      out << "virtual void visit" << sym->mCapitalizedName
+          << "(" << sym->mCapitalizedName << "Ast *) {}" << endl;
     }
 
-  out << "};" << std::endl;
+  out << "};" << endl;
 }
 
 }

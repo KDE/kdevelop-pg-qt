@@ -29,12 +29,12 @@ namespace KDevPG
 class CodeGenerator: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
   Model::EvolveItem *mEvolve;
-  std::set<std::string> *mNames;
+  QSet<QString> *mNames;
 
 public:
-  CodeGenerator(std::ostream &o, std::set<std::string> *names)
+  CodeGenerator(QTextStream& o, QSet<QString> *names)
     : out(o), mNames(names), mCurrentCatchId(0)
   {}
 
@@ -64,36 +64,36 @@ private:
 class GenerateForwardParserRule
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateForwardParserRule(std::ostream &o): out(o)
+  GenerateForwardParserRule(QTextStream& o): out(o)
   {}
 
-  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
+  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 };
 
 class GenerateParserRule
 {
 public:
-  std::ostream &out;
-  std::set<std::string> mNames;
+  QTextStream& out;
+  QSet<QString> mNames;
 
 public:
-  GenerateParserRule(std::ostream &o): out(o)
+  GenerateParserRule(QTextStream& o): out(o)
   {}
 
-  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
+  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 };
 
 class GenerateLocalDeclarations: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
-  std::set<std::string> *mNames;
+  QTextStream& out;
+  QSet<QString> *mNames;
 
 public:
-  GenerateLocalDeclarations(std::ostream &o, std::set<std::string> *names)
+  GenerateLocalDeclarations(QTextStream& o, QSet<QString> *names)
     : out(o), mNames(names)
   {}
 
@@ -104,12 +104,12 @@ public:
 class GenerateParseMethodSignature: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
   bool firstParameter;
-  std::set<std::string> *mNames;
+  QSet<QString> *mNames;
 
 public:
-  GenerateParseMethodSignature(std::ostream &o, std::set<std::string> *names)
+  GenerateParseMethodSignature(QTextStream& o, QSet<QString> *names)
     : out(o), firstParameter(true), mNames(names)
   {}
 
@@ -120,10 +120,10 @@ public:
 class GenerateVariableDeclaration
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateVariableDeclaration(std::ostream &o): out(o)
+  GenerateVariableDeclaration(QTextStream& o): out(o)
   {}
 
   void operator()(Model::VariableDeclarationItem *node);
@@ -132,24 +132,24 @@ public:
 class GenerateToken
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
   int mTokenValue;
 
 public:
-  GenerateToken(std::ostream &o): out(o), mTokenValue(1000)
+  GenerateToken(QTextStream& o): out(o), mTokenValue(1000)
   {}
 
-  void operator()(std::pair<std::string, Model::TerminalItem*> const &__it);
+  void operator()(QPair<QString, Model::TerminalItem*> const &__it);
 };
 
 class GenerateMemberCode
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
   int mKindMask;
 
 public:
-  GenerateMemberCode(std::ostream &o, int kind_mask)
+  GenerateMemberCode(QTextStream& o, int kind_mask)
   : out(o), mKindMask(kind_mask)
   {}
 
@@ -159,10 +159,10 @@ public:
 class GenerateParserDeclarations
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateParserDeclarations(std::ostream &o): out(o)
+  GenerateParserDeclarations(QTextStream& o): out(o)
   {}
 
   void operator()();
@@ -171,10 +171,10 @@ public:
 class GenerateParserBits
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateParserBits(std::ostream &o): out(o)
+  GenerateParserBits(QTextStream& o): out(o)
   {}
 
   void operator()();

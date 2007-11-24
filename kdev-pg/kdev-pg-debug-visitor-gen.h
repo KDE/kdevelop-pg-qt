@@ -23,9 +23,10 @@
 #include "kdev-pg-default-visitor.h"
 #include "kdev-pg-default-visitor-bits-gen.h" // for the HasMemberNodes class
 
-#include <set>
-#include <list>
-#include <string>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QTextStream>
 
 namespace KDevPG
 {
@@ -33,10 +34,10 @@ namespace KDevPG
 class GenerateDebugVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateDebugVisitor(std::ostream &o): out(o)
+  GenerateDebugVisitor(QTextStream& o): out(o)
   {}
 
   void operator()();
@@ -44,13 +45,13 @@ public:
 
 class GenerateDebugVisitorRule: protected DefaultVisitor
 {
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateDebugVisitorRule(std::ostream &o): out(o)
+  GenerateDebugVisitorRule(QTextStream& o): out(o)
   {}
 
-  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
+  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 };
 
 }

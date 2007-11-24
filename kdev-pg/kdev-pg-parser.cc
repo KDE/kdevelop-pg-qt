@@ -158,7 +158,7 @@
 #include <cassert>
 
 extern int yylex();
-extern void yyerror(char const *msg);
+extern void yyerror(QString msg);
 
 
 
@@ -1054,7 +1054,7 @@ yytnamerr (char *yyres, const char *yystr)
   if (*yystr == '"')
     {
       YYSIZE_T yyn = 0;
-      char const *yyp = yystr;
+      QString yyp = yystr;
 
       for (;;)
 	switch (*++yyp)
@@ -1110,7 +1110,7 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
       YYSIZE_T yysize1;
       int yysize_overflow = 0;
       enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-      char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
+      QString yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
       int yyx;
 
 # if 0
@@ -1123,7 +1123,7 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
       YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s");
 # endif
       char *yyfmt;
-      char const *yyf;
+      QString yyf;
       static char const yyunexpected[] = "syntax error, unexpected %s";
       static char const yyexpecting[] = ", expecting %s";
       static char const yyor[] = " or %s";
@@ -1131,7 +1131,7 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 		    + sizeof yyexpecting - 1
 		    + ((YYERROR_VERBOSE_ARGS_MAXIMUM - 2)
 		       * (sizeof yyor - 1))];
-      char const *yyprefix = yyexpecting;
+      QString yyprefix = yyexpecting;
 
       /* Start YYX at -YYN if negative to avoid negative indexes in
 	 YYCHECK.  */

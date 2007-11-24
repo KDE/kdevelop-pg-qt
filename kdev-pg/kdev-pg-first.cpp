@@ -89,7 +89,13 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
           continue;
         }
 
-      mChanged |= dest.insert(*it).second;
+      if( dest.contains(*it) )
+        mChanged |= false;
+      else
+      {
+        mChanged |= true;
+      }
+      dest.insert(*it);
     }
 }
 
@@ -133,8 +139,9 @@ void NextFirst::visitStar(Model::StarItem *node)
 {
   DefaultVisitor::visitStar(node);
 
-  if (globalSystem.first(node).insert(globalSystem.zero()).second)
+  if ( !globalSystem.first(node).contains(globalSystem.zero()) )
     mChanged = true;
+  globalSystem.first(node).insert(globalSystem.zero());
 
   merge(node, node->mItem);
 }
@@ -216,15 +223,21 @@ void NextFirst::visitCondition(Model::ConditionItem* node)
 
 void computeFirst() // the closure of the FIRST sets
 {
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                InitializeFirst());
+  for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    InitializeFirst initfirst;
+    initfirst(*it);
+  }
 
   bool changed = true;
   while (changed)
     {
       changed = false;
-      std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                    NextFirst(changed));
+      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+      {
+        NextFirst next(changed);
+        next(*it);
+      }
     }
 }
 

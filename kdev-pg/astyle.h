@@ -35,7 +35,7 @@
 #pragma warning( disable:4786 )
 #endif
 
-#include <string>
+#include <QtCore/QString>
 #include <vector>
 #include <sstream>
 #include <iostream>

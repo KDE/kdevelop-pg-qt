@@ -20,9 +20,7 @@
 #include "kdev-pg.h"
 #include "kdev-pg-allocator.h"
 
-#include <cstdio>
-
-FILE *file;
+QFile file;
 KDevPG::Allocator<char> globalMemoryPool;
 KDevPG::World globalSystem;
 

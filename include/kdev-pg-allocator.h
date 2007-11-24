@@ -22,9 +22,9 @@
 #ifndef KDEV_PG_ALLOCATOR_H
 #define KDEV_PG_ALLOCATOR_H
 
-#include <cstddef>
-#include <cstdlib>
 #include <memory>
+
+#include <QtCore/QtGlobal>
 
 namespace KDevPG
 {
@@ -38,8 +38,8 @@ public:
   typedef const _Tp* constPointer;
   typedef _Tp& reference;
   typedef const _Tp& constReference;
-  typedef std::size_t sizeType;
-  typedef std::ptrdiff_t differenceType;
+  typedef qint64 sizeType;
+  typedef qint64 differenceType;
 
   static const sizeType maxBlockCount = sizeType( -1);
 

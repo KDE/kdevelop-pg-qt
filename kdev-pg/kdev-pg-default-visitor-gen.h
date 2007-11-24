@@ -23,9 +23,10 @@
 
 #include "kdev-pg-default-visitor.h"
 
-#include <set>
-#include <list>
-#include <string>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QTextStream>
 
 
 namespace KDevPG
@@ -34,10 +35,10 @@ namespace KDevPG
 class GenerateDefaultVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateDefaultVisitor(std::ostream &o): out(o)
+  GenerateDefaultVisitor(QTextStream& o): out(o)
   {}
 
   void operator()();
@@ -46,13 +47,13 @@ public:
 class GenerateDefaultVisitorRule: protected DefaultVisitor
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
 public:
-  GenerateDefaultVisitorRule(std::ostream &o): out(o)
+  GenerateDefaultVisitorRule(QTextStream& o): out(o)
   {}
 
-  void operator()(std::pair<std::string, Model::SymbolItem*> const &__it);
+  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 };
 
 }

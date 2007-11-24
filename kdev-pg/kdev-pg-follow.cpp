@@ -22,8 +22,7 @@
 #include "kdev-pg-follow.h"
 #include "kdev-pg-pretty-printer.h"
 
-#include <cassert>
-#include <iostream>
+#include <QtCore/QDebug>
 
 //uncomment this to see debug output for follow dependency calculation
 // #define followDepsEP_DEBUG
@@ -33,32 +32,32 @@ namespace KDevPG
 {
 
 #ifdef FOLLOWDEP_DEBUG
-void DebugFollowDep(Model::Node *dest, Model::Node *dep, const std::string &message)
+void DebugFollowDep(Model::Node *dest, Model::Node *dep, const QString &message)
 {
-  std::cerr << "=============================" << std::endl;
-  PrettyPrinter p(std::cerr);
-  std::cerr << "adding " << message << " ";
+  qDebug() << "=============================" << endl;
+  PrettyPrinter p(QTextStream( stderr ));
+  qDebug() << "adding " << message << " ";
   p(dep);
-  std::cerr << " (" << (uint*)dep << ")";
-  std::cerr << " to follow ";
+  qDebug() << " (" << (uint*)dep << ")";
+  qDebug() << " to follow ";
   p(dest);
-  std::cerr << " (" << (uint*)dest << ")";
-  std::cerr << "{" << dest->kind << "}";
+  qDebug() << " (" << (uint*)dest << ")";
+  qDebug() << "{" << dest->kind << "}";
   if (dest->kind == Model::Node_kind_nonTerminal)
   {
     Model::SymbolItem *s = ((Model::NonTerminalItem*)dest)->mSymbol;
     if (s)
-      std::cerr << "__"; p(s); std::cerr << "__";
+      qDebug() << "__"; p(s); qDebug() << "__";
   }
-  std::cerr << std::endl;
+  qDebug() << endl;
 }
 
-void debug_first_to_FollowDep(Model::Node *dest, Model::Node *dep)
+void debugFirstToFollowDep(Model::Node *dest, Model::Node *dep)
 {
   DebugFollowDep(dest, dep, "first");
 }
 
-void debug_follow_to_FollowDep(Model::Node *dest, Model::Node *dep)
+void debugFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 {
   DebugFollowDep(dest, dep, "follow");
 }
@@ -84,7 +83,7 @@ NextFollow::NextFollow(bool &changed)
 void NextFollow::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  assert(e != 0);
+  Q_ASSERT(e != 0);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -97,24 +96,31 @@ void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
       return;
     }
 
-  PrettyPrinter p(std::cout);
+  PrettyPrinter p(QTextStream( stdout ));
 
   World::NodeSet &dest = globalSystem.follow(__dest);
 
   for (World::NodeSet::const_iterator it = source.begin(); it != source.end(); ++it)
     {
       if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(*it))
-          mChanged |= dest.insert(t).second;
+      {
+          if( dest.contains(t) )
+            mChanged |= false;
+          else
+            mChanged |= true;
+          dest.insert(t) != dest.end();
+      }
     }
 }
 
 void NextFollow::visitEvolve(Model::EvolveItem *node)
 {
   Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
-  if (node == globalSystem.start && globalSystem.follow(node->mSymbol).insert(teof).second)
-    {
-      mChanged = true;
-    }
+  if (node == globalSystem.start && !globalSystem.follow(node->mSymbol).contains(teof) )
+  {
+    mChanged = true;
+  }
+  globalSystem.follow(node->mSymbol).insert(teof);
 
   merge(node->mItem, globalSystem.follow(node->mSymbol));
   addFollowToFollowDep(node->mItem, node->mSymbol);
@@ -225,7 +231,7 @@ void NextFollow::addFirstToFollowDep(Model::Node *dest, Model::Node *dep)
   else
     globalSystem.followDep(dest).first.insert(dep);
 #ifdef FOLLOWDEP_DEBUG
-  debug_first_to_FollowDep(dest, dep);
+  debugFirstToFollowDep(dest, dep);
 #endif
 }
 
@@ -240,7 +246,7 @@ void NextFollow::addFollowToFollowDep(Model::Node *dest, Model::Node *dep)
   else
     globalSystem.followDep(dest).second.insert(dep);
 #ifdef FOLLOWDEP_DEBUG
-  debug_follow_to_FollowDep(dest, dep);
+  debugFollowToFollowDep(dest, dep);
 #endif
 }
 
@@ -250,7 +256,11 @@ void computeFollow()
   while (changed)
     {
       changed = false;
-      std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(), NextFollow(changed));
+      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+      {
+        NextFollow next(changed);
+        next(*it);
+      }
     }
 }
 

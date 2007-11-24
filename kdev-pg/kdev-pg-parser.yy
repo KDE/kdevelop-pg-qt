@@ -26,7 +26,7 @@
 #include <cassert>
 
 extern int yylex();
-extern void yyerror(char const *msg);
+extern void yyerror(const char* msg);
 
 %}
 

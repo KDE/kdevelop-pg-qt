@@ -21,8 +21,8 @@
 #include "kdev-pg.h"
 #include "kdev-pg-ast.h"
 
-#include <cassert>
-#include <iostream>
+
+#include <QtCore/QDebug>
 
 namespace KDevPG
 {
@@ -47,14 +47,16 @@ Model::StarItem *star(Model::Node *item)
   return node;
 }
 
-Model::SymbolItem *symbol(char const *name)
+Model::SymbolItem *symbol(const QString& name)
 {
   Model::SymbolItem *node = createNode<Model::SymbolItem>();
   node->mName = name;
+  node->mCapitalizedName = name;
+  node->mCapitalizedName.replace( 0, 1, name.at(0).toUpper() );
   return node;
 }
 
-Model::ActionItem *action(Model::Node *item, char const *code)
+Model::ActionItem *action(Model::Node *item, const QString& code)
 {
   Model::ActionItem *node = createNode<Model::ActionItem>();
   node->mItem = item;
@@ -80,7 +82,7 @@ Model::ConsItem *cons(Model::Node *left, Model::Node *right)
 
 Model::EvolveItem *evolve(
     Model::Node *item, Model::SymbolItem *symbol,
-    Model::VariableDeclarationItem *declarations, char const *code)
+    Model::VariableDeclarationItem *declarations, const QString& code)
 {
   Model::EvolveItem *node = createNode<Model::EvolveItem>();
   node->mItem = item;
@@ -99,7 +101,7 @@ Model::TryCatchItem *tryCatch(Model::Node *try_item, Model::Node *catch_item)
   return node;
 }
 
-Model::AliasItem *alias(char const *code, Model::SymbolItem *symbol)
+Model::AliasItem *alias(const QString& code, Model::SymbolItem *symbol)
 {
   Model::AliasItem *node = createNode<Model::AliasItem>();
   node->mCode = code;
@@ -107,7 +109,7 @@ Model::AliasItem *alias(char const *code, Model::SymbolItem *symbol)
   return node;
 }
 
-Model::TerminalItem *terminal(char const *name, char const *description)
+Model::TerminalItem *terminal(const QString& name, const QString& description)
 {
   Model::TerminalItem *node = createNode<Model::TerminalItem>();
   node->mName = name;
@@ -115,7 +117,7 @@ Model::TerminalItem *terminal(char const *name, char const *description)
   return node;
 }
 
-Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, char const *arguments)
+Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, const QString& arguments)
 {
   Model::NonTerminalItem *node = createNode<Model::NonTerminalItem>();
   node->mSymbol = symbol;
@@ -124,14 +126,14 @@ Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, char const *argum
 }
 
 Model::AnnotationItem *annotation(
-    char const *name, Model::Node *item, bool isSequence,
+    const QString& name, Model::Node *item, bool isSequence,
     Model::VariableDeclarationItem::StorateType storageType)
 {
   Model::AnnotationItem *node = createNode<Model::AnnotationItem>();
   node->mItem = item;
 
   Model::VariableDeclarationItem::VariableType variableType;
-  char const *type;
+  QString type;
 
   if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
     {
@@ -145,7 +147,7 @@ Model::AnnotationItem *annotation(
     }
   else
     {
-      assert(0); // ### item must either be a terminal or a nonTerminal
+      Q_ASSERT(0); // ### item must either be a terminal or a nonTerminal
     }
 
   node->mDeclaration =
@@ -154,7 +156,7 @@ Model::AnnotationItem *annotation(
   return node;
 }
 
-Model::ConditionItem *condition(char const *code, Model::Node *item)
+Model::ConditionItem *condition(const QString& code, Model::Node *item)
 {
   Model::ConditionItem *node = createNode<Model::ConditionItem>();
   node->mCode = code;
@@ -166,7 +168,7 @@ Model::VariableDeclarationItem *variableDeclaration(
       Model::VariableDeclarationItem::DeclarationType declarationType,
       Model::VariableDeclarationItem::StorateType     storageType,
       Model::VariableDeclarationItem::VariableType    variableType,
-      bool isSequence, char const* name, char const *type)
+      bool isSequence, const QString& name, const QString& type)
 {
   Model::VariableDeclarationItem *node = createNode<Model::VariableDeclarationItem>();
   node->mName = name;
@@ -179,7 +181,7 @@ Model::VariableDeclarationItem *variableDeclaration(
   return node;
 }
 
-Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, char const *code)
+Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QString& code)
 {
   Settings::MemberItem *node = createNode<Settings::MemberItem>();
   node->mMemberKind = kind;
@@ -187,32 +189,6 @@ Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, char const *
   return node;
 }
 
-std::ostream &operator << (std::ostream &out, Model::Node const *__node)
-{
-  Model::Node *node = const_cast<Model::Node*>(__node);
-
-  if (nodeCast<Model::ZeroItem*>(node))
-    return (out << "0");
-  else if (Model::SymbolItem *s = nodeCast<Model::SymbolItem *>(node))
-    return (out << s->mName);
-  else if (Model::TerminalItem *t = nodeCast<Model::TerminalItem *>(node))
-    return (out << t->mName);
-  else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem *>(node))
-    return (out << ((a->mDeclaration->mIsSequence) ? "#" : "")
-                << a->mDeclaration->mName
-                << ((a->mDeclaration->mStorageType
-                     == Model::VariableDeclarationItem::StorageTemporary) ? ":" : "=")
-                << a->mItem);
-#if 0
-
-  else
-    if (Model::EvolveItem *e = nodeCast<Model::EvolveItem *>(node))
-      return (out << "evolve:" << e->mSymbol->mName);
-#endif
-
-  assert(0);
-  return out;
-}
 
 bool reducesToEpsilon(Model::Node *node)
 {
@@ -295,5 +271,32 @@ bool isZero(Model::Node *node)
   return false;
 }
 
+}
+
+QTextStream& operator << (QTextStream& out, KDevPG::Model::Node const *__node)
+{
+  KDevPG::Model::Node *node = const_cast<KDevPG::Model::Node*>(__node);
+
+  if (KDevPG::nodeCast<KDevPG::Model::ZeroItem*>(node))
+    return (out << "0");
+  else if (KDevPG::Model::SymbolItem *s = KDevPG::nodeCast<KDevPG::Model::SymbolItem *>(node))
+    return (out << s->mName);
+  else if (KDevPG::Model::TerminalItem *t = KDevPG::nodeCast<KDevPG::Model::TerminalItem *>(node))
+    return (out << t->mName);
+  else if (KDevPG::Model::AnnotationItem *a = KDevPG::nodeCast<KDevPG::Model::AnnotationItem *>(node))
+    return (out << ((a->mDeclaration->mIsSequence) ? "#" : "")
+                << a->mDeclaration->mName
+                << ((a->mDeclaration->mStorageType
+                     == KDevPG::Model::VariableDeclarationItem::StorageTemporary) ? ":" : "=")
+                << a->mItem);
+#if 0
+
+  else
+    if (Model::EvolveItem *e = nodeCast<Model::EvolveItem *>(node))
+      return (out << "evolve:" << e->mSymbol->mName);
+#endif
+
+  Q_ASSERT(0);
+  return out;
 }
 

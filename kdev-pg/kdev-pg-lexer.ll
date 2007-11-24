@@ -18,15 +18,18 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <iostream>
-#include <cstdio>
+#include <QtCore/QDebug>
+// #include <iostream>
+// #include <cstdio>
 #include "kdev-pg.h"
 #include "kdev-pg-parser.hh"
+
+#include <QtCore/QFile>
 
 int inp();
 void appendLineBuffer();
 void newline();
-void yyerror(char const *);
+void yyerror(const char* );
 
 #define YY_INPUT(buf, result, max_size) \
   { \
@@ -139,7 +142,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    std::cout << "Encountered end of file in an unclosed rule argument specification..." << std::endl;
+    qDebug() << "Encountered end of file in an unclosed rule argument specification..." << endl;
     yyerror("");
     return 0;
 }
@@ -201,7 +204,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    std::cout << "Encountered end of file in an unclosed code segment..." << std::endl;
+    qDebug() << "Encountered end of file in an unclosed code segment..." << endl;
     yyerror("");
     return 0;
 }
@@ -219,23 +222,26 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 
 . {
-  std::cout << "Unexpected character: ``" << yytext[0] << "''" << std::endl;
+  qDebug() << "Unexpected character: ``" << yytext[0] << "''" << endl;
   yyerror("");
 }
 
 
 %%
 
-extern FILE *file;
+extern QFile file;
 
-int ch = 0;
+int ch;
 int yyLine = 1, currentOffset = 0;
 bool endOfLine = false;
 char yyTextLine[256 * 1024];
 
 int inp()
 {
-  return ch = fgetc(file);
+  if( file.atEnd() )
+    return EOF;
+  file.getChar( (char*)&ch );
+  return ch;
 }
 
 void newline()
@@ -263,9 +269,9 @@ void appendLineBuffer()
   /* strcpy is faster than strcat */
 }
 
-void yyerror(char const *)
+void yyerror(const char* msg )
 {
-  std::cerr << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << std::endl;
+  qDebug() << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << endl;
 
   char *current_end = yyTextLine + strlen(yyTextLine);
   char *p;
@@ -290,13 +296,13 @@ void yyerror(char const *)
   /* at currentOffset */
 
   /* print error message and current line */
-  std::cerr << yyTextLine;
+  qDebug() << yyTextLine;
 
   /* print a ^ under the most recent token */
   for (int i = 0; i < currentOffset; i++)
-    std::cerr << " ";
+    qDebug() << " ";
 
-  std::cout << "^" << std::endl; /* currentOffset spaces, then ^ */
+  qDebug() << "^" << endl; /* currentOffset spaces, then ^ */
 
   exit(EXIT_FAILURE);
 }

@@ -23,31 +23,31 @@
 namespace KDevPG
 {
 
-void format(std::istream &in, std::ostream &out)
+void format(QTextStream& in, QTextStream& out)
 {
-  astyle::ASFormatter f;
-
-  f.sourceStyle = astyle::STYLE_C;
-
-  f.blockIndent = true;
-  f.bracketIndent = false;
-  f.indentLength = 2;
-  f.indentString = "  ";
-  f.minConditionalIndent = f.indentLength * 2;
-  f.bracketFormatMode = astyle::BREAK_MODE;
-  f.classIndent = false;
-  f.switchIndent = false;
-  f.namespaceIndent = false;
-  f.breakElseIfs = false;
-  f.padParen = false;
-  f.emptyLineIndent = false;
-  f.init(in);
+//   astyle::ASFormatter f;
+//
+//   f.sourceStyle = astyle::STYLE_C;
+//
+//   f.blockIndent = true;
+//   f.bracketIndent = false;
+//   f.indentLength = 2;
+//   f.indentString = "  ";
+//   f.minConditionalIndent = f.indentLength * 2;
+//   f.bracketFormatMode = astyle::BREAK_MODE;
+//   f.classIndent = false;
+//   f.switchIndent = false;
+//   f.namespaceIndent = false;
+//   f.breakElseIfs = false;
+//   f.padParen = false;
+//   f.emptyLineIndent = false;
+//   f.init(in);
 
   do
     {
-      out << f.nextLine() << std::endl;
+      out << in.readLine() << endl;
     }
-  while (f.hasMoreLines());
+  while (!in.atEnd());
 }
 
 }

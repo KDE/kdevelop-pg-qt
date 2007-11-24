@@ -29,45 +29,41 @@
 #include "kdev-pg-checker.h"
 #include "kdev-pg-generate.h"
 
-#include <iterator>
-#include <algorithm>
-#include <memory>
+#include <QtCore/QFile>
+#include <QtCore/QStringList>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
 
-#include <iostream>
-#include <fstream>
 
-#include <cassert>
-#include <cstdio>
-#include <cstdlib>
 
 int yyparse();
 
 void usage()
 {
-  std::cerr << "usage: kdev-pg --output=<name> file.g" << std::endl;
+  qDebug() << "usage: kdev-pg --output=<name> file.g" << endl;
   exit(EXIT_SUCCESS);
 }
 
 class DebugRule
 {
 public:
-  std::ostream &out;
+  QTextStream& out;
 
-  DebugRule(std::ostream &o): out(o)
+  DebugRule(QTextStream& o): out(o)
   {}
 
   void operator()(KDevPG::Model::Node *node)
   {
     KDevPG::Model::EvolveItem *e = KDevPG::nodeCast<KDevPG::Model::EvolveItem*>(node);
 
-    out << std::endl;
+    out << endl;
     KDevPG::PrettyPrinter p(out);
     p(e);
 
     bool initial = true;
     KDevPG::World::NodeSet::iterator it;
 
-    out << std::endl;
+    out << endl;
     out << " FIRST:[";
     for (it = globalSystem.first(e).begin(); it != globalSystem.first(e).end(); it++)
       {
@@ -81,7 +77,7 @@ public:
 
     initial = true;
 
-    out << std::endl;
+    out << endl;
     out << " FOLLOW:[";
     for (it = globalSystem.follow(e->mSymbol).begin();
          it != globalSystem.follow(e->mSymbol).end(); it++)
@@ -93,101 +89,126 @@ public:
         initial = false;
       }
     out << "]";
-    out << std::endl;
+    out << endl;
   }
 };
 
-int main(int, char *argv[])
+int main(int argc, char **argv)
 {
   bool dump_terminals = false;
   bool dump_symbols = false;
   bool DebugRules = false;
 
-  file = stdin;
+  QCoreApplication app(argc, argv);
 
-  while (char const *arg = *++argv)
+  QStringList args = QCoreApplication::arguments();
+  args.pop_front();
+  foreach(QString arg, args)
+  {
+    if (arg.startsWith("--output="))
     {
-      if (!strncmp(arg, "--output=", 9))
-        {
-          globalSystem.language = arg + 9;
-        }
-      else if (!strncmp(arg,"--namespace=",12))
-        {
-          globalSystem.ns = arg + 12;
+      globalSystem.language = arg.mid( 9 );
     }
-      else if (!strcmp("--no-ast", arg))
-        {
-          globalSystem.GenerateAst = false;
-        }
-      else if (!strcmp("--serialize-visitor", arg))
-        {
-          globalSystem.generateSerializeVisitor = true;
-        }
-      else if (!strcmp("--debug-visitor", arg))
-        {
-          globalSystem.generateDebugVisitor = true;
-        }
-      else if (!strcmp("--help", arg))
-        {
-          usage();
-        }
-      else if (!strcmp("--terminals", arg))
-        {
-          dump_terminals = true;
-        }
-      else if (!strcmp("--symbols", arg))
-        {
-          dump_symbols = true;
-        }
-      else if (!strcmp("--rules", arg))
-        {
-          DebugRules = true;
-        }
-      else if (file == stdin)
-        {
-          file = fopen(arg, "r");
+    else if (arg.startsWith("--namespace="))
+    {
+      globalSystem.ns = arg.mid( 12 );
+    }
+    else if (arg == "--no-ast")
+    {
+      globalSystem.GenerateAst = false;
+    }
+    else if (arg == "--serialize-visitor")
+    {
+      globalSystem.generateSerializeVisitor = true;
+    }
+    else if (arg == "--debug-visitor")
+    {
+      globalSystem.generateDebugVisitor = true;
+    }
+    else if (arg == "--help")
+    {
+      usage();
+    }
+    else if (arg == "--terminals")
+    {
+      dump_terminals = true;
+    }
+    else if (arg == "--symbols")
+    {
+      dump_symbols = true;
+    }
+    else if (arg == "--rules")
+    {
+      DebugRules = true;
+    }
+    else if (file.fileName().isEmpty())
+    {
+      file.setFileName(arg);
 
-          if (!file)
-            {
-              std::cerr << "kdev-pg: file ``" << arg
-                        << "'' not found!" << std::endl;
-              file = stdin;
-            }
-        }
-      else
+      if (!file.open(QIODevice::ReadOnly|QIODevice::Text))
         {
-          std::cerr << "kdev-pg: unknown option ``" << arg << "''"
-                    << std::endl;
+          qDebug() << "kdev-pg-qt: file ``" << arg
+                    << "'' not found!" << endl;
+          file.setFileName("");
         }
     }
+    else
+    {
+      qDebug() << "kdev-pg: unknown option ``" << arg << "''"
+                << endl;
+    }
+    }
 
-  if( !globalSystem.ns )
+  if( globalSystem.ns.isEmpty() )
     globalSystem.ns = globalSystem.language;
+
+  if( !file.isOpen() )
+  {
+    exit(1);
+  }
 
   yyparse();
 
-  fclose(file);
+  file.close();
 
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                KDevPG::InitializeEnvironment());
+  for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    KDevPG::InitializeEnvironment initenv;
+    initenv(*it);
+  }
 
   KDevPG::computeFirst();
   KDevPG::computeFollow();
 
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                KDevPG::FirstFollowConflictChecker());
+  for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    KDevPG::FirstFollowConflictChecker check;
+    check(*it);
+  }
 
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                KDevPG::FirstFirstConflictChecker());
+  for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    KDevPG::FirstFirstConflictChecker check;
+    check(*it);
+  }
 
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                KDevPG::EmptyFirstChecker());
+  for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    KDevPG::EmptyFirstChecker check;
+    check(*it);
+  }
 
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                KDevPG::UndefinedSymbolChecker());
+  for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    KDevPG::UndefinedSymbolChecker check;
+    check(*it);
+  }
 
-  std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                KDevPG::UndefinedTokenChecker());
+  for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  {
+    KDevPG::UndefinedTokenChecker check;
+    check(*it);
+  }
 
   KDevPG::ProblemSummaryPrinter()();
 
@@ -195,30 +216,39 @@ int main(int, char *argv[])
     {
       if(dump_terminals)
         {
-          std::ofstream ft("kdev-pg-terminals", std::ios_base::out | std::ios_base::trunc );
+          QFile ft("kdev-pg-terminals");
+          ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
+          QTextStream strm(&ft);
           for (KDevPG::World::TerminalSet::iterator it = globalSystem.terminals.begin();
                it != globalSystem.terminals.end(); ++it)
             {
-              ft << (*it).first << std::endl;
+              strm << it.key() << endl;
             }
         }
       if (dump_symbols)
         {
-          std::ofstream st("kdev-pg-symbols", std::ios_base::out | std::ios_base::trunc );
+          QFile ft("kdev-pg-symbols");
+          ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
+          QTextStream strm(&ft);
           for (KDevPG::World::SymbolSet::iterator it = globalSystem.symbols.begin();
                it != globalSystem.symbols.end(); ++it)
             {
-              st << (*it).first << std::endl;
+              strm << it.key() << endl;
             }
         }
       if (DebugRules)
         {
-          std::ofstream rt("kdev-pg-rules", std::ios_base::out | std::ios_base::trunc );
-          std::for_each(globalSystem.rules.begin(), globalSystem.rules.end(),
-                        DebugRule(rt));
+          QFile ft("kdev-pg-rules");
+          ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
+          QTextStream strm(&ft);
+          for(QList<KDevPG::Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+          {
+            DebugRule dr(strm);
+            dr(*it);
+          }
         }
     }
-  else if (!globalSystem.language)
+  else if (globalSystem.language.isEmpty())
     {
       usage();
     }

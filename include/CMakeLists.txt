@@ -3,4 +3,4 @@ install( FILES
     kdev-pg-location-table.h
     kdev-pg-memory-pool.h
     kdev-pg-token-stream.h
-    DESTINATION include/kdevelop-pg )
+    DESTINATION include/kdevelop-pg-qt )

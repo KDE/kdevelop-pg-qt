@@ -72,7 +72,7 @@ struct ListNode
   { return 1 + back()->index; }
 
   inline const ListNode<_Tp> *front() const
-  { return to_back()->next; }
+  { return back()->next; }
 
   inline const ListNode<_Tp> *back() const
   {

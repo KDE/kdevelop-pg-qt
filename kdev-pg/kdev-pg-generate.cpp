@@ -49,8 +49,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language << "_AST_H_INCLUDED" << endl
-      << "#define " << globalSystem.language << "_AST_H_INCLUDED" << endl
+      << "#ifndef " << globalSystem.language.toUpper() << "_AST_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_AST_H_INCLUDED" << endl
       << endl
 
       << "#include <QtCore/QList>" << endl
@@ -92,13 +92,13 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language << "_H_INCLUDED" << endl
-      << "#define " << globalSystem.language << "_H_INCLUDED" << endl
+      << "#ifndef " << globalSystem.language.toUpper() << "_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_H_INCLUDED" << endl
       << endl;
 
     if (globalSystem.GenerateAst)
       {
-        s << "#include \"" << globalSystem.language << "Ast.h\"" << endl
+        s << "#include \"" << globalSystem.language << "ast.h\"" << endl
           << "#include <kdev-pg-memory-pool.h>" << endl
           << "#include <kdev-pg-allocator.h>" << endl;
       }
@@ -145,11 +145,11 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language << "_VISITOR_H_INCLUDED" << endl
-      << "#define " << globalSystem.language << "_VISITOR_H_INCLUDED" << endl
+      << "#ifndef " << globalSystem.language.toUpper() << "_VISITOR_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_VISITOR_H_INCLUDED" << endl
       << endl
 
-      << "#include \"" << globalSystem.language << "Ast.h\"" << endl
+      << "#include \"" << globalSystem.language << "ast.h\"" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include <" << globalSystem.exportMacroHeader << ">"
@@ -186,8 +186,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
-      << "#define " << globalSystem.language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
+      << "#ifndef " << globalSystem.language.toUpper() << "_DEFAULT_VISITOR_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_DEFAULT_VISITOR_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "visitor.h\"" << endl
@@ -227,8 +227,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << endl
-      << "#define " << globalSystem.language << "_SERIALIZATION_H_INCLUDED" << endl
+      << "#ifndef " << globalSystem.language.toUpper() << "_SERIALIZATION_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_SERIALIZATION_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
@@ -272,8 +272,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << endl
-      << "#define " << globalSystem.language << "_DEBUG_VISITOR_H_INCLUDED" << endl
+      << "#ifndef " << globalSystem.language.toUpper() << "_DEBUG_VISITOR_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_DEBUG_VISITOR_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl

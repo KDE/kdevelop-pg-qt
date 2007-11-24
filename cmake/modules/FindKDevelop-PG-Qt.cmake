@@ -11,8 +11,8 @@
 #                              can be set by the user to select different include dirs
 # KDEVPGQT_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
-# KDEVPGQT_GENERATE(SRC_FILE_VAR OUTPUT language 
-#                     [NAMESPACE ns] [DEBUG_VISITOR] [DUMP_INFO] 
+# KDEVPGQT_GENERATE(SRC_FILE_VAR OUTPUT language
+#                     [NAMESPACE ns] [DEBUG_VISITOR] [DUMP_INFO]
 #                     GRAMMARFILE ADDITIONALDEPS)
 #     macro to add a custom target for the generation of the parser
 #     OUTPUT will be given to kdev-pg as the --output parameter and thus sets the filename prefix
@@ -80,14 +80,14 @@ if( KDEVPGQT_INCLUDE_DIR
     set(KDEVPGQT_FOUND TRUE)
 
     macro(KDEVPGQT_GENERATE _srcVar _language )
-        set(_outputList 
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_ast.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp"
+        set(_outputList
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp"
         )
         set(_depList ${ARGN})
 	list(GET _depList 0 _ns)
@@ -102,7 +102,7 @@ if( KDEVPGQT_INCLUDE_DIR
             list(REMOVE_AT _depList 0)
 	    set(_dbgVisit "--debug-visitor")
 	    set(_outputList ${_outputList}
-                "${CMAKE_CURRENT_BINARY_DIR}/${_language}_debug_visitor.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/${_language}debugvisitor.h"
             )
 	endif(${_dbg} STREQUAL "DEBUG_VISITOR" )
 	set(_dumpInfo)
@@ -110,7 +110,7 @@ if( KDEVPGQT_INCLUDE_DIR
 	if( ${_dump} STREQUAL "DUMP_INFO" )
             list(REMOVE_AT _depList 0)
 	    set(_dumpInfo --terminals --symbols --rules)
-	    set(_outputList ${_outputList} 
+	    set(_outputList ${_outputList}
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-terminals"
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-symbols"
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-rules"
@@ -126,17 +126,17 @@ if( KDEVPGQT_INCLUDE_DIR
             OUTPUT  ${_outputList}
             MAIN_DEPENDENCY "${_grammarFile}"
 	    DEPENDS ${_depList}
-            COMMAND ${KDEVPG_EXECUTABLE}
+            COMMAND ${KDEVPGQT_EXECUTABLE}
             ARGS    --output=${_language} --namespace=${_namespace}
                     ${_dbgVisit} ${_dumpInfo} "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
-    
+
         set( ${_srcVar}
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_parser.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_visitor.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}_default_visitor.cpp" )
-    endmacro(KDEVPG_GENERATE)
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp" )
+    endmacro(KDEVPGQT_GENERATE)
 
 
 else( KDEVPGQT_INCLUDE_DIR

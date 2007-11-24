@@ -30,6 +30,7 @@ namespace KDevPG
 
 class LocationTable
 {
+public:
   inline LocationTable(qint64 size = 1024)
     : lines(0), lineCount(0), currentLine(0)
   {
@@ -82,7 +83,7 @@ class LocationTable
    */
   inline void newline(qint64 offset)
   {
-    if (current_line == lineCount)
+    if (currentLine == lineCount)
       resize(currentLine * 2);
 
     lines[currentLine++] = offset+1;

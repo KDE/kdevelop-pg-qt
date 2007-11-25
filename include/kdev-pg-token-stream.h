@@ -76,7 +76,7 @@ public:
     return mIndex;
   }
 
-  inline qint64 yytokenIndex() const
+  inline qint64 tokenIndex() const
   {
     if( mIndex )
       return mIndex - 1;
@@ -119,7 +119,7 @@ public:
     return mTokenBuffer[mTokenCount++];
   }
 
-  inline LocationTable *location_table()
+  inline LocationTable *locationTable()
   {
     if (!mLocationTable)
       mLocationTable = new LocationTable();

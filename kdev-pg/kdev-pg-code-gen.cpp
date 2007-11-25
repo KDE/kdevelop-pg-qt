@@ -754,12 +754,12 @@ void GenerateParserDeclarations::operator()()
 {
   out << "class " << globalSystem.exportMacro << " Parser {"
       << "public:" << endl
-      << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
-      << "typedef " << globalSystem.tokenStream << "::TokenType tokenType;" << endl
+//       << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
+      << "typedef " << globalSystem.tokenStream << "::Token Token;" << endl
       << globalSystem.tokenStream << " *tokenStream;" << endl
       << "int yytoken;" << endl
       << endl
-      << "inline tokenType LA(qint64 k = 1) const" << endl
+      << "inline Token LA(qint64 k = 1) const" << endl
       << "{ return tokenStream->token(tokenStream->index() - 1 + k - 1); }"
       << endl
       << "inline int yylex() {" << endl
@@ -814,7 +814,7 @@ void GenerateParserDeclarations::operator()()
     gen(qMakePair(it.key(), *it));
   }
   out << "TokenTypeSize" << endl
-      << "}; // tokenType" << endl
+      << "}; // TokenType" << endl
       << endl;
 
 

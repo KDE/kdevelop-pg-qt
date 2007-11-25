@@ -33,7 +33,7 @@ namespace KDevPG
 class TokenStream
 {
 public:
-  class TokenType
+  class Token
   {
   public:
     int kind;
@@ -88,12 +88,12 @@ public:
     mIndex = index;
   }
 
-  inline TokenType const &token(qint64 index) const
+  inline Token const &token(qint64 index) const
   {
     return mTokenBuffer[index];
   }
 
-  inline TokenType &token(qint64 index)
+  inline Token &token(qint64 index)
   {
     return mTokenBuffer[index];
   }
@@ -103,7 +103,7 @@ public:
     return mTokenBuffer[mIndex++].kind;
   }
 
-  inline TokenType &next()
+  inline Token &next()
   {
     if (mTokenCount == mTokenBufferSize)
       {
@@ -112,8 +112,8 @@ public:
 
         mTokenBufferSize <<= 2;
 
-        mTokenBuffer = reinterpret_cast<TokenType*>
-          (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(TokenType)));
+        mTokenBuffer = reinterpret_cast<Token*>
+          (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(Token)));
       }
 
     return mTokenBuffer[mTokenCount++];
@@ -148,7 +148,7 @@ public:
   }
 
 private:
-  TokenType *mTokenBuffer;
+  Token *mTokenBuffer;
   qint64 mTokenBufferSize;
   qint64 mIndex;
   qint64 mTokenCount;

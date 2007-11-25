@@ -30,10 +30,10 @@ void GenerateDebugVisitor::operator()()
       << "public:" << endl;
 
 
+  GenerateDebugVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); it++ )
   {
-    GenerateDebugVisitorRule gen(out);
     gen(qMakePair(it.key(), *it));
   }
 

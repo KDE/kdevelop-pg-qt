@@ -388,10 +388,10 @@ void generateOutput()
       << endl;
 
 
+    GenerateDefaultVisitorBitsRule gen(s);
     for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
         it != globalSystem.symbols.end(); it++ )
     {
-      GenerateDefaultVisitorBitsRule gen(s);
       gen(qMakePair(it.key(), *it));
     }
 

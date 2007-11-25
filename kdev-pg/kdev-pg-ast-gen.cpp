@@ -67,9 +67,9 @@ void GenerateAst::operator()()
       << "};" << endl
       << endl;
 
+  GenerateAstRule gen(out);
   for( World::SymbolSet::const_iterator it = globalSystem.symbols.begin(); it != globalSystem.symbols.end(); it++ )
   {
-    GenerateAstRule gen(out);
     gen(qMakePair( it.key(), *it ));
   }
   out << endl;
@@ -103,10 +103,10 @@ void GenerateAstRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
 
 void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
+  GenerateVariableDeclaration gen_var_decl(out);
   if (node->mStorageType != Model::VariableDeclarationItem::StorageTemporary
       && mNames.find(node->mName) == mNames.end())
     {
-      GenerateVariableDeclaration gen_var_decl(out);
       gen_var_decl(node);
 
       out << ";" << endl;

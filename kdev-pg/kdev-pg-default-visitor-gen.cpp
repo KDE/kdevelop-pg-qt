@@ -31,10 +31,10 @@ void GenerateDefaultVisitor::operator()()
   out << "class " << globalSystem.exportMacro << " DefaultVisitor: public Visitor {" << endl
       << "public:" << endl;
 
+  GenerateDefaultVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); it++ )
   {
-    GenerateDefaultVisitorRule gen(out);
     gen(qMakePair(it.key(), *it));
   }
 

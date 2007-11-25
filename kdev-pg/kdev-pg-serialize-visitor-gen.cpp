@@ -137,10 +137,10 @@ void GenerateSerializeVisitor::operator()()
       << "}" << endl << endl;
 
 
+  GenerateSerializeVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); it++ )
   {
-    GenerateSerializeVisitorRule gen(out);
     gen(qMakePair(it.key(), *it));
   }
 

@@ -553,6 +553,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
     }
 
   World::Environment::iterator it = globalSystem.env.find(sym);
+  GenerateLocalDeclarations gen_locals(out, &mNames);
   while (it != globalSystem.env.end())
     {
       Model::EvolveItem *e = (*it);
@@ -560,8 +561,6 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
         break;
 
       ++it;
-
-      GenerateLocalDeclarations gen_locals(out, &mNames);
       gen_locals(e->mDeclarations);
     }
 
@@ -808,9 +807,9 @@ void GenerateParserDeclarations::operator()()
 
 
   out << "enum TokenType" << endl << "{" << endl;
+  GenerateToken gen(out);
   for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); it++ )
   {
-    GenerateToken gen(out);
     gen(qMakePair(it.key(), *it));
   }
   out << "TokenTypeSize" << endl
@@ -821,12 +820,12 @@ void GenerateParserDeclarations::operator()()
   if (globalSystem.parserclassMembers.declarations.empty() == false)
     {
       out << "// user defined declarations:" << endl;
+      GenerateMemberCode gen(out, Settings::MemberItem::PublicDeclaration
+                            | Settings::MemberItem::ProtectedDeclaration
+                            | Settings::MemberItem::PrivateDeclaration);
       for( QList<Settings::MemberItem*>::iterator it = globalSystem.parserclassMembers.declarations.begin();
                     it != globalSystem.parserclassMembers.declarations.end(); it++ )
       {
-                    GenerateMemberCode gen(out, Settings::MemberItem::PublicDeclaration
-                                         | Settings::MemberItem::ProtectedDeclaration
-                                         | Settings::MemberItem::PrivateDeclaration);
                     gen(*it);
       }
       out << endl << "public:" << endl;
@@ -861,11 +860,11 @@ void GenerateParserDeclarations::operator()()
   if (globalSystem.parserclassMembers.constructorCode.empty() == false)
     {
       out << endl << "// user defined constructor code:" << endl;
+      GenerateMemberCode gen(out, Settings::MemberItem::ConstructorCode);
       for(QList<Settings::MemberItem*>::iterator it =
             globalSystem.parserclassMembers.constructorCode.begin();
             it != globalSystem.parserclassMembers.constructorCode.end(); it++ )
       {
-        GenerateMemberCode gen(out, Settings::MemberItem::ConstructorCode);
         gen(*it);
       }
     }
@@ -878,21 +877,22 @@ void GenerateParserDeclarations::operator()()
     {
       out << endl
           << "// user defined destructor code:" << endl;
+
+      GenerateMemberCode gen(out, Settings::MemberItem::DestructorCode);
       for(QList<Settings::MemberItem*>::iterator it = globalSystem.parserclassMembers.destructorCode.begin();
                     it != globalSystem.parserclassMembers.destructorCode.end(); it++ )
       {
-        GenerateMemberCode gen(out, Settings::MemberItem::DestructorCode);
         gen(*it);
       }
     }
 
   out << "}" << endl << endl;
 
+  GenerateForwardParserRule genfwdparserrule(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); it++ )
   {
-    GenerateForwardParserRule gen(out);
-    gen(qMakePair(it.key(), *it));
+    genfwdparserrule(qMakePair(it.key(), *it));
   }
 
   out << "};" << endl;
@@ -900,10 +900,10 @@ void GenerateParserDeclarations::operator()()
 
 void GenerateParserBits::operator()()
 {
+  GenerateParserRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); it++ )
   {
-    GenerateParserRule gen(out);
     gen(qMakePair(it.key(), *it));
   }
 }

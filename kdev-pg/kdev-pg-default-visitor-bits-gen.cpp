@@ -68,7 +68,7 @@ void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDec
     if (mNames.find(node->mName) != mNames.end())
       break;
 
-    QString base_type = node->mType + "Ast*";
+    QString base_type = node->mCapitalizedType + "Ast*";
 
     if (node->mIsSequence)
       {

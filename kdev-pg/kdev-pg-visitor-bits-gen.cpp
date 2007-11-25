@@ -29,7 +29,7 @@ namespace KDevPG
 
 void GenerateVisitorBits::operator()()
 {
-  out << "Visitor::ParserFuncType visitor::sParserTable[] = {" << endl;
+  out << "Visitor::ParserFuncType Visitor::sParserTable[] = {" << endl;
 
   QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
   while (it != globalSystem.symbols.end())

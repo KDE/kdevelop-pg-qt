@@ -127,7 +127,7 @@ public:
     return mLocationTable;
   }
 
-  inline void startPosition(qint64 index, size_t *line, size_t *column)
+  inline void startPosition(qint64 index, qint64 *line, qint64 *column)
   {
     if (!mLocationTable)
       {
@@ -137,7 +137,7 @@ public:
       mLocationTable->positionAt(token(index).begin, line, column);
   }
 
-  inline void endPosition(qint64 index, size_t *line, size_t *column)
+  inline void endPosition(qint64 index, qint64 *line, qint64 *column)
   {
     if (!mLocationTable)
       {

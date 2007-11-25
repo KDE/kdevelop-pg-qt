@@ -56,7 +56,7 @@ public:
   /**
    * Returns the \a line and \a column of the given \a offset in this table.
    */
-  void positionAt(qint64 offset, size_t *line, size_t *column) const
+  void positionAt(qint64 offset, qint64 *line, qint64 *column) const
   {
     qint64 idx = 0;
     for( qint64 i = 0; i < currentLine; i++ )

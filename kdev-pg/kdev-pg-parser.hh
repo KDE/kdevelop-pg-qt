@@ -113,7 +113,7 @@ typedef union YYSTYPE
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 /* Line 1489 of yacc.c.  */
-#line 117 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+#line 117 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

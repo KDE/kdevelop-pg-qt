@@ -22,6 +22,7 @@
 #include "kdev-pg-code-gen.h"
 
 #include <QtCore/QList>
+#include <QtCore/QDebug>
 #include <QtCore/QStack>
 
 namespace KDevPG
@@ -548,8 +549,11 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
   if (globalSystem.GenerateAst)
     {
       out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << endl << endl
-          << "(*yynode)->startToken = tokenStream->index() - 1;" << endl
-          << endl;
+          << "(*yynode)->startToken = tokenStream->index() - 1;" << endl;
+      //Generate initialization for this ast nodes token-members using -1 as invalid value
+      GenerateTokenVariableInitialization gentokenvar( out );
+      gentokenvar(sym);
+      out << endl;
     }
 
   World::Environment::iterator it = globalSystem.env.find(sym);
@@ -905,6 +909,29 @@ void GenerateParserBits::operator()()
        it != globalSystem.symbols.end(); it++ )
   {
     gen(qMakePair(it.key(), *it));
+  }
+}
+
+void GenerateTokenVariableInitialization::operator()(Model::SymbolItem* sym)
+{
+
+  World::Environment::iterator it = globalSystem.env.find(sym);
+  if (it != globalSystem.env.end())
+    {
+      // this creates the method signature using just the first of
+      // possibly multiple rules with the same name.
+      Model::EvolveItem *e = (*it);
+      if (e->mItem)
+        visitNode(e->mItem);
+    }
+}
+
+void GenerateTokenVariableInitialization::visitVariableDeclaration(Model::VariableDeclarationItem *node)
+{
+  if( node->mVariableType == Model::VariableDeclarationItem::TypeToken )
+  {
+    if( !node->mIsSequence )
+      out << "(*yynode)->" << node->mName << " = -1;" << endl;
   }
 }
 

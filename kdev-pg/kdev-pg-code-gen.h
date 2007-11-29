@@ -129,6 +129,18 @@ public:
   void operator()(Model::VariableDeclarationItem *node);
 };
 
+class GenerateTokenVariableInitialization : public DefaultVisitor
+{
+public:
+  QTextStream& out;
+  GenerateTokenVariableInitialization( QTextStream& o) : out(o)
+  {
+  }
+
+  void operator()(Model::SymbolItem* node);
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+};
+
 class GenerateToken
 {
 public:

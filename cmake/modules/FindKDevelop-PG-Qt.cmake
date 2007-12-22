@@ -1,7 +1,7 @@
 #
 # Find the KDevelop Parser Generator and set various variables accordingly
 #
-# KDEVPG_DIR and can be set to adjust the directory where the kdevelop-pg-qt
+# KDEVPGQT_DIR and can be set to adjust the directory where the kdevelop-pg-qt
 # headers and executable are searched. This should point to the installation
 # directory of kdevelop-pg-qt
 #
@@ -147,7 +147,7 @@ else( KDEVPGQT_INCLUDE_DIR
     else( KDevelop-PG-Qt_FIND_REQUIRED)
         message(STATUS "Couldn't find KDevelop-PG-Qt.")
     endif( KDevelop-PG-Qt_FIND_REQUIRED)
-    message(STATUS "You can set KDEVPGQT_DIR to help cmake find KDevelop-PG")
+    message(STATUS "You can set KDEVPGQT_DIR to help cmake find KDevelop-PG-Qt")
     set(KDEVPGQT_FOUND FALSE)
 
 endif( KDEVPGQT_INCLUDE_DIR

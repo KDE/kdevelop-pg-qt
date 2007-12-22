@@ -40,34 +40,35 @@ if( NOT KDEVPGQT_DIR )
     find_path( _kdevpgqtIncDir kdevelop-pg-qt/kdev-pg-token-stream.h
         PATHS
         ${CMAKE_INSTALL_PREFIX}/include
-        ${_KDEVPG_DIR}/include
+        ${_KDEVPGQT_DIR}/include
     )
     if( _kdevpgqtIncDir )
-        set(KDEVPGQT_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg-qt)
+        set(KDEVPGQT_INCLUDE_DIR ${_kdevpgqtIncDir}/kdevelop-pg-qt)
     endif( _kdevpgqtIncDir )
     find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
         PATHS
         ${CMAKE_INSTALL_PREFIX}/bin
-        ${_KDEVPG_DIR}/bin
+        ${_KDEVPGQT_DIR}/bin
     )
-    set(KDEVPGQT_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
-    set( KDEVPGQT_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
+
+    set(KDEVPGQT_INCLUDE_DIR ${KDEVPGQT_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
+    set( KDEVPGQT_EXECUTABLE ${KDEVPGQT_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
 else( NOT KDEVPGQT_DIR )
     find_path( _kdevpgqtIncDir kdevelop-pg-qt/kdev-pg-token-stream.h
         PATHS
         ${CMAKE_INSTALL_PREFIX}/include
-        ${_KDEVPG_DIR}/include
+        ${_KDEVPGQT_DIR}/include
 	${KDEVPGQT_DIR}/include
     )
     set(KDEVPGQT_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg-qt)
     find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
         PATHS
         ${CMAKE_INSTALL_PREFIX}/bin
-        ${_KDEVPG_DIR}/bin
+        ${_KDEVPGQT_DIR}/bin
 	${KDEVPGQT_DIR}/bin
     )
-    set(KDEVPGQT_INCLUDE_DIR ${KDEVPG_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
-    set( KDEVPGQT_EXECUTABLE ${KDEVPG_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
+    set(KDEVPGQT_INCLUDE_DIR ${KDEVPGQT_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
+    set( KDEVPGQT_EXECUTABLE ${KDEVPGQT_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
 endif( NOT KDEVPGQT_DIR )
 if( KDEVPGQT_INCLUDE_DIR
  AND KDEVPGQT_EXECUTABLE)
@@ -120,7 +121,7 @@ if( KDEVPGQT_INCLUDE_DIR
         list(GET _depList 0 _grammarFile)
         list(REMOVE_AT _depList 0)
         if(NOT _grammarFile)
-            message(ERROR "No grammar file given to KDEVPG_GENERATE macro")
+            message(ERROR "No grammar file given to KDEVPGQT_GENERATE macro")
         endif(NOT _grammarFile)
         add_custom_command(
             OUTPUT  ${_outputList}

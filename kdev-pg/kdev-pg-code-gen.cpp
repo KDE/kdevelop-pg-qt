@@ -719,7 +719,7 @@ void GenerateVariableDeclaration::operator()(Model::VariableDeclarationItem *nod
   {
     out << node->mCapitalizedType << "Ast *";
   }else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable)
-    out << node->mCapitalizedType << " ";
+    out << node->mType << " ";
   else
     Q_ASSERT(0); // ### not supported
 

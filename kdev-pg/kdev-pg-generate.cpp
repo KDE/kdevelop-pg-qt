@@ -283,6 +283,8 @@ void generateOutput()
       s << "#include <" << globalSystem.exportMacroHeader << ">"
         << endl;
 
+    s << "#include <kdev-pg-token-stream.h>" << endl;
+    
     s << "#include <QtCore/QTextStream>" << endl
       << "#include <QtCore/QDebug>" << endl
       << endl

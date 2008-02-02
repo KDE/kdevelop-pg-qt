@@ -58,6 +58,11 @@ public:
    */
   void positionAt(qint64 offset, qint64 *line, qint64 *column) const
   {
+    if( offset < 0 )
+    {
+      *line = -1;
+      *column = -1;
+    }
     qint64 idx = 0;
     for( qint64 i = 0; i < currentLine; i++ )
     {

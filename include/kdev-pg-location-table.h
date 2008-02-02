@@ -62,6 +62,7 @@ public:
     {
       *line = -1;
       *column = -1;
+      return;
     }
     qint64 idx = 0;
     for( qint64 i = 0; i < currentLine; i++ )

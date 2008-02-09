@@ -591,7 +591,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
 
   if (globalSystem.GenerateAst)
     {
-      out << "(*yynode)->endToken = tokenStream->index() - 1;" << endl
+      out << "(*yynode)->endToken = tokenStream->index() - 2;" << endl
           << endl;
     }
 

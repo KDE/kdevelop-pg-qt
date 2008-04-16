@@ -1,84 +1,46 @@
 
 PROJECT(fact_parser)
 
-PROJECT(fact_parser)
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
-
-# autogenerate the lexer and the parser
-
-SET(parser_srcs)
-
-FIND_PROGRAM(FLEX_EXECUTABLE
-    NAMES flex
-    PATHS /usr/bin
-    DOC "Flex executable")
-
 
 # Add command to generate the parser.
 ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact_ast.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.cpp"
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/factast.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/factparser.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/factparser.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/factvisitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/factvisitor.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/factdefaultvisitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/factdefaultvisitor.cpp"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact.g"
-            "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.h"
-    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
+            "${CMAKE_CURRENT_SOURCE_DIR}/factlexer.h"
+    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg-qt
     ARGS    --output=fact
             "fact.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 SET(parser_srcs
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/factparser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factvisitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factdefaultvisitor.cpp"
+)
 
 SET_SOURCE_FILES_PROPERTIES(
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_ast.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_visitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fact_default_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factast.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factparser.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factparser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factvisitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factvisitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factdefaultvisitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/factdefaultvisitor.cpp"
     GENERATED
     )
 
 
-IF(FLEX_EXECUTABLE)
-    # Add command to generate the lexer.
-    ADD_CUSTOM_COMMAND(
-        OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.ll"
-                "${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/fact_parser.h"
-        COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"fact_lexer.cpp"
-                "fact_lexer.ll"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        )
-
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp ${parser_srcs})
-
-    SET_SOURCE_FILES_PROPERTIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp
-        GENERATED
-        )
-ELSE(FLEX_EXECUTABLE)
-    MESSAGE("--- Assuming existence of the generated lexer file fact_lexer.cpp")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/fact_lexer.cpp ${parser_srcs})
-ENDIF(FLEX_EXECUTABLE)
-
-
 SET(assembled_parser_srcs
-    ${parser_srcs}
-    decoder.cpp
-    fact_io.cpp
+    factlexer.cpp
+    debugvisitor.cpp
 )
 
 
@@ -86,7 +48,9 @@ SET(assembled_parser_srcs
 ADD_DEFINITIONS(-Wall -O2)
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(fact-parser ${assembled_parser_srcs} main.cpp)
+ADD_EXECUTABLE(fact-parser ${assembled_parser_srcs} ${parser_srcs} main.cpp)
+
+target_link_libraries(fact-parser ${QT_QTCORE_LIBRARY})
 
 # in order to generate only the parser, call "make parser"
 ADD_CUSTOM_TARGET(parser echo "Generating the parser"

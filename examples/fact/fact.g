@@ -1,3 +1,18 @@
+-----------------------------------------------------------
+-- Global  declarations
+-----------------------------------------------------------
+
+
+[:
+
+#include <QtCore/QString>
+
+namespace fact
+{
+    class Lexer;
+}
+
+:]
 
 ------------------------------------------------------------
 -- Parser class members
@@ -10,17 +25,26 @@
    * When this method returns, the parser's token stream has been filled
    * and any parse_*() method can be called.
    */
-  void tokenize( char *contents );
+  void tokenize( const QString& contents );
 
-  enum problem_type {
-      error,
-      warning,
-      info
-  };
-  void report_problem( parser::problem_type type, const char* message );
-  void report_problem( parser::problem_type type, std::string message );
+    enum ProblemType {
+        Error,
+        Warning,
+        Info
+    };
+    void reportProblem( Parser::ProblemType type, const QString& message );
+
+    QString tokenText(qint64 begin, qint64 end) const;
+
+    void setDebug( bool debug );
+
 :]
 
+%parserclass (private declaration)
+[:
+    QString m_contents;
+    bool m_debug;
+:]
 
 ------------------------------------------------------------
 -- List of defined tokens
@@ -47,12 +71,12 @@
 -- Declaration rules
 ----------------------
 
-   (#fun=function_definition)*
+   (#fun=functionDefinition)*
 -> program ;;
 
    FUNCTION id=IDENTIFIER
    LPAREN (#param=IDENTIFIER @ COMMA | 0) RPAREN body=body
--> function_definition ;;
+-> functionDefinition ;;
 
    LBRACE (#decl=declaration)* (#stmt=statement)* RBRACE
 -> body ;;
@@ -68,22 +92,22 @@
 --------------------
 
    id=IDENTIFIER ASSIGN expr=expression SEMICOLON
--> assignment_statement ;;
+-> assignmentStatement ;;
 
-   IF LPAREN cond=condition RPAREN if_stmt=statement
-   (ELSE else_stmt=statement | 0)
--> if_statement ;;
+   IF LPAREN cond=condition RPAREN ifStmt=statement
+   (ELSE elseStmt=statement | 0)
+-> ifStatement ;;
 
    LBRACE (#stmt=statement)* RBRACE
--> block_statement ;;
+-> blockStatement ;;
 
    RETURN expr=expression SEMICOLON
--> return_statement ;;
+-> returnStatement ;;
 
-   assign_stmt=assignment_statement
- | if_stmt=if_statement
- | block_stmt=block_statement
- | return_stmt=return_statement
+   assignStmt=assignmentStatement
+ | ifStmt=ifStatement
+ | blockStmt=blockStatement
+ | returnStmt=returnStatement
 -> statement ;;
 
 
@@ -94,13 +118,13 @@
  | id=IDENTIFIER (LPAREN (#argument=expression @ COMMA) RPAREN | 0)
 -> primary ;;
 
-   left_expr=primary (STAR right_expr=primary)*
--> mult_expression ;;
+   leftExpr=primary (STAR rightExpr=primary)*
+-> multExpression ;;
 
-   left_expr=mult_expression (MINUS right_expr=mult_expression)*
+   leftExpr=multExpression (MINUS rightExpr=multExpression)*
 -> expression ;;
 
-   left_expr=expression EQUAL right_expr=expression
+   leftExpr=expression EQUAL rightExpr=expression
 -> condition ;;
 
 
@@ -113,36 +137,100 @@
 -----------------------------------------------------------------
 
 [:
-#include "fact_lexer.h"
-
+#include "factlexer.h"
+#include <QtCore/QString>
+#include <QDebug>
 
 namespace fact
 {
 
-void parser::tokenize( char *contents )
+void Parser::tokenize( const QString& contents )
 {
+    m_contents = contents;
     Lexer lexer( this, contents );
 
-    int kind = parser::Token_EOF;
+    int kind = Parser::Token_EOF;
     do
     {
-        kind = lexer.yylex();
-        //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
+        kind = lexer.nextTokenKind();
 
         if ( !kind ) // when the lexer returns 0, the end of file is reached
-            kind = parser::Token_EOF;
+            kind = Parser::Token_EOF;
 
-        parser::token_type &t = this->token_stream->next();
+        Parser::Token &t = tokenStream->next();
         t.kind = kind;
-        t.begin = lexer.tokenBegin();
-        t.end = lexer.tokenEnd();
-        t.text = contents;
+        if( t.kind == Parser::Token_EOF )
+        {
+            t.begin = -1;
+            t.end = -1;
+        }
+        else
+        {
+            t.begin = lexer.tokenBegin();
+            t.end = lexer.tokenEnd();
+        }
+
+        if( m_debug )
+        {
+            qDebug() << kind << "(" << t.begin << "," << t.end << ")::" << tokenText(t.begin, t.end);
+        }
+
     }
-    while ( kind != parser::Token_EOF );
+    while ( kind != Parser::Token_EOF );
 
     this->yylex(); // produce the look ahead token
+}
+
+QString Parser::tokenText( qint64 begin, qint64 end ) const
+{
+    return m_contents.mid((int)begin, (int)end-begin+1);
+}
+
+void Parser::reportProblem( Parser::ProblemType type, const QString& message )
+{
+    if (type == Error)
+        qDebug() << "** ERROR:" << message;
+    else if (type == Warning)
+        qDebug() << "** WARNING:" << message;
+    else if (type == Info)
+        qDebug() << "** Info:" << message;
+}
+
+// custom error recovery
+void Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString& name)
+{
+    reportProblem(
+        Parser::Error,
+        QString("Expected token \"%1\"").arg(name));
+}
+
+void Parser::expectedSymbol(int /*expected_symbol*/, const QString& name)
+{
+    qint64 line;
+    qint64 col;
+    size_t index = tokenStream->index()-1;
+    Token &token = tokenStream->token(index);
+    qDebug() << "token starts at:" << token.begin;
+    qDebug() << "index is:" << index;
+    tokenStream->startPosition(index, &line, &col);
+    QString tokenValue = tokenText(token.begin, token.end);
+    reportProblem(
+        Parser::Error,
+        QString("Expected symbol \"%1\" (current token: \"%2\" [%3] at line: %4 col: %5)")
+            .arg(name)
+            .arg(token.kind != 0 ? tokenValue : "EOF")
+            .arg(token.kind)
+            .arg(line)
+            .arg(col));
+}
+
+void Parser::setDebug( bool debug )
+{
+    m_debug = debug;
 }
 
 } // end of namespace fact
 
 :]
+
+-- kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on

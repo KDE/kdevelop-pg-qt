@@ -29,7 +29,7 @@ void GenerateDebugVisitor::operator()()
   out << "class " << globalSystem.exportMacro << " DebugVisitor: public DefaultVisitor {" << endl
       << "public:" << endl;
 
-  out << "DebugVisitor(KDevPG::TokenStream *str) : m_str(str) {}" << endl;
+  out << "DebugVisitor(KDevPG::TokenStream *str) : m_str(str), m_indent(0) {}" << endl;
   GenerateDebugVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); it++ )

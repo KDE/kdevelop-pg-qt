@@ -20,7 +20,7 @@
 
 #include "factparser.h"
 #include "factdefaultvisitor.h"
-#include "debugvisitor.h"
+#include "factdebugvisitor.h"
 
 #include <QDebug>
 #include <QFile>
@@ -92,7 +92,7 @@ bool parseFile(const QString& filename, bool debug)
     if (matched)
     {
         if (debug) {
-            DebugVisitor d(&factParser);
+            DebugVisitor d(&tokenStream);
             d.visitNode(ast);
         }
     }

@@ -49,6 +49,7 @@ private:
     int state() const;
     void pushState(int state);
     void popState();
+    void createNewline( int pos );
 
     QStack<int> mState;
     enum State

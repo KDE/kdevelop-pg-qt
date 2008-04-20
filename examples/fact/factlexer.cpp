@@ -66,6 +66,9 @@ int Lexer::nextTokenKind()
     // Ignore whitespace
     while ( m_curpos < m_contentSize && ( it->isSpace() ) )
     {
+        if (it->unicode() == '\n') {
+            createNewline(m_curpos);
+        }
         ++it;
         ++m_curpos;
     }
@@ -180,4 +183,9 @@ qint64 Lexer::tokenEnd() const
   return m_tokenEnd;
 }
 
+void Lexer::createNewline( int pos )
+{
+    if( m_parser )
+        m_parser->tokenStream->locationTable()->newline( pos );
+}
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on

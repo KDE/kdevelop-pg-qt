@@ -64,6 +64,7 @@ void GenerateAst::operator()()
       << "int kind;" << endl
       << "qint64 startToken;" << endl
       << "qint64 endToken;" << endl
+      << globalSystem.astCode << endl
       << "};" << endl
       << endl;
 

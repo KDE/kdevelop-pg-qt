@@ -89,7 +89,7 @@ public:
 
   World()
     : tokenStream("KDevPG::TokenStream"), language(0), ns(0), decl(0), bits(0),
-      exportMacro(""), exportMacroHeader(0), GenerateAst(true),
+      exportMacro(""), exportMacroHeader(0), astCode(""), GenerateAst(true),
       generateSerializeVisitor(false), generateDebugVisitor(false),
       needStateManagement(false), start(0), mZero(0)
   {}
@@ -102,6 +102,7 @@ public:
   QString bits;
   QString exportMacro;
   QString exportMacroHeader;
+  QString astCode;
   bool GenerateAst;
   bool generateSerializeVisitor;
   bool generateDebugVisitor;

@@ -99,6 +99,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%token_stream"         return T_TOKEN_STREAM_DECLARATION;
 "%namespace"            return T_NAMESPACE_DECLARATION;
 "%parserclass"          BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
+"%ast_extra_members"    return T_AST_DECLARATION;
 
 
 <PARSERCLASS>{

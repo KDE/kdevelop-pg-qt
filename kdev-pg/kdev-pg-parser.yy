@@ -44,6 +44,7 @@ extern void yyerror(const char* msg);
 %token T_CONSTRUCTOR T_DESTRUCTOR T_TRY_RECOVER T_TRY_ROLLBACK T_CATCH
 %token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_EXPORT_MACRO
 %token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
+%token T_AST_DECLARATION 
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
@@ -78,7 +79,9 @@ declaration
     | T_EXPORT_MACRO T_STRING
         { KDevPG::globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING
-        { KDevPG::globalSystem.exportMacroHeader = $2;   }
+        { KDevPG::globalSystem.exportMacroHeader = $2;     }
+    | T_AST_DECLARATION T_CODE
+        { KDevPG::globalSystem.astCode = $2;               }
     ;
 
 member_declaration_rest

@@ -324,7 +324,7 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
 
   if (node->mCatchItem) // node is a try/rollback block
     {
-      out << "bool block_errors_" << mCurrentCatchId
+      out << "bool blockErrors_" << mCurrentCatchId
           << " = blockErrors(true);" << endl;
     }
 
@@ -333,8 +333,8 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
 
   if (!node->mUnsafe)
     {
-      out << "parser_state *try_start_state_" << mCurrentCatchId
-          << " = copy_current_state();" << endl;
+      out << "ParserState *try_startState_" << mCurrentCatchId
+          << " = copyCurrentState();" << endl;
     }
 
   out << "{" << endl;
@@ -343,13 +343,13 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
 
   if (node->mCatchItem)
     {
-      out << "blockErrors(block_errors_" << mCurrentCatchId << ");" << endl;
+      out << "blockErrors(blockErrors_" << mCurrentCatchId << ");" << endl;
     }
 
   if (!node->mUnsafe)
     {
-      out << "if (try_start_state_" << mCurrentCatchId << ")" << endl
-          << "delete try_start_state_" <<  mCurrentCatchId << ";" << endl
+      out << "if (try_startState_" << mCurrentCatchId << ")" << endl
+          << "delete try_startState_" <<  mCurrentCatchId << ";" << endl
           << endl;
     }
 
@@ -359,10 +359,10 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
 
   if (!node->mUnsafe)
     {
-      out << "if (try_start_state_" << mCurrentCatchId << ")" << endl
+      out << "if (try_startState_" << mCurrentCatchId << ")" << endl
           << "{" << endl
-          << "restore_state(try_start_state_" <<  mCurrentCatchId << ");" << endl
-          << "delete try_start_state_" <<  mCurrentCatchId << ";" << endl
+          << "restoreState(try_startState_" <<  mCurrentCatchId << ");" << endl
+          << "delete try_startState_" <<  mCurrentCatchId << ";" << endl
           << "}" << endl;
     }
 
@@ -373,7 +373,7 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
     }
   else
     {
-      out << "blockErrors(block_errors_" << mCurrentCatchId << ");" << endl
+      out << "blockErrors(blockErrors_" << mCurrentCatchId << ");" << endl
           << "rewind(try_startToken_" << mCurrentCatchId << ");" << endl
           << endl;
 
@@ -837,18 +837,18 @@ void GenerateParserDeclarations::operator()()
 
   if (globalSystem.needStateManagement)
     {
-      out << "// The copy_current_state() and restore_state() methods are only declared" << endl
+      out << "// The copyCurrentState() and restoreState() methods are only declared" << endl
           << "// if you are using try blocks in your grammar, and have to be" << endl
           << "// implemented by yourself, and you also have to define a" << endl
-          << "// \"struct parser_state\" inside a %parserclass directive." << endl
+          << "// \"struct ParserState\" inside a %parserclass directive." << endl
           << endl
-          << "// This method should create a new parser_state object and return it," << endl
+          << "// This method should create a new ParserState object and return it," << endl
           << "// or return 0 if no state variables need to be saved." << endl
-          << "parser_state *copy_current_state();" << endl
+          << "ParserState *copyCurrentState();" << endl
           << endl
-          << "// This method is only called for parser_state objects != 0" << endl
+          << "// This method is only called for ParserState objects != 0" << endl
           << "// and should restore the parser state given as argument." << endl
-          << "void restore_state(parser_state *state);" << endl;
+          << "void restoreState(ParserState *state);" << endl;
     }
 
   out << "Parser() {" << endl;

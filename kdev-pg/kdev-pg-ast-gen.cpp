@@ -35,16 +35,7 @@ void GenerateAst::operator()()
       out << "struct " << sym->mCapitalizedName << "Ast;" << endl;
     }
 
-  out << endl;
-
-  for (World::NamespaceSet::iterator it = globalSystem.namespaces.begin();
-       it != globalSystem.namespaces.end(); ++it)
-    {
-      out << "namespace " << it.key()
-          << "{" << (*it) << "}" << endl << endl;
-    }
-
-  out << endl;
+  out << endl << globalSystem.namespaceCode << endl;
 
   out << "struct " << globalSystem.exportMacro << " AstNode";
 

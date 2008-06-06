@@ -89,8 +89,8 @@ public:
 
   World()
     : tokenStream("KDevPG::TokenStream"), language(0), ns(0), decl(0), bits(0),
-      exportMacro(""), exportMacroHeader(0), astCode(""), GenerateAst(true),
-      generateSerializeVisitor(false), generateDebugVisitor(false),
+      exportMacro(""), exportMacroHeader(0), astCode(""), namespaceCode(""),
+      GenerateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
       needStateManagement(false), start(0), mZero(0)
   {}
 
@@ -103,6 +103,7 @@ public:
   QString exportMacro;
   QString exportMacroHeader;
   QString astCode;
+  QString namespaceCode;
   bool GenerateAst;
   bool generateSerializeVisitor;
   bool generateDebugVisitor;
@@ -133,11 +134,6 @@ public:
     if (rules.empty())
       start = e;
     rules.push_back(e);
-  }
-
-  void pushNamespace(QString name, QString code)
-  {
-    namespaces.insert(name, code);
   }
 
   void pushParserClassMember(Model::Node *member)
@@ -200,7 +196,6 @@ public:
   SymbolSet symbols;
   TerminalSet terminals;
   QList<Model::Node*> rules;
-  NamespaceSet namespaces;
   MemberCode parserclassMembers;
 
   Environment env;

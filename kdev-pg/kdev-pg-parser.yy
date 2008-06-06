@@ -75,11 +75,12 @@ declaration
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
-    | namespace_declaration
     | T_EXPORT_MACRO T_STRING
         { KDevPG::globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING
         { KDevPG::globalSystem.exportMacroHeader = $2;     }
+    | T_NAMESPACE_DECLARATION T_CODE
+        { KDevPG::globalSystem.namespaceCode = $2;         }
     | T_AST_DECLARATION T_CODE
         { KDevPG::globalSystem.astCode = $2;               }
     ;
@@ -97,11 +98,6 @@ member_declaration_rest
         { $$ = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, $4);       }
     ;
 
-namespace_declaration
-    : T_NAMESPACE_DECLARATION T_IDENTIFIER T_CODE
-        { KDevPG::globalSystem.pushNamespace($2, $3); }
-    ;
-
 declared_tokens
     : T_TERMINAL                        { KDevPG::globalSystem.pushTerminal($1,$1); }
     | T_TERMINAL '(' T_STRING ')'       { KDevPG::globalSystem.pushTerminal($1,$3); }
@@ -113,7 +109,6 @@ declared_tokens
 rules
     : item ';'                          { KDevPG::globalSystem.pushRule($1); }
     | rules item ';'                    { KDevPG::globalSystem.pushRule($2); }
-    | rules namespace_declaration
     ;
 
 primary_item

@@ -130,7 +130,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 2 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 2 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
@@ -182,7 +182,7 @@ extern void yyerror(const char* msg);
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 33 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 33 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 {
     KDevPG::Model::Node *item;
     char* str;
@@ -191,7 +191,7 @@ typedef union YYSTYPE
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 /* Line 187 of yacc.c.  */
-#line 195 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
+#line 195 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -204,7 +204,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 208 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
+#line 208 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
 
 #ifdef short
 # undef short
@@ -1530,137 +1530,137 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 60 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 60 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.decl = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 3:
-#line 63 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 63 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.bits = (yyvsp[(5) - (5)].str); ;}
     break;
 
   case 6:
-#line 73 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 73 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushParserClassMember((yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 8:
-#line 76 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 76 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.tokenStream = (yyvsp[(2) - (3)].str);           ;}
     break;
 
   case 10:
-#line 79 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 79 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.exportMacro = (yyvsp[(2) - (2)].str);           ;}
     break;
 
   case 11:
-#line 81 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 81 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.exportMacroHeader = (yyvsp[(2) - (2)].str);   ;}
     break;
 
   case 12:
-#line 86 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 86 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, (yyvsp[(5) - (5)].str));    ;}
     break;
 
   case 13:
-#line 88 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 88 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, (yyvsp[(5) - (5)].str)); ;}
     break;
 
   case 14:
-#line 90 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 90 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, (yyvsp[(5) - (5)].str));   ;}
     break;
 
   case 15:
-#line 92 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 92 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, (yyvsp[(4) - (4)].str));      ;}
     break;
 
   case 16:
-#line 94 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 94 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, (yyvsp[(4) - (4)].str));       ;}
     break;
 
   case 17:
-#line 99 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 99 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushNamespace((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].str)); ;}
     break;
 
   case 18:
-#line 103 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 103 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (1)].str),(yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 19:
-#line 104 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 104 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str)); ;}
     break;
 
   case 20:
-#line 105 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 105 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (3)].str),(yyvsp[(3) - (3)].str)); ;}
     break;
 
   case 21:
-#line 107 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 107 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (6)].str),(yyvsp[(5) - (6)].str)); ;}
     break;
 
   case 22:
-#line 111 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 111 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushRule((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 23:
-#line 112 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 112 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushRule((yyvsp[(2) - (3)].item)); ;}
     break;
 
   case 25:
-#line 117 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 117 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::globalSystem.zero(); ;}
     break;
 
   case 26:
-#line 118 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 118 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(2) - (3)].item); ;}
     break;
 
   case 27:
-#line 119 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 119 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 28:
-#line 120 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 120 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 29:
-#line 121 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 121 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::annotation((yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].item), false, (yyvsp[(2) - (3)].storageType)); ;}
     break;
 
   case 30:
-#line 122 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 122 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::annotation((yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].item), true, (yyvsp[(3) - (4)].storageType));  ;}
     break;
 
   case 31:
-#line 126 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 126 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol((yyvsp[(1) - (2)].str)), (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 32:
-#line 127 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 127 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::globalSystem.terminal((yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 33:
-#line 132 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 132 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::globalSystem.needStateManagement = true;
           (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (4)].item), 0);
@@ -1668,7 +1668,7 @@ yyreduce:
     break;
 
   case 34:
-#line 137 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 137 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::globalSystem.needStateManagement = true;
           (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (8)].item), (yyvsp[(7) - (8)].item));
@@ -1676,22 +1676,22 @@ yyreduce:
     break;
 
   case 35:
-#line 143 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 143 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = ""; ;}
     break;
 
   case 36:
-#line 144 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 144 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 37:
-#line 148 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 148 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 38:
-#line 150 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 150 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.str) = (yyvsp[(3) - (3)].str);
           fprintf(stderr, "** WARNING support for scoped name"
@@ -1700,37 +1700,37 @@ yyreduce:
     break;
 
   case 39:
-#line 158 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 158 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember; ;}
     break;
 
   case 40:
-#line 159 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 159 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;  ;}
     break;
 
   case 41:
-#line 163 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 163 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::plus((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 42:
-#line 164 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 164 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::star((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 43:
-#line 165 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 165 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 44:
-#line 170 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 170 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 45:
-#line 172 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 172 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::CloneTree cl;
           (yyval.item) = KDevPG::cons((yyvsp[(1) - (3)].item), KDevPG::star(KDevPG::cons(cl.clone((yyvsp[(3) - (3)].item)), cl.clone((yyvsp[(1) - (3)].item)))));
@@ -1738,42 +1738,42 @@ yyreduce:
     break;
 
   case 46:
-#line 176 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 176 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::action((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 47:
-#line 180 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 180 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 48:
-#line 181 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 181 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::cons((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 49:
-#line 185 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 185 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 50:
-#line 186 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 186 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::condition((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].item)); ;}
     break;
 
   case 51:
-#line 190 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 190 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 52:
-#line 191 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 191 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::alternative((yyvsp[(1) - (3)].item), (yyvsp[(3) - (3)].item)); ;}
     break;
 
   case 53:
-#line 196 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 196 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
                           (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(6) - (7)].item), (yyvsp[(4) - (7)].str));
@@ -1781,7 +1781,7 @@ yyreduce:
     break;
 
   case 54:
-#line 201 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 201 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
                           (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(5) - (7)].item), (yyvsp[(7) - (7)].str));
@@ -1789,27 +1789,27 @@ yyreduce:
     break;
 
   case 55:
-#line 206 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 206 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::evolve((yyvsp[(1) - (4)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (4)].str)), 0, (yyvsp[(4) - (4)].str)); ;}
     break;
 
   case 56:
-#line 210 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 210 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = ""; ;}
     break;
 
   case 57:
-#line 211 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 211 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 58:
-#line 215 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 215 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 59:
-#line 217 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 217 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(1) - (2)].item);
           while (last->mNext != 0) {
@@ -1821,58 +1821,58 @@ yyreduce:
     break;
 
   case 60:
-#line 229 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 229 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), (yyvsp[(3) - (6)].variableType), false, (yyvsp[(4) - (6)].str), (yyvsp[(6) - (6)].str)); ;}
     break;
 
   case 61:
-#line 231 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 231 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (5)].declarationType), (yyvsp[(2) - (5)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, false, (yyvsp[(4) - (5)].str), ""); ;}
     break;
 
   case 62:
-#line 233 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 233 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (7)].declarationType), (yyvsp[(2) - (7)].storageType), (yyvsp[(3) - (7)].variableType), true, (yyvsp[(5) - (7)].str), (yyvsp[(7) - (7)].str)); ;}
     break;
 
   case 63:
-#line 235 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 235 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, true, (yyvsp[(5) - (6)].str), ""); ;}
     break;
 
   case 64:
-#line 239 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 239 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     ;}
     break;
 
   case 65:
-#line 240 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 240 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  ;}
     break;
 
   case 66:
-#line 244 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 244 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    ;}
     break;
 
   case 67:
-#line 245 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 245 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     ;}
     break;
 
   case 68:
-#line 249 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 249 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeNode;             ;}
     break;
 
   case 69:
-#line 250 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 250 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeVariable;         ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1876 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
+#line 1876 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2086,6 +2086,6 @@ yyreturn:
 }
 
 
-#line 253 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 253 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
 

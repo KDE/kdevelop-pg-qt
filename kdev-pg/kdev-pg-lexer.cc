@@ -1,6 +1,6 @@
-#line 2 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 2 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
-#line 4 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 4 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -682,8 +682,8 @@ static int yy_more_len = 0;
 #define YY_MORE_ADJ (yy_more_len)
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-#line 2 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 1 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 2 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* This file is part of kdev-pg
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
@@ -743,7 +743,7 @@ namespace {
 
 
 
-#line 747 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 747 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
 #define INITIAL 0
 #define CODE 1
@@ -765,6 +765,35 @@ namespace {
 #endif
 
 static int yy_init_globals (void );
+
+/* Accessor methods to globals.
+   These are made visible to non-reentrant scanners for convenience. */
+
+int yylex_destroy (void );
+
+int yyget_debug (void );
+
+void yyset_debug (int debug_flag  );
+
+YY_EXTRA_TYPE yyget_extra (void );
+
+void yyset_extra (YY_EXTRA_TYPE user_defined  );
+
+FILE *yyget_in (void );
+
+void yyset_in  (FILE * in_str  );
+
+FILE *yyget_out (void );
+
+void yyset_out  (FILE * out_str  );
+
+int yyget_leng (void );
+
+char *yyget_text (void );
+
+int yyget_lineno (void );
+
+void yyset_lineno (int line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -901,11 +930,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 68 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 68 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 
 
 
-#line 909 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 938 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
 	if ( !(yy_init) )
 		{
@@ -1003,201 +1032,201 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 71 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 71 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 72 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 72 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 73 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 73 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 75 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 75 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleBody;   return ';';
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 76 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 76 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleFooter; return T_ARROW;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 78 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 79 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 79 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ')';
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 80 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 80 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ',';
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 81 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 81 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '0';
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 82 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 82 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 83 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 83 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '.';
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 84 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 84 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ':';
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 85 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 85 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '=';
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 86 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 86 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '+';
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 87 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 87 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '*';
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 88 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 88 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '?';
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 89 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 89 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '@';
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 90 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 90 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '|';
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 92 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 92 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TRY_RECOVER;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 93 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 93 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TRY_ROLLBACK;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 94 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 94 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_CATCH;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 96 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 96 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_EXPORT_MACRO;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 97 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 97 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_EXPORT_MACRO_HEADER;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 98 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 98 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN_DECLARATION;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 99 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 99 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN_STREAM_DECLARATION;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 100 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 100 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_NAMESPACE_DECLARATION;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 101 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 101 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 	YY_BREAK
 
 case 28:
 YY_RULE_SETUP
-#line 105 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 105 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 106 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 106 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 107 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 107 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 108 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 108 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PUBLIC;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 109 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 109 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PRIVATE;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 110 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 110 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PROTECTED;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 111 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 111 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_DECLARATION;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 112 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 112 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_CONSTRUCTOR;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 113 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 113 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_DESTRUCTOR;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 114 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 114 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); return ')';
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 115 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 115 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 case 39:
 YY_RULE_SETUP
-#line 119 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 119 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     if (rulePosition == RuleBody) { /* use the arguments in a rule call */
       openBrackets = 0;
@@ -1212,32 +1241,32 @@ YY_RULE_SETUP
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 130 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 130 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline(); yymore();
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 131 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 131 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* this and... */
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 132 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 132 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* ...this prevent brackets inside strings to be counted */
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 133 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 133 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* gather everything that's not a bracket, and append what comes next */
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 134 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 134 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 openBrackets++; yymore();
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 135 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 135 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     openBrackets--;
     if (openBrackets < 0) {
@@ -1248,7 +1277,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(RULE_ARGUMENTS):
-#line 143 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 143 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     qDebug() << "Encountered end of file in an unclosed rule argument specification..." << endl;
@@ -1260,78 +1289,78 @@ case YY_STATE_EOF(RULE_ARGUMENTS):
 
 case 46:
 YY_RULE_SETUP
-#line 152 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 152 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 153 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 153 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 154 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 154 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 155 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 155 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(RULE_PARAMETERS_VARNAME); return ':';
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 156 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 156 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 157 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 157 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_MEMBER;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 158 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 158 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TEMPORARY;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 159 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 159 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_ARGUMENT;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 160 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 160 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_NODE;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 161 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 161 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 162 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 162 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_VARIABLE;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 163 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 163 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ';';  /* only used for "token" types */
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 164 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 164 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 165 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 165 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); return ']';
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 166 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 166 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
@@ -1339,17 +1368,17 @@ BEGIN(INITIAL); REJECT; /* everything else */
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 170 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 170 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline(); yymore();
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 171 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 171 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* gather everything that's not a semicolon, and append what comes next */
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 172 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 172 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     // strip trailing whitespace
     int length = yyleng-1; // and first, the trailing semicolon
@@ -1372,35 +1401,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 191 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 191 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 case 65:
 YY_RULE_SETUP
-#line 195 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 195 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(CODE);
 	YY_BREAK
 
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 197 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 197 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline(); yymore();
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 198 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 198 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* gather everything that's not a colon, and append what comes next */
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 199 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 199 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* also gather colons that are not followed by colons or newlines */
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 200 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 200 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     COPY_TO_YYLVAL(yytext,yyleng-2); /* cut off the trailing stuff */
     BEGIN(INITIAL);
@@ -1408,7 +1437,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(CODE):
-#line 205 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 205 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     qDebug() << "Encountered end of file in an unclosed code segment..." << endl;
@@ -1419,17 +1448,17 @@ case YY_STATE_EOF(CODE):
 
 case 70:
 YY_RULE_SETUP
-#line 214 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 214 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 215 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 215 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 218 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 218 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
    yytext++;                         /* start inside the quotes */
    COPY_TO_YYLVAL(yytext,yyleng-2);  /* cut off the trailing quote */
@@ -1438,7 +1467,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 224 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 224 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
   qDebug() << "Unexpected character: ``" << yytext[0] << "''" << endl;
   yyerror("");
@@ -1446,10 +1475,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 230 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 230 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 ECHO;
 	YY_BREAK
-#line 1453 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 1482 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 			case YY_STATE_EOF(INITIAL):
 			case YY_STATE_EOF(PARSERCLASS):
 			case YY_STATE_EOF(RULE_PARAMETERS_HEADER):
@@ -1654,7 +1683,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), (size_t) num_to_read );
+			(yy_n_chars), num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -2150,7 +2179,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 
 /** Setup the input buffer state to scan a string. The next call to yylex() will
  * scan from a @e copy of @a str.
- * @param yystr a NUL-terminated string to scan
+ * @param str a NUL-terminated string to scan
  * 
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
@@ -2412,7 +2441,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 230 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 230 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 
 
 

@@ -23,6 +23,8 @@
 #define KDEV_PG_ALLOCATOR_H
 
 #include <memory>
+#include <cstdlib>
+#include <cstring>
 
 #include <QtCore/QtGlobal>
 
@@ -59,7 +61,7 @@ public:
 
         --sBlockIndex;
 
-        ::free(sStorage);
+        std::free(sStorage);
       }
   }
 
@@ -82,12 +84,12 @@ public:
         ++sBlockIndex;
 
         sStorage = reinterpret_cast<char**>
-          (::realloc(sStorage, sizeof(char*) * (1 + sBlockIndex)));
+          (std::realloc(sStorage, sizeof(char*) * (1 + sBlockIndex)));
 
         sCurrentBlock = sStorage[sBlockIndex] = reinterpret_cast<char*>
           (new char[sBlockSize]);
 
-        ::memset(sCurrentBlock, 0, sBlockSize);
+        std::memset(sCurrentBlock, 0, sBlockSize);
         sCurrentIndex = 0;
       }
 

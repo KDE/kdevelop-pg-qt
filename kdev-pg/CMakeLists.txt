@@ -87,7 +87,7 @@ IF(FLEX_EXECUTABLE)
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("'flex' was not found!")
     MESSAGE("Assuming existence of the generated lexer file kdev-pg-lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc)
+    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc ${parser_srcs})
 ENDIF(FLEX_EXECUTABLE)
 
 

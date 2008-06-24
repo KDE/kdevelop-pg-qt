@@ -1,6 +1,6 @@
-#line 2 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 2 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
-#line 4 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 4 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -9,7 +9,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 33
+#define YY_FLEX_SUBMINOR_VERSION 35
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -31,7 +31,7 @@
 
 /* C99 systems have <inttypes.h>. Non-C99 systems may or may not. */
 
-#if __STDC_VERSION__ >= 199901L
+#if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
  * if you want the limit (max/min) macros for int types. 
@@ -54,7 +54,6 @@ typedef int flex_int32_t;
 typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
-#endif /* ! C99 */
 
 /* Limits of integral types. */
 #ifndef INT8_MIN
@@ -85,6 +84,8 @@ typedef unsigned int flex_uint32_t;
 #define UINT32_MAX             (4294967295U)
 #endif
 
+#endif /* ! C99 */
+
 #endif /* ! FLEXINT_H */
 
 #ifdef __cplusplus
@@ -94,11 +95,12 @@ typedef unsigned int flex_uint32_t;
 
 #else	/* ! __cplusplus */
 
-#if __STDC__
+/* C99 requires __STDC__ to be defined as 1. */
+#if defined (__STDC__)
 
 #define YY_USE_CONST
 
-#endif	/* __STDC__ */
+#endif	/* defined (__STDC__) */
 #endif	/* ! __cplusplus */
 
 #ifdef YY_USE_CONST
@@ -178,14 +180,9 @@ extern FILE *yyin, *yyout;
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
-/* The following is because we cannot portably get our hands on size_t
- * (without autoconf's help, which isn't available because we want
- * flex-generated scanners to compile on their own).
- */
-
 #ifndef YY_TYPEDEF_YY_SIZE_T
 #define YY_TYPEDEF_YY_SIZE_T
-typedef unsigned int yy_size_t;
+typedef size_t yy_size_t;
 #endif
 
 #ifndef YY_STRUCT_YY_BUFFER_STATE
@@ -365,8 +362,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 74
-#define YY_END_OF_BUFFER 75
+#define YY_NUM_RULES 75
+#define YY_END_OF_BUFFER 76
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -374,41 +371,41 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_acclist[275] =
+static yyconst flex_int16_t yy_acclist[276] =
     {   0,
-        1,    1,   67,   67,   28,   28,   43,   43,   46,   46,
-       62,   62,   75,   73,   74,    1,   73,   74,    2,   74,
-        2,   73,   74,   73,   74,   10,   73,   74,   73,   74,
-        6,   73,   74,    7,   73,   74,   15,   73,   74,   14,
-       73,   74,    8,   73,   74,   73,   74,   11,   73,   74,
-        9,   71,   73,   74,   71,   73,   74,   12,   73,   74,
-       73,   74,   13,   73,   74,   16,   73,   74,   17,   73,
-       74,   70,   71,   73,   74,   39,   73,   74,   71,   73,
-       74,   71,   73,   74,   18,   73,   74,   67,   74,   66,
-       74,   66,   74,   68,   74,   38,   74,   28,   38,   74,
+        1,    1,   68,   68,   29,   29,   44,   44,   47,   47,
+       63,   63,   76,   74,   75,    1,   74,   75,    2,   75,
+        2,   74,   75,   74,   75,   10,   74,   75,   74,   75,
+        6,   74,   75,    7,   74,   75,   15,   74,   75,   14,
+       74,   75,    8,   74,   75,   74,   75,   11,   74,   75,
+        9,   72,   74,   75,   72,   74,   75,   12,   74,   75,
+       74,   75,   13,   74,   75,   16,   74,   75,   17,   74,
+       75,   71,   72,   74,   75,   40,   74,   75,   72,   74,
+       75,   72,   74,   75,   18,   74,   75,   68,   75,   67,
+       75,   67,   75,   69,   75,   39,   75,   29,   39,   75,
 
-       29,   74,   29,   38,   74,   30,   38,   74,   37,   38,
-       74,   38,   74,   38,   74,   38,   74,   43,   74,   40,
-       74,   40,   74,   42,   74,   44,   74,   45,   74,   60,
-       74,   46,   60,   74,   47,   74,   47,   60,   74,   50,
-       60,   74,   60,   74,   58,   60,   74,   49,   60,   74,
-       57,   60,   74,   59,   60,   74,   58,   60,   74,   58,
-       60,   74,   58,   60,   74,   58,   60,   74,   58,   60,
-       74,   62,   64,   74,   61,   74,   61,   64,   74,   63,
-       64,   74,    1,    2,   72,    3,    5,   71,    4,   70,
-       71,   65,   71,   71,   67,   66,   68,   68,   69,   28,
+       30,   75,   30,   39,   75,   31,   39,   75,   38,   39,
+       75,   39,   75,   39,   75,   39,   75,   44,   75,   41,
+       75,   41,   75,   43,   75,   45,   75,   46,   75,   61,
+       75,   47,   61,   75,   48,   75,   48,   61,   75,   51,
+       61,   75,   61,   75,   59,   61,   75,   50,   61,   75,
+       58,   61,   75,   60,   61,   75,   59,   61,   75,   59,
+       61,   75,   59,   61,   75,   59,   61,   75,   59,   61,
+       75,   63,   65,   75,   62,   75,   62,   65,   75,   64,
+       65,   75,    1,    2,   73,    3,    5,   72,    4,   71,
+       72,   66,   72,   72,   68,   67,   69,   69,   70,   29,
 
-       29,   43,   40,   41,   46,   47,   48,   58,   49,   58,
-       58,   58,   58,   58,   58,   62,   61,   72,    3,   71,
-       71,   41,   48,   58,   58,   58,   58,   58,   58,   71,
-       58,   58,   54,   58,   58,   58,   58,   21,   71,   58,
-       58,   58,   55,   58,   58,   24,   31,   58,   51,   58,
-       58,   58,   32,   58,   58,   58,   53,   58,   58,   56,
-       58,   33,   52,   58,   26,   36,   19,   35,   34,   27,
-       20,   22,   25,   23
+       30,   44,   41,   42,   47,   48,   49,   59,   50,   59,
+       59,   59,   59,   59,   59,   63,   62,   73,    3,   72,
+       72,   42,   49,   59,   59,   59,   59,   59,   59,   72,
+       59,   59,   55,   59,   59,   59,   59,   21,   72,   59,
+       59,   59,   56,   59,   59,   24,   32,   59,   52,   59,
+       59,   59,   33,   59,   59,   59,   54,   59,   59,   57,
+       59,   34,   53,   59,   26,   37,   19,   36,   35,   27,
+       20,   22,   25,   28,   23
     } ;
 
-static yyconst flex_int16_t yy_accept[270] =
+static yyconst flex_int16_t yy_accept[287] =
     {   0,
         1,    2,    3,    4,    5,    6,    7,    8,    9,   10,
        11,   12,   13,   14,   16,   19,   21,   24,   26,   29,
@@ -418,27 +415,29 @@ static yyconst flex_int16_t yy_accept[270] =
       114,  116,  118,  120,  122,  124,  126,  128,  130,  132,
       135,  137,  140,  143,  145,  148,  151,  154,  157,  160,
       163,  166,  169,  172,  175,  177,  180,  183,  184,  185,
-      185,  186,  186,  186,  186,  186,  186,  187,  188,  189,
-      190,  192,  193,  194,  195,  196,  197,  198,  199,  200,
+      185,  186,  186,  186,  186,  186,  186,  186,  187,  188,
+      189,  190,  192,  193,  194,  195,  196,  197,  198,  199,
 
-      201,  202,  202,  202,  202,  202,  203,  204,  204,  205,
-      205,  206,  207,  208,  209,  210,  211,  212,  213,  214,
-      215,  216,  217,  218,  218,  219,  219,  219,  219,  219,
-      219,  220,  221,  222,  222,  222,  222,  222,  222,  222,
-      222,  223,  223,  224,  225,  226,  227,  228,  229,  230,
-      230,  230,  230,  230,  231,  231,  231,  231,  231,  231,
-      231,  231,  232,  233,  235,  236,  237,  238,  238,  238,
-      238,  238,  240,  240,  240,  240,  240,  240,  240,  240,
-      241,  242,  243,  245,  246,  246,  246,  246,  247,  247,
-      247,  247,  247,  247,  247,  247,  248,  249,  251,  252,
+      200,  201,  202,  202,  202,  202,  202,  203,  204,  204,
+      205,  205,  206,  207,  208,  209,  210,  211,  212,  213,
+      214,  215,  216,  217,  218,  218,  219,  219,  219,  219,
+      219,  219,  219,  220,  221,  222,  222,  222,  222,  222,
+      222,  222,  222,  223,  223,  224,  225,  226,  227,  228,
+      229,  230,  230,  230,  230,  230,  230,  231,  231,  231,
+      231,  231,  231,  231,  231,  232,  233,  235,  236,  237,
+      238,  238,  238,  238,  238,  238,  240,  240,  240,  240,
+      240,  240,  240,  240,  241,  242,  243,  245,  246,  246,
+      246,  246,  246,  247,  247,  247,  247,  247,  247,  247,
 
-      253,  253,  253,  253,  253,  253,  253,  253,  253,  253,
-      254,  254,  255,  256,  257,  257,  257,  257,  257,  257,
-      257,  257,  257,  257,  257,  259,  260,  262,  262,  262,
-      262,  262,  262,  262,  262,  262,  262,  263,  265,  265,
-      266,  266,  266,  266,  266,  266,  266,  267,  267,  267,
-      267,  268,  268,  269,  270,  270,  271,  271,  272,  273,
-      274,  274,  274,  274,  274,  274,  274,  275,  275
+      247,  248,  249,  251,  252,  253,  253,  253,  253,  253,
+      253,  253,  253,  253,  253,  253,  254,  254,  255,  256,
+      257,  257,  257,  257,  257,  257,  257,  257,  257,  257,
+      257,  257,  259,  260,  262,  262,  262,  262,  262,  262,
+      262,  262,  262,  262,  262,  263,  265,  265,  265,  266,
+      266,  266,  266,  266,  266,  266,  267,  267,  267,  267,
+      267,  268,  268,  269,  270,  270,  270,  271,  271,  272,
+      272,  273,  274,  274,  274,  274,  274,  274,  274,  274,
+      274,  275,  275,  275,  276,  276
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -482,77 +481,83 @@ static yyconst flex_int32_t yy_meta[51] =
         4,    4,    4,    4,    4,    4,    4,    4,    4,    1
     } ;
 
-static yyconst flex_int16_t yy_base[285] =
+static yyconst flex_int16_t yy_base[302] =
     {   0,
         0,    0,   48,   50,   67,  108,   52,   55,  150,    0,
-       59,   69,  417,  418,  414,  418,  412,   59,  418,   41,
-      418,  418,  418,  418,  418,   71,  418,    0,    0,  418,
-      395,  418,  418,  418,   37,  395,  383,  368,  418,    0,
-      418,  407,   69,  418,  407,  418,  405,  418,  418,  366,
-      373,   47,    0,  418,  402,   89,  418,  418,  418,  402,
-      418,  400,  418,  389,    0,  399,  418,  418,  357,  366,
-      357,   56,  368,    0,  418,  393,  418,  393,  418,   95,
-      418,   96,  346,  364,  363,  350,    0,  418,    0,  418,
-       67,  418,  345,  340,    0,  418,   86,   87,  418,  386,
+       59,   69,  434,  435,  431,  435,  429,   59,  435,   60,
+      435,  435,  435,  435,  435,   70,  435,    0,    0,  435,
+      412,  435,  435,  435,   37,  412,  400,  385,  435,    0,
+      435,  424,   63,  435,  424,  435,  422,  435,  435,  383,
+      390,   41,    0,  435,  419,   69,  435,  435,  435,  419,
+      435,  417,  435,  406,    0,  416,  435,  435,  374,  383,
+      374,   53,  385,    0,  435,  410,  435,  410,  435,   87,
+      435,   92,  367,  362,  380,  379,  366,    0,  435,    0,
+      435,   79,  435,  361,  356,    0,  435,   88,   96,  435,
 
-      418,  347,   75,   66,  356,    0,  418,   98,  418,  103,
-      383,  418,    0,    0,  382,  349,  343,  349,  341,  342,
-      335,    0,  418,  115,  118,  120,  335,  337,  332,  337,
-        0,  342,  357,  327,  332,  324,  321,  322,  328,  121,
-      122,  123,    0,  319,  334,  330,  320,  328,  324,  318,
-      325,  313,  323,  320,  311,  308,  323,  308,  321,  316,
-      312,  308,  313,    0,  304,  304,  314,  299,  297,  307,
-      299,    0,   97,  295,  294,  290,  290,  303,  302,  299,
-      288,  287,    0,  299,  283,  285,  283,  297,  293,  285,
-      276,  292,  289,  286,  273,  418,  277,    0,  287,  277,
+      402,  435,  363,   77,   60,  372,    0,  435,   99,  435,
+      115,  399,  435,    0,    0,  398,  365,  359,  365,  357,
+      358,  351,    0,  435,  117,  119,  121,  348,  350,  352,
+      347,  352,    0,  357,  372,  342,  347,  339,  336,  337,
+      343,  122,  123,  196,    0,  334,  349,  345,  335,  343,
+      339,  346,  332,  339,  327,  337,  334,  325,  322,  337,
+      322,  335,  330,  326,  322,  327,    0,  318,  318,  328,
+      323,  312,  310,  320,  312,    0,   96,  308,  307,  303,
+      303,  316,  315,  312,  301,  300,    0,  312,  293,  295,
+      297,  295,  309,  305,  297,  288,  304,  301,  298,  285,
 
-      286,  284,  281,  267,  269,  271,  277,  262,  261,  418,
-      272,  259,  260,  269,  262,  269,  261,  253,  250,  266,
-      250,  258,  252,  260,    0,  242,    0,  261,  256,  259,
-      244,  253,  256,  243,  238,  230,  418,    0,  236,  418,
-      217,  223,  207,  214,  201,  198,  418,  192,  188,  197,
-      418,  108,  418,  418,  102,  418,  103,  418,  109,  418,
-      101,  102,  105,  101,   99,   88,  418,  418,  200,  206,
-      212,  218,  224,  114,  230,  236,  242,  248,   63,  254,
-      259,  265,  271,  277
+      435,  289,    0,  299,  289,  281,  297,  295,  292,  278,
+      280,  282,  288,  273,  272,  435,  283,  270,  271,  280,
+      269,  272,  279,  271,  263,  260,  276,  256,  259,  248,
+      251,    0,  229,    0,  243,  238,  233,  231,  214,  221,
+      219,  180,  179,  176,  435,    0,  190,  186,  435,  172,
+      182,  171,  182,  169,  171,  435,  171,  166,  164,  178,
+      435,  169,  435,  435,  172,  163,  435,  164,  435,  163,
+      118,  435,  114,  107,  105,  103,   92,  105,   89,  100,
+      435,   98,   87,  435,  435,  222,  228,  234,  240,  246,
+      115,  252,  258,  264,  270,   63,  276,  281,  287,  293,
+
+      299
     } ;
 
-static yyconst flex_int16_t yy_def[285] =
+static yyconst flex_int16_t yy_def[302] =
     {   0,
-      268,    1,  269,  269,  270,  270,  271,  271,  268,    9,
-      272,  272,  268,  268,  268,  268,  268,  273,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  274,  274,  268,
-      268,  268,  268,  268,  274,  268,  274,  274,  268,  275,
-      268,  268,  276,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  277,  268,  268,  278,  268,  268,  268,  268,
-      268,  268,  268,  268,  279,  268,  268,  268,  279,  279,
-      279,  279,  279,  280,  268,  268,  268,  268,  268,  273,
-      268,  281,  268,  268,  268,  268,  282,  268,  274,  268,
-      274,  268,  274,  274,  275,  268,  276,  276,  268,  268,
+      285,    1,  286,  286,  287,  287,  288,  288,  285,    9,
+      289,  289,  285,  285,  285,  285,  285,  290,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  291,  291,  285,
+      285,  285,  285,  285,  291,  285,  291,  291,  285,  292,
+      285,  285,  293,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  294,  285,  285,  295,  285,  285,  285,  285,
+      285,  285,  285,  285,  296,  285,  285,  285,  296,  296,
+      296,  296,  296,  297,  285,  285,  285,  285,  285,  290,
+      285,  298,  285,  285,  285,  285,  285,  299,  285,  291,
+      285,  291,  285,  291,  291,  292,  285,  293,  293,  285,
 
-      268,  268,  268,  268,  268,  277,  268,  278,  268,  283,
-      268,  268,  284,  279,  268,  279,  279,  279,  279,  279,
-      279,  280,  268,  273,  273,  281,  268,  268,  268,  268,
-      282,  274,  274,  268,  268,  268,  268,  268,  268,  278,
-      278,  283,  284,  279,  279,  279,  279,  279,  279,  268,
-      268,  268,  268,  274,  268,  268,  268,  268,  268,  268,
-      268,  279,  279,  279,  279,  279,  279,  268,  268,  268,
-      268,  274,  268,  268,  268,  268,  268,  268,  268,  279,
-      279,  279,  279,  279,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  279,  279,  279,  279,
+      285,  285,  285,  285,  285,  285,  294,  285,  295,  285,
+      300,  285,  285,  301,  296,  285,  296,  296,  296,  296,
+      296,  296,  297,  285,  290,  290,  298,  285,  285,  285,
+      285,  285,  299,  291,  291,  285,  285,  285,  285,  285,
+      285,  295,  295,  300,  301,  296,  296,  296,  296,  296,
+      296,  285,  285,  285,  285,  285,  291,  285,  285,  285,
+      285,  285,  285,  285,  296,  296,  296,  296,  296,  296,
+      285,  285,  285,  285,  285,  291,  285,  285,  285,  285,
+      285,  285,  285,  296,  296,  296,  296,  296,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
 
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  279,  279,  279,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  279,  279,  279,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  279,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,    0,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268
+      285,  296,  296,  296,  296,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  296,  296,  296,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  296,  296,  296,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  296,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,    0,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+
+      285
     } ;
 
-static yyconst flex_int16_t yy_nxt[469] =
+static yyconst flex_int16_t yy_nxt[486] =
     {   0,
        14,   15,   16,   17,   18,   19,   20,   21,   22,   23,
        24,   25,   26,   27,   14,   28,   29,   30,   31,   32,
@@ -560,54 +565,56 @@ static yyconst flex_int16_t yy_nxt[469] =
        37,   29,   29,   29,   29,   29,   29,   29,   29,   29,
        29,   29,   29,   29,   38,   29,   29,   29,   29,   39,
        41,   42,   41,   42,   54,   55,   56,   54,   55,   56,
-       91,   75,   76,   81,   91,   43,  114,   43,   45,   46,
-       47,   75,   76,   83,   48,   49,   57,   77,   58,   57,
-       84,   58,   85,   87,   82,   86,   98,   77,  119,  104,
-       91,   88,  105,  109,   91,   99,  120,   50,   51,   81,
+       92,   75,   76,   81,   92,   43,  115,   43,   45,   46,
+       47,   75,   76,  110,   48,   49,   57,   77,   58,   57,
+       99,   58,   88,  105,   82,  120,  106,   77,   83,  100,
+       89,   81,   84,  121,  111,  139,  126,   50,   51,   85,
 
-      125,  137,  109,  268,   98,  135,  138,  141,   52,   45,
-       46,   47,  268,  268,  110,   48,   49,   89,  136,   81,
-       82,  126,   81,  110,  125,  109,  109,  141,  142,  189,
-      267,  266,  265,  264,  263,  262,  261,  190,   50,   51,
-       82,  260,  259,   82,  258,  126,  110,  110,  142,   52,
+      140,   86,   92,  110,   87,  285,   92,  137,   52,   45,
+       46,   47,   82,   99,  285,   48,   49,  127,   90,  143,
+      138,   81,  285,   81,  111,  126,  110,  110,  194,  284,
+      283,  282,  281,  280,  279,  278,  195,  277,   50,   51,
+      144,  276,   82,  275,   82,  274,  127,  111,  111,   52,
        59,   60,   61,   62,   59,   63,   59,   59,   59,   59,
        59,   59,   64,   59,   59,   65,   65,   66,   67,   59,
        59,   59,   59,   65,   59,   59,   68,   65,   69,   65,
        65,   65,   65,   65,   65,   65,   65,   65,   70,   71,
        65,   65,   65,   65,   72,   65,   73,   65,   65,   59,
 
-       40,   40,   40,   40,   40,   40,   44,   44,   44,   44,
-       44,   44,   53,   53,   53,   53,   53,   53,   74,   74,
-       74,   74,   74,   74,   80,  257,   80,   80,   80,   80,
-       95,  256,   95,   95,  255,   95,   97,  254,   97,   97,
-       97,   97,  106,  253,  252,  106,  106,  106,  108,  251,
-      108,  108,  108,  108,  122,  250,  122,  122,  122,  124,
-      249,  124,  124,  124,  124,  131,  248,  131,  131,  131,
-      131,  140,  247,  140,  140,  140,  140,  143,  246,  143,
-      143,  143,  143,  245,  244,  243,  242,  241,  240,  239,
-      238,  237,  236,  235,  234,  233,  232,  231,  230,  229,
+      143,  273,  272,  271,  270,  269,  268,  267,  266,  265,
+      264,  263,  262,  261,  260,  259,  258,  257,  256,  255,
+      254,  144,   40,   40,   40,   40,   40,   40,   44,   44,
+       44,   44,   44,   44,   53,   53,   53,   53,   53,   53,
+       74,   74,   74,   74,   74,   74,   80,  253,   80,   80,
+       80,   80,   96,  252,   96,   96,  251,   96,   98,  250,
+       98,   98,   98,   98,  107,  249,  248,  107,  107,  107,
+      109,  247,  109,  109,  109,  109,  123,  246,  123,  123,
+      123,  125,  245,  125,  125,  125,  125,  133,  244,  133,
+      133,  133,  133,  142,  243,  142,  142,  142,  142,  145,
 
-      228,  227,  226,  225,  224,  223,  222,  221,  220,  219,
-      218,  217,  216,  215,  214,  213,  212,  211,  210,  209,
-      208,  207,  206,  205,  204,  203,  202,  201,  200,  199,
-      198,  197,  196,  195,  194,  193,  192,  191,  188,  187,
-      186,  185,  184,  183,  182,  181,  180,  179,  178,  177,
-      176,  175,  174,  173,  172,  171,  170,  169,  168,  167,
-      166,  165,  164,  163,  162,  161,  160,  159,  158,  157,
-      156,  155,  154,  153,  152,  151,  150,  149,  148,  147,
-      146,  145,  144,  115,  111,  139,  134,  100,  133,  132,
-      130,  129,  128,  127,   78,  123,  121,  118,  117,  116,
+      242,  145,  145,  145,  145,  241,  240,  239,  238,  237,
+      236,  235,  234,  233,  232,  231,  230,  229,  228,  227,
+      226,  225,  224,  223,  222,  221,  220,  219,  218,  217,
+      216,  215,  214,  213,  212,  211,  210,  209,  208,  207,
+      206,  205,  204,  203,  202,  201,  200,  199,  198,  197,
+      196,  193,  192,  191,  190,  189,  188,  187,  186,  185,
+      184,  183,  182,  181,  180,  179,  178,  177,  176,  175,
+      174,  173,  172,  171,  170,  169,  168,  167,  166,  165,
+      164,  163,  162,  161,  160,  159,  158,  157,  156,  155,
+      154,  153,  152,  151,  150,  149,  148,  147,  146,  116,
 
-      115,  113,  112,  111,  107,  103,  102,  101,  100,   96,
-       94,   93,   92,   90,   79,   78,  268,   13,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268
+      112,  141,  136,  101,  135,  134,  132,  131,  130,  129,
+      128,   78,  124,  122,  119,  118,  117,  116,  114,  113,
+      112,  108,  104,  103,  102,  101,   97,   95,   94,   93,
+       91,   79,   78,  285,   13,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285
     } ;
 
-static yyconst flex_int16_t yy_chk[469] =
+static yyconst flex_int16_t yy_chk[486] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -615,51 +622,53 @@ static yyconst flex_int16_t yy_chk[469] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         3,    3,    4,    4,    7,    7,    7,    8,    8,    8,
-       35,   11,   11,   18,   35,    3,  279,    4,    5,    5,
-        5,   12,   12,   20,    5,    5,    7,   11,    7,    8,
-       20,    8,   20,   26,   18,   20,   43,   12,   72,   52,
-       91,   26,   52,   56,   91,   43,   72,    5,    5,   80,
+       35,   11,   11,   18,   35,    3,  296,    4,    5,    5,
+        5,   12,   12,   56,    5,    5,    7,   11,    7,    8,
+       43,    8,   26,   52,   18,   72,   52,   12,   20,   43,
+       26,   80,   20,   72,   56,  105,   82,    5,    5,   20,
 
-       82,  104,  108,   97,   98,  103,  104,  110,    5,    6,
-        6,    6,   97,   98,   56,    6,    6,  274,  103,  124,
-       80,   82,  125,  108,  126,  140,  141,  142,  110,  173,
-      266,  265,  264,  263,  262,  261,  259,  173,    6,    6,
-      124,  257,  255,  125,  252,  126,  140,  141,  142,    6,
+      105,   20,   92,  109,   20,   98,   92,  104,    5,    6,
+        6,    6,   80,   99,   98,    6,    6,   82,  291,  111,
+      104,  125,   99,  126,  109,  127,  142,  143,  177,  283,
+      282,  280,  279,  278,  277,  276,  177,  275,    6,    6,
+      111,  274,  125,  273,  126,  271,  127,  142,  143,    6,
         9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
         9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
         9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
         9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
         9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
 
-      269,  269,  269,  269,  269,  269,  270,  270,  270,  270,
-      270,  270,  271,  271,  271,  271,  271,  271,  272,  272,
-      272,  272,  272,  272,  273,  250,  273,  273,  273,  273,
-      275,  249,  275,  275,  248,  275,  276,  246,  276,  276,
-      276,  276,  277,  245,  244,  277,  277,  277,  278,  243,
-      278,  278,  278,  278,  280,  242,  280,  280,  280,  281,
-      241,  281,  281,  281,  281,  282,  239,  282,  282,  282,
-      282,  283,  236,  283,  283,  283,  283,  284,  235,  284,
-      284,  284,  284,  234,  233,  232,  231,  230,  229,  228,
-      226,  224,  223,  222,  221,  220,  219,  218,  217,  216,
+      144,  270,  268,  266,  265,  262,  260,  259,  258,  257,
+      255,  254,  253,  252,  251,  250,  248,  247,  244,  243,
+      242,  144,  286,  286,  286,  286,  286,  286,  287,  287,
+      287,  287,  287,  287,  288,  288,  288,  288,  288,  288,
+      289,  289,  289,  289,  289,  289,  290,  241,  290,  290,
+      290,  290,  292,  240,  292,  292,  239,  292,  293,  238,
+      293,  293,  293,  293,  294,  237,  236,  294,  294,  294,
+      295,  235,  295,  295,  295,  295,  297,  233,  297,  297,
+      297,  298,  231,  298,  298,  298,  298,  299,  230,  299,
+      299,  299,  299,  300,  229,  300,  300,  300,  300,  301,
 
-      215,  214,  213,  212,  211,  209,  208,  207,  206,  205,
-      204,  203,  202,  201,  200,  199,  197,  195,  194,  193,
-      192,  191,  190,  189,  188,  187,  186,  185,  184,  182,
-      181,  180,  179,  178,  177,  176,  175,  174,  171,  170,
-      169,  168,  167,  166,  165,  163,  162,  161,  160,  159,
-      158,  157,  156,  155,  154,  153,  152,  151,  150,  149,
-      148,  147,  146,  145,  144,  139,  138,  137,  136,  135,
-      134,  133,  132,  130,  129,  128,  127,  121,  120,  119,
-      118,  117,  116,  115,  111,  105,  102,  100,   94,   93,
-       86,   85,   84,   83,   78,   76,   73,   71,   70,   69,
+      228,  301,  301,  301,  301,  227,  226,  225,  224,  223,
+      222,  221,  220,  219,  218,  217,  215,  214,  213,  212,
+      211,  210,  209,  208,  207,  206,  205,  204,  202,  200,
+      199,  198,  197,  196,  195,  194,  193,  192,  191,  190,
+      189,  188,  186,  185,  184,  183,  182,  181,  180,  179,
+      178,  175,  174,  173,  172,  171,  170,  169,  168,  166,
+      165,  164,  163,  162,  161,  160,  159,  158,  157,  156,
+      155,  154,  153,  152,  151,  150,  149,  148,  147,  146,
+      141,  140,  139,  138,  137,  136,  135,  134,  132,  131,
+      130,  129,  128,  122,  121,  120,  119,  118,  117,  116,
 
-       66,   64,   62,   60,   55,   51,   50,   47,   45,   42,
-       38,   37,   36,   31,   17,   15,   13,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268,  268,  268,
-      268,  268,  268,  268,  268,  268,  268,  268
+      112,  106,  103,  101,   95,   94,   87,   86,   85,   84,
+       83,   78,   76,   73,   71,   70,   69,   66,   64,   62,
+       60,   55,   51,   50,   47,   45,   42,   38,   37,   36,
+       31,   17,   15,   13,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285,  285,  285,  285,  285,  285,
+      285,  285,  285,  285,  285
     } ;
 
 extern int yy_flex_debug;
@@ -682,8 +691,8 @@ static int yy_more_len = 0;
 #define YY_MORE_ADJ (yy_more_len)
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-#line 2 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 1 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 2 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* This file is part of kdev-pg
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
@@ -743,7 +752,7 @@ namespace {
 
 
 
-#line 747 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 756 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
 #define INITIAL 0
 #define CODE 1
@@ -837,7 +846,7 @@ static int input (void );
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO (void) fwrite( yytext, yyleng, 1, yyout )
+#define ECHO fwrite( yytext, yyleng, 1, yyout )
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -930,11 +939,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 68 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 68 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 
 
 
-#line 938 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 947 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 
 	if ( !(yy_init) )
 		{
@@ -947,6 +956,8 @@ YY_DECL
         /* Create the reject buffer large enough to save one state per allowed character. */
         if ( ! (yy_state_buf) )
             (yy_state_buf) = (yy_state_type *)yyalloc(YY_STATE_BUF_SIZE  );
+            if ( ! (yy_state_buf) )
+                YY_FATAL_ERROR( "out of dynamic memory in yylex()" );
 
 		if ( ! (yy_start) )
 			(yy_start) = 1;	/* first start state */
@@ -996,14 +1007,14 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 269 )
+				if ( yy_current_state >= 286 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			*(yy_state_ptr)++ = yy_current_state;
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 418 );
+		while ( yy_base[yy_current_state] != 435 );
 
 yy_find_action:
 		yy_current_state = *--(yy_state_ptr);
@@ -1032,201 +1043,206 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 71 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 71 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 72 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 72 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 73 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 73 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 75 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 75 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleBody;   return ';';
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 76 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 76 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleFooter; return T_ARROW;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 78 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 79 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 79 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ')';
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 80 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 80 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ',';
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 81 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 81 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '0';
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 82 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 82 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 83 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 83 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '.';
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 84 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 84 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ':';
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 85 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 85 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '=';
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 86 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 86 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '+';
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 87 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 87 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '*';
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 88 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 88 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '?';
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 89 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 89 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '@';
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 90 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 90 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '|';
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 92 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 92 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TRY_RECOVER;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 93 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 93 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TRY_ROLLBACK;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 94 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 94 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_CATCH;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 96 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 96 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_EXPORT_MACRO;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 97 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 97 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_EXPORT_MACRO_HEADER;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 98 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 98 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN_DECLARATION;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 99 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 99 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN_STREAM_DECLARATION;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 100 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 100 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_NAMESPACE_DECLARATION;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 101 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 101 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 	YY_BREAK
-
 case 28:
 YY_RULE_SETUP
-#line 105 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 102 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_AST_DECLARATION;
+	YY_BREAK
+
+case 29:
+YY_RULE_SETUP
+#line 106 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
-case 29:
-/* rule 29 can match eol */
-YY_RULE_SETUP
-#line 106 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-newline();
-	YY_BREAK
 case 30:
+/* rule 30 can match eol */
 YY_RULE_SETUP
-#line 107 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return '(';
+#line 107 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+newline();
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 108 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_PUBLIC;
+#line 108 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return '(';
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 109 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_PRIVATE;
+#line 109 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_PUBLIC;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 110 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_PROTECTED;
+#line 110 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_PRIVATE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 111 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_DECLARATION;
+#line 111 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_PROTECTED;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 112 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_CONSTRUCTOR;
+#line 112 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_DECLARATION;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 113 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_DESTRUCTOR;
+#line 113 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_CONSTRUCTOR;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 114 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-BEGIN(INITIAL); return ')';
+#line 114 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_DESTRUCTOR;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 115 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 115 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+BEGIN(INITIAL); return ')';
+	YY_BREAK
+case 39:
+YY_RULE_SETUP
+#line 116 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
-case 39:
+case 40:
 YY_RULE_SETUP
-#line 119 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 120 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     if (rulePosition == RuleBody) { /* use the arguments in a rule call */
       openBrackets = 0;
@@ -1238,35 +1254,35 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 
-case 40:
-/* rule 40 can match eol */
-YY_RULE_SETUP
-#line 130 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-newline(); yymore();
-	YY_BREAK
 case 41:
+/* rule 41 can match eol */
 YY_RULE_SETUP
-#line 131 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-yymore(); /* this and... */
+#line 131 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+newline(); yymore();
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 132 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-yymore(); /* ...this prevent brackets inside strings to be counted */
+#line 132 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+yymore(); /* this and... */
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 133 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-yymore(); /* gather everything that's not a bracket, and append what comes next */
+#line 133 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+yymore(); /* ...this prevent brackets inside strings to be counted */
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 134 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-openBrackets++; yymore();
+#line 134 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+yymore(); /* gather everything that's not a bracket, and append what comes next */
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 135 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 135 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+openBrackets++; yymore();
+	YY_BREAK
+case 46:
+YY_RULE_SETUP
+#line 136 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     openBrackets--;
     if (openBrackets < 0) {
@@ -1277,7 +1293,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(RULE_ARGUMENTS):
-#line 143 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 144 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     qDebug() << "Encountered end of file in an unclosed rule argument specification..." << endl;
@@ -1287,98 +1303,98 @@ case YY_STATE_EOF(RULE_ARGUMENTS):
 	YY_BREAK
 
 
-case 46:
+case 47:
 YY_RULE_SETUP
-#line 152 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 153 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
-case 47:
-/* rule 47 can match eol */
-YY_RULE_SETUP
-#line 153 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-newline();
-	YY_BREAK
 case 48:
+/* rule 48 can match eol */
 YY_RULE_SETUP
-#line 154 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-/* line comments, skip */ ;
+#line 154 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+newline();
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 155 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-BEGIN(RULE_PARAMETERS_VARNAME); return ':';
+#line 155 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+/* line comments, skip */ ;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 156 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return '#';
+#line 156 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+BEGIN(RULE_PARAMETERS_VARNAME); return ':';
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 157 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_MEMBER;
+#line 157 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return '#';
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 158 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_TEMPORARY;
+#line 158 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_MEMBER;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 159 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_ARGUMENT;
+#line 159 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_TEMPORARY;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 160 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_NODE;
+#line 160 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_ARGUMENT;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 161 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_TOKEN;
+#line 161 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_NODE;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 162 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return T_VARIABLE;
+#line 162 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_TOKEN;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 163 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-return ';';  /* only used for "token" types */
+#line 163 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return T_VARIABLE;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 164 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+#line 164 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+return ';';  /* only used for "token" types */
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 165 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-BEGIN(INITIAL); return ']';
+#line 165 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 166 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 166 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+BEGIN(INITIAL); return ']';
+	YY_BREAK
+case 61:
+YY_RULE_SETUP
+#line 167 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 
-case 61:
-/* rule 61 can match eol */
-YY_RULE_SETUP
-#line 170 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-newline(); yymore();
-	YY_BREAK
 case 62:
+/* rule 62 can match eol */
 YY_RULE_SETUP
-#line 171 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-yymore(); /* gather everything that's not a semicolon, and append what comes next */
+#line 171 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+newline(); yymore();
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 172 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 172 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+yymore(); /* gather everything that's not a semicolon, and append what comes next */
+	YY_BREAK
+case 64:
+YY_RULE_SETUP
+#line 173 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     // strip trailing whitespace
     int length = yyleng-1; // and first, the trailing semicolon
@@ -1399,37 +1415,37 @@ YY_RULE_SETUP
     return T_IDENTIFIER;
 }
 	YY_BREAK
-case 64:
+case 65:
 YY_RULE_SETUP
-#line 191 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 192 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
-case 65:
+case 66:
 YY_RULE_SETUP
-#line 195 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 196 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(CODE);
 	YY_BREAK
 
-case 66:
-/* rule 66 can match eol */
-YY_RULE_SETUP
-#line 197 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-newline(); yymore();
-	YY_BREAK
 case 67:
+/* rule 67 can match eol */
 YY_RULE_SETUP
-#line 198 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-yymore(); /* gather everything that's not a colon, and append what comes next */
+#line 198 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+newline(); yymore();
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 199 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-yymore(); /* also gather colons that are not followed by colons or newlines */
+#line 199 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+yymore(); /* gather everything that's not a colon, and append what comes next */
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 200 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 200 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+yymore(); /* also gather colons that are not followed by colons or newlines */
+	YY_BREAK
+case 70:
+YY_RULE_SETUP
+#line 201 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     COPY_TO_YYLVAL(yytext,yyleng-2); /* cut off the trailing stuff */
     BEGIN(INITIAL);
@@ -1437,7 +1453,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(CODE):
-#line 205 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 206 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     qDebug() << "Encountered end of file in an unclosed code segment..." << endl;
@@ -1446,39 +1462,39 @@ case YY_STATE_EOF(CODE):
 }
 	YY_BREAK
 
-case 70:
-YY_RULE_SETUP
-#line 214 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
-	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 215 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+#line 215 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 218 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 216 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+	YY_BREAK
+case 73:
+YY_RULE_SETUP
+#line 219 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
    yytext++;                         /* start inside the quotes */
    COPY_TO_YYLVAL(yytext,yyleng-2);  /* cut off the trailing quote */
    return T_STRING;
 }
 	YY_BREAK
-case 73:
+case 74:
 YY_RULE_SETUP
-#line 224 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 225 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
   qDebug() << "Unexpected character: ``" << yytext[0] << "''" << endl;
   yyerror("");
 }
 	YY_BREAK
-case 74:
+case 75:
 YY_RULE_SETUP
-#line 230 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 231 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 ECHO;
 	YY_BREAK
-#line 1482 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
+#line 1498 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.cc"
 			case YY_STATE_EOF(INITIAL):
 			case YY_STATE_EOF(PARSERCLASS):
 			case YY_STATE_EOF(RULE_PARAMETERS_HEADER):
@@ -1683,7 +1699,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), num_to_read );
+			(yy_n_chars), (size_t) num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -1706,6 +1722,14 @@ static int yy_get_next_buffer (void)
 
 	else
 		ret_val = EOB_ACT_CONTINUE_SCAN;
+
+	if ((yy_size_t) ((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
+		/* Extend the array by 50%, plus the number we really need. */
+		yy_size_t new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
+		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size  );
+		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
+			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
+	}
 
 	(yy_n_chars) += number_to_move;
 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
@@ -1734,7 +1758,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 269 )
+			if ( yy_current_state >= 286 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1757,11 +1781,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 269 )
+		if ( yy_current_state >= 286 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 268);
+	yy_is_jam = (yy_current_state == 285);
 	if ( ! yy_is_jam )
 		*(yy_state_ptr)++ = yy_current_state;
 
@@ -2117,7 +2141,9 @@ static void yyensure_buffer_stack (void)
 		(yy_buffer_stack) = (struct yy_buffer_state**)yyalloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								);
-		
+		if ( ! (yy_buffer_stack) )
+			YY_FATAL_ERROR( "out of dynamic memory in yyensure_buffer_stack()" );
+								  
 		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
 				
 		(yy_buffer_stack_max) = num_to_alloc;
@@ -2135,6 +2161,8 @@ static void yyensure_buffer_stack (void)
 								((yy_buffer_stack),
 								num_to_alloc * sizeof(struct yy_buffer_state*)
 								);
+		if ( ! (yy_buffer_stack) )
+			YY_FATAL_ERROR( "out of dynamic memory in yyensure_buffer_stack()" );
 
 		/* zero only the new slots.*/
 		memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
@@ -2179,7 +2207,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 
 /** Setup the input buffer state to scan a string. The next call to yylex() will
  * scan from a @e copy of @a str.
- * @param str a NUL-terminated string to scan
+ * @param yystr a NUL-terminated string to scan
  * 
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
@@ -2441,7 +2469,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 230 "/home/matt/Projects/KDE/Source/trunk/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 231 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 
 
 

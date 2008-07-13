@@ -29,7 +29,7 @@ void GenerateDebugVisitor::operator()()
   out << "class " << globalSystem.exportMacro << " DebugVisitor: public DefaultVisitor {" << endl
       << "public:" << endl;
 
-  out << "DebugVisitor(KDevPG::TokenStream *str, const QString& content = QString())" << endl;
+  out << "DebugVisitor("<< globalSystem.tokenStream << " *str, const QString& content = QString())" << endl;
   out << "    : m_str(str), m_indent(0), m_content(content) {}" << endl;
   GenerateDebugVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
@@ -38,7 +38,7 @@ void GenerateDebugVisitor::operator()()
     gen(qMakePair(it.key(), *it));
   }
 
-  out << "private:" << endl << "KDevPG::TokenStream *m_str;" << endl;
+  out << "private:" << endl << globalSystem.tokenStream << " *m_str;" << endl;
   out << "int m_indent;" << endl;
   out << "QString m_content;" << endl;
   out << "};" << endl;
@@ -62,8 +62,8 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
   out << "m_str->endPosition(node->endToken, &endLine, &endCol);" << endl;
   out << "QString tokenString;" << endl;
   out << "if (!m_content.isEmpty()) {" << endl;
-  out << "    KDevPG::TokenStream::Token startToken = m_str->token(node->startToken);" << endl;
-  out << "    KDevPG::TokenStream::Token endToken = m_str->token(node->endToken);" << endl;
+  out << "    " << globalSystem.tokenStream << "::Token startToken = m_str->token(node->startToken);" << endl;
+  out << "    " << globalSystem.tokenStream << "::Token endToken = m_str->token(node->endToken);" << endl;
   out << "    int begin = startToken.begin;" << endl;
   out << "    int end = endToken.end;" << endl;
   out << "    if (end-begin > 30) {" << endl;

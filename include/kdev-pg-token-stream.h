@@ -30,19 +30,18 @@
 namespace KDevPG
 {
 
-class TokenStream
-{
-public:
-  class Token
-  {
+class Token {
   public:
     int kind;
     qint64 begin;
     qint64 end;
-  };
-
+};
+template<class T>
+class TokenStreamBase
+{
 public:
-  TokenStream()
+  typedef T Token;
+  TokenStreamBase()
     : mTokenBuffer(0),
       mTokenBufferSize(0),
       mIndex(0),
@@ -52,7 +51,7 @@ public:
     reset();
   }
 
-  ~TokenStream()
+  ~TokenStreamBase()
   {
     if (mTokenBuffer)
       ::free(mTokenBuffer);
@@ -88,12 +87,12 @@ public:
     mIndex = index;
   }
 
-  inline Token const &token(qint64 index) const
+  inline T const &token(qint64 index) const
   {
     return mTokenBuffer[index];
   }
 
-  inline Token &token(qint64 index)
+  inline T &token(qint64 index)
   {
     return mTokenBuffer[index];
   }
@@ -103,7 +102,7 @@ public:
     return mTokenBuffer[mIndex++].kind;
   }
 
-  inline Token &next()
+  inline T &next()
   {
     if (mTokenCount == mTokenBufferSize)
       {
@@ -112,8 +111,8 @@ public:
 
         mTokenBufferSize <<= 2;
 
-        mTokenBuffer = reinterpret_cast<Token*>
-          (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(Token)));
+        mTokenBuffer = reinterpret_cast<T*>
+          (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
       }
 
     return mTokenBuffer[mTokenCount++];
@@ -148,16 +147,22 @@ public:
   }
 
 private:
-  Token *mTokenBuffer;
+  T *mTokenBuffer;
   qint64 mTokenBufferSize;
   qint64 mIndex;
   qint64 mTokenCount;
   LocationTable *mLocationTable;
 
 private:
-  TokenStream(TokenStream const &other);
-  void operator = (TokenStream const &other);
+  TokenStreamBase(TokenStreamBase const &other);
+  void operator = (TokenStreamBase const &other);
 };
+
+
+class TokenStream : public TokenStreamBase<Token>
+{
+};
+
 
 }
 

@@ -47,7 +47,7 @@ void yyerror(const char* );
 namespace {
   enum RulePosition {
     RuleBody,
-    RuleFooter,
+    RuleFooter
   };
   RulePosition rulePosition = RuleBody;
   int openBrackets; // for rule arguments usage

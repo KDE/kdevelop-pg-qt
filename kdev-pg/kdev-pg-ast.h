@@ -167,18 +167,18 @@ namespace Model
 
     enum DeclarationType {
       DeclarationArgument,
-      DeclarationLocal,
+      DeclarationLocal
     };
 
     enum StorateType {
       StorageAstMember,
-      StorageTemporary,
+      StorageTemporary
     };
 
     enum VariableType {
       TypeNode,
       TypeToken,
-      TypeVariable,
+      TypeVariable
     };
 
     QString mType;
@@ -245,7 +245,7 @@ namespace Settings
       ProtectedDeclaration = 2,
       PrivateDeclaration   = 4,
       ConstructorCode      = 8,
-      DestructorCode       = 16,
+      DestructorCode       = 16
     };
 
     MemberKind mMemberKind;

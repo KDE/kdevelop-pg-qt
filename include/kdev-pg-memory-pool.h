@@ -23,7 +23,7 @@
 #define KDEV_PG_MEMORY_POOL
 
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 namespace KDevPG
 {

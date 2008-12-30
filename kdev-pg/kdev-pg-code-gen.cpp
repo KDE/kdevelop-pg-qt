@@ -24,6 +24,7 @@
 #include <QtCore/QList>
 #include <QtCore/QDebug>
 #include <QtCore/QStack>
+#include <QtCore/QStringList>
 
 namespace KDevPG
 {
@@ -32,20 +33,25 @@ namespace KDevPG
     bool initial = true;
     Model::Node *item = globalSystem.zero();
 
+    QStringList tokens;
     World::NodeSet::const_iterator it = s.begin();
     while (it != s.end())
       {
         item = *it++;
 
         if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
-          {
-            if (!initial)
-              out << endl << "|| ";
-
-            out << "yytoken == Token_" << t->mName;
-            initial = false;
-          }
+          tokens << t->mName;
       }
+    tokens.sort();
+    foreach (const QString &token, tokens)
+      {
+        if (!initial)
+          out << endl << "|| ";
+
+        out << "yytoken == Token_" << token;
+        initial = false;
+      }
+
 
     if (initial && isZero(item))
       out << "true /*epsilon*/";

@@ -22,6 +22,8 @@
 #ifndef KDEV_PG_MEMORY_POOL
 #define KDEV_PG_MEMORY_POOL
 
+#include <QtCore/QtGlobal>
+
 #include <string.h>
 #include <stdlib.h>
 

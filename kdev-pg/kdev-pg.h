@@ -66,7 +66,7 @@ namespace KDevPG
 class World
 {
 public:
-  typedef struct MemberCode {
+  struct MemberCode {
     QList<Settings::MemberItem*> declarations;
     QList<Settings::MemberItem*> constructorCode;
     QList<Settings::MemberItem*> destructorCode;

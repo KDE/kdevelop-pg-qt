@@ -65,18 +65,21 @@ public:
       return;
     }
     qint64 idx = 0;
-    for( qint64 i = 0; i < currentLine; i++ )
+    qint64 i = 0;
+    for( ; i < currentLine; i++ )
     {
       if( lines[i] > offset )
       {
         idx = i-1;
-	break;
+        break;
       }else if( lines[i] == offset )
       {
         idx = i;
         break;
       }
-
+    }
+    if (i == currentLine) {
+      idx = i - 1;
     }
 
     *line = idx;

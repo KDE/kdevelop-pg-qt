@@ -138,7 +138,7 @@ try_item
         }
 
 rule_arguments_opt
-    : /* empty */                       { $$ = ""; }
+    : /* empty */                       { $$ = const_cast<char*>(""); }
     | T_RULE_ARGUMENTS                  { $$ = $1; }
     ;
 
@@ -205,7 +205,7 @@ item
     ;
 
 code_opt
-    : /* empty */                       { $$ = ""; }
+    : /* empty */                       { $$ = const_cast<char*>(""); }
     | T_CODE                            { $$ = $1; }
     ;
 

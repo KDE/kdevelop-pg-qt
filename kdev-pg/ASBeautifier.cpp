@@ -954,6 +954,7 @@ string ASBeautifier::beautify(const string &originalLine)
 
 		// handle quotes (such as 'x' and "Hello Dolly")
 		if (!(isInComment || isInLineComment) && (ch == '"' || ch == '\''))
+                {
 			if (!isInQuote)
 			{
 				quoteChar = ch;
@@ -965,6 +966,7 @@ string ASBeautifier::beautify(const string &originalLine)
 				isInStatement = true;
 				continue;
 			}
+                }
 		if (isInQuote)
 			continue;
 
@@ -1584,11 +1586,12 @@ string ASBeautifier::beautify(const string &originalLine)
 		// e.g. '>>' and '>>='. If this is the case, treat the LONGER one as the
 		// found operator.
 		if (foundAssignmentOp != NULL && foundNonAssignmentOp != NULL)
+                {
 			if (foundAssignmentOp->length() < foundNonAssignmentOp->length())
 				foundAssignmentOp = NULL;
 			else
 				foundNonAssignmentOp = NULL;
-
+                }
 		if (foundNonAssignmentOp != NULL)
 		{
 			if (foundNonAssignmentOp->length() > 1)

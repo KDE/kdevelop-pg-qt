@@ -664,7 +664,7 @@ string ASFormatter::nextLine()
 		}
 
 		if (((previousCommandChar == '{' && isPreviousBracketBlockRelated)
-		        || (previousCommandChar == '}'
+		        || ((previousCommandChar == '}'
 		            && bracketFormatMode != NONE_MODE
 		            && !isImmediatelyPostEmptyBlock
 		            && isPreviousBracketBlockRelated
@@ -672,7 +672,7 @@ string ASFormatter::nextLine()
 		            && peekNextChar() != ' '
 		            && !IS_A(previousBracketType,  DEFINITION_TYPE)
 		            && !(ASBeautifier::isJavaStyle && currentChar == ')'))
-		        && !IS_A(bracketTypeStack->back(),  DEFINITION_TYPE))
+		        && !IS_A(bracketTypeStack->back(),  DEFINITION_TYPE)))
 		        && (shouldBreakOneLineBlocks
 		            || !IS_A(bracketTypeStack->back(),  SINGLE_LINE_TYPE)))
 		{

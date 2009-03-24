@@ -18,9 +18,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. *
  *****************************************************************************/
 
-#include "cool_parser.h"
+#include "coolparser.h"
 
 #include <iostream>
+
+#include <QtCore/QString>
+#include <string>
 
 #ifndef DONT_INCLUDE_FLEXLEXER
 #include <FlexLexer.h>
@@ -38,8 +41,8 @@ namespace cool
 class Lexer : public yyFlexLexer
 {
 public:
-    Lexer( cool::parser *parser, char *contents );
-    void restart( cool::parser *parser, char *contents );
+    Lexer( cool::Parser *parser, char *contents );
+    void restart( cool::Parser *parser, char *contents );
 
     int yylex();
     char *contents()         { return m_contents;   }
@@ -55,11 +58,11 @@ protected:
     virtual void LexerError( const char */*msg*/ ) { return; }
 
 private:
-    cool::parser* m_parser;
+    cool::Parser* m_parser;
     char *m_contents;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
-    kdev_pg_location_table *m_locationTable;
+    KDevPG::LocationTable *m_locationTable;
 };
 
 } // end of namespace cool

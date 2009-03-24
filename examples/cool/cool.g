@@ -1,7 +1,15 @@
+[:
+#include <QtCore/QString>
 
+:]
 ------------------------------------------------------------
 -- Parser class members
 ------------------------------------------------------------
+
+%parserclass (private declaration)
+[:
+    QString m_contents;
+:]
 
 %parserclass (public declaration)
 [:
@@ -17,8 +25,10 @@
       warning,
       info
   };
-  void report_problem( parser::problem_type type, const char* message );
-  void report_problem( parser::problem_type type, std::string message );
+//  void report_problem( Parser::problem_type type, const char* message );
+  void report_problem( Parser::problem_type type, const QString & message );
+  
+  QString tokenText(qint64 begin, qint64 end);
 :]
 
 
@@ -155,29 +165,36 @@
 namespace cool
 {
 
-void parser::tokenize( char *contents )
+void Parser::tokenize( char *contents )
 {
+    m_contents = contents;
     Lexer lexer( this, contents );
 
-    int kind = parser::Token_EOF;
+    int kind = Parser::Token_EOF;
     do
     {
         kind = lexer.yylex();
         //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
 
         if ( !kind ) // when the lexer returns 0, the end of file is reached
-            kind = parser::Token_EOF;
+            kind = Parser::Token_EOF;
 
-        parser::token_type &t = this->token_stream->next();
+        Parser::Token &t = this->tokenStream->next();
         t.kind = kind;
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();
-        t.text = contents;
+//        t.text = contents;
     }
-    while ( kind != parser::Token_EOF );
+    while ( kind != Parser::Token_EOF );
 
     this->yylex(); // produce the look ahead token
 }
+
+QString Parser::tokenText(qint64 begin, qint64 end)
+{
+    return m_contents.mid(begin,end-begin+1);
+}
+
 
 } // end of namespace cool
 

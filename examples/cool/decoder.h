@@ -1,7 +1,7 @@
 #ifndef COOL_DECODER_H
 #define COOL_DECODER_H
 
-#include "cool_parser.h"
+#include "coolparser.h"
 
 #include <string>
 #include <cstdlib>
@@ -11,28 +11,28 @@ namespace cool
 
 class decoder
 {
-  parser::token_stream_type *_M_token_stream;
-
+  KDevPG::TokenStream *_M_token_stream;
+  Parser * p;
 public:
-  decoder(parser::token_stream_type *token_stream)
-    : _M_token_stream(token_stream) {}
+  decoder(KDevPG::TokenStream *token_stream, Parser * parser)
+    : _M_token_stream(token_stream), p(parser) {}
 
   int decode_op(std::size_t index) const
   {
-    parser::token_type const &tk = _M_token_stream->token(index);
+    Parser::Token const &tk = _M_token_stream->token(index);
     return tk.kind;
   }
 
-  std::string decode_id(std::size_t index) const
+  QString decode_id(std::size_t index) const
   {
-    parser::token_type const &tk = _M_token_stream->token(index);
-    return std::string(&tk.text[tk.begin], tk.end - tk.begin);
+    Parser::Token const &tk = _M_token_stream->token(index);
+    return p->tokenText(tk.begin,tk.end);
   }
 
   long decode_number(std::size_t index) const
   {
-    parser::token_type const &tk = _M_token_stream->token(index);
-    return ::strtol(&tk.text[tk.begin], 0, 0);
+    Parser::Token const &tk = _M_token_stream->token(index);
+    return p->tokenText(tk.begin,tk.end).toLong();    
   }
 };
 

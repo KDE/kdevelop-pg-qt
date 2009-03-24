@@ -212,6 +212,7 @@ void ASEnhancer::enhance(string &line)
 
 		// handle quotes (such as 'x' and "Hello Dolly")
 		if (!(isInComment) && (ch == '"' || ch == '\''))
+                {
 			if (!isInQuote)
 			{
 				quoteChar = ch;
@@ -222,7 +223,7 @@ void ASEnhancer::enhance(string &line)
 				isInQuote = false;
 				continue;
 			}
-
+                }
 		if (isInQuote)
 			continue;
 
@@ -326,16 +327,17 @@ void ASEnhancer::enhance(string &line)
 				sw.unindentCase = false;                    // stop unindenting previous case
 				sw.unindentDepth--;                         // reduce depth
 			}
-			for (; i < lineLength; i++)                     // bypass colon
+			for (; i < lineLength; ++i)                     // bypass colon
 			{
-				if (line[i] == ':')
+				if (line[i] == ':') {
 					if ((i + 1 < lineLength) && (line[i + 1] == ':'))
-						i++;								// bypass scope resolution operator
+						++i;								// bypass scope resolution operator
 					else
 						break;
+                                }
 			}
-			i++;
-			for (; i < lineLength; i++)                     // bypass whitespace
+			++i;
+			for (; i < lineLength; ++i)                     // bypass whitespace
 			{
 				if (!(isWhiteSpaceX(line[i])))
 					break;
@@ -350,7 +352,7 @@ void ASEnhancer::enhance(string &line)
 				}
 			}
 			lookingForCaseBracket = true;                   // bracket must be on next line
-			i--;                                            // need to check for comments
+			--i;                                            // need to check for comments
 			continue;
 		}
 	}   // end of for loop

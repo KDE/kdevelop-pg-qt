@@ -1,6 +1,6 @@
 
-#include "cool_parser.h"
-#include "cool_default_visitor.h"
+#include "coolparser.h"
+#include "cooldefaultvisitor.h"
 #include "decoder.h"
 
 #include <cstdlib>
@@ -13,24 +13,24 @@ static void usage(char const* argv0);
 static bool parse_file(char const* filename);
 
 
-void print_token_environment(parser* parser)
+void print_token_environment(Parser* parser)
 {
     static bool done = false;
     if (done)
       return; // don't print with each call when going up the error path
 
-    decoder dec(parser->token_stream);
+    decoder dec(parser->tokenStream, parser);
 
-    std::size_t current_index = parser->token_stream->index() - 1;
-    for (std::size_t i = current_index - 5; i < current_index + 5; i++)
+    std::size_t current_index = parser->tokenStream->index() - 1;
+    for (std::size_t i = current_index - 5; i < current_index + 5; ++i)
       {
-        if (i < 0 || i >= parser->token_stream->size())
+        if (i < 0 || i >= parser->tokenStream->size())
           continue;
 
         if (i == current_index)
           std::cerr << ">>";
 
-        std::cerr << dec.decode_id(i); // print out currently processed token
+        std::cerr << dec.decode_id(i).toAscii().constData(); // print out currently processed token
 
         if (i == current_index)
           std::cerr << "<<";
@@ -108,28 +108,28 @@ bool parse_file(char const *filename)
       return false;
     }
 
-  parser::token_stream_type token_stream;
-  parser::memory_pool_type memory_pool;
+  KDevPG::TokenStream token_stream;
+  Parser::memoryPoolType memory_pool;
 
   // 0) setup
-  parser cool_parser;
-  cool_parser.set_token_stream(&token_stream);
-  cool_parser.set_memory_pool(&memory_pool);
+  Parser cool_parser;
+  cool_parser.setTokenStream(&token_stream);
+  cool_parser.setMemoryPool(&memory_pool);
 
   // 1) tokenize
   cool_parser.tokenize(contents);
 
   // 2) parse
-  program_ast *ast = 0;
-  bool matched = cool_parser.parse_program(&ast);
+  ProgramAst *ast = 0;
+  bool matched = cool_parser.parseProgram(&ast);
   if (matched)
     {
-      default_visitor v;
-      v.visit_node(ast);
+      DefaultVisitor v;
+      v.visitNode(ast);
     }
   else
     {
-      cool_parser.yy_expected_symbol(ast_node::Kind_program, "program"); // ### remove me
+      cool_parser.expectedSymbol(AstNode::ProgramKind, "program"); // ### remove me
     }
 
   delete[] contents;

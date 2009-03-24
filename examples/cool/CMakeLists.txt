@@ -2,6 +2,8 @@
 PROJECT(cool_parser)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+REMOVE_DEFINITIONS(-DQT_NO_STL)
+ADD_DEFINITIONS(-DQT_STL)
 
 
 # autogenerate the lexer and the parser
@@ -16,34 +18,34 @@ FIND_PROGRAM(FLEX_EXECUTABLE
 
 # Add command to generate the parser.
 ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_ast.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cool_parser.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cool_parser.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cool_visitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cool_visitor.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cool_default_visitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cool_default_visitor.cpp"
+    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/coolast.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.cpp"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
             "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.h"
-    COMMAND ${CMAKE_BINARY_DIR}/kdev-pg/kdev-pg
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
     ARGS    --output=cool
             "cool.g"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 SET(parser_srcs
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_parser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_visitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_default_visitor.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.cpp")
 
 SET_SOURCE_FILES_PROPERTIES(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_ast.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_parser.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_parser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_visitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_visitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_default_visitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cool_default_visitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolast.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.cpp"
     GENERATED
     )
 
@@ -54,7 +56,7 @@ IF(FLEX_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/cool_parser.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"cool_lexer.cpp"
                 "cool_lexer.ll"
@@ -85,6 +87,8 @@ ADD_DEFINITIONS(-Wall -O2)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(cool-parser ${assembled_parser_srcs} main.cpp)
+
+TARGET_LINK_LIBRARIES( cool-parser ${QT_QTCORE_LIBRARY})
 
 # in order to generate only the parser, call "make parser"
 ADD_CUSTOM_TARGET(parser echo "Generating the parser"

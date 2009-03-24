@@ -134,22 +134,24 @@ Model::AnnotationItem *annotation(
 
   Model::VariableDeclarationItem::VariableType variableType;
   QString type;
-
+  
   if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
     {
       variableType = Model::VariableDeclarationItem::TypeToken;
-      type = t->mName;
+      type = t->mName;      
     }
   else if (Model::NonTerminalItem *nt = nodeCast<Model::NonTerminalItem*>(item))
     {
       variableType = Model::VariableDeclarationItem::TypeNode;
-      type = nt->mSymbol->mName;
+      type = nt->mSymbol->mName;      
     }
   else
     {
+      variableType = Model::VariableDeclarationItem::TypeVariable; // has to be set to something, or compiler gives a warning
+      qFatal("Item must either be a terminal or a non-terminal");
       Q_ASSERT(0); // ### item must either be a terminal or a nonTerminal
     }
-
+      
   node->mDeclaration =
      variableDeclaration(Model::VariableDeclarationItem::DeclarationLocal,
                               storageType, variableType, isSequence, name, type);

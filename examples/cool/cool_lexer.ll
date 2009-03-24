@@ -26,7 +26,7 @@ Whitespace  [ \t\f\n]
 "(*"                    BEGIN(IN_BLOCKCOMMENT);
 <IN_BLOCKCOMMENT>{
 "*)"            BEGIN(INITIAL);
-<<EOF>>         return parser::Token_EOF;
+<<EOF>>         return cool::Parser::Token_EOF;
 [\n]            /* skip */ ;
 .               /* skip */ ;
 }
@@ -34,82 +34,82 @@ Whitespace  [ \t\f\n]
 
  /* seperators */
 
-"("             return parser::Token_LPAREN;
-")"             return parser::Token_RPAREN;
-"{"             return parser::Token_LBRACE;
-"}"             return parser::Token_RBRACE;
-";"             return parser::Token_SEMICOLON;
-","             return parser::Token_COMMA;
-"."             return parser::Token_DOT;
-"@"             return parser::Token_AT;
+"("             return cool::Parser::Token_LPAREN;
+")"             return cool::Parser::Token_RPAREN;
+"{"             return cool::Parser::Token_LBRACE;
+"}"             return cool::Parser::Token_RBRACE;
+";"             return cool::Parser::Token_SEMICOLON;
+","             return cool::Parser::Token_COMMA;
+"."             return cool::Parser::Token_DOT;
+"@"             return cool::Parser::Token_AT;
 
 
  /* operators */
 
-"+"             return parser::Token_PLUS;
-"-"             return parser::Token_MINUS;
-"*"             return parser::Token_STAR;
-"/"             return parser::Token_SLASH;
-"="             return parser::Token_EQUAL;
-"<="            return parser::Token_LESS_EQUAL;
-"<"             return parser::Token_LESS;
-":"             return parser::Token_COLON;
-"<-"            return parser::Token_ARROW_LEFT;
-"=>"            return parser::Token_ARROW_RIGHT;
-"~"             return parser::Token_TILDE;
-"not"           return parser::Token_NOT;
-"isvoid"        return parser::Token_ISVOID;
+"+"             return cool::Parser::Token_PLUS;
+"-"             return cool::Parser::Token_MINUS;
+"*"             return cool::Parser::Token_STAR;
+"/"             return cool::Parser::Token_SLASH;
+"="             return cool::Parser::Token_EQUAL;
+"<="            return cool::Parser::Token_LESS_EQUAL;
+"<"             return cool::Parser::Token_LESS;
+":"             return cool::Parser::Token_COLON;
+"<-"            return cool::Parser::Token_ARROW_LEFT;
+"=>"            return cool::Parser::Token_ARROW_RIGHT;
+"~"             return cool::Parser::Token_TILDE;
+"not"           return cool::Parser::Token_NOT;
+"isvoid"        return cool::Parser::Token_ISVOID;
 
 
  /* reserved words */
 
-"case"          return parser::Token_CASE;
-"esac"          return parser::Token_ESAC;
-"class"         return parser::Token_CLASS;
-"Class"         return parser::Token_CLASS;
-"else"          return parser::Token_ELSE;
-"false"         return parser::Token_FALSE;
-"if"            return parser::Token_IF;
-"in"            return parser::Token_IN;
-"fi"            return parser::Token_FI;
-"inherits"      return parser::Token_INHERITS;
-"let"           return parser::Token_LET;
-"loop"          return parser::Token_LOOP;
-"new"           return parser::Token_NEW;
-"of"            return parser::Token_OF;
-"pool"          return parser::Token_POOL;
-"then"          return parser::Token_THEN;
-"true"          return parser::Token_TRUE;
-"while"         return parser::Token_WHILE;
+"case"          return cool::Parser::Token_CASE;
+"esac"          return cool::Parser::Token_ESAC;
+"class"         return cool::Parser::Token_CLASS;
+"Class"         return cool::Parser::Token_CLASS;
+"else"          return cool::Parser::Token_ELSE;
+"false"         return cool::Parser::Token_FALSE;
+"if"            return cool::Parser::Token_IF;
+"in"            return cool::Parser::Token_IN;
+"fi"            return cool::Parser::Token_FI;
+"inherits"      return cool::Parser::Token_INHERITS;
+"let"           return cool::Parser::Token_LET;
+"loop"          return cool::Parser::Token_LOOP;
+"new"           return cool::Parser::Token_NEW;
+"of"            return cool::Parser::Token_OF;
+"pool"          return cool::Parser::Token_POOL;
+"then"          return cool::Parser::Token_THEN;
+"true"          return cool::Parser::Token_TRUE;
+"while"         return cool::Parser::Token_WHILE;
 
 
  /* literals */
 
-"\""([^"\\]|\\.)*"\""   return parser::Token_STRING;
+"\""([^"\\]|\\.)*"\""   return cool::Parser::Token_STRING;
 
-[A-Z][a-zA-Z0-9_]*      return parser::Token_TYPE;
-[a-z_][a-zA-Z0-9_]*     return parser::Token_IDENTIFIER;
-[0-9]+          return parser::Token_INTEGER;
+[A-Z][a-zA-Z0-9_]*      return cool::Parser::Token_TYPE;
+[a-z_][a-zA-Z0-9_]*     return cool::Parser::Token_IDENTIFIER;
+[0-9]+          return cool::Parser::Token_INTEGER;
 
 
  /* everything else is not a valid lexeme */
 
-.               return parser::Token_INVALID;
+.               return cool::Parser::Token_INVALID;
 
 %%
 
 namespace cool
 {
 
-Lexer::Lexer( parser *parser, char *contents )
+Lexer::Lexer( Parser *parser, char *contents )
 {
     restart( parser, contents );
 }
 
-void Lexer::restart( parser *parser, char *contents )
+void Lexer::restart( Parser *parser, char *contents )
 {
     m_parser = parser;
-    m_locationTable = parser->token_stream->location_table();
+    m_locationTable = parser->tokenStream->locationTable();
     m_contents = contents;
     m_tokenBegin = m_tokenEnd = 0;
     m_currentOffset = 0;

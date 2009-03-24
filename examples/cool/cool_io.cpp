@@ -5,51 +5,46 @@
 // but will rather be placed as items inside some listbox.
 
 
-#include "cool_parser.h"
+#include "coolparser.h"
 #include "cool_lexer.h"
 
 #include <iostream>
 
-void print_token_environment(cool::parser* parser);
+void print_token_environment(cool::Parser* parser);
 
 
 namespace cool
 {
 
-void parser::report_problem( parser::problem_type type, std::string message )
-{
-  report_problem( type, message.c_str() );
-}
-
-void parser::report_problem( parser::problem_type type, const char* message )
+void Parser::report_problem( Parser::problem_type type, const QString & message )
 {
   if (type == error)
-    std::cerr << "** ERROR: " << message << std::endl;
+    std::cerr << "** ERROR: " << message.toAscii().constData() << std::endl;
   else if (type == warning)
-    std::cerr << "** WARNING: " << message << std::endl;
+    std::cerr << "** WARNING: " << message.toAscii().constData() << std::endl;
   else if (type == info)
-    std::cerr << "** Info: " << message << std::endl;
+    std::cerr << "** Info: " << message.toAscii().constData() << std::endl;
 }
 
 
 // custom error recovery
-void parser::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+void Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString & name)
 {
   print_token_environment(this);
   report_problem(
-    parser::error,
-    std::string("Expected token ``") + name
+    Parser::error,
+    "Expected token ``" + name
       //+ "'' instead of ``" + current_token_text
       + "''"
   );
 }
 
-void parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+void Parser::expectedSymbol(int /*expected_symbol*/, const QString & name)
 {
   print_token_environment(this);
   report_problem(
-    parser::error,
-    std::string("Expected symbol ``") + name
+    Parser::error,
+    "Expected symbol ``" + name
       //+ "'' instead of ``" + current_token_text
       + "''"
   );

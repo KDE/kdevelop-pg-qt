@@ -46,12 +46,16 @@ public:
 class GenerateDebugVisitorRule: protected DefaultVisitor
 {
   QTextStream& out;
+  QSet<QString> mNames;
 
 public:
   GenerateDebugVisitorRule(QTextStream& o): out(o)
   {}
 
   void operator()(QPair<QString, Model::SymbolItem*> const &__it);
+
+protected:
+  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
 }

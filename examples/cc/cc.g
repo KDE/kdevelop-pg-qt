@@ -1,4 +1,5 @@
 --   Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+--   Copyright (C) 2009 Jonathan Schmidt-Dominé <devel@the-user.org>
 --
 --   This library is free software; you can redistribute it and/or
 --   modify it under the terms of the GNU Library General Public
@@ -14,6 +15,17 @@
 --   along with this library; see the file COPYING.LIB.  If not, write to
 --   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 --   Boston, MA 02111-1307, USA.
+
+[:
+#include <QtCore/QString>
+#include <kdebug.h>
+:]
+
+%parserclass (protected declaration)
+[:
+void expectedSymbol(cc::AstNode::AstNodeKind kind, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected symbol " << name; }
+void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected token " << name << " (" << token << ")";}
+:]
 
 ------------------------------------------------------------
 -- T O K E N   L I S T
@@ -56,49 +68,50 @@
 -- E X T E R N A L    D E C L A R A T I O N S
 ------------------------------------------------------------
 
-   external_declaration*
+   (#external_declaration=external_declaration)*
 -> translation_unit ;;
 
-   declaration_specifier declaration_specifier*
+   #declaration_specifier=declaration_specifier (#declaration_specifier=declaration_specifier)*
 -> declaration_header ;;
 
-   declaration_header variable_or_function
+   declaration_header=declaration_header variable_or_function=variable_or_function
 -> external_declaration ;;
 
-   declarator (COMMA init_declarator @ COMMA SEMICOLON
+   declarator=declarator (COMMA #init_declarator=init_declarator @ COMMA SEMICOLON
                | SEMICOLON
-               | ?[:is_fun_definition:] declaration* compound_statement
-               | initializer (COMMA init_declarator)* SEMICOLON)
+--               | ?[:is_fun_definition:] declaration* compound_statement
+               | (#declaration=declaration)* compound_statement=compound_statement
+               | initializer=initializer (COMMA #init_declarator=init_declarator)* SEMICOLON)
 -> variable_or_function ;;
 
 ------------------------------------------------------------
 -- E X P R E S S I O N S
 ------------------------------------------------------------
 
-   IDENTIFIER
- | constant
- | STRING_LITERAL
- | LPAREN expression RPAREN
+   identifier=IDENTIFIER
+ | constant=constant
+ | string_literal=STRING_LITERAL
+ | LPAREN expression=expression RPAREN
 -> primary_expression ;;
 
-   primary_expression postfix_expression_rest*
+   primary_expression=primary_expression (#postfix_expression_rest=postfix_expression_rest)*
 -> postfix_expression ;;
 
    (DOT | ARROW) IDENTIFIER
  | PLUS_PLUS
  | MINUS_MINUS
- | LPAREN (argument_expression_list | 0) RPAREN
- | LBRACKET expression RBRACKET
+ | LPAREN (argument_expression_list=argument_expression_list | 0) RPAREN
+ | LBRACKET expression=expression RBRACKET
 -> postfix_expression_rest ;;
 
-   assignment_expression @ COMMA
+   #assignment_expression=assignment_expression @ COMMA
 -> argument_expression_list ;;
 
-   postfix_expression
- | PLUS_PLUS unary_expression
- | MINUS_MINUS unary_expression
- | unary_operator cast_expression
- | SIZEOF (?(LPAREN type_name RPAREN) LPAREN type_name RPAREN | unary_expression)
+   postfix_expression=postfix_expression
+ | PLUS_PLUS unary_expression=unary_expression
+ | MINUS_MINUS unary_expression=unary_expression
+ | unary_operator cast_expression=cast_expression
+ | SIZEOF LPAREN type_name=type_name RPAREN
 -> unary_expression ;;
 
    AND
@@ -109,44 +122,44 @@
  | NOT
 -> unary_operator ;;
 
-   ?(LPAREN type_name RPAREN) LPAREN type_name RPAREN cast_expression
- | unary_expression
+   LPAREN type_name=type_name RPAREN cast_expression=cast_expression
+ | unary_expression=unary_expression
 -> cast_expression ;;
 
-   cast_expression @ (STAR | DIVIDE | REMAINDER)
+   #cast_expression=cast_expression @ (STAR | DIVIDE | REMAINDER)
 -> multiplicative_expression ;;
 
-   multiplicative_expression @ (PLUS | MINUS)
+   #multiplicative_expression=multiplicative_expression @ (PLUS | MINUS)
 -> additive_expression ;;
 
-   additive_expression @ (LSHIFT | RSHIFT)
+   #additive_expression=additive_expression @ (LSHIFT | RSHIFT)
 -> shift_expression ;;
 
-   shift_expression @ (LESS | GREATER | LESS_EQUAL | GREATER_EQUAL)
+   #shift_expression=shift_expression @ (LESS | GREATER | LESS_EQUAL | GREATER_EQUAL)
 -> relational_expression ;;
 
-   relational_expression @ (EQUAL_EQUAL | NOT_EQUAL)
+   #relational_expression=relational_expression @ (EQUAL_EQUAL | NOT_EQUAL)
 -> equality_expression ;;
 
-   equality_expression @ AND
+   #equality_expression=equality_expression @ AND
 -> AND_expression ;;
 
-   AND_expression @ XOR
+   #AND_expression=AND_expression @ XOR
 -> exclusive_OR_expression ;;
 
-   exclusive_OR_expression @ OR
+   #exclusive_OR_expression=exclusive_OR_expression @ OR
 -> inclusive_OR_expression ;;
 
-   inclusive_OR_expression @ AND_AND
+   #inclusive_OR_expression=inclusive_OR_expression @ AND_AND
 -> logical_AND_expression ;;
 
-   logical_AND_expression @ OR_OR
+   #logical_AND_expression=logical_AND_expression @ OR_OR
 -> logical_OR_expression ;;
 
-   logical_OR_expression (QUESTION expression COLON conditional_expression | 0)
+   logical_OR_expression=logical_OR_expression (QUESTION expression COLON conditional_expression | 0)
 -> conditional_expression ;;
 
-   conditional_expression @ assignment_operator
+   #conditional_expression=conditional_expression @ assignment_operator
 -> assignment_expression ;;
 
    EQUAL
@@ -162,10 +175,10 @@
  | OR_EQUAL
 -> assignment_operator ;;
 
-   assignment_expression @ COMMA
+   #assignment_expression=assignment_expression @ COMMA
 -> expression ;;
 
-   conditional_expression
+   conditional_expression=conditional_expression
 -> constant_expression ;;
 
    X_CONSTANT
@@ -174,54 +187,54 @@
 ------------------------------------------------------------
 -- S T A T E M E N T S
 ------------------------------------------------------------
-   ?(IDENTIFIER COLON) IDENTIFIER COLON
- | labeled_statement
- | compound_statement
- | expression_statement
- | selection_statement
- | iteration_statement
- | jump_statement
+   IDENTIFIER COLON
+ | labeled_statement=labeled_statement
+ | compound_statement=compound_statement
+ | expression_statement=expression_statement
+ | selection_statement=selection_statement
+ | iteration_statement=iteration_statement
+ | jump_statement=jump_statement
  | SEMICOLON
 -> statement ;;
 
-   CASE constant_expression COLON statement
- | DEFAULT COLON statement
+   CASE constant_expression=constant_expression COLON statement=statement
+ | DEFAULT COLON statement=statement
 -> labeled_statement ;;
 
-   LBRACE declaration* statement* RBRACE
+   LBRACE (#declaration=declaration)* (#statement=statement)* RBRACE
 -> compound_statement ;;
 
-   expression SEMICOLON
+   expression=expression SEMICOLON
 -> expression_statement ;;
 
-   IF LPAREN expression RPAREN statement (ELSE statement | 0)
- | SWITCH LPAREN expression RPAREN statement
+   IF LPAREN expression=expression RPAREN statement=statement (ELSE alternative_statement=statement | 0)
+ | SWITCH LPAREN expression=expression RPAREN statement=statement
 -> selection_statement ;;
 
-   WHILE LPAREN expression RPAREN statement
- | DO statement WHILE LPAREN expression RPAREN SEMICOLON
- | FOR LPAREN (expression|0) SEMICOLON (expression|0) SEMICOLON (expression|0) RPAREN statement
+   WHILE LPAREN expression=expression RPAREN statement=statement
+ | DO statement WHILE LPAREN expression=expression RPAREN SEMICOLON
+ | FOR LPAREN (for_1=expression|0) SEMICOLON (for_2=expression|0) SEMICOLON (for_3=expression|0) RPAREN statement=statement
 -> iteration_statement ;;
 
    GOTO IDENTIFIER SEMICOLON
  | CONTINUE SEMICOLON
  | BREAK SEMICOLON
- | RETURN (expression | 0) SEMICOLON
+ | RETURN (expression=expression | 0) SEMICOLON
 -> jump_statement ;;
 
 ------------------------------------------------------------
 -- D E C L A R A T I O N S
 ------------------------------------------------------------
 
-   declaration_specifier declaration_specifier* (init_declarator @ COMMA | 0) SEMICOLON
+   #declaration_specifier=declaration_specifier (#declaration_specifier=declaration_specifier)* (#init_declarator=init_declarator @ COMMA | 0) SEMICOLON
 -> declaration ;;
 
-   storage_class_specifier
- | type_specifier
- | type_qualifier
+   storage_class_specifier=storage_class_specifier
+ | type_specifier=type_specifier
+ | type_qualifier=type_qualifier
 -> declaration_specifier ;;
 
-   declarator (EQUAL initializer | 0)
+   declarator=declarator (EQUAL initializer=initializer | 0)
 -> init_declarator ;;
 
    TYPEDEF
@@ -240,67 +253,72 @@
  | DOUBLE
  | SIGNED
  | UNSIGNED
- | struct_or_union_specifier
- | enum_specifier
+ | struct_or_union_specifier=struct_or_union_specifier
+ | enum_specifier=enum_specifier
  | TYPEDEF_NAME
 -> type_specifier ;;
 
-   (STRUCT | UNION) (IDENTIFIER LBRACE struct_declaration* RBRACE
-                     | LBRACE struct_declaration* RBRACE)
+--   EXTERN STRING_LITERAL LBRACE (#external_declaration=external_declaration)* RBRACE
+---> external_block ;;
+
+   (STRUCT | UNION) (IDENTIFIER LBRACE (#struct_declaration=struct_declaration)* RBRACE
+                     | LBRACE (#struct_declaration=struct_declaration)* RBRACE)
 -> struct_or_union_specifier ;;
 
-   specifier_qualifier specifier_qualifier specifier_qualifier* struct_declarator* SEMICOLON
+   #specifier_qualifier=specifier_qualifier #specifier_qualifier=specifier_qualifier (#specifier_qualifier=specifier_qualifier*) (#struct_declarator=struct_declarator)* SEMICOLON
 -> struct_declaration ;;
 
-   type_specifier
- | type_qualifier
+   type_specifier=type_specifier
+ | type_qualifier=type_qualifier
 -> specifier_qualifier ;;
 
-   declarator (constant_expression | 0)
- | COLON constant_expression
+   declarator=declarator (constant_expression=constant_expression | 0)
+ | COLON constant_expression=constant_expression
 -> struct_declarator ;;
 
-   ENUM (IDENTIFIER LBRACE enumerator @ COMMA RBRACE | LBRACE enumerator @ COMMA RBRACE)
+   ENUM (IDENTIFIER LBRACE #enumerator=enumerator @ COMMA RBRACE | LBRACE #enumerator=enumerator @ COMMA RBRACE)
 -> enum_specifier ;;
 
-   IDENTIFIER (EQUAL constant_expression | 0)
+   IDENTIFIER (EQUAL constant_expression=constant_expression | 0)
 -> enumerator ;;
 
    CONST
  | VOLATILE
 -> type_qualifier ;;
 
-   (pointer direct_declarator | direct_declarator) direct_declarator_rest*
+   (pointer=pointer direct_declarator=direct_declarator | direct_declarator=direct_declarator) (#direct_declarator_rest=direct_declarator_rest)*
+ | direct_declarator=direct_declarator
 -> declarator ;;
 
    IDENTIFIER
- | LPAREN declarator RPAREN
+ | LPAREN declarator=declarator RPAREN
 -> direct_declarator ;;
 
    LBRACKET (constant_expression | 0) RBRACKET
- | LPAREN (IDENTIFIER @ COMMA | parameter_type_list) RPAREN
+ | LPAREN (IDENTIFIER @ COMMA | parameter_type_list=parameter_type_list | 0) RPAREN
 -> direct_declarator_rest ;;
 
-   STAR (type_qualifier | STAR)*
+   STAR (#type_qualifier=type_qualifier | STAR)*
 -> pointer ;;
 
-   (parameter_declaration | ELLIPSIS) @ COMMA
+   (#parameter_declaration=parameter_declaration | ELLIPSIS) @ COMMA
+ | 0
 -> parameter_type_list ;;
 
-   declaration_specifier declaration_specifier* (?(declarator) declarator | abstract_declarator | 0)
+   #declaration_specifier=declaration_specifier (#declaration_specifier=declaration_specifier)* (declarator=declarator | abstract_declarator=abstract_declarator | 0)
 -> parameter_declaration ;;
 
-   specifier_qualifier specifier_qualifier* (abstract_declarator | 0)
+   #specifier_qualifier=specifier_qualifier (#specifier_qualifier=specifier_qualifier)* (abstract_declarator=abstract_declarator | 0)
 -> type_name ;;
 
-   (pointer direct_abstract_declarator | direct_abstract_declarator) direct_abstract_declarator*
+   (pointer=pointer #direct_abstract_declarator=direct_abstract_declarator | #direct_abstract_declarator=direct_abstract_declarator) (#direct_abstract_declarator=direct_abstract_declarator)*
 -> abstract_declarator ;;
 
-   LPAREN (abstract_declarator | parameter_type_list) RPAREN
+   LPAREN (abstract_declarator=abstract_declarator | parameter_type_list=parameter_type_list) RPAREN
  | LBRACKET (constant_expression | 0) RBRACKET
 -> direct_abstract_declarator ;;
 
-   assignment_expression
- | LBRACE initializer (COMMA (initializer | 0))* RBRACE
+   assignment_expression=assignment_expression
+ | LBRACE #initializer=initializer (COMMA (#initializer=initializer | 0))* RBRACE
 -> initializer ;;
 

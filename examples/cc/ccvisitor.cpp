@@ -1,0 +1,82 @@
+// THIS FILE IS GENERATED
+// WARNING! All changes made in this file will be lost!
+
+#include "ccvisitor.h"
+
+namespace cc
+{
+
+Visitor::ParserFuncType Visitor::sParserTable[] =
+{
+    reinterpret_cast<ParserFuncType>(&Visitor::visitAND_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitAbstract_declarator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitAdditive_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitArgument_expression_list),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitAssignment_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitAssignment_operator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitCast_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitCompound_statement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitConditional_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitConstant),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitConstant_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDdeclaration),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDeclaration),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDeclaration_header),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDeclaration_parameter),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDeclaration_specifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDeclarator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDirect_abstract_declarator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDirect_declarator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDirect_declarator_rest),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitDocument),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitEnum_specifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitEnumerator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitEquality_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitExclusive_OR_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitExecution_block),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitExpression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitExpression_statement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitExternal_block),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitFunction_declaration),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitFunction_definition),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitFunction_pointer_parameter),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitInclusive_OR_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitInit_declarator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitInitializer),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitIteration_statement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitJump_statement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitLabeled_statement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitLogical_AND_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitLogical_OR_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitMultiplicative_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitNamed_parameter),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitParameter),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitParameter_declaration),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitParameter_type_list),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitPointer),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitPostfix_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitPostfix_expression_rest),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitPrimary_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitRelational_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitSelection_statement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitShift_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitSpecifier_qualifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitStatement),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitStorage_class_specifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitStruct_declaration),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitStruct_declarator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitStruct_or_union_specifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitType_attribute_identifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitType_name),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitType_qualifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitType_specifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitTyped_identifier),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitTypedef_d),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitUnary_expression),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitUnary_operator),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitValue_declaration),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitVariable_declaration)
+}; // sParserTable[]
+
+} // end of namespace cc
+

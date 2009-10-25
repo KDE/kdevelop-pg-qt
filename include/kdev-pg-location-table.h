@@ -101,7 +101,7 @@ public:
   inline qint64 &operator[](int index)
   { return lines[index]; }
 
-private:
+protected:
   /// An array of input buffer offsets
   qint64 *lines;
   /// The size of the allocated array

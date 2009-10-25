@@ -44,6 +44,10 @@ private:
       RelativePositionAt,
       BinaryPositionAt
     };
+    enum AccessType {
+      LinearAccess,
+      RandomAccess
+    };
 };
 
 }

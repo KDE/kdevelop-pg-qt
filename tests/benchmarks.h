@@ -30,18 +30,20 @@ public slots:
     void initTestCase();
 
 private slots:
-    /// benchmarks the old implementation of LocationTable::positionAt
-    void initialPositionAt();
-    /// benchmarks take 1 on a new implementation of LocationTable::positionAt
-    /// remembers the last line with it's index and bases the search of that one
-    void positionAtWithMemory();
-    /// make sure the new "memory" algorithm is correct
-    void verifyPositionAtWithMemory();
-    /// benchmarks take 2 on a new implementation of LocationTable::positionAt
-    /// implements a binary search / bisection algorithm
-    void positionAtBisection();
-    /// make sure the new "bisection" algorithm is correct
-    void verifyPositionAtBisection();
+    /// benchmarks on of the PositionAtAlgorithms
+    void positionAt();
+    void positionAt_data();
+    /// verifies the new PositionAtAlgorithms by comparing to
+    /// the initial algorithm
+    void verifyPositionAt();
+    void verifyPositionAt_data();
+
+private:
+    enum PositionAtAlgorithms {
+      InitialPositionAt,
+      RelativePositionAt,
+      BinaryPositionAt
+    };
 };
 
 }

@@ -144,93 +144,95 @@ void Benchmarks::initTestCase()
 {
 }
 
-void Benchmarks::initialPositionAt()
+void Benchmarks::positionAt()
 {
+  QFETCH(int, algorithm);
+
   BenchmarkLocationTable table;
   qint64 line;
   qint64 column;
-
-  QBENCHMARK {
-    for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-      table.positionAt(i, &line, &column);
+  switch ( algorithm) {
+    case InitialPositionAt: {
+      QBENCHMARK {
+        for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+          table.positionAt(i, &line, &column);
+        }
+      }
+      break;
     }
-  }
-  QBENCHMARK {
-    for ( qint64 i = table.tableMaxOffset - 1; i >= 0; i -= 10 ) {
-      table.positionAt(i, &line, &column);
+    case RelativePositionAt: {
+      QBENCHMARK {
+        for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+          table.positionAtWithMemory(i, &line, &column);
+        }
+      }
+      break;
     }
+    case BinaryPositionAt: {
+      QBENCHMARK {
+        for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+          table.positionAtBisection(i, &line, &column);
+        }
+      }
+      break;
+    }
+    default:
+      qFatal("unexpected algorithm");
+      break;
   }
 }
 
-void Benchmarks::verifyPositionAtWithMemory()
+void Benchmarks::positionAt_data()
 {
+  QTest::addColumn<int>("algorithm");
+  QTest::newRow("initial") << (int) InitialPositionAt;
+  QTest::newRow("relative") << (int)  RelativePositionAt;
+  QTest::newRow("binary") << (int) BinaryPositionAt;
+}
+
+void Benchmarks::verifyPositionAt()
+{
+  QFETCH(int, algorithm);
+
   BenchmarkLocationTable table;
-  qint64 lineOrig;
-  qint64 columnOrig;
-
-  qint64 lineNew;
-  qint64 columnNew;
-
-  for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-    table.positionAt(i, &lineOrig, &columnOrig);
-    table.positionAtWithMemory(i, &lineNew, &columnNew);
-    QCOMPARE(lineNew, lineOrig);
-    QCOMPARE(columnNew, columnOrig);
+  qint64 oldLine;
+  qint64 oldColumn;
+  qint64 newLine;
+  qint64 newColumn;
+  switch ( algorithm) {
+    case RelativePositionAt: {
+      QBENCHMARK {
+        for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+          table.positionAt(i, &oldLine, &oldColumn);
+          table.positionAtWithMemory(i, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
+        }
+      }
+      break;
+    }
+    case BinaryPositionAt: {
+      QBENCHMARK {
+        for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+          table.positionAt(i, &oldLine, &oldColumn);
+          table.positionAtBisection(i, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
+        }
+      }
+      break;
+    }
+    default:
+      qFatal("unexpected algorithm");
+      break;
   }
 }
 
-void Benchmarks::positionAtWithMemory()
+void Benchmarks::verifyPositionAt_data()
 {
-  BenchmarkLocationTable table;
-  qint64 line;
-  qint64 column;
-
-  QBENCHMARK {
-    for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-      table.positionAtWithMemory(i, &line, &column);
-    }
-  }
-  QBENCHMARK {
-    for ( qint64 i = table.tableMaxOffset - 1; i >= 0; i -= 10 ) {
-      table.positionAtWithMemory(i, &line, &column);
-    }
-  }
-}
-
-void Benchmarks::verifyPositionAtBisection()
-{
-  BenchmarkLocationTable table;
-  qint64 lineOrig;
-  qint64 columnOrig;
-
-  qint64 lineNew;
-  qint64 columnNew;
-
-  for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-    table.positionAt(i, &lineOrig, &columnOrig);
-    table.positionAtBisection(i, &lineNew, &columnNew);
-    qDebug() << i;
-    QCOMPARE(lineNew, lineOrig);
-    QCOMPARE(columnNew, columnOrig);
-  }
-}
-
-void Benchmarks::positionAtBisection()
-{
-  BenchmarkLocationTable table;
-  qint64 line;
-  qint64 column;
-
-  QBENCHMARK {
-    for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-      table.positionAtBisection(i, &line, &column);
-    }
-  }
-  QBENCHMARK {
-    for ( qint64 i = table.tableMaxOffset - 1; i >= 0; i -= 10 ) {
-      table.positionAtBisection(i, &line, &column);
-    }
-  }
+  QTest::addColumn<int>("algorithm");
+  QTest::newRow("relative") << (int)  RelativePositionAt;
+  QTest::newRow("binary") << (int) BinaryPositionAt;
 }
 
 }

@@ -109,6 +109,10 @@ public:
       *line = -1;
       *column = -1;
       return;
+    } else if ( offset > lines[currentLine - 1] ) {
+      *line = currentLine - 1;
+      *column = offset - lines[currentLine - 1];
+      return;
     }
 
     qint64 i = currentLine / 2;
@@ -258,6 +262,17 @@ void Benchmarks::verifyPositionAt()
             QCOMPARE(newLine, oldLine);
             QCOMPARE(newColumn, oldColumn);
           }
+          // special cases
+          // underflow
+          table.positionAt(-5, &oldLine, &oldColumn);
+          table.positionAtWithMemory(-5, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
+          // overflow
+          table.positionAt(table.tableMaxOffset + 10, &oldLine, &oldColumn);
+          table.positionAtWithMemory(table.tableMaxOffset + 10, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
           break;
         }
         case RandomAccess: {
@@ -285,6 +300,17 @@ void Benchmarks::verifyPositionAt()
             QCOMPARE(newLine, oldLine);
             QCOMPARE(newColumn, oldColumn);
           }
+          // special cases
+          // underflow
+          table.positionAt(-5, &oldLine, &oldColumn);
+          table.positionAtBisection(-5, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
+          // overflow
+          table.positionAt(table.tableMaxOffset + 10, &oldLine, &oldColumn);
+          table.positionAtBisection(table.tableMaxOffset + 10, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
           break;
         }
         case RandomAccess: {

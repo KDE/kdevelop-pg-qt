@@ -64,7 +64,13 @@ public:
       *line = -1;
       *column = -1;
       return;
+    } else if ( offset > lines[currentLine - 1] ) {
+      // overflow
+      *line = currentLine - 1;
+      *column = offset - lines[currentLine - 1];
+      return;
     }
+
     qint64 i = -1;
     if ( lastLine + 1 < currentLine && lines[lastLine] <= offset ) {
       if ( lines[lastLine + 1] > offset ) {

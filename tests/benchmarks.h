@@ -42,7 +42,8 @@ private:
     enum PositionAtAlgorithms {
       InitialPositionAt,
       RelativePositionAt,
-      BinaryPositionAt
+      BinaryPositionAt,
+      BinaryAndRelativePositionAt
     };
     enum AccessType {
       LinearAccess,

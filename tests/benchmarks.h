@@ -40,7 +40,7 @@ private slots:
 
 private:
     enum PositionAtAlgorithms {
-      InitialPositionAt,
+      CurrentPositionAt,
       RelativePositionAt,
       BinaryPositionAt,
       BinaryAndRelativePositionAt

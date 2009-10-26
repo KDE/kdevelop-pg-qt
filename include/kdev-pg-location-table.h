@@ -1,6 +1,7 @@
 /*
   This file is part of kdev-pg
   Copyright 2002-2006 Roberto Raggi <roberto@kdevelop.org>
+  Copyright 2009 Milian Wolff <mail@milianw.de>
 
   Permission to use, copy, modify, distribute, and sell this software and its
   documentation for any purpose is hereby granted without fee, provided that
@@ -32,7 +33,7 @@ class LocationTable
 {
 public:
   inline LocationTable(qint64 size = 1024)
-    : lines(0), lineCount(0), currentLine(0)
+    : lines(0), lineCount(0), currentLine(0), lastLine(0)
   {
     resize(size);
     lines[currentLine++] = 0;
@@ -58,32 +59,42 @@ public:
    */
   void positionAt(qint64 offset, qint64 *line, qint64 *column) const
   {
-    if( offset < 0 )
-    {
+    if( offset < 0 ) {
+      // invalid offset
       *line = -1;
       *column = -1;
       return;
     }
-    qint64 idx = 0;
-    qint64 i = 0;
-    for( ; i < currentLine; i++ )
-    {
-      if( lines[i] > offset )
-      {
-        idx = i-1;
-        break;
-      }else if( lines[i] == offset )
-      {
-        idx = i;
-        break;
+    qint64 i = -1;
+    if ( lastLine + 1 < currentLine && lines[lastLine] <= offset ) {
+      if ( lines[lastLine + 1] > offset ) {
+        // last matched line matches again
+        i = lastLine;
+      } else if ( lastLine + 2 < currentLine && lines[lastLine + 2] > offset ) {
+        // next line relative to last matched matches
+        i = lastLine + 1;
       }
     }
-    if (i == currentLine) {
-      idx = i - 1;
+    if ( i == -1 ) {
+      // fallback to binary search
+      i = currentLine / 2;
+      qint64 upperBound = currentLine;
+      qint64 lowerBound = 0;
+
+      while ( !(lines[i] <= offset && lines[i + 1] > offset) ) {
+        if ( lines[i] < offset ) {
+          lowerBound = i;
+          i += float(upperBound - lowerBound) / 2;
+        } else {
+          upperBound = i;
+          i -= float(upperBound - lowerBound) / 2;
+        }
+      }
     }
 
-    *line = idx;
-    *column = offset - lines[idx];
+    *line = i;
+    *column = offset - lines[i];
+    lastLine = i;
   }
 
   /**
@@ -108,6 +119,8 @@ protected:
   qint64 lineCount;
   /// The index to the next index in the lines array
   qint64 currentLine;
+  /// Last line as found by positionAt
+  mutable qint64 lastLine;
 
 private:
   LocationTable(LocationTable const &other);

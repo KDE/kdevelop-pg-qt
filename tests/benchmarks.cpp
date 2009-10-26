@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <algorithm>
 
 #include "../include/kdev-pg-location-table.h"
 
@@ -132,7 +133,21 @@ public:
     *line = i;
     *column = offset - lines[i];
   }
+  /**
+   * Uses old algorithm as written by Roberto Raggi in r687144 (kdevelop-pg/include/kdev-pg-location-table.h)
+   */
+  void positionAtSTLBisection(qint64 offset, qint64 *line, qint64 *column) const
+  {
+    qint64 *it = std::lower_bound(lines, lines + currentLine, offset);
+    Q_ASSERT(it != lines + currentLine);
 
+    if (*it != offset) {
+      --it;
+    }
+
+    *line = it - lines;
+    *column = offset - *it;
+  }
   qint64 tableMaxOffset;
 
 private:
@@ -226,6 +241,30 @@ void Benchmarks::positionAt()
       }
       break;
     }
+    case STLBinaryPositionAt: {
+      switch ( access ) {
+        case LinearAccess: {
+          QBENCHMARK {
+            for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+              table.positionAtSTLBisection(i, &line, &column);
+            }
+          }
+          break;
+        }
+        case RandomAccess: {
+          QBENCHMARK {
+            for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+              table.positionAtSTLBisection(rand() % table.tableMaxOffset, &line, &column);
+            }
+          }
+          break;
+        }
+        default:
+          qFatal("unexpected access type");
+          break;
+      }
+      break;
+    }
   }
 }
 
@@ -240,6 +279,8 @@ void Benchmarks::positionAt_data()
   QTest::newRow("relative, random") << (int) RelativePositionAt << (int) RandomAccess;
   QTest::newRow("binary, linear") << (int) BinaryPositionAt << (int) LinearAccess;
   QTest::newRow("binary, random") << (int) BinaryPositionAt << (int) RandomAccess;
+  QTest::newRow("stl binary, linear") << (int) STLBinaryPositionAt << (int) LinearAccess;
+  QTest::newRow("stl binary, random") << (int) STLBinaryPositionAt << (int) RandomAccess;
 }
 
 void Benchmarks::verifyPositionAt()
@@ -329,6 +370,33 @@ void Benchmarks::verifyPositionAt()
       }
       break;
     }
+    case STLBinaryPositionAt: {
+      switch ( access ) {
+        case LinearAccess: {
+          for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+            table.positionAt(i, &oldLine, &oldColumn);
+            table.positionAtSTLBisection(i, &newLine, &newColumn);
+            QCOMPARE(newLine, oldLine);
+            QCOMPARE(newColumn, oldColumn);
+          }
+          break;
+        }
+        case RandomAccess: {
+          for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
+            qint64 offset = rand() % table.tableMaxOffset;
+            table.positionAt(offset, &oldLine, &oldColumn);
+            table.positionAtSTLBisection(offset, &newLine, &newColumn);
+            QCOMPARE(newLine, oldLine);
+            QCOMPARE(newColumn, oldColumn);
+          }
+          break;
+        }
+        default:
+          qFatal("unexpected access type");
+          break;
+      }
+      break;
+    }
     default:
       qFatal("unexpected algorithm");
       break;
@@ -343,6 +411,8 @@ void Benchmarks::verifyPositionAt_data()
   QTest::newRow("relative, random") << (int) RelativePositionAt << (int) RandomAccess;
   QTest::newRow("binary, linear") << (int) BinaryPositionAt << (int) LinearAccess;
   QTest::newRow("binary, random") << (int) BinaryPositionAt << (int) RandomAccess;
+  QTest::newRow("stl binary, linear") << (int) STLBinaryPositionAt << (int) LinearAccess;
+  QTest::newRow("stl binary, random") << (int) STLBinaryPositionAt << (int) RandomAccess;
 }
 
 }

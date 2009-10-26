@@ -43,7 +43,8 @@ private:
       CurrentPositionAt,
       RelativePositionAt,
       BinaryPositionAt,
-      BinaryAndRelativePositionAt
+      BinaryAndRelativePositionAt,
+      STLBinaryPositionAt
     };
     enum AccessType {
       LinearAccess,

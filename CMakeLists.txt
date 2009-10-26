@@ -1,5 +1,7 @@
 project(kdevelop-pg)
 
+enable_testing()
+
 find_package(KDE4)
 
 if(NOT KDE4_FOUND)

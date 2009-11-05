@@ -10,6 +10,14 @@ target_link_libraries(testlocationtable
     ${QT_QTTEST_LIBRARY}
 )
 
+set(testmemorypool_SRCS
+    testmemorypool.cpp
+)
+kde4_add_unit_test(testmemorypool ${testmemorypool_SRCS})
+target_link_libraries(testmemorypool
+    ${QT_QTTEST_LIBRARY}
+)
+
 set(benchmarks_SRCS
     benchmarks.cpp
 )

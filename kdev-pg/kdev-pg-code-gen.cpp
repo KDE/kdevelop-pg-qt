@@ -942,4 +942,22 @@ void GenerateTokenVariableInitialization::visitVariableDeclaration(Model::Variab
 }
 
 
+void GenerateTokenTexts::operator()()
+{
+  out << "switch (token) {" << endl;
+  GenerateToken gen(out);
+  for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); it++ )
+  {
+    Model::TerminalItem* t = *it;
+    out << "    case Parser::Token_" << t->mName << ":" << endl;
+    QString text = t->mDescription;
+    text.replace('\\', "\\\\").replace('"', "\\\"");
+    out << "        return \"" <<  text << "\";" << endl;
+  }
+  out << "    default:" << endl;
+  out << "        return \"unknown token\";" << endl;
+  out << "}" << endl;
+}
+
+
 } // namespace KDevPG

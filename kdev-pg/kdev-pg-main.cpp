@@ -125,6 +125,10 @@ int main(int argc, char **argv)
     {
       KDevPG::globalSystem.generateDebugVisitor = true;
     }
+    else if (arg == "--token-text")
+    {
+      KDevPG::globalSystem.generateTokenText = true;
+    }
     else if (arg == "--help")
     {
       usage();

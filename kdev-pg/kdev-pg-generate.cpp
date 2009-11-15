@@ -308,7 +308,45 @@ void generateOutput()
     QTextStream outstr(&ofile);
     format(s, outstr);
   }
+  if (globalSystem.generateDebugVisitor)
+  { // generate the token text function
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
+
+      << "#ifndef " << globalSystem.language.toUpper() << "_TOKEN_TEXT_H_INCLUDED" << endl
+      << "#define " << globalSystem.language.toUpper() << "_TOKEN_TEXT_H_INCLUDED" << endl
+      << endl
+
+      << "#include \"" << globalSystem.language << "parser.h\"" << endl
+      << endl
+
+      << "namespace " << globalSystem.ns << "{" << endl
+      << endl
+
+      << "QString tokenText(int token)" << endl << "{" << endl;
+
+    GenerateTokenTexts gen(s);
+    gen();
+
+    s << "}"
+      << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
+
+    s << "#endif" << endl
+      << endl;
+
+    QString oname = globalSystem.language;
+    oname += "tokentext.h";
+
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
+  }
   { // generate the parser bits
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);

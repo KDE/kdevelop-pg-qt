@@ -12,13 +12,15 @@
 # KDEVPGQT_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
 # KDEVPGQT_GENERATE(SRC_FILE_VAR OUTPUT language
-#                     [NAMESPACE ns] [DEBUG_VISITOR] [DUMP_INFO]
+#                     [NAMESPACE ns] [DEBUG_VISITOR] [TOKEN_TEXT] [DUMP_INFO]
 #                     GRAMMARFILE ADDITIONALDEPS)
 #     macro to add a custom target for the generation of the parser
 #     OUTPUT will be given to kdev-pg as the --output parameter and thus sets the filename prefix
 #     NAMESPACE can be given to choose a namespace different from the OUTPUT value
 #     DEBUG_VISITOR will run kdevelop-pg with the --debug-visitor argument to generate a simple
 #                   visitor that will print debug messages
+#     TOKEN_TEXT will run kdevelop-pg with the --token-text argument to generate a simple
+#                function that returns a readable name of a token
 #     DUMP_INFO will tell kdevelop-pg to dump extra information about symbols, terminals and rules
 #               into files in the binary dir
 #     Note: The macro only exists when KDEVPG was found
@@ -106,6 +108,15 @@ if( KDEVPGQT_INCLUDE_DIR
                 "${CMAKE_CURRENT_BINARY_DIR}/${_language}debugvisitor.h"
             )
 	endif(${_dbg} STREQUAL "DEBUG_VISITOR" )
+        list(GET _depList 0 _txt)
+        set(_tokenText)
+        if( ${_txt} STREQUAL "TOKEN_TEXT" )
+            list(REMOVE_AT _depList 0)
+            set(_tokenText "--token-text")
+            set(_outputList ${_outputList}
+                "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentext.h"
+            )
+        endif(${_txt} STREQUAL "TOKEN_TEXT" )
 	set(_dumpInfo)
 	list(GET _depList 0 _dump)
 	if( ${_dump} STREQUAL "DUMP_INFO" )

@@ -192,6 +192,18 @@ public:
   void operator()();
 };
 
+class GenerateTokenTexts
+{
+public:
+  QTextStream& out;
+
+public:
+  GenerateTokenTexts(QTextStream& o): out(o)
+  {}
+
+  void operator()();
+};
+
 }
 
 #endif // KDEV_PG_CODEGEN_H

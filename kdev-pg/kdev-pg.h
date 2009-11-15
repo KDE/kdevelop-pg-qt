@@ -91,7 +91,7 @@ public:
     : tokenStream("KDevPG::TokenStream"), language(0), ns(0), decl(0), bits(0),
       exportMacro(""), exportMacroHeader(0), astCode(""), namespaceCode(""),
       GenerateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
-      needStateManagement(false), start(0), mZero(0)
+      generateTokenText(false), needStateManagement(false), start(0), mZero(0)
   {}
 
   // options
@@ -107,6 +107,7 @@ public:
   bool GenerateAst;
   bool generateSerializeVisitor;
   bool generateDebugVisitor;
+  bool generateTokenText;
   bool needStateManagement;
 
   Model::ZeroItem *zero()

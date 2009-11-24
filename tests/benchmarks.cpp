@@ -147,15 +147,34 @@ public:
       *column = offset - lines[currentLine - 1];
       return;
     }
-    qint64 *it = std::lower_bound(lines, lines + currentLine, offset);
-    Q_ASSERT(it != lines + currentLine);
 
-    if (*it != offset) {
-      --it;
+    qint64 i = -1;
+    // search relative to last line (next line and the one after that)
+    if ( m_lastLine + 1 < currentLine && lines[m_lastLine] <= offset ) {
+      if ( lines[m_lastLine + 1] > offset ) {
+        // last matched line matches again
+        i = m_lastLine;
+      } else if ( m_lastLine + 2 < currentLine && lines[m_lastLine + 2] > offset ) {
+        // next line relative to last matched matches
+        i = m_lastLine + 1;
+      }
+    }
+    if ( i == -1 ) {
+      // fallback to binary search
+      qint64 *it = std::lower_bound(lines, lines + currentLine, offset);
+      Q_ASSERT(it != lines + currentLine);
+
+      if (*it != offset) {
+        --it;
+      }
+      *line = it - lines;
+      *column = offset - *it;
+    } else {
+      *line = i;
+      *column = offset - lines[i];
     }
 
-    *line = it - lines;
-    *column = offset - *it;
+    m_lastLine = *line;
   }
   qint64 tableMaxOffset;
 

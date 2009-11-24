@@ -41,9 +41,7 @@ private slots:
 private:
     enum PositionAtAlgorithms {
       CurrentPositionAt,
-      RelativePositionAt,
-      BinaryPositionAt,
-      BinaryAndRelativePositionAt,
+      QtBinaryPositionAt,
       STLBinaryPositionAt
     };
     enum AccessType {

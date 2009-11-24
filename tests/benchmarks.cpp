@@ -23,6 +23,8 @@
 #include <ctime>
 #include <algorithm>
 
+#include <qalgorithms.h>
+
 #include "../include/kdev-pg-location-table.h"
 
 #include <QtTest/QTest>
@@ -52,61 +54,15 @@ public:
     }
   }
   /**
-   * Bases the next access to positionAt off the last one,
-   * making linear consecutive accesses very fast.
-   *
-   * Will not perform really good on random access, but I really
-   * doubt whether that is required for a parser?
-   */
-  void positionAtWithMemory(qint64 offset, qint64 *line, qint64 *column) const
-  {
-    if( offset < 0 ) {
-      *line = -1;
-      *column = -1;
-      return;
-    }
-
-    qint64 i = m_lastLine;
-
-    if ( lines[m_lastLine] < offset ) {
-      // walk forward
-      for( ; i < currentLine; ++i ) {
-        if( lines[i] > offset ) {
-          --i;
-          break;
-        } else if( lines[i] == offset ) {
-          break;
-        }
-      }
-    } else if ( lines[m_lastLine] > offset ) {
-      // walk backward
-      for( ; i >= 0; --i ) {
-        if ( lines[i] <= offset ) {
-          break;
-        }
-      }
-    } else {
-      // we have a direct match
-    }
-
-    if (i == currentLine) {
-      --i;
-    }
-
-    *line = i;
-    *column = offset - lines[i];
-    m_lastLine = i;
-  }
-  /**
    * Implements a bisection algorithm / binary search
    * for the offset.
    *
    * Should perform pretty good for any kind of usage, but potentially not
    * as good as positionAtWithMemory for linear access.
    */
-  void positionAtBisection(qint64 offset, qint64 *line, qint64 *column) const
+  void positionAtQtBisection(qint64 offset, qint64 *line, qint64 *column) const
   {
-    if( offset < 0 ) {
+    if ( offset < 0 ) {
       *line = -1;
       *column = -1;
       return;
@@ -116,22 +72,33 @@ public:
       return;
     }
 
-    qint64 i = currentLine / 2;
-    qint64 upperBound = currentLine;
-    qint64 lowerBound = 0;
-
-    while ( !(lines[i] <= offset && lines[i + 1] > offset) ) {
-      if ( lines[i] < offset ) {
-        lowerBound = i;
-        i += float(upperBound - lowerBound) / 2;
-      } else {
-        upperBound = i;
-        i -= float(upperBound - lowerBound) / 2;
+    qint64 i = -1;
+    // search relative to last line (next line and the one after that)
+    if ( m_lastLine + 1 < currentLine && lines[m_lastLine] <= offset ) {
+      if ( lines[m_lastLine + 1] > offset ) {
+        // last matched line matches again
+        i = m_lastLine;
+      } else if ( m_lastLine + 2 < currentLine && lines[m_lastLine + 2] > offset ) {
+        // next line relative to last matched matches
+        i = m_lastLine + 1;
       }
     }
+    if ( i == -1 ) {
+      // fallback to binary search
+      qint64 *it = qLowerBound(lines, lines + currentLine, offset);
+      Q_ASSERT(it != lines + currentLine);
 
-    *line = i;
-    *column = offset - lines[i];
+      if (*it != offset) {
+        --it;
+      }
+      *line = it - lines;
+      *column = offset - *it;
+    } else {
+      *line = i;
+      *column = offset - lines[i];
+    }
+
+    m_lastLine = *line;
   }
   /**
    * Uses old algorithm as written by Roberto Raggi in r687144 (kdevelop-pg/include/kdev-pg-location-table.h)
@@ -221,12 +188,12 @@ void Benchmarks::positionAt()
       }
       break;
     }
-    case RelativePositionAt: {
+    case QtBinaryPositionAt: {
       switch ( access ) {
         case LinearAccess: {
           QBENCHMARK {
             for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-              table.positionAtWithMemory(i, &line, &column);
+              table.positionAtQtBisection(i, &line, &column);
             }
           }
           break;
@@ -234,31 +201,7 @@ void Benchmarks::positionAt()
         case RandomAccess: {
           QBENCHMARK {
             for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-              table.positionAtWithMemory(rand() % table.tableMaxOffset, &line, &column);
-            }
-          }
-          break;
-        }
-        default:
-          qFatal("unexpected access type");
-          break;
-      }
-      break;
-    }
-    case BinaryPositionAt: {
-      switch ( access ) {
-        case LinearAccess: {
-          QBENCHMARK {
-            for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-              table.positionAtBisection(i, &line, &column);
-            }
-          }
-          break;
-        }
-        case RandomAccess: {
-          QBENCHMARK {
-            for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-              table.positionAtBisection(rand() % table.tableMaxOffset, &line, &column);
+              table.positionAtQtBisection(rand() % table.tableMaxOffset, &line, &column);
             }
           }
           break;
@@ -303,10 +246,8 @@ void Benchmarks::positionAt_data()
 
   QTest::newRow("current, linear") << (int) CurrentPositionAt << (int) LinearAccess;
   QTest::newRow("current, random") << (int) CurrentPositionAt << (int) RandomAccess;
-  QTest::newRow("relative, linear") << (int) RelativePositionAt << (int) LinearAccess;
-  QTest::newRow("relative, random") << (int) RelativePositionAt << (int) RandomAccess;
-  QTest::newRow("binary, linear") << (int) BinaryPositionAt << (int) LinearAccess;
-  QTest::newRow("binary, random") << (int) BinaryPositionAt << (int) RandomAccess;
+  QTest::newRow("qt binary, linear") << (int) QtBinaryPositionAt << (int) LinearAccess;
+  QTest::newRow("qt binary, random") << (int) QtBinaryPositionAt << (int) RandomAccess;
   QTest::newRow("stl binary, linear") << (int) STLBinaryPositionAt << (int) LinearAccess;
   QTest::newRow("stl binary, random") << (int) STLBinaryPositionAt << (int) RandomAccess;
 }
@@ -322,24 +263,24 @@ void Benchmarks::verifyPositionAt()
   qint64 newLine;
   qint64 newColumn;
   switch ( algorithm) {
-    case RelativePositionAt: {
+    case QtBinaryPositionAt: {
       switch ( access ) {
         case LinearAccess: {
           for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
             table.positionAt(i, &oldLine, &oldColumn);
-            table.positionAtWithMemory(i, &newLine, &newColumn);
+            table.positionAtQtBisection(i, &newLine, &newColumn);
             QCOMPARE(newLine, oldLine);
             QCOMPARE(newColumn, oldColumn);
           }
           // special cases
           // underflow
           table.positionAt(-5, &oldLine, &oldColumn);
-          table.positionAtWithMemory(-5, &newLine, &newColumn);
+          table.positionAtQtBisection(-5, &newLine, &newColumn);
           QCOMPARE(newLine, oldLine);
           QCOMPARE(newColumn, oldColumn);
           // overflow
           table.positionAt(table.tableMaxOffset + 10, &oldLine, &oldColumn);
-          table.positionAtWithMemory(table.tableMaxOffset + 10, &newLine, &newColumn);
+          table.positionAtQtBisection(table.tableMaxOffset + 10, &newLine, &newColumn);
           QCOMPARE(newLine, oldLine);
           QCOMPARE(newColumn, oldColumn);
           break;
@@ -348,45 +289,7 @@ void Benchmarks::verifyPositionAt()
           for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
             qint64 offset = rand() % table.tableMaxOffset;
             table.positionAt(offset, &oldLine, &oldColumn);
-            table.positionAtWithMemory(offset, &newLine, &newColumn);
-            QCOMPARE(newLine, oldLine);
-            QCOMPARE(newColumn, oldColumn);
-          }
-          break;
-        }
-        default:
-          qFatal("unexpected access type");
-          break;
-      }
-      break;
-    }
-    case BinaryPositionAt: {
-      switch ( access ) {
-        case LinearAccess: {
-          for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-            table.positionAt(i, &oldLine, &oldColumn);
-            table.positionAtBisection(i, &newLine, &newColumn);
-            QCOMPARE(newLine, oldLine);
-            QCOMPARE(newColumn, oldColumn);
-          }
-          // special cases
-          // underflow
-          table.positionAt(-5, &oldLine, &oldColumn);
-          table.positionAtBisection(-5, &newLine, &newColumn);
-          QCOMPARE(newLine, oldLine);
-          QCOMPARE(newColumn, oldColumn);
-          // overflow
-          table.positionAt(table.tableMaxOffset + 10, &oldLine, &oldColumn);
-          table.positionAtBisection(table.tableMaxOffset + 10, &newLine, &newColumn);
-          QCOMPARE(newLine, oldLine);
-          QCOMPARE(newColumn, oldColumn);
-          break;
-        }
-        case RandomAccess: {
-          for ( qint64 i = 0; i < table.tableMaxOffset; i += 10 ) {
-            qint64 offset = rand() % table.tableMaxOffset;
-            table.positionAt(offset, &oldLine, &oldColumn);
-            table.positionAtBisection(offset, &newLine, &newColumn);
+            table.positionAtQtBisection(offset, &newLine, &newColumn);
             QCOMPARE(newLine, oldLine);
             QCOMPARE(newColumn, oldColumn);
           }
@@ -446,10 +349,8 @@ void Benchmarks::verifyPositionAt_data()
 {
   QTest::addColumn<int>("algorithm");
   QTest::addColumn<int>("access");
-  QTest::newRow("relative, linear") << (int) RelativePositionAt << (int) LinearAccess;
-  QTest::newRow("relative, random") << (int) RelativePositionAt << (int) RandomAccess;
-  QTest::newRow("binary, linear") << (int) BinaryPositionAt << (int) LinearAccess;
-  QTest::newRow("binary, random") << (int) BinaryPositionAt << (int) RandomAccess;
+  QTest::newRow("qt binary, linear") << (int) QtBinaryPositionAt << (int) LinearAccess;
+  QTest::newRow("qt binary, random") << (int) QtBinaryPositionAt << (int) RandomAccess;
   QTest::newRow("stl binary, linear") << (int) STLBinaryPositionAt << (int) LinearAccess;
   QTest::newRow("stl binary, random") << (int) STLBinaryPositionAt << (int) RandomAccess;
 }

@@ -26,6 +26,8 @@
 
 #include <QtCore/QtGlobal>
 
+#include <QtCore/qalgorithms.h>
+
 namespace KDevPG
 {
 
@@ -59,7 +61,7 @@ public:
    */
   void positionAt(qint64 offset, qint64 *line, qint64 *column) const
   {
-    if( offset < 0 ) {
+    if ( offset < 0 ) {
       // invalid offset
       *line = -1;
       *column = -1;
@@ -72,6 +74,7 @@ public:
     }
 
     qint64 i = -1;
+    // search relative to last line (next line and the one after that)
     if ( lastLine + 1 < currentLine && lines[lastLine] <= offset ) {
       if ( lines[lastLine + 1] > offset ) {
         // last matched line matches again
@@ -83,24 +86,20 @@ public:
     }
     if ( i == -1 ) {
       // fallback to binary search
-      i = currentLine / 2;
-      qint64 upperBound = currentLine;
-      qint64 lowerBound = 0;
+      qint64 *it = qLowerBound(lines, lines + currentLine, offset);
+      Q_ASSERT(it != lines + currentLine);
 
-      while ( !(lines[i] <= offset && lines[i + 1] > offset) ) {
-        if ( lines[i] < offset ) {
-          lowerBound = i;
-          i += float(upperBound - lowerBound) / 2;
-        } else {
-          upperBound = i;
-          i -= float(upperBound - lowerBound) / 2;
-        }
+      if (*it != offset) {
+        --it;
       }
+      *line = it - lines;
+      *column = offset - *it;
+    } else {
+      *line = i;
+      *column = offset - lines[i];
     }
 
-    *line = i;
-    *column = offset - lines[i];
-    lastLine = i;
+    lastLine = *line;
   }
 
   /**

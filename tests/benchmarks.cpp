@@ -138,6 +138,15 @@ public:
    */
   void positionAtSTLBisection(qint64 offset, qint64 *line, qint64 *column) const
   {
+    if ( offset < 0 ) {
+      *line = -1;
+      *column = -1;
+      return;
+    } else if ( offset > lines[currentLine - 1] ) {
+      *line = currentLine - 1;
+      *column = offset - lines[currentLine - 1];
+      return;
+    }
     qint64 *it = std::lower_bound(lines, lines + currentLine, offset);
     Q_ASSERT(it != lines + currentLine);
 
@@ -379,6 +388,17 @@ void Benchmarks::verifyPositionAt()
             QCOMPARE(newLine, oldLine);
             QCOMPARE(newColumn, oldColumn);
           }
+          // special cases
+          // underflow
+          table.positionAt(-5, &oldLine, &oldColumn);
+          table.positionAtSTLBisection(-5, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
+          // overflow
+          table.positionAt(table.tableMaxOffset + 10, &oldLine, &oldColumn);
+          table.positionAtSTLBisection(table.tableMaxOffset + 10, &newLine, &newColumn);
+          QCOMPARE(newLine, oldLine);
+          QCOMPARE(newColumn, oldColumn);
           break;
         }
         case RandomAccess: {

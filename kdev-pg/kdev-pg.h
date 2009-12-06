@@ -38,12 +38,13 @@ namespace KDevPG
   Model::ZeroItem *zero();
   Model::PlusItem *plus(Model::Node *item);
   Model::StarItem *star(Model::Node *item);
+  Model::CodeItem *code(const QString& code, Model::Node *item);
   Model::SymbolItem *symbol(const QString& name);
   Model::ActionItem *action(Model::Node *item, const QString& code);
   Model::AlternativeItem *alternative(Model::Node *left, Model::Node *right);
   Model::ConsItem *cons(Model::Node *left, Model::Node *right);
   Model::EvolveItem *evolve(
-      const QString& preCode, Model::Node *item, Model::SymbolItem *symbol,
+      Model::Node *item, Model::SymbolItem *symbol,
       Model::VariableDeclarationItem *declarations, const QString& code
   );
   Model::TryCatchItem *tryCatch(Model::Node *try_item, Model::Node *catch_item);

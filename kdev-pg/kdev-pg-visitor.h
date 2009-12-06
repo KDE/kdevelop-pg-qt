@@ -42,6 +42,7 @@ protected:
   virtual void visitZero(Model::ZeroItem *) {}
   virtual void visitPlus(Model::PlusItem *) {}
   virtual void visitStar(Model::StarItem *) {}
+  virtual void visitCode(Model::CodeItem *) {}
   virtual void visitSymbol(Model::SymbolItem *) {}
   virtual void visitAction(Model::ActionItem *) {}
   virtual void visitAlternative(Model::AlternativeItem *) {}

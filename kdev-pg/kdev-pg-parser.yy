@@ -114,7 +114,7 @@ rules
 primary_item
     : '0'                               { $$ = KDevPG::globalSystem.zero(); }
     | '(' option_item ')'               { $$ = $2; }
-    | try_item                    { $$ = $1; }
+    | try_item                          { $$ = $1; }
     | primary_atom                      { $$ = $1; }
     | name scope primary_atom           { $$ = KDevPG::annotation($1, $3, false, $2); }
     | '#' name scope primary_atom       { $$ = KDevPG::annotation($2, $4, true, $3);  }
@@ -185,23 +185,23 @@ conditional_item
     ;
 
 option_item
-    : conditional_item                  { $$ = $1; }
+    : code_opt conditional_item         { $$ = KDevPG::code($1, $2); }
     | option_item '|' conditional_item  { $$ = KDevPG::alternative($1, $3); }
     ;
 
 item
-    : code_opt option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    : option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
         {
-          $$ = KDevPG::evolve($1, $2, KDevPG::globalSystem.pushSymbol($4),
-                          (KDevPG::Model::VariableDeclarationItem*) $7, $5);
+          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
+                          (KDevPG::Model::VariableDeclarationItem*) $6, $4);
         }
-    | code_opt option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
+    | option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
         {
-          $$ = KDevPG::evolve($1, $2, KDevPG::globalSystem.pushSymbol($4),
-                          (KDevPG::Model::VariableDeclarationItem*) $6, $8);
+          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
+                          (KDevPG::Model::VariableDeclarationItem*) $5, $7);
         }
-    | code_opt option_item T_ARROW T_IDENTIFIER code_opt
-        { $$ = KDevPG::evolve($1, $2, KDevPG::globalSystem.pushSymbol($4), 0, $5); }
+    | option_item T_ARROW T_IDENTIFIER code_opt
+        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
     ;
 
 code_opt

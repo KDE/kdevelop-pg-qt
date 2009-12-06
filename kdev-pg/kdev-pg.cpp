@@ -33,6 +33,14 @@ Model::ZeroItem *zero()
   return node;
 }
 
+Model::CodeItem *code(const QString& code, Model::Node *item)
+{
+  Model::CodeItem *node = createNode<Model::CodeItem>();
+  node->mCode = code;
+  node->mItem = item;
+  return node;
+}
+
 Model::PlusItem *plus(Model::Node *item)
 {
   Model::PlusItem *node = createNode<Model::PlusItem>();
@@ -81,7 +89,7 @@ Model::ConsItem *cons(Model::Node *left, Model::Node *right)
 }
 
 Model::EvolveItem *evolve(
-    const QString& preCode, Model::Node *item, Model::SymbolItem *symbol,
+    Model::Node *item, Model::SymbolItem *symbol,
     Model::VariableDeclarationItem *declarations, const QString& code)
 {
   Model::EvolveItem *node = createNode<Model::EvolveItem>();
@@ -89,7 +97,6 @@ Model::EvolveItem *evolve(
   node->mSymbol = symbol;
   node->mDeclarations = declarations;
   node->mCode = code;
-  node->mPreCode = preCode;
   return node;
 }
 
@@ -260,6 +267,10 @@ bool isZero(Model::Node *node)
   else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem*>(node))
     {
       return isZero(a->mItem);
+    }
+  else if (Model::CodeItem *c = nodeCast<Model::CodeItem*>(node))
+    {
+      return c->mCode == "" && isZero(c->mItem);
     }
   else if (Model::PlusItem *p = nodeCast<Model::PlusItem*>(node))
     {

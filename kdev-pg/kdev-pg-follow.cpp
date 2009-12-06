@@ -185,6 +185,14 @@ void NextFollow::visitAnnotation(Model::AnnotationItem *node)
   DefaultVisitor::visitAnnotation(node);
 }
 
+void NextFollow::visitCode(Model::CodeItem *node)
+{
+  merge(node->mItem, globalSystem.follow(node));
+  addFollowToFollowDep(node->mItem, node);
+  
+  DefaultVisitor::visitCode(node);
+}
+
 void NextFollow::visitCondition(Model::ConditionItem *node)
 {
   merge(node->mItem, globalSystem.follow(node));

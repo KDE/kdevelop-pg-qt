@@ -132,7 +132,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 2 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 2 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
@@ -184,7 +184,7 @@ extern void yyerror(const char* msg);
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 33 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 33 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 {
     KDevPG::Model::Node *item;
     char* str;
@@ -193,7 +193,7 @@ typedef union YYSTYPE
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 /* Line 187 of yacc.c.  */
-#line 197 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
+#line 197 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -206,7 +206,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 210 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
+#line 210 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
 
 #ifdef short
 # undef short
@@ -421,7 +421,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   162
+#define YYLAST   148
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  48
@@ -430,7 +430,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  68
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  145
+#define YYNSTATES  146
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -483,8 +483,8 @@ static const yytype_uint8 yyprhs[] =
       73,    77,    84,    87,    91,    93,    97,    99,   101,   105,
      110,   113,   115,   120,   129,   130,   132,   134,   138,   140,
      142,   145,   148,   150,   152,   156,   159,   161,   164,   166,
-     170,   172,   176,   184,   192,   197,   198,   200,   202,   205,
-     212,   218,   226,   233,   234,   236,   238,   240,   242
+     170,   173,   177,   185,   193,   198,   199,   201,   203,   206,
+     213,   219,   227,   234,   235,   237,   239,   241,   243
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -507,14 +507,14 @@ static const yytype_int8 yyrhs[] =
       40,    -1,    56,    41,    -1,    56,    42,    -1,    56,    -1,
       62,    -1,    63,    43,    56,    -1,    63,     6,    -1,    63,
       -1,    64,    63,    -1,    64,    -1,    44,     6,    64,    -1,
-      65,    -1,    66,    45,    65,    -1,    66,     4,     3,     6,
-      46,    69,    47,    -1,    66,     4,     3,    46,    69,    47,
-      68,    -1,    66,     4,     3,    68,    -1,    -1,     6,    -1,
-      70,    -1,    69,    70,    -1,    71,    72,    73,     3,    40,
-       3,    -1,    71,    72,    29,     3,     7,    -1,    71,    72,
-      73,    37,     3,    40,     3,    -1,    71,    72,    29,    37,
-       3,     7,    -1,    -1,    25,    -1,    23,    -1,    24,    -1,
-      27,    -1,    30,    -1
+      68,    65,    -1,    66,    45,    65,    -1,    66,     4,     3,
+       6,    46,    69,    47,    -1,    66,     4,     3,    46,    69,
+      47,    68,    -1,    66,     4,     3,    68,    -1,    -1,     6,
+      -1,    70,    -1,    69,    70,    -1,    71,    72,    73,     3,
+      40,     3,    -1,    71,    72,    29,     3,     7,    -1,    71,
+      72,    73,    37,     3,    40,     3,    -1,    71,    72,    29,
+      37,     3,     7,    -1,    -1,    25,    -1,    23,    -1,    24,
+      -1,    27,    -1,    30,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
@@ -587,7 +587,7 @@ static const yytype_uint8 yyr2[] =
        3,     6,     2,     3,     1,     3,     1,     1,     3,     4,
        2,     1,     4,     8,     0,     1,     1,     3,     1,     1,
        2,     2,     1,     1,     3,     2,     1,     2,     1,     3,
-       1,     3,     7,     7,     4,     0,     1,     1,     2,     6,
+       2,     3,     7,     7,     4,     0,     1,     1,     2,     6,
        5,     7,     6,     0,     1,     1,     1,     1,     1
 };
 
@@ -597,58 +597,58 @@ static const yytype_uint8 yyr2[] =
 static const yytype_uint8 yydefact[] =
 {
       55,    56,     0,     2,     1,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     4,    18,     0,     0,    11,     0,
-       6,     9,    10,    12,    34,    31,     0,     0,     0,    24,
-       0,     0,     5,    55,    42,    27,    26,     0,    43,    46,
-      48,    50,     0,     0,     0,     7,     0,     8,     0,     0,
-       0,     0,     0,    35,     0,    30,     0,     0,     0,    36,
-       0,     0,     0,     3,    40,    41,    38,    39,     0,    45,
-       0,    47,     0,     0,    22,     0,    20,     0,     0,     0,
-       0,     0,    37,     0,     0,    25,     0,    49,    23,    34,
-      28,    44,    55,    51,    19,     0,     0,     0,     0,    16,
-      17,    32,     0,    29,    56,    63,    54,     0,    13,    15,
-      14,     0,    63,    64,    63,    57,     0,    21,     0,    63,
-      55,    58,    65,    66,     0,     0,    52,    53,    67,     0,
-      68,     0,    33,     0,     0,     0,     0,    60,     0,     0,
-       0,    62,    59,     0,    61
+       0,     0,     0,    55,     4,    18,     0,     0,    11,     0,
+       6,     9,    10,    12,     5,    55,     0,     0,     0,     0,
+       7,     0,     8,     0,     0,     0,     0,     0,     0,     3,
+       0,     0,    22,    34,    31,     0,     0,    55,    24,     0,
+       0,    42,    27,    26,     0,    43,    46,    48,    50,     0,
+      20,     0,     0,     0,     0,     0,    23,    55,    51,    35,
+       0,    30,    55,    55,     0,    36,     0,     0,    40,    41,
+      38,    39,     0,    45,     0,    47,    19,     0,     0,     0,
+       0,    16,    17,    56,    63,    54,    37,     0,     0,    25,
+       0,    49,    34,    28,    44,     0,    13,    15,    14,    63,
+      64,    63,    57,     0,    32,     0,    29,    21,    63,    55,
+      58,    65,    66,     0,     0,    52,    53,    67,     0,    68,
+       0,    55,     0,     0,     0,     0,     0,    60,     0,     0,
+       0,    33,    62,    59,     0,    61
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-      -1,     2,     5,    13,    14,    20,    16,    33,    34,    35,
-      36,    55,    37,    68,    38,    39,    40,    41,    42,    43,
-       3,   114,   115,   116,   124,   131
+      -1,     2,     5,    13,    14,    20,    16,    25,    51,    52,
+      53,    71,    54,    82,    55,    56,    57,    58,    26,    27,
+      28,   111,   112,   113,   123,   130
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -85
+#define YYPACT_NINF -65
 static const yytype_int16 yypact[] =
 {
-       1,   -85,    27,   -85,   -85,    74,    16,    58,    81,    56,
-      85,    86,    97,     0,   -85,    71,    10,   104,   -85,    84,
-     -85,   -85,   -85,   -85,    69,   -85,    82,    87,    38,   -85,
-     111,   110,   -85,    19,    31,   -85,   -85,    37,   -85,     8,
-      59,   -85,     2,   112,   109,   -85,   113,   -85,   105,   106,
-     107,    90,    91,   -85,   123,   -85,    38,    38,   -30,    89,
-      37,    59,   121,   -85,   -85,   -85,   -85,   -85,    64,   -85,
-      59,     8,   126,    38,   -85,    96,    98,    99,   100,   101,
-     130,   131,   -85,   -11,    20,   -85,    64,    59,   -85,   116,
-     -85,   -85,     7,   -85,   -85,   124,   133,   134,   135,   -85,
-     -85,   -85,   122,   -85,   102,   117,   -85,   115,   -85,   -85,
-     -85,   114,   117,   -85,    -7,   -85,    57,   -85,    38,    21,
-       1,   -85,   -85,   -85,    83,    25,   -85,   -85,   -85,     5,
-     -85,    13,   -85,   137,   142,   118,   143,   -85,   144,   147,
-     119,   -85,   -85,   149,   -85
+      10,   -65,    19,   -65,   -65,    52,    35,    21,    45,    49,
+      81,    85,    75,    48,   -65,    63,    -2,    90,   -65,    73,
+     -65,   -65,   -65,   -65,   -65,    10,    -1,    91,     1,    92,
+     -65,    94,   -65,    86,    87,    88,    67,    71,    99,     1,
+     104,     1,   -65,    -8,   -65,    76,    77,    10,   -65,   105,
+     106,    24,   -65,   -65,    31,   -65,     4,    36,   -65,    79,
+      78,    80,    82,    83,   109,   112,   -65,     2,   -65,   -65,
+     117,   -65,    10,    10,   -23,    84,    31,    36,   -65,   -65,
+     -65,   -65,    47,   -65,    36,     4,   -65,   113,   118,   119,
+     120,   -65,   -65,    89,    98,   -65,   -65,   -22,   -17,   -65,
+      47,    36,   107,   -65,   -65,    93,   -65,   -65,   -65,    98,
+     -65,   -18,   -65,    53,   -65,   110,   -65,   -65,   -12,    10,
+     -65,   -65,   -65,    65,    95,   -65,   -65,   -65,     6,   -65,
+      12,    10,   123,   129,    96,   130,     8,   -65,   127,   134,
+     100,   -65,   -65,   -65,   135,   -65
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+static const yytype_int8 yypgoto[] =
 {
-     -85,   -85,   -85,   -85,   140,   -85,   -85,   -85,    92,   -20,
-     -85,   -85,   125,    94,   -85,   -38,    95,    88,   -28,   127,
-     -32,    45,   -84,   -85,   -85,   -85
+     -65,   -65,   -65,   -65,   126,   -65,   -65,   -65,    57,   -64,
+     -65,   -65,    97,    66,   -65,   -55,    68,   102,   -46,   122,
+       0,    39,   -43,   -65,   -65,   -65
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -658,44 +658,40 @@ static const yytype_int16 yypgoto[] =
 #define YYTABLE_NINF -37
 static const yytype_int16 yytable[] =
 {
-      58,    63,    71,    24,    85,    25,    72,     1,   133,     6,
-       7,     8,     9,   104,    69,    73,   135,    45,   113,    26,
-      27,    15,    24,   101,    25,     1,    10,     4,    83,    84,
-     121,    11,    12,    28,    73,   121,    29,    30,    26,    27,
-     120,    24,   134,    25,    31,    46,   113,    73,    90,    71,
-     136,    70,    28,   105,   102,    29,    30,    26,    27,   132,
-     106,    17,    24,    31,    25,    73,   103,    89,   126,    25,
-      73,    28,    64,    65,    29,    30,    66,    67,    26,    27,
-     122,   123,    31,     6,     7,     8,     9,    18,   127,    19,
-     125,    53,    28,    21,    22,    29,    30,    48,    49,    50,
-      10,    51,    52,    23,    44,    11,    12,    54,   -36,   -36,
-     128,    47,   129,   130,    59,    56,    61,    75,    76,    74,
-      57,    77,    78,    79,    80,    81,    82,    54,    88,    92,
-      94,    95,   107,    96,    97,    98,    99,   100,    53,   108,
-     109,   110,   113,   111,   137,   138,   140,   118,   112,   117,
-     142,   141,   144,    32,    86,    60,    87,   119,   139,   143,
-      62,    93,    91
+       3,    74,    85,    40,    43,    30,    44,   110,    93,   132,
+      83,    99,   114,   110,    69,   134,     1,   115,   103,     4,
+      45,    46,    41,    41,    17,    39,    97,    98,    41,   119,
+      70,   -36,   -36,    31,    47,   125,   116,    48,    49,    43,
+      15,    44,   141,   133,    41,    50,    85,    84,    94,   135,
+     102,    18,    44,    41,     1,    45,    46,     6,     7,     8,
+       9,     6,     7,     8,     9,    78,    79,    95,   120,    47,
+      80,    81,    48,    49,    10,   120,   121,   122,    10,    11,
+      12,    23,    19,    11,    12,   136,    33,    34,    35,    21,
+      36,    37,   127,    22,   128,   129,    29,    32,    42,    60,
+      59,    64,    61,    62,    63,    65,    66,    67,    75,    72,
+      73,    87,    77,    86,    88,    91,    89,    90,    92,   126,
+      96,   105,    70,   110,   106,   107,   108,   117,   131,    69,
+     137,   124,   138,   140,   142,   109,   139,   143,   145,    24,
+     144,   104,   100,    68,     0,   101,    76,    38,   118
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int16 yycheck[] =
 {
-      28,    33,    40,     3,    34,     5,     4,     6,     3,     9,
-      10,    11,    12,     6,     6,    45,     3,     7,    25,    19,
-      20,     5,     3,    34,     5,     6,    26,     0,    56,    57,
-     114,    31,    32,    33,    45,   119,    36,    37,    19,    20,
-      47,     3,    37,     5,    44,    35,    25,    45,    68,    87,
-      37,    43,    33,    46,    34,    36,    37,    19,    20,    34,
-      92,     3,     3,    44,     5,    45,    86,     3,    47,     5,
-      45,    33,    41,    42,    36,    37,    39,    40,    19,    20,
-      23,    24,    44,     9,    10,    11,    12,     6,   120,    33,
-     118,    22,    33,     8,     8,    36,    37,    13,    14,    15,
-      26,    17,    18,     6,    33,    31,    32,    38,    39,    40,
-      27,     7,    29,    30,     3,    33,     6,     8,     5,     7,
-      33,    16,    16,    16,    34,    34,     3,    38,     7,     3,
-      34,    33,     8,    34,    34,    34,     6,     6,    22,     6,
-       6,     6,    25,    21,     7,     3,     3,    33,    46,    34,
-       3,     7,     3,    13,    60,    30,    61,   112,    40,    40,
-      33,    73,    70
+       0,    47,    57,     4,     3,     7,     5,    25,     6,     3,
+       6,    34,    34,    25,    22,     3,     6,    34,    82,     0,
+      19,    20,    45,    45,     3,    25,    72,    73,    45,    47,
+      38,    39,    40,    35,    33,    47,   100,    36,    37,     3,
+       5,     5,    34,    37,    45,    44,   101,    43,    46,    37,
+       3,     6,     5,    45,     6,    19,    20,     9,    10,    11,
+      12,     9,    10,    11,    12,    41,    42,    67,   111,    33,
+      39,    40,    36,    37,    26,   118,    23,    24,    26,    31,
+      32,     6,    33,    31,    32,   131,    13,    14,    15,     8,
+      17,    18,    27,     8,    29,    30,    33,     7,     7,     5,
+       8,    34,    16,    16,    16,    34,     7,     3,     3,    33,
+      33,    33,     6,    34,    34,     6,    34,    34,     6,   119,
+       3,     8,    38,    25,     6,     6,     6,    34,    33,    22,
+       7,    21,     3,     3,     7,    46,    40,     3,     3,    13,
+      40,    84,    76,    41,    -1,    77,    49,    25,   109
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -704,19 +700,19 @@ static const yytype_uint8 yystos[] =
 {
        0,     6,    49,    68,     0,    50,     9,    10,    11,    12,
       26,    31,    32,    51,    52,     5,    54,     3,     6,    33,
-      53,     8,     8,     6,     3,     5,    19,    20,    33,    36,
-      37,    44,    52,    55,    56,    57,    58,    60,    62,    63,
-      64,    65,    66,    67,    33,     7,    35,     7,    13,    14,
-      15,    17,    18,    22,    38,    59,    33,    33,    66,     3,
-      60,     6,    67,    68,    41,    42,    39,    40,    61,     6,
-      43,    63,     4,    45,     7,     8,     5,    16,    16,    16,
-      34,    34,     3,    66,    66,    34,    61,    64,     7,     3,
-      57,    56,     3,    65,    34,    33,    34,    34,    34,     6,
-       6,    34,    34,    57,     6,    46,    68,     8,     6,     6,
-       6,    21,    46,    25,    69,    70,    71,    34,    33,    69,
-      47,    70,    23,    24,    72,    66,    47,    68,    27,    29,
-      30,    73,    34,     3,    37,     3,    37,     7,     3,    40,
-       3,     7,     3,    40,     3
+      53,     8,     8,     6,    52,    55,    66,    67,    68,    33,
+       7,    35,     7,    13,    14,    15,    17,    18,    67,    68,
+       4,    45,     7,     3,     5,    19,    20,    33,    36,    37,
+      44,    56,    57,    58,    60,    62,    63,    64,    65,     8,
+       5,    16,    16,    16,    34,    34,     7,     3,    65,    22,
+      38,    59,    33,    33,    66,     3,    60,     6,    41,    42,
+      39,    40,    61,     6,    43,    63,    34,    33,    34,    34,
+      34,     6,     6,     6,    46,    68,     3,    66,    66,    34,
+      61,    64,     3,    57,    56,     8,     6,     6,     6,    46,
+      25,    69,    70,    71,    34,    34,    57,    34,    69,    47,
+      70,    23,    24,    72,    21,    47,    68,    27,    29,    30,
+      73,    33,     3,    37,     3,    37,    66,     7,     3,    40,
+       3,    34,     7,     3,    40,     3
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1531,142 +1527,142 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 61 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 61 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.decl = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 3:
-#line 64 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 64 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.bits = (yyvsp[(5) - (5)].str); ;}
     break;
 
   case 6:
-#line 74 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 74 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushParserClassMember((yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 8:
-#line 77 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 77 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.tokenStream = (yyvsp[(2) - (3)].str);           ;}
     break;
 
   case 9:
-#line 79 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 79 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.exportMacro = (yyvsp[(2) - (2)].str);           ;}
     break;
 
   case 10:
-#line 81 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 81 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.exportMacroHeader = (yyvsp[(2) - (2)].str);     ;}
     break;
 
   case 11:
-#line 83 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 83 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.namespaceCode = (yyvsp[(2) - (2)].str);         ;}
     break;
 
   case 12:
-#line 85 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 85 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.astCode = (yyvsp[(2) - (2)].str);               ;}
     break;
 
   case 13:
-#line 90 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 90 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, (yyvsp[(5) - (5)].str));    ;}
     break;
 
   case 14:
-#line 92 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 92 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, (yyvsp[(5) - (5)].str)); ;}
     break;
 
   case 15:
-#line 94 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 94 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, (yyvsp[(5) - (5)].str));   ;}
     break;
 
   case 16:
-#line 96 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 96 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, (yyvsp[(4) - (4)].str));      ;}
     break;
 
   case 17:
-#line 98 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 98 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, (yyvsp[(4) - (4)].str));       ;}
     break;
 
   case 18:
-#line 102 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 102 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (1)].str),(yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 19:
-#line 103 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 103 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str)); ;}
     break;
 
   case 20:
-#line 104 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 104 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (3)].str),(yyvsp[(3) - (3)].str)); ;}
     break;
 
   case 21:
-#line 106 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 106 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (6)].str),(yyvsp[(5) - (6)].str)); ;}
     break;
 
   case 22:
-#line 110 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 110 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushRule((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 23:
-#line 111 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 111 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushRule((yyvsp[(2) - (3)].item)); ;}
     break;
 
   case 24:
-#line 115 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 115 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::globalSystem.zero(); ;}
     break;
 
   case 25:
-#line 116 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 116 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(2) - (3)].item); ;}
     break;
 
   case 26:
-#line 117 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 117 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 27:
-#line 118 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 118 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 28:
-#line 119 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 119 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::annotation((yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].item), false, (yyvsp[(2) - (3)].storageType)); ;}
     break;
 
   case 29:
-#line 120 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 120 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::annotation((yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].item), true, (yyvsp[(3) - (4)].storageType));  ;}
     break;
 
   case 30:
-#line 124 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 124 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol((yyvsp[(1) - (2)].str)), (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 31:
-#line 125 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 125 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::globalSystem.terminal((yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 32:
-#line 130 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 130 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::globalSystem.needStateManagement = true;
           (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (4)].item), 0);
@@ -1674,7 +1670,7 @@ yyreduce:
     break;
 
   case 33:
-#line 135 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 135 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::globalSystem.needStateManagement = true;
           (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (8)].item), (yyvsp[(7) - (8)].item));
@@ -1682,22 +1678,22 @@ yyreduce:
     break;
 
   case 34:
-#line 141 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = ""; ;}
+#line 141 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+    { (yyval.str) = const_cast<char*>(""); ;}
     break;
 
   case 35:
-#line 142 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 142 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 36:
-#line 146 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 146 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 37:
-#line 148 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 148 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.str) = (yyvsp[(3) - (3)].str);
           fprintf(stderr, "** WARNING support for scoped name"
@@ -1706,37 +1702,37 @@ yyreduce:
     break;
 
   case 38:
-#line 156 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 156 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember; ;}
     break;
 
   case 39:
-#line 157 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 157 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;  ;}
     break;
 
   case 40:
-#line 161 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 161 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::plus((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 41:
-#line 162 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 162 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::star((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 42:
-#line 163 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 163 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 43:
-#line 168 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 168 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 44:
-#line 170 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 170 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::CloneTree cl;
           (yyval.item) = KDevPG::cons((yyvsp[(1) - (3)].item), KDevPG::star(KDevPG::cons(cl.clone((yyvsp[(3) - (3)].item)), cl.clone((yyvsp[(1) - (3)].item)))));
@@ -1744,42 +1740,42 @@ yyreduce:
     break;
 
   case 45:
-#line 174 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 174 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::action((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 46:
-#line 178 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 178 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 47:
-#line 179 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 179 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::cons((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 48:
-#line 183 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 183 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 49:
-#line 184 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 184 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::condition((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].item)); ;}
     break;
 
   case 50:
-#line 188 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
+#line 188 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+    { (yyval.item) = KDevPG::code((yyvsp[(1) - (2)].str), (yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 51:
-#line 189 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 189 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::alternative((yyvsp[(1) - (3)].item), (yyvsp[(3) - (3)].item)); ;}
     break;
 
   case 52:
-#line 194 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 194 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
                           (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(6) - (7)].item), (yyvsp[(4) - (7)].str));
@@ -1787,7 +1783,7 @@ yyreduce:
     break;
 
   case 53:
-#line 199 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 199 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
                           (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(5) - (7)].item), (yyvsp[(7) - (7)].str));
@@ -1795,27 +1791,27 @@ yyreduce:
     break;
 
   case 54:
-#line 204 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 204 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::evolve((yyvsp[(1) - (4)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (4)].str)), 0, (yyvsp[(4) - (4)].str)); ;}
     break;
 
   case 55:
-#line 208 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = ""; ;}
+#line 208 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+    { (yyval.str) = const_cast<char*>(""); ;}
     break;
 
   case 56:
-#line 209 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 209 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 57:
-#line 213 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 213 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 58:
-#line 215 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 215 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(1) - (2)].item);
           while (last->mNext != 0) {
@@ -1827,58 +1823,58 @@ yyreduce:
     break;
 
   case 59:
-#line 227 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 227 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), (yyvsp[(3) - (6)].variableType), false, (yyvsp[(4) - (6)].str), (yyvsp[(6) - (6)].str)); ;}
     break;
 
   case 60:
-#line 229 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 229 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (5)].declarationType), (yyvsp[(2) - (5)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, false, (yyvsp[(4) - (5)].str), ""); ;}
     break;
 
   case 61:
-#line 231 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 231 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (7)].declarationType), (yyvsp[(2) - (7)].storageType), (yyvsp[(3) - (7)].variableType), true, (yyvsp[(5) - (7)].str), (yyvsp[(7) - (7)].str)); ;}
     break;
 
   case 62:
-#line 233 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 233 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, true, (yyvsp[(5) - (6)].str), ""); ;}
     break;
 
   case 63:
-#line 237 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 237 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     ;}
     break;
 
   case 64:
-#line 238 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 238 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  ;}
     break;
 
   case 65:
-#line 242 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 242 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    ;}
     break;
 
   case 66:
-#line 243 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 243 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     ;}
     break;
 
   case 67:
-#line 247 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 247 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeNode;             ;}
     break;
 
   case 68:
-#line 248 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 248 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeVariable;         ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1882 "/home/andreas/KDE-work/4.0/build/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.cc"
+#line 1878 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2092,6 +2088,6 @@ yyreturn:
 }
 
 
-#line 251 "/home/andreas/KDE-work/4.0/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 251 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
 

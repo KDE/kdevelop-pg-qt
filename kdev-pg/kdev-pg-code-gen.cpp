@@ -290,6 +290,8 @@ void CodeGenerator::visitCons(Model::ConsItem *node)
 
 void CodeGenerator::visitEvolve(Model::EvolveItem *node)
 {
+  out << node->mPreCode;
+
   out << "if (";
 
   Model::ConditionItem *cond = nodeCast<Model::ConditionItem*>(node->mItem);

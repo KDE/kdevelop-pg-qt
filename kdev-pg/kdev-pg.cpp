@@ -81,7 +81,7 @@ Model::ConsItem *cons(Model::Node *left, Model::Node *right)
 }
 
 Model::EvolveItem *evolve(
-    Model::Node *item, Model::SymbolItem *symbol,
+    const QString& preCode, Model::Node *item, Model::SymbolItem *symbol,
     Model::VariableDeclarationItem *declarations, const QString& code)
 {
   Model::EvolveItem *node = createNode<Model::EvolveItem>();
@@ -89,6 +89,7 @@ Model::EvolveItem *evolve(
   node->mSymbol = symbol;
   node->mDeclarations = declarations;
   node->mCode = code;
+  node->mPreCode = preCode;
   return node;
 }
 

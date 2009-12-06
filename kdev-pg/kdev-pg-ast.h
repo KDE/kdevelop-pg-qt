@@ -220,6 +220,7 @@ namespace Model
     SymbolItem *mSymbol;
     VariableDeclarationItem *mDeclarations;
     QString mCode;
+    QString mPreCode;
   };
 
 } // namespace model

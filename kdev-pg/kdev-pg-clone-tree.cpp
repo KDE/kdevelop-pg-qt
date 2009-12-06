@@ -111,7 +111,7 @@ void CloneTree::visitEvolve(Model::EvolveItem *node)
   Model::Node *item = mTemps.top();
   mTemps.pop();
 
-  mTemps.push(KDevPG::evolve(item, node->mSymbol, node->mDeclarations, node->mCode));
+  mTemps.push(KDevPG::evolve("", item, node->mSymbol, node->mDeclarations, node->mCode));
 }
 
 void CloneTree::visitTryCatch(Model::TryCatchItem *node)

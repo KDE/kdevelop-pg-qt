@@ -190,18 +190,18 @@ option_item
     ;
 
 item
-    : option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    : code_opt option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
         {
-          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
-                          (KDevPG::Model::VariableDeclarationItem*) $6, $4);
+          $$ = KDevPG::evolve($1, $2, KDevPG::globalSystem.pushSymbol($4),
+                          (KDevPG::Model::VariableDeclarationItem*) $7, $5);
         }
-    | option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
+    | code_opt option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
         {
-          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
-                          (KDevPG::Model::VariableDeclarationItem*) $5, $7);
+          $$ = KDevPG::evolve($1, $2, KDevPG::globalSystem.pushSymbol($4),
+                          (KDevPG::Model::VariableDeclarationItem*) $6, $8);
         }
-    | option_item T_ARROW T_IDENTIFIER code_opt
-        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
+    | code_opt option_item T_ARROW T_IDENTIFIER code_opt
+        { $$ = KDevPG::evolve($1, $2, KDevPG::globalSystem.pushSymbol($4), 0, $5); }
     ;
 
 code_opt

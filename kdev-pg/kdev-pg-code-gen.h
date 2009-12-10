@@ -42,7 +42,6 @@ public:
 
 protected:
   virtual void visitZero(Model::ZeroItem *node);
-  virtual void visitCode(Model::CodeItem *node);
   virtual void visitSymbol(Model::SymbolItem *node);
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
   virtual void visitTerminal(Model::TerminalItem *node);

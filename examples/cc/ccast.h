@@ -18,6 +18,8 @@ struct AND_expressionAst;
 struct Abstract_declaratorAst;
 struct Additive_expressionAst;
 struct Argument_expression_listAst;
+struct Asm_against_manglingAst;
+struct Asm_specifierAst;
 struct Assignment_expressionAst;
 struct Assignment_operatorAst;
 struct Cast_expressionAst;
@@ -42,6 +44,7 @@ struct Exclusive_OR_expressionAst;
 struct Execution_blockAst;
 struct ExpressionAst;
 struct Expression_statementAst;
+struct Ext_expressionAst;
 struct External_blockAst;
 struct Function_declarationAst;
 struct Function_definitionAst;
@@ -49,6 +52,7 @@ struct Function_pointer_parameterAst;
 struct Inclusive_OR_expressionAst;
 struct Init_declaratorAst;
 struct InitializerAst;
+struct Inline_asmAst;
 struct Iteration_statementAst;
 struct Jump_statementAst;
 struct Labeled_statementAst;
@@ -92,70 +96,74 @@ struct  AstNode
         Abstract_declaratorKind = 1001,
         Additive_expressionKind = 1002,
         Argument_expression_listKind = 1003,
-        Assignment_expressionKind = 1004,
-        Assignment_operatorKind = 1005,
-        Cast_expressionKind = 1006,
-        Compound_statementKind = 1007,
-        Conditional_expressionKind = 1008,
-        ConstantKind = 1009,
-        Constant_expressionKind = 1010,
-        DdeclarationKind = 1011,
-        DeclarationKind = 1012,
-        Declaration_headerKind = 1013,
-        Declaration_parameterKind = 1014,
-        Declaration_specifierKind = 1015,
-        DeclaratorKind = 1016,
-        Direct_abstract_declaratorKind = 1017,
-        Direct_declaratorKind = 1018,
-        Direct_declarator_restKind = 1019,
-        DocumentKind = 1020,
-        Enum_specifierKind = 1021,
-        EnumeratorKind = 1022,
-        Equality_expressionKind = 1023,
-        Exclusive_OR_expressionKind = 1024,
-        Execution_blockKind = 1025,
-        ExpressionKind = 1026,
-        Expression_statementKind = 1027,
-        External_blockKind = 1028,
-        Function_declarationKind = 1029,
-        Function_definitionKind = 1030,
-        Function_pointer_parameterKind = 1031,
-        Inclusive_OR_expressionKind = 1032,
-        Init_declaratorKind = 1033,
-        InitializerKind = 1034,
-        Iteration_statementKind = 1035,
-        Jump_statementKind = 1036,
-        Labeled_statementKind = 1037,
-        Logical_AND_expressionKind = 1038,
-        Logical_OR_expressionKind = 1039,
-        Multiplicative_expressionKind = 1040,
-        Named_parameterKind = 1041,
-        ParameterKind = 1042,
-        Parameter_declarationKind = 1043,
-        Parameter_type_listKind = 1044,
-        PointerKind = 1045,
-        Postfix_expressionKind = 1046,
-        Postfix_expression_restKind = 1047,
-        Primary_expressionKind = 1048,
-        Relational_expressionKind = 1049,
-        Selection_statementKind = 1050,
-        Shift_expressionKind = 1051,
-        Specifier_qualifierKind = 1052,
-        StatementKind = 1053,
-        Storage_class_specifierKind = 1054,
-        Struct_declarationKind = 1055,
-        Struct_declaratorKind = 1056,
-        Struct_or_union_specifierKind = 1057,
-        Type_attribute_identifierKind = 1058,
-        Type_nameKind = 1059,
-        Type_qualifierKind = 1060,
-        Type_specifierKind = 1061,
-        Typed_identifierKind = 1062,
-        Typedef_dKind = 1063,
-        Unary_expressionKind = 1064,
-        Unary_operatorKind = 1065,
-        Value_declarationKind = 1066,
-        Variable_declarationKind = 1067,
+        Asm_against_manglingKind = 1004,
+        Asm_specifierKind = 1005,
+        Assignment_expressionKind = 1006,
+        Assignment_operatorKind = 1007,
+        Cast_expressionKind = 1008,
+        Compound_statementKind = 1009,
+        Conditional_expressionKind = 1010,
+        ConstantKind = 1011,
+        Constant_expressionKind = 1012,
+        DdeclarationKind = 1013,
+        DeclarationKind = 1014,
+        Declaration_headerKind = 1015,
+        Declaration_parameterKind = 1016,
+        Declaration_specifierKind = 1017,
+        DeclaratorKind = 1018,
+        Direct_abstract_declaratorKind = 1019,
+        Direct_declaratorKind = 1020,
+        Direct_declarator_restKind = 1021,
+        DocumentKind = 1022,
+        Enum_specifierKind = 1023,
+        EnumeratorKind = 1024,
+        Equality_expressionKind = 1025,
+        Exclusive_OR_expressionKind = 1026,
+        Execution_blockKind = 1027,
+        ExpressionKind = 1028,
+        Expression_statementKind = 1029,
+        Ext_expressionKind = 1030,
+        External_blockKind = 1031,
+        Function_declarationKind = 1032,
+        Function_definitionKind = 1033,
+        Function_pointer_parameterKind = 1034,
+        Inclusive_OR_expressionKind = 1035,
+        Init_declaratorKind = 1036,
+        InitializerKind = 1037,
+        Inline_asmKind = 1038,
+        Iteration_statementKind = 1039,
+        Jump_statementKind = 1040,
+        Labeled_statementKind = 1041,
+        Logical_AND_expressionKind = 1042,
+        Logical_OR_expressionKind = 1043,
+        Multiplicative_expressionKind = 1044,
+        Named_parameterKind = 1045,
+        ParameterKind = 1046,
+        Parameter_declarationKind = 1047,
+        Parameter_type_listKind = 1048,
+        PointerKind = 1049,
+        Postfix_expressionKind = 1050,
+        Postfix_expression_restKind = 1051,
+        Primary_expressionKind = 1052,
+        Relational_expressionKind = 1053,
+        Selection_statementKind = 1054,
+        Shift_expressionKind = 1055,
+        Specifier_qualifierKind = 1056,
+        StatementKind = 1057,
+        Storage_class_specifierKind = 1058,
+        Struct_declarationKind = 1059,
+        Struct_declaratorKind = 1060,
+        Struct_or_union_specifierKind = 1061,
+        Type_attribute_identifierKind = 1062,
+        Type_nameKind = 1063,
+        Type_qualifierKind = 1064,
+        Type_specifierKind = 1065,
+        Typed_identifierKind = 1066,
+        Typedef_dKind = 1067,
+        Unary_expressionKind = 1068,
+        Unary_operatorKind = 1069,
+        Value_declarationKind = 1070,
+        Variable_declarationKind = 1071,
         AST_NODE_KIND_COUNT
     };
 
@@ -192,6 +200,18 @@ struct  Argument_expression_listAst: public AstNode
     enum { KIND = Argument_expression_listKind };
 
     const KDevPG::ListNode<Assignment_expressionAst *> *assignment_expressionSequence;
+};
+
+struct  Asm_against_manglingAst: public AstNode
+{
+    enum { KIND = Asm_against_manglingKind };
+
+};
+
+struct  Asm_specifierAst: public AstNode
+{
+    enum { KIND = Asm_specifierKind };
+
 };
 
 struct  Assignment_expressionAst: public AstNode
@@ -375,6 +395,12 @@ struct  Expression_statementAst: public AstNode
     ExpressionAst *expression;
 };
 
+struct  Ext_expressionAst: public AstNode
+{
+    enum { KIND = Ext_expressionKind };
+
+};
+
 struct  External_blockAst: public AstNode
 {
     enum { KIND = External_blockKind };
@@ -387,6 +413,7 @@ struct  Function_declarationAst: public AstNode
     enum { KIND = Function_declarationKind };
 
     const KDevPG::ListNode<Declaration_parameterAst *> *declaration_parameterSequence;
+    Asm_against_manglingAst *asm_against_mangling;
 };
 
 struct  Function_definitionAst: public AstNode
@@ -428,15 +455,27 @@ struct  InitializerAst: public AstNode
     const KDevPG::ListNode<InitializerAst *> *initializerSequence;
 };
 
+struct  Inline_asmAst: public AstNode
+{
+    enum { KIND = Inline_asmKind };
+
+    const KDevPG::ListNode<Asm_specifierAst *> *output_operandsSequence;
+    const KDevPG::ListNode<Asm_specifierAst *> *input_operandsSequence;
+};
+
 struct  Iteration_statementAst: public AstNode
 {
     enum { KIND = Iteration_statementKind };
 
     ExpressionAst *expression;
+    Ext_expressionAst *ext_expression;
     StatementAst *statement;
     ExpressionAst *for_1;
+    Ext_expressionAst *for1_ext;
     ExpressionAst *for_2;
+    Ext_expressionAst *for2_ext;
     ExpressionAst *for_3;
+    Ext_expressionAst *for3_ext;
 };
 
 struct  Jump_statementAst: public AstNode

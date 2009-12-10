@@ -212,6 +212,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "while"         return Parser::Token_WHILE;
 "static"        return Parser::Token_STATIC;
 "volatile"      return Parser::Token_VOLATILE;
+"__volatile__"      return Parser::Token_VOLATILE;
 "const"         return Parser::Token_CONST;
 "typedef"       return Parser::Token_TYPEDEF;
 "extern"        return Parser::Token_EXTERN;
@@ -227,6 +228,11 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 "float"         return Parser::Token_FLOAT;
 "double"        return Parser::Token_DOUBLE;
 "union"         return Parser::Token_UNION;
+"asm"           return Parser::Token_ASM;
+"__asm__"       return Parser::Token_ASM;
+"__extension__" return Parser::Token_EXTENSION;
+"__inline"      return Parser::Token_INLINE;
+"inline"        return Parser::Token_INLINE;
 
  /* characters and strings (C with unicode-support) */
 

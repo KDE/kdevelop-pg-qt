@@ -63,8 +63,7 @@ protected:
   virtual void visitTryCatch(Model::TryCatchItem *node);
   virtual void visitAlias(Model::AliasItem *node);
   virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem *node);
-  virtual void visitCode(Model::CodeItem *node);
+  virtual void visitCondition(Model::ConditionItem* node);
 
 private:
   Model::Node *mItem;

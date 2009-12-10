@@ -157,10 +157,13 @@ void NextFollow::visitAlternative(Model::AlternativeItem *node)
 
 void NextFollow::visitAction(Model::ActionItem *node)
 {
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
+  if(node->mItem)
+  {
+    merge(node->mItem, globalSystem.follow(node));
+    addFollowToFollowDep(node->mItem, node);
 
-  DefaultVisitor::visitAction(node);
+    DefaultVisitor::visitAction(node);
+  }
 }
 
 void NextFollow::visitTryCatch(Model::TryCatchItem *node)
@@ -183,14 +186,6 @@ void NextFollow::visitAnnotation(Model::AnnotationItem *node)
   addFollowToFollowDep(node->mItem, node);
 
   DefaultVisitor::visitAnnotation(node);
-}
-
-void NextFollow::visitCode(Model::CodeItem *node)
-{
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-  
-  DefaultVisitor::visitCode(node);
 }
 
 void NextFollow::visitCondition(Model::ConditionItem *node)

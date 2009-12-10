@@ -16,6 +16,8 @@ public:
     virtual void visitAbstract_declarator(Abstract_declaratorAst *node);
     virtual void visitAdditive_expression(Additive_expressionAst *node);
     virtual void visitArgument_expression_list(Argument_expression_listAst *node);
+    virtual void visitAsm_against_mangling(Asm_against_manglingAst *node);
+    virtual void visitAsm_specifier(Asm_specifierAst *node);
     virtual void visitAssignment_expression(Assignment_expressionAst *node);
     virtual void visitAssignment_operator(Assignment_operatorAst *node);
     virtual void visitCast_expression(Cast_expressionAst *node);
@@ -40,6 +42,7 @@ public:
     virtual void visitExecution_block(Execution_blockAst *node);
     virtual void visitExpression(ExpressionAst *node);
     virtual void visitExpression_statement(Expression_statementAst *node);
+    virtual void visitExt_expression(Ext_expressionAst *node);
     virtual void visitExternal_block(External_blockAst *node);
     virtual void visitFunction_declaration(Function_declarationAst *node);
     virtual void visitFunction_definition(Function_definitionAst *node);
@@ -47,6 +50,7 @@ public:
     virtual void visitInclusive_OR_expression(Inclusive_OR_expressionAst *node);
     virtual void visitInit_declarator(Init_declaratorAst *node);
     virtual void visitInitializer(InitializerAst *node);
+    virtual void visitInline_asm(Inline_asmAst *node);
     virtual void visitIteration_statement(Iteration_statementAst *node);
     virtual void visitJump_statement(Jump_statementAst *node);
     virtual void visitLabeled_statement(Labeled_statementAst *node);

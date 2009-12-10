@@ -114,7 +114,7 @@ rules
 primary_item
     : '0'                               { $$ = KDevPG::globalSystem.zero(); }
     | '(' option_item ')'               { $$ = $2; }
-    | try_item                          { $$ = $1; }
+    | try_item                    { $$ = $1; }
     | primary_atom                      { $$ = $1; }
     | name scope primary_atom           { $$ = KDevPG::annotation($1, $3, false, $2); }
     | '#' name scope primary_atom       { $$ = KDevPG::annotation($2, $4, true, $3);  }
@@ -172,6 +172,7 @@ postfix_item
           $$ = KDevPG::cons($1, KDevPG::star(KDevPG::cons(cl.clone($3), cl.clone($1))));
         }
     | postfix_item T_CODE               { $$ = KDevPG::action($1, $2); }
+    | T_CODE                            { $$ = KDevPG::action(0, $1); }
     ;
 
 item_sequence
@@ -185,7 +186,7 @@ conditional_item
     ;
 
 option_item
-    : code_opt conditional_item         { $$ = KDevPG::code($1, $2); }
+    : conditional_item                  { $$ = $1; }
     | option_item '|' conditional_item  { $$ = KDevPG::alternative($1, $3); }
     ;
 

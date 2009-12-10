@@ -53,7 +53,6 @@ namespace Model
     NodeKindAnnotation = 13,
     NodeKindCondition = 14,
     NodeKindVariableDeclaration = 15,
-    NodeKindCode = 16,
 
     NodeKindLast
   };
@@ -70,15 +69,6 @@ namespace Model
   {
   public:
     PG_NODE(Zero)
-  };
-
-  class CodeItem: public Node
-  {
-  public:
-    PG_NODE(Code)
-    
-    QString mCode;
-    Node *mItem;
   };
 
   class PlusItem: public Node

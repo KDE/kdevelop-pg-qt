@@ -63,7 +63,6 @@ protected:
   virtual void visitAnnotation(Model::AnnotationItem *node);
   virtual void visitCondition(Model::ConditionItem *node);
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitCode(Model::CodeItem *node);
 
 private:
   bool &mChanged;

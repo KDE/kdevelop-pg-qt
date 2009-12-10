@@ -150,7 +150,8 @@ void NextFirst::visitAction(Model::ActionItem *node)
 {
   DefaultVisitor::visitAction(node);
 
-  merge(node, node->mItem);
+  if(node->mItem)
+    merge(node, node->mItem);
 }
 
 void NextFirst::visitAlternative(Model::AlternativeItem *node)
@@ -214,16 +215,9 @@ void NextFirst::visitAnnotation(Model::AnnotationItem *node)
   merge(node, node->mItem);
 }
 
-void NextFirst::visitCondition(Model::ConditionItem *node)
+void NextFirst::visitCondition(Model::ConditionItem* node)
 {
   DefaultVisitor::visitCondition(node);
-
-  merge(node, node->mItem);
-}
-
-void NextFirst::visitCode(Model::CodeItem *node)
-{
-  DefaultVisitor::visitCode(node);
 
   merge(node, node->mItem);
 }

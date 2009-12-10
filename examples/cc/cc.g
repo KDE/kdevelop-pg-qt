@@ -25,6 +25,10 @@
 [:
 void expectedSymbol(cc::AstNode::AstNodeKind kind, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected symbol " << name; }
 void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected token " << name << " (" << token << ")";}
+struct ParserState {
+  int ltCounter;
+};
+ParserState m_state;
 :]
 
 ------------------------------------------------------------
@@ -63,26 +67,122 @@ void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug
 -- identifiers and literals:
 %token IDENTIFIER ("identifier"), STRING_LITERAL ("string literal"),
        X_CONSTANT ;;
+       
+-- GCC extensions
+%token INLINE ("inline"), EXTENSION ("__extension__"), ASM ("asm") ;;
+
+
+
 
 ------------------------------------------------------------
 -- E X T E R N A L    D E C L A R A T I O N S
 ------------------------------------------------------------
+   (#ddeclaration=ddeclaration)*
+-> document ;;
 
-   (#external_declaration=external_declaration)*
--> translation_unit ;;
+   enum_specifier=enum_specifier SEMICOLON
+ | struct_or_union_specifier=struct_or_union_specifier SEMICOLON
+ | TYPEDEF typedef_d=typedef_d SEMICOLON
+ | try/rollback(external_block=external_block) catch(
+      value_declaration=value_declaration
+    )
+-> ddeclaration ;;
+
+   typed_identifier ( SEMICOLON
+ | try/rollback(function_definition=function_definition) catch(
+      function_declaration=function_declaration
+   ))
+-> value_declaration ;;
+
+   EXTERN STRING_LITERAL LBRACE (#ddeclaration=ddeclaration)* RBRACE
+-> external_block ;;
+
+--   VOID
+-- | CHAR
+-- | SHORT
+-- | INT
+-- | LONG
+-- | FLOAT
+-- | DOUBLE
+---> type_name_d ;;
+
+   LPAREN type_attribute_identifier=type_attribute_identifier RPAREN (LPAREN (0 | (#function_pointer_parameter=function_pointer_parameter @ COMMA)) RPAREN | 0)
+ | STAR type_attribute_identifier=type_attribute_identifier
+ | type_attribute_identifier=type_attribute_identifier LBRACKET (0 | X_CONSTANT) RBRACKET
+ | IDENTIFIER
+-> type_attribute_identifier ;;
+
+   type_name=type_name type_attribute_identifier=type_attribute_identifier
+-> typed_identifier ;;
+
+   typed_identifier=typed_identifier SEMICOLON
+-> variable_declaration ;;
+
+   try/rollback(typed_identifier=typed_identifier) catch(
+      type_name=type_name
+   )
+-> parameter ;;
+
+   struct_or_union_specifier=struct_or_union_specifier
+ | enum_specifier=enum_specifier
+ | typed_identifier=typed_identifier
+-> typedef_d ;;
+
+   (#statement = statement)*
+-> execution_block ;;
+
+   LPAREN (0|#declaration_parameter=declaration_parameter @ COMMA) RPAREN (0|asm_against_mangling=asm_against_mangling) SEMICOLON
+-> function_declaration ;;
+
+   typed_identifier=typed_identifier (0 | EQUAL constant_expression=constant_expression)
+ | ELLIPSIS
+-> named_parameter ;;
+
+   try/rollback(typed_identifier=typed_identifier (0 | EQUAL constant_expression=constant_expression)) catch(
+      type_name=type_name
+   )
+ | ELLIPSIS
+-> declaration_parameter ;;
+
+   try/rollback(typed_identifier=typed_identifier) catch(
+       type_name=type_name
+   )
+ | ELLIPSIS
+-> function_pointer_parameter ;;
+
+   LPAREN (#named_parameter=named_parameter @ COMMA) RPAREN LBRACE execution_block=execution_block RBRACE
+-> function_definition ;;
+
+--   (#external_declaration=external_declaration)*
+---> translation_unit ;;
 
    #declaration_specifier=declaration_specifier (#declaration_specifier=declaration_specifier)*
 -> declaration_header ;;
 
-   declaration_header=declaration_header variable_or_function=variable_or_function
--> external_declaration ;;
+--   declaration_header=declaration_header variable_or_function=variable_or_function
+---> external_declaration ;;
 
-   declarator=declarator (COMMA #init_declarator=init_declarator @ COMMA SEMICOLON
-               | SEMICOLON
+--   declarator=declarator (COMMA #init_declarator=init_declarator @ COMMA SEMICOLON
+--               | SEMICOLON
 --               | ?[:is_fun_definition:] declaration* compound_statement
-               | (#declaration=declaration)* compound_statement=compound_statement
-               | initializer=initializer (COMMA #init_declarator=init_declarator)* SEMICOLON)
--> variable_or_function ;;
+--               | (#declaration=declaration)* compound_statement=compound_statement
+--               | initializer=initializer (COMMA #init_declarator=init_declarator)* SEMICOLON)
+---> variable_or_function ;;
+
+------------------------------------------------------------
+-- GCC-STUFF
+------------------------------------------------------------
+   STRING_LITERAL LPAREN IDENTIFIER
+-> asm_specifier ;;
+
+   ASM (0 | VOLATILE) LPAREN (STRING_LITERAL*) (0 | COLON (#output_operands=asm_specifier @ COMMA) (0 | COLON (#input_operands=asm_specifier @ COMMA) (0 | COLON (STRING_LITERAL @ COMMA))))
+-> inline_asm ;;
+
+   EXTENSION LPAREN LBRACE execution_block RBRACE RPAREN
+-> ext_expression ;;
+
+   ASM LPAREN STRING_LITERAL RPAREN
+-> asm_against_mangling ;;
 
 ------------------------------------------------------------
 -- E X P R E S S I O N S
@@ -194,6 +294,7 @@ void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug
  | selection_statement=selection_statement
  | iteration_statement=iteration_statement
  | jump_statement=jump_statement
+ | inline_asm
  | SEMICOLON
 -> statement ;;
 
@@ -211,9 +312,9 @@ void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug
  | SWITCH LPAREN expression=expression RPAREN statement=statement
 -> selection_statement ;;
 
-   WHILE LPAREN expression=expression RPAREN statement=statement
+   WHILE LPAREN (expression=expression | ext_expression=ext_expression) RPAREN statement=statement
  | DO statement WHILE LPAREN expression=expression RPAREN SEMICOLON
- | FOR LPAREN (for_1=expression|0) SEMICOLON (for_2=expression|0) SEMICOLON (for_3=expression|0) RPAREN statement=statement
+ | FOR LPAREN (for_1=expression|for1_ext=ext_expression|0) SEMICOLON (for_2=expression|for2_ext=ext_expression|0) SEMICOLON (for_3=expression|for3_ext=ext_expression|0) RPAREN statement=statement
 -> iteration_statement ;;
 
    GOTO IDENTIFIER SEMICOLON
@@ -308,7 +409,7 @@ void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug
    #declaration_specifier=declaration_specifier (#declaration_specifier=declaration_specifier)* (declarator=declarator | abstract_declarator=abstract_declarator | 0)
 -> parameter_declaration ;;
 
-   #specifier_qualifier=specifier_qualifier (#specifier_qualifier=specifier_qualifier)* (abstract_declarator=abstract_declarator | 0)
+   #specifier_qualifier=specifier_qualifier (#specifier_qualifier=specifier_qualifier)*
 -> type_name ;;
 
    (pointer=pointer #direct_abstract_declarator=direct_abstract_declarator | #direct_abstract_declarator=direct_abstract_declarator) (#direct_abstract_declarator=direct_abstract_declarator)*
@@ -322,3 +423,19 @@ void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug
  | LBRACE #initializer=initializer (COMMA (#initializer=initializer | 0))* RBRACE
 -> initializer ;;
 
+[:
+namespace cc
+{
+Parser::ParserState *Parser::copyCurrentState()
+{
+  ParserState *state = new ParserState();
+  state->ltCounter = m_state.ltCounter;
+  return state;
+}
+
+void Parser::restoreState( Parser::ParserState *state )
+{
+  m_state.ltCounter = state->ltCounter;
+}
+};
+:]

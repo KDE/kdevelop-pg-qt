@@ -24,6 +24,8 @@ public:
     virtual void visitAbstract_declarator(Abstract_declaratorAst *) {}
     virtual void visitAdditive_expression(Additive_expressionAst *) {}
     virtual void visitArgument_expression_list(Argument_expression_listAst *) {}
+    virtual void visitAsm_against_mangling(Asm_against_manglingAst *) {}
+    virtual void visitAsm_specifier(Asm_specifierAst *) {}
     virtual void visitAssignment_expression(Assignment_expressionAst *) {}
     virtual void visitAssignment_operator(Assignment_operatorAst *) {}
     virtual void visitCast_expression(Cast_expressionAst *) {}
@@ -48,6 +50,7 @@ public:
     virtual void visitExecution_block(Execution_blockAst *) {}
     virtual void visitExpression(ExpressionAst *) {}
     virtual void visitExpression_statement(Expression_statementAst *) {}
+    virtual void visitExt_expression(Ext_expressionAst *) {}
     virtual void visitExternal_block(External_blockAst *) {}
     virtual void visitFunction_declaration(Function_declarationAst *) {}
     virtual void visitFunction_definition(Function_definitionAst *) {}
@@ -55,6 +58,7 @@ public:
     virtual void visitInclusive_OR_expression(Inclusive_OR_expressionAst *) {}
     virtual void visitInit_declarator(Init_declaratorAst *) {}
     virtual void visitInitializer(InitializerAst *) {}
+    virtual void visitInline_asm(Inline_asmAst *) {}
     virtual void visitIteration_statement(Iteration_statementAst *) {}
     virtual void visitJump_statement(Jump_statementAst *) {}
     virtual void visitLabeled_statement(Labeled_statementAst *) {}

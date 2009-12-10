@@ -33,14 +33,6 @@ Model::ZeroItem *zero()
   return node;
 }
 
-Model::CodeItem *code(const QString& code, Model::Node *item)
-{
-  Model::CodeItem *node = createNode<Model::CodeItem>();
-  node->mCode = code;
-  node->mItem = item;
-  return node;
-}
-
 Model::PlusItem *plus(Model::Node *item)
 {
   Model::PlusItem *node = createNode<Model::PlusItem>();
@@ -215,7 +207,10 @@ bool reducesToEpsilon(Model::Node *node)
     }
   else if (Model::ActionItem *a = nodeCast<Model::ActionItem*>(node))
     {
-      return reducesToEpsilon(a->mItem);
+      if(a->mItem)
+        return reducesToEpsilon(a->mItem);
+      else
+        return true;
     }
   else if (Model::ConditionItem *c = nodeCast<Model::ConditionItem*>(node))
     {
@@ -267,10 +262,6 @@ bool isZero(Model::Node *node)
   else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem*>(node))
     {
       return isZero(a->mItem);
-    }
-  else if (Model::CodeItem *c = nodeCast<Model::CodeItem*>(node))
-    {
-      return c->mCode == "" && isZero(c->mItem);
     }
   else if (Model::PlusItem *p = nodeCast<Model::PlusItem*>(node))
     {

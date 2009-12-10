@@ -63,6 +63,14 @@ void DefaultVisitor::visitArgument_expression_list(Argument_expression_listAst *
     }
 }
 
+void DefaultVisitor::visitAsm_against_mangling(Asm_against_manglingAst *)
+{
+}
+
+void DefaultVisitor::visitAsm_specifier(Asm_specifierAst *)
+{
+}
+
 void DefaultVisitor::visitAssignment_expression(Assignment_expressionAst *node)
 {
     if (node->conditional_expressionSequence)
@@ -313,6 +321,10 @@ void DefaultVisitor::visitExpression_statement(Expression_statementAst *node)
     visitNode(node->expression);
 }
 
+void DefaultVisitor::visitExt_expression(Ext_expressionAst *)
+{
+}
+
 void DefaultVisitor::visitExternal_block(External_blockAst *node)
 {
     if (node->ddeclarationSequence)
@@ -339,6 +351,7 @@ void DefaultVisitor::visitFunction_declaration(Function_declarationAst *node)
         }
         while (__it != __end);
     }
+    visitNode(node->asm_against_mangling);
 }
 
 void DefaultVisitor::visitFunction_definition(Function_definitionAst *node)
@@ -397,13 +410,41 @@ void DefaultVisitor::visitInitializer(InitializerAst *node)
     }
 }
 
+void DefaultVisitor::visitInline_asm(Inline_asmAst *node)
+{
+    if (node->output_operandsSequence)
+    {
+        const KDevPG::ListNode<Asm_specifierAst*> *__it = node->output_operandsSequence->front(), *__end = __it;
+        do
+        {
+            visitNode(__it->element);
+            __it = __it->next;
+        }
+        while (__it != __end);
+    }
+    if (node->input_operandsSequence)
+    {
+        const KDevPG::ListNode<Asm_specifierAst*> *__it = node->input_operandsSequence->front(), *__end = __it;
+        do
+        {
+            visitNode(__it->element);
+            __it = __it->next;
+        }
+        while (__it != __end);
+    }
+}
+
 void DefaultVisitor::visitIteration_statement(Iteration_statementAst *node)
 {
     visitNode(node->expression);
+    visitNode(node->ext_expression);
     visitNode(node->statement);
     visitNode(node->for_1);
+    visitNode(node->for1_ext);
     visitNode(node->for_2);
+    visitNode(node->for2_ext);
     visitNode(node->for_3);
+    visitNode(node->for3_ext);
 }
 
 void DefaultVisitor::visitJump_statement(Jump_statementAst *node)

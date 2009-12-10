@@ -38,7 +38,6 @@ namespace KDevPG
   Model::ZeroItem *zero();
   Model::PlusItem *plus(Model::Node *item);
   Model::StarItem *star(Model::Node *item);
-  Model::CodeItem *code(const QString& code, Model::Node *item);
   Model::SymbolItem *symbol(const QString& name);
   Model::ActionItem *action(Model::Node *item, const QString& code);
   Model::AlternativeItem *alternative(Model::Node *left, Model::Node *right);

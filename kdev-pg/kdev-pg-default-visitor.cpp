@@ -26,11 +26,6 @@ namespace KDevPG
 void DefaultVisitor::visitZero(Model::ZeroItem *node)
 {}
 
-void DefaultVisitor::visitCode(Model::CodeItem *node)
-{
-  visitNode(node->mItem);
-}
-
 void DefaultVisitor::visitSymbol(Model::SymbolItem *node)
 {}
 

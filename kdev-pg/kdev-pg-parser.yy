@@ -45,6 +45,7 @@ extern void yyerror(const char* msg);
 %token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_EXPORT_MACRO
 %token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
 %token T_AST_DECLARATION 
+%token T_PARSER_DECLARATION_HEADER T_PARSER_BITS_HEADER T_AST_HEADER
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
@@ -83,6 +84,12 @@ declaration
         { KDevPG::globalSystem.namespaceCode = $2;         }
     | T_AST_DECLARATION T_CODE
         { KDevPG::globalSystem.astCode = $2;               }
+    | T_PARSER_DECLARATION_HEADER T_STRING
+        { KDevPG::globalSystem.pushParserDeclarationHeader($2); }
+    | T_PARSER_BITS_HEADER T_STRING
+        { KDevPG::globalSystem.pushParserBitsHeader($2); }
+    | T_AST_HEADER T_STRING
+        { KDevPG::globalSystem.pushAstHeader($2); }
     ;
 
 member_declaration_rest

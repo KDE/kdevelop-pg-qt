@@ -60,6 +60,9 @@ void generateOutput()
       s << "#include <" << globalSystem.exportMacroHeader << ">"
         << endl;
 
+    foreach (const QString& header, globalSystem.astHeaders)
+      s << "#include <" << header << ">\n";
+
     if (!globalSystem.decl.isEmpty())
       s << globalSystem.decl << endl;
 
@@ -106,6 +109,9 @@ void generateOutput()
 
     if (globalSystem.tokenStream == "KDevPG::TokenStream")
       s << "#include <kdev-pg-token-stream.h>" << endl;
+
+    foreach (const QString& header, globalSystem.parserDeclarationHeaders)
+      s << "#include <" << header << ">\n";
 
     s << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
@@ -358,8 +364,12 @@ void generateOutput()
       << endl;
 
     s << "#include \"" << globalSystem.language << "parser.h\""
-      << endl
       << endl;
+
+    foreach (const QString& header, globalSystem.parserBitsHeaders)
+      s << "#include <" << header << ">\n";
+
+    s << endl;
 
     if (!globalSystem.bits.isEmpty())
       s << globalSystem.bits << endl;
@@ -393,6 +403,7 @@ void generateOutput()
       << endl
 
       << "#include \"" << globalSystem.language << "visitor.h\"" << endl
+
       << endl
 
       << "namespace " << globalSystem.ns << "{" << endl
@@ -425,8 +436,8 @@ void generateOutput()
       << endl
 
       << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
 
+      << endl;
 
     GenerateDefaultVisitorBitsRule gen(s);
     for( World::SymbolSet::iterator it = globalSystem.symbols.begin();

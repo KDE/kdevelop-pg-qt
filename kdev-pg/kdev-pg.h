@@ -29,6 +29,7 @@
 #include <QtCore/QList>
 #include <QtCore/QFile>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QMultiMap>
 #include <QtCore/QtGlobal>
 #include <QtCore/QTextStream>
@@ -104,6 +105,9 @@ public:
   QString exportMacroHeader;
   QString astCode;
   QString namespaceCode;
+  QStringList parserDeclarationHeaders;
+  QStringList parserBitsHeaders;
+  QStringList astHeaders;
   bool GenerateAst;
   bool generateSerializeVisitor;
   bool generateDebugVisitor;
@@ -168,6 +172,21 @@ public:
       it = symbols.insert(name, KDevPG::symbol(__name));
 
     return (*it);
+  }
+
+  void pushParserDeclarationHeader(QString file)
+  {
+    parserDeclarationHeaders << file;
+  }
+
+  void pushParserBitsHeader(QString file)
+  {
+    parserBitsHeaders << file;
+  }
+
+  void pushAstHeader(QString file)
+  {
+    astHeaders << file;
   }
 
   FirstSet::iterator firstBegin() { return firstSet.begin(); }

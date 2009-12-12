@@ -100,7 +100,9 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%namespace"            return T_NAMESPACE_DECLARATION;
 "%parserclass"          BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 "%ast_extra_members"    return T_AST_DECLARATION;
-
+"%parser_declaration_header"   return T_PARSER_DECLARATION_HEADER;
+"%parser_bits_header"   return T_PARSER_BITS_HEADER;
+"%ast_header"           return T_AST_HEADER;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;

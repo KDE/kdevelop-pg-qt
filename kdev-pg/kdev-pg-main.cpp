@@ -40,7 +40,19 @@ int yyparse();
 
 void usage()
 {
-  qDebug() << "usage: kdev-pg --output=<name> file.g" << endl;
+  qDebug() << "usage: kdev-pg [further-options] --output=<name> [further-options] file.g" << endl
+           << "options:" << endl
+           << "--output=<name> - Specify a prefix for all generated files" << endl
+           << "--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
+           << "--debug-visitor - Generate a visitor to dump the parse-tree" << endl
+           << "--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
+           << "--no-ast - Do not generate any AST-files" << endl
+           << "--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
+           << "--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
+           << "--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
+           << "--token-text - Generate a function converting the number of a token into its name" << endl
+           << "--help - Show this messages" << endl;
+
   exit(EXIT_SUCCESS);
 }
 

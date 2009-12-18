@@ -103,6 +103,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%parser_declaration_header"   return T_PARSER_DECLARATION_HEADER;
 "%parser_bits_header"   return T_PARSER_BITS_HEADER;
 "%ast_header"           return T_AST_HEADER;
+"%ast_base"             return T_AST_BASE;
+"%parser_base"          return T_PARSER_BASE;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;

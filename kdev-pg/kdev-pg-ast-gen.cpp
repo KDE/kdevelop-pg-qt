@@ -74,8 +74,9 @@ void GenerateAstRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
   mInCons = false;
 
   Model::SymbolItem *sym = __it.second;
-  out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public AstNode"
-      << "{" << endl
+  out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
+      << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+      << " {" << endl
       << "enum { KIND = " << sym->mCapitalizedName << "Kind };" << endl << endl;
 
   World::Environment::iterator it = globalSystem.env.find(sym);

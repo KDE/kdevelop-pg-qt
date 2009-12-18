@@ -761,7 +761,10 @@ void GenerateMemberCode::operator()(Settings::MemberItem* m)
 
 void GenerateParserDeclarations::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Parser {"
+  out << "class " << globalSystem.exportMacro << " Parser ";
+  if(globalSystem.parserBaseClass != "")
+    out << ": public " << globalSystem.parserBaseClass << " ";
+  out << "{"
       << "public:" << endl
 //       << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
       << "typedef " << globalSystem.tokenStream << "::Token Token;" << endl

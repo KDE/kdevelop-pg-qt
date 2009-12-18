@@ -88,6 +88,8 @@ public:
   value: follow set dependency*/
   typedef QMap<Model::Node*, FollowDep> FollowDeps;
 
+  typedef QMap<QString, QString> AstBaseClasses;
+
   World()
     : tokenStream("KDevPG::TokenStream"), language(0), ns(0), decl(0), bits(0),
       exportMacro(""), exportMacroHeader(0), astCode(""), namespaceCode(""),
@@ -217,6 +219,8 @@ public:
   TerminalSet terminals;
   QList<Model::Node*> rules;
   MemberCode parserclassMembers;
+  AstBaseClasses astBaseClasses;
+  QString parserBaseClass;
 
   Environment env;
 

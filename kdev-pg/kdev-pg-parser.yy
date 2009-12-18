@@ -46,6 +46,7 @@ extern void yyerror(const char* msg);
 %token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
 %token T_AST_DECLARATION 
 %token T_PARSER_DECLARATION_HEADER T_PARSER_BITS_HEADER T_AST_HEADER
+%token T_PARSER_BASE T_AST_BASE
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
@@ -90,6 +91,10 @@ declaration
         { KDevPG::globalSystem.pushParserBitsHeader($2); }
     | T_AST_HEADER T_STRING
         { KDevPG::globalSystem.pushAstHeader($2); }
+    | T_AST_BASE T_IDENTIFIER T_STRING
+        { KDevPG::globalSystem.astBaseClasses[$2] = $3; }
+    | T_PARSER_BASE T_STRING
+        { KDevPG::globalSystem.parserBaseClass = $2; }
     ;
 
 member_declaration_rest

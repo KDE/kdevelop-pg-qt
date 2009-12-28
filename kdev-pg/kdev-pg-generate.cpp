@@ -38,6 +38,13 @@ namespace KDevPG
 {
 void generateOutput()
 {
+  QByteArray language = globalSystem.language.toUpper().toLatin1();
+  for(size_t i = 0; i != language.size(); ++i)
+  {
+    if(language[i] < '0' || (language[i] > '9' && language[i] < 'A') || language[i] > 'Z')
+      language[i] = '_';
+  }
+
   if (globalSystem.GenerateAst)
   { // generate the ast
     QString str;
@@ -49,8 +56,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_AST_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_AST_H_INCLUDED" << endl
+      << "#ifndef " << language << "_AST_H_INCLUDED" << endl
+      << "#define " << language << "_AST_H_INCLUDED" << endl
       << endl
 
       << "#include <QtCore/QList>" << endl
@@ -96,8 +103,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_H_INCLUDED" << endl
+      << "#ifndef " << language << "_H_INCLUDED" << endl
+      << "#define " << language << "_H_INCLUDED" << endl
       << endl;
 
     if (globalSystem.GenerateAst)
@@ -152,8 +159,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_VISITOR_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_VISITOR_H_INCLUDED" << endl
+      << "#ifndef " << language << "_VISITOR_H_INCLUDED" << endl
+      << "#define " << language << "_VISITOR_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "ast.h\"" << endl
@@ -193,8 +200,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_DEFAULT_VISITOR_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_DEFAULT_VISITOR_H_INCLUDED" << endl
+      << "#ifndef " << language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
+      << "#define " << language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "visitor.h\"" << endl
@@ -234,8 +241,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_SERIALIZATION_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_SERIALIZATION_H_INCLUDED" << endl
+      << "#ifndef " << language << "_SERIALIZATION_H_INCLUDED" << endl
+      << "#define " << language << "_SERIALIZATION_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
@@ -279,8 +286,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_DEBUG_VISITOR_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_DEBUG_VISITOR_H_INCLUDED" << endl
+      << "#ifndef " << language << "_DEBUG_VISITOR_H_INCLUDED" << endl
+      << "#define " << language << "_DEBUG_VISITOR_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
@@ -323,8 +330,8 @@ void generateOutput()
       << "// WARNING! All changes made in this file will be lost!" << endl
       << endl
 
-      << "#ifndef " << globalSystem.language.toUpper() << "_TOKEN_TEXT_H_INCLUDED" << endl
-      << "#define " << globalSystem.language.toUpper() << "_TOKEN_TEXT_H_INCLUDED" << endl
+      << "#ifndef " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
+      << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << endl
 
       << "#include \"" << globalSystem.language << "parser.h\"" << endl

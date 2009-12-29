@@ -39,7 +39,7 @@ namespace KDevPG
 void generateOutput()
 {
   QByteArray language = globalSystem.language.toUpper().toLatin1();
-  for(size_t i = 0; i != language.size(); ++i)
+  for(int i = 0; i != language.size(); ++i)
   {
     if(language[i] < '0' || (language[i] > '9' && language[i] < 'A') || language[i] > 'Z')
       language[i] = '_';

@@ -67,7 +67,12 @@
      T_TOKEN = 283,
      T_VARIABLE = 284,
      T_EXPORT_MACRO_HEADER = 285,
-     T_AST_DECLARATION = 286
+     T_AST_DECLARATION = 286,
+     T_PARSER_DECLARATION_HEADER = 287,
+     T_PARSER_BITS_HEADER = 288,
+     T_AST_HEADER = 289,
+     T_PARSER_BASE = 290,
+     T_AST_BASE = 291
    };
 #endif
 /* Tokens.  */
@@ -103,8 +108,9 @@
 #define T_PARSER_DECLARATION_HEADER 287
 #define T_PARSER_BITS_HEADER 288
 #define T_AST_HEADER 289
-#define T_AST_BASE 290
-#define T_PARSER_BASE 291
+#define T_PARSER_BASE 290
+#define T_AST_BASE 291
+
 
 
 
@@ -119,7 +125,7 @@ typedef union YYSTYPE
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 /* Line 1489 of yacc.c.  */
-#line 119 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+#line 129 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

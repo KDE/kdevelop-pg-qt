@@ -29,6 +29,8 @@
 #include "kdev-pg-default-visitor-bits-gen.h"
 #include "kdev-pg-serialize-visitor-gen.h"
 #include "kdev-pg-debug-visitor-gen.h"
+#include "kdev-pg-new-visitor-gen.h"
+#include "kdev-pg-new-visitor-bits-gen.h"
 #include "kdev-pg-beautifier.h"
 
 #include <QtCore/QTextStream>
@@ -466,5 +468,105 @@ void generateOutput()
   }
 }
 
+void generateVisitor(const QString& name, bool inherit_default)
+{
+  QByteArray language = globalSystem.language.toUpper().toLatin1();
+  for(int i = 0; i != language.size(); ++i)
+  {
+    if(language[i] < '0' || (language[i] > '9' && language[i] < 'A') || language[i] > 'Z')
+      language[i] = '_';
+  }
+  QByteArray upper_name = name.toUpper().toLatin1();
+  
+  {
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
+    
+    s << "#ifndef " << language << "_" << upper_name << "_H" << endl
+      << "#define " << language << "_" << upper_name << "_H" << endl
+      << endl
+    
+      << "#include \"" << globalSystem.language << (inherit_default ? "default" : "") << "visitor.h\"" << endl
+      << endl;
+    
+    if (!globalSystem.exportMacroHeader.isEmpty())
+      s << "#include <" << globalSystem.exportMacroHeader << ">"
+        << endl;
+    
+    s << "namespace " << globalSystem.ns << "{" << endl << endl;
+                                                            
+    if (inherit_default)
+    { // generate an empty visitor using the default-visitor
+      
+      GenerateNewVisitor visitor(s, name);
+      
+      visitor();
+    }
+    else
+    { // generate a visitor like the default visitor
+      
+      GenerateDefaultVisitor visitor(s, name);
+          
+      visitor();
+    }
+        
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
+        
+      << "#endif" << endl
+      << endl;
+        
+    QString oname = globalSystem.language;
+    oname += name.toLower() + ".h";
+    
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
+  }
+  
+  {
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
+    
+    s << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
+      << endl
+    
+      << "namespace " << globalSystem.ns << "{" << endl
+    
+      << endl;
+    
+    if(inherit_default)
+    {
+      GenerateNewVisitorBitsRule gen(s, name);
+      for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+              it != globalSystem.symbols.end(); it++ )
+      {
+        gen(qMakePair(it.key(), *it));
+      }
+    }
+    else
+    {
+      GenerateDefaultVisitorBitsRule gen(s, name);
+      for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+              it != globalSystem.symbols.end(); it++ )
+      {
+        gen(qMakePair(it.key(), *it));
+      }
+    }
+    
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl;
+    
+    QString oname = globalSystem.language;
+    oname += name.toLower() + ".cpp";
+    
+    QFile ofile(oname);
+    ofile.open(QIODevice::WriteOnly);
+    QTextStream outstr(&ofile);
+    format(s, outstr);
+  }
+  
 }
 
+}

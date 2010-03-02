@@ -18,15 +18,27 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_GENERATE_H
-#define KDEV_PG_GENERATE_H
-
-class QString;
+#include "kdev-pg-new-visitor-bits-gen.h"
+#include "kdev-pg-default-visitor-bits-gen.h"
+#include "kdev-pg.h"
 
 namespace KDevPG
 {
-void generateOutput();
-void generateVisitor(const QString& name, bool inherit_default);
+
+void GenerateNewVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*> const &__it)
+{
+  bool has_members = false;
+  HasMemberNodes hms(has_members);
+  hms(__it.second);
+
+  if(has_members)
+  {
+    out << "void " << name << "::visit" << __it.second->mCapitalizedName
+        << "(" << __it.second->mCapitalizedName << "Ast *node"
+        << ") {" << endl << endl
+        << "DefaultVisitor::visit" << __it.second->mCapitalizedName << "(node)" << endl
+        << "}" << endl << endl;
+  }
 }
 
-#endif // KDEV_PG_GENERATE_H
+}

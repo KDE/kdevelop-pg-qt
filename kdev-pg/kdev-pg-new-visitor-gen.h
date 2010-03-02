@@ -18,15 +18,33 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_GENERATE_H
-#define KDEV_PG_GENERATE_H
+#ifndef KDEV_PG_NEW_VISITOR_GEN_H
+#define KDEV_PG_NEW_VISITOR_GEN_H
 
-class QString;
+#include "kdev-pg-default-visitor.h"
+
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QTextStream>
+
 
 namespace KDevPG
 {
-void generateOutput();
-void generateVisitor(const QString& name, bool inherit_default);
+
+class GenerateNewVisitor
+{
+public:
+  QTextStream& out;
+  QString name;
+
+public:
+  GenerateNewVisitor(QTextStream& o, const QString& n): out(o), name(n)
+  {}
+
+  void operator()();
+};
+
 }
 
-#endif // KDEV_PG_GENERATE_H
+#endif // KDEV_PG_NEW_VISITOR_GEN_H

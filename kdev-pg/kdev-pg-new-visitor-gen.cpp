@@ -18,15 +18,27 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_GENERATE_H
-#define KDEV_PG_GENERATE_H
+#include "kdev-pg-new-visitor-gen.h"
+#include "kdev-pg-default-visitor-gen.h"
+#include "kdev-pg.h"
 
-class QString;
 
 namespace KDevPG
 {
-void generateOutput();
-void generateVisitor(const QString& name, bool inherit_default);
+
+void GenerateNewVisitor::operator()()
+{
+  out << "class " << globalSystem.exportMacro << " " << name << ": public DefaultVisitor {" << endl
+      << "public:" << endl;
+
+  GenerateDefaultVisitorRule gen(out);
+  for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); it++ )
+  {
+    gen(qMakePair(it.key(), *it));
+  }
+
+  out << "};" << endl;
 }
 
-#endif // KDEV_PG_GENERATE_H
+}

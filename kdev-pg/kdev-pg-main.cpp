@@ -54,6 +54,11 @@ void usage()
            << "--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue" << endl
            << "--strict-conflicts - Quit after having detected conflicts" << endl
            << "--ignore-conflicts - Do not perform conflict-checking" << endl
+           << "--new-visitor=VisitorName - Create a new empty visitor" << endl
+           << "--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << endl
+           << "--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
+           << "--with-parser - The default, a parser will be generated" << endl
+           << "--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
            << "--help - Show this messages" << endl;
 
   exit(EXIT_SUCCESS);
@@ -112,7 +117,10 @@ int main(int argc, char **argv)
 {
   bool dump_terminals = false;
   bool dump_symbols = false;
+  bool generate_parser = true;
   bool DebugRules = false;
+  bool inherit_default = false;
+  QString new_visitor;
 
   QCoreApplication app(argc, argv);
 
@@ -155,6 +163,28 @@ int main(int argc, char **argv)
     else if (arg == "--token-text")
     {
       KDevPG::globalSystem.generateTokenText = true;
+    }
+    else if (arg == "--no-parser")
+    {
+      generate_parser = false;
+    }
+    else if (arg == "--with-parser")
+    {
+      generate_parser = true;
+    }
+    else if (arg.startsWith("--new-visitor="))
+    {
+      new_visitor = arg.mid( 14 );
+      KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
+      generate_parser = false;
+    }
+    else if (arg.startsWith("--inherit-default-visitor"))
+    {
+      inherit_default = true;
+    }
+    else if (arg.startsWith("--inherit-abstract-visitor"))
+    {
+      inherit_default = false;
     }
     else if (arg == "--help")
     {
@@ -287,7 +317,11 @@ int main(int argc, char **argv)
       usage();
     }
 
-  KDevPG::generateOutput();
+  if (generate_parser)
+    KDevPG::generateOutput();
+  
+  if (new_visitor != "")
+    KDevPG::generateVisitor(new_visitor, inherit_default);
 
   return EXIT_SUCCESS;
 }

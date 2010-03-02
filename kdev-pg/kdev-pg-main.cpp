@@ -51,6 +51,9 @@ void usage()
            << "--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
            << "--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
            << "--token-text - Generate a function converting the number of a token into its name" << endl
+           << "--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue" << endl
+           << "--strict-conflicts - Quit after having detected conflicts" << endl
+           << "--ignore-conflicts - Do not perform conflict-checking" << endl
            << "--help - Show this messages" << endl;
 
   exit(EXIT_SUCCESS);
@@ -133,6 +136,18 @@ int main(int argc, char **argv)
     {
       KDevPG::globalSystem.generateSerializeVisitor = true;
     }
+    else if (arg == "--ignore-conflicts")
+    {
+      KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
+    }
+    else if (arg == "--strict-conflicts")
+    {
+      KDevPG::globalSystem.conflictHandling = KDevPG::World::Strict;
+    }
+    else if (arg == "--permissive-conflicts")
+    {
+      KDevPG::globalSystem.conflictHandling = KDevPG::World::Permissive;
+    }
     else if (arg == "--debug-visitor")
     {
       KDevPG::globalSystem.generateDebugVisitor = true;
@@ -196,18 +211,21 @@ int main(int argc, char **argv)
   KDevPG::computeFirst();
   KDevPG::computeFollow();
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
   {
-    KDevPG::FirstFollowConflictChecker check;
-    check(*it);
-  }
+    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+    {
+      KDevPG::FirstFollowConflictChecker check;
+      check(*it);
+    }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
-  {
-    KDevPG::FirstFirstConflictChecker check;
-    check(*it);
+    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+    {
+      KDevPG::FirstFirstConflictChecker check;
+      check(*it);
+    }
   }
-
+    
   for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
   {
     KDevPG::EmptyFirstChecker check;

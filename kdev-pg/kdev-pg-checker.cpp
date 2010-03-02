@@ -324,14 +324,22 @@ void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
 
 void ProblemSummaryPrinter::operator()()
 {
-  qDebug() << (mFirstFirstConflictCount + mFirstFollowConflictCount)
-            << " conflicts total: " << mFirstFollowConflictCount
-            << " FIRST/FOLLOW conflicts, " << mFirstFirstConflictCount
-            << " FIRST/FIRST conflicts." << endl;
+  if (KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
+    qDebug() << (mFirstFirstConflictCount + mFirstFollowConflictCount)
+              << " conflicts total: " << mFirstFollowConflictCount
+              << " FIRST/FOLLOW conflicts, " << mFirstFirstConflictCount
+              << " FIRST/FIRST conflicts." << endl;
 
   if (mErrorCount > 0)
     {
       qDebug() << mErrorCount << " fatal errors found, exiting."
+                << endl;
+      exit(EXIT_FAILURE);
+    }
+    
+  if (KDevPG::globalSystem.conflictHandling == KDevPG::World::Strict && mFirstFirstConflictCount + mFirstFollowConflictCount > 0)
+    {
+      qDebug() << "Conflicts found, existing."
                 << endl;
       exit(EXIT_FAILURE);
     }

@@ -28,7 +28,7 @@ namespace KDevPG
 
 void GenerateDefaultVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " DefaultVisitor: public Visitor {" << endl
+  out << "class " << globalSystem.exportMacro << " " << name << ": public Visitor {" << endl
       << "public:" << endl;
 
   GenerateDefaultVisitorRule gen(out);

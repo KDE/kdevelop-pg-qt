@@ -36,7 +36,7 @@ void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "void DefaultVisitor::visit" << sym->mCapitalizedName
+  out << "void " << name << "::visit" << sym->mCapitalizedName
       << "(" << sym->mCapitalizedName << "Ast *" << (has_members ? "node" : "")
       << ") {" << endl;
 

@@ -36,9 +36,10 @@ class GenerateDefaultVisitor
 {
 public:
   QTextStream& out;
+  QString name;
 
 public:
-  GenerateDefaultVisitor(QTextStream& o): out(o)
+  GenerateDefaultVisitor(QTextStream& o, const QString& n = "DefaultVisitor"): out(o), name(n)
   {}
 
   void operator()();

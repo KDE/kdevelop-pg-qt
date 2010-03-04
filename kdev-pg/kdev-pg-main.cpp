@@ -218,7 +218,7 @@ int main(int argc, char **argv)
       qDebug() << "kdev-pg: unknown option ``" << arg << "''"
                 << endl;
     }
-    }
+  }
 
   if( KDevPG::globalSystem.ns.isEmpty() )
     KDevPG::globalSystem.ns = KDevPG::globalSystem.language;

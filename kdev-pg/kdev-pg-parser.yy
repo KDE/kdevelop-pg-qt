@@ -38,7 +38,7 @@ extern void yyerror(const char* msg);
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING ';'
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_NUMBER ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
 %token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
 %token T_CONSTRUCTOR T_DESTRUCTOR T_TRY_RECOVER T_TRY_ROLLBACK T_CATCH
@@ -47,6 +47,9 @@ extern void yyerror(const char* msg);
 %token T_AST_DECLARATION 
 %token T_PARSER_DECLARATION_HEADER T_PARSER_BITS_HEADER T_AST_HEADER
 %token T_PARSER_BASE T_AST_BASE
+%token T_BIN T_PRE T_POST T_TERN
+%token T_LOPR T_ROPR
+%token T_LEFT_ASSOC T_RIGHT_ASSOC
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
 %type<str> name code_opt rule_arguments_opt
@@ -56,6 +59,7 @@ extern void yyerror(const char* msg);
 %type<declarationType> declarationType_opt
 %type<storageType>     scope storageType
 %type<variableType>    variableType
+%type<void> operator operatorDeclaration operatorDeclarations operatorRule
 
 %%
 
@@ -77,6 +81,7 @@ declaration
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
+    | operatorRule ';' ';'
     | T_EXPORT_MACRO T_STRING
         { KDevPG::globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING
@@ -220,6 +225,34 @@ item
 code_opt
     : /* empty */                       { $$ = const_cast<char*>(""); }
     | T_CODE                            { $$ = $1; }
+    ;
+
+
+operatorDeclarations
+    : operatorDeclaration operatorDeclarations
+    | /* empty */
+    ;
+
+operatorRule
+    : T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER code_opt
+    | T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
+    | T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    ;
+
+operatorDeclaration
+    : T_BIN operator T_NUMBER T_LEFT_ASSOC
+    | T_BIN operator T_NUMBER T_RIGHT_ASSOC
+    | T_TERN operator operator T_NUMBER T_LEFT_ASSOC
+    | T_TERN operator operator T_NUMBER T_RIGHT_ASSOC
+    | T_PRE operator T_NUMBER
+    | T_POST operator T_NUMBER
+    ;
+    
+operator
+    : '?' T_CODE T_TOKEN T_CODE
+    | '?' T_CODE T_TOKEN
+    | T_TOKEN T_CODE
+    | T_TOKEN
     ;
 
 variableDeclarations

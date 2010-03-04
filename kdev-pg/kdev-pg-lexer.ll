@@ -105,6 +105,14 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%ast_header"           return T_AST_HEADER;
 "%ast_base"             return T_AST_BASE;
 "%parser_base"          return T_PARSER_BASE;
+"%bin"                  return T_BIN;
+"%pre"                  return T_PRE;
+"%post"                 return T_POST;
+"%tern"                 return T_TERN;
+"%<"                    return T_LOPR;
+"%>"                    return T_ROPR;
+"%left"                 return T_LEFT_ASSOC;
+"%right"                return T_RIGHT_ASSOC;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;
@@ -166,7 +174,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "token"                 return T_TOKEN;
 "variable"              return T_VARIABLE;
 ";"                     return ';';  /* only used for "token" types */
-[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+[_a-zA-Z]*[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+[0-9]+                  return T_NUMBER;
 "]"                     BEGIN(INITIAL); return ']';
 .                       BEGIN(INITIAL); REJECT; /* everything else */
 }

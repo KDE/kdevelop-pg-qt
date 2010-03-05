@@ -322,6 +322,20 @@ void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
     }
 }
 
+void EmptyOperatorChecker::operator()(Model::Node *node)
+{
+  visitNode(node);
+}
+
+void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
+{
+  if (reducesToEpsilon(globalSystem.pushSymbol(node->mBase)))
+  {
+    qDebug() << "** ERROR Base symbol ``" << node->mBase << "'' for operator ``" << node->mName << "'' reduces to zero" << endl;
+    ProblemSummaryPrinter::reportError();
+  }
+}
+
 void ProblemSummaryPrinter::operator()()
 {
   if (KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)

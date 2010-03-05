@@ -54,6 +54,7 @@ protected:
   virtual void visitAnnotation(Model::AnnotationItem *) {}
   virtual void visitCondition(Model::ConditionItem *) {}
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *) {}
+  virtual void visitOperator(Model::OperatorItem *) {}
 
 private:
   typedef void (Visitor::*VisitorFuncPointer)(Model::Node *item);

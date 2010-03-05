@@ -1,3 +1,4 @@
+
 /* This file is part of kdev-pg
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
@@ -40,6 +41,7 @@ Visitor::VisitorFuncPointer Visitor::sTable[Model::NodeKindLast] = {
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitAnnotation),
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitCondition),
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitVariableDeclaration),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitOperator),
 };
 
 }

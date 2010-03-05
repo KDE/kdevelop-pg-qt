@@ -151,6 +151,12 @@ void CloneTree::visitAnnotation(Model::AnnotationItem *node)
                                node->mDeclaration->mStorageType));
 }
 
+void CloneTree::visitOperator(Model::OperatorItem *node)
+{
+  // Should not be relevant if it gets really copied
+  mTemps.push(node);
+}
+
 Model::Node *CloneTree::clone(Model::Node *node)
 {
   mTemps = QStack<Model::Node*>();

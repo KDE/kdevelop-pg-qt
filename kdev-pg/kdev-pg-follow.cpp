@@ -105,7 +105,7 @@ void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
       if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(*it))
       {
           if( dest.contains(t) )
-            mChanged |= false;
+            /*mChanged |= false*/;
           else
             mChanged |= true;
           dest.insert(t) != dest.end();
@@ -221,6 +221,12 @@ void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
   merge(node->mSymbol, globalSystem.follow(node));
 
   DefaultVisitor::visitNonTerminal(node);
+}
+
+void NextFollow::visitOperator(Model::OperatorItem *node)
+{
+  Q_UNUSED(node);
+  /// @TODO Do we have to do anything here? I think not, because an operator-expression expects mBase not to reduce to zero, because prefix and postfix expression would not make any sense in this case. All necessary FOLLOW-stuff should be added from outside. But I am not 100% sure. (The User, 6.3.2010)
 }
 
 void NextFollow::addFirstToFollowDep(Model::Node *dest, Model::Node *dep)

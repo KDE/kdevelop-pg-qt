@@ -48,6 +48,7 @@ protected:
   virtual void visitTryCatch(Model::TryCatchItem *node);
   virtual void visitAlias(Model::AliasItem *node);
   virtual void visitAnnotation(Model::AnnotationItem *node);
+  virtual void visitOperator(Model::OperatorItem *node);
 };
 
 }

@@ -211,6 +211,10 @@ bool reducesToEpsilon(Model::Node *node)
     {
       return reducesToEpsilon(c->mLeft) && reducesToEpsilon(c->mRight);
     }
+  else if (nodeCast<Model::OperatorItem*>(node))
+    {
+      return false;
+    }
   else if (Model::AlternativeItem *a = nodeCast<Model::AlternativeItem*>(node))
     {
       return reducesToEpsilon(a->mLeft) || reducesToEpsilon(a->mRight);

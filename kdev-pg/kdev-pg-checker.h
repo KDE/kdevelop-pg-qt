@@ -37,6 +37,15 @@ protected:
   virtual void visitSymbol(Model::SymbolItem *node);
 };
 
+class EmptyOperatorChecker: protected DefaultVisitor
+{
+public:
+  void operator()(Model::Node *node);
+
+protected:
+  virtual void visitOperator(Model::OperatorItem *node);
+};
+
 class FirstFirstConflictChecker: protected DefaultVisitor
 {
 public:

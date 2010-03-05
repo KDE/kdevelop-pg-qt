@@ -238,6 +238,12 @@ int main(int argc, char **argv)
     initenv(*it);
   }
 
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  {
+    KDevPG::EmptyOperatorChecker check;
+    check(*it);
+  }
+
   KDevPG::computeFirst();
   KDevPG::computeFollow();
 

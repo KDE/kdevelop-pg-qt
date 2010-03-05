@@ -26,17 +26,36 @@
 namespace KDevPG
 {
 
+/**
+ * Adds first-sets for terminals, zeros and operators.
+ */
 class InitializeFirst: protected DefaultVisitor
 {
 public:
   void operator ()(Model::Node *node);
 
 protected:
+  /**
+   * Stops endless recursion.
+   */
   virtual void visitNode(Model::Node *node);
+  /**
+   * Add node to the first-set of node.
+   */
   virtual void visitZero(Model::ZeroItem *node);
+  /**
+   * The same as visitZero.
+   */
   virtual void visitTerminal(Model::TerminalItem *node);
+  /**
+   * Create the whole-first-set for node.
+   */
+  virtual void visitOperator(Model::OperatorItem *node);
 };
 
+/**
+ * Recursively merge first-sets.
+ */
 class NextFirst: protected DefaultVisitor
 {
 public:
@@ -63,7 +82,8 @@ protected:
   virtual void visitTryCatch(Model::TryCatchItem *node);
   virtual void visitAlias(Model::AliasItem *node);
   virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem* node);
+  virtual void visitCondition(Model::ConditionItem *node);
+  virtual void visitOperator(Model::OperatorItem *node);
 
 private:
   Model::Node *mItem;
@@ -72,6 +92,10 @@ private:
   bool &mChanged;
 };
 
+/**
+ * This method computes the first-set for all symbols.
+ * The algorithm: The function starts with InitializeFirst. As long as possible NextFirst will merge first-sets.
+ */
 void computeFirst();
 
 }

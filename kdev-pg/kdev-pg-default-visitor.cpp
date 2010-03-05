@@ -98,4 +98,9 @@ void DefaultVisitor::visitVariableDeclaration(Model::VariableDeclarationItem *no
   visitNode(node->mNext);
 }
 
+void DefaultVisitor::visitOperator(Model::OperatorItem *node)
+{
+  visitSymbol(node);
+}
+
 }

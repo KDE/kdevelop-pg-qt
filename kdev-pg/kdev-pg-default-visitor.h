@@ -44,6 +44,7 @@ protected:
   virtual void visitAnnotation(Model::AnnotationItem *node);
   virtual void visitCondition(Model::ConditionItem *node);
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  virtual void visitOperator(Model::OperatorItem *node);
 };
 
 }

@@ -49,6 +49,23 @@ void InitializeFirst::visitTerminal(Model::TerminalItem *node)
   globalSystem.first(node).insert(node);
 }
 
+void InitializeFirst::visitOperator(Model::OperatorItem *node)
+{
+  Model::TerminalItem *t;
+  #define REGISTER \
+  globalSystem.first(node).insert(t); \
+  globalSystem.first(t).insert(t);
+  for(vector< pair<Model::Operator, Model::Operator> >::iterator i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  {
+    t = globalSystem.terminal(i->first.mTok);
+    REGISTER
+  }
+  for(vector<Model::OperatorItem::UnaryDescription>::iterator i = node->mPre.begin(); i != node->mPre.end(); ++i)
+  {
+    t = globalSystem.terminal(i->op.mTok);
+    REGISTER
+  }
+}
 
 NextFirst::NextFirst(bool &changed): mChanged(changed)
 {
@@ -90,7 +107,7 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
         }
 
       if( dest.contains(*it) )
-        mChanged |= false;
+        /*mChanged |= false*/;
       else
       {
         mChanged |= true;
@@ -122,6 +139,13 @@ void NextFirst::visitNonTerminal(Model::NonTerminalItem *node)
   DefaultVisitor::visitNonTerminal(node);
 
   merge(node, node->mSymbol);
+}
+
+void NextFirst::visitOperator(Model::OperatorItem *node)
+{
+//   DefaultVisitor::visitEvolve(globalSystem.env[globalSystem.pushSymbol(node->mBase)]);
+  
+  merge(node, globalSystem.pushSymbol(node->mBase));
 }
 
 void NextFirst::visitSymbol(Model::SymbolItem *)
@@ -215,7 +239,7 @@ void NextFirst::visitAnnotation(Model::AnnotationItem *node)
   merge(node, node->mItem);
 }
 
-void NextFirst::visitCondition(Model::ConditionItem* node)
+void NextFirst::visitCondition(Model::ConditionItem *node)
 {
   DefaultVisitor::visitCondition(node);
 

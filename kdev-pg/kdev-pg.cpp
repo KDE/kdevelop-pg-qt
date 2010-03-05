@@ -56,6 +56,16 @@ Model::SymbolItem *symbol(const QString& name)
   return node;
 }
 
+Model::OperatorItem *operatorSymbol(const QString& name, const QString& base)
+{
+  Model::OperatorItem *node = createNode<Model::OperatorItem>();
+  node->mName = name;
+  node->mCapitalizedName = name;
+  node->mCapitalizedName.replace( 0, 1, name.at(0).toUpper() );
+  node->mBase = base;
+  return node;
+}
+
 Model::ActionItem *action(Model::Node *item, const QString& code)
 {
   Model::ActionItem *node = createNode<Model::ActionItem>();
@@ -277,6 +287,16 @@ bool isZero(Model::Node *node)
     }
 
   return false;
+}
+
+
+Model::Operator *makeOperator(const QString& tok, const QString& cond, const QString& code)
+{
+  Model::Operator *op = new Model::Operator;
+  op->mTok = tok;
+  op->mCond = cond;
+  op->mCode = code;
+  return op;
 }
 
 }

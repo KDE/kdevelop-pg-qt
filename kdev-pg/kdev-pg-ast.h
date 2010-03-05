@@ -24,6 +24,12 @@
 #include "kdev-pg-allocator.h"
 #include "kdev-pg-memory-pool.h"
 
+#include <vector>
+#include <utility>
+using std::vector;
+using std::pair;
+using std::make_pair;
+
 #include <QtCore/QString>
 
 #define PG_NODE(k) \
@@ -53,6 +59,7 @@ namespace Model
     NodeKindAnnotation = 13,
     NodeKindCondition = 14,
     NodeKindVariableDeclaration = 15,
+    NodeKindOperatorItem = 16,
 
     NodeKindLast
   };
@@ -158,6 +165,77 @@ namespace Model
 
     SymbolItem *mSymbol;
     QString mArguments;
+  };
+  
+  class Operator
+  {
+  public:
+    QString mTok, mCond, mCode;
+  };
+  
+  class OperatorItem : public SymbolItem
+  {
+  public:
+    PG_NODE(OperatorItem)
+    
+    struct TernDescription
+    {
+      Operator first, second;
+      bool left: 1;
+      QString priority;
+    };
+    struct BinDescription
+    {
+      Operator op;
+      bool left: 1;
+      QString priority;
+    };
+    struct UnaryDescription
+    {
+      Operator op;
+      QString priority;
+    };
+    QString mBase;
+    vector< pair<Operator, Operator> > mParen;
+    vector< TernDescription > mTern;
+    vector< BinDescription > mBin;
+    vector< UnaryDescription > mPre, mPost;
+    
+    inline void pushParen(const Operator& op1, const Operator& op2)
+    {
+      mParen.push_back(make_pair(op1, op2));
+    }
+    inline void pushPre(const Operator& op, const QString& priority)
+    {
+      UnaryDescription d;
+      d.op = op;
+      d.priority = priority;
+      mPre.push_back(d);
+    }
+    inline void pushPost(const Operator& op, const QString& priority)
+    {
+      UnaryDescription d;
+      d.op = op;
+      d.priority = priority;
+      mPost.push_back(d);
+    }
+    inline void pushBin(const Operator& op, bool left, const QString& priority)
+    {
+      BinDescription d;
+      d.op = op;
+      d.left = left;
+      d.priority = priority;
+      mBin.push_back(d);
+    }
+    inline void pushTern(const Operator& op1, const Operator& op2, bool left, const QString& priority)
+    {
+      TernDescription d;
+      d.first = op1;
+      d.second = op2;
+      d.left = left;
+      d.priority = priority;
+      mTern.push_back(d);
+    }
   };
 
   class VariableDeclarationItem: public Node

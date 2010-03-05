@@ -113,6 +113,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%>"                    return T_ROPR;
 "%left"                 return T_LEFT_ASSOC;
 "%right"                return T_RIGHT_ASSOC;
+"%paren"                return T_PAREN;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;

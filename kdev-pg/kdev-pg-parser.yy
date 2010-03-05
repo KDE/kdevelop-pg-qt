@@ -28,7 +28,10 @@
 extern int yylex();
 extern void yyerror(const char* msg);
 
+KDevPG::Model::OperatorItem *operatorNode = 0;
+
 %}
+
 
 %union {
     KDevPG::Model::Node *item;
@@ -36,6 +39,7 @@ extern void yyerror(const char* msg);
     KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
     KDevPG::Model::VariableDeclarationItem::StorateType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
+    KDevPG::Model::Operator                                *operatorInformation;
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_NUMBER ';'
@@ -50,16 +54,18 @@ extern void yyerror(const char* msg);
 %token T_BIN T_PRE T_POST T_TERN
 %token T_LOPR T_ROPR
 %token T_LEFT_ASSOC T_RIGHT_ASSOC
+%token T_PAREN
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
 %type<str> name code_opt rule_arguments_opt
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
-%type<item> member_declaration_rest variableDeclarations variableDeclaration
+%type<item> member_declaration_rest variableDeclarations variableDeclaration operatorRule
 %type<declarationType> declarationType_opt
 %type<storageType>     scope storageType
 %type<variableType>    variableType
-%type<void> operator operatorDeclaration operatorDeclarations operatorRule
+/* %type<void> operatorDeclaration operatorDeclarations operatorRule */
+%type<operatorInformation> operator
 
 %%
 
@@ -230,29 +236,45 @@ code_opt
 
 operatorDeclarations
     : operatorDeclaration operatorDeclarations
-    | /* empty */
+    | /* empty */   { ; }
     ;
 
 operatorRule
-    : T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER code_opt
-    | T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
-    | T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    : { operatorNode = KDevPG::operatorSymbol("", ""); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER code_opt
+            {
+              operatorNode->mBase = $3;
+              operatorNode->mName = $6;
+              $$ = KDevPG::evolve(0, KDevPG::globalSystem.pushOperator(operatorNode), 0, $7);
+            }
+    | { operatorNode = KDevPG::operatorSymbol("", ""); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
+            {
+              operatorNode->mBase = $3;
+              operatorNode->mName = $6;
+              $$ = KDevPG::evolve(0, KDevPG::globalSystem.pushOperator(operatorNode), (KDevPG::Model::VariableDeclarationItem*)$8, $10);
+            }
+    | { operatorNode = KDevPG::operatorSymbol("", ""); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+            {
+              operatorNode->mBase = $3;
+              operatorNode->mName = $6;
+              $$ = KDevPG::evolve(0, KDevPG::globalSystem.pushOperator(operatorNode), (KDevPG::Model::VariableDeclarationItem*)$9, $7);
+            }
     ;
 
 operatorDeclaration
-    : T_BIN operator T_NUMBER T_LEFT_ASSOC
-    | T_BIN operator T_NUMBER T_RIGHT_ASSOC
-    | T_TERN operator operator T_NUMBER T_LEFT_ASSOC
-    | T_TERN operator operator T_NUMBER T_RIGHT_ASSOC
-    | T_PRE operator T_NUMBER
-    | T_POST operator T_NUMBER
+    : T_BIN operator T_NUMBER T_LEFT_ASSOC              { operatorNode->pushBin(*$2, true, $3); delete $2; }
+    | T_BIN operator T_NUMBER T_RIGHT_ASSOC             { operatorNode->pushBin(*$2, false, $3); delete $2; }
+    | T_TERN operator operator T_NUMBER T_LEFT_ASSOC    { operatorNode->pushTern(*$2, *$3, true, $4); delete $2; delete $3; }
+    | T_TERN operator operator T_NUMBER T_RIGHT_ASSOC   { operatorNode->pushTern(*$2, *$3, false, $4); delete $2; delete $3; }
+    | T_PRE operator T_NUMBER                           { operatorNode->pushPre(*$2, $3); delete $2; }
+    | T_POST operator T_NUMBER                          { operatorNode->pushPost(*$2, $3); delete $2; }
+    | T_PAREN operator operator                         { operatorNode->pushParen(*$2, *$3); delete $2; delete $3; }
     ;
     
 operator
-    : '?' T_CODE T_TOKEN T_CODE
-    | '?' T_CODE T_TOKEN
-    | T_TOKEN T_CODE
-    | T_TOKEN
+    : '?' T_CODE T_TERMINAL T_CODE { $$ = KDevPG::makeOperator($3, $2, $4); }
+    | '?' T_CODE T_TERMINAL        { $$ = KDevPG::makeOperator($3, $2, ""); }
+    | T_TERMINAL T_CODE            { $$ = KDevPG::makeOperator($1, "", $2); }
+    | T_TERMINAL                   { $$ = KDevPG::makeOperator($1, "", ""); }
     ;
 
 variableDeclarations

@@ -12,6 +12,10 @@ You can find an introduction at KDE-Techbase:
 http://techbase.kde.org/Development/KDevelop-PG-Qt_Introduction (English)
 http://techbase.kde.org/Development/KDevelop-PG-Qt_Introduction_(de) (German)
 
+HACKING:
+See <http://techbase.kde.org/Development/KDevelop-PG-Qt_Development_Guide> for basic information
+about KDevelop-PG-Qt-Development and ideas for future you could implement.
+
 Questions?
 #kdevelop@freenode
 kdevelop-devel@kdevelop.org

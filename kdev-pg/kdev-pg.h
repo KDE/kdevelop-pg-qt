@@ -95,8 +95,8 @@ public:
   typedef QMap<QString, QString> AstBaseClasses;
 
   World()
-    : tokenStream("KDevPG::TokenStream"), language(0), ns(0), decl(0), bits(0),
-      exportMacro(""), exportMacroHeader(0), astCode(""), namespaceCode(""),
+    : tokenStream("KDevPG::TokenStream"), language(), ns(), decl(), bits(),
+      exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
       GenerateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
       generateTokenText(false), needStateManagement(false), conflictHandling(Permissive), start(0), mZero(0)
   {}

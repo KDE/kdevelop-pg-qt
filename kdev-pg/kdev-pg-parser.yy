@@ -87,7 +87,7 @@ declaration
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
-    | operatorRule ';' ';'
+    | operatorRule ';' ';' { KDevPG::globalSystem.needOperatorStack = true; }
     | T_EXPORT_MACRO T_STRING
         { KDevPG::globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING

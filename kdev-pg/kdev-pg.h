@@ -98,7 +98,7 @@ public:
     : tokenStream("KDevPG::TokenStream"), language(), ns(), decl(), bits(),
       exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
       GenerateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
-      generateTokenText(false), needStateManagement(false), conflictHandling(Permissive), start(0), mZero(0)
+      generateTokenText(false), needStateManagement(false), needOperatorStack(false), conflictHandling(Permissive), start(0), mZero(0)
   {}
 
   // options
@@ -114,12 +114,13 @@ public:
   QStringList parserDeclarationHeaders;
   QStringList parserBitsHeaders;
   QStringList astHeaders;
-  bool GenerateAst;
-  bool generateSerializeVisitor;
-  bool generateDebugVisitor;
-  bool generateTokenText;
-  bool needStateManagement;
-  enum { Ignore, Permissive, Strict } conflictHandling;
+  bool GenerateAst: 1;
+  bool generateSerializeVisitor: 1;
+  bool generateDebugVisitor: 1;
+  bool generateTokenText: 1;
+  bool needStateManagement: 1;
+  bool needOperatorStack: 1;
+  enum { Ignore = 0, Permissive = 1, Strict = 2 } conflictHandling: 2;
 
   Model::ZeroItem *zero()
   {

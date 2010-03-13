@@ -769,7 +769,11 @@ void GenerateParserDeclarations::operator()()
 //       << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
       << "typedef " << globalSystem.tokenStream << "::Token Token;" << endl
       << globalSystem.tokenStream << " *tokenStream;" << endl
-      << "int yytoken;" << endl
+      << "int yytoken;" << endl;
+  if(globalSystem.needOperatorStack)
+    out << "struct OperatorStackItem{AstNode *n; int unsigned p; inline OperatorStackItem(AstNode *n, int unsigned p) : n(n), p(p) {} };\
+QVector<OperatorStackItem> opStack;" << endl;
+  out
       << endl
       << "inline Token LA(qint64 k = 1) const" << endl
       << "{ return tokenStream->token(tokenStream->index() - 1 + k - 1); }"

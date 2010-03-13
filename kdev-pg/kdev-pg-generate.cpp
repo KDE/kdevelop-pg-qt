@@ -118,7 +118,10 @@ void generateOutput()
 
     if (globalSystem.tokenStream == "KDevPG::TokenStream")
       s << "#include <kdev-pg-token-stream.h>" << endl;
-
+    
+    if (globalSystem.needOperatorStack)
+      s << "#include <QtCore/QVector>" << endl;
+    
     foreach (const QString& header, globalSystem.parserDeclarationHeaders)
       s << "#include <" << header << ">\n";
 

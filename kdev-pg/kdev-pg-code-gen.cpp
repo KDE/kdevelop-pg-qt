@@ -572,10 +572,10 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
   }
   /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
-    out << "if(yytoken == Token_" << i->second.mTok << ";
+    out << "if(yytoken == Token_" << i->second.mTok;
     if(i->second.mCond.size() != 0)
       out << " && " << i->second.mCond;
-    out << ") {
+    out << ") {" << i->second.mCode << "... }";
   }*/
   /// @TODO TernOp, Paren (e.g. a variable instead of "1" in "opStack.size() == 1", return after ")")
   if(printElse)
@@ -606,7 +606,17 @@ if(opStack.isEmpty())\
   opStack.push_back(OperatorStackItem(ptr, -1));\
 else {\
   reinterpret_cast<Binary" << nodeType << "*>(opStack.last().first)->second = ptr;\
-  opStack.push_back(OperatorStackItem(ptr, -1));}";
+  opStack.push_back(OperatorStackItem(ptr, -1));} }";
+  /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == Token_" << i->first.mTok;
+    if(i->first.mCond.size() != 0)
+      out << " && " << i->first.mCond;
+    out << ") { " << i->first.mCode << " }";
+  }*/
   out << "else ";
   out << "break;";
   out << "} }";

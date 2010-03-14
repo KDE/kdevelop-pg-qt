@@ -617,6 +617,18 @@ else {\
       out << " && " << i->first.mCond;
     out << ") { " << i->first.mCode << " }";
   }*/
+  /*for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == Token_" << i->op.mTok;
+    if(i->op.mCond.size() != 0)
+      out << " && " << i->op.mCond;
+    out << ") { const unsigned int priority = " << i->priority << ";";
+    out << i->op.mCode;
+    out << "... }";
+  }*/
   out << "else ";
   out << "break;";
   out << "} }";

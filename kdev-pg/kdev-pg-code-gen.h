@@ -55,6 +55,7 @@ protected:
   virtual void visitAlias(Model::AliasItem *node);
   virtual void visitAnnotation(Model::AnnotationItem *node);
   virtual void visitCondition(Model::ConditionItem *node);
+  virtual void visitOperator(Model::OperatorItem *node);
 
 private:
   int mCurrentCatchId;

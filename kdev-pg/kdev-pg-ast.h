@@ -59,7 +59,7 @@ namespace Model
     NodeKindAnnotation = 13,
     NodeKindCondition = 14,
     NodeKindVariableDeclaration = 15,
-    NodeKindOperatorItem = 16,
+    NodeKindOperator = 16,
 
     NodeKindLast
   };
@@ -173,10 +173,10 @@ namespace Model
     QString mTok, mCond, mCode;
   };
   
-  class OperatorItem : public SymbolItem
+  class OperatorItem : public Node
   {
   public:
-    PG_NODE(OperatorItem)
+    PG_NODE(Operator)
     
     struct TernDescription
     {
@@ -198,8 +198,8 @@ namespace Model
     QString mBase;
     vector< pair<Operator, Operator> > mParen;
     vector< TernDescription > mTern;
-    vector< BinDescription > mBin;
-    vector< UnaryDescription > mPre, mPost;
+    vector< BinDescription > mBin, mPost;
+    vector< UnaryDescription > mPre;
     
     inline void pushParen(const Operator& op1, const Operator& op2)
     {
@@ -214,9 +214,10 @@ namespace Model
     }
     inline void pushPost(const Operator& op, const QString& priority)
     {
-      UnaryDescription d;
+      BinDescription d;
       d.op = op;
       d.priority = priority;
+      d.left = false;
       mPost.push_back(d);
     }
     inline void pushBin(const Operator& op, bool left, const QString& priority)

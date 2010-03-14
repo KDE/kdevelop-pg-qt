@@ -100,7 +100,7 @@ void DefaultVisitor::visitVariableDeclaration(Model::VariableDeclarationItem *no
 
 void DefaultVisitor::visitOperator(Model::OperatorItem *node)
 {
-  visitSymbol(node);
+  
 }
 
 }

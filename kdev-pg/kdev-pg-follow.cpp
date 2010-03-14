@@ -124,7 +124,7 @@ void NextFollow::visitEvolve(Model::EvolveItem *node)
 
   merge(node->mItem, globalSystem.follow(node->mSymbol));
   addFollowToFollowDep(node->mItem, node->mSymbol);
-
+  
   DefaultVisitor::visitEvolve(node);
 }
 

@@ -87,7 +87,6 @@ declaration
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
-    | operatorRule ';' ';' { KDevPG::globalSystem.needOperatorStack = true; }
     | T_EXPORT_MACRO T_STRING
         { KDevPG::globalSystem.exportMacro = $2;           }
     | T_EXPORT_MACRO_HEADER T_STRING
@@ -226,6 +225,7 @@ item
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
         { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
+    | operatorRule { KDevPG::globalSystem.needOperatorStack = true; $$ = $1; }
     ;
 
 code_opt
@@ -240,23 +240,20 @@ operatorDeclarations
     ;
 
 operatorRule
-    : { operatorNode = KDevPG::operatorSymbol("", ""); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER code_opt
+    : { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER code_opt
             {
               operatorNode->mBase = $3;
-              operatorNode->mName = $6;
-              $$ = KDevPG::evolve(0, KDevPG::globalSystem.pushOperator(operatorNode), 0, $7);
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), 0, $7);
             }
-    | { operatorNode = KDevPG::operatorSymbol("", ""); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
+    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
             {
               operatorNode->mBase = $3;
-              operatorNode->mName = $6;
-              $$ = KDevPG::evolve(0, KDevPG::globalSystem.pushOperator(operatorNode), (KDevPG::Model::VariableDeclarationItem*)$8, $10);
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), (KDevPG::Model::VariableDeclarationItem*)$8, $10);
             }
-    | { operatorNode = KDevPG::operatorSymbol("", ""); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
             {
               operatorNode->mBase = $3;
-              operatorNode->mName = $6;
-              $$ = KDevPG::evolve(0, KDevPG::globalSystem.pushOperator(operatorNode), (KDevPG::Model::VariableDeclarationItem*)$9, $7);
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), (KDevPG::Model::VariableDeclarationItem*)$9, $7);
             }
     ;
 

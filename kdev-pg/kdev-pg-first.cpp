@@ -22,6 +22,7 @@
 
 #include <cassert>
 
+#include <qdebug.h>
 
 namespace KDevPG
 {
@@ -49,19 +50,23 @@ void InitializeFirst::visitTerminal(Model::TerminalItem *node)
   globalSystem.first(node).insert(node);
 }
 
+
 void InitializeFirst::visitOperator(Model::OperatorItem *node)
 {
   Model::TerminalItem *t;
+  qDebug() << "InitializeFirst::visitOperator";
   #define REGISTER \
   globalSystem.first(node).insert(t); \
   globalSystem.first(t).insert(t);
   for(vector< pair<Model::Operator, Model::Operator> >::iterator i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
+    qDebug() << "Register for operator";
     t = globalSystem.terminal(i->first.mTok);
     REGISTER
   }
   for(vector<Model::OperatorItem::UnaryDescription>::iterator i = node->mPre.begin(); i != node->mPre.end(); ++i)
   {
+    qDebug() << "Register for operator";
     t = globalSystem.terminal(i->op.mTok);
     REGISTER
   }
@@ -144,6 +149,7 @@ void NextFirst::visitNonTerminal(Model::NonTerminalItem *node)
 void NextFirst::visitOperator(Model::OperatorItem *node)
 {
 //   DefaultVisitor::visitEvolve(globalSystem.env[globalSystem.pushSymbol(node->mBase)]);
+  qDebug() << "NextFirst::visitOperator";
   
   merge(node, globalSystem.pushSymbol(node->mBase));
 }
@@ -212,7 +218,6 @@ void NextFirst::visitEvolve(Model::EvolveItem *node)
 {
   visitNode(node->mItem);
   merge(node, node->mItem);
-
   merge(node->mSymbol, node);
 }
 

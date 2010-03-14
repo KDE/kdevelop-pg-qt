@@ -176,7 +176,6 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "variable"              return T_VARIABLE;
 ";"                     return ';';  /* only used for "token" types */
 [_a-zA-Z]*[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
-[0-9]+                  return T_NUMBER;
 "]"                     BEGIN(INITIAL); return ']';
 .                       BEGIN(INITIAL); REJECT; /* everything else */
 }
@@ -227,7 +226,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 
 [_A-Z]+                 COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
-[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+[_a-zA-Z][_a-zA-Z0-9]*           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+[0-9]+                  return T_NUMBER;
 
 
 {String} {

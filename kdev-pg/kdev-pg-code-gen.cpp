@@ -526,6 +526,87 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
     Q_ASSERT(0); // ### not supported
 }
 
+void CodeGenerator::visitOperator(Model::OperatorItem *node)
+{
+  // generateTestCondition(node, out)
+//   out << "if(";
+//   generateTestCondition(node, out);
+//   out << ")";
+  out << "bool expectOperator = false;"
+      << "while(true) {"
+      << "if(expectOperator) {"
+      << " ";
+  const QString nodeType = "OperationNode*";    /// @TODO Add a unique name
+  const QString baseType = node->mBase + "Node*";
+  bool printElse = false;
+  for(__typeof__(node->mPost.begin()) i = node->mPost.begin(); i != node->mPost.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == Token_" << i->op.mTok;
+    if(i->op.mCond.size() != 0)
+      out << " && " << i->op.mCond;
+    out << ") { const unsigned int priority = " << i->priority << ";";
+    out << i->op.mCode;
+    out << "AstNode *last = 0; bool br = false;";
+    out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
+    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem(new Postfix" << nodeType << "(last), priority)); br = true; break; } else { last = opStack.last().n; opStack.pop_back(); }}";
+    out << "if(!br) { opStack.push_back(OperatorStackItem(new Postfix" << nodeType << "(last), priority)); } yylex(); }";
+  }
+  for(__typeof__(node->mBin.begin()) i = node->mBin.begin(); i != node->mBin.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == Token_" << i->op.mTok;
+    if(i->op.mCond.size() != 0)
+      out << " && " << i->op.mCond;
+    out << ") { const unsigned int priority = " << i->priority << ";";
+    out << i->op.mCode;
+    out << "AstNode *last = 0; bool br = false;";
+    out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
+    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem(new Binary" << nodeType << "(last, 0), priority)); br = true; break; } else { last = opStack.last().n; opStack.pop_back(); }}";
+    out << "if(!br) { opStack.push_back(OperatorStackItem(new Binary" << nodeType << "(last, 0), priority)); } expectOperator = false; yylex(); }";
+  }
+  /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  {
+    out << "if(yytoken == Token_" << i->second.mTok << ";
+    if(i->second.mCond.size() != 0)
+      out << " && " << i->second.mCond;
+    out << ") {
+  }*/
+  /// @TODO TernOp, Paren (e.g. a variable instead of "1" in "opStack.size() == 1", return after ")")
+  if(printElse)
+    out << "else ";
+  out << "break;";
+  out << "} else {";
+  printElse = false;
+  /// @TODO Paren, Prefix, Normal
+  for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == " << i->op.mTok;
+    if(i->op.mCond.size() != 0)
+      out << " && " << i->op.mCond;
+    out << ") { const unsigned int priority = " << i->priority << ";";
+    out << i->op.mCode;
+    out << "...";
+    out << "}";
+  }
+  if(printElse)
+    out << "else ";
+  out << "if(";
+  generateTestCondition(globalSystem.pushSymbol(baseType), out);
+  out << ") parse" << node->mBase << "();";
+  out << "else ";
+  out << "break;";
+  out << "} }";
+  /// @TODO Further: empty binary operator
+}
+
 
 void GenerateForwardParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
 {

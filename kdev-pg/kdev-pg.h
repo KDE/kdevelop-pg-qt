@@ -40,7 +40,6 @@ namespace KDevPG
   Model::PlusItem *plus(Model::Node *item);
   Model::StarItem *star(Model::Node *item);
   Model::SymbolItem *symbol(const QString& name);
-  Model::OperatorItem *operatorSymbol(const QString& name, const QString& base);
   Model::ActionItem *action(Model::Node *item, const QString& code);
   Model::AlternativeItem *alternative(Model::Node *left, Model::Node *right);
   Model::ConsItem *cons(Model::Node *left, Model::Node *right);
@@ -176,20 +175,11 @@ public:
   {
     QString name = __name;
     SymbolSet::iterator it = symbols.find(name);
+    
     if (it == symbols.end())
       it = symbols.insert(name, KDevPG::symbol(__name));
 
     return (*it);
-  }
-  
-  Model::SymbolItem *pushOperator(Model::OperatorItem *item)
-  {
-//     SymbolSet::iterator it = symbols.find(item->name);
-//     if(it == symbols.end())
-//       it = symbols.insert(item->name, item);
-//     return *it;
-    symbols.insert(item->mName, item);
-    return item;
   }
 
   void pushParserDeclarationHeader(QString file)

@@ -315,11 +315,11 @@ void EmptyFirstChecker::operator()(Model::Node *node)
 void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
 {
   if (globalSystem.first(node).empty())
-    {
-      qDebug() << "** ERROR Empty FIRST set for ``" << node->mName
-                << "''" << endl;
-      ProblemSummaryPrinter::reportError();
-    }
+  {
+    qDebug() << "** ERROR Empty FIRST set for ``" << node->mName
+              << "''" << endl;
+    ProblemSummaryPrinter::reportError();
+  }
 }
 
 void EmptyOperatorChecker::operator()(Model::Node *node)
@@ -331,7 +331,7 @@ void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
 {
   if (reducesToEpsilon(globalSystem.pushSymbol(node->mBase)))
   {
-    qDebug() << "** ERROR Base symbol ``" << node->mBase << "'' for operator ``" << node->mName << "'' reduces to zero" << endl;
+    qDebug() << "** ERROR Base symbol ``" << node->mBase << "'' for operator ``?'' reduces to zero" << endl;  /// @TODO Get the symbol
     ProblemSummaryPrinter::reportError();
   }
 }

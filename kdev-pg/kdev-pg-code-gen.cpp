@@ -570,6 +570,17 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem(new Binary" << nodeType << "(last, 0), priority)); br = true; break; } else { last = opStack.last().n; opStack.pop_back(); }}";
     out << "if(!br) { opStack.push_back(OperatorStackItem(new Binary" << nodeType << "(last, 0), priority)); } expectOperator = false; yylex(); }";
   }
+  /*for(__typeof__(node->mTern.begin()) i = node->mTern.begin(); i != node->mTern.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == Token_" << i->first.mTok;
+    if(i->first.mCond.size() != 0)
+      out << " && " << i->op.mCond;
+    out << ") { const unsigned int priority = " << i->priority << ";";
+    out << i->first.mCode << "...}";
+  }*/
   /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
     out << "if(yytoken == Token_" << i->second.mTok;

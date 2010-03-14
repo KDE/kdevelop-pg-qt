@@ -66,6 +66,18 @@ namespace KDevPG
   
   Model::Operator *makeOperator(const QString& tok, const QString& cond, const QString& code);
   
+  inline void capitalize(QString& str)
+  {
+    if(!str.isEmpty())
+      str.replace(0, 1, str.at(0).toUpper());
+  }
+  
+  inline QString capitalized(const QString& str)
+  {
+    QString ret(str);
+    capitalize(ret);
+    return ret;
+  }
   
 class World
 {

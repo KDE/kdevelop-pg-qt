@@ -52,7 +52,7 @@ Model::SymbolItem *symbol(const QString& name)
   Model::SymbolItem *node = createNode<Model::SymbolItem>();
   node->mName = name;
   node->mCapitalizedName = name;
-  node->mCapitalizedName.replace( 0, 1, name.at(0).toUpper() );
+  capitalize(node->mCapitalizedName);
   return node;
 }
 
@@ -176,8 +176,7 @@ Model::VariableDeclarationItem *variableDeclaration(
   node->mName = name;
   node->mType = type;
   node->mCapitalizedType = type;
-  if (!type.isEmpty())
-    node->mCapitalizedType.replace( 0, 1, type.at(0).toUpper() );
+  capitalize(node->mCapitalizedType);
   node->mDeclarationType = declarationType;
   node->mStorageType     = storageType;
   node->mVariableType    = variableType;

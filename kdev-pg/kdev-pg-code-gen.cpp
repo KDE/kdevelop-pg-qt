@@ -537,7 +537,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       << "if(expectOperator) {"
       << " ";
   const QString nodeType = "OperationNode*";    /// @TODO Add a unique name
-  const QString baseType = node->mBase + "Node*";
+  const QString baseNameC = capitalized(node->mBase);
+  const QString baseType = baseNameC + "Node";
   bool printElse = false;
   for(__typeof__(node->mPost.begin()) i = node->mPost.begin(); i != node->mPost.end(); ++i)
   {
@@ -599,8 +600,13 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
   if(printElse)
     out << "else ";
   out << "if(";
-  generateTestCondition(globalSystem.pushSymbol(baseType), out);
-  out << ") parse" << node->mBase << "();";
+  generateTestCondition(globalSystem.pushSymbol(node->mBase), out);
+  out << ") { " << baseType << " *ptr; parse" << baseNameC << "(&ptr);\
+if(opStack.isEmpty())\
+  opStack.push_back(OperatorStackItem(ptr, -1));\
+else {\
+  reinterpret_cast<Binary" << nodeType << "*>(opStack.last().first)->second = ptr;\
+  opStack.push_back(OperatorStackItem(ptr, -1));}";
   out << "else ";
   out << "break;";
   out << "} }";

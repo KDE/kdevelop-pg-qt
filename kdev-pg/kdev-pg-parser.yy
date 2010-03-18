@@ -183,7 +183,7 @@ unary_item
     : primary_item '+'                  { $$ = KDevPG::plus($1); }
     | primary_item '*'                  { $$ = KDevPG::star($1); }
     | primary_item                      { $$ = $1; }
-/*    | '?' primary_item                  { $$ = KDevPG::alternative($2, KDevPG::globalSystem.zero()); } */
+    | '?' primary_item                   { $$ = KDevPG::alternative($2, KDevPG::globalSystem.zero()); }
     ;
 
 postfix_item

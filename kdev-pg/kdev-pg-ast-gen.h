@@ -61,6 +61,7 @@ protected:
   virtual void visitAlternative(Model::AlternativeItem *node);
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
   virtual void visitCons(Model::ConsItem *node);
+  virtual void visitEvolve(Model::EvolveItem *node);
 
   bool switchAlternative(bool alt);
   bool switchCons(bool c);

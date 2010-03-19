@@ -145,7 +145,7 @@ void NextFirst::visitOperator(Model::OperatorItem *node)
 {
 //   DefaultVisitor::visitEvolve(globalSystem.env[globalSystem.pushSymbol(node->mBase)]);
   
-  merge(node, globalSystem.pushSymbol(node->mBase));
+  merge(node, node->mBase->mSymbol);
 }
 
 void NextFirst::visitSymbol(Model::SymbolItem *)

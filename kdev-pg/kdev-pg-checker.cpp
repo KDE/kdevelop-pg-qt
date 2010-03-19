@@ -329,9 +329,9 @@ void EmptyOperatorChecker::operator()(Model::Node *node)
 
 void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
 {
-  if (reducesToEpsilon(globalSystem.pushSymbol(node->mBase)))
+  if (reducesToEpsilon((node->mBase->mSymbol)))
   {
-    qDebug() << "** ERROR Base symbol ``" << node->mBase << "'' for operator ``?'' reduces to zero" << endl;  /// @TODO Get the symbol
+    qDebug() << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``?'' reduces to zero" << endl;  /// @TODO Get the symbol
     ProblemSummaryPrinter::reportError();
   }
 }

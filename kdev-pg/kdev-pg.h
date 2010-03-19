@@ -62,6 +62,7 @@ namespace KDevPG
       Model::VariableDeclarationItem::VariableType    variableType,
       bool isSequence, const QString& name, const QString& type
   );
+  bool isOperatorSymbol(Model::SymbolItem *node);
   Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QString& code);
   
   Model::Operator *makeOperator(const QString& tok, const QString& cond, const QString& code);

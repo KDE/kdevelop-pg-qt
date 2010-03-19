@@ -240,19 +240,22 @@ operatorDeclarations
     ;
 
 operatorRule
-    : { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER code_opt
+    : { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER code_opt
             {
-              operatorNode->mBase = $3;
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$3;
+              operatorNode->mName = $6;
               $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), 0, $7);
             }
-    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
+    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
             {
-              operatorNode->mBase = $3;
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$3;
+              operatorNode->mName = $6;
               $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), (KDevPG::Model::VariableDeclarationItem*)$8, $10);
             }
-    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR T_IDENTIFIER operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
             {
-              operatorNode->mBase = $3;
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$3;
+              operatorNode->mName = $6;
               $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), (KDevPG::Model::VariableDeclarationItem*)$9, $7);
             }
     ;

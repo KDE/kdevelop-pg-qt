@@ -47,7 +47,13 @@ void GenerateAst::operator()()
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = (*it);
-      out << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
+      if(isOperatorSymbol(sym))
+      {
+        out << "Unary" << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
+        out << "Binary" << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
+      }
+      else
+        out << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
     }
 
   out << "AST_NODE_KIND_COUNT" << endl
@@ -73,25 +79,52 @@ void GenerateAstRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
   mInAlternative = false;
   mInCons = false;
 
-  Model::SymbolItem *sym = __it.second;
-  out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
-      << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
-      << " {" << endl
-      << "enum { KIND = " << sym->mCapitalizedName << "Kind };" << endl << endl;
-
-  World::Environment::iterator it = globalSystem.env.find(sym);
+  World::Environment::iterator it = globalSystem.env.find(__it.second);
   while (it != globalSystem.env.end())
-    {
-      Model::EvolveItem *e = *it;
-      if (it.key() != sym)
-        break;
+  {
+    Model::EvolveItem *e = *it;
+    if (it.key() != __it.second)
+      break;
+    
+    ++it;
+    
+    visitNode(e);
+  }
+}
 
-      ++it;
+void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
+{
+  Model::SymbolItem *sym = node->mSymbol;
+  if (node->mItem->kind == Model::OperatorItem::NodeKind)
+  {
+    out << "struct " << globalSystem.exportMacro << " Unary" << sym->mCapitalizedName << "Ast: public "
+        << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << " {" << endl
+        << "enum { KIND = Unary" << sym->mCapitalizedName << "Kind };" << endl
+        << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *first;" << endl;
+    DefaultVisitor::visitEvolve(node);
+    out << "};" << endl << endl;
+    
+    out << "struct " << globalSystem.exportMacro << " Binary" << sym->mCapitalizedName << "Ast: public "
+        << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << " {" << endl
+        << "enum { KIND = Binary" << sym->mCapitalizedName << "Kind };" << endl
+        << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *first;" << endl
+        << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *second;" << endl;
+    DefaultVisitor::visitEvolve(node);
+    out << "};" << endl << endl;
+  }
+  else
+  {
+    out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
+        << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << " {" << endl
+        << "enum { KIND = " << sym->mCapitalizedName << "Kind };" << endl << endl;
 
-      visitNode(e);
-    }
+    DefaultVisitor::visitEvolve(node);
 
-  out << "};" << endl << endl;
+    out << "};" << endl << endl;
+  }
 }
 
 void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)

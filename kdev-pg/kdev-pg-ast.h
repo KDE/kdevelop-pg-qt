@@ -195,7 +195,8 @@ namespace Model
       Operator op;
       QString priority;
     };
-    QString mBase;
+    QString mName;
+    NonTerminalItem *mBase;
     vector< pair<Operator, Operator> > mParen;
     vector< TernDescription > mTern;
     vector< BinDescription > mBin, mPost;

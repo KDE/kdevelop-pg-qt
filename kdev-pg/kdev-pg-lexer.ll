@@ -289,6 +289,7 @@ void appendLineBuffer()
 
 void yyerror(const char* msg )
 {
+  Q_UNUSED(msg);
   qDebug() << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << endl;
 
   char *current_end = yyTextLine + strlen(yyTextLine);

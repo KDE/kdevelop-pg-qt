@@ -173,11 +173,13 @@ void CodeGenerator::operator()(Model::Node *node)
 
 void CodeGenerator::visitZero(Model::ZeroItem *node)
 {
+  Q_UNUSED(node);
   // out << " /* nothing to do */" << endl;
 }
 
 void CodeGenerator::visitSymbol(Model::SymbolItem *node)
 {
+  Q_UNUSED(node);
   // out << " /* nothing to do */" << endl;
 }
 
@@ -400,6 +402,7 @@ int CodeGenerator::setCatchId(int catch_id)
 
 void CodeGenerator::visitAlias(Model::AliasItem *node)
 {
+  Q_UNUSED(node);
   Q_ASSERT(0); // ### not implemented yet
 }
 

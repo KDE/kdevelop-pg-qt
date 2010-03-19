@@ -136,6 +136,7 @@ void CloneTree::visitTryCatch(Model::TryCatchItem *node)
 
 void CloneTree::visitAlias(Model::AliasItem *node)
 {
+  Q_UNUSED(node);
   Q_ASSERT(0); // ### not implemented yet
 }
 

@@ -21,6 +21,7 @@
 #ifndef KDEV_PG_CODEGEN_H
 #define KDEV_PG_CODEGEN_H
 
+#include "kdev-pg.h"
 #include "kdev-pg-default-visitor.h"
 
 namespace KDevPG

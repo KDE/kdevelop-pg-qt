@@ -19,7 +19,6 @@
 */
 
 #include "kdev-pg-code-gen.h"
-#include "kdev-pg.h"
 
 #include <QtCore/QList>
 #include <QtCore/QDebug>

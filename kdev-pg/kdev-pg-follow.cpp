@@ -265,7 +265,7 @@ void computeFollow()
   while (changed)
     {
       changed = false;
-      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {
         NextFollow next(changed);
         next(*it);

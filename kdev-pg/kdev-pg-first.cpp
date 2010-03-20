@@ -247,7 +247,7 @@ void NextFirst::visitCondition(Model::ConditionItem *node)
 
 void computeFirst() // the closure of the FIRST sets
 {
-  for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+  for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
   {
     InitializeFirst initfirst;
     initfirst(*it);
@@ -257,7 +257,7 @@ void computeFirst() // the closure of the FIRST sets
   while (changed)
     {
       changed = false;
-      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); it++)
+      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {
         NextFirst next(changed);
         next(*it);

@@ -26,7 +26,7 @@
 
 #include <QtCore/QtGlobal>
 
-#include <QtCore/qalgorithms.h>
+#include <QtCore/qalgorithms.h> // krazy:exclude=includes
 
 namespace KDevPG
 {

@@ -85,7 +85,7 @@ public:
 
     out << endl;
     out << " FIRST:[";
-    for (it = KDevPG::globalSystem.first(e).begin(); it != KDevPG::globalSystem.first(e).end(); it++)
+    for (it = KDevPG::globalSystem.first(e).begin(); it != KDevPG::globalSystem.first(e).end(); ++it)
       {
         if (!initial)
           out << ",";
@@ -100,7 +100,7 @@ public:
     out << endl;
     out << " FOLLOW:[";
     for (it = KDevPG::globalSystem.follow(e->mSymbol).begin();
-         it != KDevPG::globalSystem.follow(e->mSymbol).end(); it++)
+         it != KDevPG::globalSystem.follow(e->mSymbol).end(); ++it)
       {
         if (!initial)
           out << ",";
@@ -232,13 +232,13 @@ int main(int argc, char **argv)
 
   KDevPG::file.close();
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::InitializeEnvironment initenv;
     initenv(*it);
   }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::EmptyOperatorChecker check;
     check(*it);
@@ -249,32 +249,32 @@ int main(int argc, char **argv)
 
   if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
   {
-    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
     {
       KDevPG::FirstFollowConflictChecker check;
       check(*it);
     }
 
-    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
     {
       KDevPG::FirstFirstConflictChecker check;
       check(*it);
     }
   }
     
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::EmptyFirstChecker check;
     check(*it);
   }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::UndefinedSymbolChecker check;
     check(*it);
   }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::UndefinedTokenChecker check;
     check(*it);
@@ -311,7 +311,7 @@ int main(int argc, char **argv)
           QFile ft("kdev-pg-rules");
           ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
           QTextStream strm(&ft);
-          for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); it++)
+          for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
           {
             DebugRule dr(strm);
             dr(*it);

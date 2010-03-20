@@ -18,8 +18,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "kdev-pg.h"
 #include "kdev-pg-code-gen.h"
+#include "kdev-pg.h"
 
 #include <QtCore/QList>
 #include <QtCore/QDebug>
@@ -37,7 +37,8 @@ namespace KDevPG
     World::NodeSet::const_iterator it = s.begin();
     while (it != s.end())
       {
-        item = *it++;
+        item = *it;
+        ++it;
 
         if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
           tokens << t->mName;
@@ -73,7 +74,8 @@ namespace KDevPG
 
     if (globalSystem.GenerateAst)
       {
-        sprintf(__var, "__node_%d", __id++);
+        sprintf(__var, "__node_%d", __id);
+        ++__id;
 
         out << capSymbolName << "Ast *" << __var << " = 0;" << endl
             << "if (!parse" << capSymbolName << "(&" << __var;
@@ -153,7 +155,8 @@ namespace KDevPG
     World::NodeSet::iterator it = s.begin();
     while (it != s.end())
       {
-        item = *it++;
+        item = *it;
+        ++it;
 
         if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
           out << endl << "&& yytoken != Token_" << t->mName;
@@ -252,7 +255,8 @@ void CodeGenerator::visitAlternative(Model::AlternativeItem *node)
   QList<Model::Node*>::iterator it = top_level_nodes.begin();
   while (it != top_level_nodes.end())
     {
-      Model::Node *n = *it++;
+      Model::Node *n = *it;
+      ++it;
       Model::ConditionItem *cond = nodeCast<Model::ConditionItem*>(n);
 
       out << "if (";
@@ -868,7 +872,8 @@ void GenerateVariableDeclaration::operator()(Model::VariableDeclarationItem *nod
 void GenerateToken::operator()(QPair<QString, Model::TerminalItem*> const &__it)
 {
   Model::TerminalItem *t = __it.second;
-  out << "Token_" << t->mName << " = " << mTokenValue++ << "," << endl;
+  out << "Token_" << t->mName << " = " << mTokenValue << "," << endl;
+  ++mTokenValue;
 }
 
 void GenerateMemberCode::operator()(Settings::MemberItem* m)
@@ -952,7 +957,7 @@ QVector<OperatorStackItem> opStack;" << endl;
 
   out << "enum TokenType" << endl << "{" << endl;
   GenerateToken gen(out);
-  for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); it++ )
+  for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); ++it )
   {
     gen(qMakePair(it.key(), *it));
   }
@@ -968,7 +973,7 @@ QVector<OperatorStackItem> opStack;" << endl;
                             | Settings::MemberItem::ProtectedDeclaration
                             | Settings::MemberItem::PrivateDeclaration);
       for( QList<Settings::MemberItem*>::iterator it = globalSystem.parserclassMembers.declarations.begin();
-                    it != globalSystem.parserclassMembers.declarations.end(); it++ )
+                    it != globalSystem.parserclassMembers.declarations.end(); ++it )
       {
                     gen(*it);
       }
@@ -1007,7 +1012,7 @@ QVector<OperatorStackItem> opStack;" << endl;
       GenerateMemberCode gen(out, Settings::MemberItem::ConstructorCode);
       for(QList<Settings::MemberItem*>::iterator it =
             globalSystem.parserclassMembers.constructorCode.begin();
-            it != globalSystem.parserclassMembers.constructorCode.end(); it++ )
+            it != globalSystem.parserclassMembers.constructorCode.end(); ++it )
       {
         gen(*it);
       }
@@ -1024,7 +1029,7 @@ QVector<OperatorStackItem> opStack;" << endl;
 
       GenerateMemberCode gen(out, Settings::MemberItem::DestructorCode);
       for(QList<Settings::MemberItem*>::iterator it = globalSystem.parserclassMembers.destructorCode.begin();
-                    it != globalSystem.parserclassMembers.destructorCode.end(); it++ )
+                    it != globalSystem.parserclassMembers.destructorCode.end(); ++it )
       {
         gen(*it);
       }
@@ -1034,7 +1039,7 @@ QVector<OperatorStackItem> opStack;" << endl;
 
   GenerateForwardParserRule genfwdparserrule(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-       it != globalSystem.symbols.end(); it++ )
+       it != globalSystem.symbols.end(); ++it )
   {
     genfwdparserrule(qMakePair(it.key(), *it));
   }
@@ -1046,7 +1051,7 @@ void GenerateParserBits::operator()()
 {
   GenerateParserRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-       it != globalSystem.symbols.end(); it++ )
+       it != globalSystem.symbols.end(); ++it )
   {
     gen(qMakePair(it.key(), *it));
   }
@@ -1080,7 +1085,7 @@ void GenerateTokenTexts::operator()()
 {
   out << "switch (token) {" << endl;
   GenerateToken gen(out);
-  for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); it++ )
+  for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); ++it )
   {
     Model::TerminalItem* t = *it;
     out << "    case Parser::Token_" << t->mName << ":" << endl;

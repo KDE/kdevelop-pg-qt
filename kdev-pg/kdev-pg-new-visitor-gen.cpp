@@ -33,7 +33,7 @@ void GenerateNewVisitor::operator()()
 
   GenerateDefaultVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-       it != globalSystem.symbols.end(); it++ )
+       it != globalSystem.symbols.end(); ++it )
   {
     gen(qMakePair(it.key(), *it));
   }

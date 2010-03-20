@@ -453,7 +453,7 @@ void generateOutput()
 
     GenerateDefaultVisitorBitsRule gen(s);
     for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-        it != globalSystem.symbols.end(); it++ )
+        it != globalSystem.symbols.end(); ++it )
     {
       gen(qMakePair(it.key(), *it));
     }
@@ -543,7 +543,7 @@ void generateVisitor(const QString& name, bool inherit_default)
     {
       GenerateNewVisitorBitsRule gen(s, name);
       for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-              it != globalSystem.symbols.end(); it++ )
+              it != globalSystem.symbols.end(); ++it )
       {
         gen(qMakePair(it.key(), *it));
       }
@@ -552,7 +552,7 @@ void generateVisitor(const QString& name, bool inherit_default)
     {
       GenerateDefaultVisitorBitsRule gen(s, name);
       for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-              it != globalSystem.symbols.end(); it++ )
+              it != globalSystem.symbols.end(); ++it )
       {
         gen(qMakePair(it.key(), *it));
       }

@@ -49,11 +49,13 @@ void GenerateAst::operator()()
       Model::SymbolItem *sym = (*it);
       if(isOperatorSymbol(sym))
       {
-        out << "Unary" << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
-        out << "Binary" << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
+        out << "Unary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+        ++node_id;
+        out << "Binary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
       }
       else
-        out << sym->mCapitalizedName << "Kind" << " = " << node_id++ << "," << endl;
+        out << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+      ++node_id;
     }
 
   out << "AST_NODE_KIND_COUNT" << endl
@@ -66,7 +68,7 @@ void GenerateAst::operator()()
       << endl;
 
   GenerateAstRule gen(out);
-  for( World::SymbolSet::const_iterator it = globalSystem.symbols.begin(); it != globalSystem.symbols.end(); it++ )
+  for( World::SymbolSet::const_iterator it = globalSystem.symbols.begin(); it != globalSystem.symbols.end(); ++it )
   {
     gen(qMakePair( it.key(), *it ));
   }

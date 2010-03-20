@@ -33,7 +33,7 @@ void GenerateDebugVisitor::operator()()
   out << "    : m_str(str), m_indent(0), m_content(content) {}" << endl;
   GenerateDebugVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
-       it != globalSystem.symbols.end(); it++ )
+       it != globalSystem.symbols.end(); ++it )
   {
     gen(qMakePair(it.key(), *it));
   }
@@ -104,7 +104,7 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
       visitNode(e);
     }
   
-  out << "m_indent++;";
+  out << "++m_indent;";
 
   out << "DefaultVisitor::visit" << sym->mCapitalizedName
       << "(" << "node"

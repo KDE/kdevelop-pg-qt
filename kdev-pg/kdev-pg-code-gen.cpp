@@ -889,7 +889,7 @@ void GenerateMemberCode::operator()(Settings::MemberItem* m)
 void GenerateParserDeclarations::operator()()
 {
   out << "class " << globalSystem.exportMacro << " Parser ";
-  if(globalSystem.parserBaseClass != "")
+  if(!globalSystem.parserBaseClass.isEmpty())
     out << ": public " << globalSystem.parserBaseClass << " ";
   out << "{"
       << "public:" << endl

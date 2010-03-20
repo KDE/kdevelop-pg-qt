@@ -36,7 +36,7 @@ public:
   QTextStream& out;
 
 public:
-  GenerateVisitor(QTextStream& o): out(o)
+  explicit GenerateVisitor(QTextStream& o): out(o)
   {}
 
   void operator()();

@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 
   QStringList args = QCoreApplication::arguments();
   args.pop_front();
-  foreach(QString arg, args)
+  foreach(const QString& arg, args)
   {
     if (arg.startsWith("--output="))
     {
@@ -326,7 +326,7 @@ int main(int argc, char **argv)
   if (generate_parser)
     KDevPG::generateOutput();
   
-  if (new_visitor != "")
+  if (!new_visitor.isEmpty())
     KDevPG::generateVisitor(new_visitor, inherit_default);
 
   return EXIT_SUCCESS;

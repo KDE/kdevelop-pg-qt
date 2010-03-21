@@ -39,7 +39,7 @@ public:
   QString name;
 
 public:
-  GenerateDefaultVisitor(QTextStream& o, const QString& n = "DefaultVisitor"): out(o), name(n)
+  explicit GenerateDefaultVisitor(QTextStream& o, const QString& n = "DefaultVisitor"): out(o), name(n)
   {}
 
   void operator()();

@@ -39,7 +39,7 @@ public:
   QList<Model::VariableDeclarationItem*> mVariableDeclarations;
 
 public:
-  GenerateDefaultVisitorBitsRule(QTextStream& o, const QString& n = "DefaultVisitor"): out(o), name(n)
+  explicit GenerateDefaultVisitorBitsRule(QTextStream& o, const QString& n = "DefaultVisitor"): out(o), name(n)
   {}
 
   void operator()(QPair<QString, Model::SymbolItem*> const &__it);

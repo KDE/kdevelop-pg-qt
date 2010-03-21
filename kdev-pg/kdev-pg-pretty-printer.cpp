@@ -31,6 +31,7 @@ namespace KDevPG
 
 void PrettyPrinter::visitZero(Model::ZeroItem *node)
 {
+  Q_UNUSED(node);
   out << "0";
 }
 
@@ -130,6 +131,7 @@ void PrettyPrinter::visitTryCatch(Model::TryCatchItem *node)
 
 void PrettyPrinter::visitAlias(Model::AliasItem *node)
 {
+  Q_UNUSED(node);
   assert(0); // ### not implemented yet
 }
 

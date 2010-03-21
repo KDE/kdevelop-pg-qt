@@ -24,13 +24,19 @@ namespace KDevPG
 {
 
 void DefaultVisitor::visitZero(Model::ZeroItem *node)
-{}
+{
+  Q_UNUSED(node);
+}
 
 void DefaultVisitor::visitSymbol(Model::SymbolItem *node)
-{}
+{
+  Q_UNUSED(node);
+}
 
 void DefaultVisitor::visitTerminal(Model::TerminalItem *node)
-{}
+{
+  Q_UNUSED(node);
+}
 
 void DefaultVisitor::visitNonTerminal(Model::NonTerminalItem *node)
 {
@@ -100,7 +106,7 @@ void DefaultVisitor::visitVariableDeclaration(Model::VariableDeclarationItem *no
 
 void DefaultVisitor::visitOperator(Model::OperatorItem *node)
 {
-  
+  Q_UNUSED(node);
 }
 
 }

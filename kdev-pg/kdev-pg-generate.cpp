@@ -326,7 +326,7 @@ void generateOutput()
     QTextStream outstr(&ofile);
     format(s, outstr);
   }
-  if (globalSystem.generateDebugVisitor)
+  if (globalSystem.generateTokenText || globalSystem.generateDebugVisitor)
   { // generate the token text function
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);

@@ -30,8 +30,8 @@ void expectedToken(int kind, enum TokenType tok, const QString& name);
 namespace Op
 {
 
-void Parser::expectedSymbol(Op::AstNode::AstNodeKind kind, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected symbol " << name << " Token: " << tokenText(yytoken) << "(" << yytoken << ", \"" << token() << "\"). Position: " << tokenStream->index(); abort();  }
-void Parser::expectedToken(int kind, enum TokenType tok, const QString& name) { kDebug() << "Read Token: " << tokenText(kind) << "(" << kind << ", \"" << token() << "\"). Expected token " << name << " (" << tok << ")"; abort(); }
+void Parser::expectedSymbol(Op::AstNode::AstNodeKind kind, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected symbol " << name << " Token: " << tokenText(yytoken) << "(" << yytoken << ", \"" << "\"). Position: " << tokenStream->index(); abort();  }
+void Parser::expectedToken(int kind, enum TokenType tok, const QString& name) { kDebug() << "Read Token: " << tokenText(kind) << "(" << kind << ", \"" << "\"). Expected token " << name << " (" << tok << ")"; abort(); }
 
 }
 :]

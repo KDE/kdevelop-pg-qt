@@ -542,9 +542,9 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       << "while(true) {"
       << "if(expectOperator) {"
       << " ";
-  const QString nodeType = node->mName + "Node";    /// @TODO Add a unique name
+  const QString nodeType = capitalized(node->mName) + "Ast";    /// @TODO Add a unique name
   const QString baseNameC = node->mBase->mSymbol->mCapitalizedName;
-  const QString baseType = baseNameC + "Node";
+  const QString baseType = baseNameC + "Ast";
   bool printElse = false;
   for(__typeof__(node->mPost.begin()) i = node->mPost.begin(); i != node->mPost.end(); ++i)
   {

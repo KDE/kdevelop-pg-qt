@@ -52,9 +52,9 @@ void GenerateAst::operator()()
         out << "Unary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
         ++node_id;
         out << "Binary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+        ++node_id;
       }
-      else
-        out << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+      out << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
       ++node_id;
     }
 
@@ -99,8 +99,11 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
   Model::SymbolItem *sym = node->mSymbol;
   if (node->mItem->kind == Model::OperatorItem::NodeKind)
   {
-    out << "struct " << globalSystem.exportMacro << " Unary" << sym->mCapitalizedName << "Ast: public "
+    out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
         << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << "{ enum { KIND = " << sym->mCapitalizedName << "Kind }; };" << endl << endl;
+    out << "struct " << globalSystem.exportMacro << " Unary" << sym->mCapitalizedName << "Ast: public "
+        << sym->mCapitalizedName << "Ast"
         << " {" << endl
         << "enum { KIND = Unary" << sym->mCapitalizedName << "Kind };" << endl
         << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *first;" << endl;
@@ -108,7 +111,7 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
     out << "};" << endl << endl;
     
     out << "struct " << globalSystem.exportMacro << " Binary" << sym->mCapitalizedName << "Ast: public "
-        << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << sym->mCapitalizedName << "Ast"
         << " {" << endl
         << "enum { KIND = Binary" << sym->mCapitalizedName << "Kind };" << endl
         << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *first;" << endl

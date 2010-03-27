@@ -32,6 +32,8 @@ using std::make_pair;
 
 #include <QtCore/QString>
 
+#include <QtCore/QDebug>
+
 #define PG_NODE(k) \
     enum { NodeKind = NodeKind##k };
 

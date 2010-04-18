@@ -21,4 +21,6 @@ add_subdirectory(include)
 add_subdirectory(kdev-pg)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
 
-add_subdirectory(tests)
+if(KDE4_FOUND)
+    add_subdirectory(tests)
+endif(KDE4_FOUND)

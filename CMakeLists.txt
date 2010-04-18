@@ -5,6 +5,7 @@ enable_testing()
 find_package(KDE4)
 
 if(NOT KDE4_FOUND)
+    find_package(Qt4)
     set(DATA_INSTALL_DIR share)
 endif(NOT KDE4_FOUND)
 

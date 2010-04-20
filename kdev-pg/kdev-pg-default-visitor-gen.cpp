@@ -44,9 +44,20 @@ void GenerateDefaultVisitor::operator()()
 void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> const &__it)
 {
   Model::SymbolItem *sym = __it.second;
-
-  out << "virtual void visit" << sym->mCapitalizedName
-      << "(" << sym->mCapitalizedName << "Ast *node);" << endl;
+  
+  #define O(name) \
+  out << "virtual void visit" << name << "(" << name << "Ast *node);" << endl;
+  
+  if(isOperatorSymbol(sym))
+  {
+    O("Prefix" + sym->mCapitalizedName)
+    O("Postfix" + sym->mCapitalizedName)
+    O("Binary" + sym->mCapitalizedName)
+  }
+  else
+    O(sym->mCapitalizedName)
+    
+  #undef O
 }
 
 }

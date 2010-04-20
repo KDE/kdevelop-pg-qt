@@ -36,23 +36,40 @@ void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "void " << name << "::visit" << sym->mCapitalizedName
-      << "(" << sym->mCapitalizedName << "Ast *" << (has_members ? "node" : "")
+  #define O(ast) \
+      out << "void " << name << "::visit" << ast \
+      << "(" << ast << "Ast *" << (has_members ? "node" : "") \
       << ") {" << endl;
+      
+  if(isOperatorSymbol(sym))
+  {
+    O("Prefix" + sym->mCapitalizedName)
+    out << "visitNode(node->first);" << endl << "}" << endl << endl;
+    O("Postfix" + sym->mCapitalizedName)
+    out << "visitNode(node->first);" << endl << "}" << endl << endl;
+    O("Binary" + sym->mCapitalizedName)
+    out << "visitNode(node->first);" << endl << "visitNode(node->second);";
+  }
+  else
+  {
+    O(sym->mCapitalizedName)
 
-  World::Environment::iterator it = globalSystem.env.find(sym);
-  while (it != globalSystem.env.end())
-    {
-      Model::EvolveItem *e = (*it);
-      if (it.key() != sym)
-        break;
+    World::Environment::iterator it = globalSystem.env.find(sym);
+    while (it != globalSystem.env.end())
+      {
+        Model::EvolveItem *e = (*it);
+        if (it.key() != sym)
+          break;
 
-      ++it;
+        ++it;
 
-      visitNode(e);
-    }
+        visitNode(e);
+      }
+  }
 
   out << "}" << endl << endl;
+  
+  #undef O
 }
 
 void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
@@ -98,6 +115,12 @@ void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDec
 
 void HasMemberNodes::operator()(Model::SymbolItem *sym)
 {
+  if(isOperatorSymbol(sym))
+  {
+    has_members = true;
+    return;
+  }
+  
   has_members = false;
 
   World::Environment::iterator it = globalSystem.env.find(sym);

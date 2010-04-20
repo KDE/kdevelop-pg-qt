@@ -623,11 +623,12 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
   out << "\
 if(!opStack.isEmpty())\
 {\
-  void *last = opStack.last().first;\
-  if(reinterpret_cast<Unary" << nodeType << "*>(last)->first == 0)\
-    reinterpret_cast<Unary" << nodeType << "*>(last)->first = " << __var << ";" << endl;
-  out << "else reinterpret_cast<Binary" << nodeType << "*>(last)->second = ptr;\
-  opStack.push_back(OperatorStackItem(" << __var << ", -1));} }";
+  void *last = opStack.last().n;\
+  if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n\
+    reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << endl;
+  out << "else\nreinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";}"
+        "opStack.push_back(OperatorStackItem(" << __var << ", -1));"
+        "expectOperator = true;}";
   /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
     if(printElse)
@@ -902,10 +903,15 @@ void GenerateParserDeclarations::operator()()
       << globalSystem.tokenStream << " *tokenStream;" << endl
       << "int yytoken;" << endl;
   if(globalSystem.needOperatorStack)
-    out << "struct OperatorStackItem{AstNode *n; int unsigned p; inline OperatorStackItem(AstNode *n, int unsigned p) : n(n), p(p) {} };\
-QVector<OperatorStackItem> opStack;" << endl;
-  out
-      << endl
+    out << "struct OperatorStackItem{AstNode *n; int unsigned p;"
+           "inline OperatorStackItem(AstNode *n, int unsigned p)\n"
+           ": n(n), p(p)\n{}\n"
+           "inline OperatorStackItem()\n{}\n"
+           "inline OperatorStackItem(const OperatorStackItem& o)\n"
+           ": n(o.n), p(o.p)\n"
+           "{}\n};"
+           "QVector<OperatorStackItem> opStack;" << endl;
+  out << endl
       << "inline Token LA(qint64 k = 1) const" << endl
       << "{ return tokenStream->token(tokenStream->index() - 1 + k - 1); }"
       << endl

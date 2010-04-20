@@ -49,7 +49,9 @@ void GenerateAst::operator()()
       Model::SymbolItem *sym = (*it);
       if(isOperatorSymbol(sym))
       {
-        out << "Unary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+        out << "Prefix" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+        ++node_id;
+        out << "Postfix" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
         ++node_id;
         out << "Binary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
         ++node_id;
@@ -102,20 +104,41 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
     out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
         << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
         << "{ enum { KIND = " << sym->mCapitalizedName << "Kind }; };" << endl << endl;
-    out << "struct " << globalSystem.exportMacro << " Unary" << sym->mCapitalizedName << "Ast: public "
-        << sym->mCapitalizedName << "Ast"
-        << " {" << endl
-        << "enum { KIND = Unary" << sym->mCapitalizedName << "Kind };" << endl
-        << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *first;" << endl;
+    #define O(thestr) \
+    out << "struct " << globalSystem.exportMacro << thestr << sym->mCapitalizedName << "Ast: public " \
+        << sym->mCapitalizedName << "Ast" \
+        << " {" << endl \
+        << "enum { KIND =" << thestr << sym->mCapitalizedName << "Kind };" << endl \
+        << "AstNode *first;" << endl \
+        << thestr << sym->mCapitalizedName << "Ast(" \
+        << "AstNode *first)" << endl \
+        << ": first(first)" << endl \
+        << "{\n}" << endl;
+        
+    O(" Prefix")
+
     DefaultVisitor::visitEvolve(node);
+      
     out << "};" << endl << endl;
+    O(" Postfix")
+
+    DefaultVisitor::visitEvolve(node);
+      
+    out << "};" << endl << endl;
+    
+    #undef O
     
     out << "struct " << globalSystem.exportMacro << " Binary" << sym->mCapitalizedName << "Ast: public "
         << sym->mCapitalizedName << "Ast"
         << " {" << endl
         << "enum { KIND = Binary" << sym->mCapitalizedName << "Kind };" << endl
-        << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *first;" << endl
-        << ((Model::OperatorItem*)node->mItem)->mBase->mSymbol->mCapitalizedName << "Ast *second;" << endl;
+        << "AstNode *first;" << endl
+        << "AstNode *second;" << endl
+        << "Binary" << sym->mCapitalizedName << "Ast("
+        << "AstNode *first, "
+        << "AstNode *second)" << endl
+        << ": first(first), second(second)" << endl
+        << "{\n}" << endl;
     DefaultVisitor::visitEvolve(node);
     out << "};" << endl << endl;
   }

@@ -42,8 +42,17 @@ void GenerateVisitor::operator()()
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = (*it);
-      out << "virtual void visit" << sym->mCapitalizedName
-          << "(" << sym->mCapitalizedName << "Ast *) {}" << endl;
+      #define O(str) \
+          out << "virtual void visit" << str << "(" << str << "Ast *) {}" << endl;
+      if(isOperatorSymbol(sym))
+      {
+        O("Prefix" + sym->mCapitalizedName)
+        O("Postfix" + sym->mCapitalizedName)
+        O("Binary" + sym->mCapitalizedName)
+      }
+      else
+        O(sym->mCapitalizedName)
+      #undef O
     }
 
   out << "};" << endl;

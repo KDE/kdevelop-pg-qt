@@ -19,7 +19,10 @@ int main()
     parser.setMemoryPool(&memory_pool);
     #define A(t) addToken(token_stream, Parser::Token_##t);
     A(NUM)
+    A(INV)
     A(MUL)
+    A(NUM)
+    A(POW)
     A(NUM)
     A(EOF)
     token_stream.rewind(0);

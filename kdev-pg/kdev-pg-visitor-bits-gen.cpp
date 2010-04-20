@@ -35,7 +35,21 @@ void GenerateVisitorBits::operator()()
   while (it != globalSystem.symbols.end())
     {
       Model::SymbolItem *sym = *it++;
-      out << "reinterpret_cast<ParserFuncType>(&Visitor::visit" << sym->mCapitalizedName << ")";
+      
+      #define O(str) \
+          out << "reinterpret_cast<ParserFuncType>(&Visitor::visit" << str << ")";
+      
+      if(isOperatorSymbol(sym))
+      {
+        O("Prefix" + sym->mCapitalizedName)
+        out << ",\n";
+        O("Postfix" + sym->mCapitalizedName)
+        out << ",\n";
+        O("Binary" + sym->mCapitalizedName)
+        out << ",\n0";
+      }
+      else
+        O(sym->mCapitalizedName)
 
       if (it != globalSystem.symbols.end())
         out << ",";

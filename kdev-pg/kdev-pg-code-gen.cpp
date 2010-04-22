@@ -559,11 +559,23 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << i->op.mCode;
     out << "AstNode *last = 0; bool br = false;";
     out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
-    out << "last = opStack.last().n;\n";
-    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem((*yynode) = create<Postfix" << nodeType << ">(last), -1)); br = true; break; } else { opStack.pop_back(); }}";
+    out << "if(opStack.size() == 1) {"
+           "last = opStack.last().n;\n"
+           "opStack.pop_back();"
+           "opStack.push_front(OperatorStackItem((*yynode) = create<Postfix"<< nodeType << ">(last), -1));"
+           "(*yynode)->endToken = last->endToken + 1;"
+           "(*yynode)->startToken = last->startToken;"
+           "br = true; break; } else {"
+           "AstNode *olast = last;"
+           "last = opStack.last().n;\n"
+           "if(olast)\nlast->endToken = olast->endToken;"
+           "opStack.pop_back(); }}";
     out << "if(!br) { "
-       << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
-       << "opStack.push_back(OperatorStackItem(ref = create<Postfix" << nodeType << ">(last), -1)); } yylex(); }";
+        << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
+        << "opStack.push_back(OperatorStackItem(ref = create<Postfix" << nodeType << ">(last), -1));"
+          "ref->endToken = last->endToken + 1;"
+          "ref->startToken = last->startToken;"
+          "} yylex(); }";
   }
   for(__typeof__(node->mBin.begin()) i = node->mBin.begin(); i != node->mBin.end(); ++i)
   {
@@ -577,11 +589,19 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << i->op.mCode;
     out << "AstNode *last = 0; bool br = false;";
     out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
-    out << "last = opStack.last().n;\n";
-    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem((*yynode) = create<Binary" << nodeType << ">(last, 0), priority)); br = true; break; } else { opStack.pop_back(); }}";
+    out << "if(opStack.size() == 1) {"
+           "last = opStack.last().n;\n"
+           "opStack.pop_back();"
+           "opStack.push_front(OperatorStackItem((*yynode) = create<Binary" << nodeType << ">(last, 0), priority));"
+           "(*yynode)->startToken = last->startToken;"
+           "br = true; break; } else {"
+           "AstNode *olast = last;"
+           "last = opStack.last().n;\n"
+           "if(olast)\nlast->endToken = olast->endToken;"
+           "opStack.pop_back(); }}";
     out << "if(!br) { "
         << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
-        << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last, 0), priority)); } expectOperator = false; yylex(); }";
+        << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last, 0), priority)); ref->startToken = last->startToken; } expectOperator = false; yylex(); }";
   }
   /*for(__typeof__(node->mTern.begin()) i = node->mTern.begin(); i != node->mTern.end(); ++i)
   {
@@ -692,12 +712,15 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
 
   if (globalSystem.GenerateAst)
     {
-      out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << endl << endl
-          << "(*yynode)->startToken = tokenStream->index() - 1;" << endl;
-      //Generate initialization for this ast nodes token-members using -1 as invalid value
-      GenerateTokenVariableInitialization gentokenvar( out );
-      gentokenvar(sym);
-      out << endl;
+      if(!isOperatorSymbol(sym))
+      {
+        out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << endl << endl
+            << "(*yynode)->startToken = tokenStream->index() - 1;" << endl;
+        //Generate initialization for this ast nodes token-members using -1 as invalid value
+        GenerateTokenVariableInitialization gentokenvar( out );
+        gentokenvar(sym);
+        out << endl;
+      }
     }
 
   World::Environment::iterator it = globalSystem.env.find(sym);
@@ -735,8 +758,23 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
 
   if (globalSystem.GenerateAst)
     {
-      out << "(*yynode)->endToken = tokenStream->index() - 2;" << endl
-          << endl;
+      if(isOperatorSymbol(sym))
+      {
+        out << "AstNode *olast, *last = 0;"
+               "while(!opStack.empty())\n"
+               "{"
+               "olast = last;"
+               "last = opStack.last().n;"
+               "if(olast)\n"
+               "last->endToken = olast->endToken;"
+               "opStack.pop_back();"
+               "}" << endl;
+      }
+      else
+      {
+        out << "(*yynode)->endToken = tokenStream->index() - 2;" << endl
+            << endl;
+      }
     }
 
   out << "return true;" << endl

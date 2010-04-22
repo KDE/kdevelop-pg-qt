@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     parser.yylex();
     DocumentAst *doc;
     kDebug() << parser.parseDocument(&doc);
-    DebugVisitor v(&token_stream, "1-*2^3");
+    DebugVisitor v(&token_stream, str);
     v.visitDocument(doc);
 }
 

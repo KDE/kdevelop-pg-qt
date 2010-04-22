@@ -91,7 +91,7 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
           << "(" << name << "Ast *" << "node" \
           << ") {" << endl;
   #define O2(name) \
-  out << "if (!m_indent) printToken(node, \"" << name << "\");" << endl;
+  out << "printToken(node, \"" << name << "\");" << endl;
   #define O3(name) \
     out << "++m_indent;"; \
         \

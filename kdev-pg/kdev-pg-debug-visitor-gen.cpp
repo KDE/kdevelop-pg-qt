@@ -86,33 +86,58 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit" << sym->mCapitalizedName
-      << "(" << sym->mCapitalizedName << "Ast *" << "node"
-      << ") {" << endl;
-
-  out << "if (!m_indent) printToken(node, \"" << sym->mName << "\");" << endl;
-
-  World::Environment::iterator it = globalSystem.env.find(sym);
-  while (it != globalSystem.env.end())
-    {
-      Model::EvolveItem *e = (*it);
-      if (it.key() != sym)
-        break;
-
-      ++it;
-
-      visitNode(e);
-    }
+  #define O1(name) \
+      out << "virtual void visit" << name \
+          << "(" << name << "Ast *" << "node" \
+          << ") {" << endl;
+  #define O2(name) \
+  out << "if (!m_indent) printToken(node, \"" << name << "\");" << endl;
+  #define O3(name) \
+    out << "++m_indent;"; \
+        \
+    out << "DefaultVisitor::visit" << name \
+        << "(" << "node" \
+        << ");" << endl; \
+        \
+    out << "m_indent--;"; \
+        \
+    out << "}" << endl << endl;
   
-  out << "++m_indent;";
+  if(isOperatorSymbol(sym))
+  {
+    O1("Prefix" + sym->mCapitalizedName)
+    O2("prefix-" + sym->mName)
+    O3("Prefix" + sym->mCapitalizedName)
+    O1("Postfix" + sym->mCapitalizedName)
+    O2("postfix-" + sym->mName)
+    O3("Postfix" + sym->mCapitalizedName)
+    O1("Binary" + sym->mCapitalizedName)
+    O2("binary-" + sym->mName)
+    O3("Binary" + sym->mCapitalizedName)
+  }
+  else
+  {
+    O1(sym->mCapitalizedName)
+    O2(sym->mName)
 
-  out << "DefaultVisitor::visit" << sym->mCapitalizedName
-      << "(" << "node"
-      << ");" << endl;
+    World::Environment::iterator it = globalSystem.env.find(sym);
+    while (it != globalSystem.env.end())
+      {
+        Model::EvolveItem *e = (*it);
+        if (it.key() != sym)
+          break;
 
-  out << "m_indent--;";
+        ++it;
+
+        visitNode(e);
+      }
+    O3(sym->mCapitalizedName)
+  }
   
-  out << "}" << endl << endl;
+  #undef O3
+  #undef O2
+  #undef O1
+  
 }
 
 void GenerateDebugVisitorRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)

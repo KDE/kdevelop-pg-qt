@@ -1,4 +1,6 @@
 #include "Opparser.cpp"
+#include "Opdebugvisitor.h"
+
 
 using namespace Op;
 
@@ -29,5 +31,10 @@ int main()
     parser.yylex();
     DocumentAst *doc;
     kDebug() << parser.parseDocument(&doc);
+    DebugVisitor v(&token_stream, "1-*1^1");
+    v.visitDocument(doc);
+    Op::BinaryExprAst *b = (Op::BinaryExprAst*)doc->exprSequence->element;
+    int *x = 0;
+    kDebug() << *x;
 }
 

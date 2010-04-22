@@ -11,7 +11,7 @@ void expectedToken(int kind, enum TokenType tok, const QString& name);
 
 %token PLUS ("+"), MUL ("*"), INV ("-"), NUM ("123"), POW ("^"), BR ("BREAK") ;;
 
-   expr @ BR
+   #expr=expr @ BR
 -> document ;;
 
 %< number

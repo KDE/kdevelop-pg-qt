@@ -542,7 +542,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       << "while(true) {"
       << "if(expectOperator) {"
       << " ";
-  const QString nodeType = capitalized(node->mName) + "Ast";    /// @TODO Add a unique name
+  const QString capNode = capitalized(node->mName);
+  const QString nodeType = capNode + "Ast";    /// @TODO Add a unique name
   const QString baseNameC = node->mBase->mSymbol->mCapitalizedName;
   const QString baseType = baseNameC + "Ast";
   bool printElse = false;
@@ -558,8 +559,11 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << i->op.mCode;
     out << "AstNode *last = 0; bool br = false;";
     out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
-    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem(new Postfix" << nodeType << "(last), priority)); br = true; break; } else { last = opStack.last().n; opStack.pop_back(); }}";
-    out << "if(!br) { opStack.push_back(OperatorStackItem(new Postfix" << nodeType << "(last), priority)); } yylex(); }";
+    out << "last = opStack.last().n;\n";
+    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem((*yynode) = create<Postfix" << nodeType << ">(last), -1)); br = true; break; } else { opStack.pop_back(); }}";
+    out << "if(!br) { "
+       << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
+       << "opStack.push_back(OperatorStackItem(ref = create<Postfix" << nodeType << ">(last), -1)); } yylex(); }";
   }
   for(__typeof__(node->mBin.begin()) i = node->mBin.begin(); i != node->mBin.end(); ++i)
   {
@@ -573,8 +577,11 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << i->op.mCode;
     out << "AstNode *last = 0; bool br = false;";
     out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
-    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem(new Binary" << nodeType << "(last, 0), priority)); br = true; break; } else { last = opStack.last().n; opStack.pop_back(); }}";
-    out << "if(!br) { opStack.push_back(OperatorStackItem(new Binary" << nodeType << "(last, 0), priority)); } expectOperator = false; yylex(); }";
+    out << "last = opStack.last().n;\n";
+    out << "if(opStack.size() == 1) { opStack.pop_back(); opStack.push_front(OperatorStackItem((*yynode) = create<Binary" << nodeType << ">(last, 0), priority)); br = true; break; } else { opStack.pop_back(); }}";
+    out << "if(!br) { "
+        << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
+        << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last, 0), priority)); } expectOperator = false; yylex(); }";
   }
   /*for(__typeof__(node->mTern.begin()) i = node->mTern.begin(); i != node->mTern.end(); ++i)
   {
@@ -956,7 +963,22 @@ void GenerateParserDeclarations::operator()()
             << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << endl
             << "node->kind = T::KIND;" << endl
             << "return node;" << endl
-            << "}" << endl << endl;
+            << "}" << endl
+            << "template <class T>" << endl
+            << "inline T *create(AstNode *u)" << endl
+            << "{" << endl
+            << "T *node = new (memoryPool->allocate(sizeof(T))) T(u);" << endl
+            << "node->kind = T::KIND;" << endl
+            << "return node;" << endl
+            << "}" << endl
+            << "template <class T>" << endl
+            << "inline T *create(AstNode *u, AstNode *v)" << endl
+            << "{" << endl
+            << "T *node = new (memoryPool->allocate(sizeof(T))) T(u, v);" << endl
+            << "node->kind = T::KIND;" << endl
+            << "return node;" << endl
+            << "}" << endl
+            << endl;
       }
 
 

@@ -14,20 +14,28 @@ inline void addToken(KDevPG::TokenStream& str, Parser::TokenType kind)
   ++i;
 }
 
-int main()
+int main(int argc, char **argv)
 {
     KDevPG::TokenStream token_stream;
     Parser::memoryPoolType memory_pool;
     Parser parser;
     parser.setTokenStream(&token_stream);
     parser.setMemoryPool(&memory_pool);
+    QString str = argc == 1 ? "1-*2^3" : argv[1];
     #define A(t) addToken(token_stream, Parser::Token_##t);
-    A(NUM)
-    A(INV)
-    A(MUL)
-    A(NUM)
-    A(POW)
-    A(NUM)
+    for(int i = 0 ; i != str.size(); ++i)
+    {
+      if(str[i] == '-')
+        A(INV)
+      else if(str[i] == '+')
+        A(PLUS)
+      else if(str[i] == '*')
+        A(MUL)
+      else if(str[i] == '^')
+        A(POW)
+      else
+        A(NUM)
+    }
     A(EOF)
     token_stream.rewind(0);
     parser.yylex();
@@ -35,8 +43,5 @@ int main()
     kDebug() << parser.parseDocument(&doc);
     DebugVisitor v(&token_stream, "1-*2^3");
     v.visitDocument(doc);
-    Op::BinaryExprAst *b = (Op::BinaryExprAst*)doc->exprSequence->element;
-    int *x = 0;
-    kDebug() << *x;
 }
 

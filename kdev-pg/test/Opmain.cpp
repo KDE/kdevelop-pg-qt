@@ -33,6 +33,8 @@ int main(int argc, char **argv)
         A(MUL)
       else if(str[i] == '^')
         A(POW)
+      else if(str[i] == '!')
+        A(NOT)
       else
         A(NUM)
     }

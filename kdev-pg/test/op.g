@@ -9,16 +9,17 @@ void expectedSymbol(Op::AstNode::AstNodeKind kind, const QString& name);
 void expectedToken(int kind, enum TokenType tok, const QString& name);
 :]
 
-%token PLUS ("+"), MUL ("*"), INV ("-"), NUM ("123"), POW ("^"), BR ("BREAK") ;;
+%token PLUS ("+"), MUL ("*"), INV ("-"), NUM ("123"), POW ("^"), BR ("BREAK"), NOT ("NOT") ;;
 
    #expr=expr @ BR
 -> document ;;
 
 %< number
 %bin PLUS 2 %left
-%bin MUL 3 %left
+%bin MUL 4 %left
+%pre NOT 3
 %post INV 1
-%bin POW 4 %right
+%bin POW 5 %right
 %> expr ;;
 
    NUM

@@ -639,13 +639,26 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     if(printElse)
       out << "else ";
     printElse = true;
-    out << "if(yytoken == " << i->op.mTok;
+    out << "if(yytoken == Token_" << i->op.mTok;
     if(i->op.mCond.size() != 0)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
-    out << i->op.mCode;
-    out << "...";
-    out << "}";
+    out << i->op.mCode
+        << "Prefix" << nodeType << " *node = create<Prefix" << nodeType << ">(0);"
+           "if(opStack.empty())\n"
+           "(*yynode) = node;"
+           "void *last = opStack.last().n;"
+           "if(last)\n"
+           "{\n"
+           "if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n"
+           "reinterpret_cast<Prefix" << nodeType << "*>(last)->first = node;"
+           "else\n"
+           "reinterpret_cast<Binary" << nodeType << "*>(last)->second = node;"
+           "}"
+           "opStack.push_back(OperatorStackItem(node, priority));"
+           "node->startToken = tokenStream->index() - 1;"
+           "yylex();"
+           "}" << endl;
   }
   if(printElse)
     out << "else ";

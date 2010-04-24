@@ -560,7 +560,9 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << "AstNode *last = 0; bool br = false;";
     out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
     out << "if(opStack.size() == 1) {"
-           "last = opStack.last().n;\n"
+           "if(last)\n"
+           "opStack.last().n->endToken = last->endToken;"
+           "last = opStack.last().n;"
            "opStack.pop_back();"
            "opStack.push_front(OperatorStackItem((*yynode) = create<Postfix"<< nodeType << ">(last), -1));"
            "(*yynode)->endToken = last->endToken + 1;"
@@ -571,6 +573,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "if(olast)\nlast->endToken = olast->endToken;"
            "opStack.pop_back(); }}";
     out << "if(!br) { "
+           "opStack.last().n->endToken = last->endToken;"
         << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
         << "opStack.push_back(OperatorStackItem(ref = create<Postfix" << nodeType << ">(last), -1));"
           "ref->endToken = last->endToken + 1;"
@@ -590,6 +593,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << "AstNode *last = 0; bool br = false;";
     out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
     out << "if(opStack.size() == 1) {"
+           "if(last)\n"
+           "opStack.last().n->endToken = last->endToken;"
            "last = opStack.last().n;\n"
            "opStack.pop_back();"
            "opStack.push_front(OperatorStackItem((*yynode) = create<Binary" << nodeType << ">(last, 0), priority));"
@@ -600,6 +605,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "if(olast)\nlast->endToken = olast->endToken;"
            "opStack.pop_back(); }}";
     out << "if(!br) { "
+           "opStack.last().n->endToken = last->endToken;"
         << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
         << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last, 0), priority)); ref->startToken = last->startToken; } expectOperator = false; yylex(); }";
   }
@@ -712,7 +718,9 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
 
   if (globalSystem.GenerateAst)
     {
-      if(!isOperatorSymbol(sym))
+      if(isOperatorSymbol(sym))
+        out << "QVector<OperatorStackItem> opStack;" << endl;
+      else
       {
         out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << endl << endl
             << "(*yynode)->startToken = tokenStream->index() - 1;" << endl;
@@ -954,8 +962,7 @@ void GenerateParserDeclarations::operator()()
            "inline OperatorStackItem()\n{}\n"
            "inline OperatorStackItem(const OperatorStackItem& o)\n"
            ": n(o.n), p(o.p)\n"
-           "{}\n};"
-           "QVector<OperatorStackItem> opStack;" << endl;
+           "{}\n};" << endl;
   out << endl
       << "inline Token LA(qint64 k = 1) const" << endl
       << "{ return tokenStream->token(tokenStream->index() - 1 + k - 1); }"

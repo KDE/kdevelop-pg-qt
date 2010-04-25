@@ -197,16 +197,25 @@ namespace Model
       Operator op;
       QString priority;
     };
+    struct ParenDescription
+    {
+      Operator first, second;
+      NonTerminalItem *item;
+    };
     QString mName;
     NonTerminalItem *mBase;
-    vector< pair<Operator, Operator> > mParen;
+    vector< ParenDescription > mParen;
     vector< TernDescription > mTern;
     vector< BinDescription > mBin, mPost;
     vector< UnaryDescription > mPre;
     
-    inline void pushParen(const Operator& op1, const Operator& op2)
+    inline void pushParen(const Operator& op1, const Operator& op2, NonTerminalItem *item)
     {
-      mParen.push_back(make_pair(op1, op2));
+      ParenDescription d;
+      d.first = op1;
+      d.second = op2;
+      d.item = item;
+      mParen.push_back(d);
     }
     inline void pushPre(const Operator& op, const QString& priority)
     {

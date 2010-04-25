@@ -55,12 +55,12 @@ void InitializeFirst::visitOperator(Model::OperatorItem *node)
   #define REGISTER \
   globalSystem.first(node).insert(t); \
   globalSystem.first(t).insert(t);
-  for(vector< pair<Model::Operator, Model::Operator> >::iterator i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
     t = globalSystem.terminal(i->first.mTok);
     REGISTER
   }
-  for(vector<Model::OperatorItem::UnaryDescription>::iterator i = node->mPre.begin(); i != node->mPre.end(); ++i)
+  for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
   {
     t = globalSystem.terminal(i->op.mTok);
     REGISTER

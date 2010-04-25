@@ -32,7 +32,15 @@ void GenerateAst::operator()()
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = *it;
-      out << "struct " << sym->mCapitalizedName << "Ast;" << endl;
+      #define O(name) out << "struct " << name << "Ast;" << endl;
+      O(sym->mCapitalizedName)
+      if(isOperatorSymbol(sym))
+      {
+        O("Prefix" + sym->mCapitalizedName)
+        O("Postfix" + sym->mCapitalizedName)
+        O("Binary" + sym->mCapitalizedName)
+      }
+      #undef O
     }
 
   out << endl << globalSystem.namespaceCode << endl;
@@ -72,22 +80,56 @@ void GenerateAst::operator()()
   GenerateAstRule gen(out);
   for( World::SymbolSet::const_iterator it = globalSystem.symbols.begin(); it != globalSystem.symbols.end(); ++it )
   {
-    gen(qMakePair( it.key(), *it ));
+    gen(*it);
+  }
+  gen.mFirstTime = false;
+  while(true)
+  {
+    int oldSize = gen.mToGenerate.size();
+    for(__typeof__(gen.mToGenerate.begin()) i = gen.mToGenerate.begin(); i != gen.mToGenerate.end(); )
+    {
+      __typeof__(i) next = i;
+      ++next;
+      gen(*i);
+      i = next;
+    }
+    if(gen.mToGenerate.size() == oldSize)
+      break;
+  }
+  gen.mForce = true;
+  for(__typeof__(gen.mToGenerate.begin()) i = gen.mToGenerate.begin(); i != gen.mToGenerate.end(); )
+  {
+    __typeof__(i) next = i;
+    ++next;
+    gen(*i);
+    i = next;
   }
   out << endl;
 }
 
-void GenerateAstRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
+void GenerateAstRule::operator()(Model::SymbolItem *sym)
 {
+  if(!mForce)
+  {
+    QString base = globalSystem.astBaseClasses.value(sym->mName, "");
+    if(!base.isEmpty() && !mGenerated.contains(base))
+    {
+      if(mFirstTime)
+        mToGenerate.insert(sym);
+      return;
+    }
+  }
+  if(!mFirstTime)
+    mToGenerate.remove(sym);
   mNames.clear();
   mInAlternative = false;
   mInCons = false;
 
-  World::Environment::iterator it = globalSystem.env.find(__it.second);
+  World::Environment::iterator it = globalSystem.env.find(sym);
   while (it != globalSystem.env.end())
   {
     Model::EvolveItem *e = *it;
-    if (it.key() != __it.second)
+    if (it.key() != sym)
       break;
     
     ++it;
@@ -113,7 +155,8 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
         << thestr << sym->mCapitalizedName << "Ast(" \
         << "AstNode *first)" << endl \
         << ": first(first)" << endl \
-        << "{\n}" << endl;
+        << "{\n}" << endl;\
+        mGenerated.insert(thestr);
         
     O(" Prefix")
 

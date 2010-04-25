@@ -225,7 +225,7 @@ item
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
         { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
-    | operatorRule { KDevPG::globalSystem.needOperatorStack = true; $$ = $1; }
+    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } operatorRule { KDevPG::globalSystem.needOperatorStack = true; $$ = $2; }
     ;
 
 code_opt
@@ -240,23 +240,29 @@ operatorDeclarations
     ;
 
 operatorRule
-    : { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER code_opt
+    : T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
             {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$3;
-              operatorNode->mName = $6;
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), 0, $7);
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$2;
+              operatorNode->mName = $5;
+              if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), (KDevPG::Model::VariableDeclarationItem*)$7, $9);
             }
-    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
+    | T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
             {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$3;
-              operatorNode->mName = $6;
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), (KDevPG::Model::VariableDeclarationItem*)$8, $10);
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$2;
+              operatorNode->mName = $5;
+              if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), (KDevPG::Model::VariableDeclarationItem*)$8, $6);
             }
-    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
+    | T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER code_opt
             {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$3;
-              operatorNode->mName = $6;
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($6), (KDevPG::Model::VariableDeclarationItem*)$9, $7);
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$2;
+              operatorNode->mName = $5;
+              if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), 0, $6);
             }
     ;
 
@@ -267,7 +273,7 @@ operatorDeclaration
     | T_TERN operator operator T_NUMBER T_RIGHT_ASSOC   { operatorNode->pushTern(*$2, *$3, false, $4); delete $2; delete $3; }
     | T_PRE operator T_NUMBER                           { operatorNode->pushPre(*$2, $3); delete $2; }
     | T_POST operator T_NUMBER                          { operatorNode->pushPost(*$2, $3); delete $2; }
-    | T_PAREN operator operator                         { operatorNode->pushParen(*$2, *$3); delete $2; delete $3; }
+    | T_PAREN operator primary_atom operator                         { operatorNode->pushParen(*$2, *$4, (KDevPG::Model::NonTerminalItem*)$3); delete $2; delete $4; }
     ;
     
 operator

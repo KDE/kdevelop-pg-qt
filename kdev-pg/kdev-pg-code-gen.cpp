@@ -633,7 +633,6 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
   out << "break;";
   out << "} else {";
   printElse = false;
-  /// @TODO Paren, Prefix, Normal
   for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
   {
     if(printElse)
@@ -660,21 +659,51 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "yylex();"
            "}" << endl;
   }
+  for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  {
+    if(printElse)
+      out << "else ";
+    printElse = true;
+    out << "if(yytoken == Token_" << i->first.mTok;
+    if(i->first.mCond.size() != 0)
+      out << " && " << i->first.mCond;
+    out << ") { yylex();"
+           "if(";
+    generateTestCondition(i->item->mSymbol, out);
+    out << ") {";
+    QString __var = generateParserCall(i->item, mCurrentCatchId, out);
+    out << "if(!(yytoken == Token_" << i->second.mTok;
+    if(i->second.mCond.size() != 0)
+      out << " && " << i->second.mCond;
+    out << ")) {"
+           "return false;"
+           "}"
+           "--" << __var << "->startToken;"
+           "++" << __var << "->endToken;"
+           "yylex();";
+    #define PUSH_UNARY \
+        out << "\
+if(!opStack.isEmpty())\
+{\
+  void *last = opStack.last().n;\
+  if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n\
+    reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << endl; \
+  out << "else\nreinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";}\
+else\n\
+(*yynode) = " << __var << ";\
+opStack.push_back(OperatorStackItem(" << __var << ", -1));";
+    PUSH_UNARY
+    out << "expectOperator = true; } else\nreturn false; }";
+  }
   if(printElse)
     out << "else ";
   out << "if(";
   generateTestCondition(node->mBase->mSymbol, out);
   out << ") { ";
   QString __var = generateParserCall(node->mBase, mCurrentCatchId, out);
-  out << "\
-if(!opStack.isEmpty())\
-{\
-  void *last = opStack.last().n;\
-  if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n\
-    reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << endl;
-  out << "else\nreinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";}"
-        "opStack.push_back(OperatorStackItem(" << __var << ", -1));"
-        "expectOperator = true;}";
+  PUSH_UNARY
+  #undef PUSH_UNARY
+  out << "expectOperator = true; }";
   /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
     if(printElse)

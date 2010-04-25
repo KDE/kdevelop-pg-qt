@@ -44,35 +44,45 @@
      T_TERMINAL = 260,
      T_CODE = 261,
      T_STRING = 262,
-     T_TOKEN_DECLARATION = 263,
-     T_TOKEN_STREAM_DECLARATION = 264,
-     T_NAMESPACE_DECLARATION = 265,
-     T_PARSERCLASS_DECLARATION = 266,
-     T_PUBLIC = 267,
-     T_PRIVATE = 268,
-     T_PROTECTED = 269,
-     T_DECLARATION = 270,
-     T_CONSTRUCTOR = 271,
-     T_DESTRUCTOR = 272,
-     T_TRY_RECOVER = 273,
-     T_TRY_ROLLBACK = 274,
-     T_CATCH = 275,
-     T_RULE_ARGUMENTS = 276,
-     T_MEMBER = 277,
-     T_TEMPORARY = 278,
-     T_ARGUMENT = 279,
-     T_EXPORT_MACRO = 280,
-     T_NODE = 281,
-     T_NODE_SEQUENCE = 282,
-     T_TOKEN = 283,
-     T_VARIABLE = 284,
-     T_EXPORT_MACRO_HEADER = 285,
-     T_AST_DECLARATION = 286,
-     T_PARSER_DECLARATION_HEADER = 287,
-     T_PARSER_BITS_HEADER = 288,
-     T_AST_HEADER = 289,
-     T_PARSER_BASE = 290,
-     T_AST_BASE = 291
+     T_NUMBER = 263,
+     T_TOKEN_DECLARATION = 264,
+     T_TOKEN_STREAM_DECLARATION = 265,
+     T_NAMESPACE_DECLARATION = 266,
+     T_PARSERCLASS_DECLARATION = 267,
+     T_PUBLIC = 268,
+     T_PRIVATE = 269,
+     T_PROTECTED = 270,
+     T_DECLARATION = 271,
+     T_CONSTRUCTOR = 272,
+     T_DESTRUCTOR = 273,
+     T_TRY_RECOVER = 274,
+     T_TRY_ROLLBACK = 275,
+     T_CATCH = 276,
+     T_RULE_ARGUMENTS = 277,
+     T_MEMBER = 278,
+     T_TEMPORARY = 279,
+     T_ARGUMENT = 280,
+     T_EXPORT_MACRO = 281,
+     T_NODE = 282,
+     T_NODE_SEQUENCE = 283,
+     T_TOKEN = 284,
+     T_VARIABLE = 285,
+     T_EXPORT_MACRO_HEADER = 286,
+     T_AST_DECLARATION = 287,
+     T_PARSER_DECLARATION_HEADER = 288,
+     T_PARSER_BITS_HEADER = 289,
+     T_AST_HEADER = 290,
+     T_PARSER_BASE = 291,
+     T_AST_BASE = 292,
+     T_BIN = 293,
+     T_PRE = 294,
+     T_POST = 295,
+     T_TERN = 296,
+     T_LOPR = 297,
+     T_ROPR = 298,
+     T_LEFT_ASSOC = 299,
+     T_RIGHT_ASSOC = 300,
+     T_PAREN = 301
    };
 #endif
 /* Tokens.  */
@@ -81,51 +91,62 @@
 #define T_TERMINAL 260
 #define T_CODE 261
 #define T_STRING 262
-#define T_TOKEN_DECLARATION 263
-#define T_TOKEN_STREAM_DECLARATION 264
-#define T_NAMESPACE_DECLARATION 265
-#define T_PARSERCLASS_DECLARATION 266
-#define T_PUBLIC 267
-#define T_PRIVATE 268
-#define T_PROTECTED 269
-#define T_DECLARATION 270
-#define T_CONSTRUCTOR 271
-#define T_DESTRUCTOR 272
-#define T_TRY_RECOVER 273
-#define T_TRY_ROLLBACK 274
-#define T_CATCH 275
-#define T_RULE_ARGUMENTS 276
-#define T_MEMBER 277
-#define T_TEMPORARY 278
-#define T_ARGUMENT 279
-#define T_EXPORT_MACRO 280
-#define T_NODE 281
-#define T_NODE_SEQUENCE 282
-#define T_TOKEN 283
-#define T_VARIABLE 284
-#define T_EXPORT_MACRO_HEADER 285
-#define T_AST_DECLARATION 286
-#define T_PARSER_DECLARATION_HEADER 287
-#define T_PARSER_BITS_HEADER 288
-#define T_AST_HEADER 289
-#define T_PARSER_BASE 290
-#define T_AST_BASE 291
+#define T_NUMBER 263
+#define T_TOKEN_DECLARATION 264
+#define T_TOKEN_STREAM_DECLARATION 265
+#define T_NAMESPACE_DECLARATION 266
+#define T_PARSERCLASS_DECLARATION 267
+#define T_PUBLIC 268
+#define T_PRIVATE 269
+#define T_PROTECTED 270
+#define T_DECLARATION 271
+#define T_CONSTRUCTOR 272
+#define T_DESTRUCTOR 273
+#define T_TRY_RECOVER 274
+#define T_TRY_ROLLBACK 275
+#define T_CATCH 276
+#define T_RULE_ARGUMENTS 277
+#define T_MEMBER 278
+#define T_TEMPORARY 279
+#define T_ARGUMENT 280
+#define T_EXPORT_MACRO 281
+#define T_NODE 282
+#define T_NODE_SEQUENCE 283
+#define T_TOKEN 284
+#define T_VARIABLE 285
+#define T_EXPORT_MACRO_HEADER 286
+#define T_AST_DECLARATION 287
+#define T_PARSER_DECLARATION_HEADER 288
+#define T_PARSER_BITS_HEADER 289
+#define T_AST_HEADER 290
+#define T_PARSER_BASE 291
+#define T_AST_BASE 292
+#define T_BIN 293
+#define T_PRE 294
+#define T_POST 295
+#define T_TERN 296
+#define T_LOPR 297
+#define T_ROPR 298
+#define T_LEFT_ASSOC 299
+#define T_RIGHT_ASSOC 300
+#define T_PAREN 301
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 33 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 36 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 {
     KDevPG::Model::Node *item;
     char* str;
     KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
     KDevPG::Model::VariableDeclarationItem::StorateType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
+    KDevPG::Model::Operator                                *operatorInformation;
 }
 /* Line 1489 of yacc.c.  */
-#line 129 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+#line 150 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -49,13 +49,17 @@ class GenerateAstRule: protected DefaultVisitor
 public:
   QTextStream& out;
   QSet<QString> mNames;
+  QSet<QString> mGenerated;
+  QSet<Model::SymbolItem*> mToGenerate;
   bool mInAlternative;
   bool mInCons;
+  bool mForce;
+  bool mFirstTime;
 
 public:
-  GenerateAstRule(QTextStream& o): out(o) {}
+  GenerateAstRule(QTextStream& o): out(o), mForce(false), mFirstTime(true) {}
 
-  void operator()(QPair<QString, Model::SymbolItem*> const &__it);
+  void operator()(Model::SymbolItem *sym);
 
 protected:
   virtual void visitAlternative(Model::AlternativeItem *node);

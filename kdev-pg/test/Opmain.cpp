@@ -35,6 +35,10 @@ int main(int argc, char **argv)
         A(POW)
       else if(str[i] == '!')
         A(NOT)
+      else if(str[i] == '(')
+        A(L_PAREN)
+      else if(str[i] == ')')
+        A(R_PAREN)
       else
         A(NUM)
     }

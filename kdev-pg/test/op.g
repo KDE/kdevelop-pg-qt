@@ -9,10 +9,13 @@ void expectedSymbol(Op::AstNode::AstNodeKind kind, const QString& name);
 void expectedToken(int kind, enum TokenType tok, const QString& name);
 :]
 
-%token PLUS ("+"), MUL ("*"), INV ("-"), NUM ("123"), POW ("^"), BR ("BREAK"), NOT ("NOT") ;;
+%token PLUS ("+"), MUL ("*"), INV ("-"), NUM ("123"), POW ("^"), BR ("BREAK"), NOT ("NOT"), L_PAREN("("), R_PAREN(")") ;;
 
    #expr=expr @ BR
 -> document ;;
+
+   NUM
+-> number ;;
 
 %< number
 %bin PLUS 2 %left
@@ -20,10 +23,8 @@ void expectedToken(int kind, enum TokenType tok, const QString& name);
 %pre NOT 3
 %post INV 1
 %bin POW 5 %right
+%paren L_PAREN expr R_PAREN
 %> expr ;;
-
-   NUM
--> number ;;
 
 [:
 #include "Optokentext.h"

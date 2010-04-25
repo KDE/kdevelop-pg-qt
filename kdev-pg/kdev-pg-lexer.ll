@@ -109,8 +109,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%pre"                  return T_PRE;
 "%post"                 return T_POST;
 "%tern"                 return T_TERN;
-"%<"                    return T_LOPR;
-"%>"                    return T_ROPR;
+"%<"                    rulePosition = RuleBody; return T_LOPR;
+"%>"                    rulePosition = RuleFooter; return T_ROPR;
 "%left"                 return T_LEFT_ASSOC;
 "%right"                return T_RIGHT_ASSOC;
 "%paren"                return T_PAREN;

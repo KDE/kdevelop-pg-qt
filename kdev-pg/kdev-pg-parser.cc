@@ -454,16 +454,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   261
+#define YYLAST   247
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  63
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  33
+#define YYNNTS  31
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  95
+#define YYNRULES  93
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  217
+#define YYNSTATES  205
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -519,16 +519,16 @@ static const yytype_uint16 yyprhs[] =
      109,   113,   115,   117,   121,   126,   129,   131,   136,   145,
      146,   148,   150,   154,   156,   158,   161,   164,   166,   169,
      171,   175,   178,   180,   182,   185,   187,   191,   193,   197,
-     205,   213,   218,   220,   221,   223,   226,   227,   228,   236,
-     237,   248,   249,   260,   265,   270,   276,   282,   286,   290,
-     295,   300,   304,   307,   309,   311,   314,   321,   327,   335,
-     342,   343,   345,   347,   349,   351
+     205,   213,   218,   219,   222,   223,   225,   228,   229,   239,
+     249,   256,   261,   266,   272,   278,   282,   286,   291,   296,
+     300,   303,   305,   307,   310,   317,   323,   331,   338,   339,
+     341,   343,   345,   347
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      64,     0,    -1,    -1,    83,    65,    66,    70,    83,    -1,
+      64,     0,    -1,    -1,    84,    65,    66,    70,    84,    -1,
       67,    -1,    66,    67,    -1,    13,    68,    -1,    10,    69,
        8,    -1,    11,     3,     8,    -1,    27,     7,    -1,    32,
        7,    -1,    12,     6,    -1,    33,     6,    -1,    34,     7,
@@ -548,22 +548,21 @@ static const yytype_int8 yyrhs[] =
       -1,    78,    59,    71,    -1,    78,     6,    -1,     6,    -1,
       78,    -1,    79,    78,    -1,    79,    -1,    58,     6,    79,
       -1,    80,    -1,    81,    60,    80,    -1,    81,     4,     3,
-       6,    61,    91,    62,    -1,    81,     4,     3,    61,    91,
-      62,    83,    -1,    81,     4,     3,    83,    -1,    85,    -1,
-      -1,     6,    -1,    89,    84,    -1,    -1,    -1,    86,    43,
-      72,    84,    44,     3,    83,    -1,    -1,    87,    43,    72,
-      84,    44,     3,    61,    91,    62,    83,    -1,    -1,    88,
-      43,    72,    84,    44,     3,     6,    61,    91,    62,    -1,
-      39,    90,     9,    45,    -1,    39,    90,     9,    46,    -1,
-      42,    90,    90,     9,    45,    -1,    42,    90,    90,     9,
-      46,    -1,    40,    90,     9,    -1,    41,    90,     9,    -1,
-      47,    90,    72,    90,    -1,    58,     6,     5,     6,    -1,
-      58,     6,     5,    -1,     5,     6,    -1,     5,    -1,    92,
-      -1,    91,    92,    -1,    93,    94,    95,     3,    55,     3,
-      -1,    93,    94,    30,     3,     8,    -1,    93,    94,    95,
-      52,     3,    55,     3,    -1,    93,    94,    30,    52,     3,
-       8,    -1,    -1,    26,    -1,    24,    -1,    25,    -1,    28,
-      -1,    31,    -1
+       6,    61,    89,    62,    -1,    81,     4,     3,    61,    89,
+      62,    84,    -1,    81,     4,     3,    84,    -1,    -1,    83,
+      86,    -1,    -1,     6,    -1,    87,    85,    -1,    -1,    43,
+      72,    85,    44,     3,    61,    89,    62,    84,    -1,    43,
+      72,    85,    44,     3,     6,    61,    89,    62,    -1,    43,
+      72,    85,    44,     3,    84,    -1,    39,    88,     9,    45,
+      -1,    39,    88,     9,    46,    -1,    42,    88,    88,     9,
+      45,    -1,    42,    88,    88,     9,    46,    -1,    40,    88,
+       9,    -1,    41,    88,     9,    -1,    47,    88,    72,    88,
+      -1,    58,     6,     5,     6,    -1,    58,     6,     5,    -1,
+       5,     6,    -1,     5,    -1,    90,    -1,    89,    90,    -1,
+      91,    92,    93,     3,    55,     3,    -1,    91,    92,    30,
+       3,     8,    -1,    91,    92,    93,    52,     3,    55,     3,
+      -1,    91,    92,    30,    52,     3,     8,    -1,    -1,    26,
+      -1,    24,    -1,    25,    -1,    28,    -1,    31,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
@@ -575,10 +574,10 @@ static const yytype_uint16 yyrline[] =
      138,   139,   140,   141,   142,   146,   147,   151,   156,   163,
      164,   168,   169,   178,   179,   183,   184,   185,   186,   190,
      191,   196,   197,   201,   202,   206,   207,   211,   212,   216,
-     221,   226,   228,   232,   233,   238,   239,   243,   243,   251,
-     251,   259,   259,   270,   271,   272,   273,   274,   275,   276,
-     280,   281,   282,   283,   287,   288,   300,   302,   304,   306,
-     311,   312,   316,   317,   321,   322
+     221,   226,   228,   228,   232,   233,   238,   239,   243,   251,
+     259,   270,   271,   272,   273,   274,   275,   276,   280,   281,
+     282,   283,   287,   288,   300,   302,   304,   306,   311,   312,
+     316,   317,   321,   322
 };
 #endif
 
@@ -603,8 +602,8 @@ static const char *const yytname[] =
   "system", "@1", "declarations", "declaration", "member_declaration_rest",
   "declared_tokens", "rules", "primary_item", "primary_atom", "try_item",
   "rule_arguments_opt", "name", "scope", "unary_item", "postfix_item",
-  "item_sequence", "conditional_item", "option_item", "item", "code_opt",
-  "operatorDeclarations", "operatorRule", "@2", "@3", "@4",
+  "item_sequence", "conditional_item", "option_item", "item", "@2",
+  "code_opt", "operatorDeclarations", "operatorRule",
   "operatorDeclaration", "operator", "variableDeclarations",
   "variableDeclaration", "declarationType_opt", "storageType",
   "variableType", 0
@@ -635,10 +634,10 @@ static const yytype_uint8 yyr1[] =
       71,    71,    71,    71,    71,    72,    72,    73,    73,    74,
       74,    75,    75,    76,    76,    77,    77,    77,    77,    78,
       78,    78,    78,    79,    79,    80,    80,    81,    81,    82,
-      82,    82,    82,    83,    83,    84,    84,    86,    85,    87,
-      85,    88,    85,    89,    89,    89,    89,    89,    89,    89,
-      90,    90,    90,    90,    91,    91,    92,    92,    92,    92,
-      93,    93,    94,    94,    95,    95
+      82,    82,    83,    82,    84,    84,    85,    85,    86,    86,
+      86,    87,    87,    87,    87,    87,    87,    87,    88,    88,
+      88,    88,    89,    89,    90,    90,    90,    90,    91,    91,
+      92,    92,    93,    93
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -650,10 +649,10 @@ static const yytype_uint8 yyr2[] =
        3,     1,     1,     3,     4,     2,     1,     4,     8,     0,
        1,     1,     3,     1,     1,     2,     2,     1,     2,     1,
        3,     2,     1,     1,     2,     1,     3,     1,     3,     7,
-       7,     4,     1,     0,     1,     2,     0,     0,     7,     0,
-      10,     0,    10,     4,     4,     5,     5,     3,     3,     4,
-       4,     3,     2,     1,     1,     2,     6,     5,     7,     6,
-       0,     1,     1,     1,     1,     1
+       7,     4,     0,     2,     0,     1,     2,     0,     9,     9,
+       6,     4,     4,     5,     5,     3,     3,     4,     4,     3,
+       2,     1,     1,     2,     6,     5,     7,     6,     0,     1,
+       1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -661,170 +660,163 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-      63,    64,     0,     2,     1,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    67,     4,
+      64,    65,     0,     2,     1,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    62,     4,
       23,     0,     0,    11,     0,     6,     9,    10,    12,    13,
       14,    15,    17,     0,    39,    36,    52,     0,     0,     0,
-      29,     0,     0,     5,    63,    47,    32,    31,     0,    49,
-      53,    55,    57,     0,     0,    62,     0,     0,     0,     0,
-       7,     0,     8,     0,     0,     0,     0,     0,    16,    40,
-       0,    35,     0,     0,     0,    41,     0,     0,    48,    52,
-       0,     3,    45,    46,    43,    44,     0,    51,     0,     0,
-      54,     0,     0,    27,     0,     0,     0,     0,    25,     0,
-       0,     0,     0,     0,    42,     0,     0,    30,     0,    56,
-      28,    39,    33,    50,    63,    58,    66,    66,    66,    24,
-       0,     0,     0,     0,    21,    22,    37,     0,    34,    64,
-      90,    61,     0,     0,     0,     0,     0,     0,    66,     0,
-       0,     0,    18,    20,    19,     0,    90,    91,    90,    84,
-       0,    83,     0,     0,     0,     0,     0,     0,     0,    65,
-       0,     0,    26,     0,    90,    63,    85,    92,    93,     0,
-      82,     0,     0,    77,    78,     0,     0,    63,     0,     0,
-       0,    59,    60,    94,     0,    95,     0,    81,    73,    74,
-       0,    79,    68,    90,     0,    38,     0,     0,     0,     0,
-      80,    75,    76,    90,    90,    87,     0,     0,     0,    63,
-      90,    89,    86,     0,    70,    72,    88
+      29,     0,     0,     5,    62,    47,    32,    31,     0,    49,
+      53,    55,    57,     0,     0,     0,     0,     7,     0,     8,
+       0,     0,     0,     0,     0,    16,    40,     0,    35,     0,
+       0,     0,    41,     0,     0,    48,    52,     0,     3,    45,
+      46,    43,    44,     0,    51,     0,     0,    54,     0,     0,
+      27,     0,    63,     0,    25,     0,     0,     0,     0,     0,
+      42,     0,     0,    30,     0,    56,    28,    39,    33,    50,
+      64,    58,    67,    24,     0,     0,     0,     0,    21,    22,
+      37,     0,    34,    65,    88,    61,     0,     0,     0,     0,
+       0,     0,    67,     0,    18,    20,    19,     0,    88,    89,
+      88,    82,     0,    81,     0,     0,     0,     0,     0,     0,
+       0,    66,    26,     0,    88,    64,    83,    90,    91,     0,
+      80,     0,     0,    75,    76,     0,     0,    64,     0,    59,
+      60,    92,     0,    93,     0,    79,    71,    72,     0,    77,
+      65,    88,    70,    38,     0,     0,     0,     0,    78,    73,
+      74,    88,    88,    85,     0,     0,     0,    88,    64,    87,
+      84,     0,    69,    68,    86
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
       -1,     2,     5,    18,    19,    25,    21,    44,    45,    46,
-      47,    71,    48,    86,    49,    50,    51,    52,    53,    54,
-       3,   137,    55,    56,    57,    58,   138,   153,   148,   149,
-     150,   169,   186
+      47,    68,    48,    83,    49,    50,    51,    52,    53,    54,
+      55,     3,   131,    92,   132,   145,   140,   141,   142,   159,
+     174
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -146
+#define YYPACT_NINF -138
 static const yytype_int16 yypact[] =
 {
-      44,  -146,    27,  -146,  -146,   144,    70,    87,    74,    47,
-      98,   103,   113,   121,   125,   128,   129,   137,    66,  -146,
-      93,    18,   151,  -146,   182,  -146,  -146,  -146,  -146,  -146,
-    -146,  -146,  -146,   138,    97,  -146,  -146,    99,   105,    91,
-    -146,   157,    33,  -146,    86,   -12,  -146,  -146,    -6,  -146,
-       1,   110,  -146,     4,   158,  -146,   130,   131,   132,   165,
-    -146,   178,  -146,   171,   172,   173,   150,   153,  -146,  -146,
-     190,  -146,    91,    91,   -27,   152,    -6,   110,  -146,   203,
-     196,  -146,  -146,  -146,  -146,  -146,    25,  -146,   143,   143,
-       1,   204,    91,  -146,    25,    25,    25,   159,   161,   162,
-     163,   164,   200,   208,  -146,   -20,   -18,  -146,    25,   110,
-    -146,   187,  -146,  -146,     0,  -146,   145,   145,   145,  -146,
-     209,   211,   212,   213,  -146,  -146,  -146,   193,  -146,   160,
-     194,  -146,     8,     8,     8,     8,     8,   179,   145,   180,
-     181,   177,  -146,  -146,  -146,   174,   194,  -146,    -3,  -146,
-      84,   221,   222,   220,   223,   224,     8,    25,   227,  -146,
-     228,   231,  -146,    91,    20,    44,  -146,  -146,  -146,   139,
-    -146,   230,    77,  -146,  -146,   229,     8,    44,   175,   233,
-     -17,  -146,  -146,  -146,    15,  -146,    22,   234,  -146,  -146,
-      81,  -146,  -146,   194,   176,  -146,   235,   238,   189,   239,
-    -146,  -146,  -146,    21,   194,  -146,   237,   243,   192,    44,
-      26,  -146,  -146,   245,  -146,  -146,  -146
+      18,  -138,    21,  -138,  -138,   153,    29,    25,    35,   -33,
+      41,    43,    68,    81,    98,   109,   113,   127,    66,  -138,
+      91,    31,   137,  -138,   178,  -138,  -138,  -138,  -138,  -138,
+    -138,  -138,  -138,   141,    96,  -138,  -138,   104,   105,    32,
+    -138,   157,   107,  -138,     6,    52,  -138,  -138,    67,  -138,
+       8,    86,  -138,     1,   154,   129,   164,  -138,   168,  -138,
+     159,   165,   166,   132,   135,  -138,  -138,   192,  -138,    32,
+      32,   -31,   145,    67,    86,  -138,   199,   193,  -138,  -138,
+    -138,  -138,  -138,    42,  -138,   126,   126,     8,   197,    32,
+    -138,    42,  -138,   155,   158,   156,   160,   161,   196,   201,
+    -138,   -30,   -24,  -138,    42,    86,  -138,   180,  -138,  -138,
+      -2,  -138,   128,  -138,   204,   202,   206,   207,  -138,  -138,
+    -138,   194,  -138,   162,   188,  -138,    15,    15,    15,    15,
+      15,   171,   128,   169,  -138,  -138,  -138,   172,   188,  -138,
+      20,  -138,   101,   211,   213,   212,   215,   216,    15,    42,
+     219,  -138,  -138,    32,    23,    18,  -138,  -138,  -138,    12,
+    -138,   221,    90,  -138,  -138,   218,    15,     2,   -16,  -138,
+    -138,  -138,     4,  -138,    10,   222,  -138,  -138,   111,  -138,
+     170,   188,  -138,  -138,   224,   226,   175,   230,  -138,  -138,
+    -138,   188,    70,  -138,   227,   231,   181,    71,    18,  -138,
+    -138,   234,  -138,  -138,  -138
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -146,  -146,  -146,  -146,   232,  -146,  -146,  -146,   -33,   -84,
-    -146,  -146,   210,   183,  -146,   -46,   184,   166,   -38,   205,
-     -44,   -97,  -146,  -146,  -146,  -146,  -146,  -119,  -142,  -145,
-    -146,  -146,  -146
+    -138,  -138,  -138,  -138,   220,  -138,  -138,  -138,     9,   -81,
+    -138,  -138,   198,   167,  -138,   -35,   173,   152,   -38,   200,
+    -138,   -44,   110,  -138,  -138,    13,  -116,  -137,  -138,  -138,
+    -138
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -68
+#define YYTABLE_NINF -66
 static const yytype_int16 yytable[] =
 {
-      81,    74,   112,   166,   164,    90,   129,    87,    91,    78,
-     116,   117,   118,   151,   154,   155,   156,   157,   196,   166,
-     139,   140,   107,   147,   128,   198,    60,     4,   111,   126,
-      35,   127,   195,    92,   105,   106,    34,   175,    35,    77,
-      92,   159,    92,    92,    82,    83,   147,   147,    84,    85,
-       1,   203,   147,    37,    38,   113,    78,   191,   166,   165,
-      88,   130,   210,    90,    92,   166,   152,   197,    61,    34,
-     131,    35,    36,   176,   199,    20,     6,     7,     8,     9,
-      23,    39,   181,   209,    40,    41,    37,    38,   215,    34,
-      22,    35,    79,    10,    34,    24,    35,    36,    11,    12,
-      13,    14,    15,    16,    17,    26,    37,    38,   167,   168,
-      27,    37,    38,    34,    39,    35,    36,    40,    41,    28,
-      69,   182,   188,   189,    42,   180,   201,   202,    29,   -67,
-      37,    38,    30,   192,    39,    31,    32,    40,    41,    39,
-      33,    59,    40,    41,    42,    68,    34,    72,    35,    42,
-      70,   -41,   -41,    73,     6,     7,     8,     9,    39,    62,
-      75,    40,    41,    37,    38,   214,    93,   183,    89,   184,
-     185,    10,    97,    94,    95,    96,    11,    12,    13,    14,
-      15,    16,    17,    98,   132,   133,   134,   135,    99,   100,
-     101,    39,   136,   104,    40,    41,    63,    64,    65,   102,
-      66,    67,   103,   -64,   110,    70,   124,   114,   119,   120,
-      69,   121,   122,   123,   125,   145,   141,   142,   143,   144,
-     147,   146,   163,   158,   160,   161,   162,   170,   171,   172,
-     177,   178,   173,   174,   179,   187,   193,   204,   190,   194,
-     200,   206,   208,   205,   207,   211,   212,   213,   216,    80,
-      43,    76,     0,     0,     0,     0,     0,     0,   115,   108,
-       0,   109
+      78,    71,   108,   156,   123,    88,   -64,   184,   180,    34,
+     112,    35,    76,   186,    84,    24,    87,   156,   103,   120,
+     143,     4,   154,   122,     1,   121,    37,    38,    22,    89,
+      89,   101,   102,   183,    20,    34,    89,    35,    36,    57,
+     171,    23,   172,   173,    89,   107,   139,    35,    26,   139,
+      27,    75,    37,    38,    39,   156,   185,    40,    41,   124,
+     156,    89,   187,   181,    42,   192,   125,    85,   166,    34,
+      87,    35,    36,   144,    28,   197,     6,     7,     8,     9,
+      39,    58,   155,    40,    41,   169,    37,    38,    29,    34,
+      42,    35,    36,    10,   109,    75,   139,   139,    11,    12,
+      13,    14,    15,    16,    17,    30,    37,    38,    79,    80,
+      34,   170,    35,    74,    39,   168,    31,    40,    41,    66,
+      32,    81,    82,   182,    42,   157,   158,    37,    38,    34,
+      33,    35,   198,   202,    39,   176,   177,    40,    41,    56,
+     146,   147,   148,   149,    86,    59,    37,    38,    65,    67,
+     -41,   -41,    69,    70,   203,    39,   189,   190,    40,    41,
+      72,   165,    90,     6,     7,     8,     9,   126,   127,   128,
+     129,    93,    91,    94,    39,   130,    95,    40,    41,   179,
+      10,    98,    96,    97,    99,    11,    12,    13,    14,    15,
+      16,    17,    60,    61,    62,   100,    63,    64,    67,   -65,
+     110,   106,   118,    66,   113,   115,   114,   119,   134,   116,
+     117,   133,   135,   136,   139,   150,   137,   160,   152,   161,
+     153,   162,   167,   138,   163,   164,   175,   178,   188,   194,
+     195,   191,   193,   196,   200,   199,   201,   204,    43,    73,
+     104,   111,   151,     0,    77,     0,     0,   105
 };
 
 static const yytype_int16 yycheck[] =
 {
-      44,    39,    86,   148,   146,    51,     6,     6,     4,    42,
-      94,    95,    96,     5,   133,   134,   135,   136,     3,   164,
-     117,   118,    49,    26,   108,     3,     8,     0,     3,    49,
-       5,    49,    49,    60,    72,    73,     3,   156,     5,     6,
-      60,   138,    60,    60,    56,    57,    26,    26,    54,    55,
-       6,   193,    26,    20,    21,    88,    89,   176,   203,    62,
-      59,    61,   204,   109,    60,   210,    58,    52,    50,     3,
-     114,     5,     6,   157,    52,     5,    10,    11,    12,    13,
-       6,    48,    62,    62,    51,    52,    20,    21,    62,     3,
-       3,     5,     6,    27,     3,    48,     5,     6,    32,    33,
-      34,    35,    36,    37,    38,     7,    20,    21,    24,    25,
-       7,    20,    21,     3,    48,     5,     6,    51,    52,     6,
-      23,   165,    45,    46,    58,   163,    45,    46,     7,    43,
-      20,    21,     7,   177,    48,     7,     7,    51,    52,    48,
-       3,    48,    51,    52,    58,     7,     3,    48,     5,    58,
-      53,    54,    55,    48,    10,    11,    12,    13,    48,     8,
-       3,    51,    52,    20,    21,   209,     8,    28,    58,    30,
-      31,    27,     7,    43,    43,    43,    32,    33,    34,    35,
-      36,    37,    38,     5,    39,    40,    41,    42,    17,    17,
-      17,    48,    47,     3,    51,    52,    14,    15,    16,    49,
-      18,    19,    49,     0,     8,    53,     6,     3,    49,    48,
-      23,    49,    49,    49,     6,    22,     7,     6,     6,     6,
-      26,    61,    48,    44,    44,    44,    49,     6,     6,     9,
-       3,     3,     9,     9,     3,     5,    61,    61,     9,     6,
-       6,     3,     3,     8,    55,     8,     3,    55,     3,    44,
-      18,    41,    -1,    -1,    -1,    -1,    -1,    -1,    92,    76,
-      -1,    77
+      44,    39,    83,   140,     6,     4,     0,     3,     6,     3,
+      91,     5,     6,     3,     6,    48,    51,   154,    49,    49,
+       5,     0,   138,   104,     6,    49,    20,    21,     3,    60,
+      60,    69,    70,    49,     5,     3,    60,     5,     6,     8,
+      28,     6,    30,    31,    60,     3,    26,     5,     7,    26,
+       7,    42,    20,    21,    48,   192,    52,    51,    52,    61,
+     197,    60,    52,    61,    58,   181,   110,    59,   149,     3,
+     105,     5,     6,    58,     6,   191,    10,    11,    12,    13,
+      48,    50,    62,    51,    52,    62,    20,    21,     7,     3,
+      58,     5,     6,    27,    85,    86,    26,    26,    32,    33,
+      34,    35,    36,    37,    38,     7,    20,    21,    56,    57,
+       3,   155,     5,     6,    48,   153,     7,    51,    52,    23,
+       7,    54,    55,   167,    58,    24,    25,    20,    21,     3,
+       3,     5,    62,    62,    48,    45,    46,    51,    52,    48,
+     127,   128,   129,   130,    58,     8,    20,    21,     7,    53,
+      54,    55,    48,    48,   198,    48,    45,    46,    51,    52,
+       3,   148,     8,    10,    11,    12,    13,    39,    40,    41,
+      42,     7,    43,     5,    48,    47,    17,    51,    52,   166,
+      27,    49,    17,    17,    49,    32,    33,    34,    35,    36,
+      37,    38,    14,    15,    16,     3,    18,    19,    53,     0,
+       3,     8,     6,    23,    49,    49,    48,     6,     6,    49,
+      49,     7,     6,     6,    26,    44,    22,     6,    49,     6,
+      48,     9,     3,    61,     9,     9,     5,     9,     6,     3,
+      55,    61,     8,     3,     3,     8,    55,     3,    18,    41,
+      73,    89,   132,    -1,    44,    -1,    -1,    74
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     6,    64,    83,     0,    65,    10,    11,    12,    13,
+       0,     6,    64,    84,     0,    65,    10,    11,    12,    13,
       27,    32,    33,    34,    35,    36,    37,    38,    66,    67,
        5,    69,     3,     6,    48,    68,     7,     7,     6,     7,
        7,     7,     7,     3,     3,     5,     6,    20,    21,    48,
       51,    52,    58,    67,    70,    71,    72,    73,    75,    77,
-      78,    79,    80,    81,    82,    85,    86,    87,    88,    48,
-       8,    50,     8,    14,    15,    16,    18,    19,     7,    23,
-      53,    74,    48,    48,    81,     3,    75,     6,    71,     6,
-      82,    83,    56,    57,    54,    55,    76,     6,    59,    58,
-      78,     4,    60,     8,    43,    43,    43,     7,     5,    17,
-      17,    17,    49,    49,     3,    81,    81,    49,    76,    79,
-       8,     3,    72,    71,     3,    80,    72,    72,    72,    49,
-      48,    49,    49,    49,     6,     6,    49,    49,    72,     6,
-      61,    83,    39,    40,    41,    42,    47,    84,    89,    84,
-      84,     7,     6,     6,     6,    22,    61,    26,    91,    92,
-      93,     5,    58,    90,    90,    90,    90,    90,    44,    84,
-      44,    44,    49,    48,    91,    62,    92,    24,    25,    94,
-       6,     6,     9,     9,     9,    90,    72,     3,     3,     3,
-      81,    62,    83,    28,    30,    31,    95,     5,    45,    46,
-       9,    90,    83,    61,     6,    49,     3,    52,     3,    52,
-       6,    45,    46,    91,    61,     8,     3,    55,     3,    62,
-      91,     8,     3,    55,    83,    62,     3
+      78,    79,    80,    81,    82,    83,    48,     8,    50,     8,
+      14,    15,    16,    18,    19,     7,    23,    53,    74,    48,
+      48,    81,     3,    75,     6,    71,     6,    82,    84,    56,
+      57,    54,    55,    76,     6,    59,    58,    78,     4,    60,
+       8,    43,    86,     7,     5,    17,    17,    17,    49,    49,
+       3,    81,    81,    49,    76,    79,     8,     3,    72,    71,
+       3,    80,    72,    49,    48,    49,    49,    49,     6,     6,
+      49,    49,    72,     6,    61,    84,    39,    40,    41,    42,
+      47,    85,    87,     7,     6,     6,     6,    22,    61,    26,
+      89,    90,    91,     5,    58,    88,    88,    88,    88,    88,
+      44,    85,    49,    48,    89,    62,    90,    24,    25,    92,
+       6,     6,     9,     9,     9,    88,    72,     3,    81,    62,
+      84,    28,    30,    31,    93,     5,    45,    46,     9,    88,
+       6,    61,    84,    49,     3,    52,     3,    52,     6,    45,
+      46,    61,    89,     8,     3,    55,     3,    89,    62,     8,
+       3,    55,    62,    84,     3
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1944,133 +1936,123 @@ yyreduce:
 
   case 62:
 #line 228 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.needOperatorStack = true; (yyval.item) = (yyvsp[(1) - (1)].item); ;}
+    { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); ;}
     break;
 
   case 63:
+#line 228 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+    { KDevPG::globalSystem.needOperatorStack = true; (yyval.item) = (yyvsp[(2) - (2)].item); ;}
+    break;
+
+  case 64:
 #line 232 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = const_cast<char*>(""); ;}
     break;
 
-  case 64:
+  case 65:
 #line 233 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
-  case 66:
+  case 67:
 #line 239 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { ; ;}
-    break;
-
-  case 67:
-#line 243 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); ;}
     break;
 
   case 68:
 #line 244 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(3) - (7)].item);
-              operatorNode->mName = (yyvsp[(6) - (7)].str);
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (9)].item);
+              operatorNode->mName = (yyvsp[(5) - (9)].str);
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
                 KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(6) - (7)].str)), 0, (yyvsp[(7) - (7)].str));
+              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(5) - (9)].str)), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[(7) - (9)].item), (yyvsp[(9) - (9)].str));
             ;}
     break;
 
   case 69:
-#line 251 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); ;}
+#line 252 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+    {
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (9)].item);
+              operatorNode->mName = (yyvsp[(5) - (9)].str);
+              if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
+              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(5) - (9)].str)), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[(8) - (9)].item), (yyvsp[(6) - (9)].str));
+            ;}
     break;
 
   case 70:
-#line 252 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 260 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(3) - (10)].item);
-              operatorNode->mName = (yyvsp[(6) - (10)].str);
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (6)].item);
+              operatorNode->mName = (yyvsp[(5) - (6)].str);
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
                 KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(6) - (10)].str)), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[(8) - (10)].item), (yyvsp[(10) - (10)].str));
+              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(5) - (6)].str)), 0, (yyvsp[(6) - (6)].str));
             ;}
     break;
 
   case 71:
-#line 259 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); ;}
-    break;
-
-  case 72:
-#line 260 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(3) - (10)].item);
-              operatorNode->mName = (yyvsp[(6) - (10)].str);
-              if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(6) - (10)].str)), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[(9) - (10)].item), (yyvsp[(7) - (10)].str));
-            ;}
-    break;
-
-  case 73:
 #line 270 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushBin(*(yyvsp[(2) - (4)].operatorInformation), true, (yyvsp[(3) - (4)].str)); delete (yyvsp[(2) - (4)].operatorInformation); ;}
     break;
 
-  case 74:
+  case 72:
 #line 271 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushBin(*(yyvsp[(2) - (4)].operatorInformation), false, (yyvsp[(3) - (4)].str)); delete (yyvsp[(2) - (4)].operatorInformation); ;}
     break;
 
-  case 75:
+  case 73:
 #line 272 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushTern(*(yyvsp[(2) - (5)].operatorInformation), *(yyvsp[(3) - (5)].operatorInformation), true, (yyvsp[(4) - (5)].str)); delete (yyvsp[(2) - (5)].operatorInformation); delete (yyvsp[(3) - (5)].operatorInformation); ;}
     break;
 
-  case 76:
+  case 74:
 #line 273 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushTern(*(yyvsp[(2) - (5)].operatorInformation), *(yyvsp[(3) - (5)].operatorInformation), false, (yyvsp[(4) - (5)].str)); delete (yyvsp[(2) - (5)].operatorInformation); delete (yyvsp[(3) - (5)].operatorInformation); ;}
     break;
 
-  case 77:
+  case 75:
 #line 274 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushPre(*(yyvsp[(2) - (3)].operatorInformation), (yyvsp[(3) - (3)].str)); delete (yyvsp[(2) - (3)].operatorInformation); ;}
     break;
 
-  case 78:
+  case 76:
 #line 275 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushPost(*(yyvsp[(2) - (3)].operatorInformation), (yyvsp[(3) - (3)].str)); delete (yyvsp[(2) - (3)].operatorInformation); ;}
     break;
 
-  case 79:
+  case 77:
 #line 276 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushParen(*(yyvsp[(2) - (4)].operatorInformation), *(yyvsp[(4) - (4)].operatorInformation), (KDevPG::Model::NonTerminalItem*)(yyvsp[(3) - (4)].item)); delete (yyvsp[(2) - (4)].operatorInformation); delete (yyvsp[(4) - (4)].operatorInformation); ;}
     break;
 
-  case 80:
+  case 78:
 #line 280 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator((yyvsp[(3) - (4)].str), (yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].str)); ;}
     break;
 
-  case 81:
+  case 79:
 #line 281 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator((yyvsp[(3) - (3)].str), (yyvsp[(2) - (3)].str), ""); ;}
     break;
 
-  case 82:
+  case 80:
 #line 282 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator((yyvsp[(1) - (2)].str), "", (yyvsp[(2) - (2)].str)); ;}
     break;
 
-  case 83:
+  case 81:
 #line 283 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator((yyvsp[(1) - (1)].str), "", ""); ;}
     break;
 
-  case 84:
+  case 82:
 #line 287 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
-  case 85:
+  case 83:
 #line 289 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(1) - (2)].item);
@@ -2082,59 +2064,59 @@ yyreduce:
         ;}
     break;
 
-  case 86:
+  case 84:
 #line 301 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), (yyvsp[(3) - (6)].variableType), false, (yyvsp[(4) - (6)].str), (yyvsp[(6) - (6)].str)); ;}
     break;
 
-  case 87:
+  case 85:
 #line 303 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (5)].declarationType), (yyvsp[(2) - (5)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, false, (yyvsp[(4) - (5)].str), ""); ;}
     break;
 
-  case 88:
+  case 86:
 #line 305 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (7)].declarationType), (yyvsp[(2) - (7)].storageType), (yyvsp[(3) - (7)].variableType), true, (yyvsp[(5) - (7)].str), (yyvsp[(7) - (7)].str)); ;}
     break;
 
-  case 89:
+  case 87:
 #line 307 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, true, (yyvsp[(5) - (6)].str), ""); ;}
     break;
 
-  case 90:
+  case 88:
 #line 311 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     ;}
     break;
 
-  case 91:
+  case 89:
 #line 312 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  ;}
     break;
 
-  case 92:
+  case 90:
 #line 316 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    ;}
     break;
 
-  case 93:
+  case 91:
 #line 317 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     ;}
     break;
 
-  case 94:
+  case 92:
 #line 321 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeNode;             ;}
     break;
 
-  case 95:
+  case 93:
 #line 322 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeVariable;         ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 2138 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
+#line 2120 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

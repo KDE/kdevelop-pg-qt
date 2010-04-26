@@ -53,6 +53,7 @@ void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> co
     O("Prefix" + sym->mCapitalizedName)
     O("Postfix" + sym->mCapitalizedName)
     O("Binary" + sym->mCapitalizedName)
+    O("Ternary" + sym->mCapitalizedName)
   }
   else
     O(sym->mCapitalizedName)

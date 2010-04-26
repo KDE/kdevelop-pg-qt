@@ -114,6 +114,9 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
     O1("Binary" + sym->mCapitalizedName)
     O2("binary-" + sym->mName)
     O3("Binary" + sym->mCapitalizedName)
+    O1("Ternary" + sym->mCapitalizedName)
+    O2("ternary-" + sym->mName)
+    O3("Ternary" + sym->mCapitalizedName)
   }
   else
   {

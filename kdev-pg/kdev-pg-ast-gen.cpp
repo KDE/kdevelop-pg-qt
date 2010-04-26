@@ -39,6 +39,7 @@ void GenerateAst::operator()()
         O("Prefix" + sym->mCapitalizedName)
         O("Postfix" + sym->mCapitalizedName)
         O("Binary" + sym->mCapitalizedName)
+        O("Ternary" + sym->mCapitalizedName)
       }
       #undef O
     }
@@ -62,6 +63,8 @@ void GenerateAst::operator()()
         out << "Postfix" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
         ++node_id;
         out << "Binary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
+        ++node_id;
+        out << "Ternary" << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
         ++node_id;
       }
       out << sym->mCapitalizedName << "Kind" << " = " << node_id << "," << endl;
@@ -181,6 +184,21 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
         << "AstNode *first, "
         << "AstNode *second)" << endl
         << ": first(first), second(second)" << endl
+        << "{\n}" << endl;
+    DefaultVisitor::visitEvolve(node);
+    out << "};" << endl << endl;
+    
+    out << "struct " << globalSystem.exportMacro << " Ternary" << sym->mCapitalizedName << "Ast: public "
+        << sym->mCapitalizedName << "Ast"
+        << " {" << endl
+        << "enum { KIND = Binary" << sym->mCapitalizedName << "Kind };" << endl
+        << "AstNode *first;" << endl
+        << "AstNode *second;" << endl
+        << "AstNode *third;" << endl
+        << "Ternary" << sym->mCapitalizedName << "Ast("
+        << "AstNode *first, "
+        << "AstNode *second, AstNode *third)" << endl
+        << ": first(first), second(second), third(third)" << endl
         << "{\n}" << endl;
     DefaultVisitor::visitEvolve(node);
     out << "};" << endl << endl;

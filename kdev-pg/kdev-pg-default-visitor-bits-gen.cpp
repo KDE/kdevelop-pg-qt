@@ -48,7 +48,9 @@ void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*
     O("Postfix" + sym->mCapitalizedName)
     out << "visitNode(node->first);" << endl << "}" << endl << endl;
     O("Binary" + sym->mCapitalizedName)
-    out << "visitNode(node->first);" << endl << "visitNode(node->second);";
+    out << "visitNode(node->first);" << endl << "visitNode(node->second); }" << endl << endl;
+    O("Ternary" + sym->mCapitalizedName)
+    out << "visitNode(node->first);" << endl << "visitNode(node->second);" << endl << "visitNode(node->third);";
   }
   else
   {

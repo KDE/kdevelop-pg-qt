@@ -31,11 +31,11 @@ void GenerateNewVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*> co
   HasMemberNodes hms(has_members);
   hms(__it.second);
 
-  #define O(name)
-    out << "void " << name << "::visit" << name
-        << "(" << name << "Ast *node"
-        << ") {" << endl << endl
-        << "DefaultVisitor::visit" << name << "(node)" << endl
+  #define O(name) \
+    out << "void " << name << "::visit" << name \
+        << "(" << name << "Ast *node" \
+        << ") {" << endl << endl \
+        << "DefaultVisitor::visit" << name << "(node)" << endl \
         << "}" << endl << endl;
   
   if(isOperatorSymbol(__it.second))
@@ -43,6 +43,7 @@ void GenerateNewVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*> co
     O("Prefix" + __it.second->mCapitalizedName)
     O("Postfix" + __it.second->mCapitalizedName)
     O("Binary" + __it.second->mCapitalizedName)
+    O("Ternary" + __it.second->mCapitalizedName)
   }
   else if(has_members)
   {

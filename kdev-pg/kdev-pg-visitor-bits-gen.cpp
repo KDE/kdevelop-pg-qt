@@ -46,6 +46,8 @@ void GenerateVisitorBits::operator()()
         O("Postfix" + sym->mCapitalizedName)
         out << ",\n";
         O("Binary" + sym->mCapitalizedName)
+        out << ",\n";
+        O("Ternary" + sym->mCapitalizedName)
         out << ",\n0";
       }
       else

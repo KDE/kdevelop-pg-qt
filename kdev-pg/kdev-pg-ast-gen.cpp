@@ -156,6 +156,9 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
         << "enum { KIND =" << thestr << sym->mCapitalizedName << "Kind };" << endl \
         << "AstNode *first;" << endl \
         << thestr << sym->mCapitalizedName << "Ast(" \
+        << ")" << endl \
+        << "{\n}" << endl \
+        << thestr << sym->mCapitalizedName << "Ast(" \
         << "AstNode *first)" << endl \
         << ": first(first)" << endl \
         << "{\n}" << endl;\
@@ -181,9 +184,8 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
         << "AstNode *first;" << endl
         << "AstNode *second;" << endl
         << "Binary" << sym->mCapitalizedName << "Ast("
-        << "AstNode *first, "
-        << "AstNode *second)" << endl
-        << ": first(first), second(second)" << endl
+        << "AstNode *first)" << endl
+        << ": first(first)" << endl
         << "{\n}" << endl;
     DefaultVisitor::visitEvolve(node);
     out << "};" << endl << endl;
@@ -191,14 +193,13 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
     out << "struct " << globalSystem.exportMacro << " Ternary" << sym->mCapitalizedName << "Ast: public "
         << sym->mCapitalizedName << "Ast"
         << " {" << endl
-        << "enum { KIND = Binary" << sym->mCapitalizedName << "Kind };" << endl
+        << "enum { KIND = Ternary" << sym->mCapitalizedName << "Kind };" << endl
         << "AstNode *first;" << endl
         << "AstNode *second;" << endl
         << "AstNode *third;" << endl
         << "Ternary" << sym->mCapitalizedName << "Ast("
-        << "AstNode *first, "
-        << "AstNode *second, AstNode *third)" << endl
-        << ": first(first), second(second), third(third)" << endl
+        << "AstNode *first)" << endl
+        << ": first(first)" << endl
         << "{\n}" << endl;
     DefaultVisitor::visitEvolve(node);
     out << "};" << endl << endl;
@@ -218,7 +219,7 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
 
 void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
-  GenerateVariableDeclaration gen_var_decl(out);
+  GenerateVariableDeclaration<true, true> gen_var_decl(out);
   if (node->mStorageType != Model::VariableDeclarationItem::StorageTemporary
       && mNames.find(node->mName) == mNames.end())
     {

@@ -200,7 +200,6 @@ namespace Model
     struct ParenDescription
     {
       Operator first, second;
-      NonTerminalItem *item;
     };
     QString mName;
     NonTerminalItem *mBase;
@@ -209,12 +208,11 @@ namespace Model
     vector< BinDescription > mBin, mPost;
     vector< UnaryDescription > mPre;
     
-    inline void pushParen(const Operator& op1, const Operator& op2, NonTerminalItem *item)
+    inline void pushParen(const Operator& op1, const Operator& op2)
     {
       ParenDescription d;
       d.first = op1;
       d.second = op2;
-      d.item = item;
       mParen.push_back(d);
     }
     inline void pushPre(const Operator& op, const QString& priority)
@@ -261,7 +259,7 @@ namespace Model
       DeclarationLocal
     };
 
-    enum StorateType {
+    enum StorageType {
       StorageAstMember,
       StorageTemporary
     };
@@ -277,7 +275,7 @@ namespace Model
     QString mName;
 
     DeclarationType mDeclarationType;
-    StorateType     mStorageType;
+    StorageType     mStorageType;
     VariableType    mVariableType;
     bool            mIsSequence;
 

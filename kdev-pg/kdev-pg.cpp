@@ -127,7 +127,7 @@ Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, const QString& ar
 
 Model::AnnotationItem *annotation(
     const QString& name, Model::Node *item, bool isSequence,
-    Model::VariableDeclarationItem::StorateType storageType)
+    Model::VariableDeclarationItem::StorageType storageType)
 {
   Model::AnnotationItem *node = createNode<Model::AnnotationItem>();
   node->mItem = item;
@@ -168,7 +168,7 @@ Model::ConditionItem *condition(const QString& code, Model::Node *item)
 
 Model::VariableDeclarationItem *variableDeclaration(
       Model::VariableDeclarationItem::DeclarationType declarationType,
-      Model::VariableDeclarationItem::StorateType     storageType,
+      Model::VariableDeclarationItem::StorageType     storageType,
       Model::VariableDeclarationItem::VariableType    variableType,
       bool isSequence, const QString& name, const QString& type)
 {

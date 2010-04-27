@@ -54,11 +54,11 @@ namespace KDevPG
   Model::ConditionItem *condition(const QString& code, Model::Node *item);
   Model::AnnotationItem *annotation(
       const QString& name, Model::Node *item, bool isSequence,
-      Model::VariableDeclarationItem::StorateType storageType
+      Model::VariableDeclarationItem::StorageType storageType
   );
   Model::VariableDeclarationItem *variableDeclaration(
       Model::VariableDeclarationItem::DeclarationType declarationType,
-      Model::VariableDeclarationItem::StorateType     storageType,
+      Model::VariableDeclarationItem::StorageType     storageType,
       Model::VariableDeclarationItem::VariableType    variableType,
       bool isSequence, const QString& name, const QString& type
   );

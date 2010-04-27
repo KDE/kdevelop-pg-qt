@@ -39,6 +39,10 @@ int main(int argc, char **argv)
         A(L_PAREN)
       else if(str[i] == ')')
         A(R_PAREN)
+      else if(str[i] == '?')
+        A(QUESTION)
+      else if(str[i] == ':')
+        A(COLON)
       else
         A(NUM)
     }

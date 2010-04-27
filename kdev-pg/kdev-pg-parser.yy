@@ -37,7 +37,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
     KDevPG::Model::Node *item;
     char* str;
     KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
-    KDevPG::Model::VariableDeclarationItem::StorateType     storageType;
+    KDevPG::Model::VariableDeclarationItem::StorageType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
     KDevPG::Model::Operator                                *operatorInformation;
 }
@@ -273,7 +273,7 @@ operatorDeclaration
     | T_TERN operator operator T_NUMBER T_RIGHT_ASSOC   { operatorNode->pushTern(*$2, *$3, false, $4); delete $2; delete $3; }
     | T_PRE operator T_NUMBER                           { operatorNode->pushPre(*$2, $3); delete $2; }
     | T_POST operator T_NUMBER                          { operatorNode->pushPost(*$2, $3); delete $2; }
-    | T_PAREN operator primary_atom operator                         { operatorNode->pushParen(*$2, *$4, (KDevPG::Model::NonTerminalItem*)$3); delete $2; delete $4; }
+    | T_PAREN operator operator                         { operatorNode->pushParen(*$2, *$3); delete $2; delete $3; }
     ;
     
 operator

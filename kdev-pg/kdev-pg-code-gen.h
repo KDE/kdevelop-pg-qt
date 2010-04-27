@@ -33,10 +33,11 @@ public:
   QTextStream& out;
   Model::EvolveItem *mEvolve;
   QSet<QString> *mNames;
+  Model::SymbolItem *mSym;
 
 public:
-  CodeGenerator(QTextStream& o, QSet<QString> *names)
-    : out(o), mNames(names), mCurrentCatchId(0)
+  CodeGenerator(QTextStream& o, QSet<QString> *names, Model::SymbolItem *sym)
+    : out(o), mNames(names), mSym(sym), mCurrentCatchId(0)
   {}
 
   void operator()(Model::Node *node);
@@ -119,6 +120,19 @@ public:
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
+class GenerateRecursiveDelegation
+{
+public:
+  QTextStream& out;
+  
+  GenerateRecursiveDelegation(QTextStream& o)
+    : out(o)
+  {}
+  
+  void operator()(Model::SymbolItem *node);
+};
+
+template<bool printType, bool printName>
 class GenerateVariableDeclaration
 {
 public:

@@ -546,6 +546,13 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
   const QString nodeType = capNode + "Ast";    /// @TODO Add a unique name
   const QString baseNameC = node->mBase->mSymbol->mCapitalizedName;
   const QString baseType = baseNameC + "Ast";
+  Model::NonTerminalItem ntItem;
+  ntItem.mSymbol = mSym;
+  ntItem.kind = Model::NodeKindNonTerminal;
+  {
+    QTextStream argStr(&ntItem.mArguments);
+    GenerateRecursiveDelegation del(argStr);
+  }
   bool printElse = false;
   for(__typeof__(node->mPost.begin()) i = node->mPost.begin(); i != node->mPost.end(); ++i)
   {
@@ -597,7 +604,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "opStack.last().n->endToken = last->endToken;"
            "last = opStack.last().n;\n"
            "opStack.pop_back();"
-           "opStack.push_front(OperatorStackItem((*yynode) = create<Binary" << nodeType << ">(last, 0), priority));"
+           "opStack.push_front(OperatorStackItem((*yynode) = create<Binary" << nodeType << ">(last), priority));"
            "(*yynode)->startToken = last->startToken;"
            "br = true; break; } else {"
            "AstNode *olast = last;"
@@ -606,30 +613,67 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "opStack.pop_back(); }}";
     out << "if(!br) { "
            "opStack.last().n->endToken = last->endToken;"
-        << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
-        << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last, 0), priority)); ref->startToken = last->startToken; } expectOperator = false; yylex(); }";
+        << "AstNode*& ref = "
+           "opStack.last().n->kind == AstNode::Ternary" << capNode << "Kind"
+           "  ? (((Ternary" << nodeType << "*)opStack.last().n)->third"
+           "   ? ((Ternary" << nodeType << "*)opStack.last().n)->third"
+           "   : (((Ternary" << nodeType << "*)opStack.last().n)->second"
+           "    ? ((Ternary" << nodeType << "*)opStack.last().n)->second"
+           "    : ((Ternary" << nodeType << "*)opStack.last().n)->first ))"
+           "  : opStack.last().n->kind == AstNode::Binary" << capNode << "Kind"
+           " && ((Binary" << nodeType << "*)opStack.last().n)->second"
+           "  ? ((Binary" << nodeType << "*)opStack.last().n)->second"
+           "  : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
+        << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last), priority)); ref->startToken = last->startToken; } expectOperator = false; yylex(); }";
   }
-  /*for(__typeof__(node->mTern.begin()) i = node->mTern.begin(); i != node->mTern.end(); ++i)
+  for(__typeof__(node->mTern.begin()) i = node->mTern.begin(); i != node->mTern.end(); ++i)
   {
     if(printElse)
       out << "else ";
     printElse = true;
     out << "if(yytoken == Token_" << i->first.mTok;
     if(i->first.mCond.size() != 0)
-      out << " && " << i->op.mCond;
-    out << ") { const unsigned int priority = " << i->priority << ";";
-    out << i->first.mCode << "...}";
-  }*/
-  /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
-  {
-    out << "if(yytoken == Token_" << i->second.mTok;
+      out << " && " << i->first.mCond;
+        out << ") { const unsigned int priority = " << i->priority << ";";
+    out << i->first.mCode;
+    out << "AstNode *last = 0; bool br = false;";
+    out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
+    out << "if(opStack.size() == 1) {"
+           "if(last)\n"
+           "opStack.last().n->endToken = last->endToken;"
+           "last = opStack.last().n;\n"
+           "opStack.pop_back();"
+           "opStack.push_front(OperatorStackItem((*yynode) = create<Ternary" << nodeType << ">(last), priority));"
+           "(*yynode)->startToken = last->startToken;"
+           "yylex();";
+    QString __var = generateParserCall(&ntItem, mCurrentCatchId, out);
+    out << "if(!(yytoken == Token_" << i->second.mTok;
     if(i->second.mCond.size() != 0)
       out << " && " << i->second.mCond;
-    out << ") {" << i->second.mCode << "... }";
-  }*/
-  /// @TODO TernOp, Paren (e.g. a variable instead of "1" in "opStack.size() == 1", return after ")")
-  if(printElse)
-    out << "else ";
+    out << ")) return false;"
+           "((Ternary" << nodeType << "*)*yynode)->second = "
+        << __var
+        << ";br = true; break; } else {"
+           "AstNode *olast = last;"
+           "last = opStack.last().n;\n"
+           "if(olast)\nlast->endToken = olast->endToken;"
+           "opStack.pop_back(); }}";
+    out << "if(!br) { "
+           "opStack.last().n->endToken = last->endToken;"
+        << "AstNode*& ref = "
+           "opStack.last().n->kind == AstNode::Ternary" << capNode << "Kind"
+           "  ? (((Ternary" << nodeType << "*)opStack.last().n)->third"
+           "   ? ((Ternary" << nodeType << "*)opStack.last().n)->third"
+           "   : (((Ternary" << nodeType << "*)opStack.last().n)->second"
+           "    ? ((Ternary" << nodeType << "*)opStack.last().n)->second"
+           "    : ((Ternary" << nodeType << "*)opStack.last().n)->first ))"
+           "  : opStack.last().n->kind == AstNode::Binary" << capNode << "Kind"
+           " && ((Binary" << nodeType << "*)opStack.last().n)->second"
+           "  ? ((Binary" << nodeType << "*)opStack.last().n)->second"
+           "  : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
+        << "opStack.push_back(OperatorStackItem(ref = create<Ternary" << nodeType << ">(last), priority)); ref->startToken = last->startToken; } expectOperator = false; yylex(); }";
+  }
+  out << "else ";
   out << "break;";
   out << "} else {";
   printElse = false;
@@ -643,7 +687,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->op.mCode
-        << "Prefix" << nodeType << " *node = create<Prefix" << nodeType << ">(0);"
+        << "Prefix" << nodeType << " *node = create<Prefix" << nodeType << ">();"
            "if(opStack.empty())\n"
            "(*yynode) = node;"
            "void *last = opStack.last().n;"
@@ -651,8 +695,10 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "{\n"
            "if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n"
            "reinterpret_cast<Prefix" << nodeType << "*>(last)->first = node;"
-           "else\n"
+           "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == 0)\n"
            "reinterpret_cast<Binary" << nodeType << "*>(last)->second = node;"
+           "else\n"
+           "reinterpret_cast<Ternary" << nodeType << "*>(last)->third = node;"
            "}"
            "opStack.push_back(OperatorStackItem(node, priority));"
            "node->startToken = tokenStream->index() - 1;"
@@ -669,9 +715,9 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       out << " && " << i->first.mCond;
     out << ") { yylex();"
            "if(";
-    generateTestCondition(i->item->mSymbol, out);
+    generateTestCondition(mSym, out);
     out << ") {";
-    QString __var = generateParserCall(i->item, mCurrentCatchId, out);
+    QString __var = generateParserCall(&ntItem, mCurrentCatchId, out);
     out << "if(!(yytoken == Token_" << i->second.mTok;
     if(i->second.mCond.size() != 0)
       out << " && " << i->second.mCond;
@@ -688,7 +734,9 @@ if(!opStack.isEmpty())\
   void *last = opStack.last().n;\
   if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n\
     reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << endl; \
-  out << "else\nreinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";}\
+  out << "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == 0)\n\
+  reinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";\
+  else\nreinterpret_cast<Ternary" << nodeType << "*>(last)->third = " << __var << ";}\
 else\n\
 (*yynode) = " << __var << ";\
 opStack.push_back(OperatorStackItem(" << __var << ", -1));";
@@ -748,7 +796,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
 {
   mNames.clear();
   Model::SymbolItem *sym = __it.second;
-  CodeGenerator cg(out, &mNames);
+  CodeGenerator cg(out, &mNames, sym);
 
   out << "bool Parser::parse" << sym->mCapitalizedName << "(";
 
@@ -845,7 +893,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
     {
       if ((mNames == 0) || mNames->find(node->mName) == mNames->end())
         {
-          GenerateVariableDeclaration gen_var_decl(out);
+          GenerateVariableDeclaration<true, true> gen_var_decl(out);
           gen_var_decl(node);
 
           if (node->mVariableType == Model::VariableDeclarationItem::TypeToken
@@ -918,6 +966,24 @@ void GenerateParseMethodSignature::operator()(Model::SymbolItem* sym)
     }
 }
 
+void GenerateRecursiveDelegation::operator()(Model::SymbolItem* node)
+{
+  World::Environment::iterator it = globalSystem.env.find(node);
+  if (it != globalSystem.env.end())
+  {
+    // this creates the method signature using just the first of
+    // possibly multiple rules with the same name.
+    Model::EvolveItem *e = (*it);
+    Model::VariableDeclarationItem *decl = e->mDeclarations;
+    GenerateVariableDeclaration<false, true> vd(out);
+    while(decl)
+    {
+      vd(decl);
+      decl = decl->mNext;
+    }
+  }
+}
+
 void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDeclarationItem *node)
 {
   if (node->mDeclarationType == Model::VariableDeclarationItem::DeclarationArgument)
@@ -929,7 +995,7 @@ void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDecla
           else
             out << ", ";
 
-          GenerateVariableDeclaration gen_var_decl(out);
+          GenerateVariableDeclaration<true, true> gen_var_decl(out);
           gen_var_decl(node);
 
           if (mNames != 0)
@@ -940,28 +1006,35 @@ void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDecla
   DefaultVisitor::visitVariableDeclaration(node);
 }
 
-void GenerateVariableDeclaration::operator()(Model::VariableDeclarationItem *node)
+template<bool printType, bool printName>
+void GenerateVariableDeclaration<printType, printName>::operator()(Model::VariableDeclarationItem *node)
 {
-  if (node->mIsSequence)
-    out << "const KDevPG::ListNode<";
-
-  if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
-    out << "qint64 ";
-  else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
+  if(printType)
   {
-    out << node->mCapitalizedType << "Ast *";
-  }else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable)
-    out << node->mType << " ";
-  else
-    Q_ASSERT(0); // ### not supported
+    if (node->mIsSequence)
+      out << "const KDevPG::ListNode<";
 
-  if (node->mIsSequence)
-    out << "> *";
+    if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
+      out << "qint64 ";
+    else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
+    {
+      out << node->mCapitalizedType << "Ast *";
+    }else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable)
+      out << node->mType << " ";
+    else
+      Q_ASSERT(0); // ### not supported
 
-  out << node->mName;
+    if (node->mIsSequence)
+      out << "> *";
+  }
 
-  if (node->mIsSequence)
-    out << "Sequence";
+  if(printName)
+  {
+    out << node->mName;
+
+    if (node->mIsSequence)
+      out << "Sequence";
+  }
 }
 
 void GenerateToken::operator()(QPair<QString, Model::TerminalItem*> const &__it)
@@ -1055,13 +1128,6 @@ void GenerateParserDeclarations::operator()()
             << "inline T *create(AstNode *u)" << endl
             << "{" << endl
             << "T *node = new (memoryPool->allocate(sizeof(T))) T(u);" << endl
-            << "node->kind = T::KIND;" << endl
-            << "return node;" << endl
-            << "}" << endl
-            << "template <class T>" << endl
-            << "inline T *create(AstNode *u, AstNode *v)" << endl
-            << "{" << endl
-            << "T *node = new (memoryPool->allocate(sizeof(T))) T(u, v);" << endl
             << "node->kind = T::KIND;" << endl
             << "return node;" << endl
             << "}" << endl

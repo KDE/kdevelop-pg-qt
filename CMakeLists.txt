@@ -28,5 +28,6 @@ add_subdirectory(kdev-pg)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
 
 if(KDE4_FOUND)
+    enable_testing()
     add_subdirectory(tests)
 endif(KDE4_FOUND)

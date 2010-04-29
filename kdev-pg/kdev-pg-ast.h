@@ -183,13 +183,13 @@ namespace Model
     struct TernDescription
     {
       Operator first, second;
-      bool left: 1;
+      QString left;
       QString priority;
     };
     struct BinDescription
     {
       Operator op;
-      bool left: 1;
+      QString left;
       QString priority;
     };
     struct UnaryDescription
@@ -222,15 +222,15 @@ namespace Model
       d.priority = priority;
       mPre.push_back(d);
     }
-    inline void pushPost(const Operator& op, const QString& priority)
+    inline void pushPost(const Operator& op, const QString& left, const QString& priority)
     {
       BinDescription d;
       d.op = op;
       d.priority = priority;
-      d.left = false;
+      d.left = left;
       mPost.push_back(d);
     }
-    inline void pushBin(const Operator& op, bool left, const QString& priority)
+    inline void pushBin(const Operator& op, const QString& left, const QString& priority)
     {
       BinDescription d;
       d.op = op;
@@ -238,7 +238,7 @@ namespace Model
       d.priority = priority;
       mBin.push_back(d);
     }
-    inline void pushTern(const Operator& op1, const Operator& op2, bool left, const QString& priority)
+    inline void pushTern(const Operator& op1, const Operator& op2, const QString& left, const QString& priority)
     {
       TernDescription d;
       d.first = op1;

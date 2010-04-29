@@ -534,16 +534,12 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
 
 void CodeGenerator::visitOperator(Model::OperatorItem *node)
 {
-  // generateTestCondition(node, out)
-//   out << "if(";
-//   generateTestCondition(node, out);
-//   out << ")";
   out << "bool expectOperator = false;"
       << "while(true) {"
       << "if(expectOperator) {"
       << " ";
   const QString capNode = capitalized(node->mName);
-  const QString nodeType = capNode + "Ast";    /// @TODO Add a unique name
+  const QString nodeType = capNode + "Ast";
   const QString baseNameC = node->mBase->mSymbol->mCapitalizedName;
   const QString baseType = baseNameC + "Ast";
   Model::NonTerminalItem ntItem;
@@ -565,13 +561,13 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->op.mCode;
     out << "AstNode *last = 0; bool br = false;";
-    out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
+    out << "while(priority < opStack.last().p + " << i->left << ") {";
     out << "if(opStack.size() == 1) {"
            "if(last)\n"
            "opStack.last().n->endToken = last->endToken;"
            "last = opStack.last().n;"
            "opStack.pop_back();"
-           "opStack.push_front(OperatorStackItem((*yynode) = create<Postfix"<< nodeType << ">(last), -1));"
+           "opStack.push_front(OperatorStackItem((*yynode) = create<Postfix"<< nodeType << ">(last), -2));"
            "(*yynode)->endToken = last->endToken + 1;"
            "(*yynode)->startToken = last->startToken;"
            "br = true; break; } else {"
@@ -582,7 +578,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << "if(!br) { "
            "opStack.last().n->endToken = last->endToken;"
         << "AstNode*& ref = opStack.last().n->kind == AstNode::Binary" << capNode << "Kind && ((Binary" << nodeType << "*)opStack.last().n)->second ? ((Binary" << nodeType << "*)opStack.last().n)->second : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
-        << "opStack.push_back(OperatorStackItem(ref = create<Postfix" << nodeType << ">(last), -1));"
+        << "opStack.push_back(OperatorStackItem(ref = create<Postfix" << nodeType << ">(last), -2));"
           "ref->endToken = last->endToken + 1;"
           "ref->startToken = last->startToken;"
           "} yylex(); }";
@@ -598,7 +594,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->op.mCode;
     out << "AstNode *last = 0; bool br = false;";
-    out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
+    out << "while(priority < opStack.last().p + " << i->left << ") {";
     out << "if(opStack.size() == 1) {"
            "if(last)\n"
            "opStack.last().n->endToken = last->endToken;"
@@ -637,7 +633,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
         out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->first.mCode;
     out << "AstNode *last = 0; bool br = false;";
-    out << "while(priority " << (i->left ? "<=" : "<") << " opStack.last().p) {";
+    out << "while(priority < opStack.last().p + " << i->left << ") {";
     out << "if(opStack.size() == 1) {"
            "if(last)\n"
            "opStack.last().n->endToken = last->endToken;"
@@ -739,7 +735,7 @@ if(!opStack.isEmpty())\
   else\nreinterpret_cast<Ternary" << nodeType << "*>(last)->third = " << __var << ";}\
 else\n\
 (*yynode) = " << __var << ";\
-opStack.push_back(OperatorStackItem(" << __var << ", -1));";
+opStack.push_back(OperatorStackItem(" << __var << ", -2));";
     PUSH_UNARY
     out << "expectOperator = true; } else\nreturn false; }";
   }
@@ -752,31 +748,11 @@ opStack.push_back(OperatorStackItem(" << __var << ", -1));";
   PUSH_UNARY
   #undef PUSH_UNARY
   out << "expectOperator = true; }";
-  /*for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
-  {
-    if(printElse)
-      out << "else ";
-    printElse = true;
-    out << "if(yytoken == Token_" << i->first.mTok;
-    if(i->first.mCond.size() != 0)
-      out << " && " << i->first.mCond;
-    out << ") { " << i->first.mCode << " }";
-  }*/
-  /*for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
-  {
-    if(printElse)
-      out << "else ";
-    printElse = true;
-    out << "if(yytoken == Token_" << i->op.mTok;
-    if(i->op.mCond.size() != 0)
-      out << " && " << i->op.mCond;
-    out << ") { const unsigned int priority = " << i->priority << ";";
-    out << i->op.mCode;
-    out << "... }";
-  }*/
-  out << "else ";
-  out << "break;";
-  out << "} }";
+  out << "else"
+         "{"
+         "expectedSymbol(AstNode::" << capNode << "Kind"
+         ", \"" << node->mName << "\");return false;"
+         "} } }";
   /// @TODO Further: empty binary operator
 }
 
@@ -863,16 +839,6 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
                "{"
                "olast = last;"
                "last = opStack.last().n;"
-               "bool fail = false;"
-               "if(last->kind == AstNode::Ternary" << sym->mCapitalizedName << "Kind)\n"
-               "fail = ((Ternary" << sym->mCapitalizedName << "Ast*)last)->third == 0;"
-               "else if(last->kind == AstNode::Binary" << sym->mCapitalizedName << "Kind)\n"
-               "fail = ((Binary" << sym->mCapitalizedName << "Ast*)last)->second == 0;"
-               "else\n"
-               "fail = ((Prefix" << sym->mCapitalizedName << "Ast*)last)->first == 0;"
-               "if(fail){"
-               "expectedSymbol(AstNode::" << sym->mCapitalizedName << "Kind"
-            << ", \"" << sym->mName << "\"" << ");return false;}"
                "if(olast)\n"
                "last->endToken = olast->endToken;"
                "opStack.pop_back();"

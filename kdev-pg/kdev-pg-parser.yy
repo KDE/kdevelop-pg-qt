@@ -53,11 +53,11 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_PARSER_BASE T_AST_BASE
 %token T_BIN T_PRE T_POST T_TERN
 %token T_LOPR T_ROPR
-%token T_LEFT_ASSOC T_RIGHT_ASSOC
+%token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
 %token T_PAREN
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
-%type<str> name code_opt rule_arguments_opt
+%type<str> name code_opt rule_arguments_opt priority assoc
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<item> member_declaration_rest variableDeclarations variableDeclaration operatorRule
@@ -273,13 +273,37 @@ operatorRule
     ;
 
 operatorDeclaration
-    : T_BIN operator T_NUMBER T_LEFT_ASSOC              { operatorNode->pushBin(*$2, true, $3); delete $2; }
-    | T_BIN operator T_NUMBER T_RIGHT_ASSOC             { operatorNode->pushBin(*$2, false, $3); delete $2; }
-    | T_TERN operator operator T_NUMBER T_LEFT_ASSOC    { operatorNode->pushTern(*$2, *$3, true, $4); delete $2; delete $3; }
-    | T_TERN operator operator T_NUMBER T_RIGHT_ASSOC   { operatorNode->pushTern(*$2, *$3, false, $4); delete $2; delete $3; }
-    | T_PRE operator T_NUMBER                           { operatorNode->pushPre(*$2, $3); delete $2; }
-    | T_POST operator T_NUMBER                          { operatorNode->pushPost(*$2, $3); delete $2; }
-    | T_PAREN operator operator                         { operatorNode->pushParen(*$2, *$3); delete $2; delete $3; }
+    : T_BIN operator priority assoc              { operatorNode->pushBin(*$2, $4, $3); delete $2; }
+    | T_TERN operator operator priority assoc    { operatorNode->pushTern(*$2, *$3, $5, $4); delete $2; delete $3; }
+    | T_PRE operator priority                    { operatorNode->pushPre(*$2, $3); delete $2; }
+    | T_POST operator priority                   { operatorNode->pushPost(*$2, "0", $3); delete $2; delete $3; }
+    | T_POST operator priority assoc             { operatorNode->pushPost(*$2, $4, $3); delete $2; }
+    | T_PAREN operator operator                  { operatorNode->pushParen(*$2, *$3); delete $2; delete $3; }
+    ;
+    
+priority
+    : '0'                          { $$ = (char*)"0"; }
+    | T_NUMBER                     { $$ = $1; }
+    | T_PRIORITY T_CODE            { $$ = $2; }
+    ;
+    
+assoc
+    : T_LEFT_ASSOC                 { $$ = (char*)"1"; }
+    | T_RIGHT_ASSOC                { $$ = (char*)"0"; }
+    | T_IS_LEFT_ASSOC T_CODE       { uint yyleng = strlen($2);
+                                     char *tmp = (char*)calloc(yyleng+7, sizeof(char));
+                                     tmp[0] = '(';
+                                     strcpy(tmp, $2);
+                                     strcpy(tmp+yyleng+6-6, "?1:0)");
+                                     $$ = tmp;
+                                   }
+    | T_IS_RIGHT_ASSOC T_CODE      { uint yyleng = strlen($2);
+                                     char *tmp = (char*)calloc(yyleng+7, sizeof(char));
+                                     tmp[0] = '(';
+                                     strcpy(tmp, $2);
+                                     strcpy(tmp+yyleng+6-6, "?0:1)");
+                                     $$ = tmp;
+                                   }
     ;
     
 operator

@@ -24,7 +24,6 @@
 #include "kdev-pg-clone-tree.h"
 
 #include <cassert>
-#include <kdebug.h>
 
 extern int yylex();
 extern void yyerror(const char* msg);
@@ -228,7 +227,7 @@ item
         { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
     | { if(KDevPG::globalSystem.generateAst == false)
         {
-          kFatal() << "Operator-expression-parsing is not yet supported with --no-ast!";
+          qFatal("Operator-expression-parsing is not yet supported with --no-ast!");
           exit(-1);
         }
         operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>();

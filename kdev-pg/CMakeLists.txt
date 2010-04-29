@@ -95,7 +95,7 @@ ENDIF(FLEX_EXECUTABLE)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg-qt ${parser_srcs} ${kdevpg_srcs})
-TARGET_LINK_LIBRARIES( kdev-pg-qt ${QT_QTCORE_LIBRARY} ${KDE4_KDECORE_LIBS})
+TARGET_LINK_LIBRARIES( kdev-pg-qt ${QT_QTCORE_LIBRARY})
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"

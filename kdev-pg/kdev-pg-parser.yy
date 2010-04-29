@@ -24,6 +24,7 @@
 #include "kdev-pg-clone-tree.h"
 
 #include <cassert>
+#include <kdebug.h>
 
 extern int yylex();
 extern void yyerror(const char* msg);
@@ -225,7 +226,13 @@ item
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
         { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
-    | { operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>(); } operatorRule { KDevPG::globalSystem.needOperatorStack = true; $$ = $2; }
+    | { if(KDevPG::globalSystem.generateAst == false)
+        {
+          kFatal() << "Operator-expression-parsing is not yet supported with --no-ast!";
+          exit(-1);
+        }
+        operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>();
+      } operatorRule { KDevPG::globalSystem.needOperatorStack = true; $$ = $2; }
     ;
 
 code_opt

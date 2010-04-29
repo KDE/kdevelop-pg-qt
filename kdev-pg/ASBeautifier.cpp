@@ -850,7 +850,7 @@ string ASBeautifier::beautify(const string &originalLine)
 		spaceTabCount = inStatementIndentStack->back();
 
 
-	for (i = 0; i < (int) headerStackSize; --i)
+	for (i = 0; i < (int) headerStackSize; ++i)
 	{
 		isInClass = false;
 

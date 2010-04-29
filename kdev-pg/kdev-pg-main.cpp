@@ -139,7 +139,7 @@ int main(int argc, char **argv)
     }
     else if (arg == "--no-ast")
     {
-      KDevPG::globalSystem.GenerateAst = false;
+      KDevPG::globalSystem.generateAst = false;
     }
     else if (arg == "--serialize-visitor")
     {

@@ -47,7 +47,7 @@ void generateOutput()
       language[i] = '_';
   }
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
   { // generate the ast
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
@@ -109,7 +109,7 @@ void generateOutput()
       << "#define " << language << "_H_INCLUDED" << endl
       << endl;
 
-    if (globalSystem.GenerateAst)
+    if (globalSystem.generateAst)
       {
         s << "#include \"" << globalSystem.language << "ast.h\"" << endl
           << "#include <kdev-pg-memory-pool.h>" << endl
@@ -130,7 +130,7 @@ void generateOutput()
       s << "#include <" << globalSystem.exportMacroHeader << ">"
         << endl;
 
-    if (!globalSystem.decl.isEmpty() && !globalSystem.GenerateAst)
+    if (!globalSystem.decl.isEmpty() && !globalSystem.generateAst)
       s << globalSystem.decl << endl;
 
     s << "namespace " << globalSystem.ns << "{" << endl
@@ -153,7 +153,7 @@ void generateOutput()
     format(s, outstr);
   }
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
   { // generate the visitor decls
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
@@ -194,7 +194,7 @@ void generateOutput()
     format(s, outstr);
   }
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
   { // generate the default visitor
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
@@ -403,7 +403,7 @@ void generateOutput()
     format(s, outstr);
   }
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
   { // generate the visitor bits
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
@@ -435,7 +435,7 @@ void generateOutput()
     format(s, outstr);
   }
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
   { // generate the default visitor bits
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);

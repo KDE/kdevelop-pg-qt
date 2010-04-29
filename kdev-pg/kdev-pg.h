@@ -109,7 +109,7 @@ public:
   World()
     : tokenStream("KDevPG::TokenStream"), language(), ns(), decl(), bits(),
       exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
-      GenerateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
+      generateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
       generateTokenText(false), needStateManagement(false), needOperatorStack(false), conflictHandling(Permissive), start(0), mZero(0)
   {}
 
@@ -126,7 +126,7 @@ public:
   QStringList parserDeclarationHeaders;
   QStringList parserBitsHeaders;
   QStringList astHeaders;
-  bool GenerateAst: 1;
+  bool generateAst: 1;
   bool generateSerializeVisitor: 1;
   bool generateDebugVisitor: 1;
   bool generateTokenText: 1;

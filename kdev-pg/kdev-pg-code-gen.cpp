@@ -71,7 +71,7 @@ namespace KDevPG
 
     QString capSymbolName = node->mSymbol->mCapitalizedName;
 
-    if (globalSystem.GenerateAst)
+    if (globalSystem.generateAst)
       {
         sprintf(__var, "__node_%d", __id);
         ++__id;
@@ -411,7 +411,7 @@ void CodeGenerator::visitAlias(Model::AliasItem *node)
 
 void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
 {
-  if (!globalSystem.GenerateAst)
+  if (!globalSystem.generateAst)
     {
       // qDebug() << "** WARNING annotation ignored" << endl;
       visitNode(node->mItem);
@@ -806,7 +806,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
   out << ")" << endl
       << "{" << endl;
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
     {
       if(isOperatorSymbol(sym))
         out << "QVector<OperatorStackItem> opStack;" << endl;
@@ -854,7 +854,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
       << endl;
 
 
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
     {
       if(isOperatorSymbol(sym))
       {
@@ -923,7 +923,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
   // for argument member nodes and tokens, check if their index precedes the current one
   else if (node->mStorageType == Model::VariableDeclarationItem::StorageAstMember
            && node->mDeclarationType == Model::VariableDeclarationItem::DeclarationArgument
-           && globalSystem.GenerateAst)
+           && globalSystem.generateAst)
     {
       QString sequence_suffix = (node->mIsSequence) ? "Sequence" : "";
 
@@ -959,7 +959,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
 
 void GenerateParseMethodSignature::operator()(Model::SymbolItem* sym)
 {
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
     {
       out << sym->mCapitalizedName << "Ast **yynode";
       firstParameter = false;
@@ -998,7 +998,7 @@ void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDecla
 {
   if (node->mDeclarationType == Model::VariableDeclarationItem::DeclarationArgument)
     {
-      if (globalSystem.GenerateAst || (node->mStorageType != Model::VariableDeclarationItem::StorageAstMember))
+      if (globalSystem.generateAst || (node->mStorageType != Model::VariableDeclarationItem::StorageAstMember))
         {
           if (firstParameter)
             firstParameter = false;
@@ -1119,7 +1119,7 @@ void GenerateParserDeclarations::operator()()
 
   out << endl;
 
-    if (globalSystem.GenerateAst)
+    if (globalSystem.generateAst)
       {
         out << "// memory pool" << endl
             << "typedef KDevPG::MemoryPool memoryPoolType;" << endl
@@ -1187,7 +1187,7 @@ void GenerateParserDeclarations::operator()()
     }
 
   out << "Parser() {" << endl;
-  if (globalSystem.GenerateAst)
+  if (globalSystem.generateAst)
     {
       out << "memoryPool = 0;" << endl;
     }

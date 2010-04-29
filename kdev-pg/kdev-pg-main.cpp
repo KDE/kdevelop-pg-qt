@@ -128,11 +128,12 @@ int main(int argc, char **argv)
   args.pop_front();
   foreach(const QString& arg, args)
   {
-    if (arg.startsWith("--output="))
+    #define SW(str) arg.startsWith(QLatin1String(#str))
+    if (SW(--output=))
     {
       KDevPG::globalSystem.language = arg.mid( 9 );
     }
-    else if (arg.startsWith("--namespace="))
+    else if (SW(--namespace=))
     {
       KDevPG::globalSystem.ns = arg.mid( 12 );
     }
@@ -172,17 +173,17 @@ int main(int argc, char **argv)
     {
       generate_parser = true;
     }
-    else if (arg.startsWith("--new-visitor="))
+    else if (SW(--new-visitor=))
     {
       new_visitor = arg.mid( 14 );
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
       generate_parser = false;
     }
-    else if (arg.startsWith("--inherit-default-visitor"))
+    else if (arg == "--inherit-default-visitor")
     {
       inherit_default = true;
     }
-    else if (arg.startsWith("--inherit-abstract-visitor"))
+    else if (arg == "--inherit-abstract-visitor")
     {
       inherit_default = false;
     }

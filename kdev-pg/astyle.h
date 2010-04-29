@@ -164,7 +164,7 @@ class ASBeautifier : protected ASResource
 //		bool isLegalNameChar(char ch) const;
 		const string *findHeader(const string &line, int i,
 		                         const vector<const string*> &possibleHeaders,
-		                         bool checkBoundry = true);
+		                         bool checkBoundary = true);
 		string trim(const string &str);
 		int  indexOf(vector<const string*> &container, const string *element);
 		int  fileType;
@@ -387,7 +387,7 @@ class ASFormatter : public ASBeautifier, private ASEnhancer
 		void formatBrackets(BracketType bracketType);
 		void formatArrayBrackets(BracketType bracketType, bool isOpeningArrayBracket);
 		void adjustComments();
-		const string *findHeader(const vector<const string*> &headers, bool checkBoundry = true);
+		const string *findHeader(const vector<const string*> &headers, bool checkBoundary = true);
 
 		static vector<const string*> headers;
 		static vector<const string*> nonParenHeaders;

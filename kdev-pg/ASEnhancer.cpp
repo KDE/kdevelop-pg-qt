@@ -91,7 +91,7 @@ ASEnhancer::~ASEnhancer()
 	msg += countLine;
 	// write a text file to "My Documents" (Windows)
 	char filename [_MAX_PATH + _MAX_FNAME + _MAX_EXT + 1];   // full path and filename
-	strcpy(filename, getenv("USERPROFILE"));
+	strcpy(filename, qgetenv("USERPROFILE").data());
 	strcat(filename, "\\My Documents\\tracee.txt");
 	ofstream outfile(filename);
 	outfile << msg;
@@ -444,7 +444,7 @@ bool ASEnhancer::findKeyword(const string &line, int i, const char *keyword) con
 	if (line.compare(i, strlen(keyword), keyword) == 0)
 	{
 		// check that this is a header and not a part of a longer word
-		// (e.g. not at its begining, not at its middle...)
+		// (e.g. not at its beginning, not at its middle...)
 
 		int lineLength = line.length();
 		int wordEnd = i + strlen(keyword);

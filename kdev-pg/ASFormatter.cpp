@@ -28,6 +28,8 @@
 
 #include "astyle.h"
 
+#include <QDir>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -121,15 +123,15 @@ ASFormatter::ASFormatter()
 	shouldBreakElseIfs = false;
 #ifdef TRACEF
 	// create a trace text file
-	string filename = "tracef.txt";
-	char* env = getenv("HOME");
-	if (env != NULL)
-		filename = string(env) + string("/tracef.txt");
+	string filename = "/tracef.txt";
+	string env = QDir::homePath().toStdString();
+	if (!env.empty())
+		filename = string(env) + filename;
 	else
 	{
-		env = getenv("USERPROFILE");
-		if (env != NULL)
-			filename = string(env) + string("\\My Documents\\tracef.txt");
+		env = qgetenv("USERPROFILE").data();
+		if (!env.empty())
+			filename = env + string("\\My Documents\\tracef.txt");
 		else
 		{
 			cout << "\nCould not open tracef.txt\n" << endl;
@@ -185,7 +187,7 @@ void ASFormatter::staticInit()
  *
  * init() should be called every time a ASFormatter object is to start
  * formatting a NEW source file.
- * init() recieves a pointer to a DYNAMICALLY CREATED ASSourceIterator object
+ * init() receives a pointer to a DYNAMICALLY CREATED ASSourceIterator object
  * that will be used to iterate through the source code. This object will be
  * deleted during the ASFormatter's destruction, and thus should not be
  * deleted elsewhere.
@@ -306,7 +308,7 @@ string ASFormatter::nextLine()
 		}
 		else // stuff to do when reading a new character...
 		{
-			// make sure that a virgin '{' at the begining ofthe file will be treated as a block...
+			// make sure that a virgin '{' at the beginning ofthe file will be treated as a block...
 			if (isInVirginLine && currentChar == '{')
 				previousCommandChar = '{';
 			isPreviousCharPostComment = isCharImmediatelyPostComment;
@@ -321,7 +323,7 @@ string ASFormatter::nextLine()
 		{
 			appendCurrentChar();
 
-			// explicitely break a line when a line comment's end is found.
+			// explicitly break a line when a line comment's end is found.
 			if (charNum + 1 == (int) currentLine.length())
 			{
 				isInLineBreak = true;
@@ -401,7 +403,7 @@ string ASFormatter::nextLine()
 			formattedLineCommentNum = formattedLine.length();
 			appendSequence(AS_OPEN_LINE_COMMENT);
 			goForward(1);
-			// explicitely break a line when a line comment's end is found.
+			// explicitly break a line when a line comment's end is found.
 			if (charNum + 1 == (int) currentLine.length())
 			{
 				isInLineBreak = true;
@@ -432,7 +434,7 @@ string ASFormatter::nextLine()
 		/* not in quote or comment or white-space of any type ... */
 
 		// check if in preprocessor
-		// ** isInPreprocessor will be automatically reset at the begining
+		// ** isInPreprocessor will be automatically reset at the beginning
 		//    of a new line in getnextChar()
 		if (currentChar == '#')
 		{
@@ -1205,7 +1207,7 @@ bool ASFormatter::isBeforeLineEndComment(int startPos) const
 * get the next character, increasing the current placement in the process.
 * the new character is inserted into the variable currentChar.
 *
-* @return   whether succeded to recieve the new character.
+* @return   whether succeeded to receive the new character.
 */
 bool ASFormatter::getNextChar()
 {

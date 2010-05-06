@@ -293,15 +293,15 @@ assoc
     | T_IS_LEFT_ASSOC T_CODE       { uint yyleng = strlen($2);
                                      char *tmp = (char*)calloc(yyleng+7, sizeof(char));
                                      tmp[0] = '(';
-                                     strcpy(tmp, $2);
-                                     strcpy(tmp+yyleng+6-6, "?1:0)");
+                                     strcpy(tmp+1, $2);
+                                     strcpy(tmp+yyleng+6-6+1, "?1:0)");
                                      $$ = tmp;
                                    }
     | T_IS_RIGHT_ASSOC T_CODE      { uint yyleng = strlen($2);
                                      char *tmp = (char*)calloc(yyleng+7, sizeof(char));
                                      tmp[0] = '(';
-                                     strcpy(tmp, $2);
-                                     strcpy(tmp+yyleng+6-6, "?0:1)");
+                                     strcpy(tmp+1, $2);
+                                     strcpy(tmp+yyleng+6-6+1, "?0:1)");
                                      $$ = tmp;
                                    }
     ;

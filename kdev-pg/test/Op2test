@@ -1,0 +1,7 @@
+bin + 1 left
+bin * 2 left
+bin ^ 5 right
+pre ~ 4
+post ! 6
+paren ( )
+1+(2+3)+4^5!*~6

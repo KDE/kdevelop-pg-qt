@@ -66,11 +66,11 @@ void generateOutput()
       << "#include <kdev-pg-list.h>" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
     foreach (const QString& header, globalSystem.astHeaders)
-      s << "#include <" << header << ">\n";
+      s << "#include \"" << header << "\"\n";
 
     if (!globalSystem.decl.isEmpty())
       s << globalSystem.decl << endl;
@@ -123,11 +123,11 @@ void generateOutput()
       s << "#include <QtCore/QVector>" << endl;
     
     foreach (const QString& header, globalSystem.parserDeclarationHeaders)
-      s << "#include <" << header << ">\n";
+      s << "#include \"" << header << "\"\n";
 
     s << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
     if (!globalSystem.decl.isEmpty() && !globalSystem.generateAst)
@@ -171,7 +171,7 @@ void generateOutput()
       << "#include \"" << globalSystem.language << "ast.h\"" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
     s << "namespace " << globalSystem.ns << "{" << endl
@@ -212,7 +212,7 @@ void generateOutput()
       << "#include \"" << globalSystem.language << "visitor.h\"" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
     s << "namespace " << globalSystem.ns << "{" << endl
@@ -253,7 +253,7 @@ void generateOutput()
       << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
     s << "#include <QtCore/QTextStream>" << endl
@@ -298,7 +298,7 @@ void generateOutput()
       << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
       << endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
     s << "#include <kdev-pg-token-stream.h>" << endl;
@@ -379,7 +379,7 @@ void generateOutput()
       << endl;
 
     foreach (const QString& header, globalSystem.parserBitsHeaders)
-      s << "#include <" << header << ">\n";
+      s << "#include \"" << header << "\"\n";
 
     s << endl;
 
@@ -493,7 +493,7 @@ void generateVisitor(const QString& name, bool inherit_default)
       << endl;
     
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include <" << globalSystem.exportMacroHeader << ">"
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
     
     s << "namespace " << globalSystem.ns << "{" << endl << endl;

@@ -419,7 +419,8 @@ class ASFormatter : public ASBeautifier, private ASEnhancer
 		size_t previousReadyFormattedLineLength;
 		BracketMode bracketFormatMode;
 		BracketType previousBracketType;
-		bool isVirgin;
+		bool ignoreStuff;
+                bool isVirgin;
 		bool shouldPadOperators;
 		bool shouldPadParensOutside;
 		bool shouldPadParensInside;

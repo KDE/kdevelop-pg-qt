@@ -33,6 +33,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
+#include <QtCore/QFileInfo>
 
 
 
@@ -59,6 +60,8 @@ void usage()
            << "--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
            << "--with-parser - The default, a parser will be generated" << endl
            << "--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
+           << "--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
+           << "--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
            << "--help - Show this messages" << endl;
 
   exit(EXIT_SUCCESS);
@@ -112,6 +115,11 @@ public:
     out << endl;
   }
 };
+
+namespace KDevPG
+{
+    QFileInfo fileInfo;
+}
 
 int main(int argc, char **argv)
 {
@@ -173,6 +181,14 @@ int main(int argc, char **argv)
     {
       generate_parser = true;
     }
+    else if (arg == "--beautiful-code")
+    {
+      KDevPG::globalSystem.beautifulCode = true;
+    }
+    else if (arg == "--error-aware-code")
+    {
+      KDevPG::globalSystem.beautifulCode = false;
+    }
     else if (SW(--new-visitor=))
     {
       new_visitor = arg.mid( 14 );
@@ -213,6 +229,8 @@ int main(int argc, char **argv)
                     << "'' not found!" << endl;
           KDevPG::file.setFileName("");
         }
+      else
+          KDevPG::fileInfo.setFile(KDevPG::file);
     }
     else
     {

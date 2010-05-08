@@ -214,6 +214,7 @@ void ASFormatter::init(ASSourceIterator *si)
 	INIT_CONTAINER(parenStack, new vector<int>);
 	parenStack->push_back(0);
 
+    ignoreStuff = false;
 	currentHeader = NULL;
 	currentLine = string("");
 	readyFormattedLine = string("");
@@ -287,6 +288,73 @@ void ASFormatter::init(ASSourceIterator *si)
 
 string ASFormatter::nextLine()
 {
+    #define next \
+        if(sourceIterator->hasMoreLines()) \
+        { \
+            currentLine = sourceIterator->nextLine(); \
+            spacePadNum = 0; \
+            charNum = 0; \
+            ++inLineNumber; \
+            if(currentLine.size() == 0) \
+                currentLine = " "; \
+            \
+            isInLineBreak = true; \
+            isVirgin = false; \
+             \
+            if (isInLineComment) \
+              isImmediatelyPostLineComment = true; \
+            isInLineComment = false; \
+             \
+            isImmediatelyPostPreprocessor = isInPreprocessor; \
+            if (previousNonWSChar != '\\') \
+                isInPreprocessor = false; \
+            currentChar = currentLine[charNum]; \
+            shouldReparseCurrentChar = true; \
+            isLineReady = false; \
+            readyFormattedLine = ""; \
+            for(int i = ret.size() - 1; i >= 0; --i) \
+            { \
+                if(!isWhiteSpace(ret[i])) \
+                { \
+                    previousNonWSChar = ret[i]; \
+                    if (!isInComment && !isInLineComment && !isInQuote \
+                      && !isImmediatelyPostComment \
+                      && !isImmediatelyPostLineComment) \
+                        previousCommandChar = previousNonWSChar; \
+                    break; \
+                } \
+            } \
+            if(ret.size()) \
+                previousChar = ret[ret.size()-1]; \
+        } \
+        else \
+            endOfCodeReached = true;
+    if(ignoreStuff)
+    {
+        if(currentLine.size() >= 14 && currentLine.substr(currentLine.size() - 14, 14) == "\01!AS/Ignore\"!!")
+        {
+            ignoreStuff = false;
+            string ret = currentLine.substr(0, currentLine.size() - 14);
+            next
+            nextLine(); // there is a mysterious line, I have to eat
+            return ret;
+        }
+        else
+        {
+            string ret = currentLine;
+            next
+            return ret;
+        }
+    }
+    else if(currentLine.size() >= 13 && currentLine.substr(0, 13) == "\01!ASIgnore\"!!")
+    {
+        ignoreStuff = true;
+        string ret = currentLine.substr(13);
+        next
+        return ret;
+    }
+    #undef next
+    
 	// these are reset with each new line
 	const string *newHeader;
 	bool isInVirginLine = isVirgin;

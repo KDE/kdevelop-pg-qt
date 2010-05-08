@@ -1,24 +1,22 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 2.4.2.  */
 
 /* Skeleton interface for Bison's Yacc-like parsers in C
-
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
-
-   This program is free software; you can redistribute it and/or modify
+   
+      Copyright (C) 1984, 1989-1990, 2000-2006, 2009-2010 Free Software
+   Foundation, Inc.
+   
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
+   
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -29,9 +27,10 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-
+   
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
+
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -82,76 +81,39 @@
      T_ROPR = 298,
      T_LEFT_ASSOC = 299,
      T_RIGHT_ASSOC = 300,
-     T_PAREN = 301
+     T_IS_LEFT_ASSOC = 301,
+     T_IS_RIGHT_ASSOC = 302,
+     T_PRIORITY = 303,
+     T_PAREN = 304
    };
 #endif
-/* Tokens.  */
-#define T_IDENTIFIER 258
-#define T_ARROW 259
-#define T_TERMINAL 260
-#define T_CODE 261
-#define T_STRING 262
-#define T_NUMBER 263
-#define T_TOKEN_DECLARATION 264
-#define T_TOKEN_STREAM_DECLARATION 265
-#define T_NAMESPACE_DECLARATION 266
-#define T_PARSERCLASS_DECLARATION 267
-#define T_PUBLIC 268
-#define T_PRIVATE 269
-#define T_PROTECTED 270
-#define T_DECLARATION 271
-#define T_CONSTRUCTOR 272
-#define T_DESTRUCTOR 273
-#define T_TRY_RECOVER 274
-#define T_TRY_ROLLBACK 275
-#define T_CATCH 276
-#define T_RULE_ARGUMENTS 277
-#define T_MEMBER 278
-#define T_TEMPORARY 279
-#define T_ARGUMENT 280
-#define T_EXPORT_MACRO 281
-#define T_NODE 282
-#define T_NODE_SEQUENCE 283
-#define T_TOKEN 284
-#define T_VARIABLE 285
-#define T_EXPORT_MACRO_HEADER 286
-#define T_AST_DECLARATION 287
-#define T_PARSER_DECLARATION_HEADER 288
-#define T_PARSER_BITS_HEADER 289
-#define T_AST_HEADER 290
-#define T_PARSER_BASE 291
-#define T_AST_BASE 292
-#define T_BIN 293
-#define T_PRE 294
-#define T_POST 295
-#define T_TERN 296
-#define T_LOPR 297
-#define T_ROPR 298
-#define T_LEFT_ASSOC 299
-#define T_RIGHT_ASSOC 300
-#define T_PAREN 301
-
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 36 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 {
+
+/* Line 1685 of yacc.c  */
+#line 42 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+
     KDevPG::Model::Node *item;
     char* str;
     KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
-    KDevPG::Model::VariableDeclarationItem::StorateType     storageType;
+    KDevPG::Model::VariableDeclarationItem::StorageType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
     KDevPG::Model::Operator                                *operatorInformation;
-}
-/* Line 1489 of yacc.c.  */
-#line 150 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
-	YYSTYPE;
+
+
+
+/* Line 1685 of yacc.c  */
+#line 111 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+} YYSTYPE;
+# define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
 #endif
 
 extern YYSTYPE yylval;
+
 

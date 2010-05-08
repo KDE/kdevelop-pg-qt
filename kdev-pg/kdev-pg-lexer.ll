@@ -25,11 +25,19 @@
 #include "kdev-pg-parser.hh"
 
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 
 int inp();
 void appendLineBuffer();
 void newline();
 void yyerror(const char* );
+extern int yyLine;
+
+namespace KDevPG
+{
+  extern QFile file;
+  extern QFileInfo fileInfo;
+}
 
 #define YY_INPUT(buf, result, max_size) \
   { \
@@ -40,9 +48,26 @@ void yyerror(const char* );
 #define YY_USER_ACTION  appendLineBuffer();
 
 #define COPY_TO_YYLVAL(string, len) \
-  yylval.str = (char*) calloc(yyleng+1, sizeof(char)); \
-  strcpy(yylval.str, string); \
-  yylval.str[len] = '\0';
+    yylval.str = (char*) calloc(len+1, sizeof(char)); \
+    strncpy(yylval.str, string, len); \
+    yylval.str[len] = '\0';
+#define COPY_CODE_TO_YYLVAL(string, len) \
+    if(KDevPG::globalSystem.beautifulCode) \
+    { \
+      COPY_TO_YYLVAL(string, len) \
+    } \
+    else \
+    { \
+      QByteArray tmp("\n\01!ASIgnore\"!!# "); \
+      tmp += QString::number(firstCodeLine); \
+      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath() + "\"\n"; \
+      size_t memlen = tmp.size() + len + 15 + 1; \
+      yylval.str = (char*) calloc(memlen, sizeof(char)); \
+      strncpy(yylval.str, tmp.data(), tmp.size()); \
+      strncpy(yylval.str + tmp.size(), yytext, len); \
+      strncpy(yylval.str + memlen - 16, "\01!AS/Ignore\"!!\n", 15); \
+      yylval.str[memlen-1] = '\0'; \
+    }
 
 namespace {
   enum RulePosition {
@@ -51,6 +76,7 @@ namespace {
   };
   RulePosition rulePosition = RuleBody;
   int openBrackets; // for rule arguments usage
+  int firstCodeLine; // where the current code-block begins
 }
 
 %}
@@ -135,6 +161,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 "[" {
     if (rulePosition == RuleBody) { /* use the arguments in a rule call */
+      firstCodeLine = yyLine;
       openBrackets = 0;
       BEGIN(RULE_ARGUMENTS);
     }
@@ -152,7 +179,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "]" {
     openBrackets--;
     if (openBrackets < 0) {
-      COPY_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
+      COPY_CODE_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
       BEGIN(INITIAL);
       return T_RULE_ARGUMENTS;
     }
@@ -209,13 +236,13 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 
 
-"[:"                    BEGIN(CODE);
+"[:"                    firstCodeLine = yyLine; BEGIN(CODE);
 <CODE>{
 {Newline}               newline(); yymore();
 [^:\n\r]*               yymore(); /* gather everything that's not a colon, and append what comes next */
 ":"+[^:\]\n\r]*         yymore(); /* also gather colons that are not followed by colons or newlines */
 ":]" {
-    COPY_TO_YYLVAL(yytext,yyleng-2); /* cut off the trailing stuff */
+    COPY_CODE_TO_YYLVAL(yytext, yyleng-2); /* cut off the trailing stuff */
     BEGIN(INITIAL);
     return T_CODE;
 }
@@ -246,11 +273,6 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 
 %%
-
-namespace KDevPG
-{
-extern QFile file;
-}
 
 int ch;
 int yyLine = 1, currentOffset = 0;

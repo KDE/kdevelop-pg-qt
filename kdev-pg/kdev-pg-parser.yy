@@ -23,15 +23,21 @@
 #include "kdev-pg.h"
 #include "kdev-pg-clone-tree.h"
 
+#include <QtCore/QFile>
 #include <cassert>
 
 extern int yylex();
 extern void yyerror(const char* msg);
+extern int yyLine;
+
+namespace KDevPG
+{
+    extern QFile file;
+}
 
 KDevPG::Model::OperatorItem *operatorNode = 0;
 
 %}
-
 
 %union {
     KDevPG::Model::Node *item;

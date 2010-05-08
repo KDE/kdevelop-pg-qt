@@ -59,8 +59,8 @@ namespace KDevPG
     else \
     { \
       QByteArray tmp("\n\01!ASIgnore\"!!# "); \
-      tmp += QString::number(firstCodeLine); \
-      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath() + "\"\n"; \
+      tmp += QString::number(firstCodeLine).toLocal8Bit(); \
+      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath().toLocal8Bit() + "\"\n"; \
       size_t memlen = tmp.size() + len + 15 + 1; \
       yylval.str = (char*) calloc(memlen, sizeof(char)); \
       strncpy(yylval.str, tmp.data(), tmp.size()); \

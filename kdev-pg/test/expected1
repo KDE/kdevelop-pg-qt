@@ -1,9 +1,18 @@
 ** WARNING found FIRST/FOLLOW conflict in r2:
 	Rule ``(A r1)*''
 	Terminals [
-	A: conflicts with the FIRST set of: 
-            r3, 
+		A: conflicts with the FIRST set of: 
+		r3, 
+
 	]
 
-1 conflicts total: 1 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
+** WARNING found FIRST/FOLLOW conflict in r5:
+	Rule ``(r4)*''
+	Terminals [
+		C: conflicts with the FIRST set of: 
+		(A | B | C), 
+
+	]
+
+2 conflicts total: 2 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
 usage: kdev-pg [further-options] --output=<name> [further-options] file.g

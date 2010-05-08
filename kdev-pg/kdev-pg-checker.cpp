@@ -68,18 +68,19 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
                 << mSymbol->mName << ":" << endl << "\tRule ``";
       printer(mCheckedNode);
       //      p(left);
-      str << "''" << endl << "\tTerminals [";
+      str << "''" << endl << "\tTerminals [" << endl;
 
       QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
         {
           Model::Node *n = *it++;
 
-          str << ((Model::TerminalItem*)n)->mName;
+          str << "\t\t" << ((Model::TerminalItem*)n)->mName;
           if (it != U.end())
-            str << ", " << endl;
+            str << ", ";
+          str << endl;
         }
-      str << "]" << endl << endl;
+      str << "\t]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFirstConflict();
     }
 }
@@ -146,12 +147,13 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
           if (isZero(n))
             continue;
 
-          str << "\t" << ((Model::TerminalItem*)n)->mName << ": conflicts with the FIRST set of: " << endl;
+          str << "\t\t" << ((Model::TerminalItem*)n)->mName << ": conflicts with the FIRST set of: " << endl;
           FollowDepChecker(n).check(node);
           if (it != U.end())
-            str << ", " << endl;
+            str << ",";
+          str << endl;
         }
-      str << "\t" << "]" << endl << endl;
+      str << "\t]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFollowConflict();
     }
 }
@@ -186,7 +188,7 @@ void FollowDepChecker::check(Model::Node *node)
 #endif
       if (first.find(mTerminal) != first.end())
       {
-        str << "            ";
+        str << "\t\t";
         p(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
         str << " ( in \"";
@@ -362,17 +364,17 @@ void ProblemSummaryPrinter::operator()()
 
 void ProblemSummaryPrinter::reportFirstFirstConflict()
 {
-  mFirstFirstConflictCount++;
+  ++mFirstFirstConflictCount;
 }
 
 void ProblemSummaryPrinter::reportFirstFollowConflict()
 {
-  mFirstFollowConflictCount++;
+  ++mFirstFollowConflictCount;
 }
 
 void ProblemSummaryPrinter::reportError()
 {
-  mErrorCount++;
+  ++mErrorCount;
 }
 
 }

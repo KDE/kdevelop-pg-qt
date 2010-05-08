@@ -1,6 +1,8 @@
 TODO list for kdev-pg
 ---------------------
 
+See also: http://techbase.kde.org/Development/KDevelop-PG-Qt_Development_Guide#Ideas_for_the_future
+
 - Inside kdev-pg, seperate the parser ast from the struct member ast.
   The latter should be far easier to access from code generating visitors,
   so it would be awesome to have one.
@@ -8,15 +10,6 @@ TODO list for kdev-pg
 - Provide a FAIL("errormessage") macro which exits the currently running rule
   or try/* block with an error. That will add many #define/#undef directives
   to the generated code, but makes the grammar author's life more bearable.
-
-- Make decoder.h generic (using templates), and add it to the runtime
-  environment (the include/ directory).
-
-- Also, make a QString version of the decoder.
-  For example, KDevelop's C# parser currently converts the original char*
-  to std::string, then back to char* in order to get a QString.
-  Which is just because there's no QString decoder.
-  (This one should be a breeze.)
 
 - Make a distinction between try/* blocks that are expected fail and ones that
   should not fail. For example, if "try/recover(#statement=block_statement)*"

@@ -6,4 +6,4 @@
 	]
 
 1 conflicts total: 1 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
-usage: kdev-pg --output=<name> file.g
+usage: kdev-pg [further-options] --output=<name> [further-options] file.g

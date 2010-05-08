@@ -35,13 +35,22 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
 
-
+namespace KDevPG
+{
+  extern QTextStream checkOut;
+}
 
 int yyparse();
 
 void usage()
 {
-  qDebug() << "usage: kdev-pg [further-options] --output=<name> [further-options] file.g" << endl
+  KDevPG::checkOut << "usage: kdev-pg [further-options] --output=<name> [further-options] file.g" << endl;
+  exit(EXIT_FAILURE);
+}
+
+void help()
+{
+  KDevPG::checkOut << "usage: kdev-pg [further-options] --output=<name> [further-options] file.g" << endl
            << "options:" << endl
            << "--output=<name> - Specify a prefix for all generated files" << endl
            << "--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
@@ -205,7 +214,7 @@ int main(int argc, char **argv)
     }
     else if (arg == "--help")
     {
-      usage();
+      help();
     }
     else if (arg == "--terminals")
     {

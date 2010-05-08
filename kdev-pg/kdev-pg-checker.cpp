@@ -29,6 +29,8 @@
 
 namespace KDevPG
 {
+  
+QTextStream checkOut(stderr);
 
 int ProblemSummaryPrinter::mFirstFirstConflictCount = 0;
 int ProblemSummaryPrinter::mFirstFollowConflictCount = 0;
@@ -60,24 +62,24 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
 
   if (!U.empty())
     {
-      QTextStream str( stderr );
+      QTextStream& str( checkOut );
       PrettyPrinter printer(str);
-      qDebug() << "** WARNING found FIRST/FIRST conflict in "
+      str << "** WARNING found FIRST/FIRST conflict in "
                 << mSymbol->mName << ":" << endl << "\tRule ``";
       printer(mCheckedNode);
       //      p(left);
-      qDebug() << "''" << endl << "\tTerminals [";
+      str << "''" << endl << "\tTerminals [";
 
       QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
         {
           Model::Node *n = *it++;
 
-          qDebug() << n;
+          str << ((Model::TerminalItem*)n)->mName;
           if (it != U.end())
-            qDebug() << ", ";
+            str << ", " << endl;
         }
-      qDebug() << "]" << endl << endl;
+      str << "]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFirstConflict();
     }
 }
@@ -123,19 +125,19 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
 
   if (!U.empty())
     {
-      QTextStream str(stderr);
+      QTextStream& str( checkOut );
       PrettyPrinter p(str);
-      qDebug() << "** WARNING found FIRST/FOLLOW conflict in "
+      str << "** WARNING found FIRST/FOLLOW conflict in "
                 << mSymbol->mName;
 #ifdef FOLLOW_CHECKER_DEBUG
-      qDebug() << "(" << (uint*)mSymbol << ")";
+      str << "(" << (uint*)mSymbol << ")";
 #endif
-      qDebug() << ":" << endl << "\tRule ``";
+      str << ":" << endl << "\tRule ``";
       p(node);
 #ifdef FOLLOW_CHECKER_DEBUG
-      qDebug() << " [[" << (uint*)node << "]]";
+      str << " [[" << (uint*)node << "]]";
 #endif
-      qDebug() << "''" << endl << "\tTerminals [" << endl;
+      str << "''" << endl << "\tTerminals [" << endl;
 
       QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
@@ -144,13 +146,12 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
           if (isZero(n))
             continue;
 
-          qDebug() << "\t" << n << ": conflicts with the FIRST set of: ";
+          str << "\t" << ((Model::TerminalItem*)n)->mName << ": conflicts with the FIRST set of: " << endl;
           FollowDepChecker(n).check(node);
           if (it != U.end())
-            qDebug() << ", ";
-          qDebug() << endl;
+            str << ", " << endl;
         }
-      qDebug() << "\t" << "]" << endl << endl;
+      str << "\t" << "]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFollowConflict();
     }
 }
@@ -165,43 +166,43 @@ void FollowDepChecker::check(Model::Node *node)
   World::FollowDep &D = globalSystem.followDep(node);
   World::NodeSet FD = D.first;
   World::NodeSet FLD = D.second;
-  QTextStream str(stderr);
+  QTextStream& str( checkOut );
   PrettyPrinter p(str);
 #ifdef FOLLOW_CHECKER_DEBUG
-  qDebug() << "[["; p(node); qDebug() << " | " << (uint*)node << "]] ";
-  qDebug() << "{" << node->kind << "}";
+  str << "[["; p(node); str << " | " << (uint*)node << "]] ";
+  str << "{" << node->kind << "}" << endl;
 #endif
   for (World::NodeSet::const_iterator it = FD.begin(); it != FD.end(); ++it)
     {
       World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
-      qDebug() << " <iterating first ";
+      str << " <iterating first ";
       for (World::NodeSet::const_iterator fit = first.begin(); fit != first.end(); ++fit)
       {
         p(*fit);
-        qDebug() << " ";
+        str << " ";
       }
-      qDebug() << " >";
+      str << ">";
 #endif
       if (first.find(mTerminal) != first.end())
       {
-        qDebug() << endl << "            ";
+        str << "            ";
         p(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
-        qDebug() << " ( in \"";
+        str << " ( in \"";
         p(node);
-        qDebug() << " \" )";
+        str << " \" )";
 #endif
-        qDebug() << ", ";
+        str << ", " << endl;
       }
     }
  for (World::NodeSet::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
   {
       World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
-      qDebug() << endl << "\t\t" << "in ";
+      str << endl << "\t\t" << "in ";
       p(*it);
-      qDebug() << endl;
+      str << endl;
 #endif
       check(*it);
   }
@@ -253,7 +254,7 @@ void UndefinedSymbolChecker::visitSymbol(Model::SymbolItem *node)
 {
   if (globalSystem.env.count(node) == 0)
     {
-      qDebug() << "** ERROR Undefined symbol ``" << node->mName << "'' in "
+      checkOut << "** ERROR Undefined symbol ``" << node->mName << "'' in "
                 << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
     }
@@ -270,7 +271,7 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
   World::SymbolSet::iterator it = globalSystem.symbols.find(name);
   if (it == globalSystem.symbols.end())
     {
-      qDebug() << "** ERROR Undefined symbol ``" << name
+      checkOut << "** ERROR Undefined symbol ``" << name
                 << "'' (rule parameter declaration) in "
                 << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
@@ -281,7 +282,7 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
 
   if (globalSystem.env.count(sym) == 0)
     {
-      qDebug() << "** ERROR Undefined symbol ``" << node->mName
+      checkOut << "** ERROR Undefined symbol ``" << node->mName
                 << "'' (rule parameter declaration) in "
                 << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
@@ -301,7 +302,7 @@ void UndefinedTokenChecker::visitTerminal(Model::TerminalItem *node)
   QString name = node->mName;
   if (globalSystem.terminals.find(name) == globalSystem.terminals.end())
     {
-      qDebug() << "** ERROR Undefined token ``" << node->mName << "'' in "
+      checkOut << "** ERROR Undefined token ``" << node->mName << "'' in "
                 << mSymbol->mName << endl;
       ProblemSummaryPrinter::reportError();
     }
@@ -316,7 +317,7 @@ void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
 {
   if (globalSystem.first(node).empty())
   {
-    qDebug() << "** ERROR Empty FIRST set for ``" << node->mName
+    checkOut << "** ERROR Empty FIRST set for ``" << node->mName
               << "''" << endl;
     ProblemSummaryPrinter::reportError();
   }
@@ -331,7 +332,7 @@ void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
 {
   if (reducesToEpsilon((node->mBase->mSymbol)))
   {
-    qDebug() << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``?'' reduces to zero" << endl;  /// @TODO Get the symbol
+    checkOut << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``?'' reduces to zero" << endl;  /// @TODO Get the symbol
     ProblemSummaryPrinter::reportError();
   }
 }
@@ -339,21 +340,21 @@ void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
 void ProblemSummaryPrinter::operator()()
 {
   if (KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
-    qDebug() << (mFirstFirstConflictCount + mFirstFollowConflictCount)
+    checkOut << (mFirstFirstConflictCount + mFirstFollowConflictCount)
               << " conflicts total: " << mFirstFollowConflictCount
               << " FIRST/FOLLOW conflicts, " << mFirstFirstConflictCount
               << " FIRST/FIRST conflicts." << endl;
 
   if (mErrorCount > 0)
     {
-      qDebug() << mErrorCount << " fatal errors found, exiting."
+      checkOut << mErrorCount << " fatal errors found, exiting."
                 << endl;
       exit(EXIT_FAILURE);
     }
     
   if (KDevPG::globalSystem.conflictHandling == KDevPG::World::Strict && mFirstFirstConflictCount + mFirstFollowConflictCount > 0)
     {
-      qDebug() << "Conflicts found, existing."
+      checkOut << "Conflicts found, existing."
                 << endl;
       exit(EXIT_FAILURE);
     }

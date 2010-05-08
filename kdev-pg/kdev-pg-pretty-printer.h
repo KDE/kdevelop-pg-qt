@@ -38,6 +38,7 @@ public:
   void operator()(Model::Node *node)
   {
     visitNode(node);
+    out.flush();
   }
 
 protected:

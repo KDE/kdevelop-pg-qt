@@ -32,7 +32,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
-#include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
 
 namespace KDevPG
@@ -44,34 +43,57 @@ int yyparse();
 
 void usage()
 {
-  KDevPG::checkOut << "usage: kdev-pg [further-options] --output=<name> [further-options] file.g" << endl;
-  exit(EXIT_FAILURE);
+  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] file.g" << endl;
 }
 
 void help()
 {
-  KDevPG::checkOut << "usage: kdev-pg [further-options] --output=<name> [further-options] file.g" << endl
-           << "options:" << endl
-           << "--output=<name> - Specify a prefix for all generated files" << endl
-           << "--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
-           << "--debug-visitor - Generate a visitor to dump the parse-tree" << endl
-           << "--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
-           << "--no-ast - Do not generate any AST-files" << endl
-           << "--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
-           << "--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
-           << "--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
-           << "--token-text - Generate a function converting the number of a token into its name" << endl
-           << "--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue" << endl
-           << "--strict-conflicts - Quit after having detected conflicts" << endl
-           << "--ignore-conflicts - Do not perform conflict-checking" << endl
-           << "--new-visitor=VisitorName - Create a new empty visitor" << endl
-           << "--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << endl
-           << "--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
-           << "--with-parser - The default, a parser will be generated" << endl
-           << "--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
-           << "--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
-           << "--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
-           << "--help - Show this messages" << endl;
+  usage();
+  KDevPG::checkOut
+           << "Options:" << endl
+           << "\t--output=<name> - Specify a prefix for all generated files" << endl
+           << "\t--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
+           << "\t--debug-visitor - Generate a visitor to dump the parse-tree" << endl
+           << "\t--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
+           << "\t--no-ast - Do not generate any AST-files" << endl
+           << "\t--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
+           << "\t--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
+           << "\t--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
+           << "\t--token-text - Generate a function converting the number of a token into its name" << endl
+           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue" << endl
+           << "\t--strict-conflicts - Quit after having detected conflicts" << endl
+           << "\t--ignore-conflicts - Do not perform conflict-checking" << endl
+           << "\t--new-visitor=VisitorName - Create a new empty visitor" << endl
+           << "\t--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << endl
+           << "\t--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
+           << "\t--with-parser - The default, a parser will be generated" << endl
+           << "\t--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
+           << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
+           << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
+           << "\t--help - Show this messages" << endl
+           << "\t--usage - Show usage" << endl
+           << "\t--version - Show version" << endl
+           << "\t--author - Show authors" << endl << endl
+           << "See http://techbase.kde.org/Development/KDevelop-PG-Qt_Introduction for further aid." << endl;
+
+  exit(EXIT_SUCCESS);
+}
+
+void version()
+{
+  KDevPG::checkOut << "KDevelop-PG-Qt: pre1.0" << endl;
+  
+  exit(EXIT_SUCCESS);
+}
+
+void author()
+{
+  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2010 by the KDevelop-PG-Qt developers:") << endl
+    << QString::fromUtf8("\tRoberto Raggi\n"
+       "\tJakob Petsovits\n"
+       "\tAndreas Pakulat\n"
+       "\tJonathan Schmidt-Dominé\n"
+       "\t...and others") << endl;
 
   exit(EXIT_SUCCESS);
 }
@@ -216,6 +238,19 @@ int main(int argc, char **argv)
     {
       help();
     }
+    else if (arg == "--version")
+    {
+      version();
+    }
+    else if (arg == "--author")
+    {
+      author();
+    }
+    else if (arg == "--usage")
+    {
+      usage();
+      exit(EXIT_SUCCESS);
+    }
     else if (arg == "--terminals")
     {
       dump_terminals = true;
@@ -234,7 +269,7 @@ int main(int argc, char **argv)
 
       if (!KDevPG::file.open(QIODevice::ReadOnly|QIODevice::Text))
         {
-          qDebug() << "kdev-pg-qt: file ``" << arg
+          KDevPG::checkOut << "kdev-pg-qt: file ``" << arg
                     << "'' not found!" << endl;
           KDevPG::file.setFileName("");
         }
@@ -243,7 +278,7 @@ int main(int argc, char **argv)
     }
     else
     {
-      qDebug() << "kdev-pg: unknown option ``" << arg << "''"
+      KDevPG::checkOut << "kdev-pg-qt: unknown option ``" << arg << "''"
                 << endl;
     }
   }
@@ -355,6 +390,7 @@ int main(int argc, char **argv)
   else if (KDevPG::globalSystem.language.isEmpty())
     {
       usage();
+      exit(EXIT_FAILURE);
     }
 
   if (generate_parser)

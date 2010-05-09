@@ -1,3 +1,5 @@
-Roberto Raggi <roberto@kdevelop.org>
-Jakob Petsovits <jpetso@gmx.at>
-Jonathan Schmidt-Dominé <devel@the-user.org>
+Roberto Raggi <roberto@kdevelop.org> (started kdev-pg, all basic features)
+Jakob Petsovits <jpetso@gmx.at> (a lot of example-grammars for real languages, kdev-pg and kdev-cmg)
+Andres Pakulat <apaku@gmx.de> (started kdev-pg-qt, move to Qt-classes)
+Jonathan Schmidt-Dominé <devel@the-user.org> (bottom-up-parsing for operator-expressions and various minor features in kdev-pg-qt)
+For other contributors see `svn log`.

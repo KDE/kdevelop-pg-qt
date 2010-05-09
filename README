@@ -3,10 +3,7 @@ KDevelop-PG-Qt
 KDevelop-PG-Qt is a parser generator written in readable source-code and generating readable source-code. Its syntax was inspirated by AntLR. It implements the visitor-pattern and uses the Qt library. That is why it is ideal to be used in Qt-/KDE-based applications like KDevelop.
 
 Authors:
-Roberto Raggi <roberto@kdevelop.org>
-Jakob Petsovits <jpetso@gmx.at>
-Jonathan Schmidt-Dominé <devel@the-user.org>
-For other contributors see `svn log`.
+See AUTHORS.
 
 Documentation:
 You can find an introduction at KDE-Techbase:

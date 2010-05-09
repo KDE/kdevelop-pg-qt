@@ -315,6 +315,11 @@ void EmptyFirstChecker::operator()(Model::Node *node)
   visitNode(node);
 }
 
+void EmptyFirstChecker::visitNonTerminal(Model::NonTerminalItem *node)
+{
+  Q_UNUSED(node);
+}
+
 void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
 {
   if (globalSystem.first(node).empty())
@@ -334,7 +339,7 @@ void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
 {
   if (reducesToEpsilon((node->mBase->mSymbol)))
   {
-    checkOut << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``?'' reduces to zero" << endl;  /// @TODO Get the symbol
+    checkOut << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``" << node->mName << "'' reduces to zero" << endl;
     ProblemSummaryPrinter::reportError();
   }
 }

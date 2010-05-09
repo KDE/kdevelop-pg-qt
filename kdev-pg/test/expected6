@@ -1,0 +1,6 @@
+** ERROR Empty FIRST set for ``r1''
+** ERROR Empty FIRST set for ``r2''
+** ERROR Undefined symbol ``bla'' in r1
+** ERROR Undefined symbol ``blabla'' in r2
+0 conflicts total: 0 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
+4 fatal errors found, exiting.

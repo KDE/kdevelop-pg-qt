@@ -1,0 +1,4 @@
+** ERROR Undefined token ``BLA'' in r1
+** ERROR Undefined token ``BLABLA'' in r2
+0 conflicts total: 0 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
+2 fatal errors found, exiting.

@@ -34,6 +34,7 @@ public:
   void operator()(Model::Node *node);
 
 protected:
+  virtual void visitNonTerminal(Model::NonTerminalItem *node);
   virtual void visitSymbol(Model::SymbolItem *node);
 };
 

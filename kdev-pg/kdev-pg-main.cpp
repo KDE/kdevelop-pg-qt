@@ -295,6 +295,12 @@ int main(int argc, char **argv)
     KDevPG::EmptyFirstChecker check;
     check(*it);
   }
+  
+  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  {
+    KDevPG::EmptyOperatorChecker check;
+    check(*it);
+  }
 
   for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {

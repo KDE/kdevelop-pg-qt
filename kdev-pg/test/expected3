@@ -1,0 +1,7 @@
+** ERROR Empty FIRST set for ``r2''
+** ERROR Empty FIRST set for ``r1''
+** ERROR Empty FIRST set for ``r3''
+** ERROR Empty FIRST set for ``r4''
+** ERROR Empty FIRST set for ``r5''
+0 conflicts total: 0 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
+5 fatal errors found, exiting.

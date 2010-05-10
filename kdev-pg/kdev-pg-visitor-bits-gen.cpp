@@ -80,7 +80,7 @@ void GenerateVisitorBits::operator()()
       
       #define O(str) \
         out << "case AstNode::" << str << "Kind:\n" \
-               "visit" << str << "(node); break;";
+               "visit" << str << "(reinterpret_cast<" << str << "Ast*>(node)); break;";
       
       if(isOperatorSymbol(sym))
         {

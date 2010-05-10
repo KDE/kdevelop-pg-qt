@@ -29,37 +29,75 @@ namespace KDevPG
 
 void GenerateVisitorBits::operator()()
 {
-  out << "Visitor::ParserFuncType Visitor::sParserTable[] = {" << endl;
-
   QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
-  while (it != globalSystem.symbols.end())
+  
+  if (globalSystem.visitorTable)
+  {
+    out << "Visitor::ParserFuncType Visitor::sParserTable[] = {" << endl;
+
+    while (it != globalSystem.symbols.end())
+      {
+        Model::SymbolItem *sym = *it++;
+        
+        #define O(str) \
+            out << "reinterpret_cast<ParserFuncType>(&Visitor::visit" << str << ")";
+        
+        if(isOperatorSymbol(sym))
+        {
+          O("Prefix" + sym->mCapitalizedName)
+          out << ",\n";
+          O("Postfix" + sym->mCapitalizedName)
+          out << ",\n";
+          O("Binary" + sym->mCapitalizedName)
+          out << ",\n";
+          O("Ternary" + sym->mCapitalizedName)
+          out << ",\n0";
+        }
+        else
+          O(sym->mCapitalizedName)
+
+        if (it != globalSystem.symbols.end())
+          out << ",";
+
+        out << endl;
+        
+        #undef O
+      }
+
+    out << "}; // sParserTable[]" << endl;
+    
+    out << "void Visitor::visitNode(AstNode *node) { "
+        << "if (node) (this->*sParserTable[node->kind - 1000])(node); "
+        << "}" << endl;
+  }
+  else
+  {
+    out << "void Visitor::visitNode(AstNode *node) { if(node) {"
+           "switch(node->kind) {";
+    while (it != globalSystem.symbols.end())
     {
       Model::SymbolItem *sym = *it++;
       
       #define O(str) \
-          out << "reinterpret_cast<ParserFuncType>(&Visitor::visit" << str << ")";
+        out << "case AstNode::" << str << "Kind:\n" \
+               "visit" << str << "(node); break;";
       
       if(isOperatorSymbol(sym))
-      {
-        O("Prefix" + sym->mCapitalizedName)
-        out << ",\n";
-        O("Postfix" + sym->mCapitalizedName)
-        out << ",\n";
-        O("Binary" + sym->mCapitalizedName)
-        out << ",\n";
-        O("Ternary" + sym->mCapitalizedName)
-        out << ",\n0";
-      }
+        {
+          O("Prefix" + sym->mCapitalizedName)
+          O("Postfix" + sym->mCapitalizedName)
+          O("Binary" + sym->mCapitalizedName)
+          O("Ternary" + sym->mCapitalizedName)
+        }
       else
         O(sym->mCapitalizedName)
-
-      if (it != globalSystem.symbols.end())
-        out << ",";
-
-      out << endl;
+      
+      #undef O
     }
-
-  out << "}; // sParserTable[]" << endl;
+      
+    out << "default: Q_ASSERT(false); } } }"
+        << endl;
+  }
 }
 
 }

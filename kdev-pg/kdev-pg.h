@@ -111,7 +111,8 @@ public:
       exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
       generateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
       generateTokenText(false), needStateManagement(false), needOperatorStack(false),
-      beautifulCode(false), conflictHandling(Permissive), start(0), mZero(0)
+      beautifulCode(false), visitorTable(false),
+      conflictHandling(Permissive), start(0), mZero(0)
   {}
 
   // options
@@ -134,6 +135,7 @@ public:
   bool needStateManagement: 1;
   bool needOperatorStack: 1;
   bool beautifulCode: 1;
+  bool visitorTable: 1;
   enum { Ignore = 0, Permissive = 1, Strict = 2 } conflictHandling: 2;
 
   Model::ZeroItem *zero()

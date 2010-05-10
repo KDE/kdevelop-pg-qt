@@ -27,16 +27,17 @@ namespace KDevPG
 
 void GenerateVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Visitor {" << endl
-      << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << endl
-      << "static ParserFuncType sParserTable[];" << endl
-      << endl
-      << "public:" << endl
+  out << "class " << globalSystem.exportMacro << " Visitor {" << endl;
+  if (globalSystem.visitorTable)
+  {
+    out << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << endl
+        << "static ParserFuncType sParserTable[];" << endl
+        << endl;
+  }
+  out << "public:" << endl
       << "virtual ~Visitor() {}" << endl;
 
-  out << "virtual void visitNode(AstNode *node) { "
-      << "if (node) (this->*sParserTable[node->kind - 1000])(node); "
-      << "}" << endl;
+  out << "virtual void visitNode(AstNode *node);" << endl;
 
   for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)

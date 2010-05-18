@@ -361,7 +361,7 @@ void ProblemSummaryPrinter::operator()()
     
   if (KDevPG::globalSystem.conflictHandling == KDevPG::World::Strict && mFirstFirstConflictCount + mFirstFollowConflictCount > 0)
     {
-      checkOut << "Conflicts found, existing."
+      checkOut << "Conflicts found, exiting."
                 << endl;
       exit(EXIT_FAILURE);
     }

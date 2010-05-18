@@ -174,7 +174,7 @@ class ASBeautifier : protected ASResource
 
 		// variables set by ASFormatter - must be updated in preprocessor
 		int  inLineNumber;              // for debugging
-		int  outLineNumber;				// for debugging
+		int  outLineNumber;             // for debugging
 		bool lineCommentNoBeautify;
 		bool isNonInStatementArray;
 

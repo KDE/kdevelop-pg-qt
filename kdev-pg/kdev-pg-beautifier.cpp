@@ -19,6 +19,8 @@
 
 #include "kdev-pg-beautifier.h"
 
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 
 namespace KDevPG
 {
@@ -37,8 +39,12 @@ std::string IteratorQTextStream::nextLine()
   return strm.readLine().toStdString();
 }
 
-void format(QTextStream& in, QTextStream& out)
+void format(QTextStream& in, const QString& oname)
 {
+  QFile ofile(oname);
+  ofile.open(QIODevice::WriteOnly);
+  QTextStream out(&ofile);
+  
   astyle::ASFormatter f;
 
   f.setCStyle();
@@ -57,6 +63,7 @@ void format(QTextStream& in, QTextStream& out)
   f.setBreakElseIfsMode(false);
   f.setParensUnPaddingMode(false);
   f.setEmptyLineFill(false);
+  f.fileName = QFileInfo(ofile).absoluteFilePath().toStdString();
   IteratorQTextStream strm(in);
   f.init(&strm);
 

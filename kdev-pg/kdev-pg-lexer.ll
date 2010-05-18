@@ -58,14 +58,14 @@ namespace KDevPG
     } \
     else \
     { \
-      QByteArray tmp("\n\01!ASIgnore\"!!# "); \
+      QByteArray tmp("\n\01!ASIgnore\"!!\n# "); \
       tmp += QString::number(firstCodeLine).toLocal8Bit(); \
-      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath().toLocal8Bit() + "\"\n"; \
+      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath().toLocal8Bit() + "\" 1\n"; \
       size_t memlen = tmp.size() + len + 15 + 1; \
       yylval.str = (char*) calloc(memlen, sizeof(char)); \
       strncpy(yylval.str, tmp.data(), tmp.size()); \
       strncpy(yylval.str + tmp.size(), yytext, len); \
-      strncpy(yylval.str + memlen - 16, "\01!AS/Ignore\"!!\n", 15); \
+      strncpy(yylval.str + memlen - 16, "\n\01!AS/Ignore\"!!\n", 15); \
       yylval.str[memlen-1] = '\0'; \
     }
 

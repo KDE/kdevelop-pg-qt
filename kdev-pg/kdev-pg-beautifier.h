@@ -39,7 +39,7 @@ private:
   QTextStream& strm;
 };
 
-void format(QTextStream &in, QTextStream& out);
+void format(QTextStream &in, const QString& oname);
 
 }
 

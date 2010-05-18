@@ -89,10 +89,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "ast.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   { // generate the parser decls
@@ -147,10 +144,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "parser.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   if (globalSystem.generateAst)
@@ -188,10 +182,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "visitor.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   if (globalSystem.generateAst)
@@ -229,10 +220,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "defaultvisitor.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   if (globalSystem.generateSerializeVisitor)
@@ -274,10 +262,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "serializevisitor.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   if (globalSystem.generateDebugVisitor)
@@ -321,10 +306,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "debugvisitor.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
   if (globalSystem.generateTokenText || globalSystem.generateDebugVisitor)
   { // generate the token text function
@@ -360,10 +342,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "tokentext.h";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
   { // generate the parser bits
     QString str;
@@ -397,10 +376,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "parser.cpp";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   if (globalSystem.generateAst)
@@ -429,10 +405,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "visitor.cpp";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 
   if (globalSystem.generateAst)
@@ -464,10 +437,7 @@ void generateOutput()
     QString oname = globalSystem.language;
     oname += "defaultvisitor.cpp";
 
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
 }
 
@@ -522,10 +492,7 @@ void generateVisitor(const QString& name, bool inherit_default)
     QString oname = globalSystem.language;
     oname += name.toLower() + ".h";
     
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+    format(s, oname);
   }
   
   {
@@ -563,11 +530,8 @@ void generateVisitor(const QString& name, bool inherit_default)
     
     QString oname = globalSystem.language;
     oname += name.toLower() + ".cpp";
-    
-    QFile ofile(oname);
-    ofile.open(QIODevice::WriteOnly);
-    QTextStream outstr(&ofile);
-    format(s, outstr);
+
+    format(s, oname);
   }
   
 }

@@ -332,14 +332,15 @@ string ASFormatter::nextLine()
 
     if(ignoreStuff)
     {
-        if(currentLine == "\01!AS/Ignore\"!!")
+        if(currentLine.substr(0, 14) == "\01!AS/Ignore\"!!")
         {
             ignoreStuff = false;
             string ret = "# ";
             ret += QString::number(inLineNumber+2).toAscii().data();
             ret += " \"" + fileName + "\" 2";
             next
-            nextLine(); // there is a mysterious line, I have to eat
+            if(hasMoreLines())
+              nextLine(); // there is a mysterious line, I have to eat
             return ret;
         }
         else
@@ -349,7 +350,7 @@ string ASFormatter::nextLine()
             return ret;
         }
     }
-    else if(currentLine == "\01!ASIgnore\"!!")
+    else if(currentLine.substr(0, 13) == "\01!ASIgnore\"!!")
     {
         ignoreStuff = true;
         string ret = "# ";

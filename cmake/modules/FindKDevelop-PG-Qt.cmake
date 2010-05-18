@@ -60,14 +60,14 @@ else( NOT KDEVPGQT_DIR )
         PATHS
         ${CMAKE_INSTALL_PREFIX}/include
         ${_KDEVPGQT_DIR}/include
-	${KDEVPGQT_DIR}/include
+        ${KDEVPGQT_DIR}/include
     )
     set(KDEVPGQT_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg-qt)
     find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
         PATHS
         ${CMAKE_INSTALL_PREFIX}/bin
         ${_KDEVPGQT_DIR}/bin
-	${KDEVPGQT_DIR}/bin
+        ${KDEVPGQT_DIR}/bin
     )
     set(KDEVPGQT_INCLUDE_DIR ${KDEVPGQT_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
     set( KDEVPGQT_EXECUTABLE ${KDEVPGQT_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
@@ -93,42 +93,52 @@ if( KDEVPGQT_INCLUDE_DIR
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp"
         )
         set(_depList ${ARGN})
-	list(GET _depList 0 _ns)
-        set(_namespace ${ARGV1})
-        if( ${_ns} STREQUAL "NAMESPACE" )
+        set(_dbgVisit)
+        set(_namespace)
+        set(_tokenText)
+        set(_dumpInfo)
+        set(_beautifulCode)
+        set(_conflicts)
+        while(1)
+        list(GET _depList 0 _arg)
+        if( ${_arg} STREQUAL "NAMESPACE" )
             list(GET _depList 1 _namespace)
             list(REMOVE_AT _depList 0 1)
-        endif( ${_ns} STREQUAL "NAMESPACE" )
-	list(GET _depList 0 _dbg)
-	set(_dbgVisit)
-        if( ${_dbg} STREQUAL "DEBUG_VISITOR" )
+            set(_namespace --namespace=${_namespace})
+        elseif( ${_arg} STREQUAL "DEBUG_VISITOR" )
             list(REMOVE_AT _depList 0)
-	    set(_dbgVisit "--debug-visitor")
-	    set(_outputList ${_outputList}
+            set(_dbgVisit "--debug-visitor")
+            set(_outputList ${_outputList}
                 "${CMAKE_CURRENT_BINARY_DIR}/${_language}debugvisitor.h"
             )
-	endif(${_dbg} STREQUAL "DEBUG_VISITOR" )
-        list(GET _depList 0 _txt)
-        set(_tokenText)
-        if( ${_txt} STREQUAL "TOKEN_TEXT" )
+        elseif( ${_arg} STREQUAL "TOKEN_TEXT" )
             list(REMOVE_AT _depList 0)
             set(_tokenText "--token-text")
             set(_outputList ${_outputList}
                 "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentext.h"
             )
-        endif(${_txt} STREQUAL "TOKEN_TEXT" )
-	set(_dumpInfo)
-	list(GET _depList 0 _dump)
-	if( ${_dump} STREQUAL "DUMP_INFO" )
+        elseif( ${_arg} STREQUAL "DUMP_INFO" )
             list(REMOVE_AT _depList 0)
-	    set(_dumpInfo --terminals --symbols --rules)
-	    set(_outputList ${_outputList}
+            set(_dumpInfo --terminals --symbols --rules)
+            set(_outputList ${_outputList}
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-terminals"
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-symbols"
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-rules"
             )
-	endif( ${_dump} STREQUAL "DUMP_INFO" )
-
+        elseif( ${_arg} STREQUAL "BEAUTIFUL_CODE" )
+            list(REMOVE_AT _depList 0)
+            set(_beautifulCode --beautiful-code)
+        elseif( ${_arg} STREQUAL "STRICT_CONFLICTS" )
+            list(REMOVE_AT _depList 0)
+            set(_conflicts --strict-conflicts)
+        elseif( ${_arg} STREQUAL "IGNORE_CONFLICTS" )
+            list(REMOVE_AT _depList 0)
+            set(_conflicts --ignore-conflicts)
+        else( ${_arg} STREQUAL "IGNORE_CONFLICTS" )
+            break(1)
+        endif( ${_arg} STREQUAL "NAMESPACE" )
+        endwhile(1)
+        
         list(GET _depList 0 _grammarFile)
         list(REMOVE_AT _depList 0)
         if(NOT _grammarFile)
@@ -137,10 +147,10 @@ if( KDEVPGQT_INCLUDE_DIR
         add_custom_command(
             OUTPUT  ${_outputList}
             MAIN_DEPENDENCY "${_grammarFile}"
-	    DEPENDS ${_depList}
+            DEPENDS ${_depList}
             COMMAND ${KDEVPGQT_EXECUTABLE}
-            ARGS    --output=${_language} --namespace=${_namespace}
-                    ${_dbgVisit} ${_dumpInfo} "${_grammarFile}"
+            ARGS    --output=${_language} ${_namespace}
+                    ${_dbgVisit} ${_dumpInfo} ${_beautifulCode} ${_conflicts} "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
 

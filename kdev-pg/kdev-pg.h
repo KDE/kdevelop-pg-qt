@@ -65,7 +65,7 @@ namespace KDevPG
   bool isOperatorSymbol(Model::SymbolItem *node);
   Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QString& code);
   
-  Model::Operator *makeOperator(const QString& tok, const QString& cond, const QString& code);
+  Model::Operator *makeOperator(Model::Node *tok, const QString& cond, const QString& code);
   
   inline void capitalize(QString& str)
   {

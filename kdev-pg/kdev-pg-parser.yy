@@ -313,10 +313,10 @@ assoc
     ;
     
 operator
-    : '?' T_CODE T_TERMINAL T_CODE { $$ = KDevPG::makeOperator($3, $2, $4); }
-    | '?' T_CODE T_TERMINAL        { $$ = KDevPG::makeOperator($3, $2, ""); }
-    | T_TERMINAL T_CODE            { $$ = KDevPG::makeOperator($1, "", $2); }
-    | T_TERMINAL                   { $$ = KDevPG::makeOperator($1, "", ""); }
+    : '?' T_CODE T_TERMINAL T_CODE { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($3), $2, $4); }
+    | '?' T_CODE T_TERMINAL        { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($3), $2, ""); }
+    | T_TERMINAL T_CODE            { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($1), "", $2); }
+    | T_TERMINAL                   { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($1), "", ""); }
     ;
 
 variableDeclarations

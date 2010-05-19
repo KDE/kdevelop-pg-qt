@@ -172,7 +172,8 @@ namespace Model
   class Operator
   {
   public:
-    QString mTok, mCond, mCode;
+    Node *mTok;
+    QString mCond, mCode;
   };
   
   class OperatorItem : public Node

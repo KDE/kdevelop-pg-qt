@@ -48,7 +48,7 @@ protected:
    */
   virtual void visitTerminal(Model::TerminalItem *node);
   /**
-   * Create the whole-first-set for node.
+   * Initialize the required terminals.
    */
   virtual void visitOperator(Model::OperatorItem *node);
 };

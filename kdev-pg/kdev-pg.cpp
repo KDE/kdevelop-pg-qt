@@ -296,7 +296,7 @@ bool isZero(Model::Node *node)
 }
 
 
-Model::Operator *makeOperator(const QString& tok, const QString& cond, const QString& code)
+Model::Operator *makeOperator(Model::Node *tok, const QString& cond, const QString& code)
 {
   Model::Operator *op = new Model::Operator;
   op->mTok = tok;

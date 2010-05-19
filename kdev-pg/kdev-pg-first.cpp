@@ -48,22 +48,15 @@ void InitializeFirst::visitTerminal(Model::TerminalItem *node)
   globalSystem.first(node).insert(node);
 }
 
-
 void InitializeFirst::visitOperator(Model::OperatorItem *node)
 {
-  Model::TerminalItem *t;
-  #define REGISTER \
-  globalSystem.first(node).insert(t); \
-  globalSystem.first(t).insert(t);
   for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
-    t = globalSystem.terminal(i->first.mTok);
-    REGISTER
+    visitNode(i->first.mTok);
   }
   for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
   {
-    t = globalSystem.terminal(i->op.mTok);
-    REGISTER
+    visitNode(i->op.mTok);
   }
 }
 
@@ -143,8 +136,16 @@ void NextFirst::visitNonTerminal(Model::NonTerminalItem *node)
 
 void NextFirst::visitOperator(Model::OperatorItem *node)
 {
-//   DefaultVisitor::visitEvolve(globalSystem.env[globalSystem.pushSymbol(node->mBase)]);
-  
+  for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  {
+    visitNode(i->first.mTok);
+    merge(node, i->first.mTok);
+  }
+  for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
+  {
+    visitNode(i->op.mTok);
+    merge(node, i->op.mTok);
+  }
   merge(node, node->mBase->mSymbol);
 }
 

@@ -27,22 +27,10 @@
 
 namespace KDevPG
 {
-  void generateCondition(World::NodeSet const &s, QTextStream& out)
+  void generateConditionFromStrings(QStringList &tokens, bool zerop, QTextStream& out)
   {
-    bool initial = true;
-    Model::Node *item = globalSystem.zero();
-
-    QStringList tokens;
-    World::NodeSet::const_iterator it = s.begin();
-    while (it != s.end())
-      {
-        item = *it;
-        ++it;
-
-        if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
-          tokens << t->mName;
-      }
     tokens.sort();
+    bool initial = true;
     foreach (const QString &token, tokens)
       {
         if (!initial)
@@ -53,14 +41,40 @@ namespace KDevPG
       }
 
 
-    if (initial && isZero(item))
+    if (initial && zerop)
       out << "true /*epsilon*/";
+  }
+
+  void generateCondition(const World::NodeSet& s, QTextStream& out)
+  {
+    Model::Node *item = globalSystem.zero();
+    
+    QStringList tokens;
+    World::NodeSet::const_iterator it = s.begin();
+    while (it != s.end())
+    {
+      item = *it;
+      ++it;
+      
+      if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
+        tokens << t->mName;
+    }
+    generateConditionFromStrings(tokens, isZero(item), out);
   }
 
   void generateTestCondition(Model::Node *node, QTextStream& out)
   {
-    World::NodeSet s = globalSystem.first(node);
-    generateCondition(s, out);
+    if(node->kind == Model::NodeKindTerminal)
+    {
+      QStringList tokens;
+      tokens << ((Model::TerminalItem*)node)->mName;
+      generateConditionFromStrings(tokens, false, out);
+    }
+    else
+    {
+      World::NodeSet s = globalSystem.first(node);
+      generateCondition(s, out);
+    }
   }
 
   QString generateParserCall(Model::NonTerminalItem *node, int catch_id, QTextStream& out)
@@ -555,7 +569,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     if(printElse)
       out << "else ";
     printElse = true;
-    out << "if(yytoken == Token_" << i->op.mTok;
+    out << "if(";
+    generateTestCondition(i->op.mTok, out);
     if(i->op.mCond.size() != 0)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
@@ -588,7 +603,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     if(printElse)
       out << "else ";
     printElse = true;
-    out << "if(yytoken == Token_" << i->op.mTok;
+    out << "if(";
+    generateTestCondition(i->op.mTok, out);
     if(i->op.mCond.size() != 0)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
@@ -627,7 +643,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     if(printElse)
       out << "else ";
     printElse = true;
-    out << "if(yytoken == Token_" << i->first.mTok;
+    out << "if(";
+    generateTestCondition(i->first.mTok, out);
     if(i->first.mCond.size() != 0)
       out << " && " << i->first.mCond;
         out << ") { const unsigned int priority = " << i->priority << ";";
@@ -643,7 +660,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "(*yynode)->startToken = last->startToken;"
            "yylex();";
     QString __var = generateParserCall(&ntItem, mCurrentCatchId, out);
-    out << "if(!(yytoken == Token_" << i->second.mTok;
+    out << "if(!(";
+    generateTestCondition(i->second.mTok, out);
     if(i->second.mCond.size() != 0)
       out << " && " << i->second.mCond;
     out << ")) return false;"
@@ -678,7 +696,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     if(printElse)
       out << "else ";
     printElse = true;
-    out << "if(yytoken == Token_" << i->op.mTok;
+    out << "if(";
+    generateTestCondition(i->op.mTok, out);
     if(i->op.mCond.size() != 0)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
@@ -706,7 +725,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     if(printElse)
       out << "else ";
     printElse = true;
-    out << "if(yytoken == Token_" << i->first.mTok;
+    out << "if(";
+    generateTestCondition(i->first.mTok, out);
     if(i->first.mCond.size() != 0)
       out << " && " << i->first.mCond;
     out << ") { yylex();"
@@ -714,7 +734,8 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     generateTestCondition(mSym, out);
     out << ") {";
     QString __var = generateParserCall(&ntItem, mCurrentCatchId, out);
-    out << "if(!(yytoken == Token_" << i->second.mTok;
+    out << "if(!(";
+    generateTestCondition(i->second.mTok, out);
     if(i->second.mCond.size() != 0)
       out << " && " << i->second.mCond;
     out << ")) {"

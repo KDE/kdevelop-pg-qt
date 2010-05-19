@@ -62,6 +62,7 @@ namespace Model
     NodeKindCondition = 14,
     NodeKindVariableDeclaration = 15,
     NodeKindOperator = 16,
+    NodeKindInlinedNonTerminal = 17,
 
     NodeKindLast
   };
@@ -148,6 +149,14 @@ namespace Model
     PG_NODE(Alias)
 
     QString mCode;
+    SymbolItem *mSymbol;
+  };
+  
+  class InlinedNonTerminalItem: public Node
+  {
+  public:
+    PG_NODE(InlinedNonTerminal)
+    
     SymbolItem *mSymbol;
   };
 

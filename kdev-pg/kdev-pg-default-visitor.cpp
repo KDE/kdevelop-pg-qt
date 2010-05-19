@@ -20,6 +20,8 @@
 
 #include "kdev-pg-default-visitor.h"
 
+#include "kdev-pg.h"
+
 namespace KDevPG
 {
 
@@ -42,6 +44,12 @@ void DefaultVisitor::visitNonTerminal(Model::NonTerminalItem *node)
 {
   visitNode(node->mSymbol);
 }
+
+void DefaultVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+  visitNode(KDevPG::globalSystem.searchRule(node->mSymbol)->mItem);
+}
+
 
 void DefaultVisitor::visitPlus(Model::PlusItem *node)
 {

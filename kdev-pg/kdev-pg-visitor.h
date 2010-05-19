@@ -51,6 +51,7 @@ protected:
   virtual void visitAlias(Model::AliasItem *) {}
   virtual void visitTerminal(Model::TerminalItem *) {}
   virtual void visitNonTerminal(Model::NonTerminalItem *) {}
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *) {}
   virtual void visitAnnotation(Model::AnnotationItem *) {}
   virtual void visitCondition(Model::ConditionItem *) {}
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *) {}

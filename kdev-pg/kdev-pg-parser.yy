@@ -144,6 +144,7 @@ primary_item
     | '(' option_item ')'               { $$ = $2; }
     | try_item                    { $$ = $1; }
     | primary_atom                      { $$ = $1; }
+    | '.' '=' T_IDENTIFIER              { $$ = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol($3)); }
     | name scope primary_atom           { $$ = KDevPG::annotation($1, $3, false, $2); }
     | '#' name scope primary_atom       { $$ = KDevPG::annotation($2, $4, true, $3);  }
     ;

@@ -125,6 +125,13 @@ Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, const QString& ar
   return node;
 }
 
+Model::InlinedNonTerminalItem* inlinedNonTerminal(Model::SymbolItem* symbol)
+{
+  Model::InlinedNonTerminalItem *node = createNode<Model::InlinedNonTerminalItem>();
+  node->mSymbol = symbol;
+  return node;
+}
+
 Model::AnnotationItem *annotation(
     const QString& name, Model::Node *item, bool isSequence,
     Model::VariableDeclarationItem::StorageType storageType)

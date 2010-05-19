@@ -34,6 +34,8 @@
 #include <QtCore/QtGlobal>
 #include <QtCore/QTextStream>
 
+#include <algorithm>
+
 namespace KDevPG
 {
   Model::ZeroItem *zero();
@@ -51,6 +53,7 @@ namespace KDevPG
   Model::AliasItem *alias(const QString& code, Model::SymbolItem *symbol);
   Model::TerminalItem *terminal(const QString& name, const QString& description);
   Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, const QString& arguments);
+  Model::InlinedNonTerminalItem *inlinedNonTerminal(Model::SymbolItem *symbol);
   Model::ConditionItem *condition(const QString& code, Model::Node *item);
   Model::AnnotationItem *annotation(
       const QString& name, Model::Node *item, bool isSequence,
@@ -213,6 +216,28 @@ public:
   {
     astHeaders << file;
   }
+  
+  inline static bool ruleComp(Model::Node *a, Model::Node *b)
+  {
+    if(a->kind == Model::NodeKindEvolve)
+      a = ((Model::EvolveItem*)a)->mSymbol;
+    if(b->kind == Model::NodeKindEvolve)
+      b = ((Model::EvolveItem*)b)->mSymbol;
+    return a < b;
+  }
+  
+  void finishedParsing()
+  {
+    std::sort(rules.begin(), rules.end(), &ruleComp);
+  }
+  
+  Model::EvolveItem *searchRule(Model::SymbolItem *sym)
+  {
+    __typeof__(rules.begin()) i = std::lower_bound(rules.begin(), rules.end(), sym, &ruleComp);
+    if(i == rules.end() || (*i)->mSymbol != sym)
+      return 0;
+    return *i;
+  }
 
   FirstSet::iterator firstBegin() { return firstSet.begin(); }
   FirstSet::iterator firstEnd() { return firstSet.end(); }
@@ -240,7 +265,7 @@ public:
 
   SymbolSet symbols;
   TerminalSet terminals;
-  QList<Model::Node*> rules;
+  QList<Model::EvolveItem*> rules;
   MemberCode parserclassMembers;
   AstBaseClasses astBaseClasses;
   QString parserBaseClass;

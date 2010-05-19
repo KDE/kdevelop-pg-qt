@@ -42,6 +42,7 @@ Visitor::VisitorFuncPointer Visitor::sTable[Model::NodeKindLast] = {
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitCondition),
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitVariableDeclaration),
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitOperator),
+  reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitInlinedNonTerminal),
 };
 
 }

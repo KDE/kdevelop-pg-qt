@@ -50,7 +50,6 @@ void DefaultVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node
   visitNode(KDevPG::globalSystem.searchRule(node->mSymbol)->mItem);
 }
 
-
 void DefaultVisitor::visitPlus(Model::PlusItem *node)
 {
   visitNode(node->mItem);

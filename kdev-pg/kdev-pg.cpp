@@ -202,16 +202,8 @@ Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QStrin
 
 bool isOperatorSymbol(Model::SymbolItem *sym)
 {
-  World::Environment::iterator it = globalSystem.env.find(sym);
-  if(it != globalSystem.env.end())
-  {
-    Model::EvolveItem *e = *it;
-    if (it.key() != sym)
-      return false;
-    if(e->mItem->kind == Model::OperatorItem::NodeKind)
-      return true;
-  }
-  return false;
+  Model::EvolveItem *e = globalSystem.searchRule(sym);
+  return e && e->mItem->kind == Model::OperatorItem::NodeKind;
 }
 
 bool reducesToEpsilon(Model::Node *node)

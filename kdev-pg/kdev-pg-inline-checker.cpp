@@ -49,6 +49,11 @@ void InlineChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
     }
     if(mVisited.contains(node))
         return;
+    if(isOperatorSymbol(node->mSymbol))
+    {
+        checkOut << "** ERROR Inlining of an operator expression ``" << node->mSymbol->mName << "''\n";
+        ProblemSummaryPrinter::reportError();
+    }
     mVisited.insert(node);
     mCurrentlyVisiting.insert(node->mSymbol);
     try

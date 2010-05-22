@@ -1,5 +1,5 @@
-** ERROR Cyclic inlining of ``blabla''
-		inlined from ``bla''
+** ERROR Cyclic inlining of ``bla''
 		inlined from ``blabla''
+		inlined from ``bla''
 0 conflicts total: 0 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
 1 fatal errors found, exiting.

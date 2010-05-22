@@ -35,6 +35,7 @@ public:
 
 protected:
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
   virtual void visitSymbol(Model::SymbolItem *node);
 };
 
@@ -57,6 +58,7 @@ protected:
 
   virtual void visitEvolve(Model::EvolveItem *node);
   virtual void visitAlternative(Model::AlternativeItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
 
 private:
   Model::SymbolItem *mSymbol;
@@ -75,6 +77,7 @@ protected:
   virtual void visitCons(Model::ConsItem *node);
   virtual void visitPlus(Model::PlusItem *node);
   virtual void visitStar(Model::StarItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
 
 private:
   Model::SymbolItem *mSymbol;
@@ -99,6 +102,7 @@ public:
 protected:
   virtual void visitSymbol(Model::SymbolItem *node);
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
 
 private:
   Model::SymbolItem *mSymbol;
@@ -111,6 +115,7 @@ public:
 
 protected:
   virtual void visitTerminal(Model::TerminalItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
 
 private:
   Model::SymbolItem *mSymbol;

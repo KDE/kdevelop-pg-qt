@@ -52,6 +52,11 @@ void FirstFirstConflictChecker::visitAlternative(Model::AlternativeItem *node)
   check(node->mLeft, node->mRight);
 }
 
+void FirstFirstConflictChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    Q_UNUSED(node);
+}
+
 void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
 {
   World::NodeSet const &left_first = globalSystem.first(left);
@@ -244,6 +249,16 @@ void FirstFollowConflictChecker::visitStar(Model::StarItem *node)
   check(node);
 }
 
+void FirstFollowConflictChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    Q_UNUSED(node);
+}
+
+void UndefinedSymbolChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    visitSymbol(node->mSymbol);
+}
+
 void UndefinedSymbolChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
@@ -291,6 +306,11 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
     }
 }
 
+void UndefinedTokenChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    Q_UNUSED(node);
+}
+
 void UndefinedTokenChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
@@ -316,6 +336,11 @@ void EmptyFirstChecker::operator()(Model::Node *node)
 }
 
 void EmptyFirstChecker::visitNonTerminal(Model::NonTerminalItem *node)
+{
+  Q_UNUSED(node);
+}
+
+void EmptyFirstChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node)
 {
   Q_UNUSED(node);
 }

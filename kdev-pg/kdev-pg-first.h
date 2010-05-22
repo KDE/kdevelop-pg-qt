@@ -51,6 +51,10 @@ protected:
    * Initialize the required terminals.
    */
   virtual void visitOperator(Model::OperatorItem *node);
+  /**
+   * Stop.
+   */
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
 };
 
 /**
@@ -72,6 +76,7 @@ protected:
   virtual void visitZero(Model::ZeroItem *node);
   virtual void visitTerminal(Model::TerminalItem *node);
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
   virtual void visitSymbol(Model::SymbolItem *node);
   virtual void visitPlus(Model::PlusItem *node);
   virtual void visitStar(Model::StarItem *node);

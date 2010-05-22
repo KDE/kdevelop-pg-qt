@@ -37,6 +37,10 @@ protected:
   {
     globalSystem.env.insert(node->mSymbol, node);
   }
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node)
+  {
+    Q_UNUSED(node);
+  }
 };
 }
 #endif // KDEV_PG_ENVIRONMENT_H

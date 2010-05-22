@@ -244,6 +244,10 @@ bool reducesToEpsilon(Model::Node *node)
     {
       return reducesToEpsilon(n->mSymbol);
     }
+  else if (Model::InlinedNonTerminalItem *n = nodeCast<Model::InlinedNonTerminalItem*>(node))
+    {
+      return reducesToEpsilon(n->mSymbol);
+    }
   else if (Model::SymbolItem *s = nodeCast<Model::SymbolItem*>(node))
     {
       return globalSystem.first(s).find(globalSystem.zero()) != globalSystem.first(s).end(); // hmm

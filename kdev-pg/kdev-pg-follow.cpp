@@ -223,6 +223,13 @@ void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
   DefaultVisitor::visitNonTerminal(node);
 }
 
+void NextFollow::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    merge(node->mSymbol, globalSystem.follow(node));
+    
+    DefaultVisitor::visitNode(node->mSymbol);
+}
+
 void NextFollow::visitOperator(Model::OperatorItem *node)
 {
   Q_UNUSED(node);

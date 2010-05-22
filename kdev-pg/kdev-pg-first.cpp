@@ -60,6 +60,11 @@ void InitializeFirst::visitOperator(Model::OperatorItem *node)
   }
 }
 
+void InitializeFirst::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    Q_UNUSED(node);
+}
+
 NextFirst::NextFirst(bool &changed): mChanged(changed)
 {
 }
@@ -94,7 +99,7 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
 
   for (World::NodeSet::iterator it = source.begin(); it != source.end(); ++it)
     {
-      if (mMergeZeroBlocked == true && nodeCast<Model::ZeroItem*>(*it))
+      if (mMergeZeroBlocked && nodeCast<Model::ZeroItem*>(*it))
         {
           continue;
         }
@@ -103,7 +108,7 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
         /*mChanged |= false*/;
       else
       {
-        mChanged |= true;
+        mChanged = true;
       }
       dest.insert(*it);
     }
@@ -133,6 +138,14 @@ void NextFirst::visitNonTerminal(Model::NonTerminalItem *node)
 
   merge(node, node->mSymbol);
 }
+
+void NextFirst::visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node)
+{
+  DefaultVisitor::visitNode(node->mSymbol);
+  
+  merge(node, node->mSymbol);
+}
+
 
 void NextFirst::visitOperator(Model::OperatorItem *node)
 {
@@ -165,8 +178,10 @@ void NextFirst::visitStar(Model::StarItem *node)
   DefaultVisitor::visitStar(node);
 
   if ( !globalSystem.first(node).contains(globalSystem.zero()) )
+  {
     mChanged = true;
-  globalSystem.first(node).insert(globalSystem.zero());
+    globalSystem.first(node).insert(globalSystem.zero());
+  }
 
   merge(node, node->mItem);
 }

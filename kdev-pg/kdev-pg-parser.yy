@@ -173,12 +173,12 @@ rule_arguments_opt
 
 name
     : T_IDENTIFIER                      { $$ = $1; }
-    | T_IDENTIFIER '.' T_IDENTIFIER
+/*    | T_IDENTIFIER '.' T_IDENTIFIER
         {
           $$ = $3;
           fprintf(stderr, "** WARNING support for scoped name"
                           " ``%s.%s'' not implemented\n", $1, $3);
-        }
+        }*/
     ;
 
 scope

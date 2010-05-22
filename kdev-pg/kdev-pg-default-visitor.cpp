@@ -48,11 +48,7 @@ void DefaultVisitor::visitNonTerminal(Model::NonTerminalItem *node)
 void DefaultVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
   Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol);
-  if(rule)
-  {
-    visitNode(rule->mItem);
-    visitNode(rule->mDeclarations);
-  }
+  visitNode(rule);
 }
 
 void DefaultVisitor::visitPlus(Model::PlusItem *node)

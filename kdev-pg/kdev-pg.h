@@ -219,9 +219,9 @@ public:
   
   inline static bool ruleComp(Model::Node *a, Model::Node *b)
   {
-    if(a->kind == Model::NodeKindEvolve)
+    if(a != 0 && a->kind == Model::NodeKindEvolve)
       a = ((Model::EvolveItem*)a)->mSymbol;
-    if(b->kind == Model::NodeKindEvolve)
+    if(b != 0 && b->kind == Model::NodeKindEvolve)
       b = ((Model::EvolveItem*)b)->mSymbol;
     return a < b;
   }

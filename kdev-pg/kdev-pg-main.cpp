@@ -33,6 +33,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
+#include "kdev-pg-inline-checker.h"
 
 namespace KDevPG
 {
@@ -306,6 +307,12 @@ int main(int argc, char **argv)
   KDevPG::file.close();
 
   KDevPG::globalSystem.finishedParsing();
+  
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  {
+    KDevPG::InlineChecker check;
+    check(*it);
+  }
   
   for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {

@@ -47,7 +47,12 @@ void DefaultVisitor::visitNonTerminal(Model::NonTerminalItem *node)
 
 void DefaultVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
-  visitNode(KDevPG::globalSystem.searchRule(node->mSymbol)->mItem);
+  Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol);
+  if(rule)
+  {
+    visitNode(rule->mItem);
+    visitNode(rule->mDeclarations);
+  }
 }
 
 void DefaultVisitor::visitPlus(Model::PlusItem *node)

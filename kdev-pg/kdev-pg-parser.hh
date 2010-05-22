@@ -84,7 +84,8 @@
      T_IS_LEFT_ASSOC = 301,
      T_IS_RIGHT_ASSOC = 302,
      T_PRIORITY = 303,
-     T_PAREN = 304
+     T_PAREN = 304,
+     T_INLINE = 305
    };
 #endif
 
@@ -95,7 +96,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1685 of yacc.c  */
-#line 42 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 42 "/home/Jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
     KDevPG::Model::Node *item;
     char* str;
@@ -107,7 +108,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 111 "/home/Jonathan/KDESVN/playground/devtools/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+#line 112 "/home/Jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

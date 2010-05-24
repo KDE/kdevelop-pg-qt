@@ -61,6 +61,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_LOPR T_ROPR
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
 %token T_PAREN
+%token T_INLINE
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
 %type<str> name code_opt rule_arguments_opt priority assoc
@@ -144,6 +145,7 @@ primary_item
     | '(' option_item ')'               { $$ = $2; }
     | try_item                    { $$ = $1; }
     | primary_atom                      { $$ = $1; }
+    | T_INLINE T_IDENTIFIER              { $$ = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol($2)); }
     | name scope primary_atom           { $$ = KDevPG::annotation($1, $3, false, $2); }
     | '#' name scope primary_atom       { $$ = KDevPG::annotation($2, $4, true, $3);  }
     ;
@@ -172,12 +174,12 @@ rule_arguments_opt
 
 name
     : T_IDENTIFIER                      { $$ = $1; }
-    | T_IDENTIFIER '.' T_IDENTIFIER
+/*    | T_IDENTIFIER '.' T_IDENTIFIER
         {
           $$ = $3;
           fprintf(stderr, "** WARNING support for scoped name"
                           " ``%s.%s'' not implemented\n", $1, $3);
-        }
+        }*/
     ;
 
 scope

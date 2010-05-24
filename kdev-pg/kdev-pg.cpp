@@ -125,6 +125,13 @@ Model::NonTerminalItem *nonTerminal(Model::SymbolItem *symbol, const QString& ar
   return node;
 }
 
+Model::InlinedNonTerminalItem* inlinedNonTerminal(Model::SymbolItem* symbol)
+{
+  Model::InlinedNonTerminalItem *node = createNode<Model::InlinedNonTerminalItem>();
+  node->mSymbol = symbol;
+  return node;
+}
+
 Model::AnnotationItem *annotation(
     const QString& name, Model::Node *item, bool isSequence,
     Model::VariableDeclarationItem::StorageType storageType)
@@ -195,21 +202,15 @@ Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QStrin
 
 bool isOperatorSymbol(Model::SymbolItem *sym)
 {
-  World::Environment::iterator it = globalSystem.env.find(sym);
-  if(it != globalSystem.env.end())
-  {
-    Model::EvolveItem *e = *it;
-    if (it.key() != sym)
-      return false;
-    if(e->mItem->kind == Model::OperatorItem::NodeKind)
-      return true;
-  }
-  return false;
+  Model::EvolveItem *e = globalSystem.searchRule(sym);
+  return e && e->mItem->kind == Model::OperatorItem::NodeKind;
 }
 
 bool reducesToEpsilon(Model::Node *node)
 {
-  if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
+  if (node == 0)
+    return true;
+  else if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
     {
       return reducesToEpsilon(c->mLeft) && reducesToEpsilon(c->mRight);
     }
@@ -242,6 +243,10 @@ bool reducesToEpsilon(Model::Node *node)
       return reducesToEpsilon(a->mItem);
     }
   else if (Model::NonTerminalItem *n = nodeCast<Model::NonTerminalItem*>(node))
+    {
+      return reducesToEpsilon(n->mSymbol);
+    }
+  else if (Model::InlinedNonTerminalItem *n = nodeCast<Model::InlinedNonTerminalItem*>(node))
     {
       return reducesToEpsilon(n->mSymbol);
     }

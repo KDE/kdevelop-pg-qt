@@ -233,6 +233,11 @@ void GenerateAstRule::visitVariableDeclaration(Model::VariableDeclarationItem *n
   DefaultVisitor::visitVariableDeclaration(node);
 }
 
+void GenerateAstRule::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+  KDevPG::DefaultVisitor::visitEvolve(globalSystem.searchRule(node->mSymbol));
+}
+
 void GenerateAstRule::visitAlternative(Model::AlternativeItem *node)
 {
   bool in_alternative = switchAlternative(true);

@@ -223,6 +223,16 @@ void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
   DefaultVisitor::visitNonTerminal(node);
 }
 
+void NextFollow::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
+{
+    if(node->mSymbol)
+    {
+      merge(node->mSymbol, globalSystem.follow(node));
+      
+      DefaultVisitor::visitNode(node->mSymbol);
+    }
+}
+
 void NextFollow::visitOperator(Model::OperatorItem *node)
 {
   Q_UNUSED(node);
@@ -265,7 +275,7 @@ void computeFollow()
   while (changed)
     {
       changed = false;
-      for(QList<Model::Node*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
+      for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {
         NextFollow next(changed);
         next(*it);

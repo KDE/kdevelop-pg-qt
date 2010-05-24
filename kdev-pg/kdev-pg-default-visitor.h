@@ -33,6 +33,7 @@ protected:
   virtual void visitSymbol(Model::SymbolItem *node);
   virtual void visitTerminal(Model::TerminalItem *node);
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
   virtual void visitPlus(Model::PlusItem *node);
   virtual void visitStar(Model::StarItem *node);
   virtual void visitAction(Model::ActionItem *node);

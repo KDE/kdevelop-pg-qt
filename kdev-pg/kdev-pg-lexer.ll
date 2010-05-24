@@ -100,6 +100,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 ";;"                    rulePosition = RuleBody;   return ';';
 "->"                    rulePosition = RuleFooter; return T_ARROW;
+".="                    return T_INLINE;
 
 "("                     return '(';
 ")"                     return ')';

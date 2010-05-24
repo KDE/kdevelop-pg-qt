@@ -64,6 +64,7 @@ protected:
   virtual void visitCondition(Model::ConditionItem *node);
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
   virtual void visitOperator(Model::OperatorItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
 
 private:
   bool &mChanged;

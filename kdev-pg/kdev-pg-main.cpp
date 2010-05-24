@@ -33,6 +33,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
+#include "kdev-pg-inline-checker.h"
 
 namespace KDevPG
 {
@@ -305,13 +306,21 @@ int main(int argc, char **argv)
 
   KDevPG::file.close();
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  KDevPG::globalSystem.finishedParsing();
+  
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  {
+    KDevPG::InlineChecker check;
+    check(*it);
+  }
+  
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::InitializeEnvironment initenv;
     initenv(*it);
   }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::EmptyOperatorChecker check;
     check(*it);
@@ -322,86 +331,84 @@ int main(int argc, char **argv)
 
   if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
   {
-    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+    for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
     {
       KDevPG::FirstFollowConflictChecker check;
       check(*it);
     }
 
-    for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+    for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
     {
       KDevPG::FirstFirstConflictChecker check;
       check(*it);
     }
   }
     
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::EmptyFirstChecker check;
     check(*it);
   }
   
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::EmptyOperatorChecker check;
     check(*it);
   }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::UndefinedSymbolChecker check;
     check(*it);
   }
 
-  for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {
     KDevPG::UndefinedTokenChecker check;
     check(*it);
   }
 
+  if(dump_terminals)
+    {
+      QFile ft("kdev-pg-terminals");
+      ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
+      QTextStream strm(&ft);
+      for (KDevPG::World::TerminalSet::iterator it = KDevPG::globalSystem.terminals.begin();
+            it != KDevPG::globalSystem.terminals.end(); ++it)
+        {
+          strm << it.key() << endl;
+        }
+    }
+  if (dump_symbols)
+    {
+      QFile ft("kdev-pg-symbols");
+      ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
+      QTextStream strm(&ft);
+      for (KDevPG::World::SymbolSet::iterator it = KDevPG::globalSystem.symbols.begin();
+            it != KDevPG::globalSystem.symbols.end(); ++it)
+        {
+          strm << it.key() << endl;
+        }
+    }
+  if (DebugRules)
+    {
+      QFile ft("kdev-pg-rules");
+      ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
+      QTextStream strm(&ft);
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        DebugRule dr(strm);
+        dr(*it);
+      }
+    }
+    
   KDevPG::ProblemSummaryPrinter()();
-
-  if (dump_terminals || dump_symbols || DebugRules)
-    {
-      if(dump_terminals)
-        {
-          QFile ft("kdev-pg-terminals");
-          ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
-          QTextStream strm(&ft);
-          for (KDevPG::World::TerminalSet::iterator it = KDevPG::globalSystem.terminals.begin();
-               it != KDevPG::globalSystem.terminals.end(); ++it)
-            {
-              strm << it.key() << endl;
-            }
-        }
-      if (dump_symbols)
-        {
-          QFile ft("kdev-pg-symbols");
-          ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
-          QTextStream strm(&ft);
-          for (KDevPG::World::SymbolSet::iterator it = KDevPG::globalSystem.symbols.begin();
-               it != KDevPG::globalSystem.symbols.end(); ++it)
-            {
-              strm << it.key() << endl;
-            }
-        }
-      if (DebugRules)
-        {
-          QFile ft("kdev-pg-rules");
-          ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
-          QTextStream strm(&ft);
-          for(QList<KDevPG::Model::Node*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-          {
-            DebugRule dr(strm);
-            dr(*it);
-          }
-        }
-    }
-  else if (KDevPG::globalSystem.language.isEmpty())
-    {
-      usage();
-      exit(EXIT_FAILURE);
-    }
+  
+  if (!(dump_terminals || dump_symbols || DebugRules) && KDevPG::globalSystem.language.isEmpty())
+  {
+    usage();
+    exit(EXIT_FAILURE);
+  }
 
   if (generate_parser)
     KDevPG::generateOutput();

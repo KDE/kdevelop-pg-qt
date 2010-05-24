@@ -4,6 +4,7 @@ PROJECT(kdevpg)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 REMOVE_DEFINITIONS(-DQT_NO_STL)
 ADD_DEFINITIONS(-DQT_STL) 
+add_definitions(-fexceptions)
 
 SET(kdevpg_srcs
     ASBeautifier.cpp
@@ -27,6 +28,7 @@ SET(kdevpg_srcs
     kdev-pg-new-visitor-bits-gen.cpp
     kdev-pg-beautifier.cpp
     kdev-pg-checker.cpp
+    kdev-pg-inline-checker.cpp
     kdev-pg-main.cpp
     kdev-pg-generate.cpp
     kdev-pg-first.cpp

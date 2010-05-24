@@ -1,10 +1,9 @@
-/* This file is part of kdev-pg
-   Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
-
+/*
+   Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
+   
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
-   License as published by the Free Software Foundation; either
-   version 2 of the License, or (at your option) any later version.
+   License version 2 as published by the Free Software Foundation.
 
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,30 +16,27 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef KDEV_PG_ENVIRONMENT_H
-#define KDEV_PG_ENVIRONMENT_H
+#ifndef KDEVPG_INLINE_CHECKER_H
+#define KDEVPG_INLINE_CHECKER_H
 
 #include "kdev-pg-default-visitor.h"
-#include "kdev-pg.h"
+
+#include <QSet>
 
 namespace KDevPG
 {
-class InitializeEnvironment: protected DefaultVisitor
+
+class InlineChecker : public DefaultVisitor
 {
 public:
-  void operator ()(Model::Node *node)
-  {
-    visitNode(node);
-  }
+    void operator()(Model::EvolveItem* node);
 protected:
-  virtual void visitEvolve(Model::EvolveItem *node)
-  {
-    globalSystem.env.insert(node->mSymbol, node);
-  }
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node)
-  {
-    Q_UNUSED(node);
-  }
+    virtual void visitNonTerminal(Model::NonTerminalItem* node);
+    virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node);
+private:
+    QSet<Model::Node*> mVisited, mCurrentlyVisiting;
 };
+
 }
-#endif // KDEV_PG_ENVIRONMENT_H
+
+#endif // KDEVPG_INLINE_CHECKER_H

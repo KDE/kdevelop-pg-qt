@@ -163,18 +163,9 @@ void GenerateSerializeVisitorRule::operator()(QPair<QString,
       << "(" << sym->mCapitalizedName << "Ast *" << "node"
       << ") {" << endl;
 
-  World::Environment::iterator it = globalSystem.env.find(sym);
-  while (it != globalSystem.env.end())
-    {
-      Model::EvolveItem *e = (*it);
-      if (it.key() != sym)
-        break;
-
-      ++it;
-
-      visitNode(e);
-    }
-
+  Model::EvolveItem *e = globalSystem.searchRule(sym);
+  visitNode(e);
+  
   out << "DefaultVisitor::visit" << sym->mCapitalizedName
       << "(" << "node"
       << ");" << endl;

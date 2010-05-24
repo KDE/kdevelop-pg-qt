@@ -46,8 +46,7 @@ void CloneTree::visitNonTerminal(Model::NonTerminalItem *node)
 
 void CloneTree::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
-  #warning "Implement me"
-  /// TODO implementation
+  mTemps.push(KDevPG::inlinedNonTerminal(node->mSymbol));
 }
 
 void CloneTree::visitPlus(Model::PlusItem *node)

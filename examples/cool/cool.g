@@ -140,7 +140,7 @@
    CASE expression=expression OF (#condition=case_condition SEMICOLON)* ESAC
 -> case_expression ;;
 
-   expression=relational_expression
+   .=relational_expression
 -> expression ;;
 
    name=IDENTIFIER COLON type=TYPE (ARROW_LEFT expression=expression | 0)

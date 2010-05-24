@@ -256,7 +256,8 @@ void FirstFollowConflictChecker::visitInlinedNonTerminal(Model::InlinedNonTermin
 
 void UndefinedSymbolChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
-    visitSymbol(node->mSymbol);
+    if(node->mSymbol)
+        visitSymbol(node->mSymbol);
 }
 
 void UndefinedSymbolChecker::operator()(Model::Node *node)

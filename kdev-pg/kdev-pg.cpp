@@ -208,7 +208,9 @@ bool isOperatorSymbol(Model::SymbolItem *sym)
 
 bool reducesToEpsilon(Model::Node *node)
 {
-  if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
+  if (node == 0)
+    return true;
+  else if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
     {
       return reducesToEpsilon(c->mLeft) && reducesToEpsilon(c->mRight);
     }

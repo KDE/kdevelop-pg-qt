@@ -225,9 +225,12 @@ void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
 
 void NextFollow::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
-    merge(node->mSymbol, globalSystem.follow(node));
-    
-    DefaultVisitor::visitNode(node->mSymbol);
+    if(node->mSymbol)
+    {
+      merge(node->mSymbol, globalSystem.follow(node));
+      
+      DefaultVisitor::visitNode(node->mSymbol);
+    }
 }
 
 void NextFollow::visitOperator(Model::OperatorItem *node)

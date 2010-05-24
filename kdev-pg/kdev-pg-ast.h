@@ -353,10 +353,15 @@ namespace Settings
 
 } // namespace settings
 
+template<class T>
+struct StripPtr { typedef T Result; };
+template<class T>
+struct StripPtr<T*> { typedef T Result; };
+
 template <class _Tp>
 _Tp nodeCast(Model::Node *item)
 {
-  if (static_cast<_Tp>(0)->NodeKind == item->kind)
+  if (StripPtr<_Tp>::Result::NodeKind == item->kind)
     return static_cast<_Tp>(item);
 
   return 0;

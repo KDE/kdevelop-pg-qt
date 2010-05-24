@@ -140,6 +140,11 @@ void PrettyPrinter::visitTerminal(Model::TerminalItem *node)
   out << node->mName;
 }
 
+void PrettyPrinter::visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node)
+{
+    visitNode(node->mSymbol);
+}
+
 void PrettyPrinter::visitNonTerminal(Model::NonTerminalItem *node)
 {
   visitNode(node->mSymbol);

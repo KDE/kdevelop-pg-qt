@@ -53,6 +53,7 @@ protected:
   virtual void visitTryCatch(Model::TryCatchItem *node);
   virtual void visitAlias(Model::AliasItem *node);
   virtual void visitTerminal(Model::TerminalItem *node);
+  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
   virtual void visitNonTerminal(Model::NonTerminalItem *node);
   virtual void visitAnnotation(Model::AnnotationItem *node);
 };

@@ -135,7 +135,7 @@ if( KDEVPGQT_INCLUDE_DIR
             list(REMOVE_AT _depList 0)
             set(_conflicts --ignore-conflicts)
         else( ${_arg} STREQUAL "IGNORE_CONFLICTS" )
-            break(1)
+            break()
         endif( ${_arg} STREQUAL "NAMESPACE" )
         endwhile(1)
         

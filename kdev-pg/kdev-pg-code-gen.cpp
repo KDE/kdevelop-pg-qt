@@ -27,6 +27,8 @@
 
 namespace KDevPG
 {
+  extern QTextStream checkOut;
+  
   void generateConditionFromStrings(QStringList &tokens, bool zerop, QTextStream& out)
   {
     tokens.sort();
@@ -427,7 +429,7 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
 {
   if (!globalSystem.generateAst)
     {
-      // qDebug() << "** WARNING annotation ignored" << endl;
+      // checkOut << "** WARNING annotation ignored" << endl;
       visitNode(node->mItem);
       return;
     }

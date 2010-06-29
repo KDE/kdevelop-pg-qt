@@ -22,7 +22,7 @@
 #include "kdev-pg-follow.h"
 #include "kdev-pg-pretty-printer.h"
 
-#include <QtCore/QDebug>
+#include <QtCore/QTextStream>
 
 //uncomment this to see debug output for follow dependency calculation
 // #define followDepsEP_DEBUG
@@ -31,25 +31,27 @@
 namespace KDevPG
 {
 
+extern QTextStream checkOut;
+
 #ifdef FOLLOWDEP_DEBUG
 void DebugFollowDep(Model::Node *dest, Model::Node *dep, const QString &message)
 {
-  qDebug() << "=============================" << endl;
+  checkOut << "=============================" << endl;
   PrettyPrinter p(QTextStream( stderr ));
-  qDebug() << "adding " << message << " ";
+  checkOut << "adding " << message << " ";
   p(dep);
-  qDebug() << " (" << (uint*)dep << ")";
-  qDebug() << " to follow ";
+  checkOut << " (" << (uint*)dep << ")";
+  checkOut << " to follow ";
   p(dest);
-  qDebug() << " (" << (uint*)dest << ")";
-  qDebug() << "{" << dest->kind << "}";
+  checkOut << " (" << (uint*)dest << ")";
+  checkOut << "{" << dest->kind << "}";
   if (dest->kind == Model::Node_kind_nonTerminal)
   {
     Model::SymbolItem *s = ((Model::NonTerminalItem*)dest)->mSymbol;
     if (s)
-      qDebug() << "__"; p(s); qDebug() << "__";
+      checkOut << "__"; p(s); checkOut << "__";
   }
-  qDebug() << endl;
+  checkOut << endl;
 }
 
 void debugFirstToFollowDep(Model::Node *dest, Model::Node *dep)

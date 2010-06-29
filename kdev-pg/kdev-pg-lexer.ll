@@ -26,6 +26,7 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QTextStream>
 
 int inp();
 void appendLineBuffer();
@@ -37,6 +38,7 @@ namespace KDevPG
 {
   extern QFile file;
   extern QFileInfo fileInfo;
+  extern QTextStream checkOut;
 }
 
 #define YY_INPUT(buf, result, max_size) \
@@ -187,7 +189,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    qDebug() << "Encountered end of file in an unclosed rule argument specification..." << endl;
+    KDevPG::checkOut << "Encountered end of file in an unclosed rule argument specification..." << endl;
     yyerror("");
     return 0;
 }
@@ -249,7 +251,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    qDebug() << "Encountered end of file in an unclosed code segment..." << endl;
+    KDevPG::checkOut << "Encountered end of file in an unclosed code segment..." << endl;
     yyerror("");
     return 0;
 }
@@ -268,7 +270,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 
 . {
-  qDebug() << "Unexpected character: ``" << yytext[0] << "''" << endl;
+  KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << endl;
   yyerror("");
 }
 
@@ -316,7 +318,7 @@ void appendLineBuffer()
 void yyerror(const char* msg )
 {
   Q_UNUSED(msg);
-  qDebug() << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << endl;
+  KDevPG::checkOut << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << endl;
 
   char *current_end = yyTextLine + strlen(yyTextLine);
   char *p;
@@ -341,13 +343,10 @@ void yyerror(const char* msg )
   /* at currentOffset */
 
   /* print error message and current line */
-  qDebug() << yyTextLine;
+  KDevPG::checkOut << yyTextLine;
 
   /* print a ^ under the most recent token */
-  for (int i = 0; i < currentOffset; i++)
-    qDebug() << " ";
-
-  qDebug() << "^" << endl; /* currentOffset spaces, then ^ */
+  KDevPG::checkOut << QString(' ', currentOffset - 1).append('^') << endl; /* currentOffset spaces, then ^ */
 
   exit(EXIT_FAILURE);
 }

@@ -26,6 +26,8 @@
 namespace KDevPG
 {
 
+QList<QHash<Model::Node*, QSet<Model::Node*> > > firstSets;
+
 /**
  * Adds first-sets for terminals, zeros and operators.
  */

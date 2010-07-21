@@ -22,6 +22,23 @@
 
 #include <cassert>
 
+// How should LL(k)-first-sets be generated?
+// Start with normal LL(1)-first-sets
+/* visitCons: For each item on the left hand being x too short add LL(x)-first-sets of the right hand
+ * visitStar: Use the star-itself as right hand
+ * visitOperator:
+ * - for each pre: LL(1)-first(pre) + LL(k-1)-first(op)
+ * - LL(k)-first(base) + LL(x)-first(post) + LL(x)-first(bin | tern1)
+ * - ...
+ * The simple solution for operator-expressions:
+ * Create temporary BNF-grammar for op-exp (don't care about conflicts, they won't be used for parsing:
+ * pre op | op bin op | op tern1 op tern2 op | lparen op rparen | op post | base -> op ;;
+ * Would be usable for follow-sets, too
+ * 
+ * Idea:
+ * To make this algorithmic stuff less bloated, create a BasicBNFVisitor, replacing + with cons+start, operator with rules mentioned above, inlined non-terminals with normal non-terminals etc.
+ */
+
 namespace KDevPG
 {
 
@@ -32,7 +49,7 @@ void InitializeFirst::operator ()(Model::Node *node)
 
 void InitializeFirst::visitNode(Model::Node *node)
 {
-  if (globalSystem.findInFirst(node) != globalSystem.firstEnd())
+  if (firstSets[k].contains(node))
     return ; // nothing to do
 
   DefaultVisitor::visitNode(node);
@@ -40,7 +57,7 @@ void InitializeFirst::visitNode(Model::Node *node)
 
 void InitializeFirst::visitZero(Model::ZeroItem *node)
 {
-  globalSystem.first(node).insert(node);
+  firstSets[k][node].insert(node);
 }
 
 void InitializeFirst::visitTerminal(Model::TerminalItem *node)

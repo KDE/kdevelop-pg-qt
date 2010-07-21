@@ -27,6 +27,9 @@
 //uncomment this to see debug output for follow dependency calculation
 // #define followDepsEP_DEBUG
 
+/*
+ * Computing LL(k)-follow-sets
+ */
 
 namespace KDevPG
 {

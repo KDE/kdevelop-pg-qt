@@ -26,6 +26,13 @@
 namespace KDevPG
 {
 
+#define visitNonTerminalIndirectly \
+  visitNode(node->mSymbol);
+
+#define visitNonTerminalDirectly \
+  Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol); \
+  visitNode(rule);
+
 class DefaultVisitor: public Visitor
 {
 protected:

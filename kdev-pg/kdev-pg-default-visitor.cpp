@@ -42,13 +42,12 @@ void DefaultVisitor::visitTerminal(Model::TerminalItem *node)
 
 void DefaultVisitor::visitNonTerminal(Model::NonTerminalItem *node)
 {
-  visitNode(node->mSymbol);
+  visitNonTerminalIndirectly
 }
 
 void DefaultVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
-  Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol);
-  visitNode(rule);
+  visitNonTerminalDirectly
 }
 
 void DefaultVisitor::visitPlus(Model::PlusItem *node)

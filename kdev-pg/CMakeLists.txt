@@ -33,6 +33,7 @@ SET(kdevpg_srcs
     kdev-pg-generate.cpp
     kdev-pg-first.cpp
     kdev-pg-follow.cpp
+    kdev-pg-bnf-visitor.cpp
     kdev-pg-clone-tree.cpp)
 
 

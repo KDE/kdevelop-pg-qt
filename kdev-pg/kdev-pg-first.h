@@ -21,12 +21,12 @@
 #define KDEV_PG_FIRST_H
 
 #include "kdev-pg.h"
-#include "kdev-pg-default-visitor.h"
+#include "kdev-pg-bnf-visitor.h"
+
+#include <QSet>
 
 namespace KDevPG
 {
-
-QList<QHash<Model::Node*, QSet<Model::Node*> > > firstSets;
 
 /**
  * Adds first-sets for terminals, zeros and operators.
@@ -62,7 +62,7 @@ protected:
 /**
  * Recursively merge first-sets.
  */
-class NextFirst: protected DefaultVisitor
+class NextFirst: protected BnfVisitor
 {
 public:
   NextFirst(bool &changed);
@@ -75,28 +75,17 @@ protected:
   void merge(Model::Node *__dest, Model::Node *__source, int K = 1);
 
   virtual void visitNode(Model::Node *node);
-  virtual void visitZero(Model::ZeroItem *node);
-  virtual void visitTerminal(Model::TerminalItem *node);
-  virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
-  virtual void visitSymbol(Model::SymbolItem *node);
-  virtual void visitPlus(Model::PlusItem *node);
-  virtual void visitStar(Model::StarItem *node);
-  virtual void visitAction(Model::ActionItem *node);
   virtual void visitAlternative(Model::AlternativeItem *node);
   virtual void visitCons(Model::ConsItem *node);
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitTryCatch(Model::TryCatchItem *node);
-  virtual void visitAlias(Model::AliasItem *node);
-  virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem *node);
-  virtual void visitOperator(Model::OperatorItem *node);
+  
+  virtual void copy(Model::Node *from, Model::Node *to) { merge(to, from); }
 
 private:
   Model::Node *mItem;
   bool mMergeBlocked;
   bool mMergeZeroBlocked;
   bool &mChanged;
+  QSet<Model::Node*> mVisited;
 };
 
 /**

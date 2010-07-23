@@ -47,22 +47,17 @@ public:
 
   Allocator()
   {
-    sReference++;
+    sBlockIndex = maxBlockCount;
+    sCurrentIndex = 0;
+    sStorage = 0;
+    sCurrentBlock = 0;
   }
 
   ~Allocator()
   {
-    if (--sReference == 0)
-      {
-        ++sBlockIndex;
-
-        for (sizeType index = 0; index < sBlockIndex; ++index)
-          delete[] sStorage[index];
-
-        --sBlockIndex;
-
-        std::free(sStorage);
-      }
+      for (sizeType index = 0; index < sBlockIndex; ++index)
+        delete[] sStorage[index];
+      std::free(sStorage);
   }
 
   pointer address(reference __val)
@@ -130,37 +125,16 @@ private:
   {}
 
 private:
-  static sizeType sReference;
   static const sizeType sBlockSize;
-  static sizeType sBlockIndex;
-  static sizeType sCurrentIndex;
-  static char *sCurrentBlock;
-  static char **sStorage;
+  sizeType sBlockIndex;
+  sizeType sCurrentIndex;
+  char *sCurrentBlock;
+  char **sStorage;
 };
-
-template <class _Tp>
-typename Allocator<_Tp>::sizeType
-Allocator<_Tp>::sReference = 0;
 
 template <class _Tp>
 const typename Allocator<_Tp>::sizeType
 Allocator<_Tp>::sBlockSize = 1 << 16; // 64K
-
-template <class _Tp>
-typename Allocator<_Tp>::sizeType
-Allocator<_Tp>::sBlockIndex = maxBlockCount;
-
-template <class _Tp>
-typename Allocator<_Tp>::sizeType
-Allocator<_Tp>::sCurrentIndex = 0;
-
-template <class _Tp>
-char**
-Allocator<_Tp>::sStorage = 0;
-
-template <class _Tp>
-char*
-Allocator<_Tp>::sCurrentBlock = 0;
 
 }
 

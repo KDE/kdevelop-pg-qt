@@ -23,7 +23,8 @@
 #define KDEV_PG_FOLLOW_H
 
 #include "kdev-pg.h"
-#include "kdev-pg-default-visitor.h"
+#include "kdev-pg-bnf-visitor.h"
+
 
 
 namespace KDevPG
@@ -37,7 +38,7 @@ protected:
   virtual void visitSymbol(Model::SymbolItem *node);
 };
 
-class NextFollow: protected DefaultVisitor
+class NextFollow: protected BnfVisitor
 {
 public:
   NextFollow(bool &changed);
@@ -53,22 +54,16 @@ protected:
   @p dest FOLLOW set*/
   void addFollowToFollowDep(Model::Node *dest, Model::Node *dep);
 
-  virtual void visitPlus(Model::PlusItem *node);
-  virtual void visitStar(Model::StarItem *node);
-  virtual void visitAction(Model::ActionItem *node);
+  virtual void visitNode(Model::Node *node);
   virtual void visitAlternative(Model::AlternativeItem *node);
   virtual void visitCons(Model::ConsItem *node);
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitTryCatch(Model::TryCatchItem *node);
-  virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem *node);
-  virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitOperator(Model::OperatorItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
+  
+  void preCopy(Model::Node *from, Model::Node *to);
 
 private:
   bool &mChanged;
   Model::SymbolItem *mSymbol;
+  QSet<Model::Node*> mVisited;
 };
 
 void computeFollow();

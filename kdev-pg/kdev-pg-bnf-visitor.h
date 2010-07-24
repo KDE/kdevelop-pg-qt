@@ -1,3 +1,6 @@
+#ifndef KDEV_PG_BNF_VISITOR_H
+#define KDEV_PG_BNF_VISITOR_H
+
 #include "kdev-pg-default-visitor.h"
 
 #include "kdev-pg.h"
@@ -42,6 +45,11 @@ protected:
     Q_UNUSED(from);
     Q_UNUSED(to);
   }
+  virtual void preCopy(Model::Node *from, Model::Node *to)
+  {
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+  }
   
   virtual void finished();
   virtual ~BnfVisitor()
@@ -51,3 +59,5 @@ protected:
 };
 
 }
+
+#endif

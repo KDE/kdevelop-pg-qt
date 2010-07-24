@@ -118,21 +118,6 @@ void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
     }
 }
 
-void NextFollow::visitEvolve(Model::EvolveItem *node)
-{
-  Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
-  if (node == globalSystem.start && !globalSystem.follow(node->mSymbol).contains(teof) )
-  {
-    mChanged = true;
-  }
-  globalSystem.follow(node->mSymbol).insert(teof);
-
-  merge(node->mItem, globalSystem.follow(node->mSymbol));
-  addFollowToFollowDep(node->mItem, node->mSymbol);
-  
-  DefaultVisitor::visitEvolve(node);
-}
-
 void NextFollow::visitCons(Model::ConsItem *node)
 {
   merge(node->mRight, globalSystem.follow(node));
@@ -160,88 +145,25 @@ void NextFollow::visitAlternative(Model::AlternativeItem *node)
   DefaultVisitor::visitAlternative(node);
 }
 
-void NextFollow::visitAction(Model::ActionItem *node)
+void NextFollow::visitNode(Model::Node* node)
 {
-  if(node->mItem)
+    if(mVisited.contains(node))
+      return;
+    
+    mVisited.insert(node);
+    
+    KDevPG::Visitor::visitNode(node);
+    
+    mVisited.remove(node);
+}
+
+void NextFollow::preCopy(Model::Node* from, Model::Node* to)
+{
+  if(from && to)
   {
-    merge(node->mItem, globalSystem.follow(node));
-    addFollowToFollowDep(node->mItem, node);
-
-    DefaultVisitor::visitAction(node);
+    merge(from, globalSystem.follow(to));
+    addFollowToFollowDep(from, to);
   }
-}
-
-void NextFollow::visitTryCatch(Model::TryCatchItem *node)
-{
-  merge(node->mTryItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mTryItem, node);
-
-  if (node->mCatchItem)
-  {
-    merge(node->mCatchItem, globalSystem.follow(node));
-    addFollowToFollowDep(node->mCatchItem, node);
-  }
-
-  DefaultVisitor::visitTryCatch(node);
-}
-
-void NextFollow::visitAnnotation(Model::AnnotationItem *node)
-{
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitAnnotation(node);
-}
-
-void NextFollow::visitCondition(Model::ConditionItem *node)
-{
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitCondition(node);
-}
-
-void NextFollow::visitPlus(Model::PlusItem *node)
-{
-  merge(node->mItem, globalSystem.first(node->mItem));
-  addFirstToFollowDep(node->mItem, node->mItem);
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitPlus(node);
-}
-
-void NextFollow::visitStar(Model::StarItem *node)
-{
-  merge(node->mItem, globalSystem.first(node->mItem));
-  addFirstToFollowDep(node->mItem, node->mItem);
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitStar(node);
-}
-
-void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
-{
-  merge(node->mSymbol, globalSystem.follow(node));
-
-  DefaultVisitor::visitNonTerminal(node);
-}
-
-void NextFollow::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
-{
-    if(node->mSymbol)
-    {
-      merge(node->mSymbol, globalSystem.follow(node));
-      
-      DefaultVisitor::visitNode(node->mSymbol);
-    }
-}
-
-void NextFollow::visitOperator(Model::OperatorItem *node)
-{
-  Q_UNUSED(node);
-  /// @TODO Do we have to do anything here? I think not, because an operator-expression expects mBase not to reduce to zero, because prefix and postfix expression would not make any sense in this case. All necessary FOLLOW-stuff should be added from outside. But I am not 100% sure. (The User, 6.3.2010)
 }
 
 void NextFollow::addFirstToFollowDep(Model::Node *dest, Model::Node *dep)
@@ -277,12 +199,12 @@ void NextFollow::addFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 void computeFollow()
 {
   bool changed = true;
+  NextFollow next(changed);
   while (changed)
     {
       changed = false;
       for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {
-        NextFollow next(changed);
         next(*it);
       }
     }

@@ -30,9 +30,11 @@ void KDevPG::BnfVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* 
   Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol);
   
   preCopy(rule, node);
+  preCopy(node->mSymbol, node);
   
-  visitNode(rule);
+//   visitNode(rule);
   
+  copy(node->mSymbol, node);
   copy(rule, node);
 }
 
@@ -41,9 +43,11 @@ void KDevPG::BnfVisitor::visitNonTerminal(Model::NonTerminalItem* node)
   Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol);
   
   preCopy(rule, node);
+  preCopy(node->mSymbol, node);
   
-  visitNode(rule);
+//   visitNode(rule);
   
+  copy(node->mSymbol, node);
   copy(rule, node);
 }
 
@@ -63,13 +67,13 @@ void KDevPG::BnfVisitor::visitPlus(Model::PlusItem* node)
   a->mLeft = globalSystem.zero();
   a->mRight = c;
   
-  preCopy(a, node);
+  preCopy(c, node);
   
   DefaultVisitor::visitNode(c);
   
   mPlusStuff[node] = c;
   
-  copy(a, node);
+  copy(c, node);
 }
 
 void KDevPG::BnfVisitor::visitStar(Model::StarItem* node)
@@ -220,6 +224,8 @@ void KDevPG::BnfVisitor::visitOperator(Model::OperatorItem* node)
 
 void BnfVisitor::visitAnnotation(Model::AnnotationItem* node)
 {
+    preCopy(node->mItem, node);
+  
     KDevPG::DefaultVisitor::visitAnnotation(node);
     
     copy(node->mItem, node);
@@ -230,6 +236,15 @@ void BnfVisitor::visitCondition(Model::ConditionItem* node)
     preCopy(node->mItem, node);
   
     KDevPG::DefaultVisitor::visitCondition(node);
+    
+    copy(node->mItem, node);
+}
+
+void BnfVisitor::visitAction(Model::ActionItem* node)
+{
+    preCopy(node->mItem, node);
+  
+    KDevPG::DefaultVisitor::visitNode(node->mItem);
     
     copy(node->mItem, node);
 }
@@ -250,8 +265,8 @@ void BnfVisitor::visitTryCatch(Model::TryCatchItem* node)
 
 void BnfVisitor::visitEvolve(Model::EvolveItem* node)
 {
-    preCopy(node->mItem, node);
     preCopy(node, node->mSymbol);
+    preCopy(node->mItem, node);
   
     visitNode(node->mItem);
     

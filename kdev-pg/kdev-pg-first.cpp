@@ -25,44 +25,15 @@
 namespace KDevPG
 {
 
-void InitializeFirst::operator ()(Model::Node *node)
+void initializeFirst()
 {
-  return visitNode(node);
-}
-
-void InitializeFirst::visitNode(Model::Node *node)
-{
-  if (globalSystem.findInFirst(node) != globalSystem.firstEnd())
-    return ; // nothing to do
-
-  DefaultVisitor::visitNode(node);
-}
-
-void InitializeFirst::visitZero(Model::ZeroItem *node)
-{
-  globalSystem.first(node).insert(node);
-}
-
-void InitializeFirst::visitTerminal(Model::TerminalItem *node)
-{
-  globalSystem.first(node).insert(node);
-}
-
-void InitializeFirst::visitOperator(Model::OperatorItem *node)
-{
-  for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  globalSystem.first(globalSystem.zero()).insert(globalSystem.zero());
+  for(__typeof__(globalSystem.terminals.begin()) i = globalSystem.terminals.begin();
+      i != globalSystem.terminals.end();
+      ++i)
   {
-    visitNode(i->first.mTok);
+      globalSystem.first(*i).insert(*i);
   }
-  for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
-  {
-    visitNode(i->op.mTok);
-  }
-}
-
-void InitializeFirst::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
-{
-    Q_UNUSED(node);
 }
 
 NextFirst::NextFirst(bool &changed): mChanged(changed)
@@ -94,6 +65,9 @@ bool NextFirst::blockZeroMerge(bool block)
 
 void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
 {
+  if(__source == 0 || __dest == 0)
+    return;
+  
   World::NodeSet &dest = globalSystem.first(__dest, K);
   World::NodeSet &source = globalSystem.first(__source, K);
 
@@ -103,14 +77,13 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
         {
           continue;
         }
-
       if( dest.contains(*it) )
         /*mChanged |= false*/;
       else
       {
+        dest.insert(*it);
         mChanged = true;
       }
-      dest.insert(*it);
     }
 }
 
@@ -166,16 +139,13 @@ void NextFirst::visitCons(Model::ConsItem *node)
 
 void computeFirst() // the closure of the FIRST sets
 {
-  for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
-  {
-    InitializeFirst initfirst;
-    initfirst(*it);
-  }
+  initializeFirst();
 
   bool changed = true;
   NextFirst next(changed);
   while (changed)
     {
+//       qDebug() << "first iteration: " << ++i;
       changed = false;
       for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {

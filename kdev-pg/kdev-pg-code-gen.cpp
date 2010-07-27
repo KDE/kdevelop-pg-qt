@@ -24,6 +24,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStack>
 #include <QtCore/QStringList>
+#include "kdev-pg-pretty-printer.h"
 
 namespace KDevPG
 {
@@ -49,6 +50,12 @@ namespace KDevPG
 
   void generateCondition(const World::NodeSet& s, QTextStream& out)
   {
+    if(s.size() == 0 || s.size() == 1 && nodeCast<Model::ZeroItem*>(*s.begin()) != 0)
+    {
+      out << "true /*epsilon*/";
+      return;
+    }
+    
     Model::Node *item = globalSystem.zero();
     
     QStringList tokens;
@@ -61,7 +68,7 @@ namespace KDevPG
       if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
         tokens << t->mName;
     }
-    generateConditionFromStrings(tokens, isZero(item), out);
+    generateConditionFromStrings(tokens, false, out);
   }
 
   void generateTestCondition(Model::Node *node, QTextStream& out)
@@ -74,7 +81,8 @@ namespace KDevPG
     }
     else
     {
-      World::NodeSet s = globalSystem.first(node);
+      World::NodeSet& s = globalSystem.first(node);
+      
       generateCondition(s, out);
     }
   }

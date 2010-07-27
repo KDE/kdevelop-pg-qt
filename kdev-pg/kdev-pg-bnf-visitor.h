@@ -38,6 +38,7 @@ protected:
   virtual void visitAnnotation(Model::AnnotationItem *node);
   virtual void visitCondition(Model::ConditionItem *node);
   virtual void visitEvolve(Model::EvolveItem *node);
+  virtual void visitAction(Model::ActionItem *node);
 
   /// Should be reimplemented by first- and follow-set-generators
   virtual void copy(Model::Node *from, Model::Node *to)

@@ -71,7 +71,7 @@ void help()
            << "\t--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
            << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
            << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
-           << "\t--visitor-table - Visit::visitNode will be implemented by using an lookup-array" << endl
+           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array" << endl
            << "\t--visitor-switch - Visitor::visitNode will use a switch-statement" << endl
            << "\t--help - Show this messages" << endl
            << "\t--usage - Show usage" << endl

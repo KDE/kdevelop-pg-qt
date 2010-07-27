@@ -29,35 +29,9 @@ namespace KDevPG
 {
 
 /**
- * Adds first-sets for terminals, zeros and operators.
+ * Adds first-sets for terminals and zeros.
  */
-class InitializeFirst: protected DefaultVisitor
-{
-public:
-  void operator ()(Model::Node *node);
-
-protected:
-  /**
-   * Stops endless recursion.
-   */
-  virtual void visitNode(Model::Node *node);
-  /**
-   * Add node to the first-set of node.
-   */
-  virtual void visitZero(Model::ZeroItem *node);
-  /**
-   * The same as visitZero.
-   */
-  virtual void visitTerminal(Model::TerminalItem *node);
-  /**
-   * Initialize the required terminals.
-   */
-  virtual void visitOperator(Model::OperatorItem *node);
-  /**
-   * Stop.
-   */
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
-};
+void InitializeFirstoperator ();
 
 /**
  * Recursively merge first-sets.

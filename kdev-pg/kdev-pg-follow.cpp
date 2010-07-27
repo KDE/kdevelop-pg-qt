@@ -83,7 +83,12 @@ void debugFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 
 NextFollow::NextFollow(bool &changed)
   : mChanged(changed)
-{}
+{
+  Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
+  globalSystem.follow(globalSystem.start).insert(teof);
+  globalSystem.follow(globalSystem.start->mSymbol).insert(teof);
+  globalSystem.follow(globalSystem.start->mItem).insert(teof);
+}
 
 void NextFollow::operator()(Model::Node *node)
 {
@@ -147,6 +152,9 @@ void NextFollow::visitAlternative(Model::AlternativeItem *node)
 
 void NextFollow::visitNode(Model::Node* node)
 {
+    if(node == 0)
+      return;
+  
     if(mVisited.contains(node))
       return;
     
@@ -200,13 +208,17 @@ void computeFollow()
 {
   bool changed = true;
   NextFollow next(changed);
-  while (changed)
+  int i = 0;
+  while (true)
     {
-      changed = false;
+//       qDebug() << "follow iteration: " << ++i;
       for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {
         next(*it);
       }
+      if(!changed)
+        break;
+      changed = false;
     }
 }
 

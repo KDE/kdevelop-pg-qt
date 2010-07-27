@@ -80,7 +80,7 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
         {
           Model::Node *n = *it++;
 
-          str << "\t\t" << ((Model::TerminalItem*)n)->mName;
+          str << "\t\t" << n;
           if (it != U.end())
             str << ", ";
           str << endl;

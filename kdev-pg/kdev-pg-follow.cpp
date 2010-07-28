@@ -107,19 +107,17 @@ void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
       return;
     }
 
-  PrettyPrinter p(QTextStream( stdout ));
-
   World::NodeSet &dest = globalSystem.follow(__dest);
 
   for (World::NodeSet::const_iterator it = source.begin(); it != source.end(); ++it)
     {
       if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(*it))
       {
-          if( dest.contains(t) )
-            /*mChanged |= false*/;
-          else
-            mChanged |= true;
-          dest.insert(t) != dest.end();
+          if( !dest.contains(t) )
+          {
+            mChanged = true;
+            dest.insert(t) != dest.end();
+          }
       }
     }
 }
@@ -168,7 +166,7 @@ void NextFollow::visitNode(Model::Node* node)
 
 void NextFollow::preCopy(Model::Node* from, Model::Node* to)
 {
-  if(from && to)
+  if(from != 0 && to != 0)
   {
     merge(from, globalSystem.follow(to));
     addFollowToFollowDep(from, to);
@@ -215,7 +213,7 @@ void computeFollow()
       {
         next(*it);
       }
-      if(!changed)
+      if(!changed) // for the eof in the first iteration
         break;
       changed = false;
     }

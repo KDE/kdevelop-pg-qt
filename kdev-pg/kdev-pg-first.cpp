@@ -43,17 +43,8 @@ NextFirst::NextFirst(bool &changed): mChanged(changed)
 void NextFirst::operator ()(Model::Node *node)
 {
   assert(nodeCast<Model::EvolveItem*>(node));
-  mMergeBlocked = false;
   mMergeZeroBlocked = false;
-  mItem = node;
   visitNode(node);
-}
-
-bool NextFirst::blockMerge(bool block)
-{
-  bool old = mMergeBlocked;
-  mMergeBlocked = block;
-  return old;
 }
 
 bool NextFirst::blockZeroMerge(bool block)
@@ -77,9 +68,7 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
         {
           continue;
         }
-      if( dest.contains(*it) )
-        /*mChanged |= false*/;
-      else
+      if( !dest.contains(*it) )
       {
         dest.insert(*it);
         mChanged = true;
@@ -99,11 +88,6 @@ void NextFirst::visitNode(Model::Node *node)
   
   DefaultVisitor::visitNode(node);
 
-  if (!mMergeBlocked)
-    {
-      merge(mItem, node);
-    }
-    
   mVisited.remove(node);
 }
 
@@ -117,9 +101,7 @@ void NextFirst::visitAlternative(Model::AlternativeItem *node)
 
 void NextFirst::visitCons(Model::ConsItem *node)
 {
-  bool blocked = blockMerge(true);
   visitNode(node->mRight);
-  blockMerge(blocked);
 
   bool zero_blocked = mMergeZeroBlocked;
   if (!reducesToEpsilon(node->mRight))
@@ -145,7 +127,6 @@ void computeFirst() // the closure of the FIRST sets
   NextFirst next(changed);
   while (changed)
     {
-//       qDebug() << "first iteration: " << ++i;
       changed = false;
       for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {

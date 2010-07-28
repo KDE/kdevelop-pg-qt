@@ -31,7 +31,7 @@ namespace KDevPG
 /**
  * Adds first-sets for terminals and zeros.
  */
-void InitializeFirstoperator ();
+void initializeFirst ();
 
 /**
  * Recursively merge first-sets.
@@ -44,7 +44,6 @@ public:
   void operator ()(Model::Node *node);
 
 protected:
-  bool blockMerge(bool block);
   bool blockZeroMerge(bool block);
   void merge(Model::Node *__dest, Model::Node *__source, int K = 1);
 
@@ -55,8 +54,6 @@ protected:
   virtual void copy(Model::Node *from, Model::Node *to) { merge(to, from); }
 
 private:
-  Model::Node *mItem;
-  bool mMergeBlocked;
   bool mMergeZeroBlocked;
   bool &mChanged;
   QSet<Model::Node*> mVisited;

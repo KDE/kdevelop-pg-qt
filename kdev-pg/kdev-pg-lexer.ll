@@ -1,5 +1,5 @@
 %{
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
    This library is free software; you can redistribute it and/or

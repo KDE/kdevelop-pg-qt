@@ -1,7 +1,8 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
    Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
+   Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -27,6 +28,9 @@
 //uncomment this to see debug output for follow dependency calculation
 // #define followDepsEP_DEBUG
 
+/*
+ * Computing LL(k)-follow-sets
+ */
 
 namespace KDevPG
 {
@@ -80,7 +84,12 @@ void debugFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 
 NextFollow::NextFollow(bool &changed)
   : mChanged(changed)
-{}
+{
+  Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
+  globalSystem.follow(globalSystem.start).insert(teof);
+  globalSystem.follow(globalSystem.start->mSymbol).insert(teof);
+  globalSystem.follow(globalSystem.start->mItem).insert(teof);
+}
 
 void NextFollow::operator()(Model::Node *node)
 {
@@ -98,36 +107,19 @@ void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
       return;
     }
 
-  PrettyPrinter p(QTextStream( stdout ));
-
   World::NodeSet &dest = globalSystem.follow(__dest);
 
   for (World::NodeSet::const_iterator it = source.begin(); it != source.end(); ++it)
     {
       if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(*it))
       {
-          if( dest.contains(t) )
-            /*mChanged |= false*/;
-          else
-            mChanged |= true;
-          dest.insert(t) != dest.end();
+          if( !dest.contains(t) )
+          {
+            mChanged = true;
+            dest.insert(t) != dest.end();
+          }
       }
     }
-}
-
-void NextFollow::visitEvolve(Model::EvolveItem *node)
-{
-  Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
-  if (node == globalSystem.start && !globalSystem.follow(node->mSymbol).contains(teof) )
-  {
-    mChanged = true;
-  }
-  globalSystem.follow(node->mSymbol).insert(teof);
-
-  merge(node->mItem, globalSystem.follow(node->mSymbol));
-  addFollowToFollowDep(node->mItem, node->mSymbol);
-  
-  DefaultVisitor::visitEvolve(node);
 }
 
 void NextFollow::visitCons(Model::ConsItem *node)
@@ -157,88 +149,28 @@ void NextFollow::visitAlternative(Model::AlternativeItem *node)
   DefaultVisitor::visitAlternative(node);
 }
 
-void NextFollow::visitAction(Model::ActionItem *node)
+void NextFollow::visitNode(Model::Node* node)
 {
-  if(node->mItem)
+    if(node == 0)
+      return;
+  
+    if(mVisited.contains(node))
+      return;
+    
+    mVisited.insert(node);
+    
+    KDevPG::Visitor::visitNode(node);
+    
+    mVisited.remove(node);
+}
+
+void NextFollow::preCopy(Model::Node* from, Model::Node* to)
+{
+  if(from != 0 && to != 0)
   {
-    merge(node->mItem, globalSystem.follow(node));
-    addFollowToFollowDep(node->mItem, node);
-
-    DefaultVisitor::visitAction(node);
+    merge(from, globalSystem.follow(to));
+    addFollowToFollowDep(from, to);
   }
-}
-
-void NextFollow::visitTryCatch(Model::TryCatchItem *node)
-{
-  merge(node->mTryItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mTryItem, node);
-
-  if (node->mCatchItem)
-  {
-    merge(node->mCatchItem, globalSystem.follow(node));
-    addFollowToFollowDep(node->mCatchItem, node);
-  }
-
-  DefaultVisitor::visitTryCatch(node);
-}
-
-void NextFollow::visitAnnotation(Model::AnnotationItem *node)
-{
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitAnnotation(node);
-}
-
-void NextFollow::visitCondition(Model::ConditionItem *node)
-{
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitCondition(node);
-}
-
-void NextFollow::visitPlus(Model::PlusItem *node)
-{
-  merge(node->mItem, globalSystem.first(node->mItem));
-  addFirstToFollowDep(node->mItem, node->mItem);
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitPlus(node);
-}
-
-void NextFollow::visitStar(Model::StarItem *node)
-{
-  merge(node->mItem, globalSystem.first(node->mItem));
-  addFirstToFollowDep(node->mItem, node->mItem);
-  merge(node->mItem, globalSystem.follow(node));
-  addFollowToFollowDep(node->mItem, node);
-
-  DefaultVisitor::visitStar(node);
-}
-
-void NextFollow::visitNonTerminal(Model::NonTerminalItem *node)
-{
-  merge(node->mSymbol, globalSystem.follow(node));
-
-  DefaultVisitor::visitNonTerminal(node);
-}
-
-void NextFollow::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
-{
-    if(node->mSymbol)
-    {
-      merge(node->mSymbol, globalSystem.follow(node));
-      
-      DefaultVisitor::visitNode(node->mSymbol);
-    }
-}
-
-void NextFollow::visitOperator(Model::OperatorItem *node)
-{
-  Q_UNUSED(node);
-  /// @TODO Do we have to do anything here? I think not, because an operator-expression expects mBase not to reduce to zero, because prefix and postfix expression would not make any sense in this case. All necessary FOLLOW-stuff should be added from outside. But I am not 100% sure. (The User, 6.3.2010)
 }
 
 void NextFollow::addFirstToFollowDep(Model::Node *dest, Model::Node *dep)
@@ -274,14 +206,16 @@ void NextFollow::addFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 void computeFollow()
 {
   bool changed = true;
-  while (changed)
+  NextFollow next(changed);
+  while (true)
     {
-      changed = false;
       for(QList<Model::EvolveItem*>::iterator it = globalSystem.rules.begin(); it != globalSystem.rules.end(); ++it)
       {
-        NextFollow next(changed);
         next(*it);
       }
+      if(!changed) // for the eof in the first iteration
+        break;
+      changed = false;
     }
 }
 

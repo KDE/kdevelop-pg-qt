@@ -1,4 +1,4 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
@@ -25,6 +25,13 @@
 
 namespace KDevPG
 {
+
+#define visitNonTerminalIndirectly \
+  visitNode(node->mSymbol);
+
+#define visitNonTerminalDirectly \
+  Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol); \
+  visitNode(rule);
 
 class DefaultVisitor: public Visitor
 {

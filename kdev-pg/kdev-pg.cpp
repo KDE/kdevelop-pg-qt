@@ -1,4 +1,4 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
@@ -206,13 +206,16 @@ bool isOperatorSymbol(Model::SymbolItem *sym)
   return e && e->mItem->kind == Model::OperatorItem::NodeKind;
 }
 
-bool reducesToEpsilon(Model::Node *node)
+bool reducesToEpsilon(Model::Node *node, QSet<Model::Node*>& v)
 {
   if (node == 0)
     return true;
-  else if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
+  if (v.contains(node))
+    return true;
+  v.insert(node);
+  if (Model::ConsItem *c = nodeCast<Model::ConsItem*>(node))
     {
-      return reducesToEpsilon(c->mLeft) && reducesToEpsilon(c->mRight);
+      return reducesToEpsilon(c->mLeft, v) && reducesToEpsilon(c->mRight, v);
     }
   else if (nodeCast<Model::OperatorItem*>(node))
     {
@@ -220,35 +223,35 @@ bool reducesToEpsilon(Model::Node *node)
     }
   else if (Model::AlternativeItem *a = nodeCast<Model::AlternativeItem*>(node))
     {
-      return reducesToEpsilon(a->mLeft) || reducesToEpsilon(a->mRight);
+      return reducesToEpsilon(a->mLeft, v) || reducesToEpsilon(a->mRight, v);
     }
   else if (Model::ActionItem *a = nodeCast<Model::ActionItem*>(node))
     {
       if(a->mItem)
-        return reducesToEpsilon(a->mItem);
+        return reducesToEpsilon(a->mItem, v);
       else
         return true;
     }
   else if (Model::ConditionItem *c = nodeCast<Model::ConditionItem*>(node))
     {
-      return reducesToEpsilon(c->mItem);
+      return reducesToEpsilon(c->mItem, v);
     }
   else if (Model::TryCatchItem *t = nodeCast<Model::TryCatchItem*>(node))
     {
-      return reducesToEpsilon(t->mTryItem)
-             || (t->mCatchItem && reducesToEpsilon(t->mCatchItem));
+      return reducesToEpsilon(t->mTryItem, v)
+             || (t->mCatchItem && reducesToEpsilon(t->mCatchItem, v));
     }
   else if (Model::AnnotationItem *a = nodeCast<Model::AnnotationItem*>(node))
     {
-      return reducesToEpsilon(a->mItem);
+      return reducesToEpsilon(a->mItem, v);
     }
   else if (Model::NonTerminalItem *n = nodeCast<Model::NonTerminalItem*>(node))
     {
-      return reducesToEpsilon(n->mSymbol);
+      return reducesToEpsilon(n->mSymbol, v);
     }
   else if (Model::InlinedNonTerminalItem *n = nodeCast<Model::InlinedNonTerminalItem*>(node))
     {
-      return reducesToEpsilon(n->mSymbol);
+      return reducesToEpsilon(n->mSymbol, v);
     }
   else if (Model::SymbolItem *s = nodeCast<Model::SymbolItem*>(node))
     {
@@ -256,7 +259,7 @@ bool reducesToEpsilon(Model::Node *node)
     }
   else if (Model::PlusItem *p = nodeCast<Model::PlusItem*>(node))
     {
-      return reducesToEpsilon(p->mItem);
+      return reducesToEpsilon(p->mItem, v);
     }
   else if (nodeCast<Model::StarItem*>(node))
     {
@@ -268,6 +271,12 @@ bool reducesToEpsilon(Model::Node *node)
     }
 
   return false;
+}
+
+bool reducesToEpsilon(Model::Node *node)
+{
+  QSet<Model::Node*> v;
+  return reducesToEpsilon(node, v);
 }
 
 bool isZero(Model::Node *node)

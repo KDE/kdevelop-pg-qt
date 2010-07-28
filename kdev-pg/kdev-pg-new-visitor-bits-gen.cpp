@@ -1,6 +1,7 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public

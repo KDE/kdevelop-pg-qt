@@ -1,4 +1,4 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
    Copyright (C) 2006 Alexander Dymo <adymo@kdevelop.org>
@@ -80,7 +80,7 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
         {
           Model::Node *n = *it++;
 
-          str << "\t\t" << ((Model::TerminalItem*)n)->mName;
+          str << "\t\t" << n;
           if (it != U.end())
             str << ", ";
           str << endl;

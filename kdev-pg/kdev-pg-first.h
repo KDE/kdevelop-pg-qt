@@ -1,5 +1,6 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
+   Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -21,46 +22,22 @@
 #define KDEV_PG_FIRST_H
 
 #include "kdev-pg.h"
-#include "kdev-pg-default-visitor.h"
+#include "kdev-pg-bnf-visitor.h"
+
+#include <QSet>
 
 namespace KDevPG
 {
 
 /**
- * Adds first-sets for terminals, zeros and operators.
+ * Adds first-sets for terminals and zeros.
  */
-class InitializeFirst: protected DefaultVisitor
-{
-public:
-  void operator ()(Model::Node *node);
-
-protected:
-  /**
-   * Stops endless recursion.
-   */
-  virtual void visitNode(Model::Node *node);
-  /**
-   * Add node to the first-set of node.
-   */
-  virtual void visitZero(Model::ZeroItem *node);
-  /**
-   * The same as visitZero.
-   */
-  virtual void visitTerminal(Model::TerminalItem *node);
-  /**
-   * Initialize the required terminals.
-   */
-  virtual void visitOperator(Model::OperatorItem *node);
-  /**
-   * Stop.
-   */
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
-};
+void initializeFirst ();
 
 /**
  * Recursively merge first-sets.
  */
-class NextFirst: protected DefaultVisitor
+class NextFirst: protected BnfVisitor
 {
 public:
   NextFirst(bool &changed);
@@ -68,33 +45,19 @@ public:
   void operator ()(Model::Node *node);
 
 protected:
-  bool blockMerge(bool block);
   bool blockZeroMerge(bool block);
   void merge(Model::Node *__dest, Model::Node *__source, int K = 1);
 
   virtual void visitNode(Model::Node *node);
-  virtual void visitZero(Model::ZeroItem *node);
-  virtual void visitTerminal(Model::TerminalItem *node);
-  virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
-  virtual void visitSymbol(Model::SymbolItem *node);
-  virtual void visitPlus(Model::PlusItem *node);
-  virtual void visitStar(Model::StarItem *node);
-  virtual void visitAction(Model::ActionItem *node);
   virtual void visitAlternative(Model::AlternativeItem *node);
   virtual void visitCons(Model::ConsItem *node);
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitTryCatch(Model::TryCatchItem *node);
-  virtual void visitAlias(Model::AliasItem *node);
-  virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem *node);
-  virtual void visitOperator(Model::OperatorItem *node);
+  
+  virtual void copy(Model::Node *from, Model::Node *to) { merge(to, from); }
 
 private:
-  Model::Node *mItem;
-  bool mMergeBlocked;
   bool mMergeZeroBlocked;
   bool &mChanged;
+  QSet<Model::Node*> mVisited;
 };
 
 /**

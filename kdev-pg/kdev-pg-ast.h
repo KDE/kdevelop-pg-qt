@@ -1,6 +1,7 @@
-/* This file is part of kdev-pg
+/* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
+   Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -373,7 +374,6 @@ template <class _Tp>
 _Tp *createNode()
 {
   _Tp *node = new (globalMemoryPool.allocate(sizeof(_Tp)))_Tp();
-  //reinterpret_cast<_Tp*>);
   node->kind = _Tp::NodeKind;
   return node;
 }

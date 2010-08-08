@@ -115,7 +115,7 @@ public:
       generateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
       generateTokenText(false), needStateManagement(false), needOperatorStack(false),
       beautifulCode(false), visitorTable(false),
-      conflictHandling(Permissive), start(0), mZero(0)
+      conflictHandling(Permissive), mZero(0)
   {}
 
   // options
@@ -163,8 +163,6 @@ public:
     Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(rule);
     Q_ASSERT(e != 0);
 
-    if (rules.empty())
-      start = e;
     rules.push_back(e);
   }
 
@@ -197,7 +195,12 @@ public:
     SymbolSet::iterator it = symbols.find(name);
     
     if (it == symbols.end())
+    {
       it = symbols.insert(name, KDevPG::symbol(__name));
+      start.insert(*it);
+    }
+    else
+      start.remove(*it);
 
     return (*it);
   }
@@ -260,7 +263,7 @@ public:
   FollowSet::iterator findInFollow(Model::Node *node, int K = 1)
   { return followSet.find(qMakePair(node, K)); }
 
-  Model::EvolveItem *start;
+  QSet<Model::SymbolItem*> start;
   Model::ZeroItem *mZero;
 
   SymbolSet symbols;

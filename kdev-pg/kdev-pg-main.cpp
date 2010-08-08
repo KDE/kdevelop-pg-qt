@@ -27,13 +27,13 @@
 #include "kdev-pg-first.h"
 #include "kdev-pg-follow.h"
 #include "kdev-pg-checker.h"
+#include "kdev-pg-inline-checker.h"
 #include "kdev-pg-generate.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
-#include "kdev-pg-inline-checker.h"
 
 namespace KDevPG
 {
@@ -307,6 +307,9 @@ int main(int argc, char **argv)
   KDevPG::file.close();
 
   KDevPG::globalSystem.finishedParsing();
+  
+  if(KDevPG::globalSystem.start.empty())
+    KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << endl;
   
   for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
   {

@@ -44,7 +44,7 @@ void GenerateSerializeVisitor::operator()()
       << "AstNode *node, QIODevice* i) : in(i) {" << endl
       << "memoryPool = p;" << endl
       << "if ( !node )" << endl
-      << "node = create<" << globalSystem.start->mSymbol->mCapitalizedName << "Ast>();" << endl
+      << "node = create<" << (*globalSystem.start.begin())->mCapitalizedName << "Ast>();" << endl
       << "visitNode( node );" << endl
       << "}" << endl << endl;
 

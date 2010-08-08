@@ -86,9 +86,15 @@ NextFollow::NextFollow(bool &changed)
   : mChanged(changed)
 {
   Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
-  globalSystem.follow(globalSystem.start).insert(teof);
-  globalSystem.follow(globalSystem.start->mSymbol).insert(teof);
-  globalSystem.follow(globalSystem.start->mItem).insert(teof);
+  for(__typeof__(globalSystem.rules.begin()) i = globalSystem.rules.begin(); i != globalSystem.rules.end(); ++i)
+  {
+    if(globalSystem.start.contains((*i)->mSymbol))
+    {
+      globalSystem.follow(*i).insert(teof);
+      globalSystem.follow((*i)->mSymbol).insert(teof);
+      globalSystem.follow((*i)->mItem).insert(teof);
+    }
+  }
 }
 
 void NextFollow::operator()(Model::Node *node)
@@ -116,7 +122,7 @@ void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
           if( !dest.contains(t) )
           {
             mChanged = true;
-            dest.insert(t) != dest.end();
+            dest.insert(t);
           }
       }
     }

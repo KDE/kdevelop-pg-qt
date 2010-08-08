@@ -347,7 +347,7 @@ void CodeGenerator::visitEvolve(Model::EvolveItem *node)
 
   visitNode(node->mItem);
 
-  if (node == globalSystem.start)
+  if (globalSystem.start.contains(node->mSymbol))
     out << "if (Token_EOF != yytoken) { return false; }" << endl;
 
   out << "}" << endl;

@@ -21,6 +21,7 @@
 
 #include "kdev-pg-checker.h"
 #include "kdev-pg-pretty-printer.h"
+#include "kdev-pg-bnf-visitor.h"
 
 #include <QtCore/QDebug>
 
@@ -181,30 +182,35 @@ void FollowDepChecker::check(Model::Node *node)
 #endif
   for (World::NodeSet::const_iterator it = FD.begin(); it != FD.end(); ++it)
     {
-      World::NodeSet first = globalSystem.first(*it);
-#ifdef FOLLOW_CHECKER_DEBUG
-      str << " <iterating first ";
-      for (World::NodeSet::const_iterator fit = first.begin(); fit != first.end(); ++fit)
+      if(!BnfVisitor::isInternal(*it))
       {
-        p(*fit);
-        str << " ";
-      }
-      str << ">";
-#endif
-      if (first.find(mTerminal) != first.end())
-      {
-        str << "\t\t";
-        p(*it);
-#ifdef FOLLOW_CHECKER_DEBUG
-        str << " ( in \"";
-        p(node);
-        str << " \" )";
-#endif
-        str << ", " << endl;
+        World::NodeSet first = globalSystem.first(*it);
+  #ifdef FOLLOW_CHECKER_DEBUG
+        str << " <iterating first ";
+        for (World::NodeSet::const_iterator fit = first.begin(); fit != first.end(); ++fit)
+        {
+          p(*fit);
+          str << " ";
+        }
+        str << ">";
+  #endif
+        if (first.find(mTerminal) != first.end())
+        {
+          str << "\t\t";
+          p(*it);
+  #ifdef FOLLOW_CHECKER_DEBUG
+          str << " ( in \"";
+          p(node);
+          str << " \" )";
+  #endif
+          str << ", " << endl;
+        }
       }
     }
  for (World::NodeSet::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
   {
+    if(!BnfVisitor::isInternal(*it))
+    {
       World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG
       str << endl << "\t\t" << "in ";
@@ -212,6 +218,7 @@ void FollowDepChecker::check(Model::Node *node)
       str << endl;
 #endif
       check(*it);
+    }
   }
 }
 

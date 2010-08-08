@@ -47,7 +47,7 @@ public:
 
   Allocator()
   {
-    sBlockIndex = maxBlockCount;
+    sBlockIndex = sizeType(-1);
     sCurrentIndex = 0;
     sStorage = 0;
     sCurrentBlock = 0;
@@ -55,9 +55,17 @@ public:
 
   ~Allocator()
   {
-      for (sizeType index = 0; index < sBlockIndex; ++index)
+      for (sizeType index = 0; index <= sBlockIndex; ++index)
         delete[] sStorage[index];
       std::free(sStorage);
+  }
+  
+  bool contains(void* ptr)
+  {
+    for(sizeType i = 0; i <= sBlockIndex; ++i)
+      if(ptr >= (void*)(sStorage[i]) && ptr < (void*)(sStorage[i] + sBlockSize))
+        return true;
+    return false;
   }
 
   pointer address(reference __val)

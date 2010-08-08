@@ -31,6 +31,8 @@ namespace KDevPG
 
 class BnfVisitor : public DefaultVisitor
 {
+public:
+  static bool isInternal(Model::Node* item);
 private:
   static KDevPG::Allocator<char> localMemoryPool;
   

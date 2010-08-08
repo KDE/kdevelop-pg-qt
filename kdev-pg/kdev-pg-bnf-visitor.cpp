@@ -21,6 +21,11 @@
 
 using namespace KDevPG;
 
+bool BnfVisitor::isInternal(Model::Node* item)
+{
+  return localMemoryPool.contains(item);
+}
+
 template<typename _Tp>
 inline _Tp* BnfVisitor::localCreateNode()
 {
@@ -301,6 +306,6 @@ void BnfVisitor::visitEvolve(Model::EvolveItem* node)
 
 void KDevPG::BnfVisitor::finished()
 {
-  localMemoryPool.~Allocator();
-  new (&localMemoryPool) Allocator<char>;
+//   localMemoryPool.~Allocator();
+//   new (&localMemoryPool) Allocator<char>;
 }

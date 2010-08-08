@@ -32,11 +32,11 @@ namespace KDevPG
 class BnfVisitor : public DefaultVisitor
 {
 private:
-  KDevPG::Allocator<char> localMemoryPool;
+  static KDevPG::Allocator<char> localMemoryPool;
   
-  QHash<Model::OperatorItem*, Model::Node*> mOpStuff;
-  QHash<Model::StarItem*, Model::Node*> mStarStuff;
-  QHash<Model::PlusItem*, Model::Node*> mPlusStuff;
+  static QHash<Model::OperatorItem*, Model::Node*> mOpStuff;
+  static QHash<Model::StarItem*, Model::Node*> mStarStuff;
+  static QHash<Model::PlusItem*, Model::Node*> mPlusStuff;
   
   template <class _Tp>
   inline _Tp *localCreateNode();

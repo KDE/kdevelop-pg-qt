@@ -44,6 +44,12 @@ inline _Tp* BnfVisitor::getSubArray(void* mem, qint64 s)
   return arr;
 }
 
+KDevPG::Allocator<char> KDevPG::BnfVisitor::localMemoryPool;
+
+QHash<Model::OperatorItem*, Model::Node*> KDevPG::BnfVisitor::mOpStuff;
+QHash<Model::StarItem*, Model::Node*> KDevPG::BnfVisitor::mStarStuff;
+QHash<Model::PlusItem*, Model::Node*> KDevPG::BnfVisitor::mPlusStuff;
+
 void KDevPG::BnfVisitor::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
   Model::EvolveItem *rule = globalSystem.searchRule(node->mSymbol);

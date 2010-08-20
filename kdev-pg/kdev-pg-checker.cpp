@@ -172,31 +172,17 @@ void FollowDepChecker::check(Model::Node *node)
   mVisited.insert(node);
 
   World::FollowDep &D = globalSystem.followDep(node);
-  QList<Model::Node*> FD = D.first.toList();
-  QList<Model::Node*> FLD = D.second.toList();
+  World::NodeSet FD = D.first;
+  World::NodeSet FLD = D.second;
   QTextStream& str( checkOut );
   PrettyPrinter p(str);
 #ifdef FOLLOW_CHECKER_DEBUG
   str << "[["; p(node); str << " | " << (uint*)node << "]] ";
   str << "{" << node->kind << "}" << endl;
 #endif
-  for (__typeof__(FD.begin()) it = FD.begin(); it != FD.end(); ++it)
+  for (World::NodeSet::const_iterator it = FD.begin(); it != FD.end(); ++it)
     {
-      if(BnfVisitor::isInternal(*it))
-      {
-        World::NodeSet set = globalSystem.followDep(*it).second;
-        World::NodeSet set2 = globalSystem.followDep(*it).first; // :-S has to be verified…
-        for(__typeof__(it) jt = FD.begin(); jt != FD.end(); ++jt)
-        {
-          set.remove(*jt);
-          set2.remove(*jt);
-        }
-        for(__typeof__(set2.begin()) jt = set2.begin(); jt != set2.end(); ++jt)
-          if(!BnfVisitor::isInternal(*jt))
-            FD.append(*jt);
-        FD.append(set.toList());
-      }
-      else
+      if(!BnfVisitor::isInternal(*it))
       {
         World::NodeSet first = globalSystem.first(*it);
   #ifdef FOLLOW_CHECKER_DEBUG
@@ -221,16 +207,9 @@ void FollowDepChecker::check(Model::Node *node)
         }
       }
     }
- for (__typeof__(FLD.begin()) it = FLD.begin(); it != FLD.end(); ++it)
+ for (World::NodeSet::const_iterator it = FLD.begin(); it != FLD.end(); ++it)
   {
-    if(BnfVisitor::isInternal(*it))
-    {
-      World::NodeSet set = globalSystem.followDep(*it).second;
-      for(__typeof__(it) jt = FLD.begin(); jt != FLD.end(); ++jt)
-        set.remove(*jt);
-      FLD.append(set.toList());
-    }
-    else
+    if(!BnfVisitor::isInternal(*it))
     {
       World::NodeSet first = globalSystem.first(*it);
 #ifdef FOLLOW_CHECKER_DEBUG

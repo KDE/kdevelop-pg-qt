@@ -17,7 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "kdev-pg-charsets.h"
+#include "kdev-pg-char-sets.h"
+// #include "kdev-pg-bit-array.h"
 
 #include <iostream>
 #include <vector>
@@ -55,121 +56,9 @@ namespace std                                               \
 
 q_Hash_to_tr1_hash(QBitArray)
 
-class BitArray
-{
-  size_t mSize;
-  unsigned char *mData;
-  friend struct ::std::tr1::hash<BitArray>;
-public:
-  struct BitRef
-  {
-    unsigned char &byte;
-    unsigned char bit: 3;
-    inline BitRef(unsigned char &byte, unsigned char bit) : byte(byte), bit(bit)
-    {}
-    inline operator bool() const
-    {
-      return byte & (1 << bit);
-    }
-    inline BitRef& operator=(bool val)
-    {
-      if(val)
-        byte |= (1 << bit);
-      else
-        byte &= ~(1 << bit);
-      return *this;
-    }
-    inline BitRef& operator=(BitRef val)
-    {
-      return *this = (bool)val;
-    }
-  };
-  inline BitArray(size_t size, bool val = false) : mSize(size), mData(reinterpret_cast<unsigned char*>(new size_t[(size + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t)]))
-  {
-    if(val)
-    {
-      for(size_t *i = reinterpret_cast<size_t*>(mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
-        *i = -1;
-    }
-    else
-    {
-      for(size_t *i = reinterpret_cast<size_t*>(mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
-        *i = 0;
-    }
-  }
-  inline BitArray() : mSize(0), mData(new unsigned char[0])
-  {
-  }
-  inline BitArray(const BitArray& o) : mSize(o.mSize), mData(reinterpret_cast<unsigned char*>(new size_t[(mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t)]))
-  {
-    for(size_t *i = reinterpret_cast<size_t*>(mData), *j = reinterpret_cast<size_t*>(o.mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i, ++j)
-        *i = *j;
-  }
-  inline ~BitArray()
-  {
-    delete[] mData;
-  }
-  inline bool operator==(const BitArray& o) const
-  {
-    if(o.size() != size())
-      return false;
-    if(size() == 0)
-      return true;
-    size_t *i, *j;
-    for(i = reinterpret_cast<size_t*>(mData), j = reinterpret_cast<size_t*>(o.mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t) - 1; ++i, ++j)
-      if(*i != *j)
-        return false;
-    return (*i & (1 << (8 * sizeof(size_t) - size() % (8 * sizeof(size_t))))) == (*j & (1 << (8 * sizeof(size_t) - size() % (8 * sizeof(size_t)))));
-  }
-  inline BitArray& operator[](const BitArray& o)
-  {
-    if(&o != this)
-    {
-      this->~BitArray();
-      new (this)BitArray(o);
-    }
-    return *this;
-  }
-  inline bool operator[](size_t x) const
-  {
-    return size_t(mData[x >> 3]) & (1 << (x & 7));
-  }
-  inline BitRef operator[](size_t x)
-  {
-    return BitRef(mData[x >> 3], x & 7);
-  }
-  inline void resize(size_t size)
-  {
-    mData = reinterpret_cast<unsigned char*>(realloc(mData, size / 8));
-    // initialization?
-    mSize = size;
-  }
-  inline size_t size() const
-  {
-    return mSize;
-  }
-};
-
-namespace std
-{
-  namespace tr1
-  {
-    template<> struct hash<BitArray>
-    {
-      inline size_t operator()(const BitArray &x) const
-      {
-        size_t ret = 0;
-        for(size_t *i = reinterpret_cast<size_t*>(x.mData); i != reinterpret_cast<size_t*>(x.mData) + (x.mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
-          ret ^= *i;
-        return ret;
-      }
-    };
-  }
-}
-
 typedef vector<bool> UsedBitArray;
-// typedef SeqCharSet<Ucs2> CharSet;
-typedef TableCharSet<Ascii> CharSet;
+typedef SeqCharSet<Ucs2> CharSet;
+// typedef TableCharSet<Ascii> CharSet;
 
 class DFA
 {

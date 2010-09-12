@@ -1,3 +1,35 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* This file is part of kdev-pg-qt
    Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
 
@@ -149,7 +181,7 @@ struct Codec2Container
 template<>
 struct Codec2Container<Ucs2>
 {
-  typedef QString Result;
+  typedef QVector<quint16> Result;
 };
 
 template<>
@@ -208,9 +240,11 @@ QVector<quint32> qString2Codec<Ucs4>(const QString& str)
 }
 
 template<>
-QString qString2Codec<Ucs2>(const QString& str)
+QVector<quint16> qString2Codec<Ucs2>(const QString& str)
 {
-  return str;
+  QVector<quint16> ret(str.size());
+  memcpy(&ret[0], str.utf16(), 2*str.size());
+  return ret;
 }
 
 template<CharEncoding codec>
@@ -235,7 +269,7 @@ public:
       Int last = -1;
       for(int i = 0; i != str.size(); ++i)
       {
-        Int x = *reinterpret_cast<const Int*>(&(((const typeof(str)&)str)[i])); // QCharRef, you suck
+        Int x = str[i];
         if(x == last)
           last = ++data.back().second;
         else
@@ -498,11 +532,11 @@ class TableCharSet
 public:
   TableCharSet(const QString& s) : mEpsilon(false)
   {
-      auto str = qString2Codec<codec>(s);
+      const auto str = qString2Codec<codec>(s);
       Int last = -1;
       for(int i = 0; i != str.size(); ++i)
       {
-        Int x = str[i]/*(codec == Ucs2 ? *reinterpret_cast<const Int*>(&(((const typeof(str)&)str)[i])) : str[i])*/; // QCharRef, you suck
+        Int x = str[i];
         data[x] = true;
       }
   }

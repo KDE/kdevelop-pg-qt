@@ -1,3 +1,24 @@
+/* This file is part of kdev-pg-qt
+   Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
+*/
+
+#include "kdev-pg-charsets.h"
+
 #include <iostream>
 #include <vector>
 #include <set>
@@ -8,6 +29,8 @@
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
 
+#include <QBitArray>
+
 using namespace std;
 using namespace tr1;
 
@@ -15,113 +38,144 @@ using namespace tr1;
 
 #define NC(...) __VA_ARGS__
 
-inline size_t rotl(unsigned int value, char shift)
-{
-    return (value << shift) | (value >> (sizeof(size_t) * 8 - shift));
+#define q_Hash_to_tr1_hash(type) \
+namespace std                                               \
+{                                                           \
+  namespace tr1                                             \
+  {                                                         \
+    template<> struct hash< type >                          \
+    {                                                       \
+      inline size_t operator()(const type &x) const         \
+      {                                                     \
+        return qHash(x);                                    \
+      }                                                     \
+    };                                                      \
+  }                                                         \
 }
 
-class CharSet
+q_Hash_to_tr1_hash(QBitArray)
+
+class BitArray
 {
-    set<QChar> data;
-    size_t hash;
-    void updateHash()
-    {
-        hash = 21390587;
-        for(__typeof__(data.begin()) i = data.begin(); i != data.end(); ++i)
-        {
-            hash = rotl(hash, 7);
-            hash ^= i->unicode();
-        }
-    }
-    friend ostream& operator<<(ostream&, const CharSet&);
+  size_t mSize;
+  unsigned char *mData;
+  friend struct ::std::tr1::hash<BitArray>;
 public:
-    CharSet(const QString& str)
-    {
-        for(int i = 0; i != str.size(); ++i)
-            data.insert(str[i]);
-        updateHash();
-    }
-    CharSet() : hash(0)
+  struct BitRef
+  {
+    unsigned char &byte;
+    unsigned char bit: 3;
+    inline BitRef(unsigned char &byte, unsigned char bit) : byte(byte), bit(bit)
     {}
-    CharSet(const CharSet& o) : data(o.data), hash(o.hash)
+    inline operator bool() const
     {
+      return byte & (1 << bit);
     }
-    bool epsilon() const
+    inline BitRef& operator=(bool val)
     {
-        return hash == 0 && empty();
+      if(val)
+        byte |= (1 << bit);
+      else
+        byte &= ~(1 << bit);
+      return *this;
     }
-    size_t hashValue() const
+    inline BitRef& operator=(BitRef val)
     {
-        return hash;
+      return *this = (bool)val;
     }
-    bool empty() const
+  };
+  inline BitArray(size_t size, bool val = false) : mSize(size), mData(reinterpret_cast<unsigned char*>(new size_t[(size + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t)]))
+  {
+    if(val)
     {
-        return data.empty();
+      for(size_t *i = reinterpret_cast<size_t*>(mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
+        *i = -1;
     }
-    bool accepts(QChar chr) const
+    else
     {
-        return data.count(chr);
+      for(size_t *i = reinterpret_cast<size_t*>(mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
+        *i = 0;
     }
-    CharSet intersection(const CharSet& o) const
+  }
+  inline BitArray() : mSize(0), mData(new unsigned char[0])
+  {
+  }
+  inline BitArray(const BitArray& o) : mSize(o.mSize), mData(reinterpret_cast<unsigned char*>(new size_t[(mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t)]))
+  {
+    for(size_t *i = reinterpret_cast<size_t*>(mData), *j = reinterpret_cast<size_t*>(o.mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i, ++j)
+        *i = *j;
+  }
+  inline ~BitArray()
+  {
+    delete[] mData;
+  }
+  inline bool operator==(const BitArray& o) const
+  {
+    if(o.size() != size())
+      return false;
+    if(size() == 0)
+      return true;
+    size_t *i, *j;
+    for(i = reinterpret_cast<size_t*>(mData), j = reinterpret_cast<size_t*>(o.mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t) - 1; ++i, ++j)
+      if(*i != *j)
+        return false;
+    return (*i & (1 << (8 * sizeof(size_t) - size() % (8 * sizeof(size_t))))) == (*j & (1 << (8 * sizeof(size_t) - size() % (8 * sizeof(size_t)))));
+  }
+  inline BitArray& operator[](const BitArray& o)
+  {
+    if(&o != this)
     {
-        CharSet ret;
-        set_intersection(data.begin(), data.end(), o.data.begin(), o.data.end(), inserter(ret.data, ret.data.begin()));
-        ret.updateHash();
-        return ret;
+      this->~BitArray();
+      new (this)BitArray(o);
     }
-    CharSet difference(const CharSet& o) const
-    {
-        CharSet ret;
-        set_difference(data.begin(), data.end(), o.data.begin(), o.data.end(), inserter(ret.data, ret.data.begin()));
-        ret.updateHash();
-        return ret;
-    }
-    CharSet getUnion(const CharSet& o) const
-    {
-        CharSet ret;
-        set_union(data.begin(), data.end(), o.data.begin(), o.data.end(), inserter(ret.data, ret.data.begin()));
-        ret.updateHash();
-        return ret;
-    }
-    CharSet& unite(const CharSet& o)
-    {
-        for(__typeof__(o.data.begin()) i = o.data.begin(); i != o.data.end(); ++i)
-            data.insert(*i);
-        updateHash();
-        return *this;
-    }
-    bool operator==(const CharSet& o) const
-    {
-        return data == o.data;
-    }
+    return *this;
+  }
+  inline bool operator[](size_t x) const
+  {
+    return size_t(mData[x >> 3]) & (1 << (x & 7));
+  }
+  inline BitRef operator[](size_t x)
+  {
+    return BitRef(mData[x >> 3], x & 7);
+  }
+  inline void resize(size_t size)
+  {
+    mData = reinterpret_cast<unsigned char*>(realloc(mData, size / 8));
+    // initialization?
+    mSize = size;
+  }
+  inline size_t size() const
+  {
+    return mSize;
+  }
 };
-
-ostream& operator<<(ostream& o, const CharSet& c)
-{
-    foreach(QChar x, c.data)
-        o << x.toAscii();
-    return o;
-}
 
 namespace std
 {
-    namespace tr1
+  namespace tr1
+  {
+    template<> struct hash<BitArray>
     {
-        template<> struct hash< CharSet >
-        {
-            inline size_t operator()(const CharSet &cs) const
-            {
-                return cs.hashValue();
-            }
-        };
-    }
+      inline size_t operator()(const BitArray &x) const
+      {
+        size_t ret = 0;
+        for(size_t *i = reinterpret_cast<size_t*>(x.mData); i != reinterpret_cast<size_t*>(x.mData) + (x.mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
+          ret ^= *i;
+        return ret;
+      }
+    };
+  }
 }
+
+typedef vector<bool> UsedBitArray;
+// typedef SeqCharSet<Ucs2> CharSet;
+typedef TableCharSet<Ascii> CharSet;
 
 class DFA
 {
     size_t nstates;
     vector<vector<pair<CharSet, size_t> > > rules;
-    vector<bool> accept;
+    UsedBitArray accept;
     friend class NFA;
 public:
     void inspect()
@@ -147,7 +201,7 @@ public:
         {
             foreach(NC(const pair<CharSet, size_t>& r), rules[state])
             {
-                if(r.first.accepts(c))
+                if(r.first.accepts(c.unicode())) // make it more portable!!
                 {
                     state = r.second;
                     goto success;
@@ -160,7 +214,7 @@ public:
     }
     DFA& eliminateUnarrivableStates()
     {
-        vector<bool> arrivable(nstates);
+        UsedBitArray arrivable(nstates);
         arrivable[0] = true;
         stack<size_t> todo;
         todo.push(0);
@@ -248,7 +302,7 @@ public:
         }
         while(ongroups != grinv.size());
         vector<vector<pair<CharSet, size_t> > > _rules(grinv.size());
-        vector<bool> _accept(grinv.size());
+        UsedBitArray _accept(grinv.size());
         for(size_t i = 0; i != nstates; ++i)
         {
             _accept[groups[i]] = accept[i];
@@ -353,8 +407,9 @@ public:
         rules.resize(nstates);
         return *this;
     }
-    vector<bool> closure(vector<bool> s)
+    UsedBitArray closure(UsedBitArray s)
     {
+        assert(s.size() == nstates);
         stack<size_t> todo;
         for(size_t i = 0; i != nstates; ++i)
             if(s[i])
@@ -374,23 +429,23 @@ public:
         }
         return s;
     }
-    vector<bool> vecUnion(const vector<bool>& a, const vector<bool>& b)
+    UsedBitArray vecUnion(const UsedBitArray& a, const UsedBitArray& b)
     {
-        vector<bool> ret(a);
+        UsedBitArray ret(a);
         for(size_t i = 0; i != a.size(); ++i)
             ret[i] = ret[i] || b[i];
         return ret;
     }
-    vector< pair<CharSet, vector<bool> > > follow(vector<bool> s)
+    vector< pair<CharSet, UsedBitArray > > follow(UsedBitArray s)
     {
-        vector<pair<CharSet, vector<bool> > > pr(nstates);
+        vector<pair<CharSet, UsedBitArray > > pr(nstates);
         for(size_t i = 0; i != nstates; ++i)
         {
             if(s[i])
             {
                 foreach(NC(const pair<CharSet, size_t>& r), rules[i])
                 {
-                    vector<bool> nxt(nstates);
+                    UsedBitArray nxt(nstates);
                     nxt[r.second] = true;
                     pr.push_back(make_pair(r.first, nxt));
                 }
@@ -414,7 +469,7 @@ public:
                             {
                                 CharSet diff1 = pr[i].first.difference(inter);
                                 CharSet diff2 = pr[j].first.difference(inter);
-                                vector<bool> v1 = pr[i].second, v2 = pr[j].second;
+                                UsedBitArray v1 = pr[i].second, v2 = pr[j].second;
                                 pr[i].first = inter;
                                 pr[i].second = vecUnion(pr[i].second, pr[j].second);
                                 if(diff1.empty())
@@ -450,24 +505,24 @@ public:
     }
     DFA dfa()
     {
-        set<vector<bool> > states;
-        map<vector<bool>, vector<pair<CharSet, vector<bool> > > > rules;
-        stack<vector<bool> > todo;
-        vector<bool> start(nstates);
+        /*unordered_*/set<UsedBitArray > states;
+        /*unordered_*/map<UsedBitArray, vector<pair<CharSet, UsedBitArray > > > rules;
+        stack<UsedBitArray > todo;
+        UsedBitArray start(nstates);
         start[0] = true;
         todo.push(closure(start));
         while(todo.size())
         {
-            vector<bool> x = todo.top();
+            UsedBitArray x = todo.top();
             todo.pop();
             states.insert(x);
             rules[x];
-            vector<pair<CharSet, vector<bool> > > nxt = follow(x);
-            foreach(NC(const pair<CharSet, vector<bool> >& nx), nxt)
+            vector<pair<CharSet, UsedBitArray > > nxt = follow(x);
+            foreach(NC(const pair<CharSet, UsedBitArray >& nx), nxt)
             {
                 if(!nx.first.epsilon())
                 {
-                    vector<bool> n = closure(nx.second);
+                    UsedBitArray n = closure(nx.second);
                     if(!states.count(n))
                         todo.push(n);
                     rules[x].push_back(make_pair(nx.first, n));
@@ -477,8 +532,8 @@ public:
         DFA _;
         _.nstates = states.size();
         _.accept.resize(_.nstates);
-        map<vector<bool>, size_t> st;
-        foreach(const vector<bool>& i, states)
+        /*unordered_*/map<UsedBitArray, size_t> st;
+        foreach(const UsedBitArray& i, states)
         {
             if(i[0] && st.size())
             {
@@ -495,7 +550,7 @@ public:
         for(__typeof__(rules.begin()) i = rules.begin(); i != rules.end(); ++i)
         {
             size_t key = st[i->first];
-            foreach(NC(const pair<CharSet, vector<bool> > nx), i->second)
+            foreach(NC(const pair<CharSet, UsedBitArray > nx), i->second)
                 _.rules[key].push_back(make_pair(nx.first, st[nx.second]));
         }
         return _;
@@ -512,7 +567,9 @@ NFA keyword(const QString& str)
 
 int main()
 {
-    cout << keyword("while").dfa().accepts("while") << endl;
+  
+  cout << SeqCharSet<Ucs2>("abcdef").intersection(SeqCharSet<Ucs2>("deq")) << endl;
+//     cout << keyword("while").dfa().accepts("while") << endl;
 //     NFA n(CharSet("abc"));
 //     {
 //         DFA d = n.dfa();
@@ -573,6 +630,6 @@ int main()
         d.minimize();
         cout << endl << endl;
         d.inspect();
-        cout << d.accepts("foo    354.123   union") << endl;
+        cout << d.accepts("foo  462.1011346  union") << endl;
     }
 }

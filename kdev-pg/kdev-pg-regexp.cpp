@@ -26,7 +26,9 @@
 #include <map>
 #include <algorithm>
 #include <stack>
+#include <string>
 #include <cassert>
+#include <initializer_list>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
 
@@ -64,15 +66,15 @@ class DFA
 {
     size_t nstates;
     vector<vector<pair<CharSet, size_t> > > rules;
-    UsedBitArray accept;
+    size_t numActions;
+    vector<size_t> accept;
     friend class NFA;
 public:
     void inspect()
     {
         cout << "#states = " << nstates << " accept = <";
         for(size_t i = 0; i != nstates; ++i)
-            if(accept[i])
-                cout << ", " << i;
+            cout << ", " << accept[i];
         cout << "> rules = {";
         for(size_t i = 0; i != nstates; ++i)
         {
@@ -83,7 +85,7 @@ public:
         }
         cout << endl;
     }
-    bool accepts(const QString& str)
+    size_t accepts(const QString& str)
     {
         size_t state = 0;
         foreach(QChar c, str)
@@ -100,6 +102,37 @@ public:
             success:;
         }
         return accept[state];
+    }
+    // tokenizing
+    pair<size_t, size_t> nextAction(const QString& str, size_t pos)
+    {
+      size_t npos = 0;
+      size_t action = 0;
+      size_t state = 0;
+      for(size_t i = pos; i != str.size(); ++i)
+      {
+        if(accept[state])
+        {
+          npos = i;
+          action = accept[state];
+        }
+        foreach(NC(const pair<CharSet, size_t>& r), rules[state])
+        {
+          if(r.first.accepts(str[i].unicode())) // make it more portable!!
+          {
+            state = r.second;
+            goto success;
+          }
+        }
+        return make_pair(npos, action);
+        success:;
+      }
+      if(accept[state])
+      {
+        npos = str.size();
+        action = accept[state];
+      }
+      return make_pair(npos, action);
     }
     DFA& eliminateUnarrivableStates()
     {
@@ -157,14 +190,9 @@ public:
     DFA& minimize()
     {
         eliminateUnarrivableStates();
-        vector<vector<size_t> > grinv(2);
+        vector<vector<size_t> > grinv(numActions + 1);
         for(size_t i = 0; i != nstates; ++i)
-        {
-            if(accept[i])
-                grinv[accept[0] ? 0 : 1].push_back(i);
-            else
-                grinv[accept[0] ? 1 : 0].push_back(i);
-        }
+            grinv[(accept[i] - accept[0] + grinv.size()) % grinv.size()].push_back(i);
         size_t ongroups;
         vector<size_t> groups(nstates);
         do
@@ -178,7 +206,7 @@ public:
             {
                 for(size_t j = 0; j != grinv.size(); ++j)
                 {
-                    if(sameGroup(ongroups, groups, grinv[j][0], i))
+                    if(groups[grinv[j][0]] == groups[i] && sameGroup(ongroups, groups, grinv[j][0], i))
                     {
                         grinv[j].push_back(i);
                         goto found;
@@ -191,7 +219,7 @@ public:
         }
         while(ongroups != grinv.size());
         vector<vector<pair<CharSet, size_t> > > _rules(grinv.size());
-        UsedBitArray _accept(grinv.size());
+        vector<size_t> _accept(grinv.size());
         for(size_t i = 0; i != nstates; ++i)
         {
             _accept[groups[i]] = accept[i];
@@ -238,6 +266,36 @@ public:
     NFA(const CharSet& set) : nstates(2), rules(2), accept(1)
     {
         rules[0].push_back(make_pair(set, 1));
+    }
+    NFA(std::initializer_list<NFA> list)
+    {
+      if(list.size() == 0)
+      {
+        nstates = 2;
+        rules.resize(2);
+        accept = 1;
+      }
+      else
+      {
+        accept = 1;
+        for(size_t i = 0; i != list.size(); ++i)
+          accept += list.begin()[i].nstates;
+        nstates = accept + list.size();
+        rules.resize(nstates);
+        size_t start = 1;
+        for(size_t i = 0; i != list.size(); ++i)
+        {
+          for(size_t j = start; j != start + list.begin()[i].nstates; ++j)
+          {
+              rules[j] = list.begin()[i].rules[j - start];
+              for(size_t k = 0; k != rules[j].size(); ++k)
+                  rules[j][k].second += start;
+          }
+          rules[0].push_back(make_pair(CharSet(), start));
+          start += list.begin()[i].nstates;
+          rules[start - 1].push_back(make_pair(CharSet(), nstates - list.size() + i));
+        }
+      }
     }
     void adjust(size_t startnum)
     {
@@ -421,21 +479,40 @@ public:
         DFA _;
         _.nstates = states.size();
         _.accept.resize(_.nstates);
+        _.numActions = nstates - accept;
         /*unordered_*/map<UsedBitArray, size_t> st;
+        size_t cnt = 0;
         foreach(const UsedBitArray& i, states)
         {
-            if(i[0] && st.size())
+            if(i[0] && cnt)
             {
-                st[*states.begin()] = st.size();
+                st[*states.begin()] = cnt;
                 st[i] = 0;
             }
             else
-                st[i] = st.size();
+                st[i] = cnt;
+            ++cnt;
         }
+//         for(auto i = st.begin(); i != st.end(); ++i)
+//         {
+//           cout << i->second << ": <";
+//           for(size_t j = 0; j != nstates; ++j)
+//             if(i->first[j])
+//               cout << ", " << j;
+//           cout << ">" << endl;
+//         }
         _.rules.resize(_.nstates);
         for(__typeof__(st.begin()) i = st.begin(); i != st.end(); ++i)
-            if(i->first[accept])
-                _.accept[i->second] = true;
+        {
+          for(size_t j = accept; j != nstates; ++j)
+          {
+            if(i->first[j])
+            {
+              _.accept[i->second] = j - accept + 1;
+              break;
+            }
+          }
+        }
         for(__typeof__(rules.begin()) i = rules.begin(); i != rules.end(); ++i)
         {
             size_t key = st[i->first];
@@ -499,6 +576,7 @@ int main()
     n |= keyword("friend");
     NFA ws(CharSet(" \t\n"));
     *ws;
+    ws &= NFA(CharSet(" \t\n"));
     n |= ws;
     NFA num(CharSet("0123456789"));
     *num;
@@ -510,15 +588,33 @@ int main()
     DFA numd = num.dfa();
     n |= num;
     *n;
+//     {
+//         cout << endl << endl;
+//         n.inspect();
+//         DFA d = n.dfa();
+//         cout << endl << endl;
+//         d.inspect();
+//         d.minimize();
+//         cout << endl << endl;
+//         d.inspect();
+//         cout << d.accepts("foo  462.1011346  union") << endl;
+//     }
+    NFA dispatch({ws, num, keyword("foo"), keyword("bar"), keyword("baz"), keyword("foobar"), keyword("for")});
+    dispatch.inspect();
+    DFA ddispatch = dispatch.dfa();
+    ddispatch.inspect();
+    ddispatch.minimize();
+    ddispatch.inspect();
+    string str;
+    getline(cin, str);
+    pair<size_t, size_t> last(0, 0);
+    const char* names[] = {"ERROR", "whitespace", "dec-number", "foo", "bar", "baz", "foobar", "for"};
+    while(last.first != str.size())
     {
-        cout << endl << endl;
-        n.inspect();
-        DFA d = n.dfa();
-        cout << endl << endl;
-        d.inspect();
-        d.minimize();
-        cout << endl << endl;
-        d.inspect();
-        cout << d.accepts("foo  462.1011346  union") << endl;
+      size_t llast = last.first;
+      last = ddispatch.nextAction(str.c_str(), last.first);
+      cout << names[last.second] << ": " << str.substr(llast, last.first - llast) << endl;
+      if(last.first == 0)
+        break;
     }
 }

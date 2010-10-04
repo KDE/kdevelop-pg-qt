@@ -1,35 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* This file is part of kdev-pg-qt
    Copyright (C) 2010 Jonathan Schmidt-Dominé <devel@the-user.org>
 
@@ -64,6 +32,23 @@ using namespace std;
 
 #define NC(...) __VA_ARGS__
 
+class QUcs4Iterator
+{
+  union { QChar *ptr; quint16 *raw; };
+public:
+  quint32 operator*() const
+  {
+    if(ptr->isHighSurrogate())
+      return (((*raw) & (0x3ff)) << 10) + (raw[1] & 0x3ff) + 0x10000;
+    return *raw;
+  }
+  QUcs4Iterator& operator++()
+  {
+    if(ptr->isHighSurrogate())
+      ptr += 2;
+    
+  }
+};
 
 class TreeCharSet
 {

@@ -32,23 +32,10 @@ using namespace std;
 
 #define NC(...) __VA_ARGS__
 
-class QUcs4Iterator
-{
-  union { QChar *ptr; quint16 *raw; };
-public:
-  quint32 operator*() const
-  {
-    if(ptr->isHighSurrogate())
-      return (((*raw) & (0x3ff)) << 10) + (raw[1] & 0x3ff) + 0x10000;
-    return *raw;
-  }
-  QUcs4Iterator& operator++()
-  {
-    if(ptr->isHighSurrogate())
-      ptr += 2;
-    
-  }
-};
+// Input: QString, QByteArray, QIODevice
+// Output: 8bit, ucs2 or ucs4 iterator
+
+
 
 class TreeCharSet
 {
@@ -231,6 +218,104 @@ QVector<quint16> qString2Codec<Ucs2>(const QString& str)
   memcpy(&ret[0], str.utf16(), 2*str.size());
   return ret;
 }
+
+class QUtf16ToUcs4Iterator
+{
+  union { QChar *ptr; quint16 *raw; };
+public:
+  QUtf16Iterator& operator++()
+  {
+    if(QChar::isHighSurrogate(*ptr))
+      ++ptr;
+    ++ptr;
+    return *this;
+  }
+  quint32 operator*() const
+  {
+    // big endian
+    quint32 ret = ptr->unicode();
+    if(QChar::isHighSurrogate(*ptr))
+      return QChar::surrogateToUcs4(ret, raw[1]);
+    return ret;
+  }
+  quint32 next()
+  {
+    quint32 ret = ptr->unicode();
+    if(QChar::isHighSurrogate(*ptr))
+      ret = QChar::surrogateToUcs4(ret, *(++raw));
+    ++ptr;
+    return ret;
+  }
+};
+
+class QUtf8ToUcs4Iterator
+{
+  uchar *ptr;
+public:
+  QUtf8Iterator& operator++()
+  {
+    Q_ASSERT(false, "not implemented");
+    return *this;
+  }
+  quint32 operator*() const
+  {
+    Q_ASSERT(false, "not implemented");
+    return ret;
+  }
+  quint32 next()
+  {
+    /*
+    Algorithm:
+    
+    Start:
+      case chr < 128
+        use it directly
+      case (chr & 0xe0) == 0xc0
+        (chr & 0x1f) -> add next
+      case (chr & 0xf0) == 0xe0
+        (chr & 0x0f) -> add next two
+      case (chr & 0xf8) == 0xf0
+        (chr & 0x07) -> add next three
+      default
+        invalid
+        
+    Add:
+      condition: (next & 0xc0) == 0x80
+      ret = (ret << 6) | (nextChr & 0x3f)
+      QChar::isUnicodeNonCharacter -> invalid
+    */
+    
+    while(true)
+    {
+      uchar chr = *ptr;
+      if(chr < 128)
+      {
+        ++ptr;
+        return chr;
+      }
+      quint32 ret;
+      if((ch & 0xe0) == 0xc0)
+      {
+        ret = ((ch & 0x1f) << 6) | ((*++ptr) & 0x3f);
+      }
+      if((ch & 0xf0) == 0xe0)
+      {
+        ret = ((ch & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      if((ch & 0xf8) == 0xf0)
+      {
+        ret = ((ch & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      ++ptr;
+      if((ret & 0xfffe) != 0xfffe && (ret - 0xfdd0U) > 15)
+        return ret;
+      // ignore the error, jump back :-)
+    }
+  }
+};
 
 template<CharEncoding codec>
 class SeqCharSet;

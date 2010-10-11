@@ -219,48 +219,84 @@ QVector<quint16> qString2Codec<Ucs2>(const QString& str)
   return ret;
 }
 
+class QStringIterator
+{
+  QString::const_iterator iter, end;
+public:
+  QStringIterator(const QString& str) : iter(str.begin()), end(str.end())
+  {
+    
+  }
+  quint16 next()
+  {
+    return iter++->unicode();
+  }
+  bool hasNext()
+  {
+    return iter != end;
+  }
+  ptrdiff_t operator-(const QStringIterator& other) const
+  {
+    return iter - other.iter;
+  }
+};
+
+class QByteArrayIterator
+{
+  QByteArray::const_iterator iter, end;
+public:
+  QByteArrayIterator(const QByteArray& str) : iter(str.begin()), end(str.end())
+  {
+    
+  }
+  uchar next()
+  {
+    return *iter++;
+  }
+  bool hasNext()
+  {
+    return iter != end;
+  }
+  ptrdiff_t operator-(const QByteArrayIterator& other) const
+  {
+    return iter - other.iter;
+  }
+};
+
 class QUtf16ToUcs4Iterator
 {
-  union { QChar *ptr; quint16 *raw; };
+  union { QChar const *ptr; quint16 const *raw; };
+  quint16 const *end;
 public:
-  QUtf16Iterator& operator++()
+  QUtf16ToUcs4Iterator(const QString& str) : raw(str.utf16()), end(raw + str.size())
   {
-    if(QChar::isHighSurrogate(*ptr))
-      ++ptr;
-    ++ptr;
-    return *this;
-  }
-  quint32 operator*() const
-  {
-    // big endian
-    quint32 ret = ptr->unicode();
-    if(QChar::isHighSurrogate(*ptr))
-      return QChar::surrogateToUcs4(ret, raw[1]);
-    return ret;
+    
   }
   quint32 next()
   {
     quint32 ret = ptr->unicode();
-    if(QChar::isHighSurrogate(*ptr))
+    if(QChar::isHighSurrogate(*raw))
       ret = QChar::surrogateToUcs4(ret, *(++raw));
     ++ptr;
     return ret;
+  }
+  bool hasNext()
+  {
+    return raw != end;
+  }
+  ptrdiff_t operator-(const QUtf16ToUcs4Iterator& other) const
+  {
+    return ptr - other.ptr;
   }
 };
 
 class QUtf8ToUcs4Iterator
 {
-  uchar *ptr;
+  uchar const *ptr, *end;
 public:
-  QUtf8Iterator& operator++()
+  QUtf8ToUcs4Iterator(const QByteArray& qba) : ptr(reinterpret_cast<uchar const*>(qba.data())), end(ptr + qba.size())
   {
-    Q_ASSERT(false, "not implemented");
-    return *this;
-  }
-  quint32 operator*() const
-  {
-    Q_ASSERT(false, "not implemented");
-    return ret;
+    
   }
   quint32 next()
   {
@@ -294,18 +330,18 @@ public:
         return chr;
       }
       quint32 ret;
-      if((ch & 0xe0) == 0xc0)
+      if((chr & 0xe0) == 0xc0)
       {
-        ret = ((ch & 0x1f) << 6) | ((*++ptr) & 0x3f);
+        ret = ((chr & 0x1f) << 6) | ((*++ptr) & 0x3f);
       }
-      if((ch & 0xf0) == 0xe0)
+      if((chr & 0xf0) == 0xe0)
       {
-        ret = ((ch & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
       }
-      if((ch & 0xf8) == 0xf0)
+      if((chr & 0xf8) == 0xf0)
       {
-        ret = ((ch & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
       }
@@ -314,6 +350,65 @@ public:
         return ret;
       // ignore the error, jump back :-)
     }
+  }
+  bool hasNext()
+  {
+    return ptr != end;
+  }
+  ptrdiff_t operator-(const QUtf8ToUcs4Iterator& other) const
+  {
+    return ptr - other.ptr;
+  }
+};
+
+
+class QUtf8ToUcs2Iterator
+{
+  uchar const *ptr, *end;
+public:
+  QUtf8ToUcs2Iterator(const QByteArray& qba) : ptr(reinterpret_cast<uchar const*>(qba.data())), end(ptr + qba.size())
+  {
+    
+  }
+  quint16 next()
+  { 
+    while(true)
+    {
+      uchar chr = *ptr;
+      if(chr < 128)
+      {
+        ++ptr;
+        return chr;
+      }
+      quint32 ret;
+      if((chr & 0xe0) == 0xc0)
+      {
+        ret = ((chr & 0x1f) << 6) | ((*++ptr) & 0x3f);
+      }
+      if((chr & 0xf0) == 0xe0)
+      {
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      if((chr & 0xf8) == 0xf0)
+      {
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      ++ptr;
+      if(ret <= 0xffff && (ret & 0xfffe) != 0xfffe && (ret - 0xfdd0U) > 15)
+        return ret;
+      // ignore the error, jump back :-)
+    }
+  }
+  bool hasNext()
+  {
+    return ptr != end;
+  }
+  ptrdiff_t operator-(const QUtf8ToUcs2Iterator& other) const
+  {
+    return ptr - other.ptr;
   }
 };
 

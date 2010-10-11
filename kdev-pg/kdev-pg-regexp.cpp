@@ -33,6 +33,8 @@
 #include <tr1/unordered_map>
 
 #include <QBitArray>
+#include <QTextCodec>
+
 
 using namespace std;
 using namespace tr1;
@@ -60,6 +62,7 @@ q_Hash_to_tr1_hash(QBitArray)
 
 typedef vector<bool> UsedBitArray;
 typedef SeqCharSet<Ucs2> CharSet;
+typedef QUtf8ToUcs4Iterator Iterator;
 // typedef TableCharSet<Ascii> CharSet;
 
 class DFA
@@ -104,21 +107,22 @@ public:
         return accept[state];
     }
     // tokenizing
-    pair<size_t, size_t> nextAction(const QString& str, size_t pos)
+    pair<Iterator, size_t> nextAction(Iterator iter)
     {
-      size_t npos = 0;
-      size_t action = 0;
+      Iterator npos = iter;
+      size_t action = -1;
       size_t state = 0;
-      for(size_t i = pos; i != str.size(); ++i)
+      while(iter.hasNext())
       {
         if(accept[state])
         {
-          npos = i;
+          npos = iter;
           action = accept[state];
         }
+        quint64 chr = iter.next(); // make it more portable!!
         foreach(NC(const pair<CharSet, size_t>& r), rules[state])
         {
-          if(r.first.accepts(str[i].unicode())) // make it more portable!!
+          if(r.first.accepts(chr))
           {
             state = r.second;
             goto success;
@@ -129,7 +133,7 @@ public:
       }
       if(accept[state])
       {
-        npos = str.size();
+        npos = iter;
         action = accept[state];
       }
       return make_pair(npos, action);
@@ -526,8 +530,8 @@ public:
 NFA keyword(const QString& str)
 {
     NFA r;
-    for(size_t i = 0; i != str.size(); ++i)
-        r &= CharSet(str[i]);
+    for(auto i = str.begin(); i != str.end(); ++i)
+        r &= CharSet(*i);
     return r;
 }
 
@@ -599,7 +603,8 @@ int main()
 //         d.inspect();
 //         cout << d.accepts("foo  462.1011346  union") << endl;
 //     }
-    NFA dispatch({ws, num, keyword("foo"), keyword("bar"), keyword("baz"), keyword("foobar"), keyword("for")});
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf-8"));
+    NFA dispatch({ws, num, keyword("foo"), keyword("bar"), keyword("baz"), keyword("foobar"), keyword("for"), keyword("äöü"), keyword("bähh, I do not like §s")});
     dispatch.inspect();
     DFA ddispatch = dispatch.dfa();
     ddispatch.inspect();
@@ -607,14 +612,20 @@ int main()
     ddispatch.inspect();
     string str;
     getline(cin, str);
-    pair<size_t, size_t> last(0, 0);
-    const char* names[] = {"ERROR", "whitespace", "dec-number", "foo", "bar", "baz", "foobar", "for"};
-    while(last.first != str.size())
+    QByteArray qba(str.c_str(), str.size());
+    pair<Iterator, size_t> last(Iterator(qba), 0);
+    Iterator begin = last.first;
+    const char* names[] = {"ERROR", "whitespace", "dec-number", "foo", "bar", "baz", "foobar", "for", "umlauts", "anti-law"};
+    while(last.first.hasNext())
     {
-      size_t llast = last.first;
-      last = ddispatch.nextAction(str.c_str(), last.first);
-      cout << names[last.second] << ": " << str.substr(llast, last.first - llast) << endl;
-      if(last.first == 0)
+      Iterator llast = last.first;
+      last = ddispatch.nextAction(llast);
+      if(last.second == -1)
+      {
+        if(last.first.hasNext())
+          cout << "ERROR" << endl;
         break;
+      }
+      cout << names[last.second] << ": " << str.substr(llast - begin, last.first - llast) << endl;
     }
 }

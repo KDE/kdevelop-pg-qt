@@ -29,87 +29,13 @@ using namespace std;
 #include <QString>
 #include <QByteArray>
 #include <QVector>
+#include <QTextStream>
+#include <QStringList>
 
 #define NC(...) __VA_ARGS__
 
 // Input: QString, QByteArray, QIODevice
 // Output: 8bit, ucs2 or ucs4 iterator
-
-
-
-class TreeCharSet
-{
-    set<QChar> data;
-    bool mEpsilon: 1;
-    friend ostream& operator<<(ostream&, const TreeCharSet&);
-public:
-    TreeCharSet(const QString& str ) : mEpsilon(false)
-    {
-        for(int i = 0; i != str.size(); ++i)
-            data.insert(str[i]);
-    }
-    TreeCharSet() : mEpsilon(true)
-    {}
-    TreeCharSet(const TreeCharSet& o) : data(o.data), mEpsilon(o.mEpsilon)
-    {
-    }
-    TreeCharSet& operator=(const TreeCharSet& o)
-    {
-      data = o.data;
-      mEpsilon = o.mEpsilon;
-      return *this;
-    }
-    bool epsilon() const
-    {
-        return mEpsilon;
-    }
-    bool empty() const
-    {
-        return data.empty();
-    }
-    bool accepts(QChar chr) const
-    {
-        return data.count(chr);
-    }
-    TreeCharSet intersection(const TreeCharSet& o) const
-    {
-        TreeCharSet ret;
-        ret.mEpsilon = false;
-        set_intersection(data.begin(), data.end(), o.data.begin(), o.data.end(), inserter(ret.data, ret.data.begin()));
-        return ret;
-    }
-    TreeCharSet difference(const TreeCharSet& o) const
-    {
-        TreeCharSet ret;
-        ret.mEpsilon = false;
-        set_difference(data.begin(), data.end(), o.data.begin(), o.data.end(), inserter(ret.data, ret.data.begin()));
-        return ret;
-    }
-    TreeCharSet getUnion(const TreeCharSet& o) const
-    {
-        TreeCharSet ret;
-        ret.mEpsilon = false;
-        set_union(data.begin(), data.end(), o.data.begin(), o.data.end(), inserter(ret.data, ret.data.begin()));
-        return ret;
-    }
-    TreeCharSet& unite(const TreeCharSet& o)
-    {
-        for(auto i = o.data.begin(); i != o.data.end(); ++i)
-            data.insert(*i);
-        return *this;
-    }
-    bool operator==(const TreeCharSet& o) const
-    {
-        return mEpsilon == o.mEpsilon && data == o.data;
-    }
-};
-
-ostream& operator<<(ostream& o, const TreeCharSet& c)
-{
-    foreach(QChar x, c.data)
-        o << x.toLatin1();
-    return o;
-}
 
 enum CharEncoding
 {
@@ -418,6 +344,8 @@ class SeqCharSet;
 template<CharEncoding codec>
 ostream& operator<<(ostream&, const SeqCharSet<codec>&);
 
+template<class cs> class CharSetCondition;
+
 template<CharEncoding codec>
 class SeqCharSet
 {
@@ -426,6 +354,7 @@ class SeqCharSet
     vector<pair<Int, Int> > data;
     bool mEpsilon: 1;
     friend ostream& operator<< <>(ostream&, const Self&);
+    friend class CharSetCondition< SeqCharSet<codec> >;
 public:
     SeqCharSet(const QString& s ) : mEpsilon(false)
     {
@@ -763,6 +692,104 @@ ostream& operator<<(ostream &o, const TableCharSet<codec> &cs)
   o << "]";
   return o;
 }
+
+template<class CharSet>
+class CharSetCondition
+{
+};
+
+template<CharEncoding codec>
+class CharSetCondition<TableCharSet<codec> >
+{
+  typedef typename Codec2Int<codec>::Result Int;
+public:
+  void operator()(QTextStream& str, vector<pair<TableCharSet<codec>, size_t> > transition, const QStringList& actions)
+  {
+    str << "switch(chr) { ";
+    for(size_t j = 0; j != transition.size(); ++j)
+    {
+      if(!transition[j].first.empty())
+      {
+        for(Int i = 0; i != Codec2Size<codec>::value; ++i)
+        {
+          if(transition[j].first.accepts(i))
+            str << "case " << quint64(i) << ":\n";
+        }
+        str << actions[transition[j].second] << '\n';
+      }
+    }
+    str << "default: goto fail;\n";
+  }
+};
+
+template<CharEncoding codec>
+class CharSetCondition<SeqCharSet<codec> >
+{
+  typedef typename Codec2Int<codec>::Result Int;
+  void codegen(QTextStream& str, const vector<pair<pair<Int, Int>, size_t> >& data, size_t l, size_t r, size_t tmin, size_t tmax, const QList<QString> actions)
+  {
+    if(l == r)
+      str << "goto fail;";
+    else if(r == l + 1)
+    {
+      if(data[l].first.first == tmin)
+      {
+        if(data[l].first.second == tmax)
+          str << actions[data[l].second];
+        else
+        {
+          if(data[l].first.second == data[l].first.first + 1)
+            str << "if(chr == " << quint64(data[l].first.first) << ")";
+          else
+            str << "if(chr < " << quint64(data[l].first.second) << ")";
+          str << "{" << actions[data[l].second] << "} else goto fail;\n";
+        }
+      }
+      else
+      {
+        if(data[l].first.second == tmax)
+        {
+          if(data[l].first.second == data[l].first.first + 1)
+            str << "if(chr == " << quint64(data[l].first.first) << ")";
+          else
+            str << "if(chr >= " << quint64(data[l].first.first) << ")";
+          str << "{" << actions[data[l].second] << "} else goto fail;\n";
+        }
+        else
+        {
+          if(data[l].first.first == data[l].first.second - 1)
+            str << "if(chr == " << quint64(data[l].first.first) << ")";
+          else if(data[l].first.first == data[l].first.second - 2)
+            str << "if(chr == " << quint64(data[l].first.first) << " || chr == " << quint64(data[l].first.first + 1) << ")";
+          else
+            str << "if(chr >= " << quint64(data[l].first.first) << " && chr < " << quint64(data[l].first.second) << ")";
+          str << "{" << actions[data[l].second] << "} else goto fail;\n";
+        }
+      }
+    }
+    else
+    {
+      size_t mid = (l + r) / 2;
+      str << "if(chr < " << quint64(data[mid].first.first) << ") {";
+      codegen(str, data, l, mid, tmin, data[mid].first.first, actions);
+      str << "} else {";
+      codegen(str, data, mid, r, data[mid].first.first, tmax, actions);
+      str << "}";
+    }
+  }
+public:
+  void operator()(QTextStream& str, vector<pair<SeqCharSet<codec>, size_t> > transition, const QStringList& actions)
+  {
+    vector<pair<pair<Int, Int>, size_t> > data;
+    for(size_t i = 0; i != transition.size(); ++i)
+    {
+      for(size_t j = 0; j != transition[i].first.data.size(); ++j)
+        data.push_back(make_pair(transition[i].first.data[j], transition[i].second));
+    }
+    sort(data.begin(), data.end());
+    codegen(str, data, 0, data.size(), 0, Codec2Size<codec>::value, actions);
+  }
+};
 
 /*int main()
 {

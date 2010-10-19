@@ -40,6 +40,8 @@ using namespace std;
 using namespace tr1;
 
 #include <QString>
+#include <QFile>
+#include <QStringList>
 
 #define NC(...) __VA_ARGS__
 
@@ -61,7 +63,7 @@ namespace std                                               \
 q_Hash_to_tr1_hash(QBitArray)
 
 typedef vector<bool> UsedBitArray;
-typedef SeqCharSet<Ucs2> CharSet;
+typedef SeqCharSet<Ucs4> CharSet;
 typedef QUtf8ToUcs4Iterator Iterator;
 // typedef TableCharSet<Ascii> CharSet;
 
@@ -73,6 +75,24 @@ class DFA
     vector<size_t> accept;
     friend class NFA;
 public:
+    void codegen(QTextStream& str)
+    {
+      QStringList actions;
+      actions.reserve(nstates);
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        if(accept[i])
+          actions.push_back("/*" + QString::number(accept[i]) + " action */lpos = CURR_POS; lstate = " + QString::number(accept[i]) + "; goto _state_" + QString::number(i) + ";\n");
+        else
+          actions.push_back("goto _state_" + QString::number(i) + ";");
+      }
+      CharSetCondition<CharSet> csc;
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        str << "_state_" + QString::number(i) + ": chr = NEXT_CHR; ";
+        csc(str, rules[i], actions);
+      }
+    }
     void inspect()
     {
         cout << "#states = " << nstates << " accept = <";
@@ -628,4 +648,9 @@ int main()
       }
       cout << names[last.second] << ": " << str.substr(llast - begin, last.first - llast) << endl;
     }
+    QFile fout("regexp.cpp");
+    fout.open(QIODevice::WriteOnly);
+    QTextStream stream(&fout);
+    ddispatch.codegen(stream);
+    fout.close();
 }

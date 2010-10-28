@@ -42,6 +42,7 @@ using namespace tr1;
 #include <QString>
 #include <QFile>
 #include <QStringList>
+#include "kdev-pg.h"
 
 #define NC(...) __VA_ARGS__
 
@@ -73,25 +74,40 @@ class DFA
     vector<vector<pair<CharSet, size_t> > > rules;
     size_t numActions;
     vector<size_t> accept;
+    vector<QString> actions;
     friend class NFA;
 public:
     void codegen(QTextStream& str)
     {
-      QStringList actions;
-      actions.reserve(nstates);
+      str << "class " << KDevPG::globalSystem.exportMacro << " "
+          << KDevPG::globalSystem.tokenStream << " : public KDevPG::TokenStream, public QUtf8ToUcs4Iterator {"
+          << "typedef QUtf8ToUcs4Iterator Iterator; public: inline KDevPG::Token& next() { \n#define CURR_POS Iterator::plain()\n"
+          << "#define NEXT_CHR __extension__( { if(!Iterator::hasNext()) goto _end; Iterator::next(); } )\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n";
+      
+      QStringList innerActions;
+      innerActions.reserve(nstates);
       for(size_t i = 0; i != nstates; ++i)
       {
         if(accept[i])
-          actions.push_back("/*" + QString::number(accept[i]) + " action */lpos = CURR_POS; lstate = " + QString::number(accept[i]) + "; goto _state_" + QString::number(i) + ";\n");
+          innerActions.push_back("/*" + QString::number(accept[i]) + " action */lpos = CURR_POS; lstate = " + QString::number(accept[i]) + "; goto _state_" + QString::number(i) + ";\n");
         else
-          actions.push_back("goto _state_" + QString::number(i) + ";");
+          innerActions.push_back("goto _state_" + QString::number(i) + ";");
       }
       CharSetCondition<CharSet> csc;
       for(size_t i = 0; i != nstates; ++i)
       {
-        str << "_state_" + QString::number(i) + ": chr = NEXT_CHR; ";
-        csc(str, rules[i], actions);
+        str << "\n_state_" + QString::number(i) + ": chr = NEXT_CHR; ";
+        csc(str, rules[i], innerActions);
       }
+      str << "_end:\nplain() = lpos;\nswitch(lstate) {\n";
+      for(size_t i = 0; i <= numActions; ++i)
+      {
+        str << "case " << QString::number(i) << ": ";
+        if(i == 0)
+          str << "_fail: ";
+        str << actions[i] << "\n";
+      }
+      str << "}\n}\n};\n";
     }
     void inspect()
     {
@@ -158,6 +174,32 @@ public:
       }
       return make_pair(npos, action);
     }
+    DFA& filterStates(const UsedBitArray& active)
+    {
+        size_t curr = 0;
+        vector<size_t> mapping(nstates);
+        for(size_t i = 0; i != nstates; ++i)
+        {
+            if(active[i])
+            {
+                rules[curr] = rules[i];
+                accept[curr] = accept[i];
+                mapping[i] = curr;
+                ++curr;
+            }
+        }
+        rules.resize(curr);
+        accept.resize(curr);
+        nstates = curr;
+        for(size_t i = 0; i != nstates; ++i)
+        {
+            for(__typeof__(rules[i].begin()) j = rules[i].begin(); j != rules[i].end(); ++j)
+            {
+                j->second = mapping[j->second];
+            }
+        }
+        return *this;
+    }
     DFA& eliminateUnarrivableStates()
     {
         UsedBitArray arrivable(nstates);
@@ -177,29 +219,36 @@ public:
                 }
             }
         }
-        size_t curr = 0;
-        vector<size_t> mapping(nstates);
+        return filterStates(arrivable);
+    }
+    DFA& eliminateInactiveStates()
+    {
+      // should never happen
+      UsedBitArray active(nstates);
+      for(size_t i = 0; i != nstates; ++i)
+        if(accept[i])
+          active[i] = true;
+      bool changed;
+      do
+      {
+        changed = false;
         for(size_t i = 0; i != nstates; ++i)
         {
-            if(arrivable[i])
+          if(!active[i])
+          {
+            for(size_t j = 0; j != rules[i].size(); ++j)
             {
-                rules[curr] = rules[i];
-                accept[curr] = accept[i];
-                mapping[i] = curr;
-                ++curr;
+              if(active[rules[i][j].second])
+              {
+                active[i] = true;
+                changed = true;
+                break;
+              }
             }
+          }
         }
-        rules.resize(curr);
-        accept.resize(curr);
-        nstates = curr;
-        for(size_t i = 0; i != nstates; ++i)
-        {
-            for(__typeof__(rules[i].begin()) j = rules[i].begin(); j != rules[i].end(); ++j)
-            {
-                j->second = mapping[j->second];
-            }
-        }
-        return *this;
+      } while(changed);
+      return filterStates(active);
     }
     /// followers in same group for every input
     bool sameGroup(size_t ngroups, const vector<size_t>& ogroups, size_t x, size_t y)
@@ -504,6 +553,7 @@ public:
         _.nstates = states.size();
         _.accept.resize(_.nstates);
         _.numActions = nstates - accept;
+        _.actions.resize(_.numActions + 1);
         /*unordered_*/map<UsedBitArray, size_t> st;
         size_t cnt = 0;
         foreach(const UsedBitArray& i, states)

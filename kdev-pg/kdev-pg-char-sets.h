@@ -149,6 +149,8 @@ class QStringIterator
 {
   QString::const_iterator iter, end;
 public:
+  typedef quint16 Int;
+  typedef quint16 InputInt;
   QStringIterator(const QString& str) : iter(str.begin()), end(str.end())
   {
     
@@ -165,12 +167,18 @@ public:
   {
     return iter - other.iter;
   }
+  InputInt const*& plain()
+  {
+    return *reinterpret_cast<InputInt const**>(&iter);
+  }
 };
 
 class QByteArrayIterator
 {
   QByteArray::const_iterator iter, end;
 public:
+  typedef uchar Int;
+  typedef uchar InputInt;
   QByteArrayIterator(const QByteArray& str) : iter(str.begin()), end(str.end())
   {
     
@@ -187,6 +195,10 @@ public:
   {
     return iter - other.iter;
   }
+  InputInt const*& plain()
+  {
+    return *reinterpret_cast<InputInt const**>(&iter);
+  }
 };
 
 class QUtf16ToUcs4Iterator
@@ -194,6 +206,8 @@ class QUtf16ToUcs4Iterator
   union { QChar const *ptr; quint16 const *raw; };
   quint16 const *end;
 public:
+  typedef quint32 Int;
+  typedef quint16 InputInt;
   QUtf16ToUcs4Iterator(const QString& str) : raw(str.utf16()), end(raw + str.size())
   {
     
@@ -214,15 +228,25 @@ public:
   {
     return ptr - other.ptr;
   }
+  InputInt const*& plain()
+  {
+    return raw;
+  }
 };
 
 class QUtf8ToUcs4Iterator
 {
   uchar const *ptr, *end;
 public:
+  typedef quint32 Int;
+  typedef uchar InputInt;
   QUtf8ToUcs4Iterator(const QByteArray& qba) : ptr(reinterpret_cast<uchar const*>(qba.data())), end(ptr + qba.size())
   {
     
+  }
+  InputInt const*& plain()
+  {
+    return ptr;
   }
   quint32 next()
   {
@@ -292,9 +316,15 @@ class QUtf8ToUcs2Iterator
 {
   uchar const *ptr, *end;
 public:
+  typedef quint16 Int;
+  typedef uchar InputInt;
   QUtf8ToUcs2Iterator(const QByteArray& qba) : ptr(reinterpret_cast<uchar const*>(qba.data())), end(ptr + qba.size())
   {
     
+  }
+  InputInt const*& plain()
+  {
+    return ptr;
   }
   quint16 next()
   { 
@@ -718,7 +748,7 @@ public:
         str << actions[transition[j].second] << '\n';
       }
     }
-    str << "default: goto fail;\n";
+    str << "default: goto _end;\n";
   }
 };
 
@@ -729,7 +759,7 @@ class CharSetCondition<SeqCharSet<codec> >
   void codegen(QTextStream& str, const vector<pair<pair<Int, Int>, size_t> >& data, size_t l, size_t r, size_t tmin, size_t tmax, const QList<QString> actions)
   {
     if(l == r)
-      str << "goto fail;";
+      str << "goto _end;";
     else if(r == l + 1)
     {
       if(data[l].first.first == tmin)
@@ -742,7 +772,7 @@ class CharSetCondition<SeqCharSet<codec> >
             str << "if(chr == " << quint64(data[l].first.first) << ")";
           else
             str << "if(chr < " << quint64(data[l].first.second) << ")";
-          str << "{" << actions[data[l].second] << "} else goto fail;\n";
+          str << "{" << actions[data[l].second] << "} else goto _end;\n";
         }
       }
       else
@@ -753,7 +783,7 @@ class CharSetCondition<SeqCharSet<codec> >
             str << "if(chr == " << quint64(data[l].first.first) << ")";
           else
             str << "if(chr >= " << quint64(data[l].first.first) << ")";
-          str << "{" << actions[data[l].second] << "} else goto fail;\n";
+          str << "{" << actions[data[l].second] << "} else goto _end;\n";
         }
         else
         {
@@ -763,7 +793,7 @@ class CharSetCondition<SeqCharSet<codec> >
             str << "if(chr == " << quint64(data[l].first.first) << " || chr == " << quint64(data[l].first.first + 1) << ")";
           else
             str << "if(chr >= " << quint64(data[l].first.first) << " && chr < " << quint64(data[l].first.second) << ")";
-          str << "{" << actions[data[l].second] << "} else goto fail;\n";
+          str << "{" << actions[data[l].second] << "} else goto _end;\n";
         }
       }
     }

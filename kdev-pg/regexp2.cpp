@@ -1,13 +1,25 @@
-class  KDevPG::TokenStream : public KDevPG::TokenStream, public QUtf8ToUcs4Iterator {
+#include <QString>
+#include <cstdlib>
+#include <kdevelop-pg-qt/kdev-pg-token-stream.h>
+#include "kdev-pg-char-sets.h"
+
+#include <iostream>
+#include <string>
+#include <QDebug>
+using namespace std;
+
+
+class TokenStream : public KDevPG::TokenStream, public QUtf8ToUcs4Iterator {
     typedef QUtf8ToUcs4Iterator Iterator;
 public:
+    TokenStream(const Iterator& iter) : Iterator(iter)
+    {}
     inline KDevPG::Token& next() {
 #define CURR_POS Iterator::plain()
 #define NEXT_CHR __extension__( { if(!Iterator::hasNext()) goto _end; Iterator::next(); } )
         const Iterator::InputInt *lpos = Iterator::plain();
         Iterator::Int chr = 0;
         int lstate = 0;
-
 _state_0:
         chr = NEXT_CHR;
         if (chr < 98) {
@@ -309,19 +321,31 @@ _state_38:
         chr = NEXT_CHR;
         goto _end;
 _end:
-        plain() = lpos;
+KDevPG::Token t;
+plain() = lpos;
         switch (lstate) {
         case 0:
-_fail:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
+_fail: qDebug() << "error" << *lpos; exit(-1); return t;
+        case 1: qDebug() << "whitespace"; return t;
+        case 2: qDebug() << "dec-number"; return t;
+        case 3: qDebug() << "foo"; return t;
+        case 4: qDebug() << "bar"; return t;
+        case 5: qDebug() << "baz"; return t;
+        case 6: qDebug() << "foobar"; return t;
+        case 7: qDebug() << "for"; return t;
+        case 8: qDebug() << "umlauts"; return t;
+        case 9: qDebug() << "anti-law"; return t;
         }
     }
 };
+
+int main()
+{
+    string str;
+    getline(cin, str);
+    QByteArray qba(str.c_str(), str.size());
+    QUtf8ToUcs4Iterator iter(qba);
+    TokenStream stream(iter);
+    while(stream.hasNext())
+      stream.next();
+}

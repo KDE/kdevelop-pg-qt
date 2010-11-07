@@ -106,6 +106,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 "("                     return '(';
 ")"                     return ')';
+"{"                     return '{';
+"}"                     return '}';
 ","                     return ',';
 "0"                     return '0';
 "#"                     return '#';

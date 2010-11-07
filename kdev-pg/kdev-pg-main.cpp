@@ -29,6 +29,7 @@
 #include "kdev-pg-checker.h"
 #include "kdev-pg-inline-checker.h"
 #include "kdev-pg-generate.h"
+#include "kdev-pg-regexp.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
@@ -405,6 +406,13 @@ int main(int argc, char **argv)
       }
     }
     
+  QFile flex("lexer.cpp");
+  flex.open( QIODevice::WriteOnly | QIODevice::Truncate );
+  QTextStream strm(&flex);
+  KDevPG::GNFA gnfa(KDevPG::globalSystem.lexerEnvs[""]);
+  KDevPG::GDFA gdfa = gnfa.dfa();
+  gdfa.codegen(strm);
+  
   KDevPG::ProblemSummaryPrinter()();
   
   if (!(dump_terminals || dump_symbols || DebugRules) && KDevPG::globalSystem.language.isEmpty())

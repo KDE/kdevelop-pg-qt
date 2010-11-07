@@ -17,6 +17,9 @@
    Boston, MA 02110-1301, USA.
 */
 
+#ifndef KDEV_PG_CHAR_SETS
+#define KDEV_PG_CHAR_SETS
+
 #include <iostream>
 #include <vector>
 #include <set>
@@ -114,31 +117,31 @@ struct Codec2Size<Ucs4>
 };
 
 template<CharEncoding codec>
-typename Codec2Container<codec>::Result qString2Codec(const QString& str)
+inline typename Codec2Container<codec>::Result qString2Codec(const QString& str)
 {
   static_assert(Codec2False<codec>::value, "Unknown codec");
 }
 
 template<>
-QByteArray qString2Codec<Ascii>(const QString& str)
+inline QByteArray qString2Codec<Ascii>(const QString& str)
 {
   return str.toAscii();
 }
 
 template<>
-QByteArray qString2Codec<Latin1>(const QString& str)
+inline QByteArray qString2Codec<Latin1>(const QString& str)
 {
   return str.toLatin1();
 }
 
 template<>
-QVector<quint32> qString2Codec<Ucs4>(const QString& str)
+inline QVector<quint32> qString2Codec<Ucs4>(const QString& str)
 {
   return str.toUcs4();
 }
 
 template<>
-QVector<quint16> qString2Codec<Ucs2>(const QString& str)
+inline QVector<quint16> qString2Codec<Ucs2>(const QString& str)
 {
   QVector<quint16> ret(str.size());
   memcpy(&ret[0], str.utf16(), 2*str.size());
@@ -147,11 +150,11 @@ QVector<quint16> qString2Codec<Ucs2>(const QString& str)
 
 class QStringIterator
 {
-  QString::const_iterator iter, end;
+  QString::const_iterator _begin, iter, end;
 public:
   typedef quint16 Int;
   typedef quint16 InputInt;
-  QStringIterator(const QString& str) : iter(str.begin()), end(str.end())
+  QStringIterator(const QString& str) : _begin(str.begin()), iter(str.begin()), end(str.end())
   {
     
   }
@@ -171,15 +174,19 @@ public:
   {
     return *reinterpret_cast<InputInt const**>(&iter);
   }
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
+  }
 };
 
 class QByteArrayIterator
 {
-  QByteArray::const_iterator iter, end;
+  QByteArray::const_iterator _begin, iter, end;
 public:
   typedef uchar Int;
   typedef uchar InputInt;
-  QByteArrayIterator(const QByteArray& str) : iter(str.begin()), end(str.end())
+  QByteArrayIterator(const QByteArray& str) : _begin(str.begin()), iter(str.begin()), end(str.end())
   {
     
   }
@@ -198,17 +205,21 @@ public:
   InputInt const*& plain()
   {
     return *reinterpret_cast<InputInt const**>(&iter);
+  }  
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
   }
 };
 
 class QUtf16ToUcs4Iterator
 {
   union { QChar const *ptr; quint16 const *raw; };
-  quint16 const *end;
+  quint16 const *_begin, *end;
 public:
   typedef quint32 Int;
   typedef quint16 InputInt;
-  QUtf16ToUcs4Iterator(const QString& str) : raw(str.utf16()), end(raw + str.size())
+  QUtf16ToUcs4Iterator(const QString& str) : _begin(str.utf16()), raw(str.utf16()), end(raw + str.size())
   {
     
   }
@@ -232,15 +243,19 @@ public:
   {
     return raw;
   }
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
+  }
 };
 
 class QUtf8ToUcs4Iterator
 {
-  uchar const *ptr, *end;
+  uchar const *_begin, *ptr, *end;
 public:
   typedef quint32 Int;
   typedef uchar InputInt;
-  QUtf8ToUcs4Iterator(const QByteArray& qba) : ptr(reinterpret_cast<uchar const*>(qba.data())), end(ptr + qba.size())
+  QUtf8ToUcs4Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
   {
     
   }
@@ -309,16 +324,20 @@ public:
   {
     return ptr - other.ptr;
   }
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
+  }
 };
 
 
 class QUtf8ToUcs2Iterator
 {
-  uchar const *ptr, *end;
+  uchar const *_begin, *ptr, *end;
 public:
   typedef quint16 Int;
   typedef uchar InputInt;
-  QUtf8ToUcs2Iterator(const QByteArray& qba) : ptr(reinterpret_cast<uchar const*>(qba.data())), end(ptr + qba.size())
+  QUtf8ToUcs2Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
   {
     
   }
@@ -366,6 +385,12 @@ public:
   {
     return ptr - other.ptr;
   }
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
+  }
 };
 
 }
+
+#endif

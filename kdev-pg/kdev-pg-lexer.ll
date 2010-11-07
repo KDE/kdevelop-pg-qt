@@ -146,6 +146,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%right"                return T_RIGHT_ASSOC;
 "%isLeft"               return T_IS_LEFT_ASSOC;
 "%isRight"              return T_IS_RIGHT_ASSOC;
+"%lexer"                return T_LEXER;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;

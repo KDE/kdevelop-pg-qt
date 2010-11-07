@@ -34,10 +34,12 @@
 #include <QtCore/QtGlobal>
 #include <QtCore/QTextStream>
 
+#include <vector>
 #include <algorithm>
 
 namespace KDevPG
 {
+  class GNFA;
   Model::ZeroItem *zero();
   Model::PlusItem *plus(Model::Node *item);
   Model::StarItem *star(Model::Node *item);
@@ -272,7 +274,10 @@ public:
   MemberCode parserclassMembers;
   AstBaseClasses astBaseClasses;
   QString parserBaseClass;
-
+  QMap<QString, vector<GNFA*> > lexerEnvs;
+  QMap<QString, vector<QString> > lexerActions;
+  QMap<QString, GNFA*> regexpById;
+  
   Environment env;
 
 private:

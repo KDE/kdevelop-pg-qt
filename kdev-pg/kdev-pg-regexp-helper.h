@@ -17,6 +17,9 @@
    Boston, MA 02110-1301, USA.
 */
 
+#ifndef KDEV_PG_REGEXP_HELPER
+#define KDEV_PG_REGEXP_HELPER
+
 #include <kdev-pg-char-sets.h>
 
 namespace KDevPG
@@ -53,6 +56,10 @@ public:
         else
           data.push_back(make_pair(x, last = x+1));
       }
+    }
+    SeqCharSet(Int chr) : mEpsilon(false)
+    {
+      data.push_back(make_pair(chr, chr + 1));
     }
     SeqCharSet() : mEpsilon(true)
     {}
@@ -318,6 +325,10 @@ public:
         data[x] = true;
       }
   }
+  TableCharSet(Int chr) : mEpsilon(false)
+  {
+    data[chr] = true;
+  }
   TableCharSet() : mEpsilon(true)
   {}
   bool accepts(Int x) const
@@ -476,3 +487,5 @@ public:
 };
 
 }
+
+#endif

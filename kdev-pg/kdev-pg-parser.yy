@@ -22,6 +22,7 @@
 
 #include "kdev-pg.h"
 #include "kdev-pg-clone-tree.h"
+#include "kdev-pg-regexp.h"
 
 #include <QtCore/QFile>
 #include <cassert>
@@ -29,6 +30,8 @@
 extern int yylex();
 extern void yyerror(const char* msg);
 extern int yyLine;
+
+QString lexerEnv;
 
 namespace KDevPG
 {
@@ -46,6 +49,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
     KDevPG::Model::VariableDeclarationItem::StorageType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
     KDevPG::Model::Operator                                *operatorInformation;
+    KDevPG::GNFA                                           *nfa;
 }
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_NUMBER ';'
@@ -62,6 +66,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
 %token T_PAREN
 %token T_INLINE
+%token T_LEXER
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
 %type<str> name code_opt rule_arguments_opt priority assoc
@@ -73,6 +78,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %type<variableType>    variableType
 /* %type<void> operatorDeclaration operatorDeclarations operatorRule */
 %type<operatorInformation> operator
+%type<nfa> regexp
 
 %%
 
@@ -112,6 +118,47 @@ declaration
         { KDevPG::globalSystem.astBaseClasses[$2] = $3; }
     | T_PARSER_BASE T_STRING
         { KDevPG::globalSystem.parserBaseClass = $2; }
+    | T_LEXER T_STRING { lexerEnv = $2; KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+    | T_LEXER { lexerEnv = ""; KDevPG::globalSystem.lexerActions[""].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+    ;
+
+lexer_declaration_rest
+    : regexp code_opt T_TERMINAL T_ARROW T_IDENTIFIER ';' lexer_declaration_rest
+            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
+                QString($2) + "KDevPG::Token _t; _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
+              + "_t.begin = spos - Iterator::begin();\n"
+              + "_t.end = plain() - Iterator::begin();\n"
+              + "return _t;");
+              KDevPG::globalSystem.regexpById[$5] = $1;
+            }
+    | regexp code_opt T_ARROW T_IDENTIFIER ';' lexer_declaration_rest
+            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2));
+              KDevPG::globalSystem.regexpById[$4] = $1;
+            }
+    | regexp code_opt T_TERMINAL ';' lexer_declaration_rest
+            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
+                QString($2) + "KDevPG::Token _t; _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
+              + "_t.begin = spos - Iterator::begin();\n"
+              + "_t.end = plain() - Iterator::begin();\n"
+              + "return _t;");
+            }
+    | regexp code_opt ';' lexer_declaration_rest
+            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2));
+            }
+    | /* empty */
+    ;
+
+regexp
+    : '(' regexp ')'        { *$$ = *$2; delete $2; }
+    | '|' regexp regexp     { *$$ = (*$2 |= *$3); delete $2; delete $3; }
+    | '&' regexp regexp     { *$$ = (*$2 &= *$3); delete $2; delete $3; }
+    | '*' regexp            { *$$ = (*$2); delete $2; }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword($1)); }
+    | '{' T_IDENTIFIER '}'  { *$$ = *KDevPG::globalSystem.regexpById[$2]; }
     ;
 
 member_declaration_rest

@@ -34,7 +34,8 @@ SET(kdevpg_srcs
     kdev-pg-first.cpp
     kdev-pg-follow.cpp
     kdev-pg-bnf-visitor.cpp
-    kdev-pg-clone-tree.cpp)
+    kdev-pg-clone-tree.cpp
+    kdev-pg-regexp.cpp)
 
 
 # Custom support for flex/bison

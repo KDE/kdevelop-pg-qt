@@ -161,6 +161,8 @@ int main(int argc, char **argv)
   bool dump_terminals = false;
   bool dump_symbols = false;
   bool generate_parser = true;
+  bool generate_lexer = true;
+  bool force_generate_lexer_or_not = false;
   bool DebugRules = false;
   bool inherit_default = false;
   QString new_visitor;
@@ -215,6 +217,16 @@ int main(int argc, char **argv)
     else if (arg == "--with-parser")
     {
       generate_parser = true;
+    }
+    else if (arg == "--no-lexer")
+    {
+      generate_lexer = false;
+      force_generate_lexer_or_not = true;
+    }
+    else if (arg == "--with-lexer")
+    {
+      generate_lexer = true;
+      force_generate_lexer_or_not = true;
     }
     else if (arg == "--beautiful-code")
     {
@@ -371,6 +383,30 @@ int main(int argc, char **argv)
     KDevPG::UndefinedTokenChecker check;
     check(*it);
   }
+  
+  if (force_generate_lexer_or_not && generate_lexer && !KDevPG::globalSystem.hasLexer)
+  {
+    KDevPG::checkOut << "** ERROR no lexer definiton" << endl;
+    KDevPG::ProblemSummaryPrinter::reportError();
+    generate_lexer = false;
+  }
+  
+  if (!force_generate_lexer_or_not)
+    generate_lexer = KDevPG::globalSystem.hasLexer;
+    
+  if (generate_lexer)
+  {
+    if(!KDevPG::globalSystem.lexerEnvs.contains("start"))
+    {
+      KDevPG::checkOut << "** ERROR missing start-state in the lexer" << endl;
+      KDevPG::ProblemSummaryPrinter::reportError();
+    }
+    if(!QRegExp("^[a-zA-Z_][a-zA-Z_0-9]*$").exactMatch(KDevPG::globalSystem.tokenStream))
+    { // primarily to exclude KDevPG::TokenStream (the default value)
+      KDevPG::checkOut << "** ERROR ou have to specify a valid name for your lexer (%token_stream)" << endl;
+      KDevPG::ProblemSummaryPrinter::reportError();
+    }
+  }
 
   if(dump_terminals)
     {
@@ -406,13 +442,6 @@ int main(int argc, char **argv)
       }
     }
     
-  QFile flex("lexer.cpp");
-  flex.open( QIODevice::WriteOnly | QIODevice::Truncate );
-  QTextStream strm(&flex);
-  KDevPG::GNFA gnfa(KDevPG::globalSystem.lexerEnvs[""]);
-  KDevPG::GDFA gdfa = gnfa.dfa();
-  gdfa.codegen(strm);
-  
   KDevPG::ProblemSummaryPrinter()();
   
   if (!(dump_terminals || dump_symbols || DebugRules) && KDevPG::globalSystem.language.isEmpty())
@@ -423,6 +452,9 @@ int main(int argc, char **argv)
 
   if (generate_parser)
     KDevPG::generateOutput();
+  
+  if (generate_lexer)
+    KDevPG::generateLexer();
   
   if (!new_visitor.isEmpty())
     KDevPG::generateVisitor(new_visitor, inherit_default);

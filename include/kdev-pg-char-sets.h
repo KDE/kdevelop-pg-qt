@@ -219,7 +219,7 @@ class QUtf16ToUcs4Iterator
 public:
   typedef quint32 Int;
   typedef quint16 InputInt;
-  QUtf16ToUcs4Iterator(const QString& str) : _begin(str.utf16()), raw(str.utf16()), end(raw + str.size())
+  QUtf16ToUcs4Iterator(const QString& str) : raw(str.utf16()), _begin(str.utf16()), end(raw + str.size())
   {
     
   }

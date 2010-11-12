@@ -130,12 +130,16 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%token_stream"         return T_TOKEN_STREAM_DECLARATION;
 "%namespace"            return T_NAMESPACE_DECLARATION;
 "%parserclass"          BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
+"%lexerclass"           BEGIN(PARSERCLASS); return T_LEXERCLASS_DECLARATION;
 "%ast_extra_members"    return T_AST_DECLARATION;
 "%parser_declaration_header"   return T_PARSER_DECLARATION_HEADER;
 "%parser_bits_header"   return T_PARSER_BITS_HEADER;
 "%ast_header"           return T_AST_HEADER;
+"%token_sream_declaration_header"   return T_TOKEN_STREAM_DECLARATION_HEADER;
+"%token_stream_bits_header" return T_TOKEN_STREAM_BITS_HEADER;
 "%ast_base"             return T_AST_BASE;
 "%parser_base"          return T_PARSER_BASE;
+"%token_stream_base"    return T_TOKEN_STREAM_BASE;
 "%bin"                  return T_BIN;
 "%pre"                  return T_PRE;
 "%post"                 return T_POST;
@@ -160,6 +164,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "declaration"           return T_DECLARATION;
 "constructor"           return T_CONSTRUCTOR;
 "destructor"            return T_DESTRUCTOR;
+"bits"                  return T_BITS;
 ")"                     BEGIN(INITIAL); return ')';
 .                       BEGIN(INITIAL); REJECT; /* everything else */
 }

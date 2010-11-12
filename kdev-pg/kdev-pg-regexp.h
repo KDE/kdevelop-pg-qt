@@ -65,6 +65,8 @@ class GDFA
 public:
   static const enum { SAscii, SLatin1, SUcs2, SUcs4, TAscii, TLatin1, TUcs2, TUcs4 } type = SUcs2;
   void codegen(QTextStream& str);
+  GDFA& minimize();
+  void setActions(const vector<QString>& actions);
   GDFA();
   GDFA(const GDFA& o);
   ~GDFA();
@@ -84,7 +86,7 @@ class GNFA
     NFA<TableCharSet<Ucs2> > *t2;
     NFA<TableCharSet<Ucs4> > *t3;
   };
-  friend GNFA keyword(const QString&);
+  friend GNFA keyword(const QString& str);
 public:
   GNFA();
   GNFA(const GNFA& o);

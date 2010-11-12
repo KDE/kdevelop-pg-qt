@@ -114,10 +114,12 @@ public:
   World()
     : tokenStream("KDevPG::TokenStream"), language(), ns(), decl(), bits(),
       exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
-      generateAst(true), generateSerializeVisitor(false), generateDebugVisitor(false),
-      generateTokenText(false), needStateManagement(false), needOperatorStack(false),
+      generateAst(true), hasLexer(false), generateSerializeVisitor(false),
+      generateDebugVisitor(false), generateTokenText(false),
+      needStateManagement(false), needOperatorStack(false),
       beautifulCode(false), visitorTable(false),
-      conflictHandling(Permissive), mZero(0)
+      conflictHandling(Permissive), mZero(0),
+      tokenStreamBaseClass("KDevPG::TokenStream")
   {}
 
   // options
@@ -126,6 +128,7 @@ public:
   QString ns;
   QString decl;
   QString bits;
+  QString lexerBits;
   QString exportMacro;
   QString exportMacroHeader;
   QString astCode;
@@ -133,7 +136,10 @@ public:
   QStringList parserDeclarationHeaders;
   QStringList parserBitsHeaders;
   QStringList astHeaders;
+  QStringList tokenStreamDeclarationHeaders;
+  QStringList tokenStreamBitsHeaders;
   bool generateAst: 1;
+  bool hasLexer: 1;
   bool generateSerializeVisitor: 1;
   bool generateDebugVisitor: 1;
   bool generateTokenText: 1;
@@ -180,7 +186,20 @@ public:
     else // public, protected or private declaration
       parserclassMembers.declarations.push_back(m);
   }
-
+  
+  void pushLexerClassMember(Model::Node *member)
+  {
+    Settings::MemberItem *m = nodeCast<Settings::MemberItem*>(member);
+    Q_ASSERT(m != 0);
+    
+    if (m->mMemberKind == Settings::MemberItem::ConstructorCode)
+      lexerclassMembers.constructorCode.push_back(m);
+    else if (m->mMemberKind == Settings::MemberItem::DestructorCode)
+      lexerclassMembers.destructorCode.push_back(m);
+    else // public, protected or private declaration
+      lexerclassMembers.declarations.push_back(m);
+  }
+  
   Model::TerminalItem *pushTerminal(QString __name, QString __description)
   {
     QString name = __name;
@@ -220,6 +239,16 @@ public:
   void pushAstHeader(QString file)
   {
     astHeaders << file;
+  }
+  
+  void pushTokenStreamBitsHeader(QString file)
+  {
+    tokenStreamBitsHeaders << file;
+  }
+  
+  void pushTokenStreamDeclarationHeader(QString file)
+  {
+    tokenStreamDeclarationHeaders << file;
   }
   
   inline static bool ruleComp(Model::Node *a, Model::Node *b)
@@ -271,9 +300,9 @@ public:
   SymbolSet symbols;
   TerminalSet terminals;
   QList<Model::EvolveItem*> rules;
-  MemberCode parserclassMembers;
+  MemberCode parserclassMembers, lexerclassMembers;
   AstBaseClasses astBaseClasses;
-  QString parserBaseClass;
+  QString parserBaseClass, tokenStreamBaseClass;
   QMap<QString, vector<GNFA*> > lexerEnvs;
   QMap<QString, vector<QString> > lexerActions;
   QMap<QString, GNFA*> regexpById;

@@ -68,18 +68,13 @@ class DFA
     vector<QString> actions;
     friend class NFA<CharSet>;
 public:
+    void setActions(const vector<QString>& _actions)
+    {
+      actions = _actions;
+      numActions = actions.size() - 1;
+    }
     void codegen(QTextStream& str)
     {
-      if(actions.size() == 0 || actions[0] == "")
-      {
-        actions = globalSystem.lexerActions[""];
-        numActions = actions.size() - 1;
-      }
-      str << "class " << KDevPG::globalSystem.exportMacro << " "
-          << KDevPG::globalSystem.tokenStream << " : public KDevPG::TokenStream, public QUtf8ToUcs4Iterator {"
-          << "typedef QUtf8ToUcs4Iterator Iterator; public: inline KDevPG::Token& next() { \n#define CURR_POS Iterator::plain()\n"
-          << "#define NEXT_CHR __extension__( { if(!Iterator::hasNext()) goto _end; Iterator::next(); } )\nconst Iterator::InputInt * const spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n";
-      
       QStringList innerActions;
       innerActions.reserve(nstates);
       for(size_t i = 0; i != nstates; ++i)
@@ -103,7 +98,7 @@ public:
           str << "_fail: ";
         str << "{" << actions[i] << "}\n";
       }
-      str << "}\n}\n};\n";
+      str << "}\n";
     }
     void inspect()
     {
@@ -613,6 +608,21 @@ void GDFA::codegen(QTextStream& str)
 {
 #define macro(x) x->codegen(str);
     EACH_TYPE(macro)
+#undef macro
+}
+
+GDFA& GDFA::minimize()
+{
+#define macro(x) x->minimize();
+  EACH_TYPE(macro)
+#undef macro
+  return *this;
+}
+
+void GDFA::setActions(const std::vector< QString >& actions)
+{
+#define macro(x) x->setActions(actions);
+  EACH_TYPE(macro)
 #undef macro
 }
 

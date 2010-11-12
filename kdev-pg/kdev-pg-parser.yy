@@ -55,13 +55,15 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 
 %token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_NUMBER ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
-%token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
+%token T_PARSERCLASS_DECLARATION T_LEXERCLASS_DECLARATION
+%token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_BITS
 %token T_CONSTRUCTOR T_DESTRUCTOR T_TRY_RECOVER T_TRY_ROLLBACK T_CATCH
 %token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_EXPORT_MACRO
 %token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
 %token T_AST_DECLARATION 
 %token T_PARSER_DECLARATION_HEADER T_PARSER_BITS_HEADER T_AST_HEADER
-%token T_PARSER_BASE T_AST_BASE
+%token T_TOKEN_STREAM_DECLARATION_HEADER T_TOKEN_STREAM_BITS_HEADER
+%token T_PARSER_BASE T_AST_BASE T_TOKEN_STREAM_BASE
 %token T_BIN T_PRE T_POST T_TERN
 %token T_LOPR T_ROPR
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
@@ -87,7 +89,7 @@ system
     : code_opt { KDevPG::globalSystem.decl = $1; }
       declarations
       rules
-      code_opt { KDevPG::globalSystem.bits = $5; }
+      code_opt { KDevPG::globalSystem.bits += $5; }
     ;
 
 declarations
@@ -98,6 +100,12 @@ declarations
 declaration
     : T_PARSERCLASS_DECLARATION member_declaration_rest
         { KDevPG::globalSystem.pushParserClassMember($2); }
+    | T_PARSERCLASS_DECLARATION '(' T_BITS ')' T_CODE
+        { KDevPG::globalSystem.bits += $5; }
+    | T_LEXERCLASS_DECLARATION member_declaration_rest
+        { KDevPG::globalSystem.pushLexerClassMember($2); }
+    | T_LEXERCLASS_DECLARATION '(' T_BITS ')' T_CODE
+        { KDevPG::globalSystem.lexerBits += $5; }
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
@@ -115,12 +123,18 @@ declaration
         { KDevPG::globalSystem.pushParserBitsHeader($2); }
     | T_AST_HEADER T_STRING
         { KDevPG::globalSystem.pushAstHeader($2); }
+    | T_TOKEN_STREAM_DECLARATION_HEADER T_STRING
+        { KDevPG::globalSystem.pushTokenStreamDeclarationHeader($2); }
+    | T_TOKEN_STREAM_BITS_HEADER T_STRING
+        { KDevPG::globalSystem.pushTokenStreamBitsHeader($2); }
     | T_AST_BASE T_IDENTIFIER T_STRING
         { KDevPG::globalSystem.astBaseClasses[$2] = $3; }
     | T_PARSER_BASE T_STRING
         { KDevPG::globalSystem.parserBaseClass = $2; }
-    | T_LEXER T_STRING { lexerEnv = $2; KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
-    | T_LEXER { lexerEnv = ""; KDevPG::globalSystem.lexerActions[""].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+    | T_TOKEN_STREAM_BASE T_STRING
+        { KDevPG::globalSystem.tokenStreamBaseClass = $2; }
+    | T_LEXER T_STRING { KDevPG::globalSystem.hasLexer = true; lexerEnv = $2; if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+    | T_LEXER { KDevPG::globalSystem.hasLexer = true; lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
     ;
 
 lexer_declaration_rest

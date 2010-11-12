@@ -401,7 +401,7 @@ int main(int argc, char **argv)
       KDevPG::checkOut << "** ERROR missing start-state in the lexer" << endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
-    if(!QRegExp("^[a-zA-Z_][a-zA-Z_0-9]*$").exactMatch(KDevPG::globalSystem.tokenStream))
+    if(!QRegExp("[a-zA-Z_][a-zA-Z_0-9]*").exactMatch(KDevPG::globalSystem.tokenStream))
     { // primarily to exclude KDevPG::TokenStream (the default value)
       KDevPG::checkOut << "** ERROR ou have to specify a valid name for your lexer (%token_stream)" << endl;
       KDevPG::ProblemSummaryPrinter::reportError();

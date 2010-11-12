@@ -69,7 +69,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
 %token T_PAREN
 %token T_INLINE
-%token T_LEXER
+%token T_LEXER T_INPUT_STREAM
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
 %type<str> name code_opt rule_arguments_opt priority assoc
@@ -125,6 +125,8 @@ declaration
         { KDevPG::globalSystem.pushAstHeader($2); }
     | T_TOKEN_STREAM_DECLARATION_HEADER T_STRING
         { KDevPG::globalSystem.pushTokenStreamDeclarationHeader($2); }
+    | T_INPUT_STREAM T_STRING
+        { KDevPG::globalSystem.inputStream = $2; }
     | T_TOKEN_STREAM_BITS_HEADER T_STRING
         { KDevPG::globalSystem.pushTokenStreamBitsHeader($2); }
     | T_AST_BASE T_IDENTIFIER T_STRING
@@ -141,7 +143,7 @@ lexer_declaration_rest
     : regexp code_opt T_TERMINAL T_ARROW T_IDENTIFIER ';'
             { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
-                QString($2) + "KDevPG::Token _t; _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
+                QString($2) + "KDevPG::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
               + "_t.begin = spos - Iterator::begin();\n"
               + "_t.end = plain() - Iterator::begin();\n"
               + "return _t;");
@@ -155,7 +157,7 @@ lexer_declaration_rest
     | regexp code_opt T_TERMINAL ';'
             { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
-                QString($2) + "KDevPG::Token _t; _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
+                QString($2) + "KDevPG::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
               + "_t.begin = spos - Iterator::begin();\n"
               + "_t.end = plain() - Iterator::begin();\n"
               + "return _t;");
@@ -172,7 +174,7 @@ regexp
     | '|' regexp regexp     { $$ = new KDevPG::GNFA(*$2 |= *$3); delete $2; delete $3; }
     | '&' regexp regexp     { $$ = new KDevPG::GNFA(*$2 &= *$3); delete $2; delete $3; }
     | '*' regexp            { $$ = new KDevPG::GNFA(*$2); *$$; delete $2; }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword($1)); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword(QString($1).replace("\\n", "\n"))); }
     | '{' T_IDENTIFIER '}'  { if(KDevPG::globalSystem.regexpById[$2] == 0) { KDevPG::checkOut << "ERROR: no named regexp " << $2 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$2]); }
     ;
 

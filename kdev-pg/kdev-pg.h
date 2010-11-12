@@ -114,6 +114,7 @@ public:
   World()
     : tokenStream("KDevPG::TokenStream"), language(), ns(), decl(), bits(),
       exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
+      inputStream("KDevPG::QUtf16ToUcs4Iterator"),
       generateAst(true), hasLexer(false), generateSerializeVisitor(false),
       generateDebugVisitor(false), generateTokenText(false),
       needStateManagement(false), needOperatorStack(false),
@@ -138,6 +139,7 @@ public:
   QStringList astHeaders;
   QStringList tokenStreamDeclarationHeaders;
   QStringList tokenStreamBitsHeaders;
+  QString inputStream;
   bool generateAst: 1;
   bool hasLexer: 1;
   bool generateSerializeVisitor: 1;

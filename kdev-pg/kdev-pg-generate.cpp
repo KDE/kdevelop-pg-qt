@@ -106,6 +106,9 @@ void generateOutput()
       << "#ifndef " << language << "_H_INCLUDED" << endl
       << "#define " << language << "_H_INCLUDED" << endl
       << endl;
+    
+    if(globalSystem.hasLexer)
+      s << "#include \"" << globalSystem.language << "lexer.h\"" << endl;
 
     if (globalSystem.generateAst)
       {
@@ -322,9 +325,6 @@ void generateOutput()
       << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << endl
 
-      << "#include \"" << globalSystem.language << "parser.h\"" << endl
-      << endl
-
       << "namespace " << globalSystem.ns << "{" << endl
       << endl
 
@@ -459,10 +459,10 @@ void generateLexer()
       << "#define " << language << "_LEXER_H_INCLUDED" << endl
       << endl
     
-      << "#include \"" << globalSystem.language << "parser.h\"" << endl
       << endl
       
       << "#include <kdev-pg-char-sets.h>" << endl
+      << "#include <kdev-pg-token-stream.h>" << endl
       << endl;
       
     foreach (const QString& header, globalSystem.tokenStreamDeclarationHeaders)
@@ -473,7 +473,7 @@ void generateLexer()
       
       << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
       << (globalSystem.tokenStreamBaseClass.isEmpty() ? "" : " public " + globalSystem.tokenStreamBaseClass)
-      << ", public KDevPG::QUtf8Iterator" << endl
+      << ", public " << globalSystem.inputStream << endl
       << "{" << endl;
     
     if(hasStates)
@@ -488,24 +488,31 @@ void generateLexer()
     
     s << "public:"
       << "typedef " << globalSystem.tokenStreamBaseClass << " Base;" << endl
-      << "typedef KDevPG::QUtf8Iterator Iterator;" << endl
-      <<  endl << "Base::Token& next();" << endl << "};" << endl;
+      << "typedef " << globalSystem.inputStream << " Iterator;" << endl << endl
+      << globalSystem.tokenStream << "(const Iterator& iter);" << endl
+      // non-virtual, virtuality will be inherited
+      << "~" << globalSystem.tokenStream << "();"
+      <<  endl << "Base::Token& next();" << endl;
     
-    if (globalSystem.parserclassMembers.declarations.empty() == false)
-    {
-      s << "\n// user defined declarations:" << endl;
-      GenerateMemberCode gen(s, Settings::MemberItem::PublicDeclaration
-                                | Settings::MemberItem::ProtectedDeclaration
-                                | Settings::MemberItem::PrivateDeclaration);
-      for( QList<Settings::MemberItem*>::iterator it = globalSystem.parserclassMembers.declarations.begin();
-      it != globalSystem.parserclassMembers.declarations.end(); ++it )
-      {
-        gen(*it);
-      }
-      s << endl << "public:" << endl;
+#define LEXER_EXTRA_CODE_GEN(name) \
+    if (globalSystem.lexerclassMembers.name.empty() == false) \
+    { \
+      s << "\n// user defined declarations:" << endl; \
+      GenerateMemberCode gen(s, Settings::MemberItem::PublicDeclaration \
+                                | Settings::MemberItem::ProtectedDeclaration \
+                                | Settings::MemberItem::PrivateDeclaration); \
+      for( auto it = globalSystem.lexerclassMembers.name.begin(); \
+      it != globalSystem.lexerclassMembers.name.end(); ++it ) \
+      { \
+        gen(*it); \
+      } \
     }
     
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
+    // for (optional) lazyness add nextToken implementation here
+    
+    LEXER_EXTRA_CODE_GEN(declarations)
+    
+    s << "};" << endl << endl << "} // end of namespace " << globalSystem.ns << endl
       << endl
       
       << "#endif" << endl
@@ -526,13 +533,22 @@ void generateLexer()
     << endl
     
     << "#include \"" << globalSystem.language << "lexer.h\"" << endl
+    << "#include \"" << globalSystem.language << "parser.h\"" << endl
     << endl;
     
-    foreach (const QString& header, globalSystem.tokenStreamDeclarationHeaders)
+    foreach (const QString& header, globalSystem.tokenStreamBitsHeaders)
       s << "#include \"" << header << "\"\n";
     
     s << endl << "namespace " << globalSystem.ns << "{" << endl
-      << endl
+      << endl << globalSystem.tokenStream << "::" << globalSystem.tokenStream
+      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter)" << endl
+      << "{";
+    LEXER_EXTRA_CODE_GEN(constructorCode)
+    s << "}" << endl << endl
+      << globalSystem.tokenStream << "::~" << globalSystem.tokenStream
+      << "()\n{";
+    LEXER_EXTRA_CODE_GEN(destructorCode)
+    s << "}" << endl << endl
             
       << "#define CURR_POS Iterator::plain()\n"
       << "#define NEXT_CHR __extension__( { if(!Iterator::hasNext()) goto _end; Iterator::next(); } )\n";
@@ -540,13 +556,14 @@ void generateLexer()
 #define LEXER_CORE_IMPL(name, state) \
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
         << name << "()" << endl << "{" \
+        << "if(!Iterator::hasNext())\n{\nBase::Token& _t(Base::next());\n_t.kind = Parser::Token_EOF;\n_t.begin = _t.end = Iterator::plain() - Iterator::begin();\nreturn _t;\n}" << endl \
         << "const Iterator::InputInt * const spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
       GNFA alltogether(globalSystem.lexerEnvs[state]); \
       GDFA deterministic = alltogether.dfa(); \
       deterministic.minimize(); \
       deterministic.setActions(globalSystem.lexerActions[state]); \
       deterministic.codegen(s); \
-      s << "}" << endl << endl;
+      s << "/* assert(false);*/\nreturn Base::next();}" << endl << endl;
     
     if(hasStates)
     {
@@ -567,10 +584,7 @@ void generateLexer()
     
     s << globalSystem.lexerBits << endl
       << "} // end of namespace " << globalSystem.ns << endl << endl;
-        
-        s << "#endif" << endl
-        << endl;
-        
+    
     QString oname = globalSystem.language;
     oname += "lexer.cpp";
         

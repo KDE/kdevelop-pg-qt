@@ -119,6 +119,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "?"                     return '?';
 "@"                     return '@';
 "|"                     return '|';
+"&"                     return '&';
 
 "try/recover"           return T_TRY_RECOVER;
 "try/rollback"          return T_TRY_ROLLBACK;
@@ -131,6 +132,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%namespace"            return T_NAMESPACE_DECLARATION;
 "%parserclass"          BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 "%lexerclass"           BEGIN(PARSERCLASS); return T_LEXERCLASS_DECLARATION;
+"%input_stream"         return T_INPUT_STREAM;
 "%ast_extra_members"    return T_AST_DECLARATION;
 "%parser_declaration_header"   return T_PARSER_DECLARATION_HEADER;
 "%parser_bits_header"   return T_PARSER_BITS_HEADER;

@@ -16,10 +16,10 @@
   |(|" ""  ")"\n" ;;
   ;;
 
-  ?SHEBANG sexp -> start ;;
+  ?SHEBANG sexp=sexp -> start ;;
   
-  LPAREN sexp* RPAREN
-| FOO | BAR | BAZ | NUMBER -> sexp ;;
+  LPAREN #sexp=sexp* RPAREN
+| foo=FOO | bar=BAR | baz=BAZ | number=NUMBER -> sexp ;;
 
 [:
 void FooLisp::Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)

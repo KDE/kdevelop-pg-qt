@@ -14,13 +14,18 @@ int main()
   getline(cin, str);
   QString qcode = QString::fromUtf8(str.c_str(), str.size());
   QUtf16ToUcs4Iterator iter(qcode);
+  qDebug() << qcode.size() << iter.hasNext();
   FooLisp::Lexer lex(iter);
   FooLisp::Parser parser;
+  parser.setMemoryPool(new KDevPG::MemoryPool);
   parser.setTokenStream(&lex);
-  while(lex.next().kind != Parser::Token_EOF)
-    ;
+  int kind;
+  while((kind = lex.next().kind) != Parser::Token_EOF)
+    qDebug() << kind;
+  parser.rewind(0);
   StartAst *ast;
   parser.parseStart(&ast);
   DebugVisitor vis(&lex, qcode);
   vis.visitNode(ast);
+  qDebug() << ast->sexp;
 }

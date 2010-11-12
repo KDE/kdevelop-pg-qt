@@ -145,13 +145,13 @@ lexer_declaration_rest
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
                 QString($2) + "KDevPG::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
               + "_t.begin = spos - Iterator::begin();\n"
-              + "_t.end = plain() - Iterator::begin();\n"
+              + "_t.end = plain() - Iterator::begin() - 1;\n"
               + "return _t;");
               KDevPG::globalSystem.regexpById[$5] = $1;
             } lexer_declaration_rest
     | regexp code_opt T_ARROW T_IDENTIFIER ';'
             { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
-              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2));
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2) + "return next();");
               KDevPG::globalSystem.regexpById[$4] = $1;
             } lexer_declaration_rest
     | regexp code_opt T_TERMINAL ';'
@@ -159,12 +159,12 @@ lexer_declaration_rest
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
                 QString($2) + "KDevPG::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
               + "_t.begin = spos - Iterator::begin();\n"
-              + "_t.end = plain() - Iterator::begin();\n"
+              + "_t.end = plain() - Iterator::begin() - 1;\n"
               + "return _t;");
             } lexer_declaration_rest
     | regexp code_opt ';'
             { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
-              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2));
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2) + "return next();");
             } lexer_declaration_rest
     | /* empty */
     ;

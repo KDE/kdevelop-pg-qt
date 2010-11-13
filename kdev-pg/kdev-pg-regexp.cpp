@@ -607,7 +607,7 @@ switch(GDFA::type) \
   case GDFA::TAscii: { macro(t0); } break; \
   case GDFA::T8Bit: { macro(t1); } break; \
   case GDFA::TUcs2: { macro(t2); } break; \
-  case GDFA::TUcs4: { macro(t3); } break; \
+  default: exit(-1); \
 }
 
 void GDFA::codegen(QTextStream& str)

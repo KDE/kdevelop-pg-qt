@@ -409,7 +409,7 @@ public:
     {
       if(!transition[j].first.empty())
       {
-        for(Int i = 0; i != Codec2Size<codec>::value; ++i)
+        for(quint64 i = 0; i != Codec2Size<codec>::value; ++i)
         {
           if(transition[j].first.accepts(i))
             str << "case " << quint64(i) << ":\n";
@@ -417,7 +417,7 @@ public:
         str << actions[transition[j].second] << '\n';
       }
     }
-    str << "default: goto _end;\n";
+    str << "default: goto _end;\n}\n";
   }
 };
 

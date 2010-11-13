@@ -58,11 +58,11 @@ class GDFA
     DFA<TableCharSet<Ascii> > *t0;
     DFA<TableCharSet<Latin1> > *t1;
     DFA<TableCharSet<Ucs2> > *t2;
-    DFA<TableCharSet<Ucs4> > *t3;
+//     DFA<TableCharSet<Ucs4> > *t3;
   };
   friend class GNFA;
 public:
-  static enum { SAscii, S8Bit, SUcs2, SUcs4, TAscii, T8Bit, TUcs2, TUcs4 } type;
+  static enum { SAscii, S8Bit, SUcs2, SUcs4, TAscii, T8Bit, TUcs2/*, TUcs4*/ } type;
   void codegen(QTextStream& str);
   GDFA& minimize();
   void setActions(const vector<QString>& actions);
@@ -83,7 +83,7 @@ class GNFA
     NFA<TableCharSet<Ascii> > *t0;
     NFA<TableCharSet<Latin1> > *t1;
     NFA<TableCharSet<Ucs2> > *t2;
-    NFA<TableCharSet<Ucs4> > *t3;
+//     NFA<TableCharSet<Ucs4> > *t3;
   };
   friend GNFA keyword(const QString& str);
 public:

@@ -3,6 +3,9 @@
 %token LPAREN, RPAREN, FOO, BAR, BAZ, NUMBER, SHEBANG ;;
 %token_stream_bits_header "QDebug"
 %parser_bits_header "QDebug"
+%input_encoding "utf16"
+%table_lexer
+%input_stream "KDevPG::QStringIterator"
 
 %lexer ->
   "(" LPAREN ;;

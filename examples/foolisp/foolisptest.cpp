@@ -13,7 +13,7 @@ int main()
   string str;
   getline(cin, str);
   QString qcode = QString::fromUtf8(str.c_str(), str.size());
-  QUtf16ToUcs4Iterator iter(qcode);
+  QStringIterator iter(qcode);
   qDebug() << qcode.size() << iter.hasNext();
   FooLisp::Lexer lex(iter);
   FooLisp::Parser parser;

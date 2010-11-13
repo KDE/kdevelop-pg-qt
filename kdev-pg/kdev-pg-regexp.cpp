@@ -747,7 +747,6 @@ GNFA keyword(const QString& str)
 }
 
 typeof(GDFA::type) GDFA::type = GDFA::SUcs2;
-QTextCodec *GDFA::codec = QTextCodec::codecForName("utf8");
 
 template<CharEncoding enc>
 const bitset<TableCharSet<enc>::nChars> TableCharSet<enc>::nullData = bitset<TableCharSet<enc>::nChars>();

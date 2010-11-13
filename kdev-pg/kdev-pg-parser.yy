@@ -138,12 +138,6 @@ declaration
         int base = (KDevPG::GDFA::type / 4) * 4; // warning: magic constant: number of different codecs
         QString str = $2;
         str = str.toLower();
-        KDevPG::GDFA::codec = QTextCodec::codecForName(str.toAscii());
-        if(KDevPG::GDFA::codec == 0)
-        {
-          KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
-          exit(-1);
-        }
         str.replace('-', "");
         if(str == "ascii")
           /* base += 0*/;

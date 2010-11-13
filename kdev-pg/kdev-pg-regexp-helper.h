@@ -21,7 +21,6 @@
 #define KDEV_PG_REGEXP_HELPER
 
 #include <kdev-pg-char-sets.h>
-#include <QTextCodec>
 
 namespace KDevPG
 {
@@ -491,6 +490,8 @@ public:
   }
 };
 
+// just for the case QTextCodec may be needed
+/*
 class QAsciiCodec : public QTextCodec
 {
 public:
@@ -522,6 +523,7 @@ public:
     return "us-ascii";
   }
 } qAsciiCodec;
+*/
 
 }
 

@@ -32,7 +32,6 @@
 #include <vector>
 
 #include <QBitArray>
-#include <QTextCodec>
 
 #include <QString>
 #include <QFile>
@@ -64,7 +63,6 @@ class GDFA
   friend class GNFA;
 public:
   static enum { SAscii, S8Bit, SUcs2, SUcs4, TAscii, T8Bit, TUcs2, TUcs4 } type;
-  static QTextCodec *codec;
   void codegen(QTextStream& str);
   GDFA& minimize();
   void setActions(const vector<QString>& actions);

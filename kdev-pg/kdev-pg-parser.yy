@@ -221,7 +221,7 @@ regexp
     : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
     | '|' regexp regexp     { $$ = new KDevPG::GNFA(*$2 |= *$3); delete $2; delete $3; }
     | '&' regexp regexp     { $$ = new KDevPG::GNFA(*$2 &= *$3); delete $2; delete $3; }
-    | '*' regexp            { $$ = new KDevPG::GNFA(*$2); *$$; delete $2; }
+    | '*' regexp            { $$ = new KDevPG::GNFA(**$2); delete $2; }
     | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
     | '{' T_IDENTIFIER '}'  { if(KDevPG::globalSystem.regexpById[$2] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $2 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$2]); }
     ;

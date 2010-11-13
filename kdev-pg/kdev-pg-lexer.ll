@@ -139,6 +139,9 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%ast_header"           return T_AST_HEADER;
 "%token_sream_declaration_header"   return T_TOKEN_STREAM_DECLARATION_HEADER;
 "%token_stream_bits_header" return T_TOKEN_STREAM_BITS_HEADER;
+"%input_encoding"       return T_INPUT_ENCODING;
+"%table_lexer"          return T_TABLE_LEXER;
+"%sequence_lexer"       return T_SEQUENCE_LEXER;
 "%ast_base"             return T_AST_BASE;
 "%parser_base"          return T_PARSER_BASE;
 "%token_stream_base"    return T_TOKEN_STREAM_BASE;

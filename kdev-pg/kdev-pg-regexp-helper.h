@@ -21,6 +21,7 @@
 #define KDEV_PG_REGEXP_HELPER
 
 #include <kdev-pg-char-sets.h>
+#include <QTextCodec>
 
 namespace KDevPG
 {
@@ -33,9 +34,12 @@ ostream& operator<<(ostream&, const SeqCharSet<codec>&);
 
 template<class cs> class CharSetCondition;
 
-template<CharEncoding codec>
+template<CharEncoding _codec>
 class SeqCharSet
 {
+public:
+    static const CharEncoding codec = _codec;
+private:
     typedef typename Codec2Int<codec>::Result Int;
     typedef SeqCharSet<codec> Self;
     vector<pair<Int, Int> > data;
@@ -305,10 +309,14 @@ class TableCharSet;
 template<CharEncoding codec>
 ostream& operator<<(ostream&, const TableCharSet<codec>&);
 
-template<CharEncoding codec>
+template<CharEncoding _codec>
 class TableCharSet
 {
-  static const bitset<Codec2Size<codec>::value> nullData;
+public:
+  static const CharEncoding codec = _codec;
+private:
+  static const size_t nChars = Codec2Size<codec>::value;
+  static const bitset<nChars> nullData;
   bitset<Codec2Size<codec>::value> data;
   bool mEpsilon: 1;
   typedef TableCharSet<codec> Self;
@@ -372,9 +380,6 @@ public:
     return mEpsilon == o.mEpsilon && data == o.data;
   }
 };
-
-template<CharEncoding codec>
-const bitset<Codec2Size<codec>::value> TableCharSet<codec>::nullData;
 
 template<CharEncoding codec>
 ostream& operator<<(ostream &o, const TableCharSet<codec> &cs)
@@ -485,6 +490,38 @@ public:
     codegen(str, data, 0, data.size(), 0, Codec2Size<codec>::value, actions);
   }
 };
+
+class QAsciiCodec : public QTextCodec
+{
+public:
+  QAsciiCodec() : QTextCodec()
+  {
+  }
+  QList<QByteArray> aliases() const
+  {
+    QList<QByteArray> ret;
+    ret << "ascii" << "us-ascii" << "usascii";
+    return ret;
+  }
+  QByteArray convertFromUnicode(const QChar* in, int length, ConverterState* state) const
+  {
+    Q_UNUSED(state);
+    return QString(in, length).toAscii();
+  }
+  virtual QString convertToUnicode(const char* in, int length, ConverterState* state) const
+  {
+    Q_UNUSED(state);
+    return QString::fromAscii(in, length);
+  }
+  virtual int mibEnum() const
+  {
+    return 47110815; // pseudo random, should be unique
+  }
+  virtual QByteArray name() const
+  {
+    return "us-ascii";
+  }
+} qAsciiCodec;
 
 }
 

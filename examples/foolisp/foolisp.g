@@ -28,6 +28,6 @@ void FooLisp::Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name
 }
 void FooLisp::Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString& name)
 {
-  qDebug() << "Expecder token: " << name;
+  qDebug() << "Expected token: " << name;
 }
 :]

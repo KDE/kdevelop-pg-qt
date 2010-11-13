@@ -69,7 +69,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
 %token T_PAREN
 %token T_INLINE
-%token T_LEXER T_INPUT_STREAM
+%token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
 %type<str> name code_opt rule_arguments_opt priority assoc
@@ -107,6 +107,59 @@ declaration
     | T_LEXERCLASS_DECLARATION '(' T_BITS ')' T_CODE
         { KDevPG::globalSystem.lexerBits += $5; }
     | T_TOKEN_DECLARATION declared_tokens ';'
+    | T_TABLE_LEXER
+      { if(KDevPG::globalSystem.hasLexer)
+        { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%table_lexer) before any lexer rules"; exit(-1); }
+        switch(KDevPG::GDFA::type)
+        {
+          case KDevPG::GDFA::SAscii: KDevPG::GDFA::type = KDevPG::GDFA::TAscii; break;
+          case KDevPG::GDFA::S8Bit: KDevPG::GDFA::type = KDevPG::GDFA::T8Bit; break;
+          case KDevPG::GDFA::SUcs2: KDevPG::GDFA::type = KDevPG::GDFA::TUcs2; break;
+          case KDevPG::GDFA::SUcs4: KDevPG::GDFA::type = KDevPG::GDFA::TUcs4; break;
+          default: /* empty */;
+        }
+      }
+    | T_SEQUENCE_LEXER
+      { if(KDevPG::globalSystem.hasLexer)
+      { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
+      switch(KDevPG::GDFA::type)
+      {
+        case KDevPG::GDFA::TAscii: KDevPG::GDFA::type = KDevPG::GDFA::SAscii; break;
+        case KDevPG::GDFA::T8Bit: KDevPG::GDFA::type = KDevPG::GDFA::S8Bit; break;
+        case KDevPG::GDFA::TUcs2: KDevPG::GDFA::type = KDevPG::GDFA::SUcs2; break;
+        case KDevPG::GDFA::TUcs4: KDevPG::GDFA::type = KDevPG::GDFA::SUcs4; break;
+        default: /* empty */;
+      }
+      }
+    | T_INPUT_ENCODING T_STRING
+      {
+        if(KDevPG::globalSystem.hasLexer)
+        { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
+        int base = (KDevPG::GDFA::type / 4) * 4; // warning: magic constant: number of different codecs
+        QString str = $2;
+        str = str.toLower();
+        KDevPG::GDFA::codec = QTextCodec::codecForName(str.toAscii());
+        if(KDevPG::GDFA::codec == 0)
+        {
+          KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
+          exit(-1);
+        }
+        str.replace('-', "");
+        if(str == "ascii")
+          /* base += 0*/;
+        else if(str == "utf8" || str == "latin1")
+          base += 1;
+        else if(str == "ucs2" || str == "utf16")
+          base += 2;
+        else if(str == "ucs4" || str == "utf32")
+          base += 3;
+        else
+        {
+          KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
+          exit(-1);
+        }
+        KDevPG::GDFA::type = (typeof(KDevPG::GDFA::type))(base);
+      }
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
     | T_EXPORT_MACRO T_STRING
@@ -174,8 +227,8 @@ regexp
     | '|' regexp regexp     { $$ = new KDevPG::GNFA(*$2 |= *$3); delete $2; delete $3; }
     | '&' regexp regexp     { $$ = new KDevPG::GNFA(*$2 &= *$3); delete $2; delete $3; }
     | '*' regexp            { $$ = new KDevPG::GNFA(*$2); *$$; delete $2; }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword(QString($1).replace("\\n", "\n"))); }
-    | '{' T_IDENTIFIER '}'  { if(KDevPG::globalSystem.regexpById[$2] == 0) { KDevPG::checkOut << "ERROR: no named regexp " << $2 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$2]); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
+    | '{' T_IDENTIFIER '}'  { if(KDevPG::globalSystem.regexpById[$2] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $2 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$2]); }
     ;
 
 member_declaration_rest

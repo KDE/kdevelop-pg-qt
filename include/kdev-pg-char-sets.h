@@ -391,6 +391,88 @@ public:
   }
 };
 
+class QUtf8ToAsciiIterator
+{
+  uchar const *_begin, *ptr, *end;
+public:
+  typedef uchar Int;
+  typedef uchar InputInt;
+  QUtf8ToAsciiIterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
+  {
+    
+  }
+  InputInt const*& plain()
+  {
+    return ptr;
+  }
+  Int next()
+  { 
+    while(true)
+    {
+      uchar chr = *ptr;
+      if(chr < 128)
+      {
+        ++ptr;
+        return chr;
+      }
+      quint32 ret;
+      if((chr & 0xe0) == 0xc0)
+      {
+        ret = ((chr & 0x1f) << 6) | ((*++ptr) & 0x3f);
+      }
+      if((chr & 0xf0) == 0xe0)
+      {
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      if((chr & 0xf8) == 0xf0)
+      {
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      ++ptr;
+      // ignore the error, jump back :-)
+    }
+  }
+  bool hasNext()
+  {
+    return ptr != end;
+  }
+  ptrdiff_t operator-(const QUtf8ToAsciiIterator& other) const
+  {
+    return ptr - other.ptr;
+  }
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
+  }
+};
+
+template<CharEncoding codec>
+struct Codec2FromUtf8Iterator
+{
+  typedef QByteArrayIterator Result;
+};
+
+template<>
+struct Codec2FromUtf8Iterator<Ascii>
+{
+  typedef QUtf8ToAsciiIterator Result;
+};
+
+template<>
+struct Codec2FromUtf8Iterator<Ucs2>
+{
+  typedef QUtf8ToUcs2Iterator Result;
+};
+
+template<>
+struct Codec2FromUtf8Iterator<Ucs4>
+{
+  typedef QUtf8ToUcs4Iterator Result;
+};
+
 }
 
 #endif

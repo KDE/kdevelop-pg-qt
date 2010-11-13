@@ -58,9 +58,12 @@ typedef QUtf8ToUcs4Iterator Iterator;
 
 template<typename CharSet> class NFA;
 
-template<typename CharSet>
+template<typename CS>
 class DFA
 {
+public:
+    typedef CS CharSet;
+private:
     size_t nstates;
     vector<vector<pair<CharSet, size_t> > > rules;
     size_t numActions;
@@ -307,9 +310,12 @@ public:
     }
 };
 
-template<typename CharSet>
+template<typename CS>
 class NFA
 {
+public:
+    typedef CS CharSet;
+private:
     size_t nstates;
     vector<vector<pair<CharSet, size_t> > > rules;
     size_t accept;
@@ -595,11 +601,11 @@ public:
 switch(GDFA::type) \
 { \
   case GDFA::SAscii: { macro(s0); } break; \
-  case GDFA::SLatin1: {macro(s1); } break; \
+  case GDFA::S8Bit: {macro(s1); } break; \
   case GDFA::SUcs2: { macro(s2); } break; \
   case GDFA::SUcs4: { macro(s3); } break; \
   case GDFA::TAscii: { macro(t0); } break; \
-  case GDFA::TLatin1: { macro(t1); } break; \
+  case GDFA::T8Bit: { macro(t1); } break; \
   case GDFA::TUcs2: { macro(t2); } break; \
   case GDFA::TUcs4: { macro(t3); } break; \
 }
@@ -726,15 +732,24 @@ GDFA GNFA::dfa()
 
 GNFA keyword(const QString& str)
 {
-    QUtf16ToUcs4Iterator iter(str);
-    GNFA r;
-    while(iter.hasNext())
-    {
-#define macro(x) *r.x &= (__typeof__(*r.x))(iter.next());
-      EACH_TYPE(macro)
+#define macro(x) \
+  GNFA r; \
+  QByteArray qba(str.toUtf8()); \
+  typedef typeof(*r.x) T; \
+  Codec2FromUtf8Iterator<T::CharSet::codec>::Result iter(qba); \
+  while(iter.hasNext()) \
+  { \
+    *r.x &= (typeof(*r.x))(iter.next()); \
+  } \
+  return r;
+  EACH_TYPE(macro)
 #undef macro
-    }
-    return r;
 }
+
+typeof(GDFA::type) GDFA::type = GDFA::SUcs2;
+QTextCodec *GDFA::codec = QTextCodec::codecForName("utf8");
+
+template<CharEncoding enc>
+const bitset<TableCharSet<enc>::nChars> TableCharSet<enc>::nullData = bitset<TableCharSet<enc>::nChars>();
 
 }

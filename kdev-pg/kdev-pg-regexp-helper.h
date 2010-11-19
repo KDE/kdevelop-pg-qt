@@ -104,7 +104,7 @@ public:
     {
         Self ret;
         ret.mEpsilon = false;
-        int tpos = 0, opos = 0;
+        size_t tpos = 0, opos = 0;
         while(tpos != data.size() && opos != o.data.size())
         {
           if(data[tpos].first >= o.data[opos].second)
@@ -127,7 +127,7 @@ public:
     {
         Self ret;
         ret.mEpsilon = false;
-        int tpos = 0, opos = 0;
+        size_t tpos = 0, opos = 0;
         bool inT = false, inO = false;
         size_t start = -1; // if there is a -1 we will know what happened
         while(tpos != data.size() && opos != o.data.size())
@@ -204,7 +204,7 @@ public:
     {
         Self ret;
         ret.mEpsilon = false;
-        int tpos = 0, opos = 0;
+        size_t tpos = 0, opos = 0;
         bool inT = false, inO = false;
         size_t start = -1; // if there is a -1 we will know what happened
         while(tpos != data.size() && opos != o.data.size())

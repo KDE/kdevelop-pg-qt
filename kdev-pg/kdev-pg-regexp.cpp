@@ -296,13 +296,13 @@ public:
         rules = _rules;
         nstates = grinv.size();
         accept = _accept;
-        for(int i = 0; i != nstates; ++i)
+        for(size_t i = 0; i != nstates; ++i)
         {
             vector<CharSet> mapping(nstates);
             foreach(NC(const pair<CharSet, size_t>& j), rules[i])
                 mapping[j.second].unite(j.first);
             rules[i].clear();
-            for(int j = 0; j != nstates; ++j)
+            for(size_t j = 0; j != nstates; ++j)
                 if(!mapping[j].empty())
                     rules[i].push_back(make_pair(mapping[j], j));
         }
@@ -474,7 +474,6 @@ public:
         bool b = true;
         while(b)
         {
-            bool changed = false;
             b = false;
             for(size_t i = 0; i != pr.size(); ++i)
             {
@@ -677,7 +676,7 @@ GNFA::GNFA(const KDevPG::GNFA& o)
 
 GNFA::GNFA(const std::vector< GNFA* >& init)
 {
-#define macro(x) vector<__typeof__(*x)> vec(init.size()); for(int i = 0; i != init.size(); ++i) vec[i] = *(init[i]->x); x = new (__typeof__(*x))(vec);
+#define macro(x) vector<__typeof__(*x)> vec(init.size()); for(size_t i = 0; i != init.size(); ++i) vec[i] = *(init[i]->x); x = new (__typeof__(*x))(vec);
   EACH_TYPE(macro)
 #undef macro
 }

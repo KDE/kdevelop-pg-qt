@@ -311,6 +311,7 @@ public:
     
     while(true)
     {
+      retry:
       uchar chr = *ptr;
       if(chr < 128)
       {
@@ -322,16 +323,21 @@ public:
       {
         ret = ((chr & 0x1f) << 6) | ((*++ptr) & 0x3f);
       }
-      if((chr & 0xf0) == 0xe0)
+      else if((chr & 0xf0) == 0xe0)
       {
         ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
       }
-      if((chr & 0xf8) == 0xf0)
+      else if((chr & 0xf8) == 0xf0)
       {
         ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      else
+      {
+        ++ptr;
+        goto retry;
       }
       ++ptr;
       if((ret & 0xfffe) != 0xfffe && (ret - 0xfdd0U) > 15)
@@ -372,6 +378,7 @@ public:
   { 
     while(true)
     {
+      retry:
       uchar chr = *ptr;
       if(chr < 128)
       {
@@ -383,16 +390,21 @@ public:
       {
         ret = ((chr & 0x1f) << 6) | ((*++ptr) & 0x3f);
       }
-      if((chr & 0xf0) == 0xe0)
+      else if((chr & 0xf0) == 0xe0)
       {
         ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
       }
-      if((chr & 0xf8) == 0xf0)
+      else if((chr & 0xf8) == 0xf0)
       {
         ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
         ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      else
+      {
+        ++ptr;
+        goto retry;
       }
       ++ptr;
       if(ret <= 0xffff && (ret & 0xfffe) != 0xfffe && (ret - 0xfdd0U) > 15)

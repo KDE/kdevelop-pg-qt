@@ -49,45 +49,54 @@
      T_TOKEN_STREAM_DECLARATION = 265,
      T_NAMESPACE_DECLARATION = 266,
      T_PARSERCLASS_DECLARATION = 267,
-     T_PUBLIC = 268,
-     T_PRIVATE = 269,
-     T_PROTECTED = 270,
-     T_DECLARATION = 271,
-     T_CONSTRUCTOR = 272,
-     T_DESTRUCTOR = 273,
-     T_TRY_RECOVER = 274,
-     T_TRY_ROLLBACK = 275,
-     T_CATCH = 276,
-     T_RULE_ARGUMENTS = 277,
-     T_MEMBER = 278,
-     T_TEMPORARY = 279,
-     T_ARGUMENT = 280,
-     T_EXPORT_MACRO = 281,
-     T_NODE = 282,
-     T_NODE_SEQUENCE = 283,
-     T_TOKEN = 284,
-     T_VARIABLE = 285,
-     T_EXPORT_MACRO_HEADER = 286,
-     T_AST_DECLARATION = 287,
-     T_PARSER_DECLARATION_HEADER = 288,
-     T_PARSER_BITS_HEADER = 289,
-     T_AST_HEADER = 290,
-     T_PARSER_BASE = 291,
-     T_AST_BASE = 292,
-     T_BIN = 293,
-     T_PRE = 294,
-     T_POST = 295,
-     T_TERN = 296,
-     T_LOPR = 297,
-     T_ROPR = 298,
-     T_LEFT_ASSOC = 299,
-     T_RIGHT_ASSOC = 300,
-     T_IS_LEFT_ASSOC = 301,
-     T_IS_RIGHT_ASSOC = 302,
-     T_PRIORITY = 303,
-     T_PAREN = 304,
-     T_INLINE = 305,
-     T_LEXER = 306
+     T_LEXERCLASS_DECLARATION = 268,
+     T_PUBLIC = 269,
+     T_PRIVATE = 270,
+     T_PROTECTED = 271,
+     T_DECLARATION = 272,
+     T_BITS = 273,
+     T_CONSTRUCTOR = 274,
+     T_DESTRUCTOR = 275,
+     T_TRY_RECOVER = 276,
+     T_TRY_ROLLBACK = 277,
+     T_CATCH = 278,
+     T_RULE_ARGUMENTS = 279,
+     T_MEMBER = 280,
+     T_TEMPORARY = 281,
+     T_ARGUMENT = 282,
+     T_EXPORT_MACRO = 283,
+     T_NODE = 284,
+     T_NODE_SEQUENCE = 285,
+     T_TOKEN = 286,
+     T_VARIABLE = 287,
+     T_EXPORT_MACRO_HEADER = 288,
+     T_AST_DECLARATION = 289,
+     T_PARSER_DECLARATION_HEADER = 290,
+     T_PARSER_BITS_HEADER = 291,
+     T_AST_HEADER = 292,
+     T_TOKEN_STREAM_DECLARATION_HEADER = 293,
+     T_TOKEN_STREAM_BITS_HEADER = 294,
+     T_PARSER_BASE = 295,
+     T_AST_BASE = 296,
+     T_TOKEN_STREAM_BASE = 297,
+     T_BIN = 298,
+     T_PRE = 299,
+     T_POST = 300,
+     T_TERN = 301,
+     T_LOPR = 302,
+     T_ROPR = 303,
+     T_LEFT_ASSOC = 304,
+     T_RIGHT_ASSOC = 305,
+     T_IS_LEFT_ASSOC = 306,
+     T_IS_RIGHT_ASSOC = 307,
+     T_PRIORITY = 308,
+     T_PAREN = 309,
+     T_INLINE = 310,
+     T_LEXER = 311,
+     T_INPUT_STREAM = 312,
+     T_INPUT_ENCODING = 313,
+     T_TABLE_LEXER = 314,
+     T_SEQUENCE_LEXER = 315
    };
 #endif
 
@@ -98,7 +107,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 45 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 46 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
     KDevPG::Model::Node *item;
     char* str;
@@ -111,7 +120,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 115 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+#line 124 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

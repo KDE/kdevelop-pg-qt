@@ -152,7 +152,6 @@ declaration
           KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
           exit(-1);
         }
-        KDevPG::checkOut << base;
         KDevPG::GDFA::type = (typeof(KDevPG::GDFA::type))(base);
       }
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'

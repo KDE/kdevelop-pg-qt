@@ -40,6 +40,29 @@ using namespace std;
 namespace KDevPG
 {
 
+template<typename T>
+struct StripReference
+{
+  typedef T Result;
+};
+
+template<typename T>
+struct StripReference<T&>
+{
+  typedef T Result;
+};
+
+template<typename T, typename U> inline T brutal_cast(const U& x)
+{
+  union tmp
+  {
+    typename StripReference<T>::Result *t;
+    const U *u;
+    inline tmp(const U* u) : u(u) {}
+  };
+  return *tmp(&x).t;
+}
+
 enum CharEncoding
 {
   Ascii = 0,
@@ -172,11 +195,11 @@ public:
   }
   InputInt const*& plain()
   {
-    return *reinterpret_cast<InputInt const**>(&iter);
+    return brutal_cast<InputInt const*&>(iter);
   }
   InputInt const*& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return brutal_cast<InputInt const*&>(_begin);
   }
 };
 
@@ -204,11 +227,11 @@ public:
   }
   InputInt const*& plain()
   {
-    return *reinterpret_cast<InputInt const**>(&iter);
+    return brutal_cast<InputInt const*&>(iter);
   }  
   InputInt const*& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return brutal_cast<InputInt const*&>(_begin);
   }
 };
 

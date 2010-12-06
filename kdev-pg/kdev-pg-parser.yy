@@ -70,8 +70,9 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_PAREN
 %token T_INLINE
 %token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
+%token T_CHARSET
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER T_CHARSET
 %type<str> name code_opt rule_arguments_opt priority assoc
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
@@ -227,8 +228,9 @@ regexp1
     ;
 
 regexp2
-    : '*' regexp2           { $$ = new KDevPG::GNFA(**$2); delete $2; }
+    : regexp2 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
     | '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
+    | T_CHARSET             { $$ = new KDevPG::GNFA(KDevPG::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
     | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
     | '{' T_IDENTIFIER '}'  { if(KDevPG::globalSystem.regexpById[$2] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $2 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$2]); }
     ;

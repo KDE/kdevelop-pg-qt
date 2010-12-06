@@ -74,7 +74,8 @@ namespace KDevPG
 namespace {
   enum RulePosition {
     RuleBody,
-    RuleFooter
+    RuleFooter,
+    RuleLexer
   };
   RulePosition rulePosition = RuleBody;
   int openBrackets; // for rule arguments usage
@@ -90,6 +91,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 %x CODE
 %x PARSERCLASS
 %x RULE_ARGUMENTS
+%x RULE_CHARSET
 %x RULE_PARAMETERS_HEADER
 %x RULE_PARAMETERS_VARNAME
 
@@ -100,8 +102,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 {Newline}               newline();
 "--"[^\r\n]*            /* line comments, skip */ ;
 
-";;"                    rulePosition = RuleBody;   return ';';
-"->"                    rulePosition = RuleFooter; return T_ARROW;
+";"+/[ \r\n]+";"        rulePosition = RuleBody; return ';';
+";"                     if(rulePosition != RuleLexer) rulePosition = RuleBody; return ';';
+";;"                    if(rulePosition != RuleLexer) rulePosition = RuleBody;   return ';';
+"->"                    if(rulePosition != RuleLexer) rulePosition = RuleFooter; return T_ARROW;
 ".="                    return T_INLINE;
 
 "("                     return '(';
@@ -157,7 +161,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%right"                return T_RIGHT_ASSOC;
 "%isLeft"               return T_IS_LEFT_ASSOC;
 "%isRight"              return T_IS_RIGHT_ASSOC;
-"%lexer"                return T_LEXER;
+"%lexer"                rulePosition = RuleLexer; return T_LEXER;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;
@@ -176,14 +180,30 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 
 "[" {
-    if (rulePosition == RuleBody) { /* use the arguments in a rule call */
-      firstCodeLine = yyLine;
+    if (rulePosition == RuleLexer) {
       openBrackets = 0;
+      BEGIN(RULE_CHARSET);
+    }
+    else if (rulePosition == RuleBody) { /* use the arguments in a rule call */
+      firstCodeLine = yyLine;
       BEGIN(RULE_ARGUMENTS);
     }
     else if (rulePosition == RuleFooter) { /* declare the arguments */
       BEGIN(RULE_PARAMETERS_HEADER); return '[';
     }
+}
+
+<RULE_CHARSET>{
+  {Newline}               newline(); yymore();
+  "\\"                    yymore();
+  "\\\\"                  yymore();
+  "\\]"                   yymore();
+  [^\]\\\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
+  "]" {
+    COPY_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
+    BEGIN(INITIAL);
+    return T_CHARSET;
+  }
 }
 
 <RULE_ARGUMENTS>{

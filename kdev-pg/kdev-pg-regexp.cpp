@@ -308,6 +308,7 @@ public:
         }
         return *this;
     }
+    NFA<CharSet> nfa() const;
 };
 
 template<typename CS>
@@ -319,6 +320,7 @@ private:
     size_t nstates;
     vector<vector<pair<CharSet, size_t> > > rules;
     size_t accept;
+    friend class DFA<CharSet>;
 public:
     void inspect()
     {
@@ -332,6 +334,9 @@ public:
         }
         cout << endl;
     }
+    /**
+     * Accezts the empty word.
+     */
     NFA() : nstates(1), rules(1), accept(0)
     {}
     NFA(const NFA<CharSet>& o) : nstates(o.nstates), rules(o.rules), accept(o.accept)
@@ -404,7 +409,7 @@ public:
         ++nstates;
         return *this;
     }
-    NFA<CharSet>& operator&=(const NFA<CharSet>& o)
+    NFA<CharSet>& operator<<=(const NFA<CharSet>& o)
     {
         rules.resize(nstates + o.nstates + 1);
         rules[accept].push_back(make_pair(CharSet(), nstates));
@@ -575,7 +580,7 @@ public:
 //           cout << ">" << endl;
 //         }
         _.rules.resize(_.nstates);
-        for(__typeof__(st.begin()) i = st.begin(); i != st.end(); ++i)
+        for(auto i = st.begin(); i != st.end(); ++i)
         {
           for(size_t j = accept; j != nstates; ++j)
           {
@@ -594,7 +599,79 @@ public:
         }
         return _;
     }
+    NFA<CharSet>& negate()
+    {
+      DFA<CharSet> tmp = dfa();
+      tmp.rules.push_back(vector< pair<CharSet, size_t> >());
+      tmp.rules.back().push_back(make_pair(CharSet::fullSet(), tmp.nstates));
+      ++tmp.nstates;
+      for(auto i = tmp.accept.begin(); i != tmp.accept.end(); ++i)
+      {
+        if(*i == 0)
+          *i = 1;
+        else
+          *i = 0;
+        qDebug() << *i;
+      }
+      tmp.accept.push_back(1);
+//       tmp.accept.back() = 1;
+      for(auto i = tmp.rules.begin(); i != tmp.rules.end(); ++i)
+      {
+        CharSet successSet = CharSet::fullSet();
+        for(auto j = i->begin(); j != i->end(); ++j)
+        {
+          CharSet tmp = j->first;
+          tmp.negate();
+          successSet.intersect(tmp);
+        }
+        i->push_back(make_pair(successSet, tmp.nstates - 1));
+      }
+      tmp.eliminateUnarrivableStates();
+      tmp.eliminateInactiveStates();
+      *this = tmp.nfa();
+      qDebug() << nstates << accept;
+      for(auto i = rules.begin(); i != rules.end(); ++i)
+      {
+        qDebug() << (i-rules.begin()) << ":";
+        for(auto j = i->begin(); j != i->end(); ++j)
+          qDebug() << j->first.epsilon() << j->second;
+        qDebug() << endl;
+      }
+      return *this;
+    }
+    NFA<CharSet>& operator&=(const NFA<CharSet>& o)
+    {
+      NFA<CharSet> _o = o;
+      _o.negate();
+      negate();
+      return (*this |= _o).negate();
+    }
+    NFA<CharSet>& operator^=(const NFA<CharSet>& o)
+    {
+      negate();
+      return (*this |= o).negate();
+    }
 };
+
+template<typename CharSet>
+NFA< CharSet > DFA<CharSet>::nfa() const
+{
+  NFA<CharSet> ret;
+  ret.nstates = nstates;
+  ret.rules = rules;
+  ret.accept = nstates;
+  for(size_t i = 0; i != nstates; ++i)
+  {
+    if(nstates + accept[i] > ret.nstates)
+    {
+      ret.nstates = nstates + accept[i];
+      ret.rules.resize(ret.nstates);
+    }
+    if(accept[i] != 0)
+      ret.rules[i].push_back(make_pair(CharSet(), nstates + accept[i] - 1));
+  }
+  return ret;
+}
 
 #define EACH_TYPE(macro) \
 switch(GDFA::type) \
@@ -696,11 +773,11 @@ GNFA& GNFA::operator=(const KDevPG::GNFA& o)
   return *this;
 }
 
-GNFA& GNFA::operator&=(const KDevPG::GNFA& o)
+GNFA& GNFA::operator<<=(const KDevPG::GNFA& o)
 {
-#define DO_AND(x) *x &= *o.x;
-  EACH_TYPE(DO_AND)
-#undef DO_AND
+#define DO_SHIFT(x) *x <<= *o.x;
+  EACH_TYPE(DO_SHIFT)
+#undef DO_SHIFT
   return *this;
 }
 
@@ -712,11 +789,35 @@ GNFA& GNFA::operator|=(const KDevPG::GNFA& o)
   return *this;
 }
 
+GNFA& GNFA::operator&=(const KDevPG::GNFA& o)
+{
+#define DO_AND(x) *x &= *o.x;
+  EACH_TYPE(DO_AND)
+#undef DO_AND
+  return *this;
+}
+
+GNFA& GNFA::operator^=(const KDevPG::GNFA& o)
+{
+  #define DO_BUT(x) *x ^= *o.x;
+  EACH_TYPE(DO_BUT)
+  #undef DO_BUT
+  return *this;
+}
+
 GNFA& GNFA::operator*()
 {
 #define DO_STAR(x) **x;
   EACH_TYPE(DO_STAR)
 #undef DO_STAR
+  return *this;
+}
+
+GNFA& GNFA::negate()
+{
+#define DO_NEGATE(x) x->negate();
+  EACH_TYPE(DO_NEGATE)
+#undef DO_NEGATE
   return *this;
 }
 
@@ -729,7 +830,7 @@ GDFA GNFA::dfa()
   return r;
 }
 
-GNFA keyword(const QString& str)
+GNFA GNFA::keyword(const QString& str)
 {
 #define macro(x) \
   GNFA r; \
@@ -738,11 +839,20 @@ GNFA keyword(const QString& str)
   Codec2FromUtf8Iterator<T::CharSet::codec>::Result iter(qba); \
   while(iter.hasNext()) \
   { \
-    *r.x &= (typeof(*r.x))(iter.next()); \
+    *r.x <<= (typeof(*r.x))(iter.next()); \
   } \
   return r;
   EACH_TYPE(macro)
 #undef macro
+}
+
+GNFA GNFA::anyChar()
+{
+  GNFA ret;
+#define macro(x) typedef __typeof__(*x) T; ret.x = new T(T::CharSet::fullSet());
+  EACH_TYPE(macro)
+#undef macro
+  return ret;
 }
 
 typeof(GDFA::type) GDFA::type = GDFA::SUcs2;

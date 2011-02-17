@@ -486,10 +486,14 @@ void generateLexer()
       s << "State_COUNT\n} state;" << endl;
     }
     
-    s << "public:"
+    s << "public:" << endl
       << "typedef " << globalSystem.tokenStreamBaseClass << " Base;" << endl
       << "typedef " << globalSystem.inputStream << " Iterator;" << endl << endl
-      << globalSystem.tokenStream << "(const Iterator& iter);" << endl
+      
+      << "private:" << endl << "const Iterator::InputInt *spos;" << endl
+      << "bool continueLexeme;" << endl << endl
+      
+      << "public:" << endl << globalSystem.tokenStream << "(const Iterator& iter);" << endl
       // non-virtual, virtuality will be inherited
       << "~" << globalSystem.tokenStream << "();"
       <<  endl << "Base::Token& next();" << endl;
@@ -541,7 +545,7 @@ void generateLexer()
     
     s << endl << "namespace " << globalSystem.ns << "{" << endl
       << endl << globalSystem.tokenStream << "::" << globalSystem.tokenStream
-      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter)" << endl
+      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter), continueLexeme(false)" << endl
       << "{";
     LEXER_EXTRA_CODE_GEN(constructorCode)
     s << "}" << endl << endl
@@ -557,7 +561,7 @@ void generateLexer()
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
         << name << "()" << endl << "{" \
         << "if(!Iterator::hasNext())\n{\nBase::Token& _t(Base::next());\n_t.kind = Parser::Token_EOF;\n_t.begin = _t.end = Iterator::plain() - Iterator::begin();\nreturn _t;\n}" << endl \
-        << "const Iterator::InputInt * const spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
+        << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
       GNFA alltogether(globalSystem.lexerEnvs[state]); \
       GDFA deterministic = alltogether.dfa(); \
       deterministic.minimize(); \

@@ -16,12 +16,14 @@ int main()
   QStringIterator iter(qcode);
   qDebug() << qcode.size() << iter.hasNext();
   FooLisp::Lexer lex(iter);
+  qDebug() << iter.hasNext();
   FooLisp::Parser parser;
   parser.setMemoryPool(new KDevPG::MemoryPool);
   parser.setTokenStream(&lex);
   int kind;
+  qDebug() << iter.hasNext();
   while((kind = lex.next().kind) != Parser::Token_EOF)
-    qDebug() << kind;
+    qDebug() << "hi" << kind;
   parser.rewind(0);
   StartAst *ast;
   parser.parseStart(&ast);

@@ -40,6 +40,7 @@ namespace KDevPG
 }
 
 KDevPG::Model::OperatorItem *operatorNode = 0;
+QString r;
 
 %}
 
@@ -70,10 +71,10 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %token T_PAREN
 %token T_INLINE
 %token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
-%token T_CHARSET
+%token T_NAMED_REGEXP T_CONTINUE
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER T_CHARSET
-%type<str> name code_opt rule_arguments_opt priority assoc
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP
+%type<str> name code_opt rule_arguments_opt priority assoc opt_lexer_action
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<item> member_declaration_rest variableDeclarations variableDeclaration operatorRule
@@ -82,7 +83,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %type<variableType>    variableType
 /* %type<void> operatorDeclaration operatorDeclarations operatorRule */
 %type<operatorInformation> operator
-%type<nfa> regexp regexp1 regexp2
+%type<nfa> regexp regexp1 regexp2 regexp3 regexp4 regexp5
 
 %%
 
@@ -188,33 +189,30 @@ declaration
     ;
 
 lexer_declaration_rest
-    : regexp code_opt T_TERMINAL T_ARROW T_IDENTIFIER ';'
-            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+    : regexp code_opt T_ARROW T_IDENTIFIER ';'
+            { KDevPG::globalSystem.regexpById[$4] = $1;
+            } lexer_declaration_rest
+    | regexp code_opt opt_lexer_action ';'
+            { qDebug() << QString(r); QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
-                QString($2) + "KDevPG::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
-              + "_t.begin = spos - Iterator::begin();\n"
-              + "_t.end = plain() - Iterator::begin() - 1;\n"
-              + "return _t;");
-              KDevPG::globalSystem.regexpById[$5] = $1;
-            } lexer_declaration_rest
-    | regexp code_opt T_ARROW T_IDENTIFIER ';'
-            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
-              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2) + "return next();");
-              KDevPG::globalSystem.regexpById[$4] = $1;
-            } lexer_declaration_rest
-    | regexp code_opt T_TERMINAL ';'
-            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
-              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
-                QString($2) + "KDevPG::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_" + $3 + ";\n"
-              + "_t.begin = spos - Iterator::begin();\n"
-              + "_t.end = plain() - Iterator::begin() - 1;\n"
-              + "return _t;");
-            } lexer_declaration_rest
-    | regexp code_opt ';'
-            { KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
-              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($2) + "return next();");
+                s); qDebug() << s;
             } lexer_declaration_rest
     | /* empty */
+    ;
+
+opt_lexer_action
+    : T_TERMINAL {
+        r = (QString("\nKDevPG::Token& _t(Base::next()); _t.kind = ::")
+          + KDevPG::globalSystem.ns
+          + "::Parser::Token_" + $1 + ";\n"
+          + "_t.begin = spos - Iterator::begin();\n"
+          + "_t.end = plain() - Iterator::begin() - 1;\n"
+          + "return _t;");
+      }
+    | T_CONTINUE {
+        r = "continueLexeme = true; return next();"; 
+      }
+    | /* empty */ { r = "return next();" }
     ;
 
 regexp
@@ -223,16 +221,31 @@ regexp
     ;
 
 regexp1
-    : regexp1 regexp2       { $$ = new KDevPG::GNFA(*$1 &= *$2); delete $1; delete $2; }
+    : regexp1 '&' regexp2   { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
     | regexp2               { $$ = $1; }
     ;
 
 regexp2
-    : regexp2 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    : regexp2 '^' regexp3   { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
+    | regexp3               { $$ = $1; }
+    ;
+
+regexp3
+    : regexp3 regexp4       { $$ = new KDevPG::GNFA(*$1 <<= *$2); delete $1; delete $2; }
+    | regexp4               { $$ = $1; }
+    ;
+
+regexp4
+    : regexp4 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | regexp5               { $$ = $1; }
+    ;
+    
+regexp5
+    : '~' regexp3           { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
     | '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
-    | T_CHARSET             { $$ = new KDevPG::GNFA(KDevPG::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
-    | '{' T_IDENTIFIER '}'  { if(KDevPG::globalSystem.regexpById[$2] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $2 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$2]); }
+    | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
+    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
     ;
 
 member_declaration_rest

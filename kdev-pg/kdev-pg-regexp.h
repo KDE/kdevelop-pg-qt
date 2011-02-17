@@ -85,7 +85,6 @@ class GNFA
     NFA<TableCharSet<Ucs2> > *t2;
 //     NFA<TableCharSet<Ucs4> > *t3;
   };
-  friend GNFA keyword(const QString& str);
 public:
   GNFA();
   GNFA(const GNFA& o);
@@ -93,12 +92,16 @@ public:
   GNFA& operator=(const GNFA& o);
   GNFA(const std::vector<GNFA*>& init);
   GNFA& operator&=(const GNFA& o);
+  GNFA& operator<<=(const GNFA& o);
   GNFA& operator|=(const GNFA& o);
+  GNFA& operator^=(const GNFA& o);
   GNFA& operator*();
+  GNFA& negate();
   GDFA dfa();
+  
+  static GNFA anyChar();
+  static GNFA keyword(const QString& str);
 };
-
-GNFA keyword(const QString& str);
 
 }
 

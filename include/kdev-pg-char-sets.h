@@ -117,26 +117,26 @@ struct Codec2Container<Ucs4>
 template<CharEncoding codec>
 struct Codec2Size
 {
-  static const quint64 value = 256;
+  enum { value = 256 };
 };
 
 template<>
 struct Codec2Size<Ascii>
 {
-  static const quint64 value = 128;
+  enum { value = 128 };
 };
 
 template<>
 struct Codec2Size<Ucs2>
 {
-  static const quint64 value = 65536; // That is a really large table!!
+  enum { value = 65536 }; // That is a really large table!!
 };
 
 template<>
 struct Codec2Size<Ucs4>
 {
 //   static_assert(false, "Ucs4-tables are too big");
-  static const quint64 value = 4294967296ull; // You should never do this!!
+  enum { value = 0x110000 }; // You should not do this!!
 };
 
 template<CharEncoding codec>

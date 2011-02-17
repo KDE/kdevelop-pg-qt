@@ -71,6 +71,9 @@ namespace KDevPG
       yylval.str[memlen-1] = '\0'; \
     }
 
+#define ESCAPE_CHARACTER(chr) \
+        yylval.str = (char*) calloc(2, sizeof(char)); yylval.str[0] = chr; yylval.str[1] = '\0'; return T_STRING;
+
 namespace {
   enum RulePosition {
     RuleBody,
@@ -91,9 +94,9 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 %x CODE
 %x PARSERCLASS
 %x RULE_ARGUMENTS
-%x RULE_CHARSET
 %x RULE_PARAMETERS_HEADER
 %x RULE_PARAMETERS_VARNAME
+%x RULE_LEXER
 
 %%
 
@@ -102,10 +105,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 {Newline}               newline();
 "--"[^\r\n]*            /* line comments, skip */ ;
 
-";"+/[ \r\n]+";"        rulePosition = RuleBody; return ';';
-";"                     if(rulePosition != RuleLexer) rulePosition = RuleBody; return ';';
-";;"                    if(rulePosition != RuleLexer) rulePosition = RuleBody;   return ';';
-"->"                    if(rulePosition != RuleLexer) rulePosition = RuleFooter; return T_ARROW;
+";"+                    rulePosition = RuleBody; return ';';
+"->"                    if(rulePosition == RuleLexer) BEGIN(RULE_LEXER); else rulePosition = RuleFooter; return T_ARROW;
 ".="                    return T_INLINE;
 
 "("                     return '(';
@@ -162,6 +163,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "%isLeft"               return T_IS_LEFT_ASSOC;
 "%isRight"              return T_IS_RIGHT_ASSOC;
 "%lexer"                rulePosition = RuleLexer; return T_LEXER;
+"%continue"             return T_CONTINUE;
 
 <PARSERCLASS>{
 {Whitespace}*           /* skip */ ;
@@ -180,11 +182,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 
 "[" {
-    if (rulePosition == RuleLexer) {
-      openBrackets = 0;
-      BEGIN(RULE_CHARSET);
-    }
-    else if (rulePosition == RuleBody) { /* use the arguments in a rule call */
+    if (rulePosition == RuleBody) { /* use the arguments in a rule call */
       firstCodeLine = yyLine;
       BEGIN(RULE_ARGUMENTS);
     }
@@ -193,17 +191,54 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
     }
 }
 
-<RULE_CHARSET>{
-  {Newline}               newline(); yymore();
-  "\\"                    yymore();
-  "\\\\"                  yymore();
-  "\\]"                   yymore();
-  [^\]\\\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
-  "]" {
-    COPY_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
-    BEGIN(INITIAL);
-    return T_CHARSET;
-  }
+<RULE_LEXER>{
+  "--"[^\r\n]*            /* line comments, skip */ ;
+  {Newline}               newline();
+  "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          qDebug() << "ococo"; ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
+  ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; qDebug() << "return to body"; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
+  ";"+                    return ';';
+  ":"                     return ';';
+  "["                     return '[';
+  "]"                     return ']';
+  "("                     return '(';
+  ")"                     return ')';
+  "?"                     return '?';
+  "|"                     return '|';
+  "^"                     return '^';
+  "-"                     return '-';
+  "&"                     return '&';
+  "~"                     return '~';
+  "*"                     return '*';
+  "+"                     return '+';
+  "@"                     return '@';
+  "."                     return '.';
+  "->"                    return T_ARROW;
+  "[:"                    firstCodeLine = yyLine; BEGIN(CODE);
+  {String}                qDebug() << "string"; yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
+  "\\n"                   ESCAPE_CHARACTER('\n')
+  "\\r"                   ESCAPE_CHARACTER('\r')
+  "\\t"                   ESCAPE_CHARACTER('\t')
+  "\\\\"                  ESCAPE_CHARACTER('\\')
+  "\\\""                  ESCAPE_CHARACTER('"')
+  "\\v"                   ESCAPE_CHARACTER('\v')
+  "\\a"                   ESCAPE_CHARACTER('\a')
+  "\\b"                   ESCAPE_CHARACTER('\b')
+  "\\f"                   ESCAPE_CHARACTER('\f')
+  "\\0"                   ESCAPE_CHARACTER('\0')
+  "\\["                   ESCAPE_CHARACTER('[')
+  "\\]"                   ESCAPE_CHARACTER(']')
+  "\\^"                   ESCAPE_CHARACTER('^')
+  "\\&"                   ESCAPE_CHARACTER('&')
+  "\\|"                   ESCAPE_CHARACTER('|')
+  "\\~"                   ESCAPE_CHARACTER('~')
+  [_A-Z]*                 qDebug() << "terminal"; COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
+  [_a-zA-Z]*[_a-zA-Z0-9]+ qDebug() << "identifier";          COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+  {Whitespace}            /* skip */
+  /*TODO: escape characters
+      "\\0"[1-7][0-7]{0,6}                      . 
+      "\\d"[1-9][0-9]{0,6}                      .
+      "\\"[xUu][1-9a-fA-F][0-9a-fA-F]{0,5}      .
+      "\\"[1-9a-fA-F][0-9a-fA-F]{0,5}           . */
 }
 
 <RULE_ARGUMENTS>{
@@ -279,7 +314,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 ":"+[^:\]\n\r]*         yymore(); /* also gather colons that are not followed by colons or newlines */
 ":]" {
     COPY_CODE_TO_YYLVAL(yytext, yyleng-2); /* cut off the trailing stuff */
-    BEGIN(INITIAL);
+    if(rulePosition == RuleLexer)
+      BEGIN(RULE_LEXER);
+    else
+      BEGIN(INITIAL);
     return T_CODE;
 }
 <<EOF>> {
@@ -351,7 +389,7 @@ void appendLineBuffer()
 void yyerror(const char* msg )
 {
   Q_UNUSED(msg);
-  KDevPG::checkOut << "** SYNTAX ERROR at line " << yyLine << " column " << currentOffset << endl;
+  KDevPG::checkOut << "** LEXICAL ERROR at line " << yyLine << " column " << currentOffset << endl;
 
   char *current_end = yyTextLine + strlen(yyTextLine);
   char *p;

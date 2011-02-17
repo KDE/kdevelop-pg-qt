@@ -69,6 +69,19 @@ public:
     SeqCharSet(const Self& o) : data(o.data), mEpsilon(o.mEpsilon)
     {
     }
+    static Self fullSet()
+    {
+      Self ret;
+      ret.mEpsilon = false;
+      ret.data.push_back(make_pair(0, Codec2Size<codec>::value));
+      return ret;
+    }
+    static Self emptySet()
+    {
+      Self ret;
+      ret.mEpsilon = false;
+      return ret;
+    }
     SeqCharSet& operator=(const Self& o)
     {
       data = o.data;
@@ -122,6 +135,50 @@ public:
         }
         // the end??
         return ret;
+    }
+    Self& intersect(const Self& o)
+    {
+        *this = this->intersection(o);
+        return *this;
+    }
+    Self& negate()
+    {
+        if(!mEpsilon)
+        {
+          if(data.size() == 0)
+          {
+            data.push_back(make_pair(0, Codec2Size<codec>::value));
+          }
+          else if(data.front().first == 0)
+          {
+            for(size_t i = 0; i != data.size()-1; ++i)
+            {
+              data[i].first = data[i].second;
+              data[i].second = data[i+1].first;
+            }
+            if(data.back().second == Codec2Size<codec>::value)
+              data.pop_back();
+            else
+            {
+              data.back().first = data.back().second;
+              data.back().second = Codec2Size<codec>::value;
+            }
+          }
+          else
+          {
+            Int tmpfirst = 0;
+            for(size_t i = 0; i != data.size(); ++i)
+            {
+              Int tmptmpfirst = data[i].first;
+              data[i].first = tmpfirst;
+              tmpfirst = data[i].second;
+              data[i].second = tmptmpfirst;
+            }
+            if(data.back().second != Codec2Size<codec>::value)
+              data.push_back(make_pair(tmpfirst, Codec2Size<codec>::value));
+          }
+        }
+        return *this;
     }
     Self difference(const Self& o) const
     {
@@ -338,6 +395,24 @@ public:
   }
   TableCharSet() : mEpsilon(true)
   {}
+  static Self emptySet()
+  {
+    Self ret;
+    ret.mEpsilon = false;
+    return ret;
+  }
+  static Self fullSet()
+  {
+    Self ret;
+    ret.data.set();
+    ret.mEpsilon = false;
+    return ret;
+  }
+  Self& negate()
+  {
+    data.flip();
+    return *this;
+  }
   bool accepts(Int x) const
   {
     return data[x];
@@ -349,6 +424,11 @@ public:
   bool epsilon() const
   {
     return mEpsilon;
+  }
+  Self& intersect(const Self& o)
+  {
+    data &= o.data;
+    return *this;
   }
   Self intersection(const Self& o) const
   {

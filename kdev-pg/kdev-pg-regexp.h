@@ -101,6 +101,7 @@ public:
   
   static GNFA anyChar();
   static GNFA keyword(const QString& str);
+  static GNFA collection(const QString& str);
 };
 
 }

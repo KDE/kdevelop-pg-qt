@@ -54,7 +54,7 @@ QString r;
     KDevPG::GNFA                                           *nfa;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_NUMBER ';'
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_NUMBER ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
 %token T_PARSERCLASS_DECLARATION T_LEXERCLASS_DECLARATION
 %token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_BITS
@@ -73,7 +73,7 @@ QString r;
 %token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
 %token T_NAMED_REGEXP T_CONTINUE
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP
 %type<str> name code_opt rule_arguments_opt priority assoc opt_lexer_action
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
@@ -83,7 +83,7 @@ QString r;
 %type<variableType>    variableType
 /* %type<void> operatorDeclaration operatorDeclarations operatorRule */
 %type<operatorInformation> operator
-%type<nfa> regexp regexp1 regexp2 regexp3 regexp4 regexp5
+%type<nfa> regexp regexp1 regexp2 regexp3 regexp4 regexp5 regexp6 regexp7 aregexp aregexp1 aregexp2 aregexp3 aregexp4 aregexp5 aregexp6 aregexp7
 
 %%
 
@@ -231,22 +231,82 @@ regexp2
     ;
 
 regexp3
-    : regexp3 regexp4       { $$ = new KDevPG::GNFA(*$1 <<= *$2); delete $1; delete $2; }
+    : '~' regexp3           { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
+    | '?' regexp3           { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA()); delete $2; }
     | regexp4               { $$ = $1; }
     ;
 
 regexp4
-    : regexp4 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    : regexp4 '@' regexp6   { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
     | regexp5               { $$ = $1; }
     ;
     
 regexp5
-    : '~' regexp3           { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
-    | '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
+    : regexp5 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | regexp5 '+'           { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
+    | regexp6               { $$ = $1; }
+    ;
+
+regexp6
+    : regexp6 regexp7       { $$ = new KDevPG::GNFA(*$1 <<= *$2); delete $1; delete $2; }
+    | regexp7               { $$ = $1; }
+    ;
+
+regexp7
+    : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
+    | '[' aregexp ']'       { $$ = $2; }
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(QString::fromUtf8($1).replace("\\n", "\n"))); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QString::fromUtf8($1)))); }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(QString::fromAscii($1))); }
     | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
     ;
+
+aregexp
+    : aregexp '|' aregexp1  { $$ = new KDevPG::GNFA(*$1 |= *$3); delete $1; delete $3; }
+    | aregexp1              { $$ = $1; }
+    ;
+
+aregexp1
+    : aregexp1 '&' aregexp2 { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
+    | aregexp2              { $$ = $1; }
+    ;
+
+aregexp2
+    : aregexp2 '^' aregexp3 { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
+    | aregexp3              { $$ = $1; }
+    ;
+
+aregexp3
+    : '~' aregexp3          { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
+    | '?' aregexp3          { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA()); delete $2; }
+    | aregexp4              { $$ = $1; }
+    ;
+
+aregexp4
+    : aregexp4 '@' aregexp6 { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
+    | aregexp5              { $$ = $1; }
+    ;
+    
+aregexp5
+    : aregexp5 '*'          { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | aregexp5 '+'          { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
+    | aregexp6              { $$ = $1; }
+    ;
+
+aregexp6
+    : aregexp6 aregexp7     { $$ = new KDevPG::GNFA(*$1 |= *$2); delete $1; delete $2; }
+    | aregexp7
+    ;
+
+aregexp7
+    : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
+    | '[' aregexp ']'       { $$ = $2; }
+    | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QString::fromUtf8($1)))); }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(QString::fromAscii($1))); }
+    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
+    ;
+
 
 member_declaration_rest
     : '(' T_PUBLIC T_DECLARATION ')' T_CODE

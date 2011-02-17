@@ -81,7 +81,7 @@ namespace {
     RuleLexer
   };
   RulePosition rulePosition = RuleBody;
-  int openBrackets; // for rule arguments usage
+  int openBrackets; // for rule arguments and regexp usage
   int firstCodeLine; // where the current code-block begins
 }
 
@@ -184,6 +184,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "[" {
     if (rulePosition == RuleBody) { /* use the arguments in a rule call */
       firstCodeLine = yyLine;
+      openBrackets = 0;
       BEGIN(RULE_ARGUMENTS);
     }
     else if (rulePosition == RuleFooter) { /* declare the arguments */
@@ -198,14 +199,14 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
   ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; qDebug() << "return to body"; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
   ";"+                    return ';';
   ":"                     return ';';
-  "["                     return '[';
-  "]"                     return ']';
-  "("                     return '(';
-  ")"                     return ')';
+  "["                     ++openBrackets; return '[';
+  "]"                     --openBrackets; return ']';
+  "("                     ++openBrackets; return '(';
+  ")"                     --openBrackets; return ')';
   "?"                     return '?';
   "|"                     return '|';
   "^"                     return '^';
-  "-"                     return '-';
+  "-"                     return '-'; /* TODO: implementation */
   "&"                     return '&';
   "~"                     return '~';
   "*"                     return '*';
@@ -218,21 +219,15 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
   "\\n"                   ESCAPE_CHARACTER('\n')
   "\\r"                   ESCAPE_CHARACTER('\r')
   "\\t"                   ESCAPE_CHARACTER('\t')
-  "\\\\"                  ESCAPE_CHARACTER('\\')
-  "\\\""                  ESCAPE_CHARACTER('"')
   "\\v"                   ESCAPE_CHARACTER('\v')
   "\\a"                   ESCAPE_CHARACTER('\a')
   "\\b"                   ESCAPE_CHARACTER('\b')
   "\\f"                   ESCAPE_CHARACTER('\f')
   "\\0"                   ESCAPE_CHARACTER('\0')
-  "\\["                   ESCAPE_CHARACTER('[')
-  "\\]"                   ESCAPE_CHARACTER(']')
-  "\\^"                   ESCAPE_CHARACTER('^')
-  "\\&"                   ESCAPE_CHARACTER('&')
-  "\\|"                   ESCAPE_CHARACTER('|')
-  "\\~"                   ESCAPE_CHARACTER('~')
-  [_A-Z]*                 qDebug() << "terminal"; COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
-  [_a-zA-Z]*[_a-zA-Z0-9]+ qDebug() << "identifier";          COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+  "\\\t"                  ESCAPE_CHARACTER('\t')
+  "\\".                   ++yytext; COPY_CODE_TO_YYLVAL(yytext,1); return T_STRING;
+  [_A-Z]*                 COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_TERMINAL : T_UNQUOTED_STRING;
+  [_a-zA-Z]*[_a-zA-Z0-9]+ COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_IDENTIFIER : T_UNQUOTED_STRING;
   {Whitespace}            /* skip */
   /*TODO: escape characters
       "\\0"[1-7][0-7]{0,6}                      . 

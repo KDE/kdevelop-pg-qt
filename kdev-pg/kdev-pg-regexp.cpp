@@ -335,7 +335,7 @@ public:
         cout << endl;
     }
     /**
-     * Accezts the empty word.
+     * Accepts the empty word.
      */
     NFA() : nstates(1), rules(1), accept(0)
     {}
@@ -840,6 +840,22 @@ GNFA GNFA::keyword(const QString& str)
   while(iter.hasNext()) \
   { \
     *r.x <<= (typeof(*r.x))(iter.next()); \
+  } \
+  return r;
+  EACH_TYPE(macro)
+#undef macro
+}
+
+GNFA GNFA::collection(const QString& str)
+{
+#define macro(x) \
+  GNFA r; \
+  QByteArray qba(str.toUtf8()); \
+  typedef typeof(*r.x) T; \
+  Codec2FromUtf8Iterator<T::CharSet::codec>::Result iter(qba); \
+  while(iter.hasNext()) \
+  { \
+    *r.x |= (typeof(*r.x))(iter.next()); \
   } \
   return r;
   EACH_TYPE(macro)

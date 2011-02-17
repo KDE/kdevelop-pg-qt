@@ -17,6 +17,7 @@
   "#!foolisp" SHEBANG ;
   " "|"\n" [: /* blank */ :];
   .^"(" LPAREN ;
+  "foo""foo"+ FOO ;
   ;
 
    ?SHEBANG sexp=sexp -> start ;;

@@ -194,6 +194,18 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 
 <RULE_LEXER>{
   "--"[^\r\n]*            /* line comments, skip */ ;
+  "\\n"                   ESCAPE_CHARACTER('\n')
+  "\\r"                   ESCAPE_CHARACTER('\r')
+  "\\t"                   ESCAPE_CHARACTER('\t')
+  "\\v"                   ESCAPE_CHARACTER('\v')
+  "\\a"                   ESCAPE_CHARACTER('\a')
+  "\\b"                   ESCAPE_CHARACTER('\b')
+  "\\f"                   ESCAPE_CHARACTER('\f')
+  "\\0"                   ESCAPE_CHARACTER('\0')
+  "\\\t"                  ESCAPE_CHARACTER('\t')
+  "\\\""                  ESCAPE_CHARACTER('"')
+  "\\\x20"                ESCAPE_CHARACTER(' ')
+  "\\".                   ++yytext; COPY_CODE_TO_YYLVAL(yytext,1); return T_STRING;
   {Newline}               newline();
   "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          qDebug() << "ococo"; ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
   ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; qDebug() << "return to body"; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
@@ -215,20 +227,10 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
   "."                     return '.';
   "->"                    return T_ARROW;
   "[:"                    firstCodeLine = yyLine; BEGIN(CODE);
-  {String}                qDebug() << "string"; yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
-  "\\n"                   ESCAPE_CHARACTER('\n')
-  "\\r"                   ESCAPE_CHARACTER('\r')
-  "\\t"                   ESCAPE_CHARACTER('\t')
-  "\\v"                   ESCAPE_CHARACTER('\v')
-  "\\a"                   ESCAPE_CHARACTER('\a')
-  "\\b"                   ESCAPE_CHARACTER('\b')
-  "\\f"                   ESCAPE_CHARACTER('\f')
-  "\\0"                   ESCAPE_CHARACTER('\0')
-  "\\\t"                  ESCAPE_CHARACTER('\t')
-  "\\".                   ++yytext; COPY_CODE_TO_YYLVAL(yytext,1); return T_STRING;
   [_A-Z]*                 COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_TERMINAL : T_UNQUOTED_STRING;
-  [_a-zA-Z]*[_a-zA-Z0-9]+ COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_IDENTIFIER : T_UNQUOTED_STRING;
+  [_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_IDENTIFIER : T_UNQUOTED_STRING;
   {Whitespace}            /* skip */
+  {String}                yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
   /*TODO: escape characters
       "\\0"[1-7][0-7]{0,6}                      . 
       "\\d"[1-9][0-9]{0,6}                      .

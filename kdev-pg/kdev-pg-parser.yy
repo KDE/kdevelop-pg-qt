@@ -226,7 +226,7 @@ regexp1
     ;
 
 regexp2
-    : regexp2 '^' regexp3   { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
+    : regexp3 '^' regexp2   { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
     | regexp3               { $$ = $1; }
     ;
 
@@ -237,18 +237,18 @@ regexp3
     ;
 
 regexp4
-    : regexp4 '@' regexp6   { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
+    : regexp4 regexp5       { $$ = new KDevPG::GNFA(*$1 <<= *$2); delete $1; delete $2; }
     | regexp5               { $$ = $1; }
     ;
-    
+
 regexp5
-    : regexp5 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
-    | regexp5 '+'           { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
+    : regexp5 '@' regexp6   { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
     | regexp6               { $$ = $1; }
     ;
-
+    
 regexp6
-    : regexp6 regexp7       { $$ = new KDevPG::GNFA(*$1 <<= *$2); delete $1; delete $2; }
+    : regexp6 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | regexp6 '+'           { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
     | regexp7               { $$ = $1; }
     ;
 
@@ -272,7 +272,7 @@ aregexp1
     ;
 
 aregexp2
-    : aregexp2 '^' aregexp3 { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
+    : aregexp3 '^' aregexp2 { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
     | aregexp3              { $$ = $1; }
     ;
 
@@ -283,19 +283,19 @@ aregexp3
     ;
 
 aregexp4
-    : aregexp4 '@' aregexp6 { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
-    | aregexp5              { $$ = $1; }
-    ;
-    
-aregexp5
-    : aregexp5 '*'          { $$ = new KDevPG::GNFA(**$1); delete $1; }
-    | aregexp5 '+'          { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
-    | aregexp6              { $$ = $1; }
+    : aregexp4 aregexp5     { $$ = new KDevPG::GNFA(*$1 |= *$2); delete $1; delete $2; }
+    | aregexp5
     ;
 
+aregexp5
+    : aregexp5 '@' aregexp6 { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
+    | aregexp6              { $$ = $1; }
+    ;
+    
 aregexp6
-    : aregexp6 aregexp7     { $$ = new KDevPG::GNFA(*$1 |= *$2); delete $1; delete $2; }
-    | aregexp7
+    : aregexp6 '*'          { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | aregexp6 '+'          { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
+    | aregexp7              { $$ = $1; }
     ;
 
 aregexp7

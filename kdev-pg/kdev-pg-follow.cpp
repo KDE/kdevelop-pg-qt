@@ -179,6 +179,12 @@ void NextFollow::preCopy(Model::Node* from, Model::Node* to)
   }
 }
 
+void NextFollow::copy(Model::Node* from, Model::Node* to)
+{
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+}
+
 void NextFollow::addFirstToFollowDep(Model::Node *dest, Model::Node *dep)
 {
   if (dest->kind == Model::NodeKindNonTerminal)

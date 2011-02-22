@@ -1,6 +1,6 @@
-%token_stream Lexer ;;
+%token_stream Lexer ;
 
-%token LPAREN, RPAREN, FOO, BAR, BAZ, NUMBER, SHEBANG, STRING, IDENTIFIER ;;
+%token LPAREN, RPAREN, FOO, BAR, BAZ, NUMBER, SHEBANG, STRING, IDENTIFIER ;
 %token_stream_bits_header "QDebug"
 %parser_bits_header "QDebug"
 %input_encoding "ascii"
@@ -22,11 +22,11 @@
   \" [.(\\.)^\"]* \"            STRING ;
   ;
 
-   ?SHEBANG sexp=sexp -> start ;;
+   ?SHEBANG sexp=sexp -> start ;
   
    LPAREN #sexp=sexp* RPAREN
  | foo=FOO | bar=BAR | baz=BAZ | number=NUMBER | string=STRING | identifier=IDENTIFIER
--> sexp ;;
+-> sexp ;
 
 [:
 void FooLisp::Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)

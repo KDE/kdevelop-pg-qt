@@ -60,7 +60,6 @@ protected:
   virtual void visitCons(Model::ConsItem *node);
   
   void preCopy(Model::Node *from, Model::Node *to);
-  void copy(Model::Node *from, Model::Node *to);
 
 private:
   bool &mChanged;

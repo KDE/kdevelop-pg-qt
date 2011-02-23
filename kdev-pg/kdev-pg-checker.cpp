@@ -235,7 +235,7 @@ void FollowDepChecker::check(Model::Node *node)
       World::NodeSet first = globalSystem.first(FLD[i]);
 #ifdef FOLLOW_CHECKER_DEBUG
       str << endl << "\t\t" << "in ";
-      p(*it);
+      p(FLD[i]);
       str << endl;
 #endif
       check(FLD[i]);

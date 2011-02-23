@@ -29,7 +29,7 @@ namespace KDevPG
 void initializeFirst()
 {
   globalSystem.first(globalSystem.zero()).insert(globalSystem.zero());
-  for(__typeof__(globalSystem.terminals.begin()) i = globalSystem.terminals.begin();
+  for(auto i = globalSystem.terminals.begin();
       i != globalSystem.terminals.end();
       ++i)
   {

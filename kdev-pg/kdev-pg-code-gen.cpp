@@ -575,7 +575,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
     GenerateRecursiveDelegation del(argStr);
   }
   bool printElse = false;
-  for(__typeof__(node->mPost.begin()) i = node->mPost.begin(); i != node->mPost.end(); ++i)
+  for(auto i = node->mPost.begin(); i != node->mPost.end(); ++i)
   {
     if(printElse)
       out << "else ";
@@ -609,7 +609,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
           "ref->startToken = last->startToken;"
           "} yylex(); }";
   }
-  for(__typeof__(node->mBin.begin()) i = node->mBin.begin(); i != node->mBin.end(); ++i)
+  for(auto i = node->mBin.begin(); i != node->mBin.end(); ++i)
   {
     if(printElse)
       out << "else ";
@@ -649,7 +649,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "  : ((Binary" << nodeType << "*)opStack.last().n)->first;\n"
         << "opStack.push_back(OperatorStackItem(ref = create<Binary" << nodeType << ">(last), priority)); ref->startToken = last->startToken; } expectOperator = false; yylex(); }";
   }
-  for(__typeof__(node->mTern.begin()) i = node->mTern.begin(); i != node->mTern.end(); ++i)
+  for(auto i = node->mTern.begin(); i != node->mTern.end(); ++i)
   {
     if(printElse)
       out << "else ";
@@ -702,7 +702,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
   out << "break;";
   out << "} else {";
   printElse = false;
-  for(__typeof__(node->mPre.begin()) i = node->mPre.begin(); i != node->mPre.end(); ++i)
+  for(auto i = node->mPre.begin(); i != node->mPre.end(); ++i)
   {
     if(printElse)
       out << "else ";
@@ -731,7 +731,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "yylex();"
            "}" << endl;
   }
-  for(__typeof__(node->mParen.begin()) i = node->mParen.begin(); i != node->mParen.end(); ++i)
+  for(auto i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
     if(printElse)
       out << "else ";

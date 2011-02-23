@@ -89,9 +89,9 @@ void GenerateAst::operator()()
   while(true)
   {
     int oldSize = gen.mToGenerate.size();
-    for(__typeof__(gen.mToGenerate.begin()) i = gen.mToGenerate.begin(); i != gen.mToGenerate.end(); )
+    for(auto i = gen.mToGenerate.begin(); i != gen.mToGenerate.end(); )
     {
-      __typeof__(i) next = i;
+      auto next = i;
       ++next;
       gen(*i);
       i = next;
@@ -100,9 +100,9 @@ void GenerateAst::operator()()
       break;
   }
   gen.mForce = true;
-  for(__typeof__(gen.mToGenerate.begin()) i = gen.mToGenerate.begin(); i != gen.mToGenerate.end(); )
+  for(auto i = gen.mToGenerate.begin(); i != gen.mToGenerate.end(); )
   {
-    __typeof__(i) next = i;
+    auto next = i;
     ++next;
     gen(*i);
     i = next;

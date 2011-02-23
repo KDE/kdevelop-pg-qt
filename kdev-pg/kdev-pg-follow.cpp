@@ -86,7 +86,7 @@ NextFollow::NextFollow(bool &changed)
   : mChanged(changed)
 {
   Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
-  for(__typeof__(globalSystem.rules.begin()) i = globalSystem.rules.begin(); i != globalSystem.rules.end(); ++i)
+  for(auto i = globalSystem.rules.begin(); i != globalSystem.rules.end(); ++i)
   {
     if(globalSystem.start.contains((*i)->mSymbol))
     {

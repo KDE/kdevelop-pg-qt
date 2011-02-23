@@ -475,12 +475,12 @@ operatorRule
     ;
 
 operatorDeclaration
-    : T_BIN operator priority assoc              { operatorNode->pushBin(*$2, $4, $3); delete $2; }
-    | T_TERN operator operator priority assoc    { operatorNode->pushTern(*$2, *$3, $5, $4); delete $2; delete $3; }
-    | T_PRE operator priority                    { operatorNode->pushPre(*$2, $3); delete $2; }
-    | T_POST operator priority                   { operatorNode->pushPost(*$2, "0", $3); delete $2; delete $3; }
-    | T_POST operator priority assoc             { operatorNode->pushPost(*$2, $4, $3); delete $2; }
-    | T_PAREN operator operator                  { operatorNode->pushParen(*$2, *$3); delete $2; delete $3; }
+    : T_BIN operator priority assoc              { operatorNode->pushBin(*$2, $4, $3); free($2); }
+    | T_TERN operator operator priority assoc    { operatorNode->pushTern(*$2, *$3, $5, $4); free($2); free($3); }
+    | T_PRE operator priority                    { operatorNode->pushPre(*$2, $3); free($2); }
+    | T_POST operator priority                   { operatorNode->pushPost(*$2, "0", $3); free($2); free($3); }
+    | T_POST operator priority assoc             { operatorNode->pushPost(*$2, $4, $3); free($2); }
+    | T_PAREN operator operator                  { operatorNode->pushParen(*$2, *$3); free($2); free($3); }
     ;
     
 priority

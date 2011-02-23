@@ -40,7 +40,7 @@ public:
   typedef const _Tp* constPointer;
   typedef _Tp& reference;
   typedef const _Tp& constReference;
-  typedef qint64 sizeType;
+  typedef ::std::size_t sizeType;
   typedef qint64 differenceType;
 
   static const sizeType maxBlockCount = sizeType( -1);
@@ -55,9 +55,12 @@ public:
 
   ~Allocator()
   {
-      for (sizeType index = 0; index <= sBlockIndex; ++index)
-        delete[] sStorage[index];
-      std::free(sStorage);
+      if (sStorage != 0)
+      {
+        for (sizeType index = 0; index <= sBlockIndex; ++index)
+          delete[] sStorage[index];
+        std::free(sStorage);
+      }
   }
   
   bool contains(void* ptr)

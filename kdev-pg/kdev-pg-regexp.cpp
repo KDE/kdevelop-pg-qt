@@ -187,7 +187,7 @@ public:
         nstates = curr;
         for(size_t i = 0; i != nstates; ++i)
         {
-            for(__typeof__(rules[i].begin()) j = rules[i].begin(); j != rules[i].end(); ++j)
+            for(auto j = rules[i].begin(); j != rules[i].end(); ++j)
             {
                 j->second = mapping[j->second];
             }
@@ -591,7 +591,7 @@ public:
             }
           }
         }
-        for(__typeof__(rules.begin()) i = rules.begin(); i != rules.end(); ++i)
+        for(auto i = rules.begin(); i != rules.end(); ++i)
         {
             size_t key = st[i->first];
             foreach(NC(const pair<CharSet, UsedBitArray > nx), i->second)
@@ -710,14 +710,14 @@ void GDFA::setActions(const std::vector< QString >& actions)
 
 GDFA::GDFA()
 {
-#define macro(x) x = new __typeof__(*x);
+#define macro(x) x = new typeof(*x);
     EACH_TYPE(macro)
 #undef macro
 }
 
 GDFA::GDFA(const KDevPG::GDFA& o)
 {
-#define macro(x) x = new (__typeof__(*x))(*o.x);
+#define macro(x) x = new (typeof(*x))(*o.x);
     EACH_TYPE(macro)
 #undef macro
 }
@@ -739,21 +739,21 @@ GDFA& GDFA::operator=(const KDevPG::GDFA& o)
 
 GNFA::GNFA()
 {
-#define macro(x) x = new __typeof__(*x);
+#define macro(x) x = new typeof(*x);
   EACH_TYPE(macro)
 #undef macro
 }
 
 GNFA::GNFA(const KDevPG::GNFA& o)
 {
-#define macro(x) x = new (__typeof__(*x))(*o.x);
+#define macro(x) x = new (typeof(*x))(*o.x);
   EACH_TYPE(macro)
 #undef macro
 }
 
 GNFA::GNFA(const std::vector< GNFA* >& init)
 {
-#define macro(x) vector<__typeof__(*x)> vec(init.size()); for(size_t i = 0; i != init.size(); ++i) vec[i] = *(init[i]->x); x = new (__typeof__(*x))(vec);
+#define macro(x) vector<typeof(*x)> vec(init.size()); for(size_t i = 0; i != init.size(); ++i) vec[i] = *(init[i]->x); x = new (typeof(*x))(vec);
   EACH_TYPE(macro)
 #undef macro
 }
@@ -865,7 +865,7 @@ GNFA GNFA::collection(const QString& str)
 GNFA GNFA::anyChar()
 {
   GNFA ret;
-#define macro(x) typedef __typeof__(*x) T; ret.x = new T(T::CharSet::fullSet());
+#define macro(x) typedef typeof(*x) T; ret.x = new T(T::CharSet::fullSet());
   EACH_TYPE(macro)
 #undef macro
   return ret;

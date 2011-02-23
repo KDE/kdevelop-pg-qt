@@ -18,7 +18,7 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#define FOLLOW_CHECKER_DEBUG
+
 #include "kdev-pg-checker.h"
 #include "kdev-pg-pretty-printer.h"
 #include "kdev-pg-bnf-visitor.h"
@@ -235,7 +235,7 @@ void FollowDepChecker::check(Model::Node *node)
       World::NodeSet first = globalSystem.first(FLD[i]);
 #ifdef FOLLOW_CHECKER_DEBUG
       str << endl << "\t\t" << "in ";
-      p(*it);
+      p(FLD[i]);
       str << endl;
 #endif
       check(FLD[i]);

@@ -1,3 +1,4 @@
+** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!
 ** ERROR Empty FIRST set for ``r1''
 ** ERROR Empty FIRST set for ``r2''
 ** ERROR Empty FIRST set for ``r3''

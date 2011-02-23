@@ -18,6 +18,8 @@ endif(NOT KDE4_FOUND)
 # Use colored output (since cmake 2.4.0)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
+add_definitions(-std=gnu++0x)
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)

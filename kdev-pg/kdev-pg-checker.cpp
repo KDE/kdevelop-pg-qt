@@ -180,25 +180,25 @@ void FollowDepChecker::check(Model::Node *node)
   str << "[["; p(node); str << " | " << (uint*)node << "]] ";
   str << "{" << node->kind << "}" << endl;
 #endif
-  for (__typeof__(FD.begin()) it = FD.begin(); it != FD.end(); ++it)
+  for (int i = 0; i != FD.size(); ++i) // no iterator → modifiable
     {
-      if(BnfVisitor::isInternal(*it))
+      if(BnfVisitor::isInternal(FD[i]))
       {
-        World::NodeSet set = globalSystem.followDep(*it).second;
-        World::NodeSet set2 = globalSystem.followDep(*it).first; // :-S has to be verified…
-        for(__typeof__(it) jt = FD.begin(); jt != FD.end(); ++jt)
+        World::NodeSet set = globalSystem.followDep(FD[i]).second;
+        World::NodeSet set2 = globalSystem.followDep(FD[i]).first; // :-S has to be verified…
+        for(auto jt = FD.begin(); jt != FD.end(); ++jt)
         {
           set.remove(*jt);
           set2.remove(*jt);
         }
-        for(__typeof__(set2.begin()) jt = set2.begin(); jt != set2.end(); ++jt)
+        for(auto jt = set2.begin(); jt != set2.end(); ++jt)
           if(!BnfVisitor::isInternal(*jt))
             FD.append(*jt);
         FD.append(set.toList());
       }
       else
       {
-        World::NodeSet first = globalSystem.first(*it);
+        World::NodeSet first = globalSystem.first(FD[i]);
   #ifdef FOLLOW_CHECKER_DEBUG
         str << " <iterating first ";
         for (World::NodeSet::const_iterator fit = first.begin(); fit != first.end(); ++fit)
@@ -211,7 +211,7 @@ void FollowDepChecker::check(Model::Node *node)
         if (first.find(mTerminal) != first.end())
         {
           str << "\t\t";
-          p(*it);
+          p(FD[i]);
   #ifdef FOLLOW_CHECKER_DEBUG
           str << " ( in \"";
           p(node);
@@ -221,24 +221,24 @@ void FollowDepChecker::check(Model::Node *node)
         }
       }
     }
- for (__typeof__(FLD.begin()) it = FLD.begin(); it != FLD.end(); ++it)
+ for (int i = 0; i != FLD.size(); ++i)
   {
-    if(BnfVisitor::isInternal(*it))
+    if(BnfVisitor::isInternal(FLD[i]))
     {
-      World::NodeSet set = globalSystem.followDep(*it).second;
-      for(__typeof__(it) jt = FLD.begin(); jt != FLD.end(); ++jt)
+      World::NodeSet set = globalSystem.followDep(FLD[i]).second;
+      for(auto jt = FLD.begin(); jt != FLD.end(); ++jt)
         set.remove(*jt);
       FLD.append(set.toList());
     }
     else
     {
-      World::NodeSet first = globalSystem.first(*it);
+      World::NodeSet first = globalSystem.first(FLD[i]);
 #ifdef FOLLOW_CHECKER_DEBUG
       str << endl << "\t\t" << "in ";
       p(*it);
       str << endl;
 #endif
-      check(*it);
+      check(FLD[i]);
     }
   }
 }

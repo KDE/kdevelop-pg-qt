@@ -115,8 +115,10 @@ declaration
         switch(KDevPG::GDFA::type)
         {
           case KDevPG::GDFA::SAscii: KDevPG::GDFA::type = KDevPG::GDFA::TAscii; break;
-          case KDevPG::GDFA::S8Bit: KDevPG::GDFA::type = KDevPG::GDFA::T8Bit; break;
+          case KDevPG::GDFA::SLatin1: KDevPG::GDFA::type = KDevPG::GDFA::TLatin1; break;
+          case KDevPG::GDFA::SUtf8: KDevPG::GDFA::type = KDevPG::GDFA::TUtf8; break;
           case KDevPG::GDFA::SUcs2: KDevPG::GDFA::type = KDevPG::GDFA::TUcs2; break;
+          case KDevPG::GDFA::SUtf16: KDevPG::GDFA::type = KDevPG::GDFA::TUtf16; break;
 /*           case KDevPG::GDFA::SUcs4: KDevPG::GDFA::type = KDevPG::GDFA::TUcs4; break; */
           default: /* empty */;
         }
@@ -127,8 +129,10 @@ declaration
       switch(KDevPG::GDFA::type)
       {
         case KDevPG::GDFA::TAscii: KDevPG::GDFA::type = KDevPG::GDFA::SAscii; break;
-        case KDevPG::GDFA::T8Bit: KDevPG::GDFA::type = KDevPG::GDFA::S8Bit; break;
+        case KDevPG::GDFA::TLatin1: KDevPG::GDFA::type = KDevPG::GDFA::SLatin1; break;
+        case KDevPG::GDFA::TUtf8: KDevPG::GDFA::type = KDevPG::GDFA::SUtf8; break;
         case KDevPG::GDFA::TUcs2: KDevPG::GDFA::type = KDevPG::GDFA::SUcs2; break;
+        case KDevPG::GDFA::TUtf16: KDevPG::GDFA::type = KDevPG::GDFA::SUtf16; break;
 /*         case KDevPG::GDFA::TUcs4: KDevPG::GDFA::type = KDevPG::GDFA::SUcs4; break; */
         default: /* empty */;
       }
@@ -143,12 +147,16 @@ declaration
         str.replace('-', "");
         if(str == "ascii")
           /* base += 0*/;
-        else if(str == "utf8" || str == "latin1")
+        else if(str == "latin1")
           base += 1;
-        else if(str == "ucs2" || str == "utf16")
+        else if(str == "utf8")
           base += 2;
-        else if(str == "ucs4" || str == "utf32")
+        else if(str == "ucs2")
           base += 3;
+        else if(str == "utf16")
+          base += 4;
+        else if(str == "ucs4" || str == "utf32")
+          base += 5;
         else
         {
           KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;

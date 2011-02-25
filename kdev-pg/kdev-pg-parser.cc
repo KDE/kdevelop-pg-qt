@@ -1748,7 +1748,9 @@ yyreduce:
         switch(KDevPG::GDFA::type)
         {
           case KDevPG::GDFA::SAscii: KDevPG::GDFA::type = KDevPG::GDFA::TAscii; break;
-          case KDevPG::GDFA::S8Bit: KDevPG::GDFA::type = KDevPG::GDFA::T8Bit; break;
+          case KDevPG::GDFA::SLatin1
+: KDevPG::GDFA::type = KDevPG::GDFA::TLatin1
+; break;
           case KDevPG::GDFA::SUcs2: KDevPG::GDFA::type = KDevPG::GDFA::TUcs2; break;
 /*           case KDevPG::GDFA::SUcs4: KDevPG::GDFA::type = KDevPG::GDFA::TUcs4; break; */
           default: /* empty */;
@@ -1765,7 +1767,9 @@ yyreduce:
       switch(KDevPG::GDFA::type)
       {
         case KDevPG::GDFA::TAscii: KDevPG::GDFA::type = KDevPG::GDFA::SAscii; break;
-        case KDevPG::GDFA::T8Bit: KDevPG::GDFA::type = KDevPG::GDFA::S8Bit; break;
+        case KDevPG::GDFA::TLatin1
+: KDevPG::GDFA::type = KDevPG::GDFA::SLatin1
+; break;
         case KDevPG::GDFA::TUcs2: KDevPG::GDFA::type = KDevPG::GDFA::SUcs2; break;
 /*         case KDevPG::GDFA::TUcs4: KDevPG::GDFA::type = KDevPG::GDFA::SUcs4; break; */
         default: /* empty */;

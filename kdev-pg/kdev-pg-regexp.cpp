@@ -673,16 +673,17 @@ NFA< CharSet > DFA<CharSet>::nfa() const
   return ret;
 }
 
+// notice: utf8/8bit and utf16/ucs2 do not require different NFAs and DFAs
 #define EACH_TYPE(macro) \
 switch(GDFA::type) \
 { \
   case GDFA::SAscii: { macro(s0); } break; \
-  case GDFA::S8Bit: {macro(s1); } break; \
-  case GDFA::SUcs2: { macro(s2); } break; \
+  case GDFA::SLatin1: case GDFA::SUtf8: {macro(s1); } break; \
+  case GDFA::SUcs2: case GDFA::SUtf16: { macro(s2); } break; \
   case GDFA::SUcs4: { macro(s3); } break; \
   case GDFA::TAscii: { macro(t0); } break; \
-  case GDFA::T8Bit: { macro(t1); } break; \
-  case GDFA::TUcs2: { macro(t2); } break; \
+  case GDFA::TLatin1: case GDFA::TUtf8: { macro(t1); } break; \
+  case GDFA::TUcs2: case GDFA::TUtf16: { macro(t2); } break; \
   default: exit(-1); \
 }
 

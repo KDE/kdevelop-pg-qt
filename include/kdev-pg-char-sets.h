@@ -67,8 +67,10 @@ enum CharEncoding
 {
   Ascii = 0,
   Latin1 = 1,
-  Ucs2 = 2,
-  Ucs4 = 3
+  Utf8 = 2,
+  Utf16 = 3,
+  Ucs2 = 4,
+  Ucs4 = 5
 };
 
 template<CharEncoding codec>
@@ -90,6 +92,12 @@ struct Codec2Int<Ucs2>
 };
 
 template<>
+struct Codec2Int<Utf16>
+{
+  typedef quint16 Result;
+};
+
+template<>
 struct Codec2Int<Ucs4>
 {
   typedef quint32 Result;
@@ -104,6 +112,12 @@ struct Codec2Container
 
 template<>
 struct Codec2Container<Ucs2>
+{
+  typedef QVector<quint16> Result;
+};
+
+template<>
+struct Codec2Container<Utf16>
 {
   typedef QVector<quint16> Result;
 };
@@ -133,6 +147,12 @@ struct Codec2Size<Ucs2>
 };
 
 template<>
+struct Codec2Size<Utf16>
+{
+  enum { value = 65536 }; // That is a really large table!!
+};
+
+template<>
 struct Codec2Size<Ucs4>
 {
 //   static_assert(false, "Ucs4-tables are too big");
@@ -145,6 +165,7 @@ inline typename Codec2Container<codec>::Result qString2Codec(const QString& str)
   static_assert(Codec2False<codec>::value, "Unknown codec");
 }
 
+/// @todo check for invalid characters
 template<>
 inline QByteArray qString2Codec<Ascii>(const QString& str)
 {
@@ -158,6 +179,12 @@ inline QByteArray qString2Codec<Latin1>(const QString& str)
 }
 
 template<>
+inline QByteArray qString2Codec<Utf8>(const QString& str)
+{
+  return str.toUtf8();
+}
+
+template<>
 inline QVector<quint32> qString2Codec<Ucs4>(const QString& str)
 {
   return str.toUcs4();
@@ -165,6 +192,14 @@ inline QVector<quint32> qString2Codec<Ucs4>(const QString& str)
 
 template<>
 inline QVector<quint16> qString2Codec<Ucs2>(const QString& str)
+{
+  QVector<quint16> ret(str.size());
+  memcpy(&ret[0], str.utf16(), 2*str.size());
+  return ret;
+}
+
+template<>
+inline QVector<quint16> qString2Codec<Utf16>(const QString& str)
 {
   QVector<quint16> ret(str.size());
   memcpy(&ret[0], str.utf16(), 2*str.size());
@@ -426,6 +461,87 @@ public:
   }
 };
 
+class QUtf8ToUtf16Iterator
+{
+  uchar const *_begin, *ptr, *end;
+  quint16 surrogate;
+public:
+  typedef quint16 Int;
+  typedef uchar InputInt;
+  QUtf8ToUtf16Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size()), surrogate(0)
+  {
+    
+  }
+  InputInt const*& plain()
+  {
+    return ptr;
+  }
+  quint16 next()
+  {
+    if(surrogate != 0)
+    {
+      Int tmp = surrogate;
+      surrogate = 0;
+      return tmp;
+    }
+    while(true)
+    {
+      retry:
+      uchar chr = *ptr;
+      if(chr < 128)
+      {
+        ++ptr;
+        return chr;
+      }
+      quint32 ret;
+      if((chr & 0xe0) == 0xc0)
+      {
+        ret = ((chr & 0x1f) << 6) | ((*++ptr) & 0x3f);
+      }
+      else if((chr & 0xf0) == 0xe0)
+      {
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      else if((chr & 0xf8) == 0xf0)
+      {
+        ret = ((chr & 0x0f) << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+        ret = (ret << 6) | ((*++ptr) & 0x3f);
+      }
+      else
+      {
+        ++ptr;
+        goto retry;
+      }
+      ++ptr;
+      if(ret <= 0xffff)
+      {
+        if((ret & 0xfffe) != 0xfffe && (ret - 0xfdd0U) > 15)
+          return ret;
+        // ignoe the error ;)
+      }
+      else
+      {
+        surrogate = QChar::lowSurrogate(ret);
+        return QChar::highSurrogate(ret);
+      }
+    }
+  }
+  bool hasNext()
+  {
+    return ptr != end;
+  }
+  ptrdiff_t operator-(const QUtf8ToUtf16Iterator& other) const
+  {
+    return ptr - other.ptr;
+  }
+  InputInt const*& begin()
+  {
+    return *reinterpret_cast<InputInt const**>(&_begin);
+  }
+};
+
 class QUtf8ToAsciiIterator
 {
   uchar const *_begin, *ptr, *end;
@@ -500,6 +616,12 @@ template<>
 struct Codec2FromUtf8Iterator<Ucs2>
 {
   typedef QUtf8ToUcs2Iterator Result;
+};
+
+template<>
+struct Codec2FromUtf8Iterator<Utf16>
+{
+  typedef QUtf8ToUtf16Iterator Result;
 };
 
 template<>

@@ -62,7 +62,7 @@ class GDFA
   };
   friend class GNFA;
 public:
-  static enum { SAscii, S8Bit, SUcs2, SUcs4, TAscii, T8Bit, TUcs2/*, TUcs4*/ } type;
+  static enum { SAscii, SLatin1, SUtf8, SUcs2, SUtf16, SUcs4, TAscii, TLatin1, TUtf8, TUcs2, TUtf16/*, TUcs4*/ } type;
   void codegen(QTextStream& str);
   GDFA& minimize();
   void setActions(const vector<QString>& actions);

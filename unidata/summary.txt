@@ -1,0 +1,136 @@
+Blocks.txt:
+
+Simple format:
+Range ; Name
+
+Priority: high, basic blocks (languages, math-block etc.)
+Difficulty: low
+
+DerivedCoreProperties.txt:
+
+Simple format:
+Range ; Name # comment
+
+Priority: high, alphabetic, lowercase, uppercase etc.
+Difficulty: low
+
+DerivedNormalizationProps.txt:
+
+Format:
+Range ; Name ; values (space separated)
+Difficulty: high
+
+Priority: low, ugly stuff for modifiers…
+
+ArabicShaping.txt:
+
+Format:
+See the file, multiple properties for each character
+
+Priority: low, properties for handling arabic characters
+Difficulty: high ?
+
+CaseFolding.txt:
+
+Format:
+from; status; to (maybe multiple characters); # comment
+status:
+# C: common case folding, common mappings shared by both simple and full mappings.
+# F: full case folding, mappings that cause strings to grow in length. Multiple characters are separated by spaces.
+# S: simple case folding, mappings to single characters where different from F.
+# T: special case for uppercase I and dotted uppercase I (dot preserving folding)
+
+Priority: medium, high, for case-insensitivity
+Difficulty: medium, high
+
+DerivedAge.txt:
+
+Which unicode-version they first appeared in
+
+Format:
+range; version
+
+Priority: medium
+Difficulty: low
+
+
+IndicMatraCategory.txt:
+
+Appearance categorization for some indic symbols
+range; value # comment
+Difficulty: low
+Priority: low
+
+IndicSyllabicCategory.txt:
+
+vowels, consonants or other special stuff for indic symbols
+range; value # comment
+Difficulty: low
+Priority: low
+
+LineBreak.txt:
+
+Huh?
+
+Difficulty: high
+Priority: probably medium, for unicode line breaks
+
+NamedSequences.txt:
+
+Some unimportant sequences
+
+Format:
+seq-name; codepoints
+
+Difficulty: low
+priority: loooow
+
+NamesList.txt:
+
+Format:
+a bit bloated with see-also etc. (http://www.unicode.org/Public/UNIDATA/NamesList.html)
+
+Priority: medium, the names would be nice to have
+Difficulty: easy, medium
+
+PropList.txt:
+
+Format:
+range ; name # comment
+
+
+Priority: high, all the usefull properties (quotation mark etc.)
+Difficulty: low
+
+PropertyAliases.txt:
+
+Not only binary properties
+Format:
+alias ; original [; additional alias]
+
+Priority: high
+Difficulty: low (but some properties may not exist in the application)
+
+ScriptExtensions.txt:
+
+Some minor categories
+simple format (range ; name #comment)
+
+Priority: medium (it should be complete ;))
+Difficulty: low
+
+Scripts.txt:
+
+Simple format
+
+Priority: high
+Difficulty: low
+
+SpecialCasing.txt:
+
+Even more complicated casing
+
+DerivedNumericType.txt:
+
+simple format, high priority
+

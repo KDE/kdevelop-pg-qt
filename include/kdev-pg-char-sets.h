@@ -52,6 +52,10 @@ struct StripReference<T&>
   typedef T Result;
 };
 
+/**
+ * Cast anything
+ * @warning This template is very brutal, it will cast anything without compiler warnings or errors (like strict-aliasing rule), unless you have an overloaded operator&, but you really should not have that.
+ */
 template<typename T, typename U> inline T brutal_cast(const U& x)
 {
   union tmp
@@ -79,6 +83,7 @@ struct Codec2False
   enum { value = false };
 };
 
+// use a bit more space than necessary, so we will be able to use ranges excluding the end
 template<CharEncoding codec>
 struct Codec2Int
 {
@@ -86,15 +91,27 @@ struct Codec2Int
 };
 
 template<>
-struct Codec2Int<Ucs2>
+struct Codec2Int<Latin1>
 {
   typedef quint16 Result;
 };
 
 template<>
-struct Codec2Int<Utf16>
+struct Codec2Int<Utf8>
 {
   typedef quint16 Result;
+};
+
+template<>
+struct Codec2Int<Ucs2>
+{
+  typedef quint32 Result;
+};
+
+template<>
+struct Codec2Int<Utf16>
+{
+  typedef quint32 Result;
 };
 
 template<>

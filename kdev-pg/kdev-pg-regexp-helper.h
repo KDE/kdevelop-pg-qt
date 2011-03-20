@@ -76,6 +76,13 @@ public:
       ret.data.push_back(make_pair(0, Codec2Size<codec>::value));
       return ret;
     }
+    static Self range(Int begin, Int end)
+    {
+      Self ret;
+      ret.mEpsilon = false;
+      ret.data.push_back(make_pair(begin, end));
+      return ret;
+    }
     static Self emptySet()
     {
       Self ret;
@@ -405,6 +412,14 @@ public:
   {
     Self ret;
     ret.data.set();
+    ret.mEpsilon = false;
+    return ret;
+  }
+  static Self range(Int begin, Int end)
+  {
+    Self ret;
+    for(Int i = 0; i != end; ++i)
+      ret.data[i] = true;
     ret.mEpsilon = false;
     return ret;
   }

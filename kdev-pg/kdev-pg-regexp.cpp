@@ -28,6 +28,11 @@
 using namespace std;
 using namespace tr1;
 
+// TODO: Lookahead operator
+// TODO: Line-End etc.
+// TODO: On-context-switch etc.
+// TODO: Deactivate/activate rules (have to keep the bitsets of possible final states)
+
 
 #define NC(...) __VA_ARGS__
 
@@ -335,10 +340,18 @@ public:
         cout << endl;
     }
     /**
-     * Accepts the empty word.
+     * Accepts no words.
      */
-    NFA() : nstates(1), rules(1), accept(0)
+    NFA() : nstates(0), rules(0), accept(0)
     {}
+    static NFA<CharSet> emptyWord()
+    {
+      NFA<CharSet> ret;
+      ret.nstates = 1;
+      ret.rules.resize(1);
+      //ret.accept = 0;
+      return ret;
+    }
     NFA(const NFA<CharSet>& o) : nstates(o.nstates), rules(o.rules), accept(o.accept)
     {}
     NFA(const CharSet& set) : nstates(2), rules(2), accept(1)
@@ -709,6 +722,8 @@ void GDFA::setActions(const std::vector< QString >& actions)
 #undef macro
 }
 
+#define UNINITIALIZED_GNFA(name) char _gnfa_##name##_buff[sizeof(GNFA)]; GNFA& name = brutal_cast<GNFA&>(_gnfa_##name##_buff[0]);
+
 GDFA::GDFA()
 {
 #define macro(x) x = new typeof(*x);
@@ -834,7 +849,7 @@ GDFA GNFA::dfa()
 GNFA GNFA::keyword(const QString& str)
 {
 #define macro(x) \
-  GNFA r; \
+  GNFA r = GNFA::emptyWord(); \
   QByteArray qba(str.toUtf8()); \
   typedef typeof(*r.x) T; \
   Codec2FromUtf8Iterator<T::CharSet::codec>::Result iter(qba); \
@@ -849,8 +864,8 @@ GNFA GNFA::keyword(const QString& str)
 
 GNFA GNFA::collection(const QString& str)
 {
+  UNINITIALIZED_GNFA(r);
 #define macro(x) \
-  GNFA r; \
   QByteArray qba(str.toUtf8()); \
   typedef typeof(*r.x) T; \
   Codec2FromUtf8Iterator<T::CharSet::codec>::Result iter(qba); \
@@ -865,11 +880,108 @@ GNFA GNFA::collection(const QString& str)
 
 GNFA GNFA::anyChar()
 {
-  GNFA ret;
+  // utf16 and utf8 support missing
+  UNINITIALIZED_GNFA(ret);
 #define macro(x) typedef typeof(*x) T; ret.x = new T(T::CharSet::fullSet());
   EACH_TYPE(macro)
 #undef macro
+  // remove the surrogate range
+  if(GDFA::type == GDFA::TUcs2 || GDFA::type == GDFA::TUtf16)
+  {
+    *ret.t2 ^= NFA<TableCharSet<Ucs2> >(TableCharSet<Ucs2>::range(0xd800, 0xe000));
+  }
+  else if(GDFA::type == GDFA::SUcs2 || GDFA::type == GDFA::SUtf16)
+  {
+    *ret.s2 ^= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xd800, 0xe000));
+  }
+  // add surrogate pairs
+  if(GDFA::type == GDFA::SUtf16)
+  {
+    NFA<SeqCharSet<Ucs2> > surrpairs(SeqCharSet<Ucs2>::range(0xd800, 0xdc00));
+    surrpairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xdc00, 0xe00));
+  }
+  if(GDFA::type == GDFA::TUtf16)
+  {
+    NFA<TableCharSet<Ucs2> > surrpairs(TableCharSet<Ucs2>::range(0xd800, 0xdc00));
+    surrpairs <<= NFA<TableCharSet<Ucs2> >(TableCharSet<Ucs2>::range(0xdc00, 0xe00));
+  }
+  // all valid utf-8 values
+  if(GDFA::type == GDFA::SUtf8)
+  {
+    NFA<SeqCharSet<Latin1> > lowerBytes(SeqCharSet<Latin1>::range(0x80, 0xc0));
+    NFA<SeqCharSet<Latin1> > ascii(SeqCharSet<Latin1>::range(0, 0x7f));
+    NFA<SeqCharSet<Latin1> > topOf2(SeqCharSet<Latin1>::range(0xc0, 0xe0));
+    NFA<SeqCharSet<Latin1> > topOf3(SeqCharSet<Latin1>::range(0xe0, 0xf0));
+    NFA<SeqCharSet<Latin1> > topOf4(SeqCharSet<Latin1>::range(0xf0, 0x100));
+    *ret.s1 = (ascii |= (topOf2 <<= lowerBytes) |= ((topOf3 <<= lowerBytes) <<= lowerBytes) |= (((topOf4 <<= lowerBytes) <<= lowerBytes) <<= lowerBytes));
+  }
+  if(GDFA::type == GDFA::TUtf8)
+  {
+    NFA<TableCharSet<Latin1> > lowerBytes(TableCharSet<Latin1>::range(0x80, 0xc0));
+    NFA<TableCharSet<Latin1> > ascii(TableCharSet<Latin1>::range(0, 0x7f));
+    NFA<TableCharSet<Latin1> > topOf2(TableCharSet<Latin1>::range(0xc0, 0xe0));
+    NFA<TableCharSet<Latin1> > topOf3(TableCharSet<Latin1>::range(0xe0, 0xf0));
+    NFA<TableCharSet<Latin1> > topOf4(TableCharSet<Latin1>::range(0xf0, 0x100));
+    *ret.t1 = (ascii |= (topOf2 <<= lowerBytes) |= ((topOf3 <<= lowerBytes) <<= lowerBytes) |= (((topOf4 <<= lowerBytes) <<= lowerBytes) <<= lowerBytes));
+  }
   return ret;
+}
+
+GNFA GNFA::emptyWord()
+{
+  UNINITIALIZED_GNFA(ret);
+#define macro(x) typedef typeof(*ret.x) T; ret.x = new T(T::emptyWord());
+  EACH_TYPE(macro)
+#undef macro
+  return ret;
+}
+
+GNFA GNFA::range(quint32 begin, quint32 end)
+{
+  // Utf32: take it
+  // Latin1, Ascii, Ucs2: cut it
+  // Utf8, Utf32: complicate
+  UNINITIALIZED_GNFA(res);
+  switch(GDFA::type)
+  {
+    case GDFA::SAscii: { res.s0 = new NFA<SeqCharSet<Ascii> >(begin >= 128 ? SeqCharSet<Ascii>::emptySet() : SeqCharSet<Ascii>::range(begin, min((quint32)128, end))); } break;
+    case GDFA::SLatin1: { res.s1 = new NFA<SeqCharSet<Latin1> >(begin >= 256 ? SeqCharSet<Latin1>::emptySet() : SeqCharSet<Latin1>::range(begin, min((quint32)256, end))); } break;
+    case GDFA::SUtf8: { 
+      
+    } break;
+    case GDFA::SUcs2: {
+      res.s2 = new NFA<SeqCharSet<Ucs2> >(begin >= 65536 ? SeqCharSet<Ucs2>::emptySet() : SeqCharSet<Ucs2>::range(begin, min((quint32)65536, end)).difference(SeqCharSet<Ucs2>::range(0xd800, 0xe000)));
+    } break;
+    case GDFA::SUtf16: { 
+      if(end < 65536)
+      {
+        if(begin <= 0xd800)
+        {
+          if(end > 0xe000)
+          {
+            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(begin, 0xd800).getUnion(SeqCharSet<Ucs2>::range(0xe000, end)));
+          }
+          else
+          {
+            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(begin, min(end, (quint32)0xd800)));
+          }
+        }
+      }
+    } break;
+    case GDFA::SUcs4: { res.s3 = new NFA<SeqCharSet<Ucs4> >(SeqCharSet<Ucs4>::range(begin, end)); } break;
+    case GDFA::TAscii: { res.t0 = new NFA<TableCharSet<Ascii> >(begin >= 128 ? TableCharSet<Ascii>::emptySet() : TableCharSet<Ascii>::range(begin, min((quint32)128, end))); } break;
+    case GDFA::TLatin1: { res.t1 = new NFA<TableCharSet<Latin1> >(begin >= 256 ? TableCharSet<Latin1>::emptySet() : TableCharSet<Latin1>::range(begin, min((quint32)256, end))); } break;
+    case GDFA::TUtf8: { 
+      
+    } break;
+    case GDFA::TUcs2: {
+      res.t2 = new NFA<TableCharSet<Ucs2> >(begin >= 65536 ? TableCharSet<Ucs2>::emptySet() : TableCharSet<Ucs2>::range(begin, min((quint32)65536, end)).difference(TableCharSet<Ucs2>::range(0xd800, 0xe000)));
+    }
+    case GDFA::TUtf16: {
+      
+    } break;
+    default: exit(-1);
+  }
 }
 
 typeof(GDFA::type) GDFA::type = GDFA::SUcs2;

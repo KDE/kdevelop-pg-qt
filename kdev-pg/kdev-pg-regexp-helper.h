@@ -418,7 +418,7 @@ public:
   static Self range(Int begin, Int end)
   {
     Self ret;
-    for(Int i = 0; i != end; ++i)
+    for(Int i = begin; i != end; ++i)
       ret.data[i] = true;
     ret.mEpsilon = false;
     return ret;

@@ -103,7 +103,7 @@ public:
   static GNFA keyword(const QString& str);
   static GNFA collection(const QString& str);
   static GNFA emptyWord();
-  static GNFA range(quint32 begin, quint32 end);
+  static GNFA range(constquint32 begin, const quint32 end);
 };
 
 }

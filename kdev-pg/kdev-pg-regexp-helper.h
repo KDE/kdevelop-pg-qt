@@ -80,7 +80,8 @@ public:
     {
       Self ret;
       ret.mEpsilon = false;
-      ret.data.push_back(make_pair(begin, end));
+      if(begin < end)
+        ret.data.push_back(make_pair(begin, end));
       return ret;
     }
     static Self emptySet()
@@ -360,8 +361,10 @@ ostream& operator<<(ostream &o, const SeqCharSet<codec> &cs)
 {
   typedef typename Codec2Int<codec>::Result Int;
   o << "[u" << 8*sizeof(Int);
+  if(cs.mEpsilon)
+    o << "ε";
   foreach(NC(pair<Int, Int> p), cs.data)
-    o << ", " << QChar(p.first).toLatin1() << "-" << QChar(p.second).toLatin1();
+    o << ", " << QChar((uint)p.first).toLatin1() << "-" << QChar((uint)p.second).toLatin1();
   o << "]";
   return o;
 }
@@ -418,8 +421,9 @@ public:
   static Self range(Int begin, Int end)
   {
     Self ret;
-    for(Int i = begin; i != end; ++i)
-      ret.data[i] = true;
+    if(begin < end)
+      for(Int i = begin; i != end; ++i)
+        ret.data[i] = true;
     ret.mEpsilon = false;
     return ret;
   }
@@ -479,10 +483,10 @@ template<CharEncoding codec>
 ostream& operator<<(ostream &o, const TableCharSet<codec> &cs)
 {
   typedef typename Codec2Int<codec>::Result Int;
-  o << "[t" << 8*sizeof(Int) << ":";
+  o << "[t" << 8*sizeof(Int) << (cs.mEpsilon ? "ε" : ":");
   for(size_t i = 0; i != cs.data.size(); ++i)
     if(cs.data[i])
-      o << QChar(i).toLatin1();
+      o << QChar((uint)i).toLatin1();
   o << "]";
   return o;
 }

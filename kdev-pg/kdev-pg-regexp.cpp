@@ -95,7 +95,7 @@ public:
       CharSetCondition<CharSet> csc;
       for(size_t i = 0; i != nstates; ++i)
       {
-        str << "\n_state_" + QString::number(i) + ": chr = NEXT_CHR; ";
+        str << "\n_state_" + QString::number(i) + ": NEXT_CHR(chr); ";
         csc(str, rules[i], innerActions);
       }
       str << "_end:\nplain() = lpos;\nswitch(lstate) {\n";
@@ -262,6 +262,7 @@ public:
     DFA<CharSet>& minimize()
     {
         eliminateUnarrivableStates();
+        eliminateInactiveStates();
         vector<vector<size_t> > grinv(numActions + 1);
         for(size_t i = 0; i != nstates; ++i)
             grinv[(accept[i] - accept[0] + grinv.size()) % grinv.size()].push_back(i);
@@ -342,14 +343,14 @@ public:
     /**
      * Accepts no words.
      */
-    NFA() : nstates(2), rules(2), accept(1)
+    NFA() : nstates(1), rules(1), accept(0)
     {}
     static NFA<CharSet> emptyWord()
     {
       NFA<CharSet> ret;
       ret.nstates = 1;
       ret.rules.resize(1);
-      //ret.accept = 0;
+      ret.accept = 0;
       return ret;
     }
     NFA(const NFA<CharSet>& o) : nstates(o.nstates), rules(o.rules), accept(o.accept)
@@ -614,7 +615,16 @@ public:
     }
     NFA<CharSet>& negate()
     {
+      qDebug() << nstates << accept;
+      for(auto i = rules.begin(); i != rules.end(); ++i)
+      {
+        qDebug() << (i-rules.begin()) << ":";
+        for(auto j = i->begin(); j != i->end(); ++j)
+          cerr << j->first << j->second;
+        qDebug() << endl;
+      }
       DFA<CharSet> tmp = dfa();
+//       tmp.minimize();
       tmp.rules.push_back(vector< pair<CharSet, size_t> >());
       tmp.rules.back().push_back(make_pair(CharSet::fullSet(), tmp.nstates));
       ++tmp.nstates;
@@ -634,6 +644,7 @@ public:
         for(auto j = i->begin(); j != i->end(); ++j)
         {
           CharSet tmp = j->first;
+          cout << tmp << endl;
           tmp.negate();
           successSet.intersect(tmp);
         }
@@ -647,7 +658,7 @@ public:
       {
         qDebug() << (i-rules.begin()) << ":";
         for(auto j = i->begin(); j != i->end(); ++j)
-          qDebug() << j->first.epsilon() << j->second;
+          cerr << j->first << j->second;
         qDebug() << endl;
       }
       return *this;
@@ -864,14 +875,14 @@ GNFA GNFA::keyword(const QString& str)
 
 GNFA GNFA::collection(const QString& str)
 {
-  UNINITIALIZED_GNFA(r);
+  GNFA r;
 #define macro(x) \
   QByteArray qba(str.toUtf8()); \
   typedef typeof(*r.x) T; \
   Codec2FromUtf8Iterator<T::CharSet::codec>::Result iter(qba); \
   while(iter.hasNext()) \
   { \
-    *r.x |= (typeof(*r.x))(iter.next()); \
+    *r.x |= T(iter.next()); \
   } \
   return r;
   EACH_TYPE(macro)
@@ -886,11 +897,11 @@ GNFA GNFA::anyChar()
   EACH_TYPE(macro)
 #undef macro
   // remove the surrogate range
-  if(GDFA::type == GDFA::TUcs2 || GDFA::type == GDFA::TUtf16)
+  if(/*GDFA::type == GDFA::TUcs2 || */GDFA::type == GDFA::TUtf16)
   {
     *ret.t2 ^= NFA<TableCharSet<Ucs2> >(TableCharSet<Ucs2>::range(0xd800, 0xe000));
   }
-  else if(GDFA::type == GDFA::SUcs2 || GDFA::type == GDFA::SUtf16)
+  else if(/*GDFA::type == GDFA::SUcs2 || */GDFA::type == GDFA::SUtf16)
   {
     *ret.s2 ^= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xd800, 0xe000));
   }
@@ -936,7 +947,125 @@ GNFA GNFA::emptyWord()
   return ret;
 }
 
-GNFA GNFA::range(const quint32 begin, const quint32 end)
+template<template<CharEncoding> class CharSet, typename... T>
+NFA<CharSet<Latin1> > getUtf8Tuples(T... args);
+
+template<template<CharEncoding> class CharSet, typename... Args>
+struct GetUtf8Tuples
+{
+  static_assert((sizeof...(Args)) == 0 || (sizeof...(Args)) != 0, "GetUtf8Tuples takes only uchars");
+};
+
+template<template<CharEncoding> class CharSet>
+struct GetUtf8Tuples<CharSet, uchar, uchar>
+{
+  static NFA<CharSet<Latin1> > exec(uchar from0, uchar to0)
+  {
+    return NFA<CharSet<Latin1> >(CharSet<Latin1>::range(from0, to0));
+  }
+};
+
+template<template<CharEncoding> class CharSet, typename... Args>
+struct GetUtf8Tuples<CharSet, uchar, uchar, uchar, uchar, Args...>
+{
+  static NFA<CharSet<Latin1> > exec(uchar from0, uchar to0, uchar from1, uchar to1, Args... rest)
+  {
+    if(from0 == to0)
+    {
+      auto tuples = NFA<CharSet<Latin1> >(CharSet<Latin1>(from0));
+      tuples <<= getUtf8Tuples<CharSet>(from1, to1, rest...);
+      return tuples;
+    }
+    else
+    {
+      NFA<CharSet<Latin1> > tuples;
+      auto firstTuples = NFA<CharSet<Latin1> >(CharSet<Latin1>(from0));
+      firstTuples <<= getUtf8Tuples<CharSet>(from1, uchar(0xc0 + (1<<6)), rest...);
+      tuples |= firstTuples;
+      auto midTuples = NFA<CharSet<Latin1> >(CharSet<Latin1>::range(from0 + 1, to0));
+      midTuples <<= getUtf8Tuples<CharSet>(uchar(0xc0), uchar(0xc0 + (1<<6)), rest...);
+      tuples |= midTuples;
+      auto lastTuples = NFA<CharSet<Latin1> >(CharSet<Latin1>(to0));
+      lastTuples <<= getUtf8Tuples<CharSet>(uchar(0xc0), to1, rest...);
+      tuples |= lastTuples;
+      return tuples;
+    }
+  }
+};
+
+template<template<CharEncoding> class CharSet, typename... T>
+NFA<CharSet<Latin1> > getUtf8Tuples(T... args)
+{
+  return GetUtf8Tuples<CharSet, T...>::exec(args...);
+}
+
+template<template<CharEncoding> class CharSet>
+void addUtf8Range(NFA<CharSet<Latin1> >& res, quint32 begin, quint32 end)
+{
+  uchar from0, from1, from2, from3, to0, to1, to2, to3;
+  if(begin < 0x80)
+  {
+    if(end <= 0x80)
+    {
+      res |= getUtf8Tuples<CharSet>(uchar(begin), uchar(end));
+      return;
+    }
+    res |= getUtf8Tuples<CharSet>(uchar(begin), uchar(0x80));
+    begin = 0x80;
+  }
+  if(begin < 0x800)
+  {
+    from1 = (begin & 0x3ff) + 0x80;
+    from0 = (begin >> 6) + 0xc0;
+    uchar to0, to1;
+    if(end <= 0x800)
+    {
+      to1 = (end & 0x3ff) + 0x80;
+      to0 = (end >> 6) + 0xc0;
+    }
+    else
+    {
+      to1 = 0x80 + 0x3ff;
+      to0 = 0xc0 + (1<<6);
+    }
+    res |= getUtf8Tuples<CharSet>(from0, to0, from1, to1);
+    if(end <= 0x800)
+      return;
+    begin = 0x800;
+  }
+  if(begin < 0x10000)
+  {
+    from2 = (begin & 0x3ff) + 0x80;
+    from1 = ((begin >> 6) & 0x3ff) + 0x80;
+    from0 = (begin >> 12) + 0xe0;
+    if(end <= 0x10000)
+    {
+      to2 = (end & 0x3ff) + 0x80;
+      to1 = ((end >> 6) & 0x3ff) + 0x80;
+      to0 = (end >> 12) + 0xe0;
+    }
+    else
+    {
+      to2 = to1 = 0x80 + 0x3ff;
+      to0 = 0xe0 + (1 << 5);
+    }
+    res |= getUtf8Tuples<CharSet>(from0, to0, from1, to1, from2, to2);
+    if(end <= 0x10000)
+      return;
+    begin = 0x10000;
+  }
+  from3 = (begin & 0x3ff) + 0x80;
+  from2 = ((begin >> 6) & 0x3ff) + 0x80;
+  from1 = ((begin >> 12) & 0x3ff) + 0x80;
+  from0 = (begin >> 18) + 0xf0;
+  to3 = (end & 0x3ff) + 0x80;
+  to2 = ((end >> 6) & 0x3ff) + 0x80;
+  to1 = ((end >> 12) & 0x3ff) + 0x80;
+  to0 = (end >> 18) + 0xf0;
+  res |= getUtf8Tuples<CharSet>(from0, to0, from1, to1, from2, to2, from3, to3);
+}
+
+GNFA GNFA::range(quint32 begin, quint32 end)
 {
   // Utf32: take it
   // Latin1, Ascii, Ucs2: cut it
@@ -946,11 +1075,12 @@ GNFA GNFA::range(const quint32 begin, const quint32 end)
   {
     case GDFA::SAscii: { res.s0 = new NFA<SeqCharSet<Ascii> >(begin >= 128 ? SeqCharSet<Ascii>::emptySet() : SeqCharSet<Ascii>::range(begin, min((quint32)128, end))); } break;
     case GDFA::SLatin1: { res.s1 = new NFA<SeqCharSet<Latin1> >(begin >= 256 ? SeqCharSet<Latin1>::emptySet() : SeqCharSet<Latin1>::range(begin, min((quint32)256, end))); } break;
-    case GDFA::SUtf8: { 
-      
+    case GDFA::SUtf8: {
+      res.s1 = new NFA<SeqCharSet<Latin1> >();
+      addUtf8Range(*res.s1, begin, end);
     } break;
     case GDFA::SUcs2: {
-      res.s2 = new NFA<SeqCharSet<Ucs2> >(begin >= 65536 ? SeqCharSet<Ucs2>::emptySet() : SeqCharSet<Ucs2>::range(begin, min((quint32)65536, end)).difference(SeqCharSet<Ucs2>::range(0xd800, 0xe000)));
+      res.s2 = new NFA<SeqCharSet<Ucs2> >(begin >= 65536 ? SeqCharSet<Ucs2>::emptySet() : SeqCharSet<Ucs2>::range(begin, min((quint32)65536, end))/*.difference(SeqCharSet<Ucs2>::range(0xd800, 0xe000))*/);
     } break;
     case GDFA::SUtf16: {
       if(end >= 0x110000 || begin >= 0x110000)
@@ -1089,11 +1219,12 @@ GNFA GNFA::range(const quint32 begin, const quint32 end)
     case GDFA::SUcs4: { res.s3 = new NFA<SeqCharSet<Ucs4> >(SeqCharSet<Ucs4>::range(begin, end)); } break;
     case GDFA::TAscii: { res.t0 = new NFA<TableCharSet<Ascii> >(begin >= 128 ? TableCharSet<Ascii>::emptySet() : TableCharSet<Ascii>::range(begin, min((quint32)128, end))); } break;
     case GDFA::TLatin1: { res.t1 = new NFA<TableCharSet<Latin1> >(begin >= 256 ? TableCharSet<Latin1>::emptySet() : TableCharSet<Latin1>::range(begin, min((quint32)256, end))); } break;
-    case GDFA::TUtf8: { 
-      
+    case GDFA::TUtf8: {
+      res.t1 = new NFA<TableCharSet<Latin1> >();
+      addUtf8Range(*res.t1, begin, end);
     } break;
     case GDFA::TUcs2: {
-      res.t2 = new NFA<TableCharSet<Ucs2> >(begin >= 65536 ? TableCharSet<Ucs2>::emptySet() : TableCharSet<Ucs2>::range(begin, min((quint32)65536, end)).difference(TableCharSet<Ucs2>::range(0xd800, 0xe000)));
+      res.t2 = new NFA<TableCharSet<Ucs2> >(begin >= 65536 ? TableCharSet<Ucs2>::emptySet() : TableCharSet<Ucs2>::range(begin, min((quint32)65536, end))/*.difference(TableCharSet<Ucs2>::range(0xd800, 0xe000))*/);
     }
     case GDFA::TUtf16: {
       
@@ -1101,6 +1232,7 @@ GNFA GNFA::range(const quint32 begin, const quint32 end)
     default: exit(-1);
   }
   // TODO: warning if empty
+  return res;
 }
 
 typeof(GDFA::type) GDFA::type = GDFA::SUcs2;

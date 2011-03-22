@@ -555,7 +555,7 @@ void generateLexer()
     s << "}" << endl << endl
             
       << "#define CURR_POS Iterator::plain()\n"
-      << "#define NEXT_CHR __extension__( { if(!Iterator::hasNext()) goto _end; Iterator::next(); } )\n";
+      << "#define NEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n";
     
 #define LEXER_CORE_IMPL(name, state) \
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \

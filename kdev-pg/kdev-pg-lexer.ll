@@ -33,6 +33,7 @@ void appendLineBuffer();
 void newline();
 void yyerror(const char* );
 extern int yyLine;
+extern int currentOffset;
 
 namespace KDevPG
 {
@@ -63,10 +64,11 @@ namespace KDevPG
       QByteArray tmp("\n\01!ASIgnore\"!!\n# "); \
       tmp += QString::number(firstCodeLine).toLocal8Bit(); \
       tmp += " \"" + KDevPG::fileInfo.absoluteFilePath().toLocal8Bit() + "\" 1\n"; \
-      size_t memlen = tmp.size() + len + 16 + 1; \
+      size_t memlen = tmp.size() + firstCodeColumn + len + 16 + 1; \
       yylval.str = (char*) calloc(memlen, sizeof(char)); \
       strncpy(yylval.str, tmp.data(), tmp.size()); \
-      strncpy(yylval.str + tmp.size(), yytext, len); \
+      memset(yylval.str + tmp.size(), ' ', firstCodeColumn); \
+      strncpy(yylval.str + tmp.size() + firstCodeColumn, yytext, len); \
       strncpy(yylval.str + memlen - 17, "\n\01!AS/Ignore\"!!\n", 16); \
       yylval.str[memlen-1] = '\0'; \
     }
@@ -83,6 +85,7 @@ namespace {
   RulePosition rulePosition = RuleBody;
   int openBrackets; // for rule arguments and regexp usage
   int firstCodeLine; // where the current code-block begins
+  int firstCodeColumn;
 }
 
 %}
@@ -226,7 +229,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
   "@"                     return '@';
   "."                     return '.';
   "->"                    return T_ARROW;
-  "[:"                    firstCodeLine = yyLine; BEGIN(CODE);
+  "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
   [_A-Z]*                 COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_TERMINAL : T_UNQUOTED_STRING;
   [_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_IDENTIFIER : T_UNQUOTED_STRING;
   {Whitespace}            /* skip */
@@ -247,7 +250,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 "]" {
     openBrackets--;
     if (openBrackets < 0) {
-      COPY_CODE_TO_YYLVAL(yytext,yyleng-1); /* cut off the trailing bracket */
+      COPY_CODE_TO_YYLVAL(yytext,(yyleng-1)); /* cut off the trailing bracket */
       BEGIN(INITIAL);
       return T_RULE_ARGUMENTS;
     }
@@ -304,13 +307,13 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
 }
 
 
-"[:"                    firstCodeLine = yyLine; BEGIN(CODE);
+"[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 <CODE>{
 {Newline}               newline(); yymore();
 [^:\n\r]*               yymore(); /* gather everything that's not a colon, and append what comes next */
 ":"+[^:\]\n\r]*         yymore(); /* also gather colons that are not followed by colons or newlines */
 ":]" {
-    COPY_CODE_TO_YYLVAL(yytext, yyleng-2); /* cut off the trailing stuff */
+    COPY_CODE_TO_YYLVAL(yytext, (yyleng-2)); /* cut off the trailing stuff */
     if(rulePosition == RuleLexer)
       BEGIN(RULE_LEXER);
     else

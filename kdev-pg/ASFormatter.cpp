@@ -291,10 +291,10 @@ string ASFormatter::nextLine()
     #define next \
         if(sourceIterator->hasMoreLines()) \
         { \
+            ++inLineNumber ; \
             currentLine = sourceIterator->nextLine(); \
             spacePadNum = 0; \
             charNum = 0; \
-            ++inLineNumber; \
             if(currentLine.size() == 0) \
                 currentLine = " "; \
             \
@@ -338,6 +338,7 @@ string ASFormatter::nextLine()
             string ret = "# ";
             ret += QString::number(inLineNumber+2).toAscii().data();
             ret += " \"" + fileName + "\" 2";
+            --inLineNumber;
             next
             if(hasMoreLines())
               nextLine(); // there is a mysterious line, I have to eat
@@ -354,7 +355,7 @@ string ASFormatter::nextLine()
     {
         ignoreStuff = true;
         string ret = "# ";
-        ret += QString::number(inLineNumber+2).toAscii().data();
+        ret += QString::number(inLineNumber+4).toAscii().data();
         ret += " \"" + fileName + "\"";
         next
         return ret;
@@ -1317,7 +1318,6 @@ bool ASFormatter::getNextChar()
 		{
 			currentLine = sourceIterator->nextLine();
 			spacePadNum = 0;
-			inLineNumber++;
 
 			if (currentLine.length() == 0)
 			{
@@ -1446,6 +1446,7 @@ void ASFormatter::appendSpaceAfter()
  */
 void ASFormatter::breakLine()
 {
+	++inLineNumber;
 	isLineReady = true;
 	isInLineBreak = false;
 	spacePadNum = 0;

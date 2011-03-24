@@ -18,7 +18,8 @@ int main()
   FooLisp::Lexer lex(iter);
   qDebug() << iter.hasNext();
   FooLisp::Parser parser;
-  parser.setMemoryPool(new KDevPG::MemoryPool);
+  KDevPG::MemoryPool pool;
+  parser.setMemoryPool(&pool);
   parser.setTokenStream(&lex);
   int kind;
   qDebug() << iter.hasNext();

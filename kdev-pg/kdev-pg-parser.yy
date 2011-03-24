@@ -71,9 +71,9 @@ QString r;
 %token T_PAREN
 %token T_INLINE
 %token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
-%token T_NAMED_REGEXP T_CONTINUE
+%token T_NAMED_REGEXP T_CONTINUE T_RANGE
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP T_RANGE
 %type<str> name code_opt rule_arguments_opt priority assoc opt_lexer_action
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
@@ -201,9 +201,9 @@ lexer_declaration_rest
             { KDevPG::globalSystem.regexpById[$4] = $1;
             } lexer_declaration_rest
     | regexp code_opt opt_lexer_action ';'
-            { qDebug() << QString(r); QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+            { QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
-                s); qDebug() << s;
+                s);
             } lexer_declaration_rest
     | /* empty */
     ;
@@ -311,6 +311,52 @@ aregexp7
     | '[' aregexp ']'       { $$ = $2; }
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
     | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QString::fromUtf8($1)))); }
+    | T_RANGE               {
+      quint32 begin, end;
+      int i = 0;
+      #define SET_CHAR(str, i, x) \
+      x = 0; \
+      if(str[i] == '\\') \
+      { \
+        if(str[i+1] == 'z') \
+        { \
+          for(i += 2; str[i] >= '0' && str[i] <= '9'; ++i, x *= 10) \
+            x += (str[i] - '0'); \
+          x /= 10; \
+        } \
+        else if(str[i+1] == 'o') \
+        {/*oct*/ \
+          \
+        } \
+        else \
+        { \
+          for(++i; ; ++i, x *= 16) \
+          { \
+            if(str[i] >= 'a' && str[i] <= 'f') \
+              x += (str[i] - 'a' + 10); \
+            else if(str[i] >= 'A' && str[i] <= 'F') \
+              x += (str[i] - 'A' + 10); \
+            else if(str[i] >= '0' && str[i] <= '9') \
+              x += (str[i] - '0'); \
+            else \
+              break; \
+          } \
+          x /= 16; \
+        } \
+      } \
+      else \
+      { \
+        x = str[i]; \
+        ++i; \
+      }
+      SET_CHAR($1, i, begin)
+      assert($1[i] == '-');
+      ++i;
+      SET_CHAR($1, i, end)
+      KDevPG::checkOut << "RANGE " << begin << " " << end << endl;
+      assert($1[i] == '\0');
+      $$ = new KDevPG::GNFA(KDevPG::GNFA::range(begin, end+1));
+    }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(QString::fromAscii($1))); }
     | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
     ;

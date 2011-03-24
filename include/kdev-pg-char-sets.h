@@ -172,7 +172,6 @@ struct Codec2Size<Utf16>
 template<>
 struct Codec2Size<Ucs4>
 {
-//   static_assert(false, "Ucs4-tables are too big");
   enum { value = 0x110000 }; // You should not do this!!
 };
 

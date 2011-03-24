@@ -47,6 +47,9 @@ template<CharEncoding enc> class TableCharSet;
 
 // General
 
+/**
+ * Deterministic finite automaton
+ */
 class GDFA
 {
   union
@@ -63,15 +66,21 @@ class GDFA
   friend class GNFA;
 public:
   static enum { SAscii, SLatin1, SUtf8, SUcs2, SUtf16, SUcs4, TAscii, TLatin1, TUtf8, TUcs2, TUtf16/*, TUcs4*/ } type;
+  /// Generation of the core state-machine
   void codegen(QTextStream& str);
+  /// Minimization of the automaton
   GDFA& minimize();
+  /// Code used for the detected tokens in the generated code
   void setActions(const vector<QString>& actions);
-  GDFA();
   GDFA(const GDFA& o);
   ~GDFA();
   GDFA& operator=(const GDFA& o);
+private:
+  /// Has to be generated using a GNFA
+  GDFA();
 };
 
+/// Non-deterministic finite automaton
 class GNFA
 {
   union
@@ -86,23 +95,36 @@ class GNFA
 //     NFA<TableCharSet<Ucs4> > *t3;
   };
 public:
+  /// Empty set
   GNFA();
   GNFA(const GNFA& o);
   ~GNFA();
   GNFA& operator=(const GNFA& o);
   GNFA(const std::vector<GNFA*>& init);
+  /// Intersection
   GNFA& operator&=(const GNFA& o);
+  /// Concatenation
   GNFA& operator<<=(const GNFA& o);
+  /// Union
   GNFA& operator|=(const GNFA& o);
+  /// Difference
   GNFA& operator^=(const GNFA& o);
+  /// Kleene-star
   GNFA& operator*();
+  /// Complement
   GNFA& negate();
+  /// DFA
   GDFA dfa();
   
+  /// Accepts any single character
   static GNFA anyChar();
+  /// Accepts the given word
   static GNFA keyword(const QString& str);
+  /// Accepts any of the chars in the string
   static GNFA collection(const QString& str);
+  /// Accepts only the empty word
   static GNFA emptyWord();
+  /// Accepts any character between begin and end (including begin, excluding end)
   static GNFA range(quint32 begin, quint32 end);
 };
 

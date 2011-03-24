@@ -93,6 +93,7 @@ namespace {
 Whitespace  [ \f\t]
 Newline     "\r\n"|\r|\n
 String      ["]([^\r\n\"]|[\\][^\r\n])*["]
+Char        [_a-zA-Z0-9]|\\[1-9a-fA-F][0-9a-fA-F]{0,5}|\\o[1-7][0-7]*|\\z[1-9][0-9]*|\\0
 
 %x CODE
 %x PARSERCLASS
@@ -210,8 +211,8 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
   "\\\x20"                ESCAPE_CHARACTER(' ')
   "\\".                   ++yytext; COPY_CODE_TO_YYLVAL(yytext,1); return T_STRING;
   {Newline}               newline();
-  "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          qDebug() << "ococo"; ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
-  ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; qDebug() << "return to body"; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
+  "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
+  ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
   ";"+                    return ';';
   ":"                     return ';';
   "["                     ++openBrackets; return '[';
@@ -221,7 +222,7 @@ String      ["]([^\r\n\"]|[\\][^\r\n])*["]
   "?"                     return '?';
   "|"                     return '|';
   "^"                     return '^';
-  "-"                     return '-'; /* TODO: implementation */
+  {Char}"-"{Char}         COPY_TO_YYLVAL(yytext,yyleng); return T_RANGE;
   "&"                     return '&';
   "~"                     return '~';
   "*"                     return '*';

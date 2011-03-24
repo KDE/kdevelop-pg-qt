@@ -28,6 +28,16 @@ namespace KDevPG
 template<CharEncoding codec>
 class SeqCharSet;
 
+inline void printChar(ostream& o, uint x)
+{
+  auto flags = o.flags();
+  if(x >= 32 && x <= 127)
+    o << '"' << (char)x << '"';
+  else
+    o << hex << x;
+  o.flags(flags);
+}
+
 template<CharEncoding codec>
 ostream& operator<<(ostream&, const SeqCharSet<codec>&);
 
@@ -364,7 +374,12 @@ ostream& operator<<(ostream &o, const SeqCharSet<codec> &cs)
   if(cs.mEpsilon)
     o << "ε";
   foreach(NC(pair<Int, Int> p), cs.data)
-    o << ", " << QChar((uint)p.first).toLatin1() << "-" << QChar((uint)p.second).toLatin1();
+  {
+    o << ", ";
+    printChar(o, p.first);
+    o << "-";
+    printChar(o, (uint)p.second-1);
+  }
   o << "]";
   return o;
 }
@@ -486,7 +501,7 @@ ostream& operator<<(ostream &o, const TableCharSet<codec> &cs)
   o << "[t" << 8*sizeof(Int) << (cs.mEpsilon ? "ε" : ":");
   for(size_t i = 0; i != cs.data.size(); ++i)
     if(cs.data[i])
-      o << QChar((uint)i).toLatin1();
+      printChar(o, (uint)i);
   o << "]";
   return o;
 }

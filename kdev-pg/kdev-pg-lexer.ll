@@ -93,7 +93,7 @@ namespace {
 Whitespace  [ \f\t]
 Newline     "\r\n"|\r|\n
 String      ["]([^\r\n\"]|[\\][^\r\n])*["]
-Char        [_a-zA-Z0-9]|\\[1-9a-fA-F][0-9a-fA-F]{0,5}|\\o[1-7][0-7]*|\\z[1-9][0-9]*|\\0
+Char        [_a-zA-Z0-9]|\\x[0-9a-fA-F]{1,6}|\\o[0-7][0-7]*|\\d[0-9]{1,7}|\\0
 
 %x CODE
 %x PARSERCLASS
@@ -211,7 +211,7 @@ Char        [_a-zA-Z0-9]|\\[1-9a-fA-F][0-9a-fA-F]{0,5}|\\o[1-7][0-7]*|\\z[1-9][0
   "\\\x20"                ESCAPE_CHARACTER(' ')
   "\\".                   ++yytext; COPY_CODE_TO_YYLVAL(yytext,1); return T_STRING;
   {Newline}               newline();
-  "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
+  "{"[a-zA-Z_\-][a-zA-Z_0-9\-]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
   ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
   ";"+                    return ';';
   ":"                     return ';';
@@ -233,6 +233,7 @@ Char        [_a-zA-Z0-9]|\\[1-9a-fA-F][0-9a-fA-F]{0,5}|\\o[1-7][0-7]*|\\z[1-9][0
   "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
   [_A-Z]*                 COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_TERMINAL : T_UNQUOTED_STRING;
   [_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_IDENTIFIER : T_UNQUOTED_STRING;
+  \\[1-9a-fA-F][0-9a-fA-F]{0,5}|\\o[1-7][0-7]*|\\z[1-9][0-9]*|\\0   return T_UNQUOTED_STRING;
   {Whitespace}            /* skip */
   {String}                yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
   /*TODO: escape characters

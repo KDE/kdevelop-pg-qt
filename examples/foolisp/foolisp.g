@@ -18,7 +18,8 @@
 --   "0" | ( {digit}^"0" ) {digit}*    NUMBER ;
 --   [{ASCII}&{LETTER}\-{digit}]+ IDENTIFIER ; -- That's how it shold look like
 --   [abc\-][abc\-{digit}]*        IDENTIFIER ; -- That's how it is currently working
-  [a-\ee A-Y][a-\ee A-Y]*             IDENTIFIER ;
+--   [a-\ee A-Y][a-\ee A-Y]*             IDENTIFIER ;
+([{basic-latin}{greek-and-coptic}]^[a-z \3b1-\3b3])+        IDENTIFIER ;
 --   "#!foolisp"                   SHEBANG ;
   [\ \n\t\f]+                   [: /* blank */ :] ;
   \" [.(\\.)^x]* \"            STRING ; ;

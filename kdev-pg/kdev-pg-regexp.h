@@ -126,6 +126,8 @@ public:
   static GNFA emptyWord();
   /// Accepts any character between begin and end (including begin, excluding end)
   static GNFA range(quint32 begin, quint32 end);
+  /// Accepts a single codepoint (or nothing if it is not represantable with tha charset)
+  static GNFA character(quint32 codepoint);
 };
 
 }

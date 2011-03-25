@@ -1264,6 +1264,11 @@ GNFA GNFA::range(quint32 begin, quint32 end)
   return res;
 }
 
+KDevPG::GNFA KDevPG::GNFA::character(quint32 codepoint)
+{
+  return range(codepoint, codepoint+1);
+}
+
 typeof(GDFA::type) GDFA::type = GDFA::SUcs2;
 
 template<CharEncoding enc>

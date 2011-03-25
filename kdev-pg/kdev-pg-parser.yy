@@ -23,6 +23,7 @@
 #include "kdev-pg.h"
 #include "kdev-pg-clone-tree.h"
 #include "kdev-pg-regexp.h"
+#include "kdev-pg-unicode-loader.h"
 
 #include <QtCore/QFile>
 #include <cassert>
@@ -193,7 +194,7 @@ declaration
     | T_TOKEN_STREAM_BASE T_STRING
         { KDevPG::globalSystem.tokenStreamBaseClass = $2; }
     | T_LEXER T_STRING { KDevPG::globalSystem.hasLexer = true; lexerEnv = $2; if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
-    | T_LEXER { KDevPG::globalSystem.hasLexer = true; lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+    | T_LEXER { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
     ;
 
 lexer_declaration_rest
@@ -315,7 +316,7 @@ aregexp7
       quint32 begin, end;
       int i = 0;
       #define SET_CHAR(str, i, x) \
-      x = 0; \
+      {x = 0; \
       if(str[i] == '\\') \
       { \
         if(str[i+1] == 'z') \
@@ -348,7 +349,7 @@ aregexp7
       { \
         x = str[i]; \
         ++i; \
-      }
+      }}
       SET_CHAR($1, i, begin)
       assert($1[i] == '-');
       ++i;

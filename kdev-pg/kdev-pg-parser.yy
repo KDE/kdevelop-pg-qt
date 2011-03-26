@@ -211,17 +211,12 @@ lexer_declaration_rest
 
 opt_lexer_action
     : T_TERMINAL {
-        r = (QString("\nKDevPG::Token& _t(Base::next()); _t.kind = ::")
-          + KDevPG::globalSystem.ns
-          + "::Parser::Token_" + $1 + ";\n"
-          + "_t.begin = spos - Iterator::begin();\n"
-          + "_t.end = plain() - Iterator::begin() - 1;\n"
-          + "return _t;");
+        r = "\nRETURN(" + QString($1) + ");\n"
       }
     | T_CONTINUE {
-        r = "continueLexeme = true; return next();"; 
+        r = "\nCONTINUE;\n"; 
       }
-    | /* empty */ { r = "return next();" }
+    | /* empty */ { r = "\nreturn next();\n" }
     ;
 
 regexp
@@ -354,7 +349,6 @@ aregexp7
       assert($1[i] == '-');
       ++i;
       SET_CHAR($1, i, end)
-      KDevPG::checkOut << "RANGE " << begin << " " << end << endl;
       assert($1[i] == '\0');
       $$ = new KDevPG::GNFA(KDevPG::GNFA::range(begin, end+1));
     }

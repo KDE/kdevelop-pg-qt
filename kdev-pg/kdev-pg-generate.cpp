@@ -554,8 +554,16 @@ void generateLexer()
     LEXER_EXTRA_CODE_GEN(destructorCode)
     s << "}" << endl << endl
             
-      << "#define CURR_POS Iterator::plain()\n"
-      << "#define NEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n";
+      << "#define CURR_POS (Iterator::plain())\n"
+         "#define CURR_IDX (Iterator::plain() - Iterator::begin())\n"
+         "#define CONTINUE {continueLexeme = true; return next();}\n"
+         "#define LENGTH {Iterator::plain() - Iterator::begin();}\n"
+         "#define BEGIN_POS (spos)\n"
+         "#define BEGIN_IDX (spos - Iterator::begin())\n"
+         "#define TOKEN(X) KDevPG::Token& token(Base::next());{token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = BEGIN_POS;token.end = CURR_POS - 1;}\n"
+         "#define RETURN(X) TOKEN(X); return token;\n"
+         "#define FAIL goto _fail;\n"
+         "#define NEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
     
 #define LEXER_CORE_IMPL(name, state) \
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
@@ -585,6 +593,17 @@ void generateLexer()
     {
       LEXER_CORE_IMPL("next", "start")
     }
+    
+    s << "#undef NEXT_CHR\n"
+         "#undef FAIl\n"
+         "#undef RETURN\n"
+         "#undef TOKEN\n"
+         "#undef BEGIN_IDX\n"
+         "#undef BEGIN_POS\n"
+         "#undef LENGTH\n"
+         "#undef CONTINUE\n"
+         "#undef CURR_IDX\n"
+         "#undef CURR_POS\n" << endl;
     
     s << globalSystem.lexerBits << endl
       << "} // end of namespace " << globalSystem.ns << endl << endl;

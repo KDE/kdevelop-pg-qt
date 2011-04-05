@@ -18,7 +18,10 @@ endif(NOT KDE4_FOUND)
 # Use colored output (since cmake 2.4.0)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
-add_definitions(-std=gnu++0x)
+# FIXME: find a way to make this portable
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=gnu++0x)
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
 

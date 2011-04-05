@@ -170,7 +170,7 @@ namespace KDevPG
     Model::Node *item = globalSystem.zero();
 
     out << "if (try_startToken_" << catch_id
-        << " == tokenStream->index() - 1)" << endl
+        << " == tokenStream->index() - 1  && yytoken != Token_EOF)" << endl
         << "yylex();" << endl
         << endl;
 

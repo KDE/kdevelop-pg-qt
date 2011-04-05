@@ -93,7 +93,7 @@ namespace {
 Whitespace  [ \f\t]
 Newline     "\r\n"|\r|\n
 String      ["]([^\r\n\"]|[\\][^\r\n])*["]
-Char        [_a-zA-Z0-9]|\\x[0-9a-fA-F]{1,6}|\\o[0-7][0-7]*|\\d[0-9]{1,7}|\\0
+Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{1,7}|\\[yY][01]{1,21}|\\[\x20-\x7f]
 
 %x CODE
 %x PARSERCLASS
@@ -198,18 +198,6 @@ Char        [_a-zA-Z0-9]|\\x[0-9a-fA-F]{1,6}|\\o[0-7][0-7]*|\\d[0-9]{1,7}|\\0
 
 <RULE_LEXER>{
   "--"[^\r\n]*            /* line comments, skip */ ;
-  "\\n"                   ESCAPE_CHARACTER('\n')
-  "\\r"                   ESCAPE_CHARACTER('\r')
-  "\\t"                   ESCAPE_CHARACTER('\t')
-  "\\v"                   ESCAPE_CHARACTER('\v')
-  "\\a"                   ESCAPE_CHARACTER('\a')
-  "\\b"                   ESCAPE_CHARACTER('\b')
-  "\\f"                   ESCAPE_CHARACTER('\f')
-  "\\0"                   ESCAPE_CHARACTER('\0')
-  "\\\t"                  ESCAPE_CHARACTER('\t')
-  "\\\""                  ESCAPE_CHARACTER('"')
-  "\\\x20"                ESCAPE_CHARACTER(' ')
-  "\\".                   ++yytext; COPY_CODE_TO_YYLVAL(yytext,1); return T_STRING;
   {Newline}               newline();
   "{"[a-zA-Z_\-][a-zA-Z_0-9\-]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
   ";"+[ \f\t\r\n]+/";"+   rulePosition = RuleBody; BEGIN(INITIAL); return ';'; /* TODO: allow comments */
@@ -231,16 +219,11 @@ Char        [_a-zA-Z0-9]|\\x[0-9a-fA-F]{1,6}|\\o[0-7][0-7]*|\\d[0-9]{1,7}|\\0
   "."                     return '.';
   "->"                    return T_ARROW;
   "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
-  [_A-Z]*                 COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_TERMINAL : T_UNQUOTED_STRING;
-  [_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return openBrackets == 0 ? T_IDENTIFIER : T_UNQUOTED_STRING;
-  \\[1-9a-fA-F][0-9a-fA-F]{0,5}|\\o[1-7][0-7]*|\\z[1-9][0-9]*|\\0   return T_UNQUOTED_STRING;
+  [_A-Z]+/[ \f\t\r\n]*";" COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
+  [_a-zA-Z0-9]+/[ \f\t\r\n]*";" COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+  {Char}+ COPY_TO_YYLVAL(yytext,yyleng); return T_UNQUOTED_STRING;
   {Whitespace}            /* skip */
   {String}                yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
-  /*TODO: escape characters
-      "\\0"[1-7][0-7]{0,6}                      . 
-      "\\d"[1-9][0-9]{0,6}                      .
-      "\\"[xUu][1-9a-fA-F][0-9a-fA-F]{0,5}      .
-      "\\"[1-9a-fA-F][0-9a-fA-F]{0,5}           . */
 }
 
 <RULE_ARGUMENTS>{

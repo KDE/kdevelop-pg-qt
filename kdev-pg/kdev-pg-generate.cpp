@@ -563,6 +563,7 @@ void generateLexer()
          "#define TOKEN(X) KDevPG::Token& token(Base::next());{token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = BEGIN_IDX; token.end = CURR_IDX - 1;}\n"
          "#define RETURN(X) TOKEN(X); return token;\n"
          "#define FAIL goto _fail;\n"
+         "#define SKIP return next();\n"
          "#define NEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
     
 #define LEXER_CORE_IMPL(name, state) \

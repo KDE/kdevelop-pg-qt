@@ -75,6 +75,8 @@ public:
   GDFA(const GDFA& o);
   ~GDFA();
   GDFA& operator=(const GDFA& o);
+  /// Debugging-information
+  void inspect();
 private:
   /// Has to be generated using a GNFA
   GDFA();
@@ -115,6 +117,10 @@ public:
   GNFA& negate();
   /// DFA
   GDFA dfa();
+  /// Minimize
+  GNFA& minimize();
+  /// Debugging-information
+  void inspect();
   
   /// Accepts any single character
   static GNFA anyChar();

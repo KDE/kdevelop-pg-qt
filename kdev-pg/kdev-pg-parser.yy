@@ -216,7 +216,7 @@ opt_lexer_action
     | T_CONTINUE {
         r = "\nCONTINUE;\n"; 
       }
-    | /* empty */ { r = "\nreturn next();\n" }
+    | /* empty */ { r = "\nSKIP\n" }
     ;
 
 regexp
@@ -260,9 +260,10 @@ regexp7
     : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
     | '[' aregexp ']'       { $$ = $2; }
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QString::fromUtf8($1)))); }
-    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(QString::fromAscii($1))); }
-    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } KDevPG::globalSystem.regexpById[$1]->inspect(); KDevPG::globalSystem.regexpById[$1]->minimize(); KDevPG::globalSystem.regexpById[$1]->inspect(); $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
+    | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); } 
     ;
 
 aregexp
@@ -306,54 +307,34 @@ aregexp7
     : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
     | '[' aregexp ']'       { $$ = $2; }
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QString::fromUtf8($1)))); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
     | T_RANGE               {
       quint32 begin, end;
-      int i = 0;
-      #define SET_CHAR(str, i, x) \
-      {x = 0; \
-      if(str[i] == '\\') \
-      { \
-        if(str[i+1] == 'z') \
-        { \
-          for(i += 2; str[i] >= '0' && str[i] <= '9'; ++i, x *= 10) \
-            x += (str[i] - '0'); \
-          x /= 10; \
-        } \
-        else if(str[i+1] == 'o') \
-        {/*oct*/ \
-          \
-        } \
-        else \
-        { \
-          for(++i; ; ++i, x *= 16) \
-          { \
-            if(str[i] >= 'a' && str[i] <= 'f') \
-              x += (str[i] - 'a' + 10); \
-            else if(str[i] >= 'A' && str[i] <= 'F') \
-              x += (str[i] - 'A' + 10); \
-            else if(str[i] >= '0' && str[i] <= '9') \
-              x += (str[i] - '0'); \
-            else \
-              break; \
-          } \
-          x /= 16; \
-        } \
-      } \
-      else \
-      { \
-        x = str[i]; \
-        ++i; \
-      }}
-      SET_CHAR($1, i, begin)
-      assert($1[i] == '-');
-      ++i;
-      SET_CHAR($1, i, end)
-      assert($1[i] == '\0');
+      QString str = KDevPG::unescaped(QByteArray($1));
+      assert(str.size() >= 3 && str.size() <= 5);
+      if(str[1] == '-')
+      {
+        begin = str[0].unicode();
+        if(str.size() == 3)
+          end = str[2].unicode();
+        else
+          end = QChar::surrogateToUcs4(str[2], str[3]);
+      }
+      else
+      {
+        begin = QChar::surrogateToUcs4(str[0], str[1]);
+        assert(str[2] == '-');
+        if(str.size() == 4)
+          end = str[3].unicode();
+        else
+          end = QChar::surrogateToUcs4(str[3], str[4]);
+      }
+      qDebug() << "RANGE: " << begin << end;
       $$ = new KDevPG::GNFA(KDevPG::GNFA::range(begin, end+1));
     }
-    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(QString::fromAscii($1))); }
-    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray($1)))); }
+    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } KDevPG::globalSystem.regexpById[$1]->inspect(); KDevPG::globalSystem.regexpById[$1]->minimize(); KDevPG::globalSystem.regexpById[$1]->inspect(); $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
+    | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
     ;
 
 

@@ -85,39 +85,7 @@ namespace KDevPG
     return ret;
   }
   
-  inline QString unescaped(const QString& str)
-  {
-    QString ret;
-    for(auto i = str.begin(); i != str.end(); ++i)
-    {
-      if(*i == '\\')
-      {
-        QChar nxt = *++i;
-        if(nxt == 'n')
-          ret += '\n';
-        else if(nxt == 't')
-          ret += '\t';
-        else if(nxt == 'f')
-          ret += '\f';
-        else if(nxt == 'v')
-          ret += '\v';
-        else if(nxt == 'r')
-          ret += '\r';
-        else if(nxt == '0')
-          ret += '\0';
-        else if(nxt == 'b')
-          ret += '\b';
-        else if(nxt == 'a')
-          ret += '\a';
-        else
-          ret += nxt;
-        /// TODO: \u[…], \x etc.
-      }
-      else
-        ret += *i;
-    }
-    return ret;
-  }
+  QString unescaped(const QByteArray& str);
   
 class World
 {

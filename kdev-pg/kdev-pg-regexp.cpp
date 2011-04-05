@@ -627,16 +627,7 @@ public:
     }
     NFA<CharSet>& negate()
     {
-//       qDebug() << nstates << accept;
-//       for(auto i = rules.begin(); i != rules.end(); ++i)
-//       {
-//         qDebug() << (i-rules.begin()) << ":";
-//         for(auto j = i->begin(); j != i->end(); ++j)
-//           cerr << j->first << j->second;
-//         qDebug() << endl;
-//       }
       DFA<CharSet> tmp = dfa();
-//       tmp.minimize();
       tmp.rules.push_back(vector< pair<CharSet, size_t> >());
       tmp.rules.back().push_back(make_pair(CharSet::fullSet(), tmp.nstates));
       ++tmp.nstates;
@@ -648,7 +639,6 @@ public:
           *i = 0;
       }
       tmp.accept.push_back(1);
-//       tmp.accept.back() = 1;
       for(auto i = tmp.rules.begin(); i != tmp.rules.end(); ++i)
       {
         CharSet successSet = CharSet::fullSet();
@@ -766,6 +756,13 @@ GDFA& GDFA::operator=(const KDevPG::GDFA& o)
   return *this;
 }
 
+void GDFA::inspect()
+{
+  #define DO_INSPECT(x) x->inspect();
+  EACH_TYPE(DO_INSPECT)
+  #undef DO_INSPECT
+}
+
 GNFA::GNFA()
 {
 #define macro(x) x = new typeof(*x);
@@ -849,6 +846,22 @@ GNFA& GNFA::negate()
 #undef DO_NEGATE
   return *this;
 }
+
+GNFA& GNFA::minimize()
+{
+#define DO_MINIMIZE(x) *x = x->dfa().minimize().nfa();
+  EACH_TYPE(DO_MINIMIZE)
+#undef DO_MINIMIZE
+  return *this;
+}
+
+void GNFA::inspect()
+{
+#define DO_INSPECT(x) x->inspect();
+  EACH_TYPE(DO_INSPECT)
+#undef DO_INSPECT
+}
+
 
 GDFA GNFA::dfa()
 {

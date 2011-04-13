@@ -355,7 +355,7 @@ public:
     /**
      * Accepts no words.
      */
-    NFA() : nstates(1), rules(1), accept(0)
+    NFA() : nstates(2), rules(2), accept(1)
     {}
     static NFA<CharSet> emptyWord()
     {

@@ -31,7 +31,7 @@ class SeqCharSet;
 inline void printChar(ostream& o, uint x)
 {
   auto flags = o.flags();
-  if(x >= 32 && x <= 127)
+  if(x >= 32 && x <= 126)
     o << '"' << (char)x << '"';
   else
     o << hex << x;
@@ -516,7 +516,7 @@ class CharSetCondition<TableCharSet<codec> >
 {
   typedef typename Codec2Int<codec>::Result Int;
 public:
-  void operator()(QTextStream& str, vector<pair<TableCharSet<codec>, size_t> > transition, const QStringList& actions)
+  void operator()(QTextStream& str, const vector<pair<TableCharSet<codec>, size_t> >& transition)
   {
     str << "switch(chr) { ";
     for(size_t j = 0; j != transition.size(); ++j)
@@ -528,7 +528,7 @@ public:
           if(transition[j].first.accepts(i))
             str << "case " << quint64(i) << ":\n";
         }
-        str << actions[transition[j].second] << '\n';
+        str << "goto _state_" << transition[j].second << ";";
       }
     }
     str << "default: goto _end;\n}\n";
@@ -539,7 +539,7 @@ template<CharEncoding codec>
 class CharSetCondition<SeqCharSet<codec> >
 {
   typedef typename Codec2Int<codec>::Result Int;
-  void codegen(QTextStream& str, const vector<pair<pair<Int, Int>, size_t> >& data, size_t l, size_t r, size_t tmin, size_t tmax, const QList<QString> actions)
+  void codegen(QTextStream& str, const vector<pair<pair<Int, Int>, size_t> >& data, size_t l, size_t r, size_t tmin, size_t tmax)
   {
     if(l == r)
       str << "goto _end;";
@@ -548,14 +548,14 @@ class CharSetCondition<SeqCharSet<codec> >
       if(data[l].first.first == tmin)
       {
         if(data[l].first.second == tmax)
-          str << actions[data[l].second];
+          str << "goto _state_" << data[l].second << ";";
         else
         {
           if(data[l].first.second == data[l].first.first + 1)
             str << "if(chr == " << quint64(data[l].first.first) << ")";
           else
             str << "if(chr < " << quint64(data[l].first.second) << ")";
-          str << "{" << actions[data[l].second] << "} else goto _end;\n";
+          str << "\ngoto _state_" << data[l].second << "; else\ngoto _end;\n";
         }
       }
       else
@@ -566,7 +566,7 @@ class CharSetCondition<SeqCharSet<codec> >
             str << "if(chr == " << quint64(data[l].first.first) << ")";
           else
             str << "if(chr >= " << quint64(data[l].first.first) << ")";
-          str << "{" << actions[data[l].second] << "} else goto _end;\n";
+          str << "\ngoto _state_" << data[l].second << "; else\ngoto _end;\n";
         }
         else
         {
@@ -576,7 +576,7 @@ class CharSetCondition<SeqCharSet<codec> >
             str << "if(chr == " << quint64(data[l].first.first) << " || chr == " << quint64(data[l].first.first + 1) << ")";
           else
             str << "if(chr >= " << quint64(data[l].first.first) << " && chr < " << quint64(data[l].first.second) << ")";
-          str << "{" << actions[data[l].second] << "} else goto _end;\n";
+          str << "\ngoto _state_" << data[l].second << "; else\ngoto _end;\n";
         }
       }
     }
@@ -584,14 +584,14 @@ class CharSetCondition<SeqCharSet<codec> >
     {
       size_t mid = (l + r) / 2;
       str << "if(chr < " << quint64(data[mid].first.first) << ") {";
-      codegen(str, data, l, mid, tmin, data[mid].first.first, actions);
+      codegen(str, data, l, mid, tmin, data[mid].first.first);
       str << "} else {";
-      codegen(str, data, mid, r, data[mid].first.first, tmax, actions);
+      codegen(str, data, mid, r, data[mid].first.first, tmax);
       str << "}";
     }
   }
 public:
-  void operator()(QTextStream& str, vector<pair<SeqCharSet<codec>, size_t> > transition, const QStringList& actions)
+  void operator()(QTextStream& str, const vector<pair<SeqCharSet<codec>, size_t> >& transition)
   {
     vector<pair<pair<Int, Int>, size_t> > data;
     for(size_t i = 0; i != transition.size(); ++i)
@@ -600,7 +600,7 @@ public:
         data.push_back(make_pair(transition[i].first.data[j], transition[i].second));
     }
     sort(data.begin(), data.end());
-    codegen(str, data, 0, data.size(), 0, Codec2Size<codec>::value, actions);
+    codegen(str, data, 0, data.size(), 0, Codec2Size<codec>::value);
   }
 };
 

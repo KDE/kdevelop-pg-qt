@@ -225,7 +225,7 @@ regexp
     ;
 
 regexp1
-    : regexp1 '&' regexp2   { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
+    : regexp1 '&' regexp2   { $$ = new KDevPG::GNFA(*$1 &= *$3); $$->inspect(); $$->minimize(); $$->inspect(); delete $1; delete $3; }
     | regexp2               { $$ = $1; }
     ;
 
@@ -272,7 +272,7 @@ aregexp
     ;
 
 aregexp1
-    : aregexp1 '&' aregexp2 { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
+    : aregexp1 '&' aregexp2 { $$ = new KDevPG::GNFA(*$1 &= *$3); $$->inspect(); delete $1; delete $3; }
     | aregexp2              { $$ = $1; }
     ;
 

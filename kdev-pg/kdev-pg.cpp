@@ -21,9 +21,6 @@
 #include "kdev-pg.h"
 #include "kdev-pg-ast.h"
 
-
-#include <QtCore/QDebug>
-
 namespace KDevPG
 {
 
@@ -203,14 +200,12 @@ Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QStrin
 QString unescaped(const QByteArray& str)
 {
   QString ret;
-  qDebug() << "In: " << str;
   int cnt = 0;
   for(auto i = str.begin(); i < str.end(); ++i)
   {
     if(cnt++ != 0)
     {
     }
-    qDebug() << *i;
     if(*i == '\\')
     {
       char nxt = *++i;
@@ -307,7 +302,6 @@ QString unescaped(const QByteArray& str)
     }
     else
       ret += *i;
-    qDebug() << "Out: " << ret;
   }
   return ret;
 }

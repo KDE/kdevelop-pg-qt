@@ -89,20 +89,14 @@ public:
     /// Generate code for transitions
     void codegen(QTextStream& str)
     {
-      QStringList innerActions;
-      innerActions.reserve(nstates);
-      for(size_t i = 0; i != nstates; ++i)
-      {
-        if(accept[i])
-          innerActions.push_back("/*" + QString::number(accept[i]) + " action */lpos = CURR_POS; lstate = " + QString::number(accept[i]) + "; goto _state_" + QString::number(i) + ";\n");
-        else
-          innerActions.push_back("goto _state_" + QString::number(i) + ";");
-      }
       CharSetCondition<CharSet> csc;
       for(size_t i = 0; i != nstates; ++i)
       {
-        str << "\n_state_" + QString::number(i) + ": NEXT_CHR(chr); ";
-        csc(str, rules[i], innerActions);
+        str << "\n_state_" + QString::number(i) + ":\n";
+        if(accept[i])
+          str << "lpos = CURR_POS; lstate = " << accept[i] << ";\n";
+        str << "NEXT_CHR(chr); ";
+        csc(str, rules[i]);
       }
       str << "_end:\nplain() = lpos;\nswitch(lstate) {\n";
       for(size_t i = 0; i <= numActions; ++i)
@@ -201,9 +195,12 @@ public:
         nstates = curr;
         for(size_t i = 0; i != nstates; ++i)
         {
-            for(auto j = rules[i].begin(); j != rules[i].end(); ++j)
+            auto orules = rules[i];
+            rules[i].clear();
+            for(auto j = orules.begin(); j != orules.end(); ++j)
             {
-                j->second = mapping[j->second];
+                if(active[j->second])
+                  rules[i].push_back(make_pair(j->first, mapping[j->second]));
             }
         }
         return *this;
@@ -233,7 +230,6 @@ public:
     /// Eliminate each state iff no final state is  arivable from it
     DFA<CharSet>& eliminateInactiveStates()
     {
-      // should never (not very often, ?) happen
       UsedBitArray active(nstates);
       for(size_t i = 0; i != nstates; ++i)
         if(accept[i])
@@ -258,6 +254,9 @@ public:
           }
         }
       } while(changed);
+      for(int i = 0; i != nstates; ++i)
+        if(!active[i])
+          cout << "inactive: " << i << endl;
       return filterStates(active);
     }
     /// followers in same group for every input
@@ -324,6 +323,7 @@ public:
                     rules[i].push_back(make_pair(mapping[j], j));
         }
         eliminateUnarrivableStates();
+        eliminateInactiveStates();
         return *this;
     }
     NFA<CharSet> nfa() const;
@@ -628,6 +628,9 @@ public:
     NFA<CharSet>& negate()
     {
       DFA<CharSet> tmp = dfa();
+      cout << "bef neg: ";
+      tmp.minimize();
+      tmp.inspect();
       tmp.rules.push_back(vector< pair<CharSet, size_t> >());
       tmp.rules.back().push_back(make_pair(CharSet::fullSet(), tmp.nstates));
       ++tmp.nstates;
@@ -648,10 +651,17 @@ public:
           tmp.negate();
           successSet.intersect(tmp);
         }
-        i->push_back(make_pair(successSet, tmp.nstates - 1));
+        if(!successSet.empty())
+          i->push_back(make_pair(successSet, tmp.nstates - 1));
       }
+      cout << "after neg: ";
+      tmp.inspect();
       tmp.eliminateUnarrivableStates();
+      tmp.inspect();
       tmp.eliminateInactiveStates();
+      tmp.inspect();
+      tmp.minimize();
+      tmp.inspect();
       *this = tmp.nfa();
       return *this;
     }
@@ -659,8 +669,22 @@ public:
     {
       NFA<CharSet> _o = o;
       _o.negate();
+      cout << "o negation: ";
+      _o.inspect();
       negate();
-      return (*this |= _o).negate();
+      cout << "self negation: ";
+      inspect();
+      *this |= _o;
+      auto tmp = dfa();
+      tmp.minimize();
+      *this = tmp.nfa();
+      cout << "or: ";
+      inspect();
+      negate();
+      cout << "final:";
+      inspect();
+      return *this;
+//       return (*this |= _o).negate();
     }
     NFA<CharSet>& operator^=(const NFA<CharSet>& o)
     {
@@ -1097,138 +1121,140 @@ GNFA GNFA::range(quint32 begin, quint32 end)
       res.s2 = new NFA<SeqCharSet<Ucs2> >(begin >= 0x10000 ? SeqCharSet<Ucs2>::emptySet() : SeqCharSet<Ucs2>::range(begin, min((quint32)0x10000, end))/*.difference(SeqCharSet<Ucs2>::range(0xd800, 0xe000))*/);
     } break;
     case GDFA::SUtf16: {
-      if(end >= 0x110000 || begin >= 0x110000)
-      {
-        res.s2 = new NFA<SeqCharSet<Ucs2> >();
+#define UTF16_IMPL(CS, field) \
+      if(end >= 0x110000 || begin >= 0x110000)                                          \
+      {                                                                                 \
+        res.field = new NFA<CS<Ucs2> >();                                          \
+      }                                                                                 \
+      else if(end < 0x10000)                                                            \
+      {                                                                                 \
+        if(begin <= 0xd800)                                                             \
+        {                                                                               \
+          if(end <= begin)                                                              \
+          {                                                                             \
+            res.field = new NFA<CS<Ucs2> >();                                      \
+          }                                                                             \
+          else if(end > 0xe000)                                                         \
+          {                                                                             \
+            res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(begin, 0xd800).getUnion(CS<Ucs2>::range(0xe000, end))); \
+          }                                                                             \
+          else                                                                          \
+          {                                                                             \
+            res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(begin, min(end, (quint32)0xd800))); \
+          }\
+        }\
+        else\
+        {\
+          auto mbegin = max(begin, (quint32)0xe000);\
+          if(end <= mbegin)\
+          {\
+            res.field = new NFA<CS<Ucs2> >();\
+          }\
+          else\
+          {\
+            res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(mbegin, end));\
+          }\
+        }\
+      }\
+      else if(begin >= 0x10000)\
+      {\
+        if(end <= begin)\
+        {\
+          res.field = new NFA<CS<Ucs2> >();\
+        }\
+        else\
+        {\
+          quint32 startHighSurrogate = (((begin - 0x10000) & 0xffc00) >> 10) + 0xd800;\
+          quint32 startLowSurrogate = ((begin - 0x10000) & 0x3ff) + 0xdc00;\
+          quint32 endHighSurrogate = (((end - 0x10000) & 0xffc00) >> 10) + 0xd800;\
+          quint32 endLowSurrogate = ((end - 0x10000) & 0x3ff) + 0xdc00;\
+          if(endLowSurrogate == 0xdc00)\
+          {\
+            if(startLowSurrogate == 0xdc00)\
+            {\
+              res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate, endHighSurrogate));\
+              *res.field <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(0xdc00, 0xe000));\
+            }\
+            else\
+            {\
+              auto firstPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate, startHighSurrogate + 1));\
+              firstPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, 0xe000));\
+              res.field = new NFA<CS<Ucs2> >(firstPairs);\
+              if(startHighSurrogate < endHighSurrogate)\
+              {\
+                auto surrPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate + 1, endHighSurrogate + 1));\
+                surrPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(0xdc00, 0xe000));\
+                *res.field |= surrPairs;\
+              }\
+            }\
+          }\
+          else\
+          {\
+            if(startLowSurrogate == 0xdc00)\
+            {\
+              res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate, endHighSurrogate));\
+            }\
+            else\
+            {\
+              res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate, startHighSurrogate + 1));\
+              *res.field <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, (startHighSurrogate == endHighSurrogate ? endLowSurrogate : 0xe000)));\
+              if(startHighSurrogate != endHighSurrogate)\
+              {\
+                if(startHighSurrogate + 1 != endHighSurrogate)\
+                {\
+                  auto midPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate + 1, endHighSurrogate));\
+                  midPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, 0xe000));\
+                  *res.field |= midPairs;\
+                }\
+                auto lastPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(endHighSurrogate, endHighSurrogate + 1));\
+                lastPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, endLowSurrogate));\
+                *res.field |= lastPairs;\
+              }\
+            }\
+          }\
+        }\
+      }\
+      else\
+      {\
+        if(end <= begin)\
+        {\
+          res.field = new NFA<CS<Ucs2> >();\
+        }\
+        else\
+        {\
+          if(begin < 0xd800)\
+          {\
+            res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(begin, 0xd800).getUnion(CS<Ucs2>::range(0xe000, 0x10000)));\
+          }\
+          else\
+          {\
+            res.field = new NFA<CS<Ucs2> >(CS<Ucs2>::range(max(begin, 0xe000u), 0x10000));\
+          }\
+          quint32 startHighSurrogate = 0xd800;\
+          quint32 startLowSurrogate = 0xdc00;\
+          quint32 endHighSurrogate = (((end - 0x10000) & 0xffc00) >> 10) + 0xd800;\
+          quint32 endLowSurrogate = ((end - 0x10000) & 0x3ff) + 0xdc00;\
+          if(endLowSurrogate == 0xdc00)\
+          {\
+            auto surrPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate, endHighSurrogate));\
+            surrPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, 0xe000));\
+            *res.field |= surrPairs;\
+          }\
+          else\
+          {\
+            if(endHighSurrogate > startHighSurrogate)\
+            {\
+              auto midPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(startHighSurrogate, endHighSurrogate));\
+              midPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, 0xe000));\
+              *res.field |= midPairs;\
+            }\
+            auto lastPairs = NFA<CS<Ucs2> >(CS<Ucs2>::range(endHighSurrogate, endHighSurrogate + 1));\
+            lastPairs <<= NFA<CS<Ucs2> >(CS<Ucs2>::range(startLowSurrogate, endLowSurrogate));\
+            *res.field |= lastPairs;\
+          }\
+        }\
       }
-      else if(end < 0x10000)
-      {
-        if(begin <= 0xd800)
-        {
-          if(end <= begin)
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >();
-          }
-          else if(end > 0xe000)
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(begin, 0xd800).getUnion(SeqCharSet<Ucs2>::range(0xe000, end)));
-          }
-          else
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(begin, min(end, (quint32)0xd800)));
-          }
-        }
-        else
-        {
-          auto mbegin = max(begin, (quint32)0xe000);
-          if(end <= mbegin)
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >();
-          }
-          else
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(mbegin, end));
-          }
-        }
-      }
-      else if(begin >= 0x10000)
-      {
-        if(end <= begin)
-        {
-          res.s2 = new NFA<SeqCharSet<Ucs2> >();
-        }
-        else
-        {
-          quint32 startHighSurrogate = (((begin - 0x10000) & 0xffc00) >> 10) + 0xd800;
-          quint32 startLowSurrogate = ((begin - 0x10000) & 0x3ff) + 0xdc00;
-          quint32 endHighSurrogate = (((end - 0x10000) & 0xffc00) >> 10) + 0xd800;
-          quint32 endLowSurrogate = ((end - 0x10000) & 0x3ff) + 0xdc00;
-          if(endLowSurrogate == 0xdc00)
-          {
-            if(startLowSurrogate == 0xdc00)
-            {
-              res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate, endHighSurrogate));
-              *res.s2 <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xdc00, 0xe000));
-            }
-            else
-            {
-              auto firstPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate, startHighSurrogate + 1));
-              firstPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, 0xe000));
-              res.s2 = new NFA<SeqCharSet<Ucs2> >(firstPairs);
-              if(startHighSurrogate < endHighSurrogate)
-              {
-                auto surrPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate + 1, endHighSurrogate + 1));
-                surrPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xdc00, 0xe000));
-                *res.s2 |= surrPairs;
-              }
-            }
-          }
-          else
-          {
-            if(startLowSurrogate == 0xdc00)
-            {
-              res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate, endHighSurrogate));
-            }
-            else
-            {
-              res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate, startHighSurrogate + 1));
-              *res.s2 <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, (startHighSurrogate == endHighSurrogate ? endLowSurrogate : 0xe000)));
-              if(startHighSurrogate != endHighSurrogate)
-              {
-                if(startHighSurrogate + 1 != endHighSurrogate)
-                {
-                  auto midPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate + 1, endHighSurrogate));
-                  midPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, 0xe000));
-                  *res.s2 |= midPairs;
-                }
-                auto lastPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(endHighSurrogate, endHighSurrogate + 1));
-                lastPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, endLowSurrogate));
-                *res.s2 |= lastPairs;
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        if(end <= begin)
-        {
-          res.s2 = new NFA<SeqCharSet<Ucs2> >();
-        }
-        else
-        {
-          if(begin < 0xd800)
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(begin, 0xd800).getUnion(SeqCharSet<Ucs2>::range(0xe000, 0x10000)));
-          }
-          else
-          {
-            res.s2 = new NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(max(begin, 0xe000u), 0x10000));
-          }
-          quint32 startHighSurrogate = 0xd800;
-          quint32 startLowSurrogate = 0xdc00;
-          quint32 endHighSurrogate = (((end - 0x10000) & 0xffc00) >> 10) + 0xd800;
-          quint32 endLowSurrogate = ((end - 0x10000) & 0x3ff) + 0xdc00;
-          if(endLowSurrogate == 0xdc00)
-          {
-            auto surrPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate, endHighSurrogate));
-            surrPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, 0xe000));
-            *res.s2 |= surrPairs;
-          }
-          else
-          {
-            if(endHighSurrogate > startHighSurrogate)
-            {
-              auto midPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startHighSurrogate, endHighSurrogate));
-              midPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, 0xe000));
-              *res.s2 |= midPairs;
-            }
-            auto lastPairs = NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(endHighSurrogate, endHighSurrogate + 1));
-            lastPairs <<= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(startLowSurrogate, endLowSurrogate));
-            *res.s2 |= lastPairs;
-          }
-        }
-      }
+      UTF16_IMPL(SeqCharSet, s2)
     } break;
     case GDFA::SUcs4: { res.s3 = new NFA<SeqCharSet<Ucs4> >(SeqCharSet<Ucs4>::range(begin, end)); } break;
     case GDFA::TAscii: { res.t0 = new NFA<TableCharSet<Ascii> >(begin >= 0x80 ? TableCharSet<Ascii>::emptySet() : TableCharSet<Ascii>::range(begin, min((quint32)0x80, end))); } break;
@@ -1241,7 +1267,8 @@ GNFA GNFA::range(quint32 begin, quint32 end)
       res.t2 = new NFA<TableCharSet<Ucs2> >(begin >= 0x10000 ? TableCharSet<Ucs2>::emptySet() : TableCharSet<Ucs2>::range(begin, min((quint32)0x10000, end))/*.difference(TableCharSet<Ucs2>::range(0xd800, 0xe000))*/);
     }
     case GDFA::TUtf16: {
-      
+      UTF16_IMPL(TableCharSet, t2)
+      #undef UTF16_IMPL
     } break;
     default: exit(-1);
   }

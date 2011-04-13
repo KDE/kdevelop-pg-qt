@@ -31,4 +31,5 @@ int main()
   DebugVisitor vis(&lex, qcode);
   vis.visitNode(ast);
   qDebug() << ast->sexp;
+  qDebug() << ast->sexp->sexpSequence;
 }

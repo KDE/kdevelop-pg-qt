@@ -483,7 +483,7 @@ void generateLexer()
       s << "enum {\n";
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << endl;
-      s << "State_COUNT\n} state;" << endl;
+      s << "State_COUNT\n} ruleSet;" << endl;
     }
     
     s << "public:" << endl
@@ -566,6 +566,11 @@ void generateLexer()
          "#define SKIP return next();\n"
          "#define NEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
     
+    if(hasStates)
+    {
+      s << "#define SET_RULE_SET(r) ruleSet = State_##r;\n" << endl;
+    }
+    
 #define LEXER_CORE_IMPL(name, state) \
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
         << name << "()" << endl << "{" \
@@ -585,7 +590,7 @@ void generateLexer()
         LEXER_CORE_IMPL("lex" << KDevPG::capitalized(state), state)
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
-        << "::next()" << endl << "{" << endl << "switch(state)\n{" << endl;
+        << "::next()" << endl << "{" << endl << "switch(ruleSet)\n{" << endl;
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "case State_" << state << ": return lex" << capitalized(state) << "();" << endl;
       s << "}\n}" << endl;
@@ -593,6 +598,11 @@ void generateLexer()
     else
     {
       LEXER_CORE_IMPL("next", "start")
+    }
+    
+    if(hasStates)
+    {
+      s << "#undef SET_RULE_SET\n" << endl;
     }
     
     s << "#undef NEXT_CHR\n"

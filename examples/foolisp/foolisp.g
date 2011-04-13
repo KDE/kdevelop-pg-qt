@@ -25,12 +25,10 @@
   xyzzy                         BAZ ;
   thud                          FOO ;
 
-  "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9" -> digit ; -- Should be predefined with unicode character classes
-  "0" | ( {digit}^"0" ) {digit}*    NUMBER ;
+--   "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9" -> digit ; -- Should be predefined with unicode character classes
+  "0" | ( {digit}&{basic-latin}^"0" ) {digit}*    NUMBER ;
 
-(([({alphabetic}&{basic-latin}){greek-and-coptic}]^[a-z \x3b1-\x3b3])&{basic-latin})+        IDENTIFIER ;
--- ({alphabetic}&{basic-latin})+ IDENTIFIER;
--- [a-zA-Z]+ IDENTIFIER;
+(([({alphabetic}&{basic-latin}){greek-and-coptic}]^[a-z \x3b1-\x3b3])&{basic-latin})+        IDENTIFIER ; -- kinda exotic limitations for identifiers ;)
 
 
   "#!foolisp"                   SHEBANG ;

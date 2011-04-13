@@ -697,6 +697,8 @@ template<typename CharSet>
 NFA< CharSet > DFA<CharSet>::nfa() const
 {
   NFA<CharSet> ret;
+  if(nstates == 0)
+    return ret;
   ret.nstates = nstates;
   ret.rules = rules;
   ret.accept = nstates;

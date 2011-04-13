@@ -712,6 +712,11 @@ NFA< CharSet > DFA<CharSet>::nfa() const
     if(accept[i] != 0)
       ret.rules[i].push_back(make_pair(CharSet(), nstates + accept[i] - 1));
   }
+  if(ret.nstates == nstates)
+  {
+    ++ret.nstates;
+    ret.rules.push_back(typeof(ret.rules.front())());
+  }
   return ret;
 }
 

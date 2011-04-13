@@ -715,7 +715,7 @@ NFA< CharSet > DFA<CharSet>::nfa() const
   if(ret.nstates == nstates)
   {
     ++ret.nstates;
-    ret.rules.push_back(typeof(ret.rules.front())());
+    ret.rules.push_back(vector<pair<CharSet, size_t> >());
   }
   return ret;
 }

@@ -115,6 +115,8 @@ public:
   GNFA& operator*();
   /// Complement
   GNFA& negate();
+  /// Whether it accepts the empty word
+  bool acceptsEpsilon() const;
   /// DFA
   GDFA dfa();
   /// Minimize

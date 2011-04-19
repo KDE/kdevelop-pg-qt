@@ -254,9 +254,6 @@ public:
           }
         }
       } while(changed);
-      for(int i = 0; i != nstates; ++i)
-        if(!active[i])
-          cout << "inactive: " << i << endl;
       return filterStates(active);
     }
     /// followers in same group for every input
@@ -597,14 +594,6 @@ public:
                 st[i] = cnt;
             ++cnt;
         }
-//         for(auto i = st.begin(); i != st.end(); ++i)
-//         {
-//           cout << i->second << ": <";
-//           for(size_t j = 0; j != nstates; ++j)
-//             if(i->first[j])
-//               cout << ", " << j;
-//           cout << ">" << endl;
-//         }
         _.rules.resize(_.nstates);
         for(auto i = st.begin(); i != st.end(); ++i)
         {
@@ -625,12 +614,32 @@ public:
         }
         return _;
     }
+    bool acceptsEpsilon() const
+    {
+      stack<size_t> todo;
+      todo.push(0);
+      UsedBitArray vis(nstates);
+      vis[0] = true;
+      while(!todo.empty())
+      {
+        size_t curr = todo.top();
+        todo.pop();
+        if(curr >= accept)
+          return true;
+        foreach(const auto& nx, rules[curr])
+        {
+          if(nx.first.epsilon() && !vis[nx.second])
+          {
+            vis[nx.second] = true;
+            todo.push(nx.second);
+          }
+        }
+      }
+      return false;
+    }
     NFA<CharSet>& negate()
     {
       DFA<CharSet> tmp = dfa();
-      cout << "bef neg: ";
-      tmp.minimize();
-      tmp.inspect();
       tmp.rules.push_back(vector< pair<CharSet, size_t> >());
       tmp.rules.back().push_back(make_pair(CharSet::fullSet(), tmp.nstates));
       ++tmp.nstates;
@@ -654,37 +663,18 @@ public:
         if(!successSet.empty())
           i->push_back(make_pair(successSet, tmp.nstates - 1));
       }
-      cout << "after neg: ";
-      tmp.inspect();
       tmp.eliminateUnarrivableStates();
-      tmp.inspect();
       tmp.eliminateInactiveStates();
-      tmp.inspect();
-      tmp.minimize();
-      tmp.inspect();
-      *this = tmp.nfa();
-      return *this;
+      return *this = tmp.nfa();
     }
     NFA<CharSet>& operator&=(const NFA<CharSet>& o)
     {
       NFA<CharSet> _o = o;
       _o.negate();
-      cout << "o negation: ";
-      _o.inspect();
       negate();
-      cout << "self negation: ";
-      inspect();
       *this |= _o;
-      auto tmp = dfa();
-      tmp.minimize();
-      *this = tmp.nfa();
-      cout << "or: ";
-      inspect();
       negate();
-      cout << "final:";
-      inspect();
       return *this;
-//       return (*this |= _o).negate();
     }
     NFA<CharSet>& operator^=(const NFA<CharSet>& o)
     {
@@ -828,6 +818,13 @@ GNFA& GNFA::operator=(const KDevPG::GNFA& o)
   EACH_TYPE(macro)
 #undef macro
   return *this;
+}
+
+bool GNFA::acceptsEpsilon() const
+{
+#define DO_AE(x) return x->acceptsEpsilon();
+  EACH_TYPE(DO_AE)
+#undef DO_AE
 }
 
 GNFA& GNFA::operator<<=(const KDevPG::GNFA& o)

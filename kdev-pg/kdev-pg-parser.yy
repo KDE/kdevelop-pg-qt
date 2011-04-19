@@ -24,6 +24,7 @@
 #include "kdev-pg-clone-tree.h"
 #include "kdev-pg-regexp.h"
 #include "kdev-pg-unicode-loader.h"
+#include "kdev-pg-checker.h"
 
 #include <QtCore/QFile>
 #include <cassert>
@@ -202,7 +203,13 @@ lexer_declaration_rest
             { KDevPG::globalSystem.regexpById[$4] = $1;
             } lexer_declaration_rest
     | regexp code_opt opt_lexer_action ';'
-            { QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+            {
+              if($1->acceptsEpsilon())
+              {
+                KDevPG::checkOut << "** ERROR Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::ProblemSummaryPrinter::reportError();
+              }
+              QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
                 s);
             } lexer_declaration_rest
@@ -225,7 +232,7 @@ regexp
     ;
 
 regexp1
-    : regexp1 '&' regexp2   { $$ = new KDevPG::GNFA(*$1 &= *$3); $$->inspect(); $$->minimize(); $$->inspect(); delete $1; delete $3; }
+    : regexp1 '&' regexp2   { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
     | regexp2               { $$ = $1; }
     ;
 
@@ -262,8 +269,21 @@ regexp7
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
     | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
-    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } KDevPG::globalSystem.regexpById[$1]->inspect(); KDevPG::globalSystem.regexpById[$1]->minimize(); KDevPG::globalSystem.regexpById[$1]->inspect(); $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
-    | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); } 
+    | T_NAMED_REGEXP        {
+                              if(KDevPG::globalSystem.regexpById[$1] == 0)
+                              {
+                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
+                                exit(-1);
+                              }
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
+                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              {
+                                regexp->minimize();
+                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                              }
+                              $$ = new KDevPG::GNFA(*regexp);
+                            }
+    | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
     ;
 
 aregexp
@@ -272,7 +292,7 @@ aregexp
     ;
 
 aregexp1
-    : aregexp1 '&' aregexp2 { $$ = new KDevPG::GNFA(*$1 &= *$3); $$->inspect(); delete $1; delete $3; }
+    : aregexp1 '&' aregexp2 { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
     | aregexp2              { $$ = $1; }
     ;
 
@@ -329,11 +349,23 @@ aregexp7
         else
           end = QChar::surrogateToUcs4(str[3], str[4]);
       }
-      qDebug() << "RANGE: " << begin << end;
       $$ = new KDevPG::GNFA(KDevPG::GNFA::range(begin, end+1));
     }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray($1)))); }
-    | T_NAMED_REGEXP        { if(KDevPG::globalSystem.regexpById[$1] == 0) { KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl; exit(-1); } KDevPG::globalSystem.regexpById[$1]->inspect(); KDevPG::globalSystem.regexpById[$1]->minimize(); KDevPG::globalSystem.regexpById[$1]->inspect(); $$ = new KDevPG::GNFA(*KDevPG::globalSystem.regexpById[$1]); }
+    | T_NAMED_REGEXP        {
+                              if(KDevPG::globalSystem.regexpById[$1] == 0)
+                              {
+                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
+                                exit(-1);
+                              }
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
+                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              {
+                                regexp->minimize();
+                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                              }
+                              $$ = new KDevPG::GNFA(*regexp);
+                            }
     | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
     ;
 

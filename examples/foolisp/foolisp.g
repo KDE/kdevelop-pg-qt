@@ -32,8 +32,8 @@
 
 
   "#!foolisp"                   SHEBANG ;
-  [\ \n\t]+                   [: /* blank */ :] ;
-  \" [.(\\.)^x]* \"            STRING ;
+  [\ \n\t]+                     [: /* blank */ :] ;
+  \" [.(\\.)^x]* \"             STRING ;
   ;
 
    ?SHEBANG sexp=sexp -> start ;

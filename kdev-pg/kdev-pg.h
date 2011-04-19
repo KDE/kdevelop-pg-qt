@@ -310,6 +310,7 @@ public:
   QMap<QString, vector<GNFA*> > lexerEnvs;
   QMap<QString, vector<QString> > lexerActions;
   QMap<QString, GNFA*> regexpById;
+  QSet<GNFA*> isMinimizedRegexp;
   
   Environment env;
 

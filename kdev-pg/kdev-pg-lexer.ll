@@ -170,18 +170,18 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 "%continue"             return T_CONTINUE;
 
 <PARSERCLASS>{
-{Whitespace}*           /* skip */ ;
-{Newline}               newline();
-"("                     return '(';
-"public"                return T_PUBLIC;
-"private"               return T_PRIVATE;
-"protected"             return T_PROTECTED;
-"declaration"           return T_DECLARATION;
-"constructor"           return T_CONSTRUCTOR;
-"destructor"            return T_DESTRUCTOR;
-"bits"                  return T_BITS;
-")"                     BEGIN(INITIAL); return ')';
-.                       BEGIN(INITIAL); REJECT; /* everything else */
+  {Whitespace}*           /* skip */ ;
+  {Newline}               newline();
+  "("                     return '(';
+  "public"                return T_PUBLIC;
+  "private"               return T_PRIVATE;
+  "protected"             return T_PROTECTED;
+  "declaration"           return T_DECLARATION;
+  "constructor"           return T_CONSTRUCTOR;
+  "destructor"            return T_DESTRUCTOR;
+  "bits"                  return T_BITS;
+  ")"                     BEGIN(INITIAL); return ')';
+  .                       BEGIN(INITIAL); REJECT; /* everything else */
 }
 
 
@@ -224,93 +224,100 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   {Char}+ COPY_TO_YYLVAL(yytext,yyleng); return T_UNQUOTED_STRING;
   {Whitespace}            /* skip */
   {String}                yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
+  
+  <<EOF>> {
+    BEGIN(INITIAL); // is not set automatically by yyrestart()
+    KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << endl;
+    yyerror("");
+    return 0;
+  }
 }
 
 <RULE_ARGUMENTS>{
-{Newline}               newline(); yymore();
-{String}                yymore(); /* this and... */
-["]                     yymore(); /* ...this prevent brackets inside strings to be counted */
-[^\[\]\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
-"["                     openBrackets++; yymore();
-"]" {
-    openBrackets--;
-    if (openBrackets < 0) {
-      COPY_CODE_TO_YYLVAL(yytext,(yyleng-1)); /* cut off the trailing bracket */
-      BEGIN(INITIAL);
-      return T_RULE_ARGUMENTS;
-    }
-}
-<<EOF>> {
-    BEGIN(INITIAL); // is not set automatically by yyrestart()
-    KDevPG::checkOut << "Encountered end of file in an unclosed rule argument specification..." << endl;
-    yyerror("");
-    return 0;
-}
+  {Newline}               newline(); yymore();
+  {String}                yymore(); /* this and... */
+  ["]                     yymore(); /* ...this prevent brackets inside strings to be counted */
+  [^\[\]\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
+  "["                     openBrackets++; yymore();
+  "]" {
+      openBrackets--;
+      if (openBrackets < 0) {
+        COPY_CODE_TO_YYLVAL(yytext,(yyleng-1)); /* cut off the trailing bracket */
+        BEGIN(INITIAL);
+        return T_RULE_ARGUMENTS;
+      }
+  }
+  <<EOF>> {
+      BEGIN(INITIAL); // is not set automatically by yyrestart()
+      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << endl;
+      yyerror("");
+      return 0;
+  }
 }
 
 <RULE_PARAMETERS_HEADER>{
-{Whitespace}*           /* skip */ ;
-{Newline}               newline();
-"--"[^\r\n]*            /* line comments, skip */ ;
-":"{Whitespace}*        BEGIN(RULE_PARAMETERS_VARNAME); return ':';
-"#"                     return '#';
-"member"                return T_MEMBER;
-"temporary"             return T_TEMPORARY;
-"argument"              return T_ARGUMENT;
-"node"                  return T_NODE;
-"token"                 return T_TOKEN;
-"variable"              return T_VARIABLE;
-";"                     return ';';  /* only used for "token" types */
-[_a-zA-Z]*[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
-"]"                     BEGIN(INITIAL); return ']';
-.                       BEGIN(INITIAL); REJECT; /* everything else */
+  {Whitespace}*           /* skip */ ;
+  {Newline}               newline();
+  "--"[^\r\n]*            /* line comments, skip */ ;
+  ":"{Whitespace}*        BEGIN(RULE_PARAMETERS_VARNAME); return ':';
+  "#"                     return '#';
+  "member"                return T_MEMBER;
+  "temporary"             return T_TEMPORARY;
+  "argument"              return T_ARGUMENT;
+  "node"                  return T_NODE;
+  "token"                 return T_TOKEN;
+  "variable"              return T_VARIABLE;
+  ";"                     return ';';  /* only used for "token" types */
+  [_a-zA-Z]*[_a-zA-Z0-9]+           COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
+  "]"                     BEGIN(INITIAL); return ']';
+  .                       BEGIN(INITIAL); REJECT; /* everything else */
 }
 
 <RULE_PARAMETERS_VARNAME>{
-{Newline}               newline(); yymore();
-[^;\r\n]*               yymore(); /* gather everything that's not a semicolon, and append what comes next */
-";" {
-    // strip trailing whitespace
-    int length = yyleng-1; // and first, the trailing semicolon
-    for (int i = length-1; i < 1; i--) {
-      switch(yytext[i-1])
-      {
-        case ' ':
-        case '\f':
-        case '\t':
-          continue;
-        default:
-          length = i;
-          break;
+  {Newline}               newline(); yymore();
+  [^;\r\n]*               yymore(); /* gather everything that's not a semicolon, and append what comes next */
+  ";" {
+      // strip trailing whitespace
+      int length = yyleng-1; // and first, the trailing semicolon
+      for (int i = length-1; i < 1; i--) {
+        switch(yytext[i-1])
+        {
+          case ' ':
+          case '\f':
+          case '\t':
+            continue;
+          default:
+            length = i;
+            break;
+        }
       }
-    }
-    COPY_TO_YYLVAL(yytext,length);
-    BEGIN(RULE_PARAMETERS_HEADER);
-    return T_IDENTIFIER;
-}
-.                       BEGIN(INITIAL); REJECT; /* everything else */
+      COPY_TO_YYLVAL(yytext,length);
+      BEGIN(RULE_PARAMETERS_HEADER);
+      return T_IDENTIFIER;
+  }
+  .                       BEGIN(INITIAL); REJECT; /* everything else */
 }
 
 
 "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 <CODE>{
-{Newline}               newline(); yymore();
-[^:\n\r]*               yymore(); /* gather everything that's not a colon, and append what comes next */
-":"+[^:\]\n\r]*         yymore(); /* also gather colons that are not followed by colons or newlines */
-":]" {
-    COPY_CODE_TO_YYLVAL(yytext, (yyleng-2)); /* cut off the trailing stuff */
-    if(rulePosition == RuleLexer)
-      BEGIN(RULE_LEXER);
-    else
-      BEGIN(INITIAL);
-    return T_CODE;
-}
-<<EOF>> {
-    BEGIN(INITIAL); // is not set automatically by yyrestart()
-    KDevPG::checkOut << "Encountered end of file in an unclosed code segment..." << endl;
-    yyerror("");
-    return 0;
-}
+  {Newline}               newline(); yymore();
+  [^:\n\r]*               yymore(); /* gather everything that's not a colon, and append what comes next */
+  ":"+[^:\]\n\r]*         yymore(); /* also gather colons that are not followed by colons or newlines */
+  ":]" {
+      COPY_CODE_TO_YYLVAL(yytext, (yyleng-2)); /* cut off the trailing stuff */
+      if(rulePosition == RuleLexer)
+        BEGIN(RULE_LEXER);
+      else
+        BEGIN(INITIAL);
+      return T_CODE;
+  }
+  <<EOF>> {
+      BEGIN(INITIAL); // is not set automatically by yyrestart()
+      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << endl;
+      yyerror("");
+      return 0;
+  }
 }
 
 
@@ -385,7 +392,7 @@ void yyerror(const char* msg )
       p = current_end;
       int c = ch;
 
-      while(c != '\n')
+      while(c != EOF && c != '\n')
         {
           *p++ = c;
           c = inp();

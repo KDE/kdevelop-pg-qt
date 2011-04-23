@@ -392,7 +392,7 @@ declared_tokens
     ;
 
 rules
-    : item ';'                          { KDevPG::globalSystem.pushRule($1); }
+    : /* empty */
     | rules item ';'                    { KDevPG::globalSystem.pushRule($2); }
     ;
 

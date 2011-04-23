@@ -9,7 +9,7 @@ if(NOT KDE4_FOUND)
     cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
     # set the cmake policies to the 2.4.x compatibility settings
     cmake_policy(VERSION 2.4.5)
-    # CMP0002: multiple targets with the same name for the unit tests
+    # CMP0002: multiple targets with the saßme name for the unit tests
     cmake_policy(SET CMP0002 OLD)
     find_package(Qt4)
     set(DATA_INSTALL_DIR share)
@@ -18,6 +18,7 @@ endif(NOT KDE4_FOUND)
 # Use colored output (since cmake 2.4.0)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
+# FIXME: find a way to make this portable (define typeof for non-gcc using decltype etc.)
 add_definitions(--std=gnu++0x)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})

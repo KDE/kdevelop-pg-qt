@@ -26,6 +26,7 @@ class QString;
 namespace KDevPG
 {
 void generateOutput();
+void generateLexer();
 void generateVisitor(const QString& name, bool inherit_default);
 }
 

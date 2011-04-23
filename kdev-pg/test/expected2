@@ -7,9 +7,8 @@
 ** WARNING found FIRST/FIRST conflict in r4:
 	Rule ``(A | B | C | r2)''
 	Terminals [
-		A, 
-		C
+		C, 
+		A
 	]
 
 2 conflicts total: 0 FIRST/FOLLOW conflicts, 2 FIRST/FIRST conflicts.
-Usage: kdev-pg-qt [further-options] --output=<name> [further-options] file.g

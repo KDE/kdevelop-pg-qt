@@ -29,6 +29,7 @@
 #include "kdev-pg-checker.h"
 #include "kdev-pg-inline-checker.h"
 #include "kdev-pg-generate.h"
+#include "kdev-pg-regexp.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
@@ -44,7 +45,7 @@ int yyparse();
 
 void usage()
 {
-  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] file.g" << endl;
+  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] <file.g>" << endl;
 }
 
 void help()
@@ -54,25 +55,35 @@ void help()
            << "Options:" << endl
            << "\t--output=<name> - Specify a prefix for all generated files" << endl
            << "\t--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
+           << "\t--no-output - Do not actually generate files" << endl
+           << "Components:" << endl
            << "\t--debug-visitor - Generate a visitor to dump the parse-tree" << endl
            << "\t--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
            << "\t--no-ast - Do not generate any AST-files" << endl
+           << "\t--with-ast - Generate AST (default)" << endl
+           << "\t--no-parser - Do not create the parser, built-in-visitors etc." << endl
+           << "\t--with-parser - The default, a parser will be generated" << endl
+           << "\t--no-lexer - Do not generate the lexer" << endl
+           << "\t--with-lexer - Ensure lexer generation" << endl
+           << "\t--token-text - Generate a function converting the number of a token into its name" << endl
+           << "Informative output:" << endl
            << "\t--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
            << "\t--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
            << "\t--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
-           << "\t--token-text - Generate a function converting the number of a token into its name" << endl
-           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue" << endl
+           << "Error-handling:" << endl
+           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue (default)" << endl
            << "\t--strict-conflicts - Quit after having detected conflicts" << endl
            << "\t--ignore-conflicts - Do not perform conflict-checking" << endl
+           << "Visitor generation:" << endl
            << "\t--new-visitor=VisitorName - Create a new empty visitor" << endl
            << "\t--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << endl
            << "\t--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
-           << "\t--with-parser - The default, a parser will be generated" << endl
-           << "\t--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
+           << "Output format:" << endl
            << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
            << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
-           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array" << endl
+           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array (default)" << endl
            << "\t--visitor-switch - Visitor::visitNode will use a switch-statement" << endl
+           << "About:" << endl
            << "\t--help - Show this messages" << endl
            << "\t--usage - Show usage" << endl
            << "\t--version - Show version" << endl
@@ -91,7 +102,7 @@ void version()
 
 void author()
 {
-  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2010 by the KDevelop-PG-Qt developers:") << endl
+  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2011 by the KDevelop-PG-Qt developers:") << endl
     << QString::fromUtf8("\tRoberto Raggi\n"
        "\tJakob Petsovits\n"
        "\tAndreas Pakulat\n"
@@ -160,8 +171,12 @@ int main(int argc, char **argv)
   bool dump_terminals = false;
   bool dump_symbols = false;
   bool generate_parser = true;
+  bool generate_lexer = true;
+  bool ensure_generate_lexer_or_not = false;
+  bool ensure_generate_parser_or_not = false;
   bool DebugRules = false;
   bool inherit_default = false;
+  bool output = true;
   QString new_visitor;
 
   QCoreApplication app(argc, argv);
@@ -174,14 +189,23 @@ int main(int argc, char **argv)
     if (SW(--output=))
     {
       KDevPG::globalSystem.language = arg.mid( 9 );
+      output = true;
     }
     else if (SW(--namespace=))
     {
       KDevPG::globalSystem.ns = arg.mid( 12 );
     }
+    else if (arg == "--no-output")
+    {
+      output = false;
+    }
     else if (arg == "--no-ast")
     {
       KDevPG::globalSystem.generateAst = false;
+    }
+    else if (arg == "--with-ast")
+    {
+      KDevPG::globalSystem.generateAst = true;
     }
     else if (arg == "--serialize-visitor")
     {
@@ -210,10 +234,22 @@ int main(int argc, char **argv)
     else if (arg == "--no-parser")
     {
       generate_parser = false;
+      ensure_generate_parser_or_not = true;
     }
     else if (arg == "--with-parser")
     {
       generate_parser = true;
+      ensure_generate_parser_or_not = true;
+    }
+    else if (arg == "--no-lexer")
+    {
+      generate_lexer = false;
+      ensure_generate_lexer_or_not = true;
+    }
+    else if (arg == "--with-lexer")
+    {
+      generate_lexer = true;
+      ensure_generate_lexer_or_not = true;
     }
     else if (arg == "--beautiful-code")
     {
@@ -235,7 +271,7 @@ int main(int argc, char **argv)
     {
       new_visitor = arg.mid( 14 );
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
-      generate_parser = false;
+      output = false;
     }
     else if (arg == "--inherit-default-visitor")
     {
@@ -308,67 +344,106 @@ int main(int argc, char **argv)
 
   KDevPG::globalSystem.finishedParsing();
   
-  if(KDevPG::globalSystem.start.empty())
-    KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << endl;
+  if(!ensure_generate_parser_or_not)
+    generate_parser = !KDevPG::globalSystem.rules.empty();
   
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  if(generate_parser)
   {
-    KDevPG::InlineChecker check;
-    check(*it);
+    if(KDevPG::globalSystem.rules.empty())
+    {
+      KDevPG::checkOut << "** ERROR no parser rules" << endl;
+      KDevPG::ProblemSummaryPrinter::reportError();
+    }
+    else
+    {
+      
+      if(KDevPG::globalSystem.start.empty())
+        KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << endl;
+      
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::InlineChecker check;
+        check(*it);
+      }
+      
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::InitializeEnvironment initenv;
+        initenv(*it);
+      }
+
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::EmptyOperatorChecker check;
+        check(*it);
+      }
+
+      KDevPG::computeFirst();
+      KDevPG::computeFollow();
+
+      if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
+      {
+        for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+        {
+          KDevPG::FirstFollowConflictChecker check;
+          check(*it);
+        }
+
+        for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+        {
+          KDevPG::FirstFirstConflictChecker check;
+          check(*it);
+        }
+      }
+        
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::EmptyFirstChecker check;
+        check(*it);
+      }
+      
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::EmptyOperatorChecker check;
+        check(*it);
+      }
+
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::UndefinedSymbolChecker check;
+        check(*it);
+      }
+
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::UndefinedTokenChecker check;
+        check(*it);
+      }
+    }
   }
   
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  if (ensure_generate_lexer_or_not && generate_lexer && !KDevPG::globalSystem.hasLexer)
   {
-    KDevPG::InitializeEnvironment initenv;
-    initenv(*it);
+    KDevPG::checkOut << "** ERROR no lexer definiton" << endl;
+    KDevPG::ProblemSummaryPrinter::reportError();
+    generate_lexer = false;
   }
-
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::EmptyOperatorChecker check;
-    check(*it);
-  }
-
-  KDevPG::computeFirst();
-  KDevPG::computeFollow();
-
-  if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
-  {
-    for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-    {
-      KDevPG::FirstFollowConflictChecker check;
-      check(*it);
-    }
-
-    for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-    {
-      KDevPG::FirstFirstConflictChecker check;
-      check(*it);
-    }
-  }
+  
+  if (!ensure_generate_lexer_or_not)
+    generate_lexer = KDevPG::globalSystem.hasLexer;
     
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  if (generate_lexer)
   {
-    KDevPG::EmptyFirstChecker check;
-    check(*it);
-  }
-  
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::EmptyOperatorChecker check;
-    check(*it);
-  }
-
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::UndefinedSymbolChecker check;
-    check(*it);
-  }
-
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::UndefinedTokenChecker check;
-    check(*it);
+    if(!KDevPG::globalSystem.lexerEnvs.contains("start"))
+    {
+      KDevPG::checkOut << "** ERROR missing start-state in the lexer" << endl;
+      KDevPG::ProblemSummaryPrinter::reportError();
+    }
+    if(!QRegExp("[a-zA-Z_][a-zA-Z_0-9]*").exactMatch(KDevPG::globalSystem.tokenStream))
+    { // primarily to exclude KDevPG::TokenStream (the default value)
+      KDevPG::checkOut << "** ERROR You have to specify a valid name for your lexer (%token_stream)" << endl;
+      KDevPG::ProblemSummaryPrinter::reportError();
+    }
   }
 
   if(dump_terminals)
@@ -407,14 +482,17 @@ int main(int argc, char **argv)
     
   KDevPG::ProblemSummaryPrinter()();
   
-  if (!(dump_terminals || dump_symbols || DebugRules) && KDevPG::globalSystem.language.isEmpty())
+  if (!(dump_terminals || dump_symbols || DebugRules) && output && KDevPG::globalSystem.language.isEmpty())
   {
     usage();
     exit(EXIT_FAILURE);
   }
 
-  if (generate_parser)
+  if (output && generate_parser)
     KDevPG::generateOutput();
+  
+  if (output && generate_lexer)
+    KDevPG::generateLexer();
   
   if (!new_visitor.isEmpty())
     KDevPG::generateVisitor(new_visitor, inherit_default);

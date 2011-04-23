@@ -21,9 +21,6 @@
 #include "kdev-pg.h"
 #include "kdev-pg-ast.h"
 
-
-#include <QtCore/QDebug>
-
 namespace KDevPG
 {
 
@@ -198,6 +195,115 @@ Settings::MemberItem *member(Settings::MemberItem::MemberKind kind, const QStrin
   node->mMemberKind = kind;
   node->mCode = code;
   return node;
+}
+
+QString unescaped(const QByteArray& str)
+{
+  QString ret;
+  int cnt = 0;
+  for(auto i = str.begin(); i < str.end(); ++i)
+  {
+    if(cnt++ != 0)
+    {
+    }
+    if(*i == '\\')
+    {
+      char nxt = *++i;
+      if(nxt == 'n')
+        ret += '\n';
+      else if(nxt == 't')
+        ret += '\t';
+      else if(nxt == 'f')
+        ret += '\f';
+      else if(nxt == 'v')
+        ret += '\v';
+      else if(nxt == 'r')
+        ret += '\r';
+      else if(nxt == '0')
+        ret += '\0';
+      else if(nxt == 'b')
+        ret += '\b';
+      else if(nxt == 'a')
+        ret += '\a';
+      else if(nxt == 'x' || nxt == 'X' || nxt == 'u' || nxt == 'U')
+      {
+        quint32 x = 0;
+        for(++i; ; ++i)
+        {
+          x *= 16;
+          if(i == str.end())
+            break;
+          else if(*i >= 'a' && *i <= 'f')
+            x += (*i - 'a' + 10);
+          else if(*i >= 'A' && *i <= 'F')
+            x += (*i - 'A' + 10);
+          else if(*i >= '0' && *i <= '9')
+            x += (*i - '0');
+          else
+            break;
+        }
+        --i;
+        x /= 16;
+        ret += QString::fromUcs4(&x, 1);
+      }
+      else if(nxt == 'd' || nxt == 'D')
+      {
+        quint32 x = 0;
+        for(++i; ; ++i)
+        {
+          x *= 10;
+          if(i == str.end())
+            break;
+          else if(*i >= '0' && *i <= '9')
+            x += (*i - '0');
+          else
+            break;
+        }
+        --i;
+        x /= 10;
+        ret += QString::fromUcs4(&x, 1);
+      }
+      else if(nxt == 'o' || nxt == 'O')
+      {
+        quint32 x = 0;
+        for(++i; ; ++i)
+        {
+          x *= 8;
+          if(i == str.end())
+            break;
+          else if(*i >= '0' && *i <= '7')
+            x += (*i - '0');
+          else
+            break;
+        }
+        --i;
+        x /= 8;
+        ret += QString::fromUcs4(&x, 1);
+      }
+      else if(nxt == 'y' || nxt == 'Y')
+      {
+        quint32 x = 0;
+        for(++i; ; ++i)
+        {
+          x *= 2;
+          if(i == str.end())
+            break;
+          else if(*i >= '0' && *i <= '1')
+            x += (*i - '0');
+          else
+            break;
+        }
+        --i;
+        x /= 2;
+        ret += QString::fromUcs4(&x, 1);
+      }
+      else
+        ret += nxt;
+    }
+    else
+      ret += *i;
+  }
+  return ret;
 }
 
 bool isOperatorSymbol(Model::SymbolItem *sym)

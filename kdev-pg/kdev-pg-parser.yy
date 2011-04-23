@@ -22,6 +22,9 @@
 
 #include "kdev-pg.h"
 #include "kdev-pg-clone-tree.h"
+#include "kdev-pg-regexp.h"
+#include "kdev-pg-unicode-loader.h"
+#include "kdev-pg-checker.h"
 
 #include <QtCore/QFile>
 #include <cassert>
@@ -30,12 +33,16 @@ extern int yylex();
 extern void yyerror(const char* msg);
 extern int yyLine;
 
+QString lexerEnv;
+
 namespace KDevPG
 {
     extern QFile file;
+    extern QTextStream checkOut;
 }
 
 KDevPG::Model::OperatorItem *operatorNode = 0;
+QString r;
 
 %}
 
@@ -46,25 +53,30 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
     KDevPG::Model::VariableDeclarationItem::StorageType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
     KDevPG::Model::Operator                                *operatorInformation;
+    KDevPG::GNFA                                           *nfa;
 }
 
-%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_NUMBER ';'
+%token T_IDENTIFIER T_ARROW T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_NUMBER ';'
 %token T_TOKEN_DECLARATION T_TOKEN_STREAM_DECLARATION T_NAMESPACE_DECLARATION
-%token T_PARSERCLASS_DECLARATION T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION
+%token T_PARSERCLASS_DECLARATION T_LEXERCLASS_DECLARATION
+%token T_PUBLIC T_PRIVATE T_PROTECTED T_DECLARATION T_BITS
 %token T_CONSTRUCTOR T_DESTRUCTOR T_TRY_RECOVER T_TRY_ROLLBACK T_CATCH
 %token T_RULE_ARGUMENTS T_MEMBER T_TEMPORARY T_ARGUMENT T_EXPORT_MACRO
 %token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
 %token T_AST_DECLARATION 
 %token T_PARSER_DECLARATION_HEADER T_PARSER_BITS_HEADER T_AST_HEADER
-%token T_PARSER_BASE T_AST_BASE
+%token T_TOKEN_STREAM_DECLARATION_HEADER T_TOKEN_STREAM_BITS_HEADER
+%token T_PARSER_BASE T_AST_BASE T_TOKEN_STREAM_BASE
 %token T_BIN T_PRE T_POST T_TERN
 %token T_LOPR T_ROPR
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
 %token T_PAREN
 %token T_INLINE
+%token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
+%token T_NAMED_REGEXP T_CONTINUE T_RANGE
 
-%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_RULE_ARGUMENTS T_NUMBER
-%type<str> name code_opt rule_arguments_opt priority assoc
+%type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP T_RANGE
+%type<str> name code_opt rule_arguments_opt priority assoc opt_lexer_action
 %type<item> item primary_item try_item primary_atom unary_item
 %type<item> postfix_item option_item item_sequence conditional_item
 %type<item> member_declaration_rest variableDeclarations variableDeclaration operatorRule
@@ -73,6 +85,7 @@ KDevPG::Model::OperatorItem *operatorNode = 0;
 %type<variableType>    variableType
 /* %type<void> operatorDeclaration operatorDeclarations operatorRule */
 %type<operatorInformation> operator
+%type<nfa> regexp regexp1 regexp2 regexp3 regexp4 regexp5 regexp6 regexp7 aregexp aregexp1 aregexp2 aregexp3 aregexp4 aregexp5 aregexp6 aregexp7
 
 %%
 
@@ -80,7 +93,7 @@ system
     : code_opt { KDevPG::globalSystem.decl = $1; }
       declarations
       rules
-      code_opt { KDevPG::globalSystem.bits = $5; }
+      code_opt { KDevPG::globalSystem.bits += $5; }
     ;
 
 declarations
@@ -91,7 +104,68 @@ declarations
 declaration
     : T_PARSERCLASS_DECLARATION member_declaration_rest
         { KDevPG::globalSystem.pushParserClassMember($2); }
+    | T_PARSERCLASS_DECLARATION '(' T_BITS ')' T_CODE
+        { KDevPG::globalSystem.bits += $5; }
+    | T_LEXERCLASS_DECLARATION member_declaration_rest
+        { KDevPG::globalSystem.pushLexerClassMember($2); }
+    | T_LEXERCLASS_DECLARATION '(' T_BITS ')' T_CODE
+        { KDevPG::globalSystem.lexerBits += $5; }
     | T_TOKEN_DECLARATION declared_tokens ';'
+    | T_TABLE_LEXER
+      { if(KDevPG::globalSystem.hasLexer)
+        { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%table_lexer) before any lexer rules"; exit(-1); }
+        switch(KDevPG::GDFA::type)
+        {
+          case KDevPG::GDFA::SAscii: KDevPG::GDFA::type = KDevPG::GDFA::TAscii; break;
+          case KDevPG::GDFA::SLatin1: KDevPG::GDFA::type = KDevPG::GDFA::TLatin1; break;
+          case KDevPG::GDFA::SUtf8: KDevPG::GDFA::type = KDevPG::GDFA::TUtf8; break;
+          case KDevPG::GDFA::SUcs2: KDevPG::GDFA::type = KDevPG::GDFA::TUcs2; break;
+          case KDevPG::GDFA::SUtf16: KDevPG::GDFA::type = KDevPG::GDFA::TUtf16; break;
+/*           case KDevPG::GDFA::SUcs4: KDevPG::GDFA::type = KDevPG::GDFA::TUcs4; break; */
+          default: /* empty */;
+        }
+      }
+    | T_SEQUENCE_LEXER
+      { if(KDevPG::globalSystem.hasLexer)
+      { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
+      switch(KDevPG::GDFA::type)
+      {
+        case KDevPG::GDFA::TAscii: KDevPG::GDFA::type = KDevPG::GDFA::SAscii; break;
+        case KDevPG::GDFA::TLatin1: KDevPG::GDFA::type = KDevPG::GDFA::SLatin1; break;
+        case KDevPG::GDFA::TUtf8: KDevPG::GDFA::type = KDevPG::GDFA::SUtf8; break;
+        case KDevPG::GDFA::TUcs2: KDevPG::GDFA::type = KDevPG::GDFA::SUcs2; break;
+        case KDevPG::GDFA::TUtf16: KDevPG::GDFA::type = KDevPG::GDFA::SUtf16; break;
+/*         case KDevPG::GDFA::TUcs4: KDevPG::GDFA::type = KDevPG::GDFA::SUcs4; break; */
+        default: /* empty */;
+      }
+      }
+    | T_INPUT_ENCODING T_STRING
+      {
+        if(KDevPG::globalSystem.hasLexer)
+        { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
+        int base = (KDevPG::GDFA::type / 4) * 4; // warning: magic constant: number of different codecs
+        QString str = $2;
+        str = str.toLower();
+        str.replace('-', "");
+        if(str == "ascii")
+          /* base += 0*/;
+        else if(str == "latin1")
+          base += 1;
+        else if(str == "utf8")
+          base += 2;
+        else if(str == "ucs2")
+          base += 3;
+        else if(str == "utf16")
+          base += 4;
+        else if(str == "ucs4" || str == "utf32")
+          base += 5;
+        else
+        {
+          KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
+          exit(-1);
+        }
+        KDevPG::GDFA::type = (typeof(KDevPG::GDFA::type))(base);
+      }
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }
     | T_EXPORT_MACRO T_STRING
@@ -108,11 +182,193 @@ declaration
         { KDevPG::globalSystem.pushParserBitsHeader($2); }
     | T_AST_HEADER T_STRING
         { KDevPG::globalSystem.pushAstHeader($2); }
+    | T_TOKEN_STREAM_DECLARATION_HEADER T_STRING
+        { KDevPG::globalSystem.pushTokenStreamDeclarationHeader($2); }
+    | T_INPUT_STREAM T_STRING
+        { KDevPG::globalSystem.inputStream = $2; }
+    | T_TOKEN_STREAM_BITS_HEADER T_STRING
+        { KDevPG::globalSystem.pushTokenStreamBitsHeader($2); }
     | T_AST_BASE T_IDENTIFIER T_STRING
         { KDevPG::globalSystem.astBaseClasses[$2] = $3; }
     | T_PARSER_BASE T_STRING
         { KDevPG::globalSystem.parserBaseClass = $2; }
+    | T_TOKEN_STREAM_BASE T_STRING
+        { KDevPG::globalSystem.tokenStreamBaseClass = $2; }
+    | T_LEXER T_STRING { KDevPG::globalSystem.hasLexer = true; lexerEnv = $2; if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+    | T_LEXER { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
     ;
+
+lexer_declaration_rest
+    : regexp code_opt T_ARROW T_IDENTIFIER ';'
+            { KDevPG::globalSystem.regexpById[$4] = $1;
+            } lexer_declaration_rest
+    | regexp code_opt opt_lexer_action ';'
+            {
+              if($1->acceptsEpsilon())
+              {
+                KDevPG::checkOut << "** ERROR Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::ProblemSummaryPrinter::reportError();
+              }
+              QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
+                s);
+            } lexer_declaration_rest
+    | /* empty */
+    ;
+
+opt_lexer_action
+    : T_TERMINAL {
+        r = "\nRETURN(" + QString($1) + ");\n"
+      }
+    | T_CONTINUE {
+        r = "\nCONTINUE;\n"; 
+      }
+    | /* empty */ { r = "\nSKIP\n" }
+    ;
+
+regexp
+    : regexp '|' regexp1    { $$ = new KDevPG::GNFA(*$1 |= *$3); delete $1; delete $3; }
+    | regexp1               { $$ = $1; }
+    ;
+
+regexp1
+    : regexp1 '&' regexp2   { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
+    | regexp2               { $$ = $1; }
+    ;
+
+regexp2
+    : regexp3 '^' regexp2   { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
+    | regexp3               { $$ = $1; }
+    ;
+
+regexp3
+    : '~' regexp3           { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
+    | '?' regexp3           { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA()); delete $2; }
+    | regexp4               { $$ = $1; }
+    ;
+
+regexp4
+    : regexp4 regexp5       { $$ = new KDevPG::GNFA(*$1 <<= *$2); delete $1; delete $2; }
+    | regexp5               { $$ = $1; }
+    ;
+
+regexp5
+    : regexp5 '@' regexp6   { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
+    | regexp6               { $$ = $1; }
+    ;
+    
+regexp6
+    : regexp6 '*'           { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | regexp6 '+'           { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
+    | regexp7               { $$ = $1; }
+    ;
+
+regexp7
+    : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
+    | '[' aregexp ']'       { $$ = $2; }
+    | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_NAMED_REGEXP        {
+                              if(KDevPG::globalSystem.regexpById[$1] == 0)
+                              {
+                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
+                                exit(-1);
+                              }
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
+                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              {
+                                regexp->minimize();
+                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                              }
+                              $$ = new KDevPG::GNFA(*regexp);
+                            }
+    | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
+    ;
+
+aregexp
+    : aregexp '|' aregexp1  { $$ = new KDevPG::GNFA(*$1 |= *$3); delete $1; delete $3; }
+    | aregexp1              { $$ = $1; }
+    ;
+
+aregexp1
+    : aregexp1 '&' aregexp2 { $$ = new KDevPG::GNFA(*$1 &= *$3); delete $1; delete $3; }
+    | aregexp2              { $$ = $1; }
+    ;
+
+aregexp2
+    : aregexp3 '^' aregexp2 { $$ = new KDevPG::GNFA(*$1 ^= *$3); delete $1; delete $3; }
+    | aregexp3              { $$ = $1; }
+    ;
+
+aregexp3
+    : '~' aregexp3          { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
+    | '?' aregexp3          { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA()); delete $2; }
+    | aregexp4              { $$ = $1; }
+    ;
+
+aregexp4
+    : aregexp4 aregexp5     { $$ = new KDevPG::GNFA(*$1 |= *$2); delete $1; delete $2; }
+    | aregexp5
+    ;
+
+aregexp5
+    : aregexp5 '@' aregexp6 { $$ = new KDevPG::GNFA(*$1); KDevPG::GNFA *tmp = new KDevPG::GNFA(*$3 <<= *$1); **tmp; *$$ <<= *tmp; delete tmp; delete $1; delete $3; }
+    | aregexp6              { $$ = $1; }
+    ;
+    
+aregexp6
+    : aregexp6 '*'          { $$ = new KDevPG::GNFA(**$1); delete $1; }
+    | aregexp6 '+'          { $$ = new KDevPG::GNFA(*$1); **$$; *$$ <<= *$1; delete $1; }
+    | aregexp7              { $$ = $1; }
+    ;
+
+aregexp7
+    : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
+    | '[' aregexp ']'       { $$ = $2; }
+    | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_RANGE               {
+      quint32 begin, end;
+      QString str = KDevPG::unescaped(QByteArray($1));
+      assert(str.size() >= 3 && str.size() <= 5);
+      if(str[1] == '-')
+      {
+        begin = str[0].unicode();
+        if(str.size() == 3)
+          end = str[2].unicode();
+        else
+          end = QChar::surrogateToUcs4(str[2], str[3]);
+      }
+      else
+      {
+        begin = QChar::surrogateToUcs4(str[0], str[1]);
+        assert(str[2] == '-');
+        if(str.size() == 4)
+          end = str[3].unicode();
+        else
+          end = QChar::surrogateToUcs4(str[3], str[4]);
+      }
+      $$ = new KDevPG::GNFA(KDevPG::GNFA::range(begin, end+1));
+    }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray($1)))); }
+    | T_NAMED_REGEXP        {
+                              if(KDevPG::globalSystem.regexpById[$1] == 0)
+                              {
+                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
+                                exit(-1);
+                              }
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
+                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              {
+                                regexp->minimize();
+                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                              }
+                              $$ = new KDevPG::GNFA(*regexp);
+                            }
+    | /* empty */           { $$ = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
+    ;
+
 
 member_declaration_rest
     : '(' T_PUBLIC T_DECLARATION ')' T_CODE
@@ -136,7 +392,7 @@ declared_tokens
     ;
 
 rules
-    : item ';'                          { KDevPG::globalSystem.pushRule($1); }
+    : /* empty */
     | rules item ';'                    { KDevPG::globalSystem.pushRule($2); }
     ;
 

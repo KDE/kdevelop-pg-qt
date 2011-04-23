@@ -1,9 +1,10 @@
-/* A Bison parser, made by GNU Bison 2.4.2.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Skeleton interface for Bison's Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2006, 2009-2010 Free Software
-   Foundation, Inc.
+      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+   Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,49 +44,63 @@
      T_TERMINAL = 260,
      T_CODE = 261,
      T_STRING = 262,
-     T_NUMBER = 263,
-     T_TOKEN_DECLARATION = 264,
-     T_TOKEN_STREAM_DECLARATION = 265,
-     T_NAMESPACE_DECLARATION = 266,
-     T_PARSERCLASS_DECLARATION = 267,
-     T_PUBLIC = 268,
-     T_PRIVATE = 269,
-     T_PROTECTED = 270,
-     T_DECLARATION = 271,
-     T_CONSTRUCTOR = 272,
-     T_DESTRUCTOR = 273,
-     T_TRY_RECOVER = 274,
-     T_TRY_ROLLBACK = 275,
-     T_CATCH = 276,
-     T_RULE_ARGUMENTS = 277,
-     T_MEMBER = 278,
-     T_TEMPORARY = 279,
-     T_ARGUMENT = 280,
-     T_EXPORT_MACRO = 281,
-     T_NODE = 282,
-     T_NODE_SEQUENCE = 283,
-     T_TOKEN = 284,
-     T_VARIABLE = 285,
-     T_EXPORT_MACRO_HEADER = 286,
-     T_AST_DECLARATION = 287,
-     T_PARSER_DECLARATION_HEADER = 288,
-     T_PARSER_BITS_HEADER = 289,
-     T_AST_HEADER = 290,
-     T_PARSER_BASE = 291,
-     T_AST_BASE = 292,
-     T_BIN = 293,
-     T_PRE = 294,
-     T_POST = 295,
-     T_TERN = 296,
-     T_LOPR = 297,
-     T_ROPR = 298,
-     T_LEFT_ASSOC = 299,
-     T_RIGHT_ASSOC = 300,
-     T_IS_LEFT_ASSOC = 301,
-     T_IS_RIGHT_ASSOC = 302,
-     T_PRIORITY = 303,
-     T_PAREN = 304,
-     T_INLINE = 305
+     T_UNQUOTED_STRING = 263,
+     T_NUMBER = 264,
+     T_TOKEN_DECLARATION = 265,
+     T_TOKEN_STREAM_DECLARATION = 266,
+     T_NAMESPACE_DECLARATION = 267,
+     T_PARSERCLASS_DECLARATION = 268,
+     T_LEXERCLASS_DECLARATION = 269,
+     T_PUBLIC = 270,
+     T_PRIVATE = 271,
+     T_PROTECTED = 272,
+     T_DECLARATION = 273,
+     T_BITS = 274,
+     T_CONSTRUCTOR = 275,
+     T_DESTRUCTOR = 276,
+     T_TRY_RECOVER = 277,
+     T_TRY_ROLLBACK = 278,
+     T_CATCH = 279,
+     T_RULE_ARGUMENTS = 280,
+     T_MEMBER = 281,
+     T_TEMPORARY = 282,
+     T_ARGUMENT = 283,
+     T_EXPORT_MACRO = 284,
+     T_NODE = 285,
+     T_NODE_SEQUENCE = 286,
+     T_TOKEN = 287,
+     T_VARIABLE = 288,
+     T_EXPORT_MACRO_HEADER = 289,
+     T_AST_DECLARATION = 290,
+     T_PARSER_DECLARATION_HEADER = 291,
+     T_PARSER_BITS_HEADER = 292,
+     T_AST_HEADER = 293,
+     T_TOKEN_STREAM_DECLARATION_HEADER = 294,
+     T_TOKEN_STREAM_BITS_HEADER = 295,
+     T_PARSER_BASE = 296,
+     T_AST_BASE = 297,
+     T_TOKEN_STREAM_BASE = 298,
+     T_BIN = 299,
+     T_PRE = 300,
+     T_POST = 301,
+     T_TERN = 302,
+     T_LOPR = 303,
+     T_ROPR = 304,
+     T_LEFT_ASSOC = 305,
+     T_RIGHT_ASSOC = 306,
+     T_IS_LEFT_ASSOC = 307,
+     T_IS_RIGHT_ASSOC = 308,
+     T_PRIORITY = 309,
+     T_PAREN = 310,
+     T_INLINE = 311,
+     T_LEXER = 312,
+     T_INPUT_STREAM = 313,
+     T_INPUT_ENCODING = 314,
+     T_TABLE_LEXER = 315,
+     T_SEQUENCE_LEXER = 316,
+     T_NAMED_REGEXP = 317,
+     T_CONTINUE = 318,
+     T_RANGE = 319
    };
 #endif
 
@@ -95,8 +110,8 @@
 typedef union YYSTYPE
 {
 
-/* Line 1685 of yacc.c  */
-#line 42 "/home/Jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+/* Line 1676 of yacc.c  */
+#line 48 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
     KDevPG::Model::Node *item;
     char* str;
@@ -104,11 +119,12 @@ typedef union YYSTYPE
     KDevPG::Model::VariableDeclarationItem::StorageType     storageType;
     KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
     KDevPG::Model::Operator                                *operatorInformation;
+    KDevPG::GNFA                                           *nfa;
 
 
 
-/* Line 1685 of yacc.c  */
-#line 112 "/home/Jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+/* Line 1676 of yacc.c  */
+#line 128 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

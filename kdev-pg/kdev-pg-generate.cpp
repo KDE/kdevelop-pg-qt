@@ -32,6 +32,7 @@
 #include "kdev-pg-new-visitor-gen.h"
 #include "kdev-pg-new-visitor-bits-gen.h"
 #include "kdev-pg-beautifier.h"
+#include "kdev-pg-regexp.h"
 
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -105,6 +106,9 @@ void generateOutput()
       << "#ifndef " << language << "_H_INCLUDED" << endl
       << "#define " << language << "_H_INCLUDED" << endl
       << endl;
+    
+    if(globalSystem.hasLexer)
+      s << "#include \"" << globalSystem.language << "lexer.h\"" << endl;
 
     if (globalSystem.generateAst)
       {
@@ -321,9 +325,6 @@ void generateOutput()
       << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << endl
 
-      << "#include \"" << globalSystem.language << "parser.h\"" << endl
-      << endl
-
       << "namespace " << globalSystem.ns << "{" << endl
       << endl
 
@@ -441,6 +442,190 @@ void generateOutput()
   }
 }
 
+void generateLexer()
+{
+  QByteArray language = globalSystem.language.toUpper().toLatin1();
+  bool hasStates = globalSystem.lexerEnvs.size() > 1;
+  
+  { // generate the lexer header
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
+    
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
+    
+      << "#ifndef " << language << "_LEXER_H_INCLUDED" << endl
+      << "#define " << language << "_LEXER_H_INCLUDED" << endl
+      << endl
+    
+      << endl
+      
+      << "#include <kdev-pg-char-sets.h>" << endl
+      << "#include <kdev-pg-token-stream.h>" << endl
+      << endl;
+      
+    foreach (const QString& header, globalSystem.tokenStreamDeclarationHeaders)
+      s << "#include \"" << header << "\"\n";
+    
+    s << endl << "namespace " << globalSystem.ns << "{" << endl
+      << endl
+      
+      << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
+      << (globalSystem.tokenStreamBaseClass.isEmpty() ? "" : " public " + globalSystem.tokenStreamBaseClass)
+      << ", public " << globalSystem.inputStream << endl
+      << "{" << endl;
+    
+    if(hasStates)
+    {
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+        s << "Base::Token& lex" << KDevPG::capitalized(state) << "();" << endl;
+      s << "enum {\n";
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+        s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << endl;
+      s << "State_COUNT\n} ruleSet;" << endl;
+    }
+    
+    s << "public:" << endl
+      << "typedef " << globalSystem.tokenStreamBaseClass << " Base;" << endl
+      << "typedef " << globalSystem.inputStream << " Iterator;" << endl << endl
+      
+      << "private:" << endl << "const Iterator::InputInt *spos;" << endl
+      << "bool continueLexeme;" << endl << endl
+      
+      << "public:" << endl << globalSystem.tokenStream << "(const Iterator& iter);" << endl
+      // non-virtual, virtuality will be inherited
+      << "~" << globalSystem.tokenStream << "();"
+      <<  endl << "Base::Token& next();" << endl;
+    
+#define LEXER_EXTRA_CODE_GEN(name) \
+    if (globalSystem.lexerclassMembers.name.empty() == false) \
+    { \
+      s << "\n// user defined declarations:" << endl; \
+      GenerateMemberCode gen(s, Settings::MemberItem::PublicDeclaration \
+                                | Settings::MemberItem::ProtectedDeclaration \
+                                | Settings::MemberItem::PrivateDeclaration); \
+      for( auto it = globalSystem.lexerclassMembers.name.begin(); \
+      it != globalSystem.lexerclassMembers.name.end(); ++it ) \
+      { \
+        gen(*it); \
+      } \
+    }
+    
+    // for (optional) lazyness add nextToken implementation here
+    
+    LEXER_EXTRA_CODE_GEN(declarations)
+    
+    s << "};" << endl << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
+      
+      << "#endif" << endl
+      << endl;
+      
+    QString oname = globalSystem.language;
+    oname += "lexer.h";
+        
+    format(s, oname);
+    
+  }
+  { // generate the lexer bits
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
+    
+    s << "// THIS FILE IS GENERATED" << endl
+    << "// WARNING! All changes made in this file will be lost!" << endl
+    << endl
+    
+    << "#include \"" << globalSystem.language << "lexer.h\"" << endl
+    << "#include \"" << globalSystem.language << "parser.h\"" << endl
+    << endl;
+    
+    foreach (const QString& header, globalSystem.tokenStreamBitsHeaders)
+      s << "#include \"" << header << "\"\n";
+    
+    s << endl << "namespace " << globalSystem.ns << "{" << endl
+      << endl << globalSystem.tokenStream << "::" << globalSystem.tokenStream
+      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter), continueLexeme(false)" << endl
+      << "{";
+    LEXER_EXTRA_CODE_GEN(constructorCode)
+    s << "}" << endl << endl
+      << globalSystem.tokenStream << "::~" << globalSystem.tokenStream
+      << "()\n{";
+    LEXER_EXTRA_CODE_GEN(destructorCode)
+    s << "}" << endl << endl
+            
+      << "#define CURR_POS (Iterator::plain())\n"
+         "#define CURR_IDX (Iterator::plain() - Iterator::begin())\n"
+         "#define CONTINUE {continueLexeme = true; return next();}\n"
+         "#define LENGTH {Iterator::plain() - Iterator::begin();}\n"
+         "#define BEGIN_POS (spos)\n"
+         "#define BEGIN_IDX (spos - Iterator::begin())\n"
+         "#define TOKEN(X) KDevPG::Token& token(Base::next());{token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = BEGIN_IDX; token.end = CURR_IDX - 1;}\n"
+         "#define RETURN(X) TOKEN(X); return token;\n"
+         "#define FAIL goto _fail;\n"
+         "#define SKIP return next();\n"
+         "#define NEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
+    
+    if(hasStates)
+    {
+      s << "#define SET_RULE_SET(r) ruleSet = State_##r;\n" << endl;
+    }
+    
+#define LEXER_CORE_IMPL(name, state) \
+      s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
+        << name << "()" << endl << "{" \
+        << "if(!Iterator::hasNext())\n{\nBase::Token& _t(Base::next());\n_t.kind = Parser::Token_EOF;\n_t.begin = _t.end = Iterator::plain() - Iterator::begin();\nreturn _t;\n}" << endl \
+        << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
+      GNFA alltogether(globalSystem.lexerEnvs[state]); \
+      GDFA deterministic = alltogether.dfa(); \
+      deterministic.minimize(); \
+      deterministic.setActions(globalSystem.lexerActions[state]); \
+      deterministic.codegen(s); \
+      s << "/* assert(false);*/\nreturn Base::next();}" << endl << endl;
+    
+    if(hasStates)
+    {
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+      {
+        LEXER_CORE_IMPL("lex" << KDevPG::capitalized(state), state)
+      }
+      s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
+        << "::next()" << endl << "{" << endl << "switch(ruleSet)\n{" << endl;
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+        s << "case State_" << state << ": return lex" << capitalized(state) << "();" << endl;
+      s << "}\n}" << endl;
+    }
+    else
+    {
+      LEXER_CORE_IMPL("next", "start")
+    }
+    
+    if(hasStates)
+    {
+      s << "#undef SET_RULE_SET\n" << endl;
+    }
+    
+    s << "#undef NEXT_CHR\n"
+         "#undef FAIl\n"
+         "#undef RETURN\n"
+         "#undef TOKEN\n"
+         "#undef BEGIN_IDX\n"
+         "#undef BEGIN_POS\n"
+         "#undef LENGTH\n"
+         "#undef CONTINUE\n"
+         "#undef CURR_IDX\n"
+         "#undef CURR_POS\n" << endl;
+    
+    s << globalSystem.lexerBits << endl
+      << "} // end of namespace " << globalSystem.ns << endl << endl;
+    
+    QString oname = globalSystem.language;
+    oname += "lexer.cpp";
+        
+    format(s, oname);
+  }
+}
+
 void generateVisitor(const QString& name, bool inherit_default)
 {
   QByteArray language = globalSystem.language.toUpper().toLatin1();
@@ -537,3 +722,5 @@ void generateVisitor(const QString& name, bool inherit_default)
 }
 
 }
+
+

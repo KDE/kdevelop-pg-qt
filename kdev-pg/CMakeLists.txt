@@ -6,6 +6,8 @@ REMOVE_DEFINITIONS(-DQT_NO_STL)
 ADD_DEFINITIONS(-DQT_STL) 
 add_definitions(-fexceptions)
 
+QT4_ADD_RESOURCES(kdevpg_rcc_srcs ../unidata.qrc)
+
 SET(kdevpg_srcs
     ASBeautifier.cpp
     ASFormatter.cpp
@@ -34,7 +36,9 @@ SET(kdevpg_srcs
     kdev-pg-first.cpp
     kdev-pg-follow.cpp
     kdev-pg-bnf-visitor.cpp
-    kdev-pg-clone-tree.cpp)
+    kdev-pg-clone-tree.cpp
+    kdev-pg-regexp.cpp
+    kdev-pg-unicode-loader.cpp)
 
 
 # Custom support for flex/bison
@@ -97,7 +101,7 @@ ENDIF(FLEX_EXECUTABLE)
 
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(kdev-pg-qt ${parser_srcs} ${kdevpg_srcs})
+ADD_EXECUTABLE(kdev-pg-qt ${parser_srcs} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
 TARGET_LINK_LIBRARIES( kdev-pg-qt ${QT_QTCORE_LIBRARY})
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 

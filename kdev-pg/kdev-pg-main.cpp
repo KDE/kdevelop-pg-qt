@@ -55,12 +55,13 @@ void help()
            << "Options:" << endl
            << "\t--output=<name> - Specify a prefix for all generated files" << endl
            << "\t--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
+           << "\t--no-output - Do not actually generate files" << endl
            << "Components:" << endl
            << "\t--debug-visitor - Generate a visitor to dump the parse-tree" << endl
            << "\t--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
            << "\t--no-ast - Do not generate any AST-files" << endl
            << "\t--with-ast - Generate AST (default)" << endl
-           << "\t--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
+           << "\t--no-parser - Do not create the parser, built-in-visitors etc." << endl
            << "\t--with-parser - The default, a parser will be generated" << endl
            << "\t--no-lexer - Do not generate the lexer" << endl
            << "\t--with-lexer - Ensure lexer generation" << endl
@@ -171,9 +172,11 @@ int main(int argc, char **argv)
   bool dump_symbols = false;
   bool generate_parser = true;
   bool generate_lexer = true;
-  bool force_generate_lexer_or_not = false;
+  bool ensure_generate_lexer_or_not = false;
+  bool ensure_generate_parser_or_not = false;
   bool DebugRules = false;
   bool inherit_default = false;
+  bool output = true;
   QString new_visitor;
 
   QCoreApplication app(argc, argv);
@@ -186,10 +189,15 @@ int main(int argc, char **argv)
     if (SW(--output=))
     {
       KDevPG::globalSystem.language = arg.mid( 9 );
+      output = true;
     }
     else if (SW(--namespace=))
     {
       KDevPG::globalSystem.ns = arg.mid( 12 );
+    }
+    else if (arg == "--no-output")
+    {
+      output = false;
     }
     else if (arg == "--no-ast")
     {
@@ -226,20 +234,22 @@ int main(int argc, char **argv)
     else if (arg == "--no-parser")
     {
       generate_parser = false;
+      ensure_generate_parser_or_not = true;
     }
     else if (arg == "--with-parser")
     {
       generate_parser = true;
+      ensure_generate_parser_or_not = true;
     }
     else if (arg == "--no-lexer")
     {
       generate_lexer = false;
-      force_generate_lexer_or_not = true;
+      ensure_generate_lexer_or_not = true;
     }
     else if (arg == "--with-lexer")
     {
       generate_lexer = true;
-      force_generate_lexer_or_not = true;
+      ensure_generate_lexer_or_not = true;
     }
     else if (arg == "--beautiful-code")
     {
@@ -261,7 +271,7 @@ int main(int argc, char **argv)
     {
       new_visitor = arg.mid( 14 );
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
-      generate_parser = false;
+      output = false;
     }
     else if (arg == "--inherit-default-visitor")
     {
@@ -334,77 +344,92 @@ int main(int argc, char **argv)
 
   KDevPG::globalSystem.finishedParsing();
   
-  if(KDevPG::globalSystem.start.empty())
-    KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << endl;
+  if(!ensure_generate_parser_or_not)
+    generate_parser = !KDevPG::globalSystem.rules.empty();
   
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+  if(generate_parser)
   {
-    KDevPG::InlineChecker check;
-    check(*it);
-  }
-  
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::InitializeEnvironment initenv;
-    initenv(*it);
-  }
-
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::EmptyOperatorChecker check;
-    check(*it);
-  }
-
-  KDevPG::computeFirst();
-  KDevPG::computeFollow();
-
-  if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
-  {
-    for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+    if(KDevPG::globalSystem.rules.empty())
     {
-      KDevPG::FirstFollowConflictChecker check;
-      check(*it);
+      KDevPG::checkOut << "** ERROR no parser rules" << endl;
+      KDevPG::ProblemSummaryPrinter::reportError();
     }
-
-    for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+    else
     {
-      KDevPG::FirstFirstConflictChecker check;
-      check(*it);
+      
+      if(KDevPG::globalSystem.start.empty())
+        KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << endl;
+      
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::InlineChecker check;
+        check(*it);
+      }
+      
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::InitializeEnvironment initenv;
+        initenv(*it);
+      }
+
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::EmptyOperatorChecker check;
+        check(*it);
+      }
+
+      KDevPG::computeFirst();
+      KDevPG::computeFollow();
+
+      if(KDevPG::globalSystem.conflictHandling != KDevPG::World::Ignore)
+      {
+        for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+        {
+          KDevPG::FirstFollowConflictChecker check;
+          check(*it);
+        }
+
+        for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+        {
+          KDevPG::FirstFirstConflictChecker check;
+          check(*it);
+        }
+      }
+        
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::EmptyFirstChecker check;
+        check(*it);
+      }
+      
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::EmptyOperatorChecker check;
+        check(*it);
+      }
+
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::UndefinedSymbolChecker check;
+        check(*it);
+      }
+
+      for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
+      {
+        KDevPG::UndefinedTokenChecker check;
+        check(*it);
+      }
     }
   }
-    
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::EmptyFirstChecker check;
-    check(*it);
-  }
   
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::EmptyOperatorChecker check;
-    check(*it);
-  }
-
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::UndefinedSymbolChecker check;
-    check(*it);
-  }
-
-  for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
-  {
-    KDevPG::UndefinedTokenChecker check;
-    check(*it);
-  }
-  
-  if (force_generate_lexer_or_not && generate_lexer && !KDevPG::globalSystem.hasLexer)
+  if (ensure_generate_lexer_or_not && generate_lexer && !KDevPG::globalSystem.hasLexer)
   {
     KDevPG::checkOut << "** ERROR no lexer definiton" << endl;
     KDevPG::ProblemSummaryPrinter::reportError();
     generate_lexer = false;
   }
   
-  if (!force_generate_lexer_or_not)
+  if (!ensure_generate_lexer_or_not)
     generate_lexer = KDevPG::globalSystem.hasLexer;
     
   if (generate_lexer)
@@ -457,16 +482,16 @@ int main(int argc, char **argv)
     
   KDevPG::ProblemSummaryPrinter()();
   
-  if (!(dump_terminals || dump_symbols || DebugRules) && KDevPG::globalSystem.language.isEmpty())
+  if (!(dump_terminals || dump_symbols || DebugRules) && output && KDevPG::globalSystem.language.isEmpty())
   {
     usage();
     exit(EXIT_FAILURE);
   }
 
-  if (generate_parser)
+  if (output && generate_parser)
     KDevPG::generateOutput();
   
-  if (generate_lexer)
+  if (output && generate_lexer)
     KDevPG::generateLexer();
   
   if (!new_visitor.isEmpty())

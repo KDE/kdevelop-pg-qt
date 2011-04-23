@@ -15,4 +15,3 @@
 	]
 
 2 conflicts total: 2 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.
-Usage: kdev-pg-qt [further-options] --output=<name> [further-options] file.g

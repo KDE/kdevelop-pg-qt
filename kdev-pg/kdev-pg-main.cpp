@@ -45,7 +45,7 @@ int yyparse();
 
 void usage()
 {
-  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] file.g" << endl;
+  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] <file.g>" << endl;
 }
 
 void help()
@@ -55,25 +55,34 @@ void help()
            << "Options:" << endl
            << "\t--output=<name> - Specify a prefix for all generated files" << endl
            << "\t--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
+           << "Components:" << endl
            << "\t--debug-visitor - Generate a visitor to dump the parse-tree" << endl
            << "\t--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
            << "\t--no-ast - Do not generate any AST-files" << endl
+           << "\t--with-ast - Generate AST (default)" << endl
+           << "\t--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
+           << "\t--with-parser - The default, a parser will be generated" << endl
+           << "\t--no-lexer - Do not generate the lexer" << endl
+           << "\t--with-lexer - Ensure lexer generation" << endl
+           << "\t--token-text - Generate a function converting the number of a token into its name" << endl
+           << "Informative output:" << endl
            << "\t--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
            << "\t--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
            << "\t--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
-           << "\t--token-text - Generate a function converting the number of a token into its name" << endl
-           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue" << endl
+           << "Error-handling:" << endl
+           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue (default)" << endl
            << "\t--strict-conflicts - Quit after having detected conflicts" << endl
            << "\t--ignore-conflicts - Do not perform conflict-checking" << endl
+           << "Visitor generation:" << endl
            << "\t--new-visitor=VisitorName - Create a new empty visitor" << endl
            << "\t--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << endl
            << "\t--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
-           << "\t--with-parser - The default, a parser will be generated" << endl
-           << "\t--no-parser - Do not create the parser, asts, built-in-visitors etc." << endl
+           << "Output format:" << endl
            << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
            << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
-           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array" << endl
+           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array (default)" << endl
            << "\t--visitor-switch - Visitor::visitNode will use a switch-statement" << endl
+           << "About:" << endl
            << "\t--help - Show this messages" << endl
            << "\t--usage - Show usage" << endl
            << "\t--version - Show version" << endl
@@ -92,7 +101,7 @@ void version()
 
 void author()
 {
-  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2010 by the KDevelop-PG-Qt developers:") << endl
+  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2011 by the KDevelop-PG-Qt developers:") << endl
     << QString::fromUtf8("\tRoberto Raggi\n"
        "\tJakob Petsovits\n"
        "\tAndreas Pakulat\n"
@@ -185,6 +194,10 @@ int main(int argc, char **argv)
     else if (arg == "--no-ast")
     {
       KDevPG::globalSystem.generateAst = false;
+    }
+    else if (arg == "--with-ast")
+    {
+      KDevPG::globalSystem.generateAst = true;
     }
     else if (arg == "--serialize-visitor")
     {

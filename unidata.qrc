@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource>
+  <file>unidata/Blocks.txt</file>
+  <file>unidata/PropList.txt</file>
+  <file>unidata/DerivedCoreProperties.txt</file>
+  <file>unidata/Scripts.txt</file>
+  <file>unidata/ScriptExtensions.txt</file>
+  <file>unidata/DerivedNumericType.txt</file>
+</qresource>
+</RCC>

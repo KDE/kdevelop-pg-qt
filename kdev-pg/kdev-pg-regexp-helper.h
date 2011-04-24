@@ -405,7 +405,8 @@ public:
   static const CharEncoding codec = _codec;
 private:
   static const size_t nChars = Codec2Size<codec>::value;
-  static const bitset<nChars> nullData;
+  typedef bitset<nChars> BitArray;
+  static const BitArray nullData;
   bitset<Codec2Size<codec>::value> data;
   bool mEpsilon: 1;
   typedef TableCharSet<codec> Self;

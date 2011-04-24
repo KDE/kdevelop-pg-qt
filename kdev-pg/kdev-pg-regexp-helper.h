@@ -32,22 +32,34 @@ class SeqCharSet;
 
 inline void printChar(ostream& o, uint x)
 {
+  auto flags = o.flags();
+  auto width = o.width();
+  auto fill = o.fill();
   if(x >= 32 && x <= 126)
     o << '"' << (char)x << '"';
   else
     o << hex << "\\" << setw(4) << setfill('0') << x;
+  o.fill(fill);
+  o.width(width);
+  o.flags(flags);
 }
 
 inline void printChar(QTextStream& o, uint x)
 {
+  auto base = o.integerBase();
+  auto width = o.fieldWidth();
+  auto pad = o.padChar();
   if(x >= 32 && x <= 126)
     o << '"' << (char)x << '"';
   else
     o << hex << "\\" << qSetFieldWidth(4) << qSetPadChar('0') << x;
+  o.setPadChar(pad);
+  o.setFieldWidth(width);
+  o.setIntegerBase(base);
 }
 
-template<CharEncoding codec>
-ostream& operator<<(ostream&, const SeqCharSet<codec>&);
+template<typename Stream, CharEncoding codec>
+Stream& operator<<(Stream&, const SeqCharSet<codec>&);
 
 template<class cs> class CharSetCondition;
 
@@ -61,7 +73,8 @@ private:
     typedef SeqCharSet<codec> Self;
     vector<pair<Int, Int> > data;
     bool mEpsilon: 1;
-    friend ostream& operator<< <>(ostream&, const Self&);
+    template<typename Stream, CharEncoding codec> /* when using fixed codec I get linker errors (undefined reference), templates do not get recognized to be the same */
+    friend Stream& operator<<(Stream&, const SeqCharSet<codec>&);
     friend class CharSetCondition< SeqCharSet<codec> >;
 public:
     SeqCharSet(const QString& s ) : mEpsilon(false)
@@ -374,8 +387,8 @@ public:
     }
 };
 
-template<CharEncoding codec>
-ostream& operator<<(ostream &o, const SeqCharSet<codec> &cs)
+template<typename Stream, CharEncoding codec>
+Stream& operator<<(Stream &o, const SeqCharSet<codec> &cs)
 {
   typedef typename Codec2Int<codec>::Result Int;
   o << "[u" << 8*sizeof(Int);
@@ -395,8 +408,8 @@ ostream& operator<<(ostream &o, const SeqCharSet<codec> &cs)
 template<CharEncoding codec>
 class TableCharSet;
 
-template<CharEncoding codec>
-ostream& operator<<(ostream&, const TableCharSet<codec>&);
+template<typename Stream, CharEncoding codec>
+Stream& operator<<(Stream&, const TableCharSet<codec>&);
 
 template<CharEncoding _codec>
 class TableCharSet
@@ -411,7 +424,8 @@ private:
   bool mEpsilon: 1;
   typedef TableCharSet<codec> Self;
   typedef typename Codec2Int<codec>::Result Int;
-  friend ostream& operator<< <>(ostream&, const Self&);
+  template<typename Stream, CharEncoding codec> /* when using fixed codec I get linker errors (undefined reference), templates do not get recognized to be the same */
+  friend Stream& KDevPG::operator<<(Stream&, const TableCharSet<codec>&);
 public:
   TableCharSet(const QString& s) : mEpsilon(false)
   {
@@ -503,8 +517,8 @@ public:
   }
 };
 
-template<CharEncoding codec>
-ostream& operator<<(ostream &o, const TableCharSet<codec> &cs)
+template<typename Stream, CharEncoding codec>
+Stream& operator<<(Stream &o, const TableCharSet<codec> &cs)
 {
   typedef typename Codec2Int<codec>::Result Int;
   o << "[t" << 8*sizeof(Int) << (cs.mEpsilon ? "ε" : ":");

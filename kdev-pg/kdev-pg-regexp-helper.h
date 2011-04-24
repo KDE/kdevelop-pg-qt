@@ -91,7 +91,7 @@ public:
     {
       Self ret;
       ret.mEpsilon = false;
-      ret.data.push_back(make_pair(0, Codec2Size<codec>::value));
+      ret.data.push_back(make_pair(Int(0), Int(Codec2Size<codec>::value)));
       return ret;
     }
     static Self range(Int begin, Int end)
@@ -173,7 +173,7 @@ public:
         {
           if(data.size() == 0)
           {
-            data.push_back(make_pair(0, Codec2Size<codec>::value));
+            data.push_back(make_pair(0, Int(Codec2Size<codec>::value)));
           }
           else if(data.front().first == 0)
           {
@@ -201,7 +201,7 @@ public:
               data[i].second = tmptmpfirst;
             }
             if(data.back().second != Codec2Size<codec>::value)
-              data.push_back(make_pair(tmpfirst, Codec2Size<codec>::value));
+              data.push_back(make_pair(tmpfirst, Int(Codec2Size<codec>::value)));
           }
         }
         return *this;

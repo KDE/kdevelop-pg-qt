@@ -108,6 +108,38 @@ public:
       }
       str << "}\n";
     }
+    /// .dot-output
+    void dotOutput(QTextStream& out, const QString& name)
+    {
+      out << "digraph " << name << "{" << endl;
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        out << "s" << i << " [ label = \"" << i << "\"";
+        if(i == 0)
+          out << ", shape=rect, style=rounded";
+        else
+          out << ", shape=oval";
+        if(accept[i] != 0)
+          out << ", penwidth=4";
+        out << " ];" << endl;
+      }
+      for(size_t i = 1; i <= numActions; ++i)
+      {
+        out << "f" << i << " [ label = \"" << actions[i].replace('\"', "\\\"").replace('\n', '\t') << "\", shape=rect, penwidth=2 ];" << endl;
+      }
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        for(auto j = rules[i].begin(); j != rules[i].end(); ++j)
+        {
+          out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << endl;
+        }
+        if(accept[i] != 0)
+        {
+          out << "s" << i << " -> " << "f" << accept[i] << ";" << endl;
+        }
+      }
+      out << "}";
+    }
     /// Debugging output
     void inspect()
     {
@@ -348,6 +380,29 @@ public:
             cout << "} ";
         }
         cout << "}" << endl;
+    }
+    void dotOutput(QTextStream& out, const QString& name)
+    {
+      out << "digraph " << name << "{" << endl;
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        out << "s" << i << " [ label = \"" << i << "\"";
+        if(i == 0)
+          out << ", shape=rect, style=rounded";
+        else
+          out << ", shape=oval";
+        if(i >= accept)
+          out << ", penwidth=4";
+        out << " ];" << endl;
+      }
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        for(auto j = rules[i].begin(); j != rules[i].end(); ++j)
+        {
+          out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << endl;
+        }
+      }
+      out << "}";
     }
     /**
      * Accepts no words.
@@ -779,9 +834,16 @@ GDFA& GDFA::operator=(const KDevPG::GDFA& o)
 
 void GDFA::inspect()
 {
-  #define DO_INSPECT(x) x->inspect();
+#define DO_INSPECT(x) x->inspect();
   EACH_TYPE(DO_INSPECT)
-  #undef DO_INSPECT
+#undef DO_INSPECT
+}
+
+void GDFA::dotOutput(QTextStream& o, const QString& name)
+{
+#define DO_DOT(x) x->dotOutput(o, name);
+  EACH_TYPE(DO_DOT)
+#undef DO_DOT
 }
 
 GNFA::GNFA()
@@ -890,6 +952,12 @@ void GNFA::inspect()
 #undef DO_INSPECT
 }
 
+void GNFA::dotOutput(QTextStream& o, const QString& name)
+{
+#define DO_DOT(x) x->dotOutput(o, name);
+  EACH_TYPE(DO_DOT)
+#undef DO_DOT
+}
 
 GDFA GNFA::dfa()
 {

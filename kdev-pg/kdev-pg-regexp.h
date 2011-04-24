@@ -77,6 +77,8 @@ public:
   GDFA& operator=(const GDFA& o);
   /// Debugging-information
   void inspect();
+  /// Nice output in .dot-format
+  void dotOutput(QTextStream& o, const QString& name);
 private:
   /// Has to be generated using a GNFA
   GDFA();
@@ -123,6 +125,8 @@ public:
   GNFA& minimize();
   /// Debugging-information
   void inspect();
+  /// Nice output in .dot-format
+  void dotOutput(QTextStream& o, const QString& name);
   
   /// Accepts any single character
   static GNFA anyChar();

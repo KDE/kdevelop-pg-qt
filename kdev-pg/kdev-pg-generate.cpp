@@ -580,6 +580,13 @@ void generateLexer()
       GDFA deterministic = alltogether.dfa(); \
       deterministic.minimize(); \
       deterministic.setActions(globalSystem.lexerActions[state]); \
+//       { \
+//         QFile ft(QString("kdev-pg-lexer-") + QString(name)); \
+//         ft.open(QIODevice::WriteOnly); \
+//         QTextStream str(&ft); \
+//         deterministic.dotOutput(str, name); \
+//         ft.close(); \
+//       } \
       deterministic.codegen(s); \
       s << "/* assert(false);*/\nreturn Base::next();}" << endl << endl;
     
@@ -587,7 +594,7 @@ void generateLexer()
     {
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
-        LEXER_CORE_IMPL("lex" << KDevPG::capitalized(state), state)
+        LEXER_CORE_IMPL("lex" + KDevPG::capitalized(state), state)
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
         << "::next()" << endl << "{" << endl << "switch(ruleSet)\n{" << endl;

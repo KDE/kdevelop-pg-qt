@@ -36,7 +36,7 @@ inline void printChar(ostream& o, uint x)
   auto width = o.width();
   auto fill = o.fill();
   if(x >= 32 && x <= 126)
-    o << '"' << (char)x << '"';
+    o << '\'' << (char)x << '\'';
   else
     o << hex << "\\" << setw(4) << setfill('0') << x;
   o.fill(fill);
@@ -50,7 +50,7 @@ inline void printChar(QTextStream& o, uint x)
   auto width = o.fieldWidth();
   auto pad = o.padChar();
   if(x >= 32 && x <= 126)
-    o << '"' << (char)x << '"';
+    o << '\'' << (char)x << '\'';
   else
     o << hex << "\\" << qSetFieldWidth(4) << qSetPadChar('0') << x;
   o.setPadChar(pad);
@@ -391,17 +391,25 @@ template<typename Stream, CharEncoding codec>
 Stream& operator<<(Stream &o, const SeqCharSet<codec> &cs)
 {
   typedef typename Codec2Int<codec>::Result Int;
-  o << "[u" << 8*sizeof(Int);
   if(cs.mEpsilon)
-    o << "ε";
-  foreach(NC(pair<Int, Int> p), cs.data)
+    o << "&epsilon;";
+  else
   {
-    o << ", ";
-    printChar(o, p.first);
-    o << "-";
-    printChar(o, (uint)p.second-1);
+    for(auto i = cs.data.begin(); i != cs.data.end(); ++i)
+    {
+      if(i != cs.data.begin())
+        o << ", ";
+      const auto &p = *i;
+      if(p.first == p.second - 1)
+        printChar(o, p.first);
+      else
+      {
+        printChar(o, p.first);
+        o << "-";
+        printChar(o, (uint)p.second-1);
+      }
+    }
   }
-  o << "]";
   return o;
 }
 
@@ -521,11 +529,14 @@ template<typename Stream, CharEncoding codec>
 Stream& operator<<(Stream &o, const TableCharSet<codec> &cs)
 {
   typedef typename Codec2Int<codec>::Result Int;
-  o << "[t" << 8*sizeof(Int) << (cs.mEpsilon ? "ε" : ":");
-  for(size_t i = 0; i != cs.data.size(); ++i)
-    if(cs.data[i])
-      printChar(o, (uint)i);
-  o << "]";
+  if(cs.mEpsilon)
+    o << "&epsilon;";
+  else
+  {
+    for(size_t i = 0; i != cs.data.size(); ++i)
+      if(cs.data[i])
+        printChar(o, (uint)i);
+  }
   return o;
 }
 

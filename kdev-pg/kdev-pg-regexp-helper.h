@@ -22,6 +22,8 @@
 
 #include <kdev-pg-char-sets.h>
 
+#include <iomanip>
+
 namespace KDevPG
 {
 
@@ -30,12 +32,18 @@ class SeqCharSet;
 
 inline void printChar(ostream& o, uint x)
 {
-  auto flags = o.flags();
   if(x >= 32 && x <= 126)
     o << '"' << (char)x << '"';
   else
-    o << hex << x;
-  o.flags(flags);
+    o << hex << "\\" << setw(4) << setfill('0') << x;
+}
+
+inline void printChar(QTextStream& o, uint x)
+{
+  if(x >= 32 && x <= 126)
+    o << '"' << (char)x << '"';
+  else
+    o << hex << "\\" << qSetFieldWidth(4) << qSetPadChar('0') << x;
 }
 
 template<CharEncoding codec>

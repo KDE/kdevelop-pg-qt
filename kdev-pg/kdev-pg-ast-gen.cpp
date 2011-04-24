@@ -81,7 +81,7 @@ void GenerateAst::operator()()
       << endl;
 
   GenerateAstRule gen(out);
-  for( World::SymbolSet::const_iterator it = globalSystem.symbols.begin(); it != globalSystem.symbols.end(); ++it )
+  for( World::SymbolSet::const_iterator it = globalSystem.symbols.constBegin(); it != globalSystem.symbols.constEnd(); ++it )
   {
     gen(*it);
   }

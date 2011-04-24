@@ -142,7 +142,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 }
 
 
- /* seperators */
+ /* separators */
 
 "("             return Parser::Token_LPAREN;
 ")"             return Parser::Token_RPAREN;

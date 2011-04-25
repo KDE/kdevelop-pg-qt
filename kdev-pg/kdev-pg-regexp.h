@@ -29,7 +29,6 @@
 #include <stack>
 #include <string>
 #include <cassert>
-#include <vector>
 
 #include <QBitArray>
 

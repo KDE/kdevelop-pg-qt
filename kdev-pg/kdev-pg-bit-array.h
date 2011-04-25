@@ -17,6 +17,9 @@
    Boston, MA 02110-1301, USA.
 */
 
+#ifndef KDEV_PG_BIT_ARRAY
+#define KDEV_PG_BIT_ARRAY
+
 #include <iostream>
 #include <cstring>
 #include <tr1/unordered_set>
@@ -55,16 +58,6 @@ public:
   };
   inline BitArray(size_t size, bool val = false) : mSize(size), mData(reinterpret_cast<unsigned char*>(malloc((size + 8 * sizeof(size_t) - 1) / 8)))
   {
-//     if(val)
-//     {
-//       for(size_t *i = reinterpret_cast<size_t*>(mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
-//         *i = ~(size_t(0));
-//     }
-//     else
-//     {
-//       for(size_t *i = reinterpret_cast<size_t*>(mData); i != reinterpret_cast<size_t*>(mData) + (mSize + 8 * sizeof(size_t) - 1) / 8 / sizeof(size_t); ++i)
-//         *i = 0;
-//     }
     memset(mData, (val ? (~(size_t(0))) : 0), (size + 8 * sizeof(size_t) - 1) / 8);
   }
   inline BitArray() : mSize(0), mData((unsigned char*)malloc(0))
@@ -159,21 +152,4 @@ namespace std
   }
 }
 
-
-/*int main()
-{
-  BitArray x(380);
-  x[341] = x[4] = true;
-  cout << x[3] << x[4] << x[341] << endl;
-  BitArray y(x);
-  cout << y[3] << y[4] << y[341] << endl;
-  cout << (x == y) <<  (x < y) << (y < x) << endl;
-  BitArray z(48, true);
-  z[45] = z[47] = false;
-  cout << z[45] << z[46] << z[47] << endl;
-  z.resize(200);
-  cout << z[45] << z[46] << z[47] << endl << z[48] << z[49] << endl;
-//   z.resize(500);
-//   cout << z[379] << endl;
-}*/
-
+#endif

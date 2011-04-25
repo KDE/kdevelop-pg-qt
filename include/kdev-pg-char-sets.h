@@ -17,6 +17,7 @@
    Boston, MA 02110-1301, USA.
 */
 
+//krazy:excludeall=inline
 #ifndef KDEV_PG_CHAR_SETS
 #define KDEV_PG_CHAR_SETS
 
@@ -29,11 +30,11 @@
 
 using namespace std;
 
-#include <QString>
-#include <QByteArray>
-#include <QVector>
-#include <QTextStream>
-#include <QStringList>
+#include <QtCore/QString>
+#include <QtCore/QByteArray>
+#include <QtCore/QVector>
+#include <QtCore/QTextStream>
+#include <QtCore/QStringList>
 
 #define NC(...) __VA_ARGS__
 

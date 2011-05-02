@@ -71,8 +71,8 @@ void standardFormat(const QString fileName)
             SET_CHAR(line, i, end)
             assert(i <= idxSemicolon);
             QByteArray name = line.mid(idxSemicolon+1, (uint)(line.indexOf('#', idxSemicolon + 1)) - idxSemicolon - 1).trimmed().toLower();
-            name.replace(' ', '-');
-            name.replace('_', '-');
+            name.replace(' ', '_');
+            name.replace('-', '_');
             auto toInsert = GNFA::range(start, end+1);
             if(globalSystem.regexpById[name] == 0)
               globalSystem.regexpById[name] = new GNFA(toInsert);
@@ -86,8 +86,8 @@ void standardFormat(const QString fileName)
             SET_CHAR(line, i, single);
             int idxSemicolon = line.indexOf(';', i);
             QByteArray name = line.mid(idxSemicolon+1, (uint)(line.indexOf('#', idxSemicolon + 1)) - idxSemicolon - 1).trimmed().toLower();
-            name.replace(' ', '-');
-            name.replace('_', '-');
+            name.replace(' ', '_');
+            name.replace('-', '_');
             auto toInsert = GNFA::character(single);
             if(globalSystem.regexpById[name] == 0)
               globalSystem.regexpById[name] = new GNFA(toInsert);

@@ -40,6 +40,9 @@
 namespace KDevPG
 {
   class GNFA;
+  class GDFA;
+  void deleteNFA(GNFA*);
+  void deleteDFA(GDFA*);
   Model::ZeroItem *zero();
   Model::PlusItem *plus(Model::Node *item);
   Model::StarItem *star(Model::Node *item);
@@ -124,6 +127,16 @@ public:
       conflictHandling(Permissive), mZero(0),
       tokenStreamBaseClass("KDevPG::TokenStream")
   {}
+  
+  ~World()
+  {
+    for(auto i = regexpById.begin(); i != regexpById.end(); ++i)
+      deleteNFA(*i);
+    for(auto i = lexerEnvResults.begin(); i != lexerEnvResults.end(); ++i)
+      deleteNFA(*i);
+    for(auto i = dfaForNfa.begin(); i != dfaForNfa.end(); ++i)
+      deleteDFA(*i);
+  }
 
   // options
   QString tokenStream;
@@ -308,9 +321,10 @@ public:
   AstBaseClasses astBaseClasses;
   QString parserBaseClass, tokenStreamBaseClass;
   QMap<QString, vector<GNFA*> > lexerEnvs;
+  QMap<QString, GNFA*> lexerEnvResults;
   QMap<QString, vector<QString> > lexerActions;
   QMap<QString, GNFA*> regexpById;
-  QSet<GNFA*> isMinimizedRegexp;
+  QMap<GNFA*, GDFA*> dfaForNfa;
   
   Environment env;
 

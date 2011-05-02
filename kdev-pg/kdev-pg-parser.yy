@@ -270,16 +270,17 @@ regexp7
     | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
     | T_NAMED_REGEXP        {
-                              if(KDevPG::globalSystem.regexpById[$1] == 0)
+                              if(!KDevPG::globalSystem.regexpById.contains($1))
                               {
                                 KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
-                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
-                                regexp->minimize();
-                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                                KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
+                                KDevPG::globalSystem.dfaForNfa[regexp]->minimize();
+                                *regexp = KDevPG::globalSystem.dfaForNfa[regexp]->nfa();
                               }
                               $$ = new KDevPG::GNFA(*regexp);
                             }
@@ -353,16 +354,17 @@ aregexp7
     }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray($1)))); }
     | T_NAMED_REGEXP        {
-                              if(KDevPG::globalSystem.regexpById[$1] == 0)
+                              if(!KDevPG::globalSystem.regexpById.contains($1))
                               {
                                 KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
-                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
-                                regexp->minimize();
-                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                                KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
+                                KDevPG::globalSystem.dfaForNfa[regexp]->minimize();
+                                *regexp = KDevPG::globalSystem.dfaForNfa[regexp]->nfa();
                               }
                               $$ = new KDevPG::GNFA(*regexp);
                             }

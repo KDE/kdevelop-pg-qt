@@ -70,6 +70,7 @@ void help()
            << "\t--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
            << "\t--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
            << "\t--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
+           << "\t--automata - Save DFAs for all used named regexps in \"kdev-pg-lexer-name-<name>.dot\" and for all states in \"kdev-pg-lexer-state-<name>.dot\"" << endl
            << "Error-handling:" << endl
            << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue (default)" << endl
            << "\t--strict-conflicts - Quit after having detected conflicts" << endl
@@ -174,7 +175,8 @@ int main(int argc, char **argv)
   bool generate_lexer = true;
   bool ensure_generate_lexer_or_not = false;
   bool ensure_generate_parser_or_not = false;
-  bool DebugRules = false;
+  bool debug_rules = false;
+  bool debug_automata = false;
   bool inherit_default = false;
   bool output = true;
   QString new_visitor;
@@ -308,7 +310,11 @@ int main(int argc, char **argv)
     }
     else if (arg == "--rules")
     {
-      DebugRules = true;
+      debug_rules = true;
+    }
+    else if (arg == "--automata")
+    {
+      debug_automata = true;
     }
     else if (KDevPG::file.fileName().isEmpty())
     {
@@ -444,6 +450,13 @@ int main(int argc, char **argv)
       KDevPG::checkOut << "** ERROR You have to specify a valid name for your lexer (%token_stream)" << endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
+    foreach(QString state, KDevPG::globalSystem.lexerEnvs.keys())
+    {
+      KDevPG::GNFA &alltogether = **KDevPG::globalSystem.lexerEnvResults.insert(state, new KDevPG::GNFA(KDevPG::globalSystem.lexerEnvs[state]));
+      KDevPG::GDFA &deterministic = **KDevPG::globalSystem.dfaForNfa.insert(&alltogether, new KDevPG::GDFA(alltogether.dfa()));
+      deterministic.minimize();
+      deterministic.setActions(KDevPG::globalSystem.lexerActions[state]);
+    }
   }
 
   if(dump_terminals)
@@ -468,7 +481,7 @@ int main(int argc, char **argv)
           strm << it.key() << endl;
         }
     }
-  if (DebugRules)
+  if (debug_rules)
     {
       QFile ft("kdev-pg-rules");
       ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
@@ -479,10 +492,32 @@ int main(int argc, char **argv)
         dr(*it);
       }
     }
-    
+  if (debug_automata)
+  {
+    foreach(QString state, KDevPG::globalSystem.lexerEnvs.keys())
+    {
+      QFile ft(QString("kdev-pg-lexer-state-") + state + ".dot");
+      ft.open(QIODevice::WriteOnly);
+      QTextStream str(&ft);
+      KDevPG::globalSystem.dfaForNfa[KDevPG::globalSystem.lexerEnvResults[state]]->dotOutput(str, state);
+      ft.close();
+    }
+    foreach(QString name, KDevPG::globalSystem.regexpById.keys())
+    {
+      if(KDevPG::globalSystem.dfaForNfa.contains(KDevPG::globalSystem.regexpById[name]))
+      {
+        QFile ft(QString("kdev-pg-lexer-name-") + name + ".dot");
+        ft.open(QIODevice::WriteOnly);
+        QTextStream str(&ft);
+        KDevPG::globalSystem.dfaForNfa[KDevPG::globalSystem.regexpById[name]]->dotOutput(str, name);
+        ft.close();
+      }
+    }
+  }
+  
   KDevPG::ProblemSummaryPrinter()();
   
-  if (!(dump_terminals || dump_symbols || DebugRules) && output && KDevPG::globalSystem.language.isEmpty())
+  if (!(dump_terminals || dump_symbols || debug_rules) && output && KDevPG::globalSystem.language.isEmpty())
   {
     usage();
     exit(EXIT_FAILURE);

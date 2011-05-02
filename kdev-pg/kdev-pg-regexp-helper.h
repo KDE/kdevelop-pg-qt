@@ -35,10 +35,16 @@ inline void printChar(ostream& o, uint x)
   auto flags = o.flags();
   auto width = o.width();
   auto fill = o.fill();
-  if(x >= 32 && x <= 126)
+  if(x == '\\')
+    o << "'\\\\'";
+  else if(x == '\'')
+    o << "'\\\\''";
+  else if(x == '"')
+    o << "'\\\"'";
+  else if(x >= 32 && x <= 126)
     o << '\'' << (char)x << '\'';
   else
-    o << hex << "\\" << setw(4) << setfill('0') << x;
+    o << hex << "\\" << setw(2) << setfill('0') << x;
   o.fill(fill);
   o.width(width);
   o.flags(flags);
@@ -49,10 +55,16 @@ inline void printChar(QTextStream& o, uint x)
   auto base = o.integerBase();
   auto width = o.fieldWidth();
   auto pad = o.padChar();
-  if(x >= 32 && x <= 126)
+  if(x == '\\')
+    o << "'\\\\'";
+  else if(x == '\'')
+    o << "'\\\\''";
+  else if(x == '"')
+    o << "'\\\"'";
+  else if(x >= 32 && x <= 126)
     o << '\'' << (char)x << '\'';
   else
-    o << hex << "\\" << qSetFieldWidth(4) << qSetPadChar('0') << x;
+    o << hex << "\\" << qSetFieldWidth(2) << qSetPadChar('0') << x;
   o.setPadChar(pad);
   o.setFieldWidth(width);
   o.setIntegerBase(base);

@@ -63,6 +63,31 @@ typedef QUtf8ToUcs4Iterator Iterator;
 
 template<typename CharSet> class NFA;
 
+inline QString codeForDot(QString str)
+{
+  QString out = "";
+  int pos = 0;
+  forever
+  {
+    int npos = str.indexOf("\n\01!ASIgnore\"!!\n# ", pos);
+    if(npos == -1)
+    {
+      out += str.midRef(pos);
+      break;
+    }
+    out += str.midRef(pos, npos - pos);
+    int nlpos = str.indexOf('\n', npos + 17);
+    int codeendpos = str.indexOf("\n\01!AS/Ignore\"!!\n", nlpos);
+    if(nlpos == -1 || codeendpos == -1)
+    {
+      out += "<junk>";
+      break;
+    }
+    out += str.midRef(nlpos + 1, codeendpos - nlpos - 1);
+    pos = codeendpos + 17;
+  }
+  return out.replace('\"', "\\\"").replace('\n', '\t').trimmed();
+}
 
 /**
  * Deterministic finite automaton.
@@ -125,7 +150,7 @@ public:
       }
       for(size_t i = 1; i <= numActions; ++i)
       {
-        out << "f" << i << " [ label = \"" << actions[i].replace('\"', "\\\"").replace('\n', '\t') << "\", shape=rect, penwidth=2 ];" << endl;
+        out << "f" << i << " [ label = \"" << codeForDot(actions[i]) << "\", shape=rect, penwidth=2 ];" << endl;
       }
       for(size_t i = 0; i != nstates; ++i)
       {
@@ -423,7 +448,7 @@ public:
     {
         rules[0].push_back(make_pair(set, 1));
     }
-    NFA(const std::vector<NFA<CharSet> >& list)
+    explicit NFA(const std::vector<NFA<CharSet> >& list)
     {
       if(list.size() == 0)
       {
@@ -846,6 +871,15 @@ void GDFA::dotOutput(QTextStream& o, const QString& name)
 #undef DO_DOT
 }
 
+GNFA GDFA::nfa()
+{
+  GNFA r;
+#define DO_NFA(x) *r.x = x->nfa();
+  EACH_TYPE(DO_NFA)
+#undef DO_NFA
+  return r;
+}
+
 GNFA::GNFA()
 {
 #define macro(x) x = new typeof(*x);
@@ -939,9 +973,7 @@ GNFA& GNFA::negate()
 
 GNFA& GNFA::minimize()
 {
-#define DO_MINIMIZE(x) *x = x->dfa().minimize().nfa();
-  EACH_TYPE(DO_MINIMIZE)
-#undef DO_MINIMIZE
+  *this = dfa().minimize().nfa();
   return *this;
 }
 
@@ -1351,6 +1383,16 @@ GNFA GNFA::range(quint32 begin, quint32 end)
 KDevPG::GNFA KDevPG::GNFA::character(quint32 codepoint)
 {
   return range(codepoint, codepoint+1);
+}
+
+void deleteNFA(GNFA *ptr)
+{
+  delete ptr;
+}
+
+void deleteDFA(GDFA *ptr)
+{
+  delete ptr;
 }
 
 typeof(GDFA::type) GDFA::type = GDFA::SUcs2;

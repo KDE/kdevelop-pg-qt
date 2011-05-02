@@ -199,7 +199,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 <RULE_LEXER>{
   "--"[^\r\n]*            /* line comments, skip */ ;
   {Newline}               newline();
-  "{"[a-zA-Z_\-][a-zA-Z_0-9\-]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
+  "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
   ";"+(("--"[^\r\n]*[\r\n])|[ \f\t\r\n])+/";"+   rulePosition = RuleBody; BEGIN(INITIAL); return ';';
   ";"+                    return ';';
   ":"                     return ';';

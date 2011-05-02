@@ -2185,10 +2185,10 @@ yyreduce:
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
-                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              if(!KDevPG::globalSystem.isUsedRegexp.contains(regexp))
                               {
                                 regexp->minimize();
-                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                                KDevPG::globalSystem.isUsedRegexp.insert(regexp);
                               }
                               (yyval.nfa) = new KDevPG::GNFA(*regexp);
                             ;}
@@ -2381,10 +2381,10 @@ yyreduce:
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
-                              if(!KDevPG::globalSystem.isMinimizedRegexp.contains(regexp))
+                              if(!KDevPG::globalSystem.isUsedRegexp.contains(regexp))
                               {
                                 regexp->minimize();
-                                KDevPG::globalSystem.isMinimizedRegexp.insert(regexp);
+                                KDevPG::globalSystem.isUsedRegexp.insert(regexp);
                               }
                               (yyval.nfa) = new KDevPG::GNFA(*regexp);
                             ;}

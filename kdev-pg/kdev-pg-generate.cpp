@@ -576,18 +576,7 @@ void generateLexer()
         << name << "()" << endl << "{" \
         << "if(!Iterator::hasNext())\n{\nBase::Token& _t(Base::next());\n_t.kind = Parser::Token_EOF;\n_t.begin = _t.end = Iterator::plain() - Iterator::begin();\nreturn _t;\n}" << endl \
         << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
-      GNFA alltogether(globalSystem.lexerEnvs[state]); \
-      GDFA deterministic = alltogether.dfa(); \
-      deterministic.minimize(); \
-      deterministic.setActions(globalSystem.lexerActions[state]); \
-//       { \
-//         QFile ft(QString("kdev-pg-lexer-") + QString(name)); \
-//         ft.open(QIODevice::WriteOnly); \
-//         QTextStream str(&ft); \
-//         deterministic.dotOutput(str, name); \
-//         ft.close(); \
-//       } \
-      deterministic.codegen(s); \
+      globalSystem.dfaForNfa[globalSystem.lexerEnvResults[state]]->codegen(s); \
       s << "/* assert(false);*/\nreturn Base::next();}" << endl << endl;
     
     if(hasStates)

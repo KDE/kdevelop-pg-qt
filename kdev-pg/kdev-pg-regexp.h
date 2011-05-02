@@ -46,6 +46,8 @@ template<CharEncoding enc> class TableCharSet;
 
 // General
 
+class GNFA;
+
 /**
  * Deterministic finite automaton
  */
@@ -78,6 +80,8 @@ public:
   void inspect();
   /// Nice output in .dot-format
   void dotOutput(QTextStream& o, const QString& name);
+  /// NFA
+  GNFA nfa();
 private:
   /// Has to be generated using a GNFA
   GDFA();
@@ -97,13 +101,14 @@ class GNFA
     NFA<TableCharSet<Ucs2> > *t2;
 //     NFA<TableCharSet<Ucs4> > *t3;
   };
+  friend class GDFA;
 public:
   /// Empty set
   GNFA();
   GNFA(const GNFA& o);
   ~GNFA();
   GNFA& operator=(const GNFA& o);
-  GNFA(const std::vector<GNFA*>& init);
+  explicit GNFA(const std::vector<GNFA*>& init);
   /// Intersection
   GNFA& operator&=(const GNFA& o);
   /// Concatenation

@@ -104,7 +104,9 @@ public:
 
   inline T &next()
   {
-    if (mTokenCount == mTokenBufferSize)
+    if (mIndex == mTokenCount)
+    {
+      if(mTokenCount++ == mTokenBufferSize)
       {
         if (mTokenBufferSize == 0)
           mTokenBufferSize = 1024;
@@ -114,8 +116,9 @@ public:
         mTokenBuffer = reinterpret_cast<T*>
           (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
       }
+    }
 
-    return mTokenBuffer[mTokenCount++];
+    return mTokenBuffer[mIndex++];
   }
 
   inline LocationTable *locationTable()

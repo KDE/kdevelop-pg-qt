@@ -218,12 +218,12 @@ lexer_declaration_rest
 
 opt_lexer_action
     : T_TERMINAL {
-        r = "\nRETURN(" + QString($1) + ");\n"
+        r = "\nlxRETURN(" + QString($1) + ");\n"
       }
     | T_CONTINUE {
-        r = "\nCONTINUE;\n"; 
+        r = "\nlxCONTINUE;\n"; 
       }
-    | /* empty */ { r = "\nSKIP\n" }
+    | /* empty */ { r = "\nlxSKIP\n" }
     ;
 
 regexp

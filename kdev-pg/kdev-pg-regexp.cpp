@@ -119,8 +119,8 @@ public:
       {
         str << "\n_state_" + QString::number(i) + ":\n";
         if(accept[i])
-          str << "lpos = CURR_POS; lstate = " << accept[i] << ";\n";
-        str << "NEXT_CHR(chr); ";
+          str << "lpos = lxCURR_POS; lstate = " << accept[i] << ";\n";
+        str << "lxNEXT_CHR(chr); ";
         csc(str, rules[i]);
       }
       str << "_end:\nplain() = lpos;\nswitch(lstate) {\n";

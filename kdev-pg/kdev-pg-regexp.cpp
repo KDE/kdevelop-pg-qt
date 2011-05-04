@@ -22,6 +22,8 @@
 #include "kdev-pg.h"
 #include "kdev-pg-regexp-helper.h"
 #include <iostream>
+#include <queue>
+#include <stack>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
 
@@ -185,7 +187,7 @@ public:
     size_t accepts(const QString& str)
     {
         size_t state = 0;
-        foreach(QChar c, str)
+        foreach(const QChar c, str)
         {
             foreach(NC(const pair<CharSet, size_t>& r), rules[state])
             {
@@ -718,6 +720,62 @@ public:
       }
       return false;
     }
+    bool isEmpty() const
+    {
+      stack<size_t> todo;
+      todo.push(0);
+      UsedBitArray vis(nstates);
+      vis[0] = true;
+      while(!todo.empty())
+      {
+        size_t curr = todo.top();
+        todo.pop();
+        if(curr >= accept)
+          return false;
+        foreach(const auto& nx, rules[curr])
+        {
+          if(!vis[nx.second])
+          {
+            vis[nx.second] =true;
+            todo.push(nx.second);
+          }
+        }
+      }
+      return true;
+    }
+    int minLength() const
+    {
+      queue<size_t> _todo0, _todo1;
+      queue<size_t> *todo0 = &_todo0, *todo1 = &_todo1;
+      todo0->push(0);
+      UsedBitArray vis(nstates);
+      vis[0] = true;
+      int length = 0;
+      while(!todo0->empty())
+      {
+        size_t curr = todo0->front();
+        todo0->pop();
+        if(curr >= accept)
+          return length;
+        foreach(const auto& nx, rules[curr])
+        {
+          if(!vis[nx.second])
+          {
+            vis[nx.second] = true;
+            if(nx.first.epsilon())
+              todo0->push(nx.second);
+            else
+              todo1->push(nx.second);
+          }
+        }
+        if(todo0->empty())
+        {
+          ++length;
+          swap(todo0, todo1);
+        }
+      }
+      return -1;
+    }
     NFA<CharSet>& negate()
     {
       DFA<CharSet> tmp = dfa();
@@ -924,6 +982,20 @@ bool GNFA::acceptsEpsilon() const
 #undef DO_AE
 }
 
+bool GNFA::isEmpty() const
+{
+#define DO_IE(x) return x->isEmpty();
+  EACH_TYPE(DO_IE)
+#undef DO_IE
+}
+
+int GNFA::minLength() const
+{
+#define DO_ML(x) return x->minLength();
+  EACH_TYPE(DO_ML)
+#undef DO_ML
+}
+
 GNFA& GNFA::operator<<=(const KDevPG::GNFA& o)
 {
 #define DO_SHIFT(x) *x <<= *o.x;
@@ -1078,6 +1150,12 @@ GNFA GNFA::anyChar()
   return ret;
 }
 
+GNFA GNFA::anything()
+{
+  auto any = anyChar();
+  return *any;
+}
+
 GNFA GNFA::emptyWord()
 {
   UNINITIALIZED_GNFA(ret);
@@ -1229,7 +1307,7 @@ GNFA GNFA::range(quint32 begin, quint32 end)
 #define UTF16_IMPL(CS, field) \
       if(end >= 0x110000 || begin >= 0x110000)                                          \
       {                                                                                 \
-        res.field = new NFA<CS<Ucs2> >();                                          \
+        res.field = new NFA<CS<Ucs2> >();                                               \
       }                                                                                 \
       else if(end < 0x10000)                                                            \
       {                                                                                 \
@@ -1237,7 +1315,7 @@ GNFA GNFA::range(quint32 begin, quint32 end)
         {                                                                               \
           if(end <= begin)                                                              \
           {                                                                             \
-            res.field = new NFA<CS<Ucs2> >();                                      \
+            res.field = new NFA<CS<Ucs2> >();                                           \
           }                                                                             \
           else if(end > 0xe000)                                                         \
           {                                                                             \

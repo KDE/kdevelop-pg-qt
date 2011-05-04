@@ -73,7 +73,7 @@ QString r;
 %token T_PAREN
 %token T_INLINE
 %token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
-%token T_NAMED_REGEXP T_CONTINUE T_RANGE
+%token T_NAMED_REGEXP T_CONTINUE T_RANGE T_FAIL T_LOOKAHEAD T_BARRIER
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP T_RANGE
 %type<str> name code_opt rule_arguments_opt priority assoc opt_lexer_action
@@ -199,18 +199,90 @@ declaration
     ;
 
 lexer_declaration_rest
-    : regexp code_opt T_ARROW T_IDENTIFIER ';'
-            { KDevPG::globalSystem.regexpById[$4] = $1;
+    : regexp T_ARROW T_IDENTIFIER ';'
+            { KDevPG::globalSystem.regexpById[$3] = $1;
             } lexer_declaration_rest
     | regexp code_opt opt_lexer_action ';'
             {
               if($1->acceptsEpsilon())
-              {
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+              else if($1->isEmpty())
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+              QString s = QString($2) + QString(r);
+              KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
+            } lexer_declaration_rest
+    | regexp T_LOOKAHEAD '(' T_STRING ')' code_opt opt_lexer_action ';'
+            {
+              if($1->acceptsEpsilon())
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+              else if($1->isEmpty())
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+              bool ignore = false;
+              if(strlen($4) == 0)
+              {
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << endl;
+                ignore = true;
               }
-              QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
-              KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
-                s);
+              KDevPG::GNFA delim = KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($4)));
+              if(delim.isEmpty())
+              {
+                KDevPG::checkOut << "** WARNING Invalid barrier for the specified encoding at line " << yyLine << endl;
+                ignore = true;
+              }
+              if(ignore)
+              {
+                QString s = QString($6) + QString(r);
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
+              }
+              else
+              {
+                QString s = "Iterator::plain() -= " + QString::number(delim.minLength()) + "; " + QString($6) + QString(r);
+                *$1 <<= delim;
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
+              }
+            } lexer_declaration_rest
+    | regexp T_BARRIER '(' T_STRING ')' code_opt opt_lexer_action ';'
+            {
+              if($1->acceptsEpsilon())
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+              else if($1->isEmpty())
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+              bool ignore = false;
+              if(strlen($4) == 0)
+              {
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << endl;
+                ignore = true;
+              }
+              KDevPG::GNFA delim = KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($4)));
+              if(delim.isEmpty())
+              {
+                KDevPG::checkOut << "** WARNING Invalid barrier for the specified encoding at line " << yyLine << endl;
+                ignore = true;
+              }
+              if(ignore)
+              {
+                QString s = QString($6) + QString(r);
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
+              }
+              else
+              {
+                KDevPG::GNFA exclude = KDevPG::GNFA::anything();
+                exclude <<= delim;
+                exclude <<= KDevPG::GNFA::anyChar();
+                *$1 <<= delim;
+                *$1 ^= exclude;
+                QString s = "Iterator::plain() -= " + QString::number(delim.minLength()) + "; " + QString($6) + QString(r);
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
+              }
+            } lexer_declaration_rest
+    | T_FAIL T_CODE ';'
+            {
+              KDevPG::globalSystem.lexerActions[lexerEnv][0] = QString($2);
             } lexer_declaration_rest
     | /* empty */
     ;

@@ -72,9 +72,8 @@
 %lexer ->
   "<?"|"<?php"                  [: lxSET_RULE_SET(php) :] OPEN_TAG ;
   "<?="                         [: lxSET_RULE_SET(php) :] OPEN_TAG_WITH_ECHO ;
---   (.+)^"<?"              INLINE_HTML ; -- empty word, huh? BUG!
-  ((.+^(.*"<?".*))^"")"<?"                    [: lxTOKEN(INLINE_HTML); token.end -= 2; plain() -= 2; return token; :] ;
-  (.+^(.*"<?".*))^""                  INLINE_HTML ;
+  .+ %ba("<?")                  INLINE_HTML;
+  .+^(.*"<?".*)                 INLINE_HTML;
   ;
 
 %lexer "php" ->

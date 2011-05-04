@@ -167,7 +167,6 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 "%isLeft"               return T_IS_LEFT_ASSOC;
 "%isRight"              return T_IS_RIGHT_ASSOC;
 "%lexer"                rulePosition = RuleLexer; return T_LEXER;
-"%continue"             return T_CONTINUE;
 
 <PARSERCLASS>{
   {Whitespace}*           /* skip */ ;
@@ -218,6 +217,10 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   "@"                     return '@';
   "."                     return '.';
   "->"                    return T_ARROW;
+  "%continue"             return T_CONTINUE;
+  "%fail"                 return T_FAIL;
+  "%la"                   return T_LOOKAHEAD;
+  "%ba"                   return T_BARRIER;
   "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
   [_A-Z]+/[ \f\t\r\n]*";" COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
   [_a-zA-Z0-9]+/[ \f\t\r\n]*";" COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;

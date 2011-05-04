@@ -123,6 +123,10 @@ public:
   GNFA& negate();
   /// Whether it accepts the empty word
   bool acceptsEpsilon() const;
+  /// Whether it represents the empty set
+  bool isEmpty() const;
+  /// Length of the shortest accepted input (-1 iff isEmpty)
+  int minLength() const;
   /// DFA
   GDFA dfa();
   /// Minimize
@@ -140,6 +144,8 @@ public:
   static GNFA collection(const QString& str);
   /// Accepts only the empty word
   static GNFA emptyWord();
+  /// Accepts anything
+  static GNFA anything();
   /// Accepts any character between begin and end (including begin, excluding end)
   static GNFA range(quint32 begin, quint32 end);
   /// Accepts a single codepoint (or nothing if it is not represantable with tha charset)

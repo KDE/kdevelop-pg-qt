@@ -206,8 +206,7 @@ lexer_declaration_rest
             {
               if($1->acceptsEpsilon())
               {
-                KDevPG::checkOut << "** ERROR Lexer rule accepting the empty word at line " << yyLine << endl;
-                KDevPG::ProblemSummaryPrinter::reportError();
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
               }
               QString s = QString($2) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(

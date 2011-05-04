@@ -56,6 +56,7 @@ q_Hash_to_tr1_hash(QBitArray)
 
 namespace KDevPG
 {
+extern QTextStream checkOut;
 
 typedef vector<bool> UsedBitArray;
 typedef QUtf8ToUcs4Iterator Iterator;
@@ -163,7 +164,7 @@ public:
           out << "s" << i << " -> " << "f" << accept[i] << ";" << endl;
         }
       }
-      out << "}";
+      out << "}" << endl;
     }
     /// Debugging output
     void inspect()
@@ -427,7 +428,7 @@ public:
           out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << endl;
         }
       }
-      out << "}";
+      out << "}" << endl;
     }
     /**
      * Accepts no words.
@@ -637,7 +638,8 @@ public:
         stack<UsedBitArray > todo;
         UsedBitArray start(nstates);
         start[0] = true;
-        todo.push(closure(start));
+        start = closure(start);
+        todo.push(start);
         while(todo.size())
         {
             UsedBitArray x = todo.top();
@@ -665,7 +667,7 @@ public:
         size_t cnt = 0;
         foreach(const UsedBitArray& i, states)
         {
-            if(i[0] && cnt)
+            if(i == start && cnt)
             {
                 st[*states.begin()] = cnt;
                 st[i] = 0;
@@ -720,6 +722,7 @@ public:
     NFA<CharSet>& negate()
     {
       DFA<CharSet> tmp = dfa();
+      tmp.dotOutput(checkOut, "asdfa");
       tmp.rules.push_back(vector< pair<CharSet, size_t> >());
       tmp.rules.back().push_back(make_pair(CharSet::fullSet(), tmp.nstates));
       ++tmp.nstates;
@@ -731,6 +734,7 @@ public:
           *i = 0;
       }
       tmp.accept.push_back(1);
+      tmp.dotOutput(checkOut, "dfanewst");
       for(auto i = tmp.rules.begin(); i != tmp.rules.end(); ++i)
       {
         CharSet successSet = CharSet::fullSet();
@@ -745,6 +749,7 @@ public:
       }
       tmp.eliminateUnarrivableStates();
       tmp.eliminateInactiveStates();
+      tmp.dotOutput(checkOut, "dfaneg");
       return *this = tmp.nfa();
     }
     NFA<CharSet>& operator&=(const NFA<CharSet>& o)
@@ -758,8 +763,15 @@ public:
     }
     NFA<CharSet>& operator^=(const NFA<CharSet>& o)
     {
+      dotOutput(checkOut, "beforeneg");
       negate();
-      return (*this |= o).negate();
+      dotOutput(checkOut, "afterneg");
+      *this |= o;
+      dotOutput(checkOut, "afteror");
+      negate();
+      dotOutput(checkOut, "final");
+      return *this;
+//       return (*this |= o).negate();
     }
 };
 

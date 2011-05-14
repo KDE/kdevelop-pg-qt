@@ -279,12 +279,12 @@ public:
   
   void finishedParsing()
   {
-    std::sort(rules.begin(), rules.end(), &ruleComp);
+    qSort(rules.begin(), rules.end(), &ruleComp);
   }
   
   Model::EvolveItem *searchRule(Model::SymbolItem *sym)
   {
-    __typeof__(rules.begin()) i = std::lower_bound(rules.begin(), rules.end(), sym, &ruleComp);
+    auto i = qLowerBound(rules.begin(), rules.end(), sym, &ruleComp);
     if(i == rules.end() || (*i)->mSymbol != sym)
       return 0;
     return *i;

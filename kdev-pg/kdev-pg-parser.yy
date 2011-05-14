@@ -116,12 +116,12 @@ declaration
         { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%table_lexer) before any lexer rules"; exit(-1); }
         switch(KDevPG::GDFA::type)
         {
-          case KDevPG::GDFA::SAscii: KDevPG::GDFA::type = KDevPG::GDFA::TAscii; break;
-          case KDevPG::GDFA::SLatin1: KDevPG::GDFA::type = KDevPG::GDFA::TLatin1; break;
-          case KDevPG::GDFA::SUtf8: KDevPG::GDFA::type = KDevPG::GDFA::TUtf8; break;
-          case KDevPG::GDFA::SUcs2: KDevPG::GDFA::type = KDevPG::GDFA::TUcs2; break;
-          case KDevPG::GDFA::SUtf16: KDevPG::GDFA::type = KDevPG::GDFA::TUtf16; break;
-/*           case KDevPG::GDFA::SUcs4: KDevPG::GDFA::type = KDevPG::GDFA::TUcs4; break; */
+          case KDevPG::SAscii: KDevPG::GDFA::type = KDevPG::TAscii; break;
+          case KDevPG::SLatin1: KDevPG::GDFA::type = KDevPG::TLatin1; break;
+          case KDevPG::SUtf8: KDevPG::GDFA::type = KDevPG::TUtf8; break;
+          case KDevPG::SUcs2: KDevPG::GDFA::type = KDevPG::TUcs2; break;
+          case KDevPG::SUtf16: KDevPG::GDFA::type = KDevPG::TUtf16; break;
+/*           case KDevPG::SUcs4: KDevPG::GDFA::type = KDevPG::TUcs4; break; */
           default: /* empty */;
         }
       }
@@ -130,12 +130,12 @@ declaration
       { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
       switch(KDevPG::GDFA::type)
       {
-        case KDevPG::GDFA::TAscii: KDevPG::GDFA::type = KDevPG::GDFA::SAscii; break;
-        case KDevPG::GDFA::TLatin1: KDevPG::GDFA::type = KDevPG::GDFA::SLatin1; break;
-        case KDevPG::GDFA::TUtf8: KDevPG::GDFA::type = KDevPG::GDFA::SUtf8; break;
-        case KDevPG::GDFA::TUcs2: KDevPG::GDFA::type = KDevPG::GDFA::SUcs2; break;
-        case KDevPG::GDFA::TUtf16: KDevPG::GDFA::type = KDevPG::GDFA::SUtf16; break;
-/*         case KDevPG::GDFA::TUcs4: KDevPG::GDFA::type = KDevPG::GDFA::SUcs4; break; */
+        case KDevPG::TAscii: KDevPG::GDFA::type = KDevPG::SAscii; break;
+        case KDevPG::TLatin1: KDevPG::GDFA::type = KDevPG::SLatin1; break;
+        case KDevPG::TUtf8: KDevPG::GDFA::type = KDevPG::SUtf8; break;
+        case KDevPG::TUcs2: KDevPG::GDFA::type = KDevPG::SUcs2; break;
+        case KDevPG::TUtf16: KDevPG::GDFA::type = KDevPG::SUtf16; break;
+/*         case KDevPG::TUcs4: KDevPG::GDFA::type = KDevPG::SUcs4; break; */
         default: /* empty */;
       }
       }
@@ -164,7 +164,7 @@ declaration
           KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
           exit(-1);
         }
-        KDevPG::GDFA::type = (typeof(KDevPG::GDFA::type))(base);
+        KDevPG::GDFA::type = KDevPG::AutomatonType(base);
       }
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
         { KDevPG::globalSystem.tokenStream = $2;           }

@@ -48,6 +48,8 @@ template<CharEncoding enc> class TableCharSet;
 
 class GNFA;
 
+enum AutomatonType { SAscii, SLatin1, SUtf8, SUcs2, SUtf16, SUcs4, TAscii, TLatin1, TUtf8, TUcs2, TUtf16/*, TUcs4*/ };
+
 /**
  * Deterministic finite automaton
  */
@@ -66,7 +68,7 @@ class GDFA
   };
   friend class GNFA;
 public:
-  static enum { SAscii, SLatin1, SUtf8, SUcs2, SUtf16, SUcs4, TAscii, TLatin1, TUtf8, TUcs2, TUtf16/*, TUcs4*/ } type;
+  static AutomatonType type;
   /// Generation of the core state-machine
   void codegen(QTextStream& str);
   /// Minimization of the automaton

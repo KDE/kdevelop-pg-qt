@@ -23,7 +23,7 @@ int main()
   parser.setTokenStream(&lex);
   int kind;
   qDebug() << iter.hasNext();
-  while((kind = lex.next().kind) != Parser::Token_EOF)
+  while((kind = lex.advance().kind) != Parser::Token_EOF)
     qDebug() << "hi" << kind;
   parser.rewind(0);
   StartAst *ast;

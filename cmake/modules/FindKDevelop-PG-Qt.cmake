@@ -147,7 +147,7 @@ if( KDEVPGQT_INCLUDE_DIR
         add_custom_command(
             OUTPUT  ${_outputList}
             MAIN_DEPENDENCY "${_grammarFile}"
-            DEPENDS ${_depList}
+            DEPENDS ${_depList} ${KDEVPGQT_EXECUTABLE}
             COMMAND ${KDEVPGQT_EXECUTABLE}
             ARGS    --output=${_language} ${_namespace}
                     ${_dbgVisit} ${_dumpInfo} ${_beautifulCode} ${_conflicts} "${_grammarFile}"

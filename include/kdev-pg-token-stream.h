@@ -36,6 +36,13 @@ class Token {
     qint64 begin;
     qint64 end;
 };
+
+/**
+ * This class stores a stream of tokens and has an associated location table.
+ * You can add tokens and traverse them (Java-style unidirectional iterator with random access).
+ * Internal representation similar to a std::vector (capacity gets multiplied if it get exceeded).
+ * @todo Fix inconsistencies in naming: advance vs. next vs. nextToken, token vs. nextToken
+ */
 template<class T>
 class TokenStreamBase
 {
@@ -58,51 +65,121 @@ public:
     if (mLocationTable)
       delete mLocationTable;
   }
-
+  
+  /**
+   * Clears the stream.
+   * @note It does not free the reserved memory, because usually as much memory is required as before.
+   * @note It will not affect the location table.
+   * @sa free
+   */
   inline void reset()
   {
     mIndex = 0;
     mTokenCount = 0;
   }
-
+  
+  /**
+   * Clears the stream and frees all memory.
+   * @note It will not affect the location table.
+   * @sa reset
+   */
+  inline void free()
+  {
+    mIndex = 0;
+    mTokenCount = 0;
+    ::free(mTokenBuffer);
+  }
+  
+  /**
+   * The number of tokens in the stream.
+   */
   inline qint64 size() const
   {
     return mTokenCount;
   }
-
+  
+  /**
+   * The current position in the stream.
+   * @sa tokenIndex
+   */
   inline qint64 index() const
   {
     return mIndex;
   }
-
+  
+  /**
+   * The index of the token returned by the last invocation of advance/nextToken.
+   * @sa index
+   */
   inline qint64 tokenIndex() const
   {
     if( mIndex )
       return mIndex - 1;
     return mIndex;
   }
-
+  
+  /**
+   * Sets the position in the stream.
+   * All tokens will be unaffected.
+   */
   inline void rewind(qint64 index)
   {
     mIndex = index;
   }
-
+  
+  /**
+   * Returns the token at the specified position in the stream.
+   */
   inline T const &token(qint64 index) const
   {
     return mTokenBuffer[index];
   }
-
+  
+  /**
+   * Returns the token at the specified position in the stream.
+   */
   inline T &token(qint64 index)
   {
     return mTokenBuffer[index];
   }
-
+  
+  /**
+   * Returns the token kind at the next position and advances.fect the 
+   * @sa advance
+   */
   inline int nextToken()
   {
     return mTokenBuffer[mIndex++].kind;
   }
-
+  
+  /**
+   * Pushes a new token to the stream.
+   * @warning This function does not affect the position!
+   * @return The new uninitialized token
+   * @sa advance
+   */
   inline T &next()
+  {
+    if (mTokenCount == mTokenBufferSize)
+    {
+      if (mTokenBufferSize == 0)
+        mTokenBufferSize = 1024;
+      
+      mTokenBufferSize <<= 2;
+      
+      mTokenBuffer = reinterpret_cast<T*>
+      (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
+    }
+    
+    return mTokenBuffer[mTokenCount++];
+  }
+  
+  /**
+   * Advances and returns the token at the current position.
+   * @sa nextToken
+   * @sa next
+   */
+  inline T &advance()
   {
     if (mIndex == mTokenCount)
     {
@@ -110,17 +187,20 @@ public:
       {
         if (mTokenBufferSize == 0)
           mTokenBufferSize = 1024;
-
+        
         mTokenBufferSize <<= 2;
-
+        
         mTokenBuffer = reinterpret_cast<T*>
-          (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
+        (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
       }
     }
-
+    
     return mTokenBuffer[mIndex++];
   }
-
+  
+  /**
+   * @return The associated location table.
+   */
   inline LocationTable *locationTable()
   {
     if (!mLocationTable)
@@ -128,7 +208,10 @@ public:
 
     return mLocationTable;
   }
-
+  
+  /**
+   * Coordinates of the beginning of the first token.
+   */
   inline void startPosition(qint64 index, qint64 *line, qint64 *column)
   {
     if (!mLocationTable)
@@ -138,7 +221,10 @@ public:
     else
       mLocationTable->positionAt(token(index).begin, line, column);
   }
-
+  
+  /**
+   * Coordinate at the end of all tokens.
+   */
   inline void endPosition(qint64 index, qint64 *line, qint64 *column)
   {
     if (!mLocationTable)

@@ -72,6 +72,17 @@ protected:
   bool switchCons(bool c);
 };
 
+class GenerateAstFwd
+{
+public:
+  QTextStream& out;
+  
+public:
+  GenerateAstFwd(QTextStream& o): out(o)
+  {}
+  
+  void operator()();
+};
 }
 
 #endif // KDEV_PG_AST_GEN_H

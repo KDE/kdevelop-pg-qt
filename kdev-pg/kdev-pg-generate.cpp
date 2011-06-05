@@ -49,48 +49,87 @@ void generateOutput()
   }
 
   if (globalSystem.generateAst)
-  { // generate the ast
-    QString str;
-    QTextStream s(&str, QIODevice::WriteOnly);
+  {
+    { // generate the ast
+      QString str;
+      QTextStream s(&str, QIODevice::WriteOnly);
 
-    GenerateAst _Ast(s);
+      GenerateAst _Ast(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+      s << "// THIS FILE IS GENERATED" << endl
+        << "// WARNING! All changes made in this file will be lost!" << endl
+        << endl
 
-      << "#ifndef " << language << "_AST_H_INCLUDED" << endl
-      << "#define " << language << "_AST_H_INCLUDED" << endl
-      << endl
+        << "#ifndef " << language << "_AST_H_INCLUDED" << endl
+        << "#define " << language << "_AST_H_INCLUDED" << endl
+        << endl
+        
+        << "#include \"" << globalSystem.language << "ast-fwd.h\"" << endl
+        << endl
 
-      << "#include <QtCore/QList>" << endl
-      << "#include <kdev-pg-list.h>" << endl
-      << endl;
-    if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include \"" << globalSystem.exportMacroHeader << "\""
+        << "#include <QtCore/QList>" << endl
+        << "#include <kdev-pg-list.h>" << endl
+        << endl;
+      if (!globalSystem.exportMacroHeader.isEmpty())
+        s << "#include \"" << globalSystem.exportMacroHeader << "\""
+          << endl;
+
+      foreach (const QString& header, globalSystem.astHeaders)
+        s << "#include \"" << header << "\"\n";
+
+      if (!globalSystem.decl.isEmpty())
+        s << globalSystem.decl << endl;
+
+      s << "namespace " << globalSystem.ns << "{" << endl
         << endl;
 
-    foreach (const QString& header, globalSystem.astHeaders)
-      s << "#include \"" << header << "\"\n";
+      _Ast();
 
-    if (!globalSystem.decl.isEmpty())
-      s << globalSystem.decl << endl;
+      s << endl << "} // end of namespace " << globalSystem.ns << endl
+        << endl
 
-    s << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+        << "#endif" << endl
+        << endl;
 
-    _Ast();
+      QString oname = globalSystem.language;
+      oname += "ast.h";
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+      format(s, oname);
+    }
+    { // generate ast forward declarations
+    
+      QString str;
+      QTextStream s(&str, QIODevice::WriteOnly);
+      
+      GenerateAstFwd _AstFwd(s);
+      
+      s << ""// THIS FILE IS GENERATED" << endl
+        << "// WARNING! All changes made in this file will be lost!" << endl
+        << endl
 
-      << "#endif" << endl
-      << endl;
-
-    QString oname = globalSystem.language;
-    oname += "ast.h";
-
-    format(s, oname);
+        << "#ifndef " << language << "_AST_FWD_INCLUDED" << endl
+        << "#define " << language << "_AST_FWD_INCLUDED" << endl
+        << endl;
+      if (!globalSystem.exportMacroHeader.isEmpty())
+        s << "#include \"" << globalSystem.exportMacroHeader << "\""
+          << endl;
+      
+      s << "namespace " << globalSystem.ns << "{" << endl
+        << endl;
+      
+      _AstFwd();
+      
+      s << endl << "} // end of namespace " << globalSystem.ns << endl
+        << endl
+      
+        << "#endif" << endl
+        << endl;
+      
+      QString oname = globalSystem.language;
+      oname += "ast-fwd.h";
+      
+      format(s, oname);
+    }
   }
 
   { // generate the parser decls
@@ -112,7 +151,7 @@ void generateOutput()
 
     if (globalSystem.generateAst)
       {
-        s << "#include \"" << globalSystem.language << "ast.h\"" << endl
+        s << "#include \"" << globalSystem.language << "ast-fwd.h\"" << endl
           << "#include <kdev-pg-memory-pool.h>" << endl
           << "#include <kdev-pg-allocator.h>" << endl;
       }
@@ -357,6 +396,11 @@ void generateOutput()
 
     s << "#include \"" << globalSystem.language << "parser.h\""
       << endl;
+    
+    if (globalSystem.generateAst)
+    {
+      s << "#include \"" << globalSystem.language << "ast.h\"" << endl;
+    }
 
     foreach (const QString& header, globalSystem.parserBitsHeaders)
       s << "#include \"" << header << "\"\n";

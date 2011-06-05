@@ -142,7 +142,7 @@ Model::AnnotationItem *annotation(
   if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
     {
       variableType = Model::VariableDeclarationItem::TypeToken;
-      type = t->mName;      
+      type = t->mName;
     }
   else if (Model::NonTerminalItem *nt = nodeCast<Model::NonTerminalItem*>(item))
     {

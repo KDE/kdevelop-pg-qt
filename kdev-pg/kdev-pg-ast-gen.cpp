@@ -28,23 +28,7 @@ namespace KDevPG
 {
 void GenerateAst::operator()()
 {
-  for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
-       it != globalSystem.symbols.end(); ++it)
-    {
-      Model::SymbolItem *sym = *it;
-      #define O(name) out << "struct " << name << "Ast;" << endl;
-      O(sym->mCapitalizedName)
-      if(isOperatorSymbol(sym))
-      {
-        O("Prefix" + sym->mCapitalizedName)
-        O("Postfix" + sym->mCapitalizedName)
-        O("Binary" + sym->mCapitalizedName)
-        O("Ternary" + sym->mCapitalizedName)
-      }
-      #undef O
-    }
-
-  out << endl << globalSystem.namespaceCode << endl;
+  out << globalSystem.namespaceCode << endl;
 
   out << "struct " << globalSystem.exportMacro << " AstNode";
 
@@ -300,6 +284,27 @@ bool GenerateAstRule::switchCons(bool c)
   bool old = mInCons;
   mInCons = c;
   return old;
+}
+
+void GenerateAstFwd::operator()()
+{
+  out << "struct " << " AstNode;";
+  
+  for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
+       it != globalSystem.symbols.end(); ++it)
+  {
+    Model::SymbolItem *sym = *it;
+    #define O(name) out << "struct " << name << "Ast;" << endl;
+    O(sym->mCapitalizedName)
+    if(isOperatorSymbol(sym))
+    {
+      O("Prefix" + sym->mCapitalizedName)
+      O("Postfix" + sym->mCapitalizedName)
+      O("Binary" + sym->mCapitalizedName)
+      O("Ternary" + sym->mCapitalizedName)
+    }
+    #undef O
+  }
 }
 
 }

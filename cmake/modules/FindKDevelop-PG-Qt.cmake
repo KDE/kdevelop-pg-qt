@@ -155,10 +155,8 @@ if( KDEVPGQT_INCLUDE_DIR
         )
 
         set( ${_srcVar}
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp" )
+              ${_outputList}
+           )
     endmacro(KDEVPGQT_GENERATE)
 
 

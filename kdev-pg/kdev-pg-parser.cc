@@ -68,7 +68,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 2 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 2 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
 /* This file is part of kdev-pg-qt
    Copyright (C) 2005 Roberto Raggi <roberto@kdevelop.org>
@@ -117,7 +117,7 @@ QString r;
 
 
 /* Line 189 of yacc.c  */
-#line 121 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
+#line 121 "/home/andreas/src/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -216,7 +216,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 49 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 49 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
     KDevPG::Model::Node *item;
     char* str;
@@ -229,7 +229,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 233 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
+#line 233 "/home/andreas/src/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -241,7 +241,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 245 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
+#line 245 "/home/andreas/src/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
 
 #ifdef short
 # undef short
@@ -602,20 +602,20 @@ static const yytype_uint16 yyrline[] =
        0,    93,    93,    93,   100,   101,   105,   107,   109,   111,
      113,   114,   128,   142,   169,   171,   173,   175,   177,   179,
      181,   183,   185,   187,   189,   191,   193,   195,   197,   197,
-     198,   198,   203,   202,   206,   205,   216,   220,   223,   226,
-     230,   231,   235,   236,   240,   241,   245,   246,   247,   251,
-     252,   256,   257,   261,   262,   263,   267,   268,   269,   270,
-     271,   272,   286,   290,   291,   295,   296,   300,   301,   305,
+     198,   198,   203,   202,   206,   205,   215,   219,   222,   225,
+     229,   230,   234,   235,   239,   240,   244,   245,   246,   250,
+     251,   255,   256,   260,   261,   262,   266,   267,   268,   269,
+     270,   271,   286,   290,   291,   295,   296,   300,   301,   305,
      306,   307,   311,   312,   316,   317,   321,   322,   323,   327,
-     328,   329,   330,   331,   354,   355,   369,   374,   376,   378,
-     380,   382,   387,   388,   389,   390,   394,   396,   400,   401,
-     402,   403,   404,   405,   406,   410,   411,   415,   420,   427,
-     428,   432,   442,   443,   447,   448,   449,   450,   454,   455,
-     460,   461,   465,   466,   470,   471,   475,   476,   480,   485,
-     490,   492,   492,   502,   503,   508,   509,   513,   521,   529,
-     540,   541,   542,   543,   544,   545,   549,   550,   551,   555,
-     556,   557,   564,   574,   575,   576,   577,   581,   582,   594,
-     596,   598,   600,   605,   606,   610,   611,   615,   616
+     328,   329,   330,   331,   354,   355,   370,   375,   377,   379,
+     381,   383,   388,   389,   390,   391,   395,   397,   401,   402,
+     403,   404,   405,   406,   407,   411,   412,   416,   421,   428,
+     429,   433,   443,   444,   448,   449,   450,   451,   455,   456,
+     461,   462,   466,   467,   471,   472,   476,   477,   481,   486,
+     491,   493,   493,   503,   504,   509,   510,   514,   522,   530,
+     541,   542,   543,   544,   545,   546,   550,   551,   552,   556,
+     557,   558,   565,   575,   576,   577,   578,   582,   583,   595,
+     597,   599,   601,   606,   607,   611,   612,   616,   617
 };
 #endif
 
@@ -1757,59 +1757,59 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 93 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 93 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.decl = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 96 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 96 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.bits += (yyvsp[(5) - (5)].str); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 106 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 106 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushParserClassMember((yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 108 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 108 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.bits += (yyvsp[(5) - (5)].str); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 110 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 110 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushLexerClassMember((yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 112 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 112 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.lexerBits += (yyvsp[(5) - (5)].str); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 115 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 115 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { if(KDevPG::globalSystem.hasLexer)
         { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%table_lexer) before any lexer rules"; exit(-1); }
         switch(KDevPG::GDFA::type)
         {
-          case KDevPG::GDFA::SAscii: KDevPG::GDFA::type = KDevPG::GDFA::TAscii; break;
-          case KDevPG::GDFA::SLatin1: KDevPG::GDFA::type = KDevPG::GDFA::TLatin1; break;
-          case KDevPG::GDFA::SUtf8: KDevPG::GDFA::type = KDevPG::GDFA::TUtf8; break;
-          case KDevPG::GDFA::SUcs2: KDevPG::GDFA::type = KDevPG::GDFA::TUcs2; break;
-          case KDevPG::GDFA::SUtf16: KDevPG::GDFA::type = KDevPG::GDFA::TUtf16; break;
-/*           case KDevPG::GDFA::SUcs4: KDevPG::GDFA::type = KDevPG::GDFA::TUcs4; break; */
+          case KDevPG::SAscii: KDevPG::GDFA::type = KDevPG::TAscii; break;
+          case KDevPG::SLatin1: KDevPG::GDFA::type = KDevPG::TLatin1; break;
+          case KDevPG::SUtf8: KDevPG::GDFA::type = KDevPG::TUtf8; break;
+          case KDevPG::SUcs2: KDevPG::GDFA::type = KDevPG::TUcs2; break;
+          case KDevPG::SUtf16: KDevPG::GDFA::type = KDevPG::TUtf16; break;
+/*           case KDevPG::SUcs4: KDevPG::GDFA::type = KDevPG::TUcs4; break; */
           default: /* empty */;
         }
       ;}
@@ -1818,17 +1818,17 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 129 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 129 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { if(KDevPG::globalSystem.hasLexer)
       { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
       switch(KDevPG::GDFA::type)
       {
-        case KDevPG::GDFA::TAscii: KDevPG::GDFA::type = KDevPG::GDFA::SAscii; break;
-        case KDevPG::GDFA::TLatin1: KDevPG::GDFA::type = KDevPG::GDFA::SLatin1; break;
-        case KDevPG::GDFA::TUtf8: KDevPG::GDFA::type = KDevPG::GDFA::SUtf8; break;
-        case KDevPG::GDFA::TUcs2: KDevPG::GDFA::type = KDevPG::GDFA::SUcs2; break;
-        case KDevPG::GDFA::TUtf16: KDevPG::GDFA::type = KDevPG::GDFA::SUtf16; break;
-/*         case KDevPG::GDFA::TUcs4: KDevPG::GDFA::type = KDevPG::GDFA::SUcs4; break; */
+        case KDevPG::TAscii: KDevPG::GDFA::type = KDevPG::SAscii; break;
+        case KDevPG::TLatin1: KDevPG::GDFA::type = KDevPG::SLatin1; break;
+        case KDevPG::TUtf8: KDevPG::GDFA::type = KDevPG::SUtf8; break;
+        case KDevPG::TUcs2: KDevPG::GDFA::type = KDevPG::SUcs2; break;
+        case KDevPG::TUtf16: KDevPG::GDFA::type = KDevPG::SUtf16; break;
+/*         case KDevPG::TUcs4: KDevPG::GDFA::type = KDevPG::SUcs4; break; */
         default: /* empty */;
       }
       ;}
@@ -1837,7 +1837,7 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 143 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 143 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
         if(KDevPG::globalSystem.hasLexer)
         { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
@@ -1862,126 +1862,126 @@ yyreduce:
           KDevPG::checkOut << "** ERROR unknown codec  ``" << (yyvsp[(2) - (2)].str) << "''" << endl;
           exit(-1);
         }
-        KDevPG::GDFA::type = (typeof(KDevPG::GDFA::type))(base);
+        KDevPG::GDFA::type = KDevPG::AutomatonType(base);
       ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 170 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 170 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.tokenStream = (yyvsp[(2) - (3)].str);           ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 172 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 172 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.exportMacro = (yyvsp[(2) - (2)].str);           ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 174 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 174 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.exportMacroHeader = (yyvsp[(2) - (2)].str);     ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 176 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 176 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.namespaceCode = (yyvsp[(2) - (2)].str);         ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 178 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 178 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.astCode = (yyvsp[(2) - (2)].str);               ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 180 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 180 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushParserDeclarationHeader((yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 182 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 182 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushParserBitsHeader((yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 184 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 184 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushAstHeader((yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 186 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 186 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTokenStreamDeclarationHeader((yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 188 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 188 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.inputStream = (yyvsp[(2) - (2)].str); ;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 190 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 190 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTokenStreamBitsHeader((yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 192 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 192 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.astBaseClasses[(yyvsp[(2) - (3)].str)] = (yyvsp[(3) - (3)].str); ;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 194 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 194 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.parserBaseClass = (yyvsp[(2) - (2)].str); ;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 196 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 196 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.tokenStreamBaseClass = (yyvsp[(2) - (2)].str); ;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 197 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 197 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.hasLexer = true; lexerEnv = (yyvsp[(2) - (2)].str); if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); ;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 198 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 198 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); ;}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 203 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 203 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.regexpById[(yyvsp[(4) - (5)].str)] = (yyvsp[(1) - (5)].nfa);
             ;}
     break;
@@ -1989,12 +1989,11 @@ yyreduce:
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 206 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 206 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               if((yyvsp[(1) - (4)].nfa)->acceptsEpsilon())
               {
-                KDevPG::checkOut << "** ERROR Lexer rule accepting the empty word at line " << yyLine << endl;
-                KDevPG::ProblemSummaryPrinter::reportError();
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
               }
               QString s = QString((yyvsp[(2) - (4)].str)) + QString(r); KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (4)].nfa));
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(
@@ -2005,190 +2004,191 @@ yyreduce:
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 220 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 219 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
-        r = "\nRETURN(" + QString((yyvsp[(1) - (1)].str)) + ");\n"
+        r = "\nlxRETURN(" + QString((yyvsp[(1) - (1)].str)) + ");\n"
       ;}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 223 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 222 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
-        r = "\nCONTINUE;\n"; 
+        r = "\nlxCONTINUE;\n"; 
       ;}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 226 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { r = "\nSKIP\n" ;}
+#line 225 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+    { r = "\nlxSKIP\n" ;}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 230 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 229 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) |= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 231 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 230 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 235 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 234 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) &= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 236 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 235 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 240 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 239 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) ^= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 241 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 240 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 245 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 244 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA((yyvsp[(2) - (2)].nfa)->negate()); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 246 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 245 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA()); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 247 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 246 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 251 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 250 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa) <<= *(yyvsp[(2) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 252 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 251 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 256 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 255 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa)); KDevPG::GNFA *tmp = new KDevPG::GNFA(*(yyvsp[(3) - (3)].nfa) <<= *(yyvsp[(1) - (3)].nfa)); **tmp; *(yyval.nfa) <<= *tmp; delete tmp; delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 257 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 256 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 261 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 260 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(**(yyvsp[(1) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); ;}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 262 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 261 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa)); **(yyval.nfa); *(yyval.nfa) <<= *(yyvsp[(1) - (2)].nfa); delete (yyvsp[(1) - (2)].nfa); ;}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 263 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 262 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 267 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 266 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (3)].nfa)); delete (yyvsp[(2) - (3)].nfa); ;}
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 268 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 267 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(2) - (3)].nfa); ;}
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 269 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 268 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); ;}
     break;
 
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 270 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 269 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 271 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 270 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 272 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 271 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
-                              if(KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)] == 0)
+                              if(!KDevPG::globalSystem.regexpById.contains((yyvsp[(1) - (1)].str)))
                               {
                                 KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
-                              if(!KDevPG::globalSystem.isUsedRegexp.contains(regexp))
+                              if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
-                                regexp->minimize();
-                                KDevPG::globalSystem.isUsedRegexp.insert(regexp);
+                                KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
+                                KDevPG::globalSystem.dfaForNfa[regexp]->minimize();
+                                *regexp = KDevPG::globalSystem.dfaForNfa[regexp]->nfa();
                               }
                               (yyval.nfa) = new KDevPG::GNFA(*regexp);
                             ;}
@@ -2197,147 +2197,147 @@ yyreduce:
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 286 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 286 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); ;}
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 290 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 290 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) |= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 291 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 291 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 295 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 295 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) &= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 296 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 296 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 300 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 300 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) ^= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 301 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 301 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 305 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 305 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA((yyvsp[(2) - (2)].nfa)->negate()); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 306 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 306 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA()); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 307 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 307 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 311 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 311 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa) |= *(yyvsp[(2) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 74:
 
 /* Line 1455 of yacc.c  */
-#line 316 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 316 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa)); KDevPG::GNFA *tmp = new KDevPG::GNFA(*(yyvsp[(3) - (3)].nfa) <<= *(yyvsp[(1) - (3)].nfa)); **tmp; *(yyval.nfa) <<= *tmp; delete tmp; delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); ;}
     break;
 
   case 75:
 
 /* Line 1455 of yacc.c  */
-#line 317 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 317 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 76:
 
 /* Line 1455 of yacc.c  */
-#line 321 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 321 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(**(yyvsp[(1) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); ;}
     break;
 
   case 77:
 
 /* Line 1455 of yacc.c  */
-#line 322 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 322 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa)); **(yyval.nfa); *(yyval.nfa) <<= *(yyvsp[(1) - (2)].nfa); delete (yyvsp[(1) - (2)].nfa); ;}
     break;
 
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 323 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 323 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); ;}
     break;
 
   case 79:
 
 /* Line 1455 of yacc.c  */
-#line 327 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 327 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (3)].nfa)); delete (yyvsp[(2) - (3)].nfa); ;}
     break;
 
   case 80:
 
 /* Line 1455 of yacc.c  */
-#line 328 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 328 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = (yyvsp[(2) - (3)].nfa); ;}
     break;
 
   case 81:
 
 /* Line 1455 of yacc.c  */
-#line 329 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 329 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); ;}
     break;
 
   case 82:
 
 /* Line 1455 of yacc.c  */
-#line 330 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 330 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 83:
 
 /* Line 1455 of yacc.c  */
-#line 331 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 331 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
       quint32 begin, end;
       QString str = KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str)));
@@ -2366,25 +2366,26 @@ yyreduce:
   case 84:
 
 /* Line 1455 of yacc.c  */
-#line 354 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 354 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 85:
 
 /* Line 1455 of yacc.c  */
-#line 355 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 355 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
-                              if(KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)] == 0)
+                              if(!KDevPG::globalSystem.regexpById.contains((yyvsp[(1) - (1)].str)))
                               {
                                 KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
-                              if(!KDevPG::globalSystem.isUsedRegexp.contains(regexp))
+                              if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
-                                regexp->minimize();
-                                KDevPG::globalSystem.isUsedRegexp.insert(regexp);
+                                KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
+                                KDevPG::globalSystem.dfaForNfa[regexp]->minimize();
+                                *regexp = KDevPG::globalSystem.dfaForNfa[regexp]->nfa();
                               }
                               (yyval.nfa) = new KDevPG::GNFA(*regexp);
                             ;}
@@ -2393,147 +2394,147 @@ yyreduce:
   case 86:
 
 /* Line 1455 of yacc.c  */
-#line 369 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 370 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); ;}
     break;
 
   case 87:
 
 /* Line 1455 of yacc.c  */
-#line 375 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 376 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, (yyvsp[(5) - (5)].str));    ;}
     break;
 
   case 88:
 
 /* Line 1455 of yacc.c  */
-#line 377 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 378 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, (yyvsp[(5) - (5)].str)); ;}
     break;
 
   case 89:
 
 /* Line 1455 of yacc.c  */
-#line 379 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 380 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, (yyvsp[(5) - (5)].str));   ;}
     break;
 
   case 90:
 
 /* Line 1455 of yacc.c  */
-#line 381 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 382 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, (yyvsp[(4) - (4)].str));      ;}
     break;
 
   case 91:
 
 /* Line 1455 of yacc.c  */
-#line 383 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 384 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, (yyvsp[(4) - (4)].str));       ;}
     break;
 
   case 92:
 
 /* Line 1455 of yacc.c  */
-#line 387 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 388 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (1)].str),(yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 93:
 
 /* Line 1455 of yacc.c  */
-#line 388 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 389 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str)); ;}
     break;
 
   case 94:
 
 /* Line 1455 of yacc.c  */
-#line 389 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 390 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (3)].str),(yyvsp[(3) - (3)].str)); ;}
     break;
 
   case 95:
 
 /* Line 1455 of yacc.c  */
-#line 391 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 392 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (6)].str),(yyvsp[(5) - (6)].str)); ;}
     break;
 
   case 97:
 
 /* Line 1455 of yacc.c  */
-#line 396 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 397 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.pushRule((yyvsp[(2) - (3)].item)); ;}
     break;
 
   case 98:
 
 /* Line 1455 of yacc.c  */
-#line 400 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 401 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::globalSystem.zero(); ;}
     break;
 
   case 99:
 
 /* Line 1455 of yacc.c  */
-#line 401 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 402 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(2) - (3)].item); ;}
     break;
 
   case 100:
 
 /* Line 1455 of yacc.c  */
-#line 402 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 403 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 101:
 
 /* Line 1455 of yacc.c  */
-#line 403 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 404 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 102:
 
 /* Line 1455 of yacc.c  */
-#line 404 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 405 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol((yyvsp[(2) - (2)].str))); ;}
     break;
 
   case 103:
 
 /* Line 1455 of yacc.c  */
-#line 405 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 406 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::annotation((yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].item), false, (yyvsp[(2) - (3)].storageType)); ;}
     break;
 
   case 104:
 
 /* Line 1455 of yacc.c  */
-#line 406 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 407 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::annotation((yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].item), true, (yyvsp[(3) - (4)].storageType));  ;}
     break;
 
   case 105:
 
 /* Line 1455 of yacc.c  */
-#line 410 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 411 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol((yyvsp[(1) - (2)].str)), (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 106:
 
 /* Line 1455 of yacc.c  */
-#line 411 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 412 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::globalSystem.terminal((yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 107:
 
 /* Line 1455 of yacc.c  */
-#line 416 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 417 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::globalSystem.needStateManagement = true;
           (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (4)].item), 0);
@@ -2543,7 +2544,7 @@ yyreduce:
   case 108:
 
 /* Line 1455 of yacc.c  */
-#line 421 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 422 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::globalSystem.needStateManagement = true;
           (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (8)].item), (yyvsp[(7) - (8)].item));
@@ -2553,77 +2554,77 @@ yyreduce:
   case 109:
 
 /* Line 1455 of yacc.c  */
-#line 427 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 428 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = const_cast<char*>(""); ;}
     break;
 
   case 110:
 
 /* Line 1455 of yacc.c  */
-#line 428 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 429 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 111:
 
 /* Line 1455 of yacc.c  */
-#line 432 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 433 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 112:
 
 /* Line 1455 of yacc.c  */
-#line 442 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 443 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember; ;}
     break;
 
   case 113:
 
 /* Line 1455 of yacc.c  */
-#line 443 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 444 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;  ;}
     break;
 
   case 114:
 
 /* Line 1455 of yacc.c  */
-#line 447 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 448 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::plus((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 115:
 
 /* Line 1455 of yacc.c  */
-#line 448 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 449 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::star((yyvsp[(1) - (2)].item)); ;}
     break;
 
   case 116:
 
 /* Line 1455 of yacc.c  */
-#line 449 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 450 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 117:
 
 /* Line 1455 of yacc.c  */
-#line 450 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 451 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::alternative((yyvsp[(2) - (2)].item), KDevPG::globalSystem.zero()); ;}
     break;
 
   case 118:
 
 /* Line 1455 of yacc.c  */
-#line 454 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 455 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 119:
 
 /* Line 1455 of yacc.c  */
-#line 456 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 457 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::CloneTree cl;
           (yyval.item) = KDevPG::cons((yyvsp[(1) - (3)].item), KDevPG::star(KDevPG::cons(cl.clone((yyvsp[(3) - (3)].item)), cl.clone((yyvsp[(1) - (3)].item)))));
@@ -2633,63 +2634,63 @@ yyreduce:
   case 120:
 
 /* Line 1455 of yacc.c  */
-#line 460 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 461 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::action((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 121:
 
 /* Line 1455 of yacc.c  */
-#line 461 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 462 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::action(0, (yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 122:
 
 /* Line 1455 of yacc.c  */
-#line 465 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 466 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 123:
 
 /* Line 1455 of yacc.c  */
-#line 466 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 467 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::cons((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].item)); ;}
     break;
 
   case 124:
 
 /* Line 1455 of yacc.c  */
-#line 470 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 471 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 125:
 
 /* Line 1455 of yacc.c  */
-#line 471 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 472 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::condition((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].item)); ;}
     break;
 
   case 126:
 
 /* Line 1455 of yacc.c  */
-#line 475 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 476 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 127:
 
 /* Line 1455 of yacc.c  */
-#line 476 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 477 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::alternative((yyvsp[(1) - (3)].item), (yyvsp[(3) - (3)].item)); ;}
     break;
 
   case 128:
 
 /* Line 1455 of yacc.c  */
-#line 481 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 482 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
                           (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(6) - (7)].item), (yyvsp[(4) - (7)].str));
@@ -2699,7 +2700,7 @@ yyreduce:
   case 129:
 
 /* Line 1455 of yacc.c  */
-#line 486 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 487 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
                           (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(5) - (7)].item), (yyvsp[(7) - (7)].str));
@@ -2709,14 +2710,14 @@ yyreduce:
   case 130:
 
 /* Line 1455 of yacc.c  */
-#line 491 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 492 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::evolve((yyvsp[(1) - (4)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (4)].str)), 0, (yyvsp[(4) - (4)].str)); ;}
     break;
 
   case 131:
 
 /* Line 1455 of yacc.c  */
-#line 492 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 493 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { if(KDevPG::globalSystem.generateAst == false)
         {
           qFatal("Operator-expression-parsing is not yet supported with --no-ast!");
@@ -2729,35 +2730,35 @@ yyreduce:
   case 132:
 
 /* Line 1455 of yacc.c  */
-#line 498 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 499 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { KDevPG::globalSystem.needOperatorStack = true; (yyval.item) = (yyvsp[(2) - (2)].item); ;}
     break;
 
   case 133:
 
 /* Line 1455 of yacc.c  */
-#line 502 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 503 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = const_cast<char*>(""); ;}
     break;
 
   case 134:
 
 /* Line 1455 of yacc.c  */
-#line 503 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 504 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 136:
 
 /* Line 1455 of yacc.c  */
-#line 509 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 510 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { ; ;}
     break;
 
   case 137:
 
 /* Line 1455 of yacc.c  */
-#line 514 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 515 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (9)].item);
               operatorNode->mName = (yyvsp[(5) - (9)].str);
@@ -2770,7 +2771,7 @@ yyreduce:
   case 138:
 
 /* Line 1455 of yacc.c  */
-#line 522 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 523 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (9)].item);
               operatorNode->mName = (yyvsp[(5) - (9)].str);
@@ -2783,7 +2784,7 @@ yyreduce:
   case 139:
 
 /* Line 1455 of yacc.c  */
-#line 530 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 531 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (6)].item);
               operatorNode->mName = (yyvsp[(5) - (6)].str);
@@ -2796,84 +2797,84 @@ yyreduce:
   case 140:
 
 /* Line 1455 of yacc.c  */
-#line 540 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 541 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushBin(*(yyvsp[(2) - (4)].operatorInformation), (yyvsp[(4) - (4)].str), (yyvsp[(3) - (4)].str)); free((yyvsp[(2) - (4)].operatorInformation)); ;}
     break;
 
   case 141:
 
 /* Line 1455 of yacc.c  */
-#line 541 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 542 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushTern(*(yyvsp[(2) - (5)].operatorInformation), *(yyvsp[(3) - (5)].operatorInformation), (yyvsp[(5) - (5)].str), (yyvsp[(4) - (5)].str)); free((yyvsp[(2) - (5)].operatorInformation)); free((yyvsp[(3) - (5)].operatorInformation)); ;}
     break;
 
   case 142:
 
 /* Line 1455 of yacc.c  */
-#line 542 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 543 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushPre(*(yyvsp[(2) - (3)].operatorInformation), (yyvsp[(3) - (3)].str)); free((yyvsp[(2) - (3)].operatorInformation)); ;}
     break;
 
   case 143:
 
 /* Line 1455 of yacc.c  */
-#line 543 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 544 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushPost(*(yyvsp[(2) - (3)].operatorInformation), "0", (yyvsp[(3) - (3)].str)); free((yyvsp[(2) - (3)].operatorInformation)); free((yyvsp[(3) - (3)].str)); ;}
     break;
 
   case 144:
 
 /* Line 1455 of yacc.c  */
-#line 544 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 545 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushPost(*(yyvsp[(2) - (4)].operatorInformation), (yyvsp[(4) - (4)].str), (yyvsp[(3) - (4)].str)); free((yyvsp[(2) - (4)].operatorInformation)); ;}
     break;
 
   case 145:
 
 /* Line 1455 of yacc.c  */
-#line 545 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 546 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { operatorNode->pushParen(*(yyvsp[(2) - (3)].operatorInformation), *(yyvsp[(3) - (3)].operatorInformation)); free((yyvsp[(2) - (3)].operatorInformation)); free((yyvsp[(3) - (3)].operatorInformation)); ;}
     break;
 
   case 146:
 
 /* Line 1455 of yacc.c  */
-#line 549 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 550 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (char*)"0"; ;}
     break;
 
   case 147:
 
 /* Line 1455 of yacc.c  */
-#line 550 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 551 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 148:
 
 /* Line 1455 of yacc.c  */
-#line 551 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 552 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (yyvsp[(2) - (2)].str); ;}
     break;
 
   case 149:
 
 /* Line 1455 of yacc.c  */
-#line 555 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 556 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (char*)"1"; ;}
     break;
 
   case 150:
 
 /* Line 1455 of yacc.c  */
-#line 556 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 557 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.str) = (char*)"0"; ;}
     break;
 
   case 151:
 
 /* Line 1455 of yacc.c  */
-#line 557 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 558 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { uint yyleng = strlen((yyvsp[(2) - (2)].str));
                                      char *tmp = (char*)calloc(yyleng+7, sizeof(char));
                                      tmp[0] = '(';
@@ -2886,7 +2887,7 @@ yyreduce:
   case 152:
 
 /* Line 1455 of yacc.c  */
-#line 564 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 565 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { uint yyleng = strlen((yyvsp[(2) - (2)].str));
                                      char *tmp = (char*)calloc(yyleng+7, sizeof(char));
                                      tmp[0] = '(';
@@ -2899,42 +2900,42 @@ yyreduce:
   case 153:
 
 /* Line 1455 of yacc.c  */
-#line 574 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 575 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(3) - (4)].str)), (yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].str)); ;}
     break;
 
   case 154:
 
 /* Line 1455 of yacc.c  */
-#line 575 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 576 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(3) - (3)].str)), (yyvsp[(2) - (3)].str), ""); ;}
     break;
 
   case 155:
 
 /* Line 1455 of yacc.c  */
-#line 576 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 577 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(1) - (2)].str)), "", (yyvsp[(2) - (2)].str)); ;}
     break;
 
   case 156:
 
 /* Line 1455 of yacc.c  */
-#line 577 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 578 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(1) - (1)].str)), "", ""); ;}
     break;
 
   case 157:
 
 /* Line 1455 of yacc.c  */
-#line 581 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 582 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = (yyvsp[(1) - (1)].item); ;}
     break;
 
   case 158:
 
 /* Line 1455 of yacc.c  */
-#line 583 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 584 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
           KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(1) - (2)].item);
           while (last->mNext != 0) {
@@ -2948,77 +2949,77 @@ yyreduce:
   case 159:
 
 /* Line 1455 of yacc.c  */
-#line 595 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 596 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), (yyvsp[(3) - (6)].variableType), false, (yyvsp[(4) - (6)].str), (yyvsp[(6) - (6)].str)); ;}
     break;
 
   case 160:
 
 /* Line 1455 of yacc.c  */
-#line 597 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 598 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (5)].declarationType), (yyvsp[(2) - (5)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, false, (yyvsp[(4) - (5)].str), ""); ;}
     break;
 
   case 161:
 
 /* Line 1455 of yacc.c  */
-#line 599 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 600 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (7)].declarationType), (yyvsp[(2) - (7)].storageType), (yyvsp[(3) - (7)].variableType), true, (yyvsp[(5) - (7)].str), (yyvsp[(7) - (7)].str)); ;}
     break;
 
   case 162:
 
 /* Line 1455 of yacc.c  */
-#line 601 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 602 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, true, (yyvsp[(5) - (6)].str), ""); ;}
     break;
 
   case 163:
 
 /* Line 1455 of yacc.c  */
-#line 605 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 606 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     ;}
     break;
 
   case 164:
 
 /* Line 1455 of yacc.c  */
-#line 606 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 607 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  ;}
     break;
 
   case 165:
 
 /* Line 1455 of yacc.c  */
-#line 610 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 611 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    ;}
     break;
 
   case 166:
 
 /* Line 1455 of yacc.c  */
-#line 611 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 612 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     ;}
     break;
 
   case 167:
 
 /* Line 1455 of yacc.c  */
-#line 615 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 616 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeNode;             ;}
     break;
 
   case 168:
 
 /* Line 1455 of yacc.c  */
-#line 616 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 617 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeVariable;         ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 3022 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
+#line 3023 "/home/andreas/src/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -3230,6 +3231,6 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 619 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+#line 620 "/home/andreas/src/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
 
 

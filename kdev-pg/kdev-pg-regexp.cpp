@@ -22,6 +22,8 @@
 #include "kdev-pg.h"
 #include "kdev-pg-regexp-helper.h"
 #include <iostream>
+#include <queue>
+#include <stack>
 #include <unordered_set>
 #include <unordered_map>
 

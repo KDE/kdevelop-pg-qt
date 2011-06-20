@@ -931,7 +931,7 @@ string ASBeautifier::beautify(const string &originalLine)
 
 		// check for utf8 characters
 		// isalnum() will display an assert message in debug if not bypassed here
-		if (ch < 0)
+		if (ch & 0x80)
 			continue;
 
 		// handle special characters (i.e. backslash+character such as \n, \t, ...)

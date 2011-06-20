@@ -44,8 +44,8 @@ namespace KDevPG
 
 #define YY_INPUT(buf, result, max_size) \
   { \
-    char c = inp(); \
-    result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
+    int c = inp(); \
+    result = (c == EOF) ? YY_NULL : (buf[0] = (char)c, 1); \
   }
 
 #define YY_USER_ACTION  appendLineBuffer();
@@ -343,7 +343,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 
 %%
 
-int ch;
+char ch;
 int yyLine = 1, currentOffset = 0;
 bool endOfLine = false;
 char yyTextLine[256 * 1024];
@@ -352,7 +352,7 @@ int inp()
 {
   if( KDevPG::file.atEnd() )
     return EOF;
-  KDevPG::file.getChar( (char*)&ch );
+  KDevPG::file.getChar( &ch );
   return ch;
 }
 

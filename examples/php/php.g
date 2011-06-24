@@ -70,10 +70,10 @@
 %token OPEN_TAG ("<?"), CLOSE_TAG ("?>"), OPEN_TAG_WITH_ECHO ("<?=");
 
 %lexer ->
-  "<?"|"<?php"                  [: lxSET_RULE_SET(php) :] OPEN_TAG ;
-  "<?="                         [: lxSET_RULE_SET(php) :] OPEN_TAG_WITH_ECHO ;
-  .+ %ba("<?")                  INLINE_HTML;
-  .+^(.*"<?".*)                 INLINE_HTML;
+  "<?"|"<?php"                  [: /*lxSET_RULE_SET(php)*/ qDebug() << "ot " << lxBEGIN_IDX << " " << lxCURR_IDX;  :] OPEN_TAG ;
+--   "<?="                         [: lxSET_RULE_SET(php) :] OPEN_TAG_WITH_ECHO ;
+.+ %ba("<?")                  [: qDebug() << "ht " << lxBEGIN_IDX << " " << lxCURR_IDX; :] INLINE_HTML;
+--   .+^(.*"<?".*)                 INLINE_HTML;
   ;
 
 %lexer "php" ->

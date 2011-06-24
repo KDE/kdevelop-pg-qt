@@ -244,22 +244,26 @@ lexer_declaration_rest
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
             } lexer_declaration_rest
-    | regexp T_BARRIER '(' T_STRING ')' code_opt opt_lexer_action ';'
+    | regexp T_BARRIER '(' regexp ')' code_opt opt_lexer_action ';'
             {
               if($1->acceptsEpsilon())
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
               else if($1->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
               bool ignore = false;
-              if(strlen($4) == 0)
+              if($4->acceptsEpsilon())
               {
-                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << endl;
+                ;
+              }
+              auto minLen = $4->minLength(), maxLen = $4->maxLength();
+              if($4 == 0)
+              {
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << endl;
                 ignore = true;
               }
-              KDevPG::GNFA delim = KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($4)));
-              if(delim.isEmpty())
+              else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid barrier for the specified encoding at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << endl;
                 ignore = true;
               }
               if(ignore)
@@ -271,11 +275,13 @@ lexer_declaration_rest
               else
               {
                 KDevPG::GNFA exclude = KDevPG::GNFA::anything();
-                exclude <<= delim;
-                exclude <<= KDevPG::GNFA::anyChar();
-                *$1 <<= delim;
+                exclude <<= *$4;
+                exclude <<= KDevPG::GNFA::anything();
                 *$1 ^= exclude;
-                QString s = "Iterator::plain() -= " + QString::number(delim.minLength()) + "; " + QString($6) + QString(r);
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(new KDevPG::GNFA(*$1));
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($6) + QString(r));
+                *$1 <<= *$4;
+                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }

@@ -772,6 +772,83 @@ public:
       }
       return -1;
     }
+private:
+    bool unboundedCheck(size_t x, UsedBitArray& vis) const
+    {
+      vis[x] = true;
+      foreach(const auto& nx, rules[x])
+      {
+        if(vis[nx.second])
+          return true;
+        else
+          if(unboundedCheck(nx.second, vis))
+            return true;
+      }
+      vis[x] = false;
+      return false;
+    }
+public:
+    bool isUnbounded() const
+    {
+      UsedBitArray vis(nstates);
+      return unboundedCheck(0, vis);
+    }
+    int maxLength() const
+    {
+      // assumes that there are no circle unarrivable from start
+      if(isUnbounded())
+        return -2;
+      if(isEmpty())
+        return -1;
+      queue<size_t> _todo0, _todo1;
+      queue<size_t> *todo0 = &_todo0, *todo1 = &_todo1;
+      vector<int> dist(nstates, -1);
+      vector<vector<pair<CharSet, size_t> > > brules(nstates);
+      for(size_t i = 0; i != nstates; ++i)
+      {
+        foreach(const auto& nx, rules[i])
+        {
+          brules[nx.second].push_back(nx);
+          brules[nx.second].back().second = i;
+        }
+      }
+      for(size_t i = accept; i != nstates; ++i)
+      {
+        todo0->push(i);
+        dist[i] = 0;
+      }
+      int length = 0;
+      while(!todo0->empty())
+      {
+        size_t curr = todo0->front();
+        todo0->pop();
+        foreach(const auto& nx, brules[curr])
+        {
+          if(nx.first.epsilon())
+          {
+            if(dist[nx.second] < length)
+            {
+              dist[nx.second] = length;
+              todo0->push(nx.second);
+            }
+          }
+          else
+          {
+            if(dist[nx.second] <= length)
+            {
+              dist[nx.second] = length + 1;
+              todo1->push(nx.second);
+            }
+          }
+        }
+        if(todo0->empty())
+        {
+          ++length;
+          swap(todo0, todo1);
+        }
+      }
+      return dist[0];
+    }
     NFA<CharSet>& negate()
     {
       DFA<CharSet> tmp = dfa();
@@ -985,11 +1062,25 @@ bool GNFA::isEmpty() const
 #undef DO_IE
 }
 
+bool GNFA::isUnbounded() const
+{
+#define DO_IU(x) return x->isUnbounded();
+  EACH_TYPE(DO_IU)
+#undef DO_IU
+}
+
 int GNFA::minLength() const
 {
 #define DO_ML(x) return x->minLength();
   EACH_TYPE(DO_ML)
 #undef DO_ML
+}
+
+int GNFA::maxLength() const
+{
+  #define DO_ML(x) return x->maxLength();
+  EACH_TYPE(DO_ML)
+  #undef DO_ML
 }
 
 GNFA& GNFA::operator<<=(const KDevPG::GNFA& o)

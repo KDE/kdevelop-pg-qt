@@ -38,7 +38,7 @@
 
 namespace KDevPG
 {
-  
+
 template<typename T> class DFA;
 template<typename T> class NFA;
 template<CharEncoding enc> class SeqCharSet;
@@ -127,8 +127,12 @@ public:
   bool acceptsEpsilon() const;
   /// Whether it represents the empty set
   bool isEmpty() const;
+  /// Whether it contains arrivable loops
+  bool isUnbounded() const;
   /// Length of the shortest accepted input (-1 iff isEmpty)
   int minLength() const;
+  /// Length of the longest accepted input (-1 iff isEmpty, -2 iff isUnbounded)
+  int maxLength() const;
   /// DFA
   GDFA dfa();
   /// Minimize

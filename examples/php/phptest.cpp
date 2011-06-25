@@ -13,8 +13,10 @@ int main()
   qDebug() << "eevl";
   string str;
   getline(cin, str);
-  QString qcode(QByteArray(str.c_str(), str.size()));
-  QStringIterator iter(qcode);
+//   QString qcode(QByteArray(str.c_str(), str.size()));
+//   QStringIterator iter(qcode);
+  QByteArray qcode(str.c_str(), str.size());
+  QByteArrayIterator iter(qcode);
   qDebug() << qcode.size() << iter.hasNext();
   Php::Lexer lex(iter);
   int kind;
@@ -26,7 +28,7 @@ int main()
   forever
   {
     auto t = lex.advance();
-    cout << tokenText(t.kind).toStdString() << ": " << qcode.mid(t.begin, t.end - t.begin + 1).toStdString() << endl << "---" << endl;
+    cout << tokenText(t.kind).toStdString() << ": " << qcode.mid(t.begin, t.end - t.begin + 1).data() << endl << "---" << endl;
     if(t.kind == Php::Parser::Token_EOF)
       break;
   }

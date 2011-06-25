@@ -41,16 +41,28 @@ using namespace std;
 namespace KDevPG
 {
 
-template<typename T>
-struct StripReference
+template<typename T, typename U>
+struct _brutal_cast_impl
 {
-  typedef T Result;
+  static inline T exec(const U& x)
+  {
+    union tmp
+    {
+      T *t;
+      const U *u;
+      inline tmp(const U* u) : u(u) {}
+    };
+    return *tmp(&x).t;
+  }
 };
 
-template<typename T>
-struct StripReference<T&>
+template<typename T, typename U>
+struct _brutal_cast_impl<T&, U>
 {
-  typedef T Result;
+  static inline T& exec(const U& x)
+  {
+    return *_brutal_cast_impl<T*, const U*>::exec(&x);
+  }
 };
 
 /**
@@ -59,13 +71,7 @@ struct StripReference<T&>
  */
 template<typename T, typename U> inline T brutal_cast(const U& x)
 {
-  union tmp
-  {
-    typename StripReference<T>::Result *t;
-    const U *u;
-    inline tmp(const U* u) : u(u) {}
-  };
-  return *tmp(&x).t;
+  return _brutal_cast_impl<T, U>::exec(x);
 }
 
 enum CharEncoding

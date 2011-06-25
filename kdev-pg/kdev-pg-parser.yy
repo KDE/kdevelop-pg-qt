@@ -212,22 +212,26 @@ lexer_declaration_rest
               KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
             } lexer_declaration_rest
-    | regexp T_LOOKAHEAD '(' T_STRING ')' code_opt opt_lexer_action ';'
+    | regexp T_LOOKAHEAD '(' regexp ')' code_opt opt_lexer_action ';'
             {
               if($1->acceptsEpsilon())
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
               else if($1->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
               bool ignore = false;
-              if(strlen($4) == 0)
+              if($4->acceptsEpsilon())
               {
-                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << endl;
+                ;
+              }
+              auto minLen = $4->minLength(), maxLen = $4->maxLength();
+              if($4 == 0)
+              {
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << endl;
                 ignore = true;
               }
-              KDevPG::GNFA delim = KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($4)));
-              if(delim.isEmpty())
+              else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid barrier for the specified encoding at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << endl;
                 ignore = true;
               }
               if(ignore)
@@ -238,8 +242,8 @@ lexer_declaration_rest
               }
               else
               {
-                QString s = "Iterator::plain() -= " + QString::number(delim.minLength()) + "; " + QString($6) + QString(r);
-                *$1 <<= delim;
+                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
+                *$1 <<= *$4;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
@@ -277,11 +281,14 @@ lexer_declaration_rest
                 KDevPG::GNFA exclude = KDevPG::GNFA::anything();
                 exclude <<= *$4;
                 exclude <<= KDevPG::GNFA::anything();
-                *$1 ^= exclude;
-                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(new KDevPG::GNFA(*$1));
-                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($6) + QString(r));
+                KDevPG::GNFA *staying = new KDevPG::GNFA(*$1);
+                *staying ^= exclude;
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(staying);
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"stay\";" + QString($6) + QString(r));
+                exclude <<= KDevPG::GNFA::anyChar();
                 *$1 <<= *$4;
-                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
+                *$1 ^= exclude;
+                QString s = "qDebug() << \"back \" << lxBEGIN_IDX << \" \" << lxCURR_IDX << \" \" << *lxCURR_POS; Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }

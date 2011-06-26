@@ -1,6 +1,6 @@
 %token_stream Lexer ;
 
-%input_encoding "ascii"
+%input_encoding "latin1"
 %sequence_lexer
 %input_stream "KDevPG::QByteArrayIterator"
 
@@ -150,12 +150,12 @@ goto            GOTO ;
 
 "("{white_space}*   -> bcast ;
 {white_space}*")"   -> ecast ;
-{bcast}"int"{ecast}     INT_CAST ;
-{bcast}"double"{ecast}     DOUBLE_CAST ;
-{bcast}"string"{ecast}     STRING_CAST ;
+{bcast}(int|integer){ecast}     INT_CAST ;
+{bcast}(double|real|float){ecast}     DOUBLE_CAST ;
+{bcast}(string|binary){ecast}     STRING_CAST ;
 {bcast}"array"{ecast}     ARRAY_CAST ;
 {bcast}"object"{ecast}     OBJECT_CAST ;
-{bcast}"bool"{ecast}     BOOL_CAST ;
+{bcast}(bool|boolean){ecast}     BOOL_CAST ;
 {bcast}"unset"{ecast}     UNSET_CAST ;
 
 "=="        IS_EQUAL;

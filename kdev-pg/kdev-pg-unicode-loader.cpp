@@ -117,6 +117,8 @@ void loadUnicodeData()
     globalSystem.regexpById["num"] = new GNFA(*globalSystem.regexpById["numeric"]);
     *globalSystem.regexpById["num"] |= *globalSystem.regexpById["digit"];
     *globalSystem.regexpById["num"] |= *globalSystem.regexpById["decimal"];
+    globalSystem.regexpById["ascii-range"] = new GNFA(GNFA::range(0, 0x80));
+    globalSystem.regexpById["latin1-range"] = new GNFA(GNFA::range(0, 0x100));
     // IndicMatraCategory and IndicSyllabicCategory: same format, but should have a prefix, names like “vowel” are confusing when used for Indian vowels only
     // named sequences: other format
   }

@@ -284,11 +284,11 @@ lexer_declaration_rest
                 KDevPG::GNFA *staying = new KDevPG::GNFA(*$1);
                 *staying ^= exclude;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(staying);
-                KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"stay\";" + QString($6) + QString(r));
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($6) + QString(r));
                 exclude <<= KDevPG::GNFA::anyChar();
                 *$1 <<= *$4;
                 *$1 ^= exclude;
-                QString s = "qDebug() << \"back \" << lxBEGIN_IDX << \" \" << lxCURR_IDX << \" \" << *lxCURR_POS; Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
+                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }

@@ -534,7 +534,7 @@ void generateLexer()
       s << "State_COUNT\n} ruleSet;" << endl;
     }
       
-    s << "const Iterator::InputInt *spos;" << endl
+    s << "Iterator::PlainIterator spos;" << endl
       << "bool continueLexeme;" << endl << endl
       
       << "public:" << endl << globalSystem.tokenStream << "(const Iterator& iter);" << endl
@@ -619,7 +619,7 @@ void generateLexer()
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
         << name << "()" << endl << "{" \
         << extra << "if(!Iterator::hasNext())\n{\nBase::Token& _t(Base::advance());\n_t.kind = Parser::Token_EOF;\n_t.begin = _t.end = Iterator::plain() - Iterator::begin();\nreturn _t;\n}" << endl \
-        << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nconst Iterator::InputInt *lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
+        << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nIterator::PlainIterator lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
       globalSystem.dfaForNfa[globalSystem.lexerEnvResults[state]]->codegen(s); \
       s << "/* assert(false);*/\nreturn Base::advance();}" << endl << endl;
     

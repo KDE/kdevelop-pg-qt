@@ -235,6 +235,7 @@ class QStringIterator
 public:
   typedef quint16 Int;
   typedef quint16 InputInt;
+  typedef QString::const_iterator PlainIterator;
   QStringIterator(const QString& str) : _begin(str.begin()), iter(str.begin()), end(str.end())
   {
     
@@ -251,13 +252,13 @@ public:
   {
     return iter - other.iter;
   }
-  InputInt const*& plain()
+  PlainIterator plain()
   {
-    return brutal_cast<InputInt const*&>(iter);
+    return iter;
   }
-  InputInt const*& begin()
+  PlainIterator begin()
   {
-    return brutal_cast<InputInt const*&>(_begin);
+    return _begin;
   }
 };
 
@@ -267,6 +268,7 @@ class QByteArrayIterator
 public:
   typedef uchar Int;
   typedef uchar InputInt;
+  typedef QByteArray::const_iterator PlainIterator;
   QByteArrayIterator(const QByteArray& str) : _begin(str.begin()), iter(str.begin()), end(str.end())
   {
     
@@ -283,13 +285,13 @@ public:
   {
     return iter - other.iter;
   }
-  InputInt const*& plain()
+  PlainIterator& plain()
   {
-    return brutal_cast<InputInt const*&>(iter);
+    return iter;
   }  
-  InputInt const*& begin()
+  PlainIterator& begin()
   {
-    return brutal_cast<InputInt const*&>(_begin);
+    return _begin;
   }
 };
 
@@ -300,6 +302,7 @@ class QUtf16ToUcs4Iterator
 public:
   typedef quint32 Int;
   typedef quint16 InputInt;
+  typedef InputInt const* PlainIterator;
   QUtf16ToUcs4Iterator(const QString& str) : raw(str.utf16()), _begin(str.utf16()), end(raw + str.size())
   {
     
@@ -320,13 +323,13 @@ public:
   {
     return ptr - other.ptr;
   }
-  InputInt const*& plain()
+  PlainIterator& plain()
   {
     return raw;
   }
-  InputInt const*& begin()
+  PlainIterator& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return _begin;
   }
 };
 
@@ -336,11 +339,12 @@ class QUtf8ToUcs4Iterator
 public:
   typedef quint32 Int;
   typedef uchar InputInt;
+  typedef InputInt const* PlainIterator;
   QUtf8ToUcs4Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
   {
     
   }
-  InputInt const*& plain()
+  PlainIterator& plain()
   {
     return ptr;
   }
@@ -411,9 +415,9 @@ public:
   {
     return ptr - other.ptr;
   }
-  InputInt const*& begin()
+  PlainIterator& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return _begin;
   }
 };
 
@@ -424,11 +428,12 @@ class QUtf8ToUcs2Iterator
 public:
   typedef quint16 Int;
   typedef uchar InputInt;
+  typedef InputInt const* PlainIterator;
   QUtf8ToUcs2Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
   {
     
   }
-  InputInt const*& plain()
+  PlainIterator& plain()
   {
     return ptr;
   }
@@ -478,9 +483,9 @@ public:
   {
     return ptr - other.ptr;
   }
-  InputInt const*& begin()
+  PlainIterator& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return _begin;
   }
 };
 
@@ -491,11 +496,12 @@ class QUtf8ToUtf16Iterator
 public:
   typedef quint16 Int;
   typedef uchar InputInt;
+  typedef InputInt const* PlainIterator;
   QUtf8ToUtf16Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size()), surrogate(0)
   {
     
   }
-  InputInt const*& plain()
+  PlainIterator& plain()
   {
     return ptr;
   }
@@ -559,9 +565,9 @@ public:
   {
     return ptr - other.ptr;
   }
-  InputInt const*& begin()
+  PlainIterator& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return _begin;
   }
 };
 
@@ -571,11 +577,12 @@ class QUtf8ToAsciiIterator
 public:
   typedef uchar Int;
   typedef uchar InputInt;
+  typedef InputInt const* PlainIterator;
   QUtf8ToAsciiIterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
   {
     
   }
-  InputInt const*& plain()
+  PlainIterator& plain()
   {
     return ptr;
   }
@@ -617,9 +624,9 @@ public:
   {
     return ptr - other.ptr;
   }
-  InputInt const*& begin()
+  PlainIterator& begin()
   {
-    return *reinterpret_cast<InputInt const**>(&_begin);
+    return _begin;
   }
 };
 

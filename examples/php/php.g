@@ -1,6 +1,6 @@
 %token_stream Lexer ;
 
-%input_encoding "latin1"
+%input_encoding "ascii"
 %sequence_lexer
 %input_stream "KDevPG::QByteArrayIterator"
 
@@ -70,9 +70,9 @@
 %token OPEN_TAG ("<?"), CLOSE_TAG ("?>"), OPEN_TAG_WITH_ECHO ("<?=");
 
 %lexer ->
-"<?"|"<?php"                  [: /*lxSET_RULE_SET(php)*/ /*qDebug() << "open tag" << lxBEGIN_IDX << " " << lxCURR_IDX << " " << char(*lxCURR_POS);*/  :] OPEN_TAG ;
---   "<?="                         [: lxSET_RULE_SET(php) :] OPEN_TAG_WITH_ECHO ;
---   [a-z"<"]+ %ba("<?")                  [: qDebug() << "ht " << lxBEGIN_IDX << " " << lxCURR_IDX << " " << char(*lxCURR_POS); :] INLINE_HTML;
+  "<?"|"<?php"                  [: qDebug() << "blub"; lxSET_RULE_SET(php) qDebug() << "open tag" << lxBEGIN_IDX << " " << lxCURR_IDX << " " << char(*lxCURR_POS);  :] OPEN_TAG ;
+  "<?="                         [: lxSET_RULE_SET(php) :] OPEN_TAG_WITH_ECHO ;
+  .+ %ba("<?")                  [: qDebug() << "ht " << lxBEGIN_IDX << " " << lxCURR_IDX << " " << char(*lxCURR_POS); :] INLINE_HTML;
   ;
 
 %lexer "php" ->
@@ -157,6 +157,64 @@ goto            GOTO ;
 {bcast}"object"{ecast}     OBJECT_CAST ;
 {bcast}"bool"{ecast}     BOOL_CAST ;
 {bcast}"unset"{ecast}     UNSET_CAST ;
+
+"=="        IS_EQUAL;
+"!="        IS_NOT_EQUAL;
+"==="       IS_IDENTICAL;
+"!=="       IS_NOT_IDENTICAL;
+"<"         IS_SMALLER;
+">"         IS_GREATER;
+"<="        IS_SMALLER_OR_EQUAL;
+">="        IS_GREATER_OR_EQUAL;
+"||"        BOOLEAN_OR;
+"&&"        BOOLEAN_AND;
+"="         ASSIGN;
+"+="        PLUS_ASSIGN;
+"-="        MINUS_ASSIGN;
+"*="        MUL_ASSIGN;
+"/="        DIV_ASSIGN;
+".="        CONCAT_ASSIGN;
+"%="        MOD_ASSIGN;
+"&="        AND_ASSIGN;
+"|="        OR_ASSIGN;
+"^="        XOR_ASSIGN;
+"<<="       SL_ASSIGN;
+">>="       SR_ASSIGN;
+"->"        OBJECT_OPERATOR;
+"+"         PLUS;
+"-"         MINUS;
+"."         CONCAT;
+"++"        INC;
+"--"        DEC;
+"!"         BANG;
+"?"         QUESTION;
+":"         COLON;
+"&"         BIT_AND;
+"|"         BIT_OR;
+"^"         BIT_XOR;
+"<<"        SL;
+">>"        SR;
+"*"         MUL;
+"/"         DIV;
+"%"         MOD;
+"~"         TILDE;
+"$"         DOLLAR;
+"or"        LOGICAL_OR;
+"and"       LOGICAL_AND;
+"xor"       LOGICAL_XOR;
+
+";"         SEMICOLON;
+"["         LBRACKET;
+"]"         RBRACKET;
+"("         LPAREN;
+")"         RPAREN;
+"{"         LBRACE;
+"}"         RBRACE;
+","         COMMA;
+"@"         AT;
+
+("$"[{alphabetic}_][{alphabetic}{num}_]*)    VARIABLE ;
+[{alphabetic}_][{alphabetic}{num}_]*         STRING ;
 
 
 

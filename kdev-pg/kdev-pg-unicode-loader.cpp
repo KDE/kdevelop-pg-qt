@@ -114,6 +114,9 @@ void loadUnicodeData()
     standardFormat(":/unidata/Scripts.txt");
     standardFormat(":/unidata/ScriptExtensions.txt");
     standardFormat(":/unidata/DerivedNumericType.txt");
+    globalSystem.regexpById["num"] = new GNFA(*globalSystem.regexpById["numeric"]);
+    *globalSystem.regexpById["num"] |= *globalSystem.regexpById["digit"];
+    *globalSystem.regexpById["num"] |= *globalSystem.regexpById["decimal"];
     // IndicMatraCategory and IndicSyllabicCategory: same format, but should have a prefix, names like “vowel” are confusing when used for Indian vowels only
     // named sequences: other format
   }

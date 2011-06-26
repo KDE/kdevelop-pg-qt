@@ -72,7 +72,6 @@ IF(FLEX_EXECUTABLE)
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
-                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"

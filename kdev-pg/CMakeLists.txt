@@ -44,16 +44,6 @@ SET(kdevpg_srcs
 # Custom support for flex/bison
 SET(parser_srcs)
 
-FIND_PROGRAM(FLEX_EXECUTABLE
-    NAMES flex
-    PATHS /usr/bin
-    DOC "Flex executable")
-
-FIND_PROGRAM(BISON_EXECUTABLE
-    NAMES bison
-    PATHS /usr/bin
-    DOC "bison executable")
-
 IF(BISON_EXECUTABLE)
     # Add command to run the parser.
     ADD_CUSTOM_COMMAND(

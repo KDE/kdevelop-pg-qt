@@ -31,6 +31,8 @@
   QString tokenText(qint64 begin, qint64 end);
 :]
 
+%parser_declaration_header "coolast.h"
+
 
 ------------------------------------------------------------
 -- List of defined tokens

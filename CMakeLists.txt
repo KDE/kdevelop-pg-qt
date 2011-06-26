@@ -25,6 +25,16 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_Q
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
+FIND_PROGRAM(FLEX_EXECUTABLE
+  NAMES flex
+  PATHS /usr/bin
+  DOC "Flex executable")
+
+FIND_PROGRAM(BISON_EXECUTABLE
+  NAMES bison
+  PATHS /usr/bin
+  DOC "bison executable")
+
 add_subdirectory(cmake)
 add_subdirectory(include)
 add_subdirectory(kdev-pg)

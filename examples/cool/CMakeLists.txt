@@ -10,12 +10,6 @@ ADD_DEFINITIONS(-DQT_STL)
 
 SET(parser_srcs)
 
-FIND_PROGRAM(FLEX_EXECUTABLE
-    NAMES flex
-    PATHS /usr/bin
-    DOC "Flex executable")
-
-
 # Add command to generate the parser.
 ADD_CUSTOM_COMMAND(
     OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/coolast.h"

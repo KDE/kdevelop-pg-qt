@@ -31,6 +31,8 @@ struct ParserState {
 ParserState m_state;
 :]
 
+%parser_declaration_header "ccast.h"
+
 ------------------------------------------------------------
 -- T O K E N   L I S T
 ------------------------------------------------------------

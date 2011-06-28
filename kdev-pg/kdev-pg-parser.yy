@@ -65,8 +65,8 @@ QString r;
 %token T_NODE T_NODE_SEQUENCE T_TOKEN T_VARIABLE T_EXPORT_MACRO_HEADER
 %token T_AST_DECLARATION 
 %token T_PARSER_DECLARATION_HEADER T_PARSER_BITS_HEADER T_AST_HEADER
-%token T_TOKEN_STREAM_DECLARATION_HEADER T_TOKEN_STREAM_BITS_HEADER
-%token T_PARSER_BASE T_AST_BASE T_TOKEN_STREAM_BASE
+%token T_LEXER_DECLARATION_HEADER T_LEXER_BITS_HEADER
+%token T_PARSER_BASE T_AST_BASE T_LEXER_BASE
 %token T_BIN T_PRE T_POST T_TERN
 %token T_LOPR T_ROPR
 %token T_LEFT_ASSOC T_RIGHT_ASSOC T_IS_LEFT_ASSOC T_IS_RIGHT_ASSOC T_PRIORITY
@@ -182,18 +182,18 @@ declaration
         { KDevPG::globalSystem.pushParserBitsHeader($2); }
     | T_AST_HEADER T_STRING
         { KDevPG::globalSystem.pushAstHeader($2); }
-    | T_TOKEN_STREAM_DECLARATION_HEADER T_STRING
-        { KDevPG::globalSystem.pushTokenStreamDeclarationHeader($2); }
+    | T_LEXER_DECLARATION_HEADER T_STRING
+        { KDevPG::globalSystem.pushLexerDeclarationHeader($2); }
     | T_INPUT_STREAM T_STRING
         { KDevPG::globalSystem.inputStream = $2; }
-    | T_TOKEN_STREAM_BITS_HEADER T_STRING
-        { KDevPG::globalSystem.pushTokenStreamBitsHeader($2); }
+    | T_LEXER_BITS_HEADER T_STRING
+        { KDevPG::globalSystem.pushLexerBitsHeader($2); }
     | T_AST_BASE T_IDENTIFIER T_STRING
         { KDevPG::globalSystem.astBaseClasses[$2] = $3; }
     | T_PARSER_BASE T_STRING
         { KDevPG::globalSystem.parserBaseClass = $2; }
-    | T_TOKEN_STREAM_BASE T_STRING
-        { KDevPG::globalSystem.tokenStreamBaseClass = $2; }
+    | T_LEXER_BASE T_STRING
+        { KDevPG::globalSystem.lexerBaseClass = $2; }
     | T_LEXER T_STRING { KDevPG::globalSystem.hasLexer = true; lexerEnv = $2; if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
     | T_LEXER { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
     ;

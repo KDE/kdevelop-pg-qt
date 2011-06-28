@@ -125,7 +125,7 @@ public:
       needStateManagement(false), needOperatorStack(false),
       beautifulCode(false), visitorTable(false),
       conflictHandling(Permissive), mZero(0),
-      tokenStreamBaseClass("KDevPG::TokenStream")
+      lexerBaseClass("KDevPG::TokenStream")
   {}
   
   ~World()
@@ -152,8 +152,8 @@ public:
   QStringList parserDeclarationHeaders;
   QStringList parserBitsHeaders;
   QStringList astHeaders;
-  QStringList tokenStreamDeclarationHeaders;
-  QStringList tokenStreamBitsHeaders;
+  QStringList lexerDeclarationHeaders;
+  QStringList lexerBitsHeaders;
   QString inputStream;
   bool generateAst: 1;
   bool hasLexer: 1;
@@ -258,14 +258,14 @@ public:
     astHeaders << file;
   }
   
-  void pushTokenStreamBitsHeader(QString file)
+  void pushLexerBitsHeader(QString file)
   {
-    tokenStreamBitsHeaders << file;
+    lexerBitsHeaders << file;
   }
   
-  void pushTokenStreamDeclarationHeader(QString file)
+  void pushLexerDeclarationHeader(QString file)
   {
-    tokenStreamDeclarationHeaders << file;
+    lexerDeclarationHeaders << file;
   }
   
   inline static bool ruleComp(Model::Node *a, Model::Node *b)
@@ -319,7 +319,7 @@ public:
   QList<Model::EvolveItem*> rules;
   MemberCode parserclassMembers, lexerclassMembers;
   AstBaseClasses astBaseClasses;
-  QString parserBaseClass, tokenStreamBaseClass;
+  QString parserBaseClass, lexerBaseClass;
   QMap<QString, vector<GNFA*> > lexerEnvs;
   QMap<QString, GNFA*> lexerEnvResults;
   QMap<QString, vector<QString> > lexerActions;

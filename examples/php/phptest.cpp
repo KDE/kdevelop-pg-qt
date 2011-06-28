@@ -12,7 +12,14 @@ int main()
 {
   qDebug() << "eevl";
   string str;
-  getline(cin, str);
+  while(true)
+  {
+    string strr;
+    getline(cin, strr);
+    if(!strr.size())
+      break;
+    str += strr + "\n";
+  }
 //   QString qcode(QByteArray(str.c_str(), str.size()));
 //   QStringIterator iter(qcode);
   QByteArray qcode(str.c_str(), str.size());

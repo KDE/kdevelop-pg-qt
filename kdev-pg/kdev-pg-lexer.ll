@@ -146,14 +146,14 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 "%parser_declaration_header"   return T_PARSER_DECLARATION_HEADER;
 "%parser_bits_header"   return T_PARSER_BITS_HEADER;
 "%ast_header"           return T_AST_HEADER;
-"%token_sream_declaration_header"   return T_TOKEN_STREAM_DECLARATION_HEADER;
-"%token_stream_bits_header" return T_TOKEN_STREAM_BITS_HEADER;
+"%lexer_declaration_header"   return T_LEXER_DECLARATION_HEADER;
+"%lexer_bits_header" return T_LEXER_BITS_HEADER;
 "%input_encoding"       return T_INPUT_ENCODING;
 "%table_lexer"          return T_TABLE_LEXER;
 "%sequence_lexer"       return T_SEQUENCE_LEXER;
 "%ast_base"             return T_AST_BASE;
 "%parser_base"          return T_PARSER_BASE;
-"%token_stream_base"    return T_TOKEN_STREAM_BASE;
+"%lexer_base"           return T_LEXER_BASE;
 "%bin"                  return T_BIN;
 "%pre"                  return T_PRE;
 "%post"                 return T_POST;

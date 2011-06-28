@@ -61,10 +61,12 @@ IF(BISON_EXECUTABLE)
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
         GENERATED
         )
+    SET(OPTIONAL_PARSER_HEADER_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh")
 ELSE(BISON_EXECUTABLE)
     MESSAGE("'bison' was not found!")
     MESSAGE("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")
     SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
+    SET(OPTIONAL_PARSER_HEADER_DEPENDENCY "")
 ENDIF(BISON_EXECUTABLE)
 
 IF(FLEX_EXECUTABLE)
@@ -72,6 +74,7 @@ IF(FLEX_EXECUTABLE)
     ADD_CUSTOM_COMMAND(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
+                 ${OPTIONAL_PARSER_HEADER_DEPENDENCY}
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"

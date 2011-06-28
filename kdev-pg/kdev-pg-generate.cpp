@@ -509,18 +509,18 @@ void generateLexer()
       << "#include <kdev-pg-token-stream.h>" << endl
       << endl;
       
-    foreach (const QString& header, globalSystem.tokenStreamDeclarationHeaders)
+    foreach (const QString& header, globalSystem.lexerDeclarationHeaders)
       s << "#include \"" << header << "\"\n";
     
     s << endl << "namespace " << globalSystem.ns << "{" << endl
       << endl
       
       << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
-      << (globalSystem.tokenStreamBaseClass.isEmpty() ? "" : " public " + globalSystem.tokenStreamBaseClass)
+      << (globalSystem.lexerBaseClass.isEmpty() ? "" : " public " + globalSystem.lexerBaseClass)
       << ", public " << globalSystem.inputStream << endl
       << "{" << endl
       << "public:" << endl
-      << "typedef " << globalSystem.tokenStreamBaseClass << " Base;" << endl
+      << "typedef " << (globalSystem.lexerBaseClass.isEmpty() ? globalSystem.tokenStream : globalSystem.lexerBaseClass) << " Base;" << endl
       << "typedef " << globalSystem.inputStream << " Iterator;" << endl << endl << "private:" << endl;
       
     
@@ -584,7 +584,7 @@ void generateLexer()
     << "#include \"" << globalSystem.language << "parser.h\"" << endl
     << endl;
     
-    foreach (const QString& header, globalSystem.tokenStreamBitsHeaders)
+    foreach (const QString& header, globalSystem.lexerBitsHeaders)
       s << "#include \"" << header << "\"\n";
     
     s << endl << "namespace " << globalSystem.ns << "{" << endl
@@ -601,7 +601,7 @@ void generateLexer()
       << "#define lxCURR_POS (Iterator::plain())\n"
          "#define lxCURR_IDX (Iterator::plain() - Iterator::begin())\n"
          "#define lxCONTINUE {continueLexeme = true; return advance();}\n"
-         "#define lxLENGTH {Iterator::plain() - Iterator::begin();}\n"
+         "#define lxLENGTH (Iterator::plain() - Iterator::begin())\n"
          "#define lxBEGIN_POS (spos)\n"
          "#define lxBEGIN_IDX (spos - Iterator::begin())\n"
          "#define lxTOKEN(X) KDevPG::Token& token(Base::advance());{token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;}\n"

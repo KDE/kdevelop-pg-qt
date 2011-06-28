@@ -6,6 +6,15 @@
 
 %parser_declaration_header "QtCore/QDebug"
 
+%lexer_bits_header "algorithm"
+%lexer_declaration_header "QtCore/QStack"
+%lexer_declaration_header "utility" -- pair
+%lexerclass(private declaration)
+[:
+QStack<std::pair<Iterator::PlainIterator, Iterator::PlainIterator> > nowDocStack;
+Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
+:]
+
 -- keywords:
 %token ABSTRACT ("abstract"), BREAK ("break"), CASE ("case"), CATCH ("catch"),
        CLASS ("class"), CONST ("const"), CONTINUE ("continue"),
@@ -76,6 +85,11 @@
   ;
 
 %lexer "php" ->
+
+[{alphabetic}_][{alphabetic}{num}_]* -> identifier ;
+
+"<<<"{identifier}\n               [: qDebug() << "nowdoc"; lxSET_RULE_SET(nowdoc); nowDocStack.push(make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_NOWDOC;
+
 abstract        ABSTRACT ;
 break           BREAK ;
 case            CASE ;
@@ -213,13 +227,26 @@ goto            GOTO ;
 ","         COMMA;
 "@"         AT;
 
-("$"[{alphabetic}_][{alphabetic}{num}_]*)    VARIABLE ;
-[{alphabetic}_][{alphabetic}{num}_]*         STRING ;
-
-
+("$"{identifier})    VARIABLE ;
+{identifier}         STRING ;
 
 {white_space}+  WHITESPACE ;
 
+;
+
+%lexer "nowdoc" ->
+[.^\n]*\n    [:
+              qDebug() << "innowdoc";
+              std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
+              if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
+              {
+                  qDebug() << "endnowdoc";
+                  lxCURR_POS = lxBEGIN_POS + topLength;
+                  nowDocStack.pop();
+                  lxRETURN(END_NOWDOC);
+              }
+            :]
+            STRING;
 ;
 
 0 -> start ;

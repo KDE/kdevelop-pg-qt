@@ -1,7 +1,7 @@
 %token_stream Lexer ;
 
 %token LPAREN, RPAREN, FOO, BAR, BAZ, NUMBER, SHEBANG, STRING, IDENTIFIER ;
-%token_stream_bits_header "QDebug"
+%lexer_bits_header "QDebug"
 %parser_bits_header "QDebug"
 %input_encoding "utf32"
 -- %table_lexer

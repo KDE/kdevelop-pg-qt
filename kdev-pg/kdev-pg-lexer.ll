@@ -219,6 +219,8 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   "->"                    return T_ARROW;
   "%continue"             return T_CONTINUE;
   "%fail"                 return T_FAIL;
+  "%enter"                return T_ENTER_RULE_SET;
+  "%leave"                return T_LEAVE_RULE_SET;
   "%la"                   return T_LOOKAHEAD;
   "%ba"                   return T_BARRIER;
   "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);

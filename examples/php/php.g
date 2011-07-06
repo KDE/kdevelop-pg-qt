@@ -13,6 +13,12 @@
 [:
 QStack<std::pair<Iterator::PlainIterator, Iterator::PlainIterator> > nowDocStack;
 Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
+size_t inStringCounter;
+:]
+
+%lexerclass(constructor)
+[:
+inStringCounter = 0;
 :]
 
 -- keywords:
@@ -88,7 +94,8 @@ Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
 
 [{alphabetic}_][{alphabetic}{num}_]* -> identifier ;
 
-"<<<"{identifier}\n               [: qDebug() << "nowdoc"; lxSET_RULE_SET(nowdoc); nowDocStack.push(make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_NOWDOC;
+"<<<"{identifier}\n               [: lxSET_RULE_SET(nowdoc); nowDocStack.push(make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_NOWDOC;
+"<<<'"{identifier}"'"\n           [: lxSET_RULE_SET(heredoc); nowDocStack.push(make_pair(lxBEGIN_POS + 4, lxCURR_POS - 2)); :] START_HEREDOC;
 
 abstract        ABSTRACT ;
 break           BREAK ;
@@ -235,14 +242,32 @@ goto            GOTO ;
 ;
 
 %lexer "nowdoc" ->
-[.^\n]*\n    [:
-              qDebug() << "innowdoc";
+%enter [: ++inStringCounter; qDebug() << "entering nowdoc"; :]
+%leave [: --inStringCounter; qDebug() << "leaving nowdoc"; :]
+%fail [: qDebug() << "failed in nowdoc"; :]
+-- "$"{identifier}   
+-- "${"
+[.^\na]*\n    [:
               std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
               if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
               {
-                  qDebug() << "endnowdoc";
                   lxCURR_POS = lxBEGIN_POS + topLength;
                   nowDocStack.pop();
+                  lxSET_RULE_SET(php);
+                  lxRETURN(END_NOWDOC);
+              }
+            :]
+            STRING;
+;
+
+%lexer "heredoc" ->
+[.^\n]*\n    [:
+              std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
+              if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
+              {
+                  lxCURR_POS = lxBEGIN_POS + topLength;
+                  nowDocStack.pop();
+                  lxSET_RULE_SET(php);
                   lxRETURN(END_NOWDOC);
               }
             :]

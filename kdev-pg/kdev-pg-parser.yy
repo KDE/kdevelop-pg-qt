@@ -74,6 +74,7 @@ QString r;
 %token T_INLINE
 %token T_LEXER T_INPUT_STREAM T_INPUT_ENCODING T_TABLE_LEXER T_SEQUENCE_LEXER
 %token T_NAMED_REGEXP T_CONTINUE T_RANGE T_FAIL T_LOOKAHEAD T_BARRIER
+%token T_ENTER_RULE_SET T_LEAVE_RULE_SET
 
 %type<str> T_IDENTIFIER T_TERMINAL T_CODE T_STRING T_UNQUOTED_STRING T_RULE_ARGUMENTS T_NUMBER T_NAMED_REGEXP T_RANGE
 %type<str> name code_opt rule_arguments_opt priority assoc opt_lexer_action
@@ -293,9 +294,17 @@ lexer_declaration_rest
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
             } lexer_declaration_rest
-    | T_FAIL T_CODE ';'
+    | T_FAIL T_CODE
             {
               KDevPG::globalSystem.lexerActions[lexerEnv][0] = QString($2);
+            } lexer_declaration_rest
+    | T_ENTER_RULE_SET T_CODE
+            {
+              KDevPG::globalSystem.enteringCode[lexerEnv] = QString($2);
+            } lexer_declaration_rest
+    | T_LEAVE_RULE_SET T_CODE
+            {
+              KDevPG::globalSystem.leavingCode[lexerEnv] = QString($2);
             } lexer_declaration_rest
     | /* empty */
     ;

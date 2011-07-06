@@ -532,6 +532,11 @@ void generateLexer()
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << endl;
       s << "State_COUNT\n} ruleSet;" << endl;
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+      {
+        s << "inline void enteringRuleSet" << state << "();" << endl;
+        s << "inline void leavingRuleSet" << state << "();" << endl;
+      }
     }
       
     s << "Iterator::PlainIterator spos;" << endl
@@ -542,10 +547,11 @@ void generateLexer()
       << "~" << globalSystem.tokenStream << "();"
       <<  endl << "Base::Token& advance();" << endl;
     
+      /// TODO: not good that it happens in a separate file for the parser but in this file for the lexer
 #define LEXER_EXTRA_CODE_GEN(name) \
     if (globalSystem.lexerclassMembers.name.empty() == false) \
     { \
-      s << "\n// user defined declarations:" << endl; \
+      s << "\n// user defined code:" << endl; \
       GenerateMemberCode gen(s, Settings::MemberItem::PublicDeclaration \
                                 | Settings::MemberItem::ProtectedDeclaration \
                                 | Settings::MemberItem::PrivateDeclaration); \
@@ -598,21 +604,34 @@ void generateLexer()
     LEXER_EXTRA_CODE_GEN(destructorCode)
     s << "}" << endl << endl
             
-      << "#define lxCURR_POS (Iterator::plain())\n"
+      << "#define PP_CONCAT_IMPL(x, y) x ## y\n" // necesarry, otherwise CURRENT_RULE_SET would not get resolved
+         "#define PP_CONCAT(x, y) PP_CONCAT_IMPL(x, y)\n\n"
+         
+         "#define lxCURR_POS (Iterator::plain())\n"
          "#define lxCURR_IDX (Iterator::plain() - Iterator::begin())\n"
          "#define lxCONTINUE {continueLexeme = true; return advance();}\n"
          "#define lxLENGTH (Iterator::plain() - Iterator::begin())\n"
          "#define lxBEGIN_POS (spos)\n"
          "#define lxBEGIN_IDX (spos - Iterator::begin())\n"
-         "#define lxTOKEN(X) KDevPG::Token& token(Base::advance());{token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;}\n"
-         "#define lxRETURN(X) lxTOKEN(X); return token;\n"
-         "#define lxFAIL goto _fail;\n"
-         "#define lxSKIP return advance();\n"
+         "#define lxNAMED_TOKEN(token, X) KDevPG::Token& token(Base::next()); token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;\n"
+         "#define lxTOKEN(X) {lxNAMED_TOKEN(token, X);}\n"
+         "#define lxDONE {return Base::advance();}\n"
+         "#define lxRETURN(X) {lxTOKEN(X); lxDONE}\n"
+         "#define yytoken (Base::back())\n"
+         "#define lxFAIL {goto _fail;}\n"
+         "#define lxSKIP {return advance();}\n"
          "#define lxNEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
     
     if(hasStates)
     {
-      s << "#define lxSET_RULE_SET(r) ruleSet = State_##r;\n" << endl;
+      s << "#define lxSET_RULE_SET(r) {PP_CONCAT(leavingRuleSet, CURRENT_RULE_SET) (); ruleSet = State_##r; enteringRuleSet##r ();}\n" << endl << endl;
+      
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+      {
+        s << "inline void " << globalSystem.tokenStream << "::enteringRuleSet" << state << "() { " << globalSystem.enteringCode[state] << "}" << endl;
+        s << "inline void " << globalSystem.tokenStream << "::leavingRuleSet" << state << "() { " << globalSystem.leavingCode[state] << "}" << endl;
+      }
+      s << endl;
     }
     
 #define LEXER_CORE_IMPL(name, state, extra) \
@@ -627,7 +646,9 @@ void generateLexer()
     {
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
+        s << "#define CURRENT_RULE_SET " << state << endl;
         LEXER_CORE_IMPL("lex" + KDevPG::capitalized(state), state, "")
+        s << "#undef CURRENT_RULE_SET" << endl;
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
         << "::advance()" << endl << "{" << endl << "if(Base::index() < Base::size())\nreturn Base::advance();\nswitch(ruleSet)\n{" << endl;
@@ -654,7 +675,10 @@ void generateLexer()
          "#undef lxLENGTH\n"
          "#undef lxCONTINUE\n"
          "#undef lxCURR_IDX\n"
-         "#undef lxCURR_POS\n" << endl;
+         "#undef lxCURR_POS\n\n"
+         
+         "#undef PP_CONCAT\n"
+         "#undef PP_CONCAT_IMPL\n" << endl;
     
     s << globalSystem.lexerBits << endl
       << "} // end of namespace " << globalSystem.ns << endl << endl;

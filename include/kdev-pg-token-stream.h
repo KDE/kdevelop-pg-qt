@@ -199,6 +199,30 @@ public:
   }
   
   /**
+   * Current token in the stream.
+   */
+  inline T &curr()
+  {
+    return mTokenBuffer[mIndex];
+  }
+  
+  /**
+   * Last token in the stream.
+   */
+  inline T &back()
+  {
+    return mTokenBuffer[mTokenCount];
+  }
+  
+  /**
+   * First token in the stream.
+   */
+  inline T &front()
+  {
+    return mTokenBuffer[0];
+  }
+  
+  /**
    * @return The associated location table.
    */
   inline LocationTable *locationTable()

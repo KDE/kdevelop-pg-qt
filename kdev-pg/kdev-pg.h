@@ -324,6 +324,7 @@ public:
   QMap<QString, GNFA*> lexerEnvResults;
   QMap<QString, vector<QString> > lexerActions;
   QMap<QString, GNFA*> regexpById;
+  QMap<QString, QString> enteringCode, leavingCode;
   QMap<GNFA*, GDFA*> dfaForNfa;
   
   Environment env;

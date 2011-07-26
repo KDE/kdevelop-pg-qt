@@ -19,7 +19,9 @@ endif(NOT KDE4_FOUND)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
 # FIXME: find a way to make this portable (define typeof for non-gcc using decltype etc.)
-add_definitions(--std=c++0x)
+if(CMAKE_COMPILER_IS_GNUCC)
+    add_definitions(--std=c++0x)
+endif(CMAKE_COMPILER_IS_GNUCC)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
 

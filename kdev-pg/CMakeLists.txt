@@ -3,8 +3,10 @@ PROJECT(kdevpg)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 REMOVE_DEFINITIONS(-DQT_NO_STL)
-ADD_DEFINITIONS(-DQT_STL) 
-add_definitions(-fexceptions)
+ADD_DEFINITIONS(-DQT_STL)
+if(CMAKE_COMPILER_IS_GNUCC)
+    add_definitions(-fexceptions)
+endif(CMAKE_COMPILER_IS_GNUCC)
 
 QT4_ADD_RESOURCES(kdevpg_rcc_srcs ../unidata.qrc)
 

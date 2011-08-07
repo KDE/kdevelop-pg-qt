@@ -112,6 +112,7 @@ public:
     /// Generate code for transitions
     void codegen(QTextStream& str)
     {
+      str << "goto _state_0; // no warning about unused label\n";
       CharSetCondition<CharSet> csc;
       for(size_t i = 0; i != nstates; ++i)
       {
@@ -126,7 +127,7 @@ public:
       {
         str << "case " << QString::number(i) << ": ";
         if(i == 0)
-          str << "_fail: ";
+          str << "goto _fail; // no warning about unused label\n_fail: ";
         str << "{" << actions[i] << "}\n";
       }
       str << "}\n";
@@ -1251,59 +1252,7 @@ GNFA GNFA::emptyWord()
   return ret;
 }
 
-template<template<CharEncoding> class CharSet, typename... T>
-NFA<CharSet<Latin1> > getUtf8Tuples(T... args);
-
-template<template<CharEncoding> class CharSet, typename... Args>
-struct GetUtf8Tuples
-{
-  static_assert((sizeof...(Args)) == 0 || (sizeof...(Args)) != 0, "GetUtf8Tuples takes only codepoints");
-};
-
-template<template<CharEncoding> class CharSet>
-struct GetUtf8Tuples<CharSet, typename Codec2Int<Latin1>::Result, typename Codec2Int<Latin1>::Result>
-{
-  typedef typename Codec2Int<Latin1>::Result Int;
-  static NFA<CharSet<Latin1> > exec(Int from0, Int to0)
-  {
-    return NFA<CharSet<Latin1> >(CharSet<Latin1>::range(from0, to0));
-  }
-};
-
-template<template<CharEncoding> class CharSet, typename... Args>
-struct GetUtf8Tuples<CharSet, typename Codec2Int<Latin1>::Result, typename Codec2Int<Latin1>::Result, typename Codec2Int<Latin1>::Result, typename Codec2Int<Latin1>::Result, Args...>
-{
-  typedef typename Codec2Int<Latin1>::Result Int;
-  static NFA<CharSet<Latin1> > exec(Int from0, Int to0, Int from1, Int to1, Args... rest)
-  {
-    if(from0 == to0)
-    {
-      auto tuples = NFA<CharSet<Latin1> >(CharSet<Latin1>(from0));
-      tuples <<= getUtf8Tuples<CharSet>(from1, to1, rest...);
-      return tuples;
-    }
-    else
-    {
-      NFA<CharSet<Latin1> > tuples;
-      auto firstTuples = NFA<CharSet<Latin1> >(CharSet<Latin1>(from0));
-      firstTuples <<= getUtf8Tuples<CharSet>(from1, Int(0x80 + (1<<6)), rest...);
-      tuples |= firstTuples;
-      auto midTuples = NFA<CharSet<Latin1> >(CharSet<Latin1>::range(from0 + 1, to0));
-      midTuples <<= getUtf8Tuples<CharSet>(Int(0x80), Int(0x80 + (1<<6)), rest...);
-      tuples |= midTuples;
-      auto lastTuples = NFA<CharSet<Latin1> >(CharSet<Latin1>(to0));
-      lastTuples <<= getUtf8Tuples<CharSet>(Int(0x80), to1, rest...);
-      tuples |= lastTuples;
-      return tuples;
-    }
-  }
-};
-
-template<template<CharEncoding> class CharSet, typename... T>
-NFA<CharSet<Latin1> > getUtf8Tuples(T... args)
-{
-  return GetUtf8Tuples<CharSet, T...>::exec(args...);
-}
+#include "generated-kdev-utf8-tuples.h"
 
 template<template<CharEncoding> class CharSet>
 void addUtf8Range(NFA<CharSet<Latin1> >& res, quint32 begin, quint32 end)

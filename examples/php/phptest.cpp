@@ -1,6 +1,7 @@
 #include "phplexer.h"
 #include "phpparser.h"
 #include "phptokentext.h"
+#include "phpdebugvisitor.h"
 
 using namespace Php;
 using namespace KDevPG;
@@ -25,13 +26,23 @@ int main()
   QByteArray qcode(str.c_str(), str.size());
   QByteArrayIterator iter(qcode);
   qDebug() << qcode.size() << iter.hasNext();
-  Php::Lexer lex(iter);
-  int kind;
-  while((kind = lex.advance().kind) != Parser::Token_EOF)
-  {
+  Php::TokenStream lex(iter);
+  Php::Parser parser;
+  KDevPG::MemoryPool pool;
+  parser.setTokenStream(&lex);
+  parser.setMemoryPool(&pool);
+//   int kind;
+//   while((kind = lex.advance().kind) != Parser::Token_EOF)
+//   {
 //     cout << tokenText(kind).toStdString() << endl;
-  }
+  //   }
+  Php::StartAst *root = 0;
   lex.rewind(0);
+//   parser.parseStart(&root);
+//   cout << tokenText(lex.front().kind).toStdString() << endl;
+//   cout << tokenText(lex.curr().kind).toStdString() << endl;
+//   cout << tokenText(lex.back().kind).toStdString() << endl;
+//   lex.rewind(0);
   forever
   {
     auto t = lex.advance();
@@ -39,4 +50,6 @@ int main()
     if(t.kind == Php::Parser::Token_EOF)
       break;
   }
+  Php::DebugVisitor vis(&lex, QString(qcode));
+  vis.visitNode(root);
 }

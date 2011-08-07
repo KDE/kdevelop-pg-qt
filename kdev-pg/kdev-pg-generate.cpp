@@ -528,10 +528,15 @@ void generateLexer()
     {
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "Base::Token& lex" << KDevPG::capitalized(state) << "();" << endl;
-      s << "enum {\n";
+      s << "public:\nenum RuleSet {\n";
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << endl;
-      s << "State_COUNT\n} ruleSet;" << endl;
+      s << "State_COUNT\n};\n"
+           "private:\n"
+           "RuleSet m_ruleSet;\n"
+           "public:\n"
+           "inline RuleSet ruleSet()\n{\nreturn m_ruleSet;\n}\n"
+           "void setRuleSet(RuleSet rs);\n";
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
         s << "inline void enteringRuleSet" << state << "();" << endl;
@@ -583,19 +588,21 @@ void generateLexer()
     QTextStream s(&str, QIODevice::WriteOnly);
     
     s << "// THIS FILE IS GENERATED" << endl
-    << "// WARNING! All changes made in this file will be lost!" << endl
-    << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
     
-    << "#include \"" << globalSystem.language << "lexer.h\"" << endl
-    << "#include \"" << globalSystem.language << "parser.h\"" << endl
-    << endl;
+      << "#include \"" << globalSystem.language << "lexer.h\"" << endl
+      << "#include \"" << globalSystem.language << "parser.h\"" << endl
+      << endl;
     
     foreach (const QString& header, globalSystem.lexerBitsHeaders)
       s << "#include \"" << header << "\"\n";
     
+    s << "\n#include <cassert>\n";
+    
     s << endl << "namespace " << globalSystem.ns << "{" << endl
       << endl << globalSystem.tokenStream << "::" << globalSystem.tokenStream
-      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter), " << (hasStates ? "ruleSet(State_start), " : "") << "continueLexeme(false)" << endl
+      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter), " << (hasStates ? "m_ruleSet(State_start), " : "") << "continueLexeme(false)" << endl
       << "{";
     LEXER_EXTRA_CODE_GEN(constructorCode)
     s << "}" << endl << endl
@@ -624,14 +631,40 @@ void generateLexer()
     
     if(hasStates)
     {
-      s << "#define lxSET_RULE_SET(r) {PP_CONCAT(leavingRuleSet, CURRENT_RULE_SET) (); ruleSet = State_##r; enteringRuleSet##r ();}\n" << endl << endl;
+      s << "#define lxSET_RULE_SET(r) {PP_CONCAT(leavingRuleSet, CURRENT_RULE_SET) (); m_ruleSet = State_##r; enteringRuleSet##r ();}\n" << endl << endl;
       
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
         s << "inline void " << globalSystem.tokenStream << "::enteringRuleSet" << state << "() { " << globalSystem.enteringCode[state] << "}" << endl;
         s << "inline void " << globalSystem.tokenStream << "::leavingRuleSet" << state << "() { " << globalSystem.leavingCode[state] << "}" << endl;
       }
-      s << endl;
+      s << "\n"
+           "void " << globalSystem.tokenStream << "::setRuleSet(RuleSet rs)\n"
+           "{\n"
+           "switch(m_ruleSet)\n"
+           "{\n";
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+      {
+        s << "case State_" << state << ":\n"
+             "leavingRuleSet" << state << "();\n"
+             "break;\n";
+      }
+      s << "\ndefault:\n"
+           "assert(0 == \"Invalid rule set\");\n"
+           "}\n\n"
+           "m_ruleSet = rs;\n\n"
+           "switch(m_ruleSet)\n"
+           "{\n";
+      foreach(QString state, globalSystem.lexerEnvs.keys())
+      {
+        s << "case State_" << state << ":\n"
+             "enteringRuleSet" << state << "();\n"
+             "break;\n";
+      }
+      s << "\ndefault:\n"
+           "assert(0 == \"Invalid rule set\");\n"
+           "}\n"
+           "}\n\n";
     }
     
 #define LEXER_CORE_IMPL(name, state, extra) \
@@ -651,7 +684,7 @@ void generateLexer()
         s << "#undef CURRENT_RULE_SET" << endl;
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
-        << "::advance()" << endl << "{" << endl << "if(Base::index() < Base::size())\nreturn Base::advance();\nswitch(ruleSet)\n{" << endl;
+        << "::advance()" << endl << "{" << endl << "if(Base::index() < Base::size())\nreturn Base::advance();\nswitch(m_ruleSet)\n{" << endl;
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "case State_" << state << ": return lex" << capitalized(state) << "();" << endl;
       s << "default:\nexit(-1);\n}\n}" << endl;

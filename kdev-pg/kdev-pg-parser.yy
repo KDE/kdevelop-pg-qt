@@ -311,10 +311,10 @@ lexer_declaration_rest
 
 opt_lexer_action
     : T_TERMINAL {
-        r = "\nlxRETURN(" + QString($1) + ");\n"
+        r = "\nlxRETURN(" + QString($1) + ")\n";
       }
     | T_CONTINUE {
-        r = "\nlxCONTINUE;\n"; 
+        r = "\nlxCONTINUE;\n";
       }
     | /* empty */ { r = "\nlxSKIP\n" }
     ;

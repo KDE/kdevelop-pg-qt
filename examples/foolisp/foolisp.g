@@ -24,6 +24,7 @@
   plugh                         BAR ;
   xyzzy                         BAZ ;
   thud                          FOO ;
+  FOOBAR                        FOO BAR ;
 
 --   "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9" -> digit ; -- Should be predefined with unicode character classes
   "0" | ( {digit}&{basic_latin}^"0" ) {digit}*    NUMBER ;

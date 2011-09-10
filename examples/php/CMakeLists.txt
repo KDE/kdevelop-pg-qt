@@ -31,6 +31,8 @@ SET(parser_SRCS
 "${CMAKE_CURRENT_SOURCE_DIR}/phpdefaultvisitor.cpp"
 "${CMAKE_CURRENT_SOURCE_DIR}/phplexer.cpp")
 
+add_definitions(-fexceptions)
+
 add_executable( phptest ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries( phptest
 ${QT_QTCORE_LIBRARY}

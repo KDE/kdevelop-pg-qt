@@ -128,7 +128,7 @@ public:
         str << "case " << QString::number(i) << ": ";
         if(i == 0)
           str << "goto _fail; // no warning about unused label\n_fail: ";
-        str << "{" << actions[i] << "}\n";
+        str << "{" << actions[i] << "\nlxFINISH\n}\n";
       }
       str << "}\n";
     }
@@ -631,8 +631,8 @@ public:
     }
     DFA<CharSet> dfa()
     {
-        /*unordered_*/set<UsedBitArray > states;
-        /*unordered_*/map<UsedBitArray, vector<pair<CharSet, UsedBitArray > > > rules;
+        unordered_set<UsedBitArray > states;
+        unordered_map<UsedBitArray, vector<pair<CharSet, UsedBitArray > > > rules;
         stack<UsedBitArray > todo;
         UsedBitArray start(nstates);
         start[0] = true;
@@ -661,7 +661,7 @@ public:
         _.accept.resize(_.nstates);
         _.numActions = nstates - accept;
         _.actions.resize(_.numActions + 1);
-        /*unordered_*/map<UsedBitArray, size_t> st;
+        unordered_map<UsedBitArray, size_t> st;
         size_t cnt = 0;
         foreach(const UsedBitArray& i, states)
         {

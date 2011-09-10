@@ -37,19 +37,31 @@ int main()
 //     cout << tokenText(kind).toStdString() << endl;
   //   }
   Php::StartAst *root = 0;
+  try
+  {
+    lex.rewind(0);
+    parser.yylex();
+    cout << "Parse: " << parser.parseStart(&root) << endl;
+    qDebug() << root->statementsSequence;
+    qDebug() << root->statementsSequence->element;
+  //   cout << tokenText(lex.front().kind).toStdString() << endl;
+  //   cout << tokenText(lex.curr().kind).toStdString() << endl;
+  //   cout << tokenText(lex.back().kind).toStdString() << endl;
+  }
+  catch(...)
+  {
+    cout << "ERROR!!" << endl;
+  }
   lex.rewind(0);
-//   parser.parseStart(&root);
-//   cout << tokenText(lex.front().kind).toStdString() << endl;
-//   cout << tokenText(lex.curr().kind).toStdString() << endl;
-//   cout << tokenText(lex.back().kind).toStdString() << endl;
-//   lex.rewind(0);
+  cout << "blub" << endl;
+  Php::DebugVisitor vis(&lex, QString(qcode));
+  vis.visitStart(root);
   forever
   {
-    auto t = lex.advance();
-    cout << tokenText(t.kind).toStdString() << ": " << qcode.mid(t.begin, t.end - t.begin + 1).data() << endl << "---" << endl;
-    if(t.kind == Php::Parser::Token_EOF)
+    auto t = lex.curr();
+    lex.nextToken();
+    cout << t.begin << ".." << t.end << tokenText(t.kind).toStdString() << ": " << qcode.mid(t.begin, t.end - t.begin + 1).data() << endl << "---" << endl;
+    if(lex.index() == lex.size())
       break;
   }
-  Php::DebugVisitor vis(&lex, QString(qcode));
-  vis.visitNode(root);
 }

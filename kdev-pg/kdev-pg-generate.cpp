@@ -624,6 +624,8 @@ void generateLexer()
          "#define lxTOKEN(X) {lxNAMED_TOKEN(token, X);}\n"
          "#define lxDONE {return Base::advance();}\n"
          "#define lxRETURN(X) {lxTOKEN(X); lxDONE}\n"
+         "#define lxEOF {Base::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_EOF;_t.begin = _t.end = Iterator::plain() - Iterator::begin();}\n"
+         "#define lxFINISH {lxEOF lxDONE}\n"
          "#define yytoken (Base::back())\n"
          "#define lxFAIL {goto _fail;}\n"
          "#define lxSKIP {return advance();}\n"
@@ -670,7 +672,7 @@ void generateLexer()
 #define LEXER_CORE_IMPL(name, state, extra) \
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
         << name << "()" << endl << "{" \
-        << extra << "if(!Iterator::hasNext())\n{\nBase::Token& _t(Base::advance());\n_t.kind = Parser::Token_EOF;\n_t.begin = _t.end = Iterator::plain() - Iterator::begin();\nreturn _t;\n}" << endl \
+        << extra << "if(!Iterator::hasNext())\n{\nlxFINISH\n}" << endl \
         << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nIterator::PlainIterator lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
       globalSystem.dfaForNfa[globalSystem.lexerEnvResults[state]]->codegen(s); \
       s << "/* assert(false);*/\nreturn Base::advance();}" << endl << endl;

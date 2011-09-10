@@ -220,12 +220,8 @@ lexer_declaration_rest
               else if($1->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
               bool ignore = false;
-              if($4->acceptsEpsilon())
-              {
-                ;
-              }
               auto minLen = $4->minLength(), maxLen = $4->maxLength();
-              if($4 == 0)
+              if(minLen == 0)
               {
                 KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << endl;
                 ignore = true;
@@ -256,12 +252,8 @@ lexer_declaration_rest
               else if($1->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
               bool ignore = false;
-              if($4->acceptsEpsilon())
-              {
-                ;
-              }
               auto minLen = $4->minLength(), maxLen = $4->maxLength();
-              if($4 == 0)
+              if(minLen == 0)
               {
                 KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << endl;
                 ignore = true;
@@ -286,6 +278,7 @@ lexer_declaration_rest
                 *staying ^= exclude;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(staying);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($6) + QString(r));
+                // barrier should not get read partially
                 exclude <<= KDevPG::GNFA::anyChar();
                 *$1 <<= *$4;
                 *$1 ^= exclude;

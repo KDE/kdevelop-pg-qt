@@ -1,6 +1,7 @@
 %token_stream TokenStream ;
 
-%input_encoding "latin1"
+-- %input_encoding "utf8"
+%input_encoding "ascii"
 %sequence_lexer
 %input_stream "KDevPG::QByteArrayIterator"
 
@@ -13,7 +14,6 @@
 [:
 QStack<std::pair<Iterator::PlainIterator, Iterator::PlainIterator> > nowDocStack;
 Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
-size_t inStringCounter;
 :]
 
 %lexerclass(public declaration)
@@ -207,138 +207,138 @@ inStringCounter = 0;
   ;
 
 %lexer "php" ->
-
+%error [: qDebug() << "error in php"; throw exception(); :] ;
 [{alphabetic}_][{alphabetic}{num}_]* -> identifier ;
 
-"<<<"{identifier}\n               [: lxSET_RULE_SET(nowdoc); nowDocStack.push(make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_NOWDOC;
-"<<<'"{identifier}"'"\n           [: lxSET_RULE_SET(heredoc); nowDocStack.push(make_pair(lxBEGIN_POS + 4, lxCURR_POS - 2)); :] START_HEREDOC;
+"<<<"{identifier}\n               [: qDebug() << "start heredoc"; nowDocStack.push(make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_HEREDOC;
+"<<<'"{identifier}"'"\n           [: lxSET_RULE_SET(nowdoc); nowDocStack.push(make_pair(lxBEGIN_POS + 4, lxCURR_POS - 2)); :] START_NOWDOC;
 
-abstract        ABSTRACT ;
-break           BREAK ;
-case            CASE ;
-catch           CATCH ;
-class           CLASS ;
-const           CONST ;
-continue        CONTINUE ;
-default         DEFAULT ;
-do              DO ;
-else            ELSE ;
-extends         EXTENDS ;
-final           FINAL ;
-for             FOR ;
-if              IF ;
-implements      IMPLEMENTS ;
-instanceof      INSTANCEOF ;
-interface       INTERFACE ;
-new             NEW ;
-private         PRIVATE ;
-protected       PROTECTED ;
-public          PUBLIC ;
-return          RETURN ;
-static          STATIC ;
-switch          SWITCH ;
-throw           THROW ;
-try             TRY ;
-while           WHILE ;
+-- abstract        ABSTRACT ;
+-- break           BREAK ;
+-- case            CASE ;
+-- catch           CATCH ;
+-- class           CLASS ;
+-- const           CONST ;
+-- continue        CONTINUE ;
+-- default         DEFAULT ;
+-- do              DO ;
+-- else            ELSE ;
+-- extends         EXTENDS ;
+-- final           FINAL ;
+-- for             FOR ;
+-- if              IF ;
+-- implements      IMPLEMENTS ;
+-- instanceof      INSTANCEOF ;
+-- interface       INTERFACE ;
+-- new             NEW ;
+-- private         PRIVATE ;
+-- protected       PROTECTED ;
+-- public          PUBLIC ;
+-- return          RETURN ;
+-- static          STATIC ;
+-- switch          SWITCH ;
+-- throw           THROW ;
+-- try             TRY ;
+-- while           WHILE ;
 echo            ECHO ;
-print           PRINT ;
-clone           CLONE ;
-exit            EXIT ;
-elseif          ELSEIF ;
-endif           ENDIF ;
-endwhile        ENDWHILE ;
-endfor          ENDFOR ;
-foreach         FOREACH ;
-endforeach      ENDFOREACH ;
-declare         DECLARE ;
-enddeclare      ENDDECLARE ;
-as              AS ;
-endswitch       ENDSWITCH ;
-function        FUNCTION ;
-use             USE ;
-global          GLOBAL ;
-var             VAR ;
-unset           UNSET ;
-isset           ISSET ;
-empty           EMPTY ;
-__halt_compiler HALT_COMPILER ;
-"=>"            DOUBLE_ARROW ;
-list            LIST ;
-array           ARRAY ;
-"__CLASS__"     CLASS_C ;
-"__METHOD__"    METHOD_C ;
-"__FUNCTION__"  FUNC_C ;
-"__LINE__"      LINE ;
-"__FILE__"      FILE ;
-"::"            PAAMAYIM_NEKUDOTAYIM ;
-include         INCLUDE ;
-include_once    INCLUDE_ONCE ;
-eval            EVAL ;
-require         REQUIRE ;
-require_once    REQUIRE_ONCE ;
-namespace       NAMESPACE ;
-"__NAMESPACE__" NAMESPACE_C ;
-use             USE ;
-goto            GOTO ;
+-- print           PRINT ;
+-- clone           CLONE ;
+-- exit            EXIT ;
+-- elseif          ELSEIF ;
+-- endif           ENDIF ;
+-- endwhile        ENDWHILE ;
+-- endfor          ENDFOR ;
+-- foreach         FOREACH ;
+-- endforeach      ENDFOREACH ;
+-- declare         DECLARE ;
+-- enddeclare      ENDDECLARE ;
+-- as              AS ;
+-- endswitch       ENDSWITCH ;
+-- function        FUNCTION ;
+-- use             USE ;
+-- global          GLOBAL ;
+-- var             VAR ;
+-- unset           UNSET ;
+-- isset           ISSET ;
+-- empty           EMPTY ;
+-- __halt_compiler HALT_COMPILER ;
+-- "=>"            DOUBLE_ARROW ;
+-- list            LIST ;
+-- array           ARRAY ;
+-- "__CLASS__"     CLASS_C ;
+-- "__METHOD__"    METHOD_C ;
+-- "__FUNCTION__"  FUNC_C ;
+-- "__LINE__"      LINE ;
+-- "__FILE__"      FILE ;
+-- "::"            PAAMAYIM_NEKUDOTAYIM ;
+-- include         INCLUDE ;
+-- include_once    INCLUDE_ONCE ;
+-- eval            EVAL ;
+-- require         REQUIRE ;
+-- require_once    REQUIRE_ONCE ;
+-- namespace       NAMESPACE ;
+-- "__NAMESPACE__" NAMESPACE_C ;
+-- use             USE ;
+-- goto            GOTO ;
 
 "/**"{white_space}(\.*^"*/")"*/"        DOC_COMMENT ;
 "/*"(\.*^"*/")"*/"|"//"[.^\n]*          COMMENT ;
 "?>"    [: lxSET_RULE_SET(start) :] CLOSE_TAG ;
 
-"("{white_space}*   -> bcast ;
-{white_space}*")"   -> ecast ;
-{bcast}(int|integer){ecast}     INT_CAST ;
-{bcast}(double|real|float){ecast}     DOUBLE_CAST ;
-{bcast}(string|binary){ecast}     STRING_CAST ;
-{bcast}"array"{ecast}     ARRAY_CAST ;
-{bcast}"object"{ecast}     OBJECT_CAST ;
-{bcast}(bool|boolean){ecast}     BOOL_CAST ;
-{bcast}"unset"{ecast}     UNSET_CAST ;
+-- "("{white_space}*   -> bcast ;
+-- {white_space}*")"   -> ecast ;
+-- {bcast}(int|integer){ecast}     INT_CAST ;
+-- {bcast}(double|real|float){ecast}     DOUBLE_CAST ;
+-- {bcast}(string|binary){ecast}     STRING_CAST ;
+-- {bcast}"array"{ecast}     ARRAY_CAST ;
+-- {bcast}"object"{ecast}     OBJECT_CAST ;
+-- {bcast}(bool|boolean){ecast}     BOOL_CAST ;
+-- {bcast}"unset"{ecast}     UNSET_CAST ;
 
-"=="        IS_EQUAL;
-"!="        IS_NOT_EQUAL;
-"==="       IS_IDENTICAL;
-"!=="       IS_NOT_IDENTICAL;
-"<"         IS_SMALLER;
-">"         IS_GREATER;
-"<="        IS_SMALLER_OR_EQUAL;
-">="        IS_GREATER_OR_EQUAL;
-"||"        BOOLEAN_OR;
-"&&"        BOOLEAN_AND;
-"="         ASSIGN;
-"+="        PLUS_ASSIGN;
-"-="        MINUS_ASSIGN;
-"*="        MUL_ASSIGN;
-"/="        DIV_ASSIGN;
-".="        CONCAT_ASSIGN;
-"%="        MOD_ASSIGN;
-"&="        AND_ASSIGN;
-"|="        OR_ASSIGN;
-"^="        XOR_ASSIGN;
-"<<="       SL_ASSIGN;
-">>="       SR_ASSIGN;
-"->"        OBJECT_OPERATOR;
-"+"         PLUS;
-"-"         MINUS;
-"."         CONCAT;
-"++"        INC;
-"--"        DEC;
-"!"         BANG;
-"?"         QUESTION;
-":"         COLON;
-"&"         BIT_AND;
-"|"         BIT_OR;
-"^"         BIT_XOR;
-"<<"        SL;
-">>"        SR;
-"*"         MUL;
-"/"         DIV;
-"%"         MOD;
-"~"         TILDE;
-"$"         DOLLAR;
-"or"        LOGICAL_OR;
-"and"       LOGICAL_AND;
-"xor"       LOGICAL_XOR;
+-- "=="        IS_EQUAL;
+-- "!="        IS_NOT_EQUAL;
+-- "==="       IS_IDENTICAL;
+-- "!=="       IS_NOT_IDENTICAL;
+-- "<"         IS_SMALLER;
+-- ">"         IS_GREATER;
+-- "<="        IS_SMALLER_OR_EQUAL;
+-- ">="        IS_GREATER_OR_EQUAL;
+-- "||"        BOOLEAN_OR;
+-- "&&"        BOOLEAN_AND;
+-- "="         ASSIGN;
+-- "+="        PLUS_ASSIGN;
+-- "-="        MINUS_ASSIGN;
+-- "*="        MUL_ASSIGN;
+-- "/="        DIV_ASSIGN;
+-- ".="        CONCAT_ASSIGN;
+-- "%="        MOD_ASSIGN;
+-- "&="        AND_ASSIGN;
+-- "|="        OR_ASSIGN;
+-- "^="        XOR_ASSIGN;
+-- "<<="       SL_ASSIGN;
+-- ">>="       SR_ASSIGN;
+-- "->"        OBJECT_OPERATOR;
+-- "+"         PLUS;
+-- "-"         MINUS;
+-- "."         CONCAT;
+-- "++"        INC;
+-- "--"        DEC;
+-- "!"         BANG;
+-- "?"         QUESTION;
+-- ":"         COLON;
+-- "&"         BIT_AND;
+-- "|"         BIT_OR;
+-- "^"         BIT_XOR;
+-- "<<"        SL;
+-- ">>"        SR;
+-- "*"         MUL;
+-- "/"         DIV;
+-- "%"         MOD;
+-- "~"         TILDE;
+-- "$"         DOLLAR;
+-- "or"        LOGICAL_OR;
+-- "and"       LOGICAL_AND;
+-- "xor"       LOGICAL_XOR;
 
 ";"         SEMICOLON;
 "["         LBRACKET;
@@ -353,22 +353,38 @@ goto            GOTO ;
 ("$"{identifier})    VARIABLE ;
 {identifier}         STRING ;
 
-{white_space}+  WHITESPACE ;
+{white_space}+   ; -- WHITESPACE
 
 ;
 
-%lexer "nowdoc" ->
-%enter [: ++inStringCounter; qDebug() << "entering nowdoc"; :]
-%fail [: qDebug() << "failed in nowdoc"; exit(-1); :]
+%lexer "heredoc" ->
+%enter [: qDebug() << "entering heredoc"; :]
+%fail [: qDebug() << "failed in heredoc"; throw exception(); :]
 -- "$"{identifier}   
 "${"{identifier} [:
+                    qDebug() << "found opening";
                     lxNAMED_TOKEN(open, DOLLAR_OPEN_CURLY_BRACES)
                     open.end = open.begin + 1;
                     lxNAMED_TOKEN(varname, STRING_VARNAME)
                     varname.begin += 2;
                     lxDONE
                 :] ;
-[.^\na]*\n    [:
+[.^\n]*. %ba("${")    [:
+              std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
+              if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
+              {
+                  qDebug() << "heredoc match";
+                  lxCURR_POS = lxBEGIN_POS + topLength;
+                  nowDocStack.pop();
+                  lxRETURN(END_HEREDOC);
+              }
+              qDebug() << "heredoc line";
+            :]
+            ENCAPSED_AND_WHITESPACE;
+;
+
+%lexer "nowdoc" ->
+[.^\n]*\n    [:
               std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
               if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
               {
@@ -377,20 +393,7 @@ goto            GOTO ;
                   lxSET_RULE_SET(php);
                   lxRETURN(END_NOWDOC);
               }
-            :]
-            STRING;
-;
-
-%lexer "heredoc" ->
-[.^\n]*\n    [:
-              std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
-              if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
-              {
-                  lxCURR_POS = lxBEGIN_POS + topLength;
-                  nowDocStack.pop();
-                  lxSET_RULE_SET(php);
-                  lxRETURN(END_HEREDOC);
-              }
+              qDebug() << "nowdoc line";
             :]
             STRING;
 ;
@@ -905,7 +908,7 @@ LBRACKET dimOffset=dimOffset RBRACKET | LBRACE expr=expr RBRACE
   | constantOrClassConst=constantOrClassConst
   | varname=STRING_VARNAME
   | DOUBLE_QUOTE encapsList=encapsList DOUBLE_QUOTE
-  | START_HEREDOC [: tokenStream->setRuleSet(TokenStream::State_heredoc); :] encapsList=encapsList END_HEREDOC [: tokenStream->setRuleSet(TokenStream::State_php); :]
+  | [: tokenStream->setRuleSet(TokenStream::State_heredoc); :] START_HEREDOC encapsList=encapsList [: tokenStream->setRuleSet(TokenStream::State_php); :] END_HEREDOC
 -> scalar ;;
 
   constant=namespacedIdentifier
@@ -918,17 +921,17 @@ LBRACKET dimOffset=dimOffset RBRACKET | LBRACE expr=expr RBRACE
     var=encapsVar | value=ENCAPSED_AND_WHITESPACE
 -> encaps ;;
 
-    [: 
-        TokenStream::RuleSet lastRuleSet = tokenStream->ruleSet();
-        tokenStream->setRuleSet(TokenStream::State_php);
-    :]
     -- first/first conflict resolved by LA(2)
     --(expr allows STRING_VARNAME too - but without [expr])
-    (DOLLAR_OPEN_CURLY_BRACES ( ?[: LA(2).kind == Token_LBRACKET:] STRING_VARNAME LBRACKET expr=expr RBRACKET RBRACE
-      | expr=expr RBRACE )
+    (
+        [: 
+        TokenStream::RuleSet lastRuleSet = tokenStream->ruleSet();
+        tokenStream->setRuleSet(TokenStream::State_php);
+        :]
+        DOLLAR_OPEN_CURLY_BRACES ( ?[: LA(2).kind == Token_LBRACKET:] STRING_VARNAME LBRACKET expr=expr RBRACKET
+      | expr=expr ) [: tokenStream->setRuleSet(lastRuleSet); :] RBRACE
   | variable=variableIdentifier (OBJECT_OPERATOR propertyIdentifier=identifier | LBRACKET offset=encapsVarOffset RBRACKET | 0)
   | CURLY_OPEN expr=expr RBRACE)
-    [: tokenStream->setRuleSet(lastRuleSet); :]
 -> encapsVar ;;
 
     STRING

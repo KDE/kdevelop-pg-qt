@@ -31,6 +31,7 @@
 int inp();
 void appendLineBuffer();
 void newline();
+void countNewlines(const char*, int);
 void yyerror(const char* );
 extern int yyLine;
 extern int currentOffset;
@@ -199,7 +200,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   "--"[^\r\n]*            /* line comments, skip */ ;
   {Newline}               newline();
   "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
-  ";"+(("--"[^\r\n]*[\r\n])|[ \f\t\r\n])+/";"+   rulePosition = RuleBody; BEGIN(INITIAL); return ';';
+  ";"+(("--"[^\r\n]*[\r\n])|[ \f\t\r\n])+/";"+   countNewlines(yytext, yyleng); rulePosition = RuleBody; BEGIN(INITIAL); return ';';
   ";"+                    return ';';
   ":"                     return ';';
   "["                     ++openBrackets; return '[';
@@ -360,8 +361,15 @@ int inp()
 
 void newline()
 {
-  yyLine++;
+  ++yyLine;
   endOfLine = true;
+}
+
+void countNewlines(const char* code, int leng)
+{
+  for(int i = 0; i != leng; ++i)
+    if(code[i] == '\n')
+      ++yyLine;
 }
 
 /* initialize the line buffer */

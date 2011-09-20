@@ -75,11 +75,11 @@
      T_PARSER_DECLARATION_HEADER = 291,
      T_PARSER_BITS_HEADER = 292,
      T_AST_HEADER = 293,
-     T_TOKEN_STREAM_DECLARATION_HEADER = 294,
-     T_TOKEN_STREAM_BITS_HEADER = 295,
+     T_LEXER_DECLARATION_HEADER = 294,
+     T_LEXER_BITS_HEADER = 295,
      T_PARSER_BASE = 296,
      T_AST_BASE = 297,
-     T_TOKEN_STREAM_BASE = 298,
+     T_LEXER_BASE = 298,
      T_BIN = 299,
      T_PRE = 300,
      T_POST = 301,
@@ -103,7 +103,9 @@
      T_RANGE = 319,
      T_FAIL = 320,
      T_LOOKAHEAD = 321,
-     T_BARRIER = 322
+     T_BARRIER = 322,
+     T_ENTER_RULE_SET = 323,
+     T_LEAVE_RULE_SET = 324
    };
 #endif
 
@@ -127,7 +129,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 131 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
+#line 133 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.hh"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

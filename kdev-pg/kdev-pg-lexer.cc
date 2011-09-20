@@ -1263,10 +1263,6 @@ namespace {
 
 #ifdef _WIN32
 #include <io.h>
-int isatty(int x)
-{
-  return _isatty(x);
-}
 #endif
 
 
@@ -1275,7 +1271,7 @@ int isatty(int x)
 
 
 
-#line 1279 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 1275 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
 
 #define INITIAL 0
 #define CODE 1
@@ -1455,11 +1451,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 114 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 110 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 
 
 
-#line 1463 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 1459 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
 
 	if ( !(yy_init) )
 		{
@@ -1582,361 +1578,361 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 117 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 113 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 118 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 114 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 119 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 115 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 121 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 117 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleBody; return ';';
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 122 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 118 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 if(rulePosition == RuleLexer) BEGIN(RULE_LEXER); else rulePosition = RuleFooter; return T_ARROW;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 123 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 119 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_INLINE;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 125 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 121 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 126 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 122 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ')';
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 127 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 123 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '{';
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 128 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 124 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '}';
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 129 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 125 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ',';
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 130 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 126 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '0';
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 131 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 127 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 132 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 128 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '.';
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 133 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 129 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ':';
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 134 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 130 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '=';
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 135 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 131 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '+';
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 136 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 132 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '*';
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 137 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 133 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '?';
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 138 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 134 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '@';
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 139 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 135 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '|';
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 140 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 136 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '&';
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 142 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 138 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TRY_RECOVER;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 143 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 139 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TRY_ROLLBACK;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 144 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 140 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_CATCH;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 146 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 142 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_EXPORT_MACRO;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 147 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 143 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_EXPORT_MACRO_HEADER;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 148 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 144 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN_DECLARATION;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 149 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 145 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN_STREAM_DECLARATION;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 150 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 146 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_NAMESPACE_DECLARATION;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 151 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 147 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 152 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 148 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(PARSERCLASS); return T_LEXERCLASS_DECLARATION;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 153 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 149 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_INPUT_STREAM;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 154 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 150 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_AST_DECLARATION;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 155 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 151 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PARSER_DECLARATION_HEADER;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 156 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 152 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PARSER_BITS_HEADER;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 157 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 153 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_AST_HEADER;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 158 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 154 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_LEXER_DECLARATION_HEADER;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 159 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 155 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_LEXER_BITS_HEADER;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 160 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 156 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_INPUT_ENCODING;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 161 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 157 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TABLE_LEXER;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 162 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 158 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_SEQUENCE_LEXER;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 163 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 159 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_AST_BASE;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 164 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 160 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PARSER_BASE;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 165 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 161 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_LEXER_BASE;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 166 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 162 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_BIN;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 167 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 163 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PRE;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 168 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 164 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_POST;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 169 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 165 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TERN;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 170 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 166 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PAREN;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 171 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 167 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PRIORITY;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 172 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 168 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleBody; return T_LOPR;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 173 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 169 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleFooter; return T_ROPR;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 174 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 170 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_LEFT_ASSOC;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 175 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 171 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_RIGHT_ASSOC;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 176 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 172 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_IS_LEFT_ASSOC;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 177 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 173 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_IS_RIGHT_ASSOC;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 178 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 174 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 rulePosition = RuleLexer; return T_LEXER;
 	YY_BREAK
 
 case 59:
 YY_RULE_SETUP
-#line 181 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 177 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 182 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 178 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 183 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 179 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 184 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 180 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PUBLIC;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 185 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 181 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PRIVATE;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 186 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 182 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_PROTECTED;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 187 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 183 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_DECLARATION;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 188 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 184 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_CONSTRUCTOR;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 189 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 185 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_DESTRUCTOR;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 190 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 186 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_BITS;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 191 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 187 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); return ')';
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 192 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 188 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 case 71:
 YY_RULE_SETUP
-#line 196 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 192 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     if (rulePosition == RuleBody) { /* use the arguments in a rule call */
       firstCodeLine = yyLine;
@@ -1951,175 +1947,175 @@ YY_RULE_SETUP
 
 case 72:
 YY_RULE_SETUP
-#line 208 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 204 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 73:
 /* rule 73 can match eol */
 YY_RULE_SETUP
-#line 209 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 205 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 210 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 206 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
 	YY_BREAK
 case 75:
 /* rule 75 can match eol */
 YY_RULE_SETUP
-#line 211 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 207 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 countNewlines(yytext, yyleng); rulePosition = RuleBody; BEGIN(INITIAL); return ';';
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 212 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 208 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ';';
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 213 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 209 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ';';
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 214 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 210 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 ++openBrackets; return '[';
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 215 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 211 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 --openBrackets; return ']';
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 216 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 212 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 ++openBrackets; return '(';
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 217 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 213 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 --openBrackets; return ')';
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 218 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 214 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '?';
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 219 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 215 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '|';
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 220 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 216 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '^';
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 221 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 217 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_RANGE;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 222 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 218 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '&';
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 223 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 219 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '~';
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 224 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 220 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '*';
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 225 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 221 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '+';
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 226 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 222 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '@';
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 227 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 223 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '.';
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 228 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 224 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_ARROW;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 229 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 225 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_CONTINUE;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 230 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 226 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_FAIL;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 231 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 227 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_ENTER_RULE_SET;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 232 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 228 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_LEAVE_RULE_SET;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 233 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 229 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_LOOKAHEAD;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 234 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 230 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_BARRIER;
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 235 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 231 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 	YY_BREAK
 case 100:
 /* rule 100 can match eol */
 YY_RULE_SETUP
-#line 236 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 232 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
 	YY_BREAK
 case 101:
 /* rule 101 can match eol */
 YY_RULE_SETUP
-#line 237 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 233 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 238 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 234 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_UNQUOTED_STRING;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 239 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 235 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 240 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 236 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
 	YY_BREAK
 case YY_STATE_EOF(RULE_LEXER):
-#line 242 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 238 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << endl;
@@ -2132,32 +2128,32 @@ case YY_STATE_EOF(RULE_LEXER):
 case 105:
 /* rule 105 can match eol */
 YY_RULE_SETUP
-#line 251 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 247 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline(); yymore();
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 252 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 248 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* this and... */
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 253 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 249 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* ...this prevent brackets inside strings to be counted */
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 254 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 250 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* gather everything that's not a bracket, and append what comes next */
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 255 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 251 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 openBrackets++; yymore();
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 256 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 252 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
       openBrackets--;
       if (openBrackets < 0) {
@@ -2168,7 +2164,7 @@ YY_RULE_SETUP
   }
 	YY_BREAK
 case YY_STATE_EOF(RULE_ARGUMENTS):
-#line 264 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 260 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
       KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << endl;
@@ -2180,78 +2176,78 @@ case YY_STATE_EOF(RULE_ARGUMENTS):
 
 case 111:
 YY_RULE_SETUP
-#line 273 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 269 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 112:
 /* rule 112 can match eol */
 YY_RULE_SETUP
-#line 274 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 270 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 275 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 271 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 276 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 272 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(RULE_PARAMETERS_VARNAME); return ':';
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 277 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 273 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 278 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 274 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_MEMBER;
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 279 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 275 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TEMPORARY;
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 280 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 276 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_ARGUMENT;
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 281 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 277 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_NODE;
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 282 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 278 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_TOKEN;
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 283 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 279 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return T_VARIABLE;
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 284 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 280 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 return ';';  /* only used for "token" types */
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 285 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 281 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 286 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 282 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); return ']';
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 287 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 283 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
@@ -2259,17 +2255,17 @@ BEGIN(INITIAL); REJECT; /* everything else */
 case 126:
 /* rule 126 can match eol */
 YY_RULE_SETUP
-#line 291 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 287 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline(); yymore();
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 292 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 288 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* gather everything that's not a semicolon, and append what comes next */
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 293 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 289 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
       // strip trailing whitespace
       int length = yyleng-1; // and first, the trailing semicolon
@@ -2292,35 +2288,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 312 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 308 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 case 130:
 YY_RULE_SETUP
-#line 316 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 312 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 	YY_BREAK
 
 case 131:
 /* rule 131 can match eol */
 YY_RULE_SETUP
-#line 318 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 314 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 newline(); yymore();
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 319 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 315 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* gather everything that's not a colon, and append what comes next */
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 320 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 316 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 yymore(); /* also gather colons that are not followed by colons or newlines */
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 321 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 317 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
       COPY_CODE_TO_YYLVAL(yytext, (yyleng-2)); /* cut off the trailing stuff */
       if(rulePosition == RuleLexer)
@@ -2331,7 +2327,7 @@ YY_RULE_SETUP
   }
 	YY_BREAK
 case YY_STATE_EOF(CODE):
-#line 329 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 325 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
       KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << endl;
@@ -2342,22 +2338,22 @@ case YY_STATE_EOF(CODE):
 
 case 135:
 YY_RULE_SETUP
-#line 338 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 334 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 339 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 335 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 340 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 336 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_NUMBER;
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 343 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 339 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
    yytext++;                         /* start inside the quotes */
    COPY_TO_YYLVAL(yytext,yyleng-2);  /* cut off the trailing quote */
@@ -2366,7 +2362,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 349 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 345 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 {
   KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << endl;
   yyerror("");
@@ -2374,10 +2370,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 355 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 351 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 ECHO;
 	YY_BREAK
-#line 2381 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 2377 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
 			case YY_STATE_EOF(INITIAL):
 			case YY_STATE_EOF(PARSERCLASS):
 			case YY_STATE_EOF(RULE_PARAMETERS_HEADER):
@@ -3352,7 +3348,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 355 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 351 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
 
 
 

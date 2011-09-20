@@ -89,6 +89,14 @@ namespace {
   int firstCodeColumn;
 }
 
+#ifdef _WIN32
+#include <io.h>
+int isatty(int x)
+{
+  return _isatty(x);
+}
+#endif
+
 %}
 
 Whitespace  [ \f\t]

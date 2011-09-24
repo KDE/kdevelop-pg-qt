@@ -329,7 +329,7 @@ regexp2
 
 regexp3
     : '~' regexp3           { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
-    | '?' regexp3           { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA()); delete $2; }
+    | '?' regexp3           { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA::emptyWord()); delete $2; }
     | regexp4               { $$ = $1; }
     ;
 
@@ -353,8 +353,8 @@ regexp7
     : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
     | '[' aregexp ']'       { $$ = $2; }
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
-    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray($1)))); }
+    | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray($1)))); }
     | T_NAMED_REGEXP        {
                               if(!KDevPG::globalSystem.regexpById.contains($1))
                               {
@@ -390,7 +390,7 @@ aregexp2
 
 aregexp3
     : '~' aregexp3          { $$ = new KDevPG::GNFA($2->negate()); delete $2; }
-    | '?' aregexp3          { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA()); delete $2; }
+    | '?' aregexp3          { $$ = new KDevPG::GNFA(*$2 |= KDevPG::GNFA::emptyWord()); delete $2; }
     | aregexp4              { $$ = $1; }
     ;
 
@@ -414,7 +414,7 @@ aregexp7
     : '(' regexp ')'        { $$ = new KDevPG::GNFA(*$2); delete $2; }
     | '[' aregexp ']'       { $$ = $2; }
     | '.'                   { $$ = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
-    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray($1)))); }
+    | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray($1)))); }
     | T_RANGE               {
       quint32 begin, end;
       QString str = KDevPG::unescaped(QByteArray($1));

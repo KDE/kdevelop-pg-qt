@@ -31,7 +31,6 @@ using namespace std;
 
 // TODO: Lookahead operator
 // TODO: Line-End etc.
-// TODO: On-context-switch etc.
 // TODO: Deactivate/activate rules (have to keep the bitsets of possible final states)
 
 
@@ -435,11 +434,11 @@ public:
     {}
     static NFA<CharSet> emptyWord()
     {
-      NFA<CharSet> ret;
-      ret.nstates = 1;
-      ret.rules.resize(1);
-      ret.accept = 0;
-      return ret;
+      NFA<CharSet> res;
+      res.nstates = 1;
+      res.rules.resize(1);
+      res.accept = 0;
+      return res;
     }
     NFA(const NFA<CharSet>& o) : nstates(o.nstates), rules(o.rules), accept(o.accept)
     {}
@@ -558,10 +557,10 @@ public:
     }
     UsedBitArray vecUnion(const UsedBitArray& a, const UsedBitArray& b)
     {
-        UsedBitArray ret(a);
+        UsedBitArray res(a);
         for(size_t i = 0; i != a.size(); ++i)
-            ret[i] = ret[i] || b[i];
-        return ret;
+            res[i] = res[i] || b[i];
+        return res;
     }
     vector< pair<CharSet, UsedBitArray > > follow(UsedBitArray s)
     {
@@ -899,28 +898,28 @@ public:
 template<typename CharSet>
 NFA< CharSet > DFA<CharSet>::nfa() const
 {
-  NFA<CharSet> ret;
+  NFA<CharSet> res;
   if(nstates == 0)
-    return ret;
-  ret.nstates = nstates;
-  ret.rules = rules;
-  ret.accept = nstates;
+    return res;
+  res.nstates = nstates;
+  res.rules = rules;
+  res.accept = nstates;
   for(size_t i = 0; i != nstates; ++i)
   {
-    if(nstates + accept[i] > ret.nstates)
+    if(nstates + accept[i] > res.nstates)
     {
-      ret.nstates = nstates + accept[i];
-      ret.rules.resize(ret.nstates);
+      res.nstates = nstates + accept[i];
+      res.rules.resize(res.nstates);
     }
     if(accept[i] != 0)
-      ret.rules[i].push_back(make_pair(CharSet(), nstates + accept[i] - 1));
+      res.rules[i].push_back(make_pair(CharSet(), nstates + accept[i] - 1));
   }
-  if(ret.nstates == nstates)
+  if(res.nstates == nstates)
   {
-    ++ret.nstates;
-    ret.rules.push_back(vector<pair<CharSet, size_t> >());
+    ++res.nstates;
+    res.rules.push_back(vector<pair<CharSet, size_t> >());
   }
-  return ret;
+  return res;
 }
 
 // notice: utf8/8bit and utf16/ucs2 do not require different NFAs and DFAs
@@ -958,8 +957,6 @@ void GDFA::setActions(const std::vector< QString >& actions)
   EACH_TYPE(macro)
 #undef macro
 }
-
-#define UNINITIALIZED_GNFA(name) char _gnfa_##name##_buff[sizeof(GNFA)]; GNFA& name = brutal_cast<GNFA&>(_gnfa_##name##_buff[0]);
 
 GDFA::GDFA()
 {
@@ -1006,18 +1003,16 @@ void GDFA::dotOutput(QTextStream& o, const QString& name)
 
 GNFA GDFA::nfa()
 {
-  GNFA r;
-#define DO_NFA(x) *r.x = x->nfa();
+  GNFA res;
+#define DO_NFA(x) res.x = new NFA<T>(x->nfa());
   EACH_TYPE(DO_NFA)
 #undef DO_NFA
-  return r;
+  return res;
 }
 
 GNFA::GNFA()
 {
-#define macro(x) x = new NFA<T>;
-  EACH_TYPE(macro)
-#undef macro
+  /* no initialization */
 }
 
 GNFA::GNFA(const KDevPG::GNFA& o)
@@ -1154,55 +1149,63 @@ void GNFA::dotOutput(QTextStream& o, const QString& name)
 
 GDFA GNFA::dfa()
 {
-  GDFA r;
-#define macro(x) *r.x = x->dfa();
+  GDFA res;
+#define macro(x) *res.x = x->dfa();
   EACH_TYPE(macro)
 #undef macro
-  return r;
+  return res;
 }
 
-GNFA GNFA::keyword(const QString& str)
+GNFA GNFA::empty()
+{
+  GNFA res;
+#define macro(x) res.x = new NFA<T>;
+  EACH_TYPE(macro)
+#undef macro
+  return res;
+}
+
+GNFA GNFA::word(const QString& str)
 {
 #define macro(x) \
-  GNFA r = GNFA::emptyWord(); \
+  GNFA res = GNFA::emptyWord(); \
   QByteArray qba(str.toUtf8()); \
   Codec2FromUtf8Iterator<T::codec>::Result iter(qba); \
   while(iter.hasNext()) \
   { \
-    *r.x <<= T(iter.next()); \
+    *res.x <<= T(iter.next()); \
   } \
-  return r;
+  return res;
   EACH_TYPE(macro)
 #undef macro
 }
 
 GNFA GNFA::collection(const QString& str)
 {
-  GNFA r;
+  GNFA res = GNFA::empty();
   QUtf16ToUcs4Iterator iter(str);
   while(iter.hasNext())
   {
     quint32 next = iter.next();
-    r |= range(next, next+1);
+    res |= range(next, next+1);
   }
-  return r;
+  return res;
 }
 
 GNFA GNFA::anyChar()
 {
-  // utf16 and utf8 support missing
-  UNINITIALIZED_GNFA(ret);
-#define macro(x) ret.x = new NFA<T>(T::fullSet());
+  GNFA res;
+#define macro(x) res.x = new NFA<T>(T::fullSet());
   EACH_TYPE(macro)
 #undef macro
   // remove the surrogate range
   if(/*GDFA::type == TUcs2 || */GDFA::type == TUtf16)
   {
-    *ret.t2 ^= NFA<TableCharSet<Ucs2> >(TableCharSet<Ucs2>::range(0xd800, 0xe000));
+    *res.t2 ^= NFA<TableCharSet<Ucs2> >(TableCharSet<Ucs2>::range(0xd800, 0xe000));
   }
   else if(/*GDFA::type == SUcs2 || */GDFA::type == SUtf16)
   {
-    *ret.s2 ^= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xd800, 0xe000));
+    *res.s2 ^= NFA<SeqCharSet<Ucs2> >(SeqCharSet<Ucs2>::range(0xd800, 0xe000));
   }
   // add surrogate pairs
   if(GDFA::type == SUtf16)
@@ -1223,7 +1226,7 @@ GNFA GNFA::anyChar()
     NFA<SeqCharSet<Latin1> > topOf2(SeqCharSet<Latin1>::range(0xc0, 0xe0));
     NFA<SeqCharSet<Latin1> > topOf3(SeqCharSet<Latin1>::range(0xe0, 0xf0));
     NFA<SeqCharSet<Latin1> > topOf4(SeqCharSet<Latin1>::range(0xf0, 0x100));
-    *ret.s1 = (ascii |= (topOf2 <<= lowerBytes) |= ((topOf3 <<= lowerBytes) <<= lowerBytes) |= (((topOf4 <<= lowerBytes) <<= lowerBytes) <<= lowerBytes));
+    *res.s1 = (ascii |= (topOf2 <<= lowerBytes) |= ((topOf3 <<= lowerBytes) <<= lowerBytes) |= (((topOf4 <<= lowerBytes) <<= lowerBytes) <<= lowerBytes));
   }
   if(GDFA::type == TUtf8)
   {
@@ -1232,24 +1235,24 @@ GNFA GNFA::anyChar()
     NFA<TableCharSet<Latin1> > topOf2(TableCharSet<Latin1>::range(0xc0, 0xe0));
     NFA<TableCharSet<Latin1> > topOf3(TableCharSet<Latin1>::range(0xe0, 0xf0));
     NFA<TableCharSet<Latin1> > topOf4(TableCharSet<Latin1>::range(0xf0, 0x100));
-    *ret.t1 = (ascii |= (topOf2 <<= lowerBytes) |= ((topOf3 <<= lowerBytes) <<= lowerBytes) |= (((topOf4 <<= lowerBytes) <<= lowerBytes) <<= lowerBytes));
+    *res.t1 = (ascii |= (topOf2 <<= lowerBytes) |= ((topOf3 <<= lowerBytes) <<= lowerBytes) |= (((topOf4 <<= lowerBytes) <<= lowerBytes) <<= lowerBytes));
   }
-  return ret;
+  return res;
 }
 
 GNFA GNFA::anything()
 {
-  auto any = anyChar();
+  GNFA any = anyChar();
   return *any;
 }
 
 GNFA GNFA::emptyWord()
 {
-  UNINITIALIZED_GNFA(ret);
-#define macro(x) ret.x = new NFA<T>(NFA<T>::emptyWord());
+  GNFA res;
+#define macro(x) res.x = new NFA<T>(NFA<T>::emptyWord());
   EACH_TYPE(macro)
 #undef macro
-  return ret;
+  return res;
 }
 
 #include "generated-kdev-utf8-tuples.h"
@@ -1326,7 +1329,7 @@ GNFA GNFA::range(quint32 begin, quint32 end)
   // Utf32: take it
   // Latin1, Ascii, Ucs2: cut it
   // Utf8, Utf32: complicate
-  UNINITIALIZED_GNFA(res);
+  GNFA res;
   switch(GDFA::type)
   {
     case SAscii: { res.s0 = new NFA<SeqCharSet<Ascii> >(begin >= 0x80 ? SeqCharSet<Ascii>::emptySet() : SeqCharSet<Ascii>::range(begin, min((quint32)0x80, end))); } break;
@@ -1494,7 +1497,7 @@ GNFA GNFA::range(quint32 begin, quint32 end)
   return res;
 }
 
-KDevPG::GNFA KDevPG::GNFA::character(quint32 codepoint)
+GNFA GNFA::character(quint32 codepoint)
 {
   return range(codepoint, codepoint+1);
 }

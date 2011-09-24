@@ -27,6 +27,10 @@
 namespace KDevPG
 {
 
+/**
+ * This class is the LL/shunting yard-parser code generator. It generates the actual parsing code.
+ * @todo Investigate whether parts of it are not code-generation, but in fact realy computations which should be handled independently from the output-language.
+ */
 class CodeGenerator: protected DefaultVisitor
 {
 public:

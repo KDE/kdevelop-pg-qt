@@ -105,8 +105,6 @@ class GNFA
   };
   friend class GDFA;
 public:
-  /// Empty set
-  GNFA();
   GNFA(const GNFA& o);
   ~GNFA();
   GNFA& operator=(const GNFA& o);
@@ -142,10 +140,12 @@ public:
   /// Nice output in .dot-format
   void dotOutput(QTextStream& o, const QString& name);
   
+  /// Accepts nothing
+  static GNFA empty();
   /// Accepts any single character
   static GNFA anyChar();
   /// Accepts the given word
-  static GNFA keyword(const QString& str);
+  static GNFA word(const QString& str);
   /// Accepts any of the chars in the string
   static GNFA collection(const QString& str);
   /// Accepts only the empty word
@@ -156,6 +156,8 @@ public:
   static GNFA range(quint32 begin, quint32 end);
   /// Accepts a single codepoint (or nothing if it is not represantable with tha charset)
   static GNFA character(quint32 codepoint);
+private:
+  GNFA(); // has to be constructed using a static member
 };
 
 }

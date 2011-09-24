@@ -36,43 +36,23 @@ using namespace std;
 #include <QtCore/QTextStream>
 #include <QtCore/QStringList>
 
-#define NC(...) __VA_ARGS__
+/**
+ * @FILE
+ * This file implements various iterator-classes providing character-set specific input streams.
+ * Each iterator-class has these members:
+ * @li Int: The type of the values returned by the stream
+ * @li InputInt: Type of the values in the underlying representation
+ * @li PlainIterator: InputInt*-like type used to reference underlying positions
+ * @li next(): returns the next value and advances the stream position
+ * @li hasNext(): checks if there are elements left
+ * @li plain(): returns the PlainIterator for the next position
+ * @li operator-(other): distance in the underlying representation between two of the iterators
+ * @li begin: returns the PlainIterator at the beginning of the stream
+ * @todo implement iterators for QIODevices, FILE and STL-streams, would need more abstraction: differentiate between input handling and decoding
+ */
 
 namespace KDevPG
 {
-
-template<typename T, typename U>
-struct _brutal_cast_impl
-{
-  static inline T exec(const U& x)
-  {
-    union tmp
-    {
-      T *t;
-      const U *u;
-      inline tmp(const U* u) : u(u) {}
-    };
-    return *tmp(&x).t;
-  }
-};
-
-template<typename T, typename U>
-struct _brutal_cast_impl<T&, U>
-{
-  static inline T& exec(const U& x)
-  {
-    return *_brutal_cast_impl<T*, const U*>::exec(&x);
-  }
-};
-
-/**
- * Cast anything
- * @warning This template is very brutal, it will cast anything without compiler warnings or errors (like strict-aliasing rule), unless you have an overloaded operator&, but you really should not have that.
- */
-template<typename T, typename U> inline T brutal_cast(const U& x)
-{
-  return _brutal_cast_impl<T, U>::exec(x);
-}
 
 enum CharEncoding
 {
@@ -614,6 +594,7 @@ public:
       }
       ++ptr;
       // ignore the error, jump back :-)
+      // TODO: error handling?
     }
   }
   bool hasNext()

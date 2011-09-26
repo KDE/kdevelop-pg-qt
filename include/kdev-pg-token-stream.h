@@ -27,6 +27,29 @@
 
 #include "kdev-pg-location-table.h"
 
+/* T& front() ✓
+ * T& back() ✓
+ * T& curr()                →   ?
+ * 
+ * T& advance()             →   readNext
+ * qint64 tokenIndex()      →   delete
+ * qint64 index()           →   ?
+ * T& next()                →   push(), push(Token)
+ * int nextToken()          →   nextKind()
+ * T& token(index)          →   tokenAt(), tokenKindAt() ?
+ * ? more
+ * 
+ * rewind(index) ✓
+ * qint64 size() ✓
+ * reset() ✓
+ * free()                   →   clear()
+ * 
+ * locationTable() ✓
+ * 
+ * startPosition(index, line, column) ✓
+ * endPosition(index, line, column) ✓
+ */
+
 namespace KDevPG
 {
 
@@ -38,7 +61,7 @@ class Token {
 };
 
 /**
- * This class stores a stream of tokens and has an associated location table.
+ * Stores a stream of tokens and has an associated location table.
  * You can add tokens and traverse them (Java-style unidirectional iterator with random access).
  * Internal representation similar to a std::vector (capacity gets multiplied if it get exceeded).
  * @todo Fix inconsistencies in naming: advance vs. next vs. nextToken, token vs. nextToken

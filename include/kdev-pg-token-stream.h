@@ -31,12 +31,12 @@
  * T& back() ✓
  * T& curr()                →   ?
  * 
- * T& advance()             →   readNext
+ * T& advance()             →   read()
  * qint64 tokenIndex()      →   delete
- * qint64 index()           →   ?
+ * qint64 index() ✓
  * T& next()                →   push(), push(Token)
- * int nextToken()          →   nextKind()
- * T& token(index)          →   tokenAt(), tokenKindAt() ?
+ * int nextToken()          →   delete
+ * T& token(index)          →   at()
  * ? more
  * 
  * rewind(index) ✓
@@ -106,7 +106,7 @@ public:
    * @note It will not affect the location table.
    * @sa reset
    */
-  inline void free()
+  inline void clear()
   {
     mIndex = 0;
     mTokenCount = 0;
@@ -123,21 +123,9 @@ public:
   
   /**
    * The current position in the stream.
-   * @sa tokenIndex
    */
   inline qint64 index() const
   {
-    return mIndex;
-  }
-  
-  /**
-   * The index of the token returned by the last invocation of advance/nextToken.
-   * @sa index
-   */
-  inline qint64 tokenIndex() const
-  {
-    if( mIndex )
-      return mIndex - 1;
     return mIndex;
   }
   
@@ -153,7 +141,7 @@ public:
   /**
    * Returns the token at the specified position in the stream.
    */
-  inline T const &token(qint64 index) const
+  inline T const &at(qint64 index) const
   {
     return mTokenBuffer[index];
   }
@@ -161,18 +149,9 @@ public:
   /**
    * Returns the token at the specified position in the stream.
    */
-  inline T &token(qint64 index)
+  inline T &at(qint64 index)
   {
     return mTokenBuffer[index];
-  }
-  
-  /**
-   * Returns the token kind at the next position and advances.fect the 
-   * @sa advance
-   */
-  inline int nextToken()
-  {
-    return mTokenBuffer[mIndex++].kind;
   }
   
   /**
@@ -181,7 +160,7 @@ public:
    * @return The new uninitialized token
    * @sa advance
    */
-  inline T &next()
+  inline T &push()
   {
     if (mTokenCount == mTokenBufferSize)
     {
@@ -197,27 +176,16 @@ public:
     return mTokenBuffer[mTokenCount++];
   }
   
+  inline T &push(const T& t)
+  {
+    return push() = t;
+  }
+  
   /**
    * Advances and returns the token at the current position.
-   * @sa nextToken
-   * @sa next
    */
-  inline T &advance()
+  inline T &read()
   {
-    if (mIndex == mTokenCount)
-    {
-      if(mTokenCount++ == mTokenBufferSize)
-      {
-        if (mTokenBufferSize == 0)
-          mTokenBufferSize = 1024;
-        
-        mTokenBufferSize <<= 2;
-        
-        mTokenBuffer = reinterpret_cast<T*>
-        (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
-      }
-    }
-    
     return mTokenBuffer[mIndex++];
   }
   
@@ -266,7 +234,7 @@ public:
         *line = 0; *column = 0;
       }
     else
-      mLocationTable->positionAt(token(index).begin, line, column);
+      mLocationTable->positionAt(at(index).begin, line, column);
   }
   
   /**
@@ -279,7 +247,7 @@ public:
         *line = 0; *column = 0;
       }
     else
-      mLocationTable->positionAt(token(index).end, line, column);
+      mLocationTable->positionAt(at(index).end, line, column);
   }
 
 private:

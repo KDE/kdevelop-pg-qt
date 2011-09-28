@@ -43,8 +43,8 @@ void GenerateDebugVisitor::operator()()
   out << "{" << endl;
   out << "    QString tokenString;" << endl;
   out << "    if (!m_content.isEmpty()) {" << endl;
-  out << "        " << globalSystem.tokenStream << "::Token startToken = m_str->token(node->startToken);" << endl;
-  out << "        " << globalSystem.tokenStream << "::Token endToken = m_str->token(node->endToken);" << endl;
+  out << "        " << globalSystem.tokenStream << "::Token startToken = m_str->at(node->startToken);" << endl;
+  out << "        " << globalSystem.tokenStream << "::Token endToken = m_str->at(node->endToken);" << endl;
   out << "        int begin = startToken.begin;" << endl;
   out << "        int end = endToken.end;" << endl;
   out << "        if (end-begin > 30) {" << endl;
@@ -62,9 +62,9 @@ void GenerateDebugVisitor::operator()()
   out << "    qint64 beginLine,endLine,beginCol,endCol;" << endl;
   out << "    m_str->startPosition(node->startToken, &beginLine, &beginCol);" << endl;
   out << "m_str->endPosition(node->endToken, &endLine, &endCol);" << endl;
-  out << "qDebug() << QString().fill(' ', m_indent) + mName + (!mName.isEmpty() ? \"->\" : \"\") + mType + \"[\" << m_str->token( node->startToken ).begin"
+  out << "qDebug() << QString().fill(' ', m_indent) + mName + (!mName.isEmpty() ? \"->\" : \"\") + mType + \"[\" << m_str->at( node->startToken ).begin"
       << " << \",\" << beginLine << \",\" << beginCol << "
-      << "\"] --- [\" << m_str->token( node->endToken ).end <<"
+      << "\"] --- [\" << m_str->at( node->endToken ).end <<"
       << " \",\" << endLine << \",\" << endCol "
       << "<< \"] \""
       << " << tokenString"

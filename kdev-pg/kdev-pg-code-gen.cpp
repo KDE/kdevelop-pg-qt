@@ -1088,10 +1088,10 @@ void GenerateParserDeclarations::operator()()
            "{}\n};" << endl;
   out << endl
       << "inline Token LA(qint64 k = 1) const" << endl
-      << "{ qint64 idx = tokenStream->index() - 1 + k - 1; qint64 oldidx = tokenStream->index(); tokenStream->rewind(tokenStream->size()); while(idx >= tokenStream->size()) tokenStream->advance(); tokenStream->rewind(oldidx); return tokenStream->token(idx); }"
+      << "{ qint64 idx = tokenStream->index() - 1 + k - 1; qint64 oldidx = tokenStream->index(); tokenStream->rewind(tokenStream->size()); while(idx >= tokenStream->size()) tokenStream->read(); tokenStream->rewind(oldidx); return tokenStream->at(idx); }"
       << endl
       << "inline int yylex() {" << endl
-      << "yytoken = tokenStream->advance().kind; return yytoken;" << endl
+      << "yytoken = tokenStream->read().kind; return yytoken;" << endl
       << "}" << endl
       << "inline void rewind(qint64 index) {" << endl
       << "tokenStream->rewind(index);" << endl

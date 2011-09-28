@@ -59,7 +59,7 @@ int main()
   forever
   {
     auto t = lex.curr();
-    lex.nextToken();
+    lex.read();
     cout << t.begin << ".." << t.end << tokenText(t.kind).toStdString() << ": " << qcode.mid(t.begin, t.end - t.begin + 1).data() << endl << "---" << endl;
     if(lex.index() == lex.size())
       break;

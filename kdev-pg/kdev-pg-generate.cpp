@@ -550,7 +550,7 @@ void generateLexer()
       << "public:" << endl << globalSystem.tokenStream << "(const Iterator& iter);" << endl
       // non-virtual, virtuality will be inherited
       << "~" << globalSystem.tokenStream << "();"
-      <<  endl << "Base::Token& advance();" << endl;
+      <<  endl << "Base::Token& read();" << endl;
     
       /// TODO: not good that it happens in a separate file for the parser but in this file for the lexer
 #define LEXER_EXTRA_CODE_GEN(name) \
@@ -566,8 +566,6 @@ void generateLexer()
         gen(*it); \
       } \
     }
-    
-    // for (optional) lazyness add nextToken implementation here
     
     LEXER_EXTRA_CODE_GEN(declarations)
     
@@ -616,19 +614,19 @@ void generateLexer()
          
          "#define lxCURR_POS (Iterator::plain())\n"
          "#define lxCURR_IDX (Iterator::plain() - Iterator::begin())\n"
-         "#define lxCONTINUE {continueLexeme = true; return advance();}\n"
+         "#define lxCONTINUE {continueLexeme = true; return read();}\n"
          "#define lxLENGTH (Iterator::plain() - Iterator::begin())\n"
          "#define lxBEGIN_POS (spos)\n"
          "#define lxBEGIN_IDX (spos - Iterator::begin())\n"
-         "#define lxNAMED_TOKEN(token, X) KDevPG::Token& token(Base::next()); token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;\n"
+         "#define lxNAMED_TOKEN(token, X) KDevPG::Token& token(Base::push()); token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;\n"
          "#define lxTOKEN(X) {lxNAMED_TOKEN(token, X);}\n"
-         "#define lxDONE {return Base::advance();}\n"
+         "#define lxDONE {return Base::read();}\n"
          "#define lxRETURN(X) {lxTOKEN(X); lxDONE}\n"
-         "#define lxEOF {Base::Token& _t(Base::next()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_EOF;_t.begin = _t.end = Iterator::plain() - Iterator::begin();}\n"
+         "#define lxEOF {Base::Token& _t(Base::push()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_EOF;_t.begin = _t.end = Iterator::plain() - Iterator::begin();}\n"
          "#define lxFINISH {lxEOF lxDONE}\n"
          "#define yytoken (Base::back())\n"
          "#define lxFAIL {goto _fail;}\n"
-         "#define lxSKIP {return advance();}\n"
+         "#define lxSKIP {return read();}\n"
          "#define lxNEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
     
     if(hasStates)
@@ -675,7 +673,7 @@ void generateLexer()
         << extra << "if(!Iterator::hasNext())\n{\nlxFINISH\n}" << endl \
         << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nIterator::PlainIterator lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
       globalSystem.dfaForNfa[globalSystem.lexerEnvResults[state]]->codegen(s); \
-      s << "/* assert(false);*/\nreturn Base::advance();}" << endl << endl;
+      s << "/* assert(false);*/\nreturn Base::read();}" << endl << endl;
     
     if(hasStates)
     {
@@ -686,14 +684,14 @@ void generateLexer()
         s << "#undef CURRENT_RULE_SET" << endl;
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
-        << "::advance()" << endl << "{" << endl << "if(Base::index() < Base::size())\nreturn Base::advance();\nswitch(m_ruleSet)\n{" << endl;
+        << "::read()" << endl << "{" << endl << "if(Base::index() < Base::size())\nreturn Base::read();\nswitch(m_ruleSet)\n{" << endl;
       foreach(QString state, globalSystem.lexerEnvs.keys())
         s << "case State_" << state << ": return lex" << capitalized(state) << "();" << endl;
       s << "default:\nexit(-1);\n}\n}" << endl;
     }
     else
     {
-      LEXER_CORE_IMPL("advance", "start", "if(Base::index() < Base::size())\nreturn Base::advance();\n")
+      LEXER_CORE_IMPL("read", "start", "if(Base::index() < Base::size())\nreturn Base::read();\n")
     }
     
     if(hasStates)

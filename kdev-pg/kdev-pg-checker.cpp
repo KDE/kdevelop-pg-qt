@@ -156,8 +156,7 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
           str << "\t\t" << ((Model::TerminalItem*)n)->mName << ": conflicts with the FIRST set of: " << endl;
           FollowDepChecker(n).check(node);
           if (it != U.end())
-            str << ",";
-          str << endl;
+            str << "," << endl;
         }
       str << "\t]" << endl << endl;
       ProblemSummaryPrinter::reportFirstFollowConflict();

@@ -3,7 +3,6 @@
 	Terminals [
 		A: conflicts with the FIRST set of: 
 		r3, 
-
 	]
 
 ** WARNING found FIRST/FOLLOW conflict in r5:
@@ -11,7 +10,6 @@
 	Terminals [
 		C: conflicts with the FIRST set of: 
 		(A | B | C), 
-
 	]
 
 2 conflicts total: 2 FIRST/FOLLOW conflicts, 0 FIRST/FIRST conflicts.

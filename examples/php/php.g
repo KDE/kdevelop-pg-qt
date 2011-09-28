@@ -16,13 +16,6 @@ QStack<std::pair<Iterator::PlainIterator, Iterator::PlainIterator> > nowDocStack
 Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
 :]
 
-%lexerclass(public declaration)
-[:
-inline int nextToken()
-{
-    return advance().kind;
-}
-:]
 
 ------------------------------------------------------------
 -- Enumeration types for additional AST members,
@@ -427,7 +420,7 @@ echo            ECHO ;
        && yytoken != Token_CASE && yytoken != Token_DEFAULT) {
         if (!reported) {
             qint64 index = tokenStream->index() - 1;
-            Token &token = tokenStream->token(index);
+            Token &token = tokenStream->at(index);
             QString tokenValue = token.kind != 0 ? tokenText(token.begin, token.end) : "EOF";
             reportProblem(Error, QString("Unexpected token \"%1\".").arg(tokenValue));
             reported = true;
@@ -1114,7 +1107,7 @@ void Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)
     qint64 line;
     qint64 col;
     qint64 index = tokenStream->index()-1;
-    Token &token = tokenStream->token(index);
+    Token &token = tokenStream->at(index);
     qDebug() << "token starts at:" << token.begin;
     qDebug() << "index is:" << index;
     tokenStream->startPosition(index, &line, &col);

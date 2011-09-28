@@ -18,10 +18,10 @@ endif(NOT KDE4_FOUND)
 # Use colored output (since cmake 2.4.0)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
-# FIXME: find a way to make this portable (define typeof for non-gcc using decltype etc.)
-if(CMAKE_COMPILER_IS_GNUCC)
+# GCC, Clang and MVC supported
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     add_definitions(--std=c++0x)
-endif(CMAKE_COMPILER_IS_GNUCC)
+endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
 

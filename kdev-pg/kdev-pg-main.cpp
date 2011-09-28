@@ -96,7 +96,7 @@ void help()
 
 void version()
 {
-  KDevPG::checkOut << "KDevelop-PG-Qt: pre1.0" << endl;
+  KDevPG::checkOut << "KDevelop-PG-Qt: 1.0" << endl;
   
   exit(EXIT_SUCCESS);
 }

@@ -25,6 +25,12 @@
 #include "kdev-pg.h"
 #include "kdev-pg-default-visitor.h"
 
+/**
+ * @file
+ * Checks for conflicts and some errors.
+ * TODO: split conflict-computation and conflict-message-printing
+ */
+
 namespace KDevPG
 {
 

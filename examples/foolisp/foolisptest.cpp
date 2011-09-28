@@ -1,6 +1,7 @@
 #include "foolispparser.h"
 #include "foolisplexer.h"
 #include "foolispdebugvisitor.h"
+#include "foolisptokentext.h"
 
 using namespace FooLisp;
 using namespace KDevPG;
@@ -23,8 +24,8 @@ int main()
   parser.setTokenStream(&lex);
   int kind;
   qDebug() << iter.hasNext();
-  while((kind = lex.advance().kind) != Parser::Token_EOF)
-    qDebug() << "hi" << kind;
+  while((kind = lex.read().kind) != Parser::Token_EOF)
+    qDebug() << "hi" << tokenText(kind);
   parser.rewind(0);
   StartAst *ast;
   parser.parseStart(&ast);

@@ -17,7 +17,7 @@ ADD_CUSTOM_COMMAND(
             "${CMAKE_CURRENT_SOURCE_DIR}/foolisplexer.h"
             "${CMAKE_CURRENT_SOURCE_DIR}/foolisplexer.cpp"
     DEPENDS 
-            "${CMAKE_CURRENT_SOURCE_DIR}/foolisp.g"
+            "${CMAKE_CURRENT_SOURCE_DIR}/foolisp.g" ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
     ARGS    --output=foolisp --namespace=FooLisp --debug-visitor --automata
             "foolisp.g"

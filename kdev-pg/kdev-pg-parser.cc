@@ -2218,7 +2218,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 332 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA()); delete (yyvsp[(2) - (2)].nfa); ;}
+    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA::emptyWord()); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 58:
@@ -2302,14 +2302,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 356 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
+    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
 #line 357 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
+    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 71:
@@ -2393,7 +2393,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 393 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA()); delete (yyvsp[(2) - (2)].nfa); ;}
+    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA::emptyWord()); delete (yyvsp[(2) - (2)].nfa); ;}
     break;
 
   case 81:
@@ -2470,7 +2470,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 417 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::keyword(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
+    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); ;}
     break;
 
   case 93:

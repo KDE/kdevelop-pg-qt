@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 			if ( !kind ) // when the lexer returns 0, the end of file is reached
 				kind = Parser::Token_EOF;
                         kDebug() << kind;
-			Parser::Token &t = token_stream.next();
+			Parser::Token &t = token_stream.push();
 			t.kind = kind;
 			t.begin = lexer.tokenBegin();
 			t.end = lexer.tokenEnd();

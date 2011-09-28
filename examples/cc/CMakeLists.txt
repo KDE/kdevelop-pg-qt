@@ -26,6 +26,7 @@ ADD_CUSTOM_COMMAND(
             "${CMAKE_CURRENT_SOURCE_DIR}/ccdefaultvisitor.cpp"
     DEPENDS 
             "${CMAKE_CURRENT_SOURCE_DIR}/lexer.h"
+            ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
     ARGS    --output=cc
             "cc.g"

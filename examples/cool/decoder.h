@@ -19,19 +19,19 @@ public:
 
   int decode_op(std::size_t index) const
   {
-    Parser::Token const &tk = _M_token_stream->token(index);
+    Parser::Token const &tk = _M_token_stream->at(index);
     return tk.kind;
   }
 
   QString decode_id(std::size_t index) const
   {
-    Parser::Token const &tk = _M_token_stream->token(index);
+    Parser::Token const &tk = _M_token_stream->at(index);
     return p->tokenText(tk.begin,tk.end);
   }
 
   long decode_number(std::size_t index) const
   {
-    Parser::Token const &tk = _M_token_stream->token(index);
+    Parser::Token const &tk = _M_token_stream->at(index);
     return p->tokenText(tk.begin,tk.end).toLong();    
   }
 };

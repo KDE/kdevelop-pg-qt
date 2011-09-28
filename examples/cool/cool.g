@@ -181,7 +181,7 @@ void Parser::tokenize( char *contents )
         if ( !kind ) // when the lexer returns 0, the end of file is reached
             kind = Parser::Token_EOF;
 
-        Parser::Token &t = this->tokenStream->next();
+        Parser::Token &t = this->tokenStream->push();
         t.kind = kind;
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();

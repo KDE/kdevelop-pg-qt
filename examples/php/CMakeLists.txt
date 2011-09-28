@@ -19,6 +19,7 @@ ADD_CUSTOM_COMMAND(
   "${CMAKE_CURRENT_SOURCE_DIR}/tokentext.h"
   DEPENDS 
   "${CMAKE_CURRENT_SOURCE_DIR}/php.g"
+  ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
   COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
   ARGS    --output=php --namespace=Php --debug-visitor --automata --token-text
   "php.g"

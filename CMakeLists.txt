@@ -4,6 +4,8 @@ enable_testing()
 
 find_package(KDE4)
 
+set(KDEVPGQT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Qt only build
 if(NOT KDE4_FOUND)
     cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)

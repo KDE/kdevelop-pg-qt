@@ -82,6 +82,7 @@ void help()
            << "Output format:" << endl
            << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
            << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
+           << "\t--compatible-error-aware-code - Like --error-aware-code, but using #line instead of GCC-specific directives, thus not providing included-from-info to display the line number in the generated file" << endl
            << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array (default)" << endl
            << "\t--visitor-switch - Visitor::visitNode will use a switch-statement" << endl
            << "About:" << endl
@@ -255,11 +256,15 @@ int main(int argc, char **argv)
     }
     else if (arg == "--beautiful-code")
     {
-      KDevPG::globalSystem.beautifulCode = true;
+      KDevPG::globalSystem.lineNumberPolicy = KDevPG::World::BeautifulCode;
     }
     else if (arg == "--error-aware-code")
     {
-      KDevPG::globalSystem.beautifulCode = false;
+      KDevPG::globalSystem.lineNumberPolicy = KDevPG::World::FullLineNumbers;
+    }
+    else if (arg == "--compatible-error-aware-code")
+    {
+      KDevPG::globalSystem.lineNumberPolicy = KDevPG::World::CompatibilityLineNumbers;
     }
     else if (arg == "--visitor-table")
     {

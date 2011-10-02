@@ -123,7 +123,7 @@ public:
       generateAst(true), hasLexer(false), generateSerializeVisitor(false),
       generateDebugVisitor(false), generateTokenText(false),
       needStateManagement(false), needOperatorStack(false),
-      beautifulCode(false), visitorTable(false),
+      lineNumberPolicy(FullLineNumbers), visitorTable(false),
       conflictHandling(Permissive), mZero(0),
       lexerBaseClass("KDevPG::TokenStream")
   {}
@@ -162,6 +162,7 @@ public:
   bool generateTokenText: 1;
   bool needStateManagement: 1;
   bool needOperatorStack: 1;
+  enum { BeautifulCode, CompatibilityLineNumbers, FullLineNumbers } lineNumberPolicy;
   bool beautifulCode: 1;
   bool visitorTable: 1;
   enum { Ignore = 0, Permissive = 1, Strict = 2 } conflictHandling: 2;

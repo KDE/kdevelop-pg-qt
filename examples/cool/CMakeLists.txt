@@ -10,38 +10,12 @@ ADD_DEFINITIONS(-DQT_STL)
 
 SET(parser_srcs)
 
-# Add command to generate the parser.
-ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/coolast.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.cpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
-            ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
-    ARGS    --output=cool
-            "cool.g"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-SET(parser_srcs
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.cpp")
-
-SET_SOURCE_FILES_PROPERTIES(
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolast.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/coolvisitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cooldefaultvisitor.cpp"
-    GENERATED
-    )
+SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
+SET(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/FindKDevelop-PG-Qt.cmake)
+kdevpgqt_generate(parser_srcs cool NAMESPACE cool
+    "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
+)
 
 
 IF(FLEX_EXECUTABLE)

@@ -56,15 +56,20 @@ namespace KDevPG
     strncpy(yylval.str, string, len); \
     yylval.str[len] = '\0';
 #define COPY_CODE_TO_YYLVAL(string, len) \
-    if(KDevPG::globalSystem.beautifulCode) \
+    if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::BeautifulCode) \
     { \
       COPY_TO_YYLVAL(string, len) \
     } \
     else \
     { \
-      QByteArray tmp("\n\01!ASIgnore\"!!\n# "); \
-      tmp += QString::number(firstCodeLine).toLocal8Bit(); \
-      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath().toLocal8Bit() + "\" 1\n"; \
+      QByteArray tmp("\n\01!ASIgnore\"!!\n#"); \
+      if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::CompatibilityLineNumbers) \
+        tmp += "line"; \
+      tmp += " " + QString::number(firstCodeLine).toLocal8Bit(); \
+      tmp += " \"" + KDevPG::fileInfo.absoluteFilePath().toLocal8Bit() + "\""; \
+      if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::FullLineNumbers) \
+        tmp += " 1"; \
+      tmp += "\n"; \
       size_t memlen = tmp.size() + firstCodeColumn + len + 16 + 1; \
       yylval.str = (char*) calloc(memlen, sizeof(char)); \
       strncpy(yylval.str, tmp.data(), tmp.size()); \

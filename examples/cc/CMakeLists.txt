@@ -15,39 +15,12 @@ FIND_PROGRAM(FLEX_EXECUTABLE
     DOC "Flex executable")
 
 
-# Add command to generate the parser.
-ADD_CUSTOM_COMMAND(
-    OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/ccast.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/ccparser.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/ccparser.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/ccvisitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/ccvisitor.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/ccdefaultvisitor.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/ccdefaultvisitor.cpp"
-    DEPENDS 
-            "${CMAKE_CURRENT_SOURCE_DIR}/lexer.h"
-            ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt
-    ARGS    --output=cc
-            "cc.g"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-SET(parser_srcs
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccparser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccvisitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccdefaultvisitor.cpp")
-
-SET_SOURCE_FILES_PROPERTIES(
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccast.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccparser.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccparser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccvisitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccvisitor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccdefaultvisitor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ccdefaultvisitor.cpp"
-    GENERATED
-    )
+SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
+SET(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/FindKDevelop-PG-Qt.cmake)
+kdevpgqt_generate(parser_srcs cc NAMESPACE cc
+    "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
+)
 
 
 IF(FLEX_EXECUTABLE)

@@ -83,21 +83,27 @@ if( KDEVPGQT_INCLUDE_DIR
     set(KDEVPGQT_FOUND TRUE)
 
     macro(KDEVPGQT_GENERATE _srcVar _language )
-        set(_outputList
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h"
+        set(_outputList)
+        set(_depList ${ARGN})
+        set(_astList
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h")
+        set(_parserList
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.h"
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.cpp"
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.h"
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.cpp"
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp"
-        )
-        set(_depList ${ARGN})
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp")
+        set(_lexerList)
         set(_dbgVisit)
         set(_namespace)
         set(_tokenText)
         set(_dumpInfo)
-        set(_beautifulCode)
+        if(CMAKE_COMPILER_IS_GNUCC)
+          set(_beautifulCode)
+        else(CMAKE_COMPILER_IS_GNUCC)
+          set(_beautifulCode --compatible-error-aware-code)
+        endif(CMAKE_COMPILER_IS_GNUCC)
         set(_conflicts)
         while(1)
         list(GET _depList 0 _arg)
@@ -134,10 +140,17 @@ if( KDEVPGQT_INCLUDE_DIR
         elseif( ${_arg} STREQUAL "IGNORE_CONFLICTS" )
             list(REMOVE_AT _depList 0)
             set(_conflicts --ignore-conflicts)
+        elseif( ${_arg} STREQUAL "GENERATE_LEXER" )
+          list(REMOVE_AT _depList 0)
+          set(_lexerList
+              "${CMAKE_CURRENT_BINARY_DIR}/${_language}lexer.h"
+              "${CMAKE_CURRENT_BINARY_DIR}/${_language}lexer.cpp")
         else( ${_arg} STREQUAL "IGNORE_CONFLICTS" )
             break()
         endif( ${_arg} STREQUAL "NAMESPACE" )
         endwhile(1)
+        
+        set(_outputList ${_outputList} ${_lexerList} ${_astList} ${_parserList})
         
         list(GET _depList 0 _grammarFile)
         list(REMOVE_AT _depList 0)
@@ -145,7 +158,8 @@ if( KDEVPGQT_INCLUDE_DIR
             message(ERROR "No grammar file given to KDEVPGQT_GENERATE macro")
         endif(NOT _grammarFile)
         add_custom_command(
-            OUTPUT  ${_outputList}
+            OUTPUT
+                    ${_outputList}
             MAIN_DEPENDENCY "${_grammarFile}"
             DEPENDS ${_depList} ${KDEVPGQT_EXECUTABLE}
             COMMAND ${KDEVPGQT_EXECUTABLE}
@@ -153,9 +167,9 @@ if( KDEVPGQT_INCLUDE_DIR
                     ${_dbgVisit} ${_dumpInfo} ${_beautifulCode} ${_conflicts} "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
-
+        set_source_files_properties("${_outputList}" GENERATED)
         set( ${_srcVar}
-              ${_outputList}
+              "${_outputList}"
            )
     endmacro(KDEVPGQT_GENERATE)
 

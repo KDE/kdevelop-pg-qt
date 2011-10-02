@@ -37,6 +37,7 @@
 #include <assert>
 #else
 #include <cassert>
+#include "kdev-pg.h"
 #endif
 
 // can trace only if NDEBUG is not defined
@@ -335,13 +336,19 @@ string ASFormatter::nextLine()
         if(currentLine.substr(0, 14) == "\01!AS/Ignore\"!!")
         {
             ignoreStuff = false;
-            string ret = "# ";
+            string ret;
+            ret = "#";
+            if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::CompatibilityLineNumbers)
+              ret += "line";
+            ret += " ";
             ret += QString::number(inLineNumber+2).toAscii().data();
-            ret += " \"" + fileName + "\" 2";
+            ret += " \"" + fileName + "\"";
+            if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::FullLineNumbers)
+              ret += " 2";
             --inLineNumber;
             next
             if(hasMoreLines())
-              nextLine(); // there is a mysterious line, I have to eat
+                nextLine(); // there is a mysterious line, I have to eat
             return ret;
         }
         else
@@ -354,9 +361,13 @@ string ASFormatter::nextLine()
     else if(currentLine.substr(0, 13) == "\01!ASIgnore\"!!")
     {
         ignoreStuff = true;
-        string ret = "# ";
-        ret += QString::number(inLineNumber+4).toAscii().data();
-        ret += " \"" + fileName + "\"";
+        string ret;
+        if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::FullLineNumbers)
+        {
+          ret = "# ";
+          ret += QString::number(inLineNumber+4).toAscii().data();
+          ret += " \"" + fileName + "\"";
+        }
         next
         return ret;
     }

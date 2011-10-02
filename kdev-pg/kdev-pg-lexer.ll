@@ -35,6 +35,7 @@ void countNewlines(const char*, int);
 void yyerror(const char* );
 extern int yyLine;
 extern int currentOffset;
+extern bool yymoreFlag;
 
 namespace KDevPG
 {
@@ -42,6 +43,8 @@ namespace KDevPG
   extern QFileInfo fileInfo;
   extern QTextStream checkOut;
 }
+
+#define YYMORE yymoreFlag = true; yymore();
 
 #define YY_INPUT(buf, result, max_size) \
   { \
@@ -74,7 +77,7 @@ namespace KDevPG
       yylval.str = (char*) calloc(memlen, sizeof(char)); \
       strncpy(yylval.str, tmp.data(), tmp.size()); \
       memset(yylval.str + tmp.size(), ' ', firstCodeColumn); \
-      strncpy(yylval.str + tmp.size() + firstCodeColumn, yytext, len); \
+      strncpy(yylval.str + tmp.size() + firstCodeColumn, string, len); \
       strncpy(yylval.str + memlen - 17, "\n\01!AS/Ignore\"!!\n", 16); \
       yylval.str[memlen-1] = '\0'; \
     }
@@ -96,6 +99,8 @@ namespace {
 
 #ifdef _WIN32
 #include <io.h>
+#else
+#include <unistd.h>
 #endif
 
 %}
@@ -249,11 +254,11 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 }
 
 <RULE_ARGUMENTS>{
-  {Newline}               newline(); yymore();
-  {String}                yymore(); /* this and... */
-  ["]                     yymore(); /* ...this prevent brackets inside strings to be counted */
-  [^\[\]\n\r\"]*          yymore(); /* gather everything that's not a bracket, and append what comes next */
-  "["                     openBrackets++; yymore();
+  {Newline}               newline(); YYMORE;
+  {String}                YYMORE; /* this and... */
+  ["]                     YYMORE; /* ...this prevent brackets inside strings to be counted */
+  [^\[\]\n\r\"]*          YYMORE; /* gather everything that's not a bracket, and append what comes next */
+  "["                     openBrackets++; YYMORE;
   "]" {
       openBrackets--;
       if (openBrackets < 0) {
@@ -289,8 +294,8 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 }
 
 <RULE_PARAMETERS_VARNAME>{
-  {Newline}               newline(); yymore();
-  [^;\r\n]*               yymore(); /* gather everything that's not a semicolon, and append what comes next */
+  {Newline}               newline(); YYMORE;
+  [^;\r\n]*               YYMORE; /* gather everything that's not a semicolon, and append what comes next */
   ";" {
       // strip trailing whitespace
       int length = yyleng-1; // and first, the trailing semicolon
@@ -316,9 +321,9 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 
 "[:"                    firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 <CODE>{
-  {Newline}               newline(); yymore();
-  [^:\n\r]*               yymore(); /* gather everything that's not a colon, and append what comes next */
-  ":"+[^:\]\n\r]*         yymore(); /* also gather colons that are not followed by colons or newlines */
+  {Newline}               newline(); YYMORE;
+  [^:\n\r]*               YYMORE; /* gather everything that's not a colon, and append what comes next */
+  ":"+[^:\]\n\r]*         YYMORE; /* also gather colons that are not followed by colons or newlines */
   ":]" {
       COPY_CODE_TO_YYLVAL(yytext, (yyleng-2)); /* cut off the trailing stuff */
       if(rulePosition == RuleLexer)
@@ -357,7 +362,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 
 char ch;
 int yyLine = 1, currentOffset = 0;
-bool endOfLine = false;
+bool endOfLine = false, yymoreFlag = false;
 char yyTextLine[256 * 1024];
 
 int inp()
@@ -394,10 +399,15 @@ void appendLineBuffer()
 {
   if (endOfLine == true)
     clearLineBuffer();
-
+  
+  static int lastTextLeng = 0;
+  
   currentOffset = strlen(yyTextLine); /* start of current */
-  strcpy(yyTextLine+currentOffset, yytext); /* append current */
+  strcpy(yyTextLine+currentOffset, yytext + (yymoreFlag ? lastTextLeng : 0)); /* append current */
   /* strcpy is faster than strcat */
+  
+  lastTextLeng = strlen(yytext);
+  yymoreFlag = false;
 }
 
 void yyerror(const char* msg )

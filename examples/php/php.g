@@ -6,6 +6,7 @@
 %input_stream "KDevPG::QByteArrayIterator"
 
 %parser_declaration_header "QtCore/QDebug"
+%lexer_bits_header "QtCore/QDebug"
 
 %lexer_bits_header "algorithm"
 %lexer_declaration_header "QtCore/QStack"

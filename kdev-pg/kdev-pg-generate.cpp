@@ -36,6 +36,7 @@
 
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
+#include "kdev-pg-token-type-gen.h"
 
 namespace KDevPG
 {
@@ -131,7 +132,45 @@ void generateOutput()
       format(s, oname);
     }
   }
+  { // generate token type
+    QString str;
+    QTextStream s(&str, QIODevice::WriteOnly);
 
+    GenerateTokenType gen(s);
+
+    s << "// THIS FILE IS GENERATED" << endl
+      << "// WARNING! All changes made in this file will be lost!" << endl
+      << endl
+
+      << "#ifndef " << language << "_TOKEN_TYPE_H_INCLUDED" << endl
+      << "#define " << language << "_TOKEN_TYPE_H_INCLUDED" << endl
+      << endl;
+    if (!globalSystem.exportMacroHeader.isEmpty())
+      s << "#include \"" << globalSystem.exportMacroHeader << "\""
+        << endl;
+
+    foreach (const QString& header, globalSystem.astHeaders)
+      s << "#include \"" << header << "\"\n";
+
+    if (!globalSystem.decl.isEmpty())
+      s << globalSystem.decl << endl;
+
+    s << "namespace " << globalSystem.ns << "{" << endl
+      << endl;
+
+    gen();
+
+    s << endl << "} // end of namespace " << globalSystem.ns << endl
+      << endl
+
+      << "#endif" << endl
+      << endl;
+
+    QString oname = globalSystem.language;
+    oname += "tokentype.h";
+
+    format(s, oname);
+  }
   { // generate the parser decls
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
@@ -145,6 +184,9 @@ void generateOutput()
       << "#ifndef " << language << "_H_INCLUDED" << endl
       << "#define " << language << "_H_INCLUDED" << endl
       << endl;
+    
+    
+    s << "#include \"" << globalSystem.language << "tokentype.h\"" << endl;
     
     if(globalSystem.hasLexer)
       s << "#include \"" << globalSystem.language << "lexer.h\"" << endl;
@@ -363,11 +405,12 @@ void generateOutput()
       << "#ifndef " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << endl
+      << "#include \"" << language << "tokentype.h\"" << endl
 
       << "namespace " << globalSystem.ns << "{" << endl
       << endl
 
-      << "QString tokenText(int token)" << endl << "{" << endl;
+      << "QString " << globalSystem.exportMacro << " tokenText(int token)" << endl << "{" << endl;
 
     GenerateTokenTexts gen(s);
     gen();
@@ -502,7 +545,8 @@ void generateLexer()
       << "#ifndef " << language << "_LEXER_H_INCLUDED" << endl
       << "#define " << language << "_LEXER_H_INCLUDED" << endl
       << endl
-    
+      
+      << "#include \"" << globalSystem.language << "tokentype.h\"" << endl
       << endl
       
       << "#include <kdev-pg-char-sets.h>" << endl
@@ -516,8 +560,9 @@ void generateLexer()
       << endl
       
       << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
-      << (globalSystem.lexerBaseClass.isEmpty() ? "" : " public " + globalSystem.lexerBaseClass)
-      << ", public " << globalSystem.inputStream << endl
+      << (globalSystem.lexerBaseClass.isEmpty() ? "" : " public " + globalSystem.lexerBaseClass + ",")
+      << "public " << globalSystem.inputStream << ","
+      << "public TokenTypeWrapper" << endl
       << "{" << endl
       << "public:" << endl
       << "typedef " << (globalSystem.lexerBaseClass.isEmpty() ? globalSystem.tokenStream : globalSystem.lexerBaseClass) << " Base;" << endl
@@ -590,7 +635,6 @@ void generateLexer()
       << endl
     
       << "#include \"" << globalSystem.language << "lexer.h\"" << endl
-      << "#include \"" << globalSystem.language << "parser.h\"" << endl
       << endl;
     
     foreach (const QString& header, globalSystem.lexerBitsHeaders)
@@ -618,11 +662,11 @@ void generateLexer()
          "#define lxLENGTH (Iterator::plain() - Iterator::begin())\n"
          "#define lxBEGIN_POS (spos)\n"
          "#define lxBEGIN_IDX (spos - Iterator::begin())\n"
-         "#define lxNAMED_TOKEN(token, X) KDevPG::Token& token(Base::push()); token.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;\n"
+         "#define lxNAMED_TOKEN(token, X) KDevPG::Token& token(Base::push()); token.kind = Token_##X; token.begin = lxBEGIN_IDX; token.end = lxCURR_IDX - 1;\n"
          "#define lxTOKEN(X) {lxNAMED_TOKEN(token, X);}\n"
          "#define lxDONE {return Base::read();}\n"
          "#define lxRETURN(X) {lxTOKEN(X); lxDONE}\n"
-         "#define lxEOF {Base::Token& _t(Base::push()); _t.kind = ::" + KDevPG::globalSystem.ns + "::Parser::Token_EOF;_t.begin = _t.end = Iterator::plain() - Iterator::begin();}\n"
+         "#define lxEOF {Base::Token& _t(Base::push()); _t.kind = Token_EOF;_t.begin = _t.end = Iterator::plain() - Iterator::begin();}\n"
          "#define lxFINISH {lxEOF lxDONE}\n"
          "#define yytoken (Base::back())\n"
          "#define lxFAIL {goto _fail;}\n"

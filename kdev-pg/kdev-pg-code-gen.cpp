@@ -1045,13 +1045,6 @@ void GenerateVariableDeclaration<printType, printName>::operator()(Model::Variab
   }
 }
 
-void GenerateToken::operator()(QPair<QString, Model::TerminalItem*> const &__it)
-{
-  Model::TerminalItem *t = __it.second;
-  out << "Token_" << t->mName << " = " << mTokenValue << "," << endl;
-  ++mTokenValue;
-}
-
 void GenerateMemberCode::operator()(Settings::MemberItem* m)
 {
   if ((mKindMask & m->mMemberKind) != 0)
@@ -1069,10 +1062,10 @@ void GenerateMemberCode::operator()(Settings::MemberItem* m)
 
 void GenerateParserDeclarations::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Parser ";
+  out << "class " << globalSystem.exportMacro << " Parser : ";
   if(!globalSystem.parserBaseClass.isEmpty())
-    out << ": public " << globalSystem.parserBaseClass << " ";
-  out << "{"
+    out << "public " << globalSystem.parserBaseClass << ", ";
+  out << "public TokenTypeWrapper\n{"
       << "public:" << endl
 //       << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
       << "typedef " << globalSystem.tokenStream << "::Token Token;" << endl
@@ -1141,18 +1134,6 @@ void GenerateParserDeclarations::operator()()
             << "}" << endl
             << endl;
       }
-
-
-  out << "enum TokenType" << endl << "{" << endl;
-  GenerateToken gen(out);
-  for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); ++it )
-  {
-    gen(qMakePair(it.key(), *it));
-  }
-  out << "TokenTypeSize" << endl
-      << "}; // TokenType" << endl
-      << endl;
-
 
   if (globalSystem.parserclassMembers.declarations.empty() == false)
     {
@@ -1272,11 +1253,10 @@ void GenerateTokenVariableInitialization::visitVariableDeclaration(Model::Variab
 void GenerateTokenTexts::operator()()
 {
   out << "switch (token) {" << endl;
-  GenerateToken gen(out);
   for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); ++it )
   {
     Model::TerminalItem* t = *it;
-    out << "    case Parser::Token_" << t->mName << ":" << endl;
+    out << "    case TokenTypeWrapper::Token_" << t->mName << ":" << endl;
     QString text = t->mDescription;
     text.replace('\\', "\\\\").replace('"', "\\\"");
     out << "        return \"" <<  text << "\";" << endl;

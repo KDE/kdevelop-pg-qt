@@ -83,7 +83,8 @@ if( KDEVPGQT_INCLUDE_DIR
     set(KDEVPGQT_FOUND TRUE)
 
     macro(KDEVPGQT_GENERATE _srcVar _language )
-        set(_outputList)
+        set(_outputList
+            "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentype.h")
         set(_depList ${ARGN})
         set(_astList
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h")

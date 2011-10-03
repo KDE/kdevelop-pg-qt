@@ -161,19 +161,6 @@ public:
   virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
 };
 
-class GenerateToken
-{
-public:
-  QTextStream& out;
-  int mTokenValue;
-
-public:
-  GenerateToken(QTextStream& o): out(o), mTokenValue(1000)
-  {}
-
-  void operator()(QPair<QString, Model::TerminalItem*> const &__it);
-};
-
 class GenerateMemberCode
 {
 public:

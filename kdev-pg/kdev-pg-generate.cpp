@@ -66,10 +66,6 @@ void generateOutput()
         << endl
         
         << "#include \"" << globalSystem.language << "ast-fwd.h\"" << endl
-        << endl
-
-        << "#include <QtCore/QList>" << endl
-        << "#include <kdev-pg-list.h>" << endl
         << endl;
       if (!globalSystem.exportMacroHeader.isEmpty())
         s << "#include \"" << globalSystem.exportMacroHeader << "\""
@@ -77,7 +73,11 @@ void generateOutput()
 
       foreach (const QString& header, globalSystem.astHeaders)
         s << "#include \"" << header << "\"\n";
-
+      
+      s <<  "#include <QtCore/QList>" << endl
+        << "#include <kdev-pg-list.h>" << endl
+        << endl;
+      
       if (!globalSystem.decl.isEmpty())
         s << globalSystem.decl << endl;
 
@@ -201,9 +201,6 @@ void generateOutput()
     if (globalSystem.tokenStream == "KDevPG::TokenStream")
       s << "#include <kdev-pg-token-stream.h>" << endl;
     
-    if (globalSystem.needOperatorStack)
-      s << "#include <QtCore/QVector>" << endl;
-    
     foreach (const QString& header, globalSystem.parserDeclarationHeaders)
       s << "#include \"" << header << "\"\n";
 
@@ -211,7 +208,10 @@ void generateOutput()
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
-
+    
+    if (globalSystem.needOperatorStack)
+      s << "#include <QtCore/QVector>" << endl;
+    
     if (!globalSystem.decl.isEmpty() && !globalSystem.generateAst)
       s << globalSystem.decl << endl;
 

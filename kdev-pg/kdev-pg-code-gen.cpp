@@ -1067,7 +1067,6 @@ void GenerateParserDeclarations::operator()()
     out << "public " << globalSystem.parserBaseClass << ", ";
   out << "public TokenTypeWrapper\n{"
       << "public:" << endl
-//       << "typedef " << globalSystem.tokenStream << " tokenStreamType;" << endl
       << "typedef " << globalSystem.tokenStream << "::Token Token;" << endl
       << globalSystem.tokenStream << " *tokenStream;" << endl
       << "int yytoken;" << endl;

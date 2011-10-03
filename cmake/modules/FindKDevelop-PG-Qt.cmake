@@ -193,5 +193,3 @@ if(KDEVPGQT_FOUND)
 message(STATUS "Using kdevelop-pg-qt include dir: ${KDEVPGQT_INCLUDE_DIR}")
 message(STATUS "Using kdevelop-pg-qt executable: ${KDEVPGQT_EXECUTABLE}")
 endif(KDEVPGQT_FOUND)
-
-

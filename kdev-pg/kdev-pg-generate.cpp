@@ -405,7 +405,7 @@ void generateOutput()
       << "#ifndef " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
       << endl
-      << "#include \"" << language << "tokentype.h\"" << endl
+      << "#include \"" << globalSystem.language << "tokentype.h\"" << endl
 
       << "namespace " << globalSystem.ns << "{" << endl
       << endl

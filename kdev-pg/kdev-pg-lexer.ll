@@ -19,8 +19,7 @@
 */
 
 #include <QtCore/QDebug>
-// #include <iostream>
-// #include <cstdio>
+
 #include "kdev-pg.h"
 #include "kdev-pg-parser.hh"
 
@@ -363,7 +362,8 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 char ch;
 int yyLine = 1, currentOffset = 0;
 bool endOfLine = false, yymoreFlag = false;
-char yyTextLine[256 * 1024];
+int yyTextLineLeng = 1024;
+char *yyTextLine = (char*)malloc(yyTextLineLeng);
 
 int inp()
 {
@@ -403,8 +403,22 @@ void appendLineBuffer()
   static int lastTextLeng = 0;
   
   currentOffset = strlen(yyTextLine); /* start of current */
+  
+  int newLeng = currentOffset + strlen(yytext) - (yymoreFlag ? lastTextLeng : 0) + 1;
+  if(newLeng > yyTextLineLeng)
+  {
+    do
+    {
+      yyTextLineLeng *= 2;
+    }
+    while(newLeng > yyTextLineLeng);
+    yyTextLine = (char*)realloc(yyTextLine, yyTextLineLeng);
+  }
+  
   strcpy(yyTextLine+currentOffset, yytext + (yymoreFlag ? lastTextLeng : 0)); /* append current */
   /* strcpy is faster than strcat */
+  
+  Q_ASSERT(strlen(yyTextLine) < yyTextLineLeng);
   
   lastTextLeng = strlen(yytext);
   yymoreFlag = false;

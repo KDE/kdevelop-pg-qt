@@ -156,9 +156,7 @@ public:
   
   /**
    * Pushes a new token to the stream.
-   * @warning This function does not affect the position!
-   * @return The new uninitialized token
-   * @sa advance
+   * @return The new uninitialized token (reference)
    */
   inline T &push()
   {
@@ -176,6 +174,10 @@ public:
     return mTokenBuffer[mTokenCount++];
   }
   
+  /**
+   * Pushes the specified token to the stream.
+   * @return Reference to the inserted token
+   */
   inline T &push(const T& t)
   {
     return push() = t;

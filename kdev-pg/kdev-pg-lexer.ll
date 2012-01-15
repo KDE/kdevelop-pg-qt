@@ -215,7 +215,6 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   "{"[a-zA-Z_][a-zA-Z_0-9]*"}"          ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
   ";"+(("--"[^\r\n]*[\r\n])|[ \f\t\r\n])+/";"+   countNewlines(yytext, yyleng); rulePosition = RuleBody; BEGIN(INITIAL); return ';';
   ";"+                    return ';';
-  ":"                     return ';';
   "["                     ++openBrackets; return '[';
   "]"                     --openBrackets; return ']';
   "("                     ++openBrackets; return '(';

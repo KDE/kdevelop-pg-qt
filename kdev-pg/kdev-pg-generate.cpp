@@ -739,6 +739,8 @@ void generateLexer()
       LEXER_CORE_IMPL("read", "start", "if(Base::index() < Base::size())\nreturn Base::read();\n")
     }
     
+    s << globalSystem.lexerBits << endl;
+    
     if(hasStates)
     {
       s << "#undef lxSET_RULE_SET\n" << endl;
@@ -758,8 +760,7 @@ void generateLexer()
          "#undef PP_CONCAT\n"
          "#undef PP_CONCAT_IMPL\n" << endl;
     
-    s << globalSystem.lexerBits << endl
-      << "} // end of namespace " << globalSystem.ns << endl << endl;
+    s << "} // end of namespace " << globalSystem.ns << endl << endl;
     
     QString oname = globalSystem.language;
     oname += "lexer.cpp";

@@ -97,14 +97,14 @@ void help()
 
 void version()
 {
-  KDevPG::checkOut << "KDevelop-PG-Qt: 0.9.81 (1.0 Beta)" << endl;
+  KDevPG::checkOut << "KDevelop-PG-Qt: 1.0.0" << endl;
   
   exit(EXIT_SUCCESS);
 }
 
 void author()
 {
-  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2011 by the KDevelop-PG-Qt developers:") << endl
+  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2012 by the KDevelop-PG-Qt developers:") << endl
     << QString::fromUtf8("\tRoberto Raggi\n"
        "\tJakob Petsovits\n"
        "\tAndreas Pakulat\n"

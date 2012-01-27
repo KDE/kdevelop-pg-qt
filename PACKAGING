@@ -1,3 +1,4 @@
 Information for packagers:
 Please notice:
-devel/dev packages including the headers from include/ do not make sense, because they are always needed, the application is not usable without these headers (just like flex requiring FlexLexer.h). In future the application might be usable as a library, then such a package containing other headers might make sense, however, include/*.h belongs to the normal package, not to the dev-package.
+*devel/dev packages including the headers from include/ do not make sense, because they are always needed, the application is not usable without these headers (just like flex requiring FlexLexer.h). In future the application might be usable as a library, then such a package containing other headers might make sense, however, include/*.h belongs to the normal package, not to the dev-package.
+*It is called KDevelop-PG-Qt, not KDevelop4-PG-Qt or anything like that, it is not part of KDevelop4.

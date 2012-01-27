@@ -10,6 +10,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/KDevelop-PG-QtConfig.cma
 kdevpgqt_generate(parser_SRCS php NAMESPACE Php DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
     "${CMAKE_CURRENT_SOURCE_DIR}/php.g"
 )
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_definitions(-fexceptions)
 

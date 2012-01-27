@@ -21,7 +21,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/KDevelop-PG-QtConfig.cma
 kdevpgqt_generate(parser_srcs cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )
-
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 IF(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
@@ -29,7 +29,7 @@ IF(FLEX_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cc.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/FlexLexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/ccparser.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/ccparser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"cclexer.cpp"
                 "cc.ll"

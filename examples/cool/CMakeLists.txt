@@ -16,6 +16,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/KDevelop-PG-QtConfig.cma
 kdevpgqt_generate(parser_srcs cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
 )
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 IF(FLEX_EXECUTABLE)
@@ -24,7 +25,7 @@ IF(FLEX_EXECUTABLE)
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.h"
-                "${CMAKE_CURRENT_SOURCE_DIR}/coolparser.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/coolparser.h"
         COMMAND ${FLEX_EXECUTABLE}
         ARGS    -o"cool_lexer.cpp"
                 "cool_lexer.ll"

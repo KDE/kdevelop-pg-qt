@@ -15,6 +15,7 @@ if(NOT KDE4_FOUND)
     cmake_policy(SET CMP0002 OLD)
     find_package(Qt4)
     set(DATA_INSTALL_DIR share)
+    set(LIB_INSTALL_DIR lib)
 endif(NOT KDE4_FOUND)
 
 # Use colored output (since cmake 2.4.0)

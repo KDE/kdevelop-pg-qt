@@ -608,7 +608,9 @@ void generateLexer()
       s << "\n// user defined code:" << endl; \
       GenerateMemberCode gen(s, Settings::MemberItem::PublicDeclaration \
                                 | Settings::MemberItem::ProtectedDeclaration \
-                                | Settings::MemberItem::PrivateDeclaration); \
+                                | Settings::MemberItem::PrivateDeclaration \
+                                | Settings::MemberItem::ConstructorCode \
+                                | Settings::MemberItem::DestructorCode); \
       for( auto it = globalSystem.lexerclassMembers.name.begin(); \
       it != globalSystem.lexerclassMembers.name.end(); ++it ) \
       { \

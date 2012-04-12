@@ -23,8 +23,6 @@
 #include <kdev-pg-char-sets.h>
 
 #include <vector>
-#include <set>
-#include <map>
 #include <algorithm>
 #include <stack>
 #include <string>

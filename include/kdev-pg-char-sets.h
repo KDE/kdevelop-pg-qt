@@ -21,6 +21,7 @@
 #ifndef KDEV_PG_CHAR_SETS
 #define KDEV_PG_CHAR_SETS
 
+#include <string>
 #include <iostream>
 #include <vector>
 #include <set>
@@ -242,14 +243,15 @@ public:
   }
 };
 
-class QByteArrayIterator
+template<typename String>
+class ByteStringIterator
 {
-  QByteArray::const_iterator _begin, iter, end;
+  typename String::const_iterator _begin, iter, end;
 public:
   typedef uchar Int;
   typedef uchar InputInt;
-  typedef QByteArray::const_iterator PlainIterator;
-  QByteArrayIterator(const QByteArray& str) : _begin(str.begin()), iter(str.begin()), end(str.end())
+  typedef typename String::const_iterator PlainIterator;
+  ByteStringIterator(const String& str) : _begin(str.begin()), iter(str.begin()), end(str.end())
   {
     
   }
@@ -261,7 +263,7 @@ public:
   {
     return iter != end;
   }
-  ptrdiff_t operator-(const QByteArrayIterator& other) const
+  ptrdiff_t operator-(const ByteStringIterator& other) const
   {
     return iter - other.iter;
   }
@@ -274,6 +276,9 @@ public:
     return _begin;
   }
 };
+
+typedef ByteStringIterator<QByteArray> QByteArrayIterator;
+typedef ByteStringIterator<string> StdStringIterator;
 
 class QUtf16ToUcs4Iterator
 {
@@ -313,14 +318,17 @@ public:
   }
 };
 
-class QUtf8ToUcs4Iterator
+template<typename String>
+class Utf8ToUcs4Iterator
 {
-  uchar const *_begin, *ptr, *end;
+public:
+  typedef typename String::const_iterator PlainIterator;
+private:
+  PlainIterator _begin, ptr, end;
 public:
   typedef quint32 Int;
   typedef uchar InputInt;
-  typedef InputInt const* PlainIterator;
-  QUtf8ToUcs4Iterator(const QByteArray& qba) : _begin(reinterpret_cast<uchar const*>(qba.data())), ptr(_begin), end(ptr + qba.size())
+  Utf8ToUcs4Iterator(const String& str) : _begin(str.begin()), ptr(_begin), end(ptr + str.size())
   {
     
   }
@@ -391,7 +399,7 @@ public:
   {
     return ptr != end;
   }
-  ptrdiff_t operator-(const QUtf8ToUcs4Iterator& other) const
+  ptrdiff_t operator-(const String& other) const
   {
     return ptr - other.ptr;
   }
@@ -401,6 +409,8 @@ public:
   }
 };
 
+typedef Utf8ToUcs4Iterator<QByteArray> QUtf8ToUcs4Iterator;
+typedef Utf8ToUcs4Iterator<string> StdStringUtf8ToUcs4Iterator;
 
 class QUtf8ToUcs2Iterator
 {

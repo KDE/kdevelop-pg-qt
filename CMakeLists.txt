@@ -47,6 +47,7 @@ add_subdirectory(examples EXCLUDE_FROM_ALL)
 
 if(KDE4_FOUND)
     enable_testing()
+    set(KDE4_BUILD_TESTS "ON" CACHE "BOOL" "Enable building of tests" FORCE )
     add_subdirectory(tests)
 endif(KDE4_FOUND)
 

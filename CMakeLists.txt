@@ -15,6 +15,7 @@ if(NOT KDE4_FOUND)
     cmake_policy(SET CMP0002 OLD)
     find_package(Qt4)
     set(DATA_INSTALL_DIR share)
+    set(LIB_INSTALL_DIR lib)
 endif(NOT KDE4_FOUND)
 
 # Use colored output (since cmake 2.4.0)
@@ -46,5 +47,12 @@ add_subdirectory(examples EXCLUDE_FROM_ALL)
 
 if(KDE4_FOUND)
     enable_testing()
+    set(KDE4_BUILD_TESTS "ON" CACHE "BOOL" "Enable building of tests" FORCE )
     add_subdirectory(tests)
 endif(KDE4_FOUND)
+
+include(CTest)
+
+# CTestCustom.cmake has to be in the CTEST_BINARY_DIR.
+# in the KDE build system, this is the same as CMAKE_BINARY_DIR.
+configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR}/CTestCustom.cmake)

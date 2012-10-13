@@ -659,7 +659,7 @@ void generateLexer()
     LEXER_EXTRA_CODE_GEN(destructorCode)
     s << "}" << endl << endl
             
-      << "#define PP_CONCAT_IMPL(x, y) x ## y\n" // necesarry, otherwise CURRENT_RULE_SET would not get resolved
+      << "#define PP_CONCAT_IMPL(x, y) x ## y\n" // necessary, otherwise CURRENT_RULE_SET would not get resolved
          "#define PP_CONCAT(x, y) PP_CONCAT_IMPL(x, y)\n\n"
          
          "#define lxCURR_POS (Iterator::plain())\n"

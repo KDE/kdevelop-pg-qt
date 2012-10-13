@@ -393,6 +393,14 @@ void clearLineBuffer()
   endOfLine = false;
 }
 
+struct InitLineBuffer
+{
+  InitLineBuffer()
+  {
+    clearLineBuffer();
+  }
+} _initLineBuffer;
+
  /* add the current token to the current line */
 void appendLineBuffer()
 {

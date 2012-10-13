@@ -21,9 +21,12 @@
 #include "kdev-pg-regexp.h"
 #include "kdev-pg.h"
 #include "kdev-pg-regexp-helper.h"
+#include "kdev-pg-bit-array.h"
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <QHash>
+#include <QSet>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -50,11 +53,10 @@ namespace std                                               \
 
 q_Hash_to_tr1_hash(QBitArray)
 
-
 namespace KDevPG
 {
 
-typedef vector<bool> UsedBitArray;
+typedef BitArray UsedBitArray;
 typedef QUtf8ToUcs4Iterator Iterator;
 // typedef TableCharSet<Ascii> CharSet;
 
@@ -533,8 +535,9 @@ public:
         rules.resize(nstates);
         return *this;
     }
-    UsedBitArray closure(UsedBitArray s)
+    UsedBitArray closure(const UsedBitArray& states)
     {
+        UsedBitArray s(states);
         assert(s.size() == nstates);
         stack<size_t> todo;
         for(size_t i = 0; i != nstates; ++i)
@@ -562,8 +565,9 @@ public:
             res[i] = res[i] || b[i];
         return res;
     }
-    vector< pair<CharSet, UsedBitArray > > follow(UsedBitArray s)
+    vector< pair<CharSet, UsedBitArray > > follow(const UsedBitArray& states)
     {
+        UsedBitArray s(states);
         vector<pair<CharSet, UsedBitArray > > pr(nstates);
         for(size_t i = 0; i != nstates; ++i)
         {
@@ -630,7 +634,7 @@ public:
     }
     DFA<CharSet> dfa()
     {
-        unordered_set<UsedBitArray > states;
+        unordered_set<UsedBitArray> states;
         unordered_map<UsedBitArray, vector<pair<CharSet, UsedBitArray > > > rules;
         stack<UsedBitArray > todo;
         UsedBitArray start(nstates);

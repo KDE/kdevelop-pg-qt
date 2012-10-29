@@ -188,6 +188,10 @@ public:
    */
   inline T &read()
   {
+    if(mIndex == size())
+    {
+      push().kind = 1000;
+    }
     return mTokenBuffer[mIndex++];
   }
   

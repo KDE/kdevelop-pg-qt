@@ -31,7 +31,7 @@ public:
   int mTokenValue;
 
 public:
-  GenerateToken(QTextStream& o): out(o), mTokenValue(1000)
+  GenerateToken(QTextStream& o): out(o), mTokenValue(1001)
   {}
 
   void operator()(QPair<QString, Model::TerminalItem*> const &__it);
@@ -40,8 +40,17 @@ public:
 void GenerateToken::operator()(QPair<QString, Model::TerminalItem*> const &__it)
 {
   Model::TerminalItem *t = __it.second;
-  out << "Token_" << t->mName << " = " << mTokenValue << "," << endl;
-  ++mTokenValue;
+  out << "Token_" << t->mName << " = ";
+  if(t->mName == "EOF")
+  {
+    out << 1000;
+  }
+  else
+  {
+    out << mTokenValue;
+    ++mTokenValue;
+  }
+  out << "," << endl;
 }
 
 void GenerateTokenType::operator()()

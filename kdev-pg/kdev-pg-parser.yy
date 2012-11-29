@@ -309,7 +309,7 @@ opt_lexer_action
     | T_CONTINUE {
         r = "\nlxCONTINUE;\n";
       }
-    | /* empty */ { r = "\nlxSKIP\n" }
+    | /* empty */ { r = "\nlxSKIP\n"; }
     ;
 
 regexp

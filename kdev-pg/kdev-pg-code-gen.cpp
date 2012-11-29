@@ -51,7 +51,7 @@ namespace KDevPG
 
   void generateCondition(const World::NodeSet& s, QTextStream& out)
   {
-    if(s.size() == 0 || s.size() == 1 && nodeCast<Model::ZeroItem*>(*s.begin()) != 0)
+    if(s.size() == 0 || (s.size() == 1 && nodeCast<Model::ZeroItem*>(*s.begin()) != 0))
     {
       out << "true /*epsilon*/";
       return;

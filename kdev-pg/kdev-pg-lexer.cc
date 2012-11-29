@@ -3423,7 +3423,7 @@ void appendLineBuffer()
   strcpy(yyTextLine+currentOffset, yytext + (yymoreFlag ? lastTextLeng : 0)); /* append current */
   /* strcpy is faster than strcat */
   
-  Q_ASSERT(strlen(yyTextLine) < yyTextLineLeng);
+  Q_ASSERT(strlen(yyTextLine) < size_t(yyTextLineLeng));
   
   lastTextLeng = strlen(yytext);
   yymoreFlag = false;

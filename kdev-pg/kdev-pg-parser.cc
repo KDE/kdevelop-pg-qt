@@ -2192,7 +2192,7 @@ yyreduce:
 
 /* Line 1806 of yacc.c  */
 #line 312 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { r = "\nlxSKIP\n" ;}
+    { r = "\nlxSKIP\n"; }
     break;
 
   case 50:

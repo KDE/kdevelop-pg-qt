@@ -164,7 +164,7 @@ struct Codec2Size<Ucs4>
 };
 
 template<CharEncoding codec>
-inline typename Codec2Container<codec>::Result qString2Codec(const QString& str)
+inline typename Codec2Container<codec>::Result qString2Codec(const QString& /*str*/)
 {
   static_assert(Codec2False<codec>::value, "Unknown codec");
 }

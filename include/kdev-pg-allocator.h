@@ -107,7 +107,7 @@ public:
     return p;
   }
 
-  void deallocate(pointer __p, sizeType __n)
+  void deallocate(pointer /*__p*/, sizeType /*__n*/)
   {}
 
   sizeType maxSize() const
@@ -132,7 +132,7 @@ private:
   };
 
   template <class _Tp1>
-  Allocator(const Allocator<_Tp1> &__o)
+  Allocator(const Allocator<_Tp1> &/*__o*/)
   {}
 
 private:

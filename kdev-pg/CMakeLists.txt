@@ -1,14 +1,11 @@
-
 PROJECT(kdevpg)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 REMOVE_DEFINITIONS(-DQT_NO_STL)
 ADD_DEFINITIONS(-DQT_STL)
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_CXX_COMPILER_ID MATCHES Clang)
-    add_definitions(-fexceptions -std=c++0x)
-endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_CXX_COMPILER_ID MATCHES Clang)
 
-QT4_ADD_RESOURCES(kdevpg_rcc_srcs ../unidata.qrc)
+QT5_ADD_RESOURCES(kdevpg_rcc_srcs ../unidata.qrc)
+kde_enable_exceptions()
 
 SET(kdevpg_srcs
     ASBeautifier.cpp
@@ -97,7 +94,7 @@ ENDIF(FLEX_EXECUTABLE)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg-qt ${parser_srcs} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
-TARGET_LINK_LIBRARIES( kdev-pg-qt ${QT_QTCORE_LIBRARY})
+TARGET_LINK_LIBRARIES( kdev-pg-qt Qt5::Core)
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"

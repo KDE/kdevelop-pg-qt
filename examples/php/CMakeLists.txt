@@ -15,7 +15,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-fexceptions)
 
 add_executable( phptest ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries( phptest
-${QT_QTCORE_LIBRARY}
-)
+target_link_libraries( phptest Qt5::Core)
 

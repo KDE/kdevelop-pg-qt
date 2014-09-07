@@ -30,7 +30,7 @@ void print_token_environment(Parser* parser)
         if (i == current_index)
           std::cerr << ">>";
 
-        std::cerr << dec.decode_id(i).toAscii().constData(); // print out currently processed token
+        std::cerr << qPrintable(dec.decode_id(i)); // print out currently processed token
 
         if (i == current_index)
           std::cerr << "<<";

@@ -1,41 +1,29 @@
-project(kdevelop-pg)
+cmake_minimum_required(VERSION 2.8.12)
+project(kdevelop-pg-qt)
 
 enable_testing()
 
-find_package(KDE4)
+set(REQUIRED_QT_VERSION 5.2.0)
+find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core Test)
 
-set(KDEVPGQT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(ECM 1.1.0 REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+include(ECMAddTests)
 
-# Qt only build
-if(NOT KDE4_FOUND)
-    cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
-    # set the cmake policies to the 2.4.x compatibility settings
-    cmake_policy(VERSION 2.4.5)
-    # CMP0002: multiple targets with the saßme name for the unit tests
-    cmake_policy(SET CMP0002 OLD)
-    find_package(Qt4)
-    set(DATA_INSTALL_DIR share)
-    set(LIB_INSTALL_DIR lib)
-endif(NOT KDE4_FOUND)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings)
 
-# Use colored output (since cmake 2.4.0)
-SET(CMAKE_COLOR_MAKEFILE ON)
-
-# GCC, Clang and MVC supported
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-    add_definitions(--std=c++0x)
-endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${QT_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
-FIND_PROGRAM(FLEX_EXECUTABLE
+find_program(FLEX_EXECUTABLE
   NAMES flex
   PATHS /usr/bin
   DOC "Flex executable")
 
-FIND_PROGRAM(BISON_EXECUTABLE
+find_program(BISON_EXECUTABLE
   NAMES bison
   PATHS /usr/bin
   DOC "bison executable")
@@ -44,11 +32,7 @@ add_subdirectory(cmake)
 add_subdirectory(include)
 add_subdirectory(kdev-pg)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
-
-if(KDE4_FOUND)
-    enable_testing()
-    add_subdirectory(tests)
-endif(KDE4_FOUND)
+add_subdirectory(tests)
 
 include(CTest)
 

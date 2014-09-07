@@ -128,7 +128,6 @@ Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
 
 %lexerclass(constructor)
 [:
-inStringCounter = 0;
 :]
 
 -- keywords:

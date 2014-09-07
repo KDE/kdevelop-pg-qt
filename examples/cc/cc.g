@@ -18,13 +18,13 @@
 
 [:
 #include <QtCore/QString>
-#include <kdebug.h>
+#include <QtCore/QDebug>
 :]
 
 %parserclass (protected declaration)
 [:
-void expectedSymbol(cc::AstNode::AstNodeKind kind, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected symbol " << name; }
-void expectedToken(int kind, enum TokenType token, const QString& name) { kDebug() << "In AstNode " << kind << ": Expected token " << name << " (" << token << ")";}
+void expectedSymbol(cc::AstNode::AstNodeKind kind, const QString& name) { qWarning() << "In AstNode " << kind << ": Expected symbol " << name; }
+void expectedToken(int kind, enum TokenType token, const QString& name) { qWarning() << "In AstNode " << kind << ": Expected token " << name << " (" << token << ")";}
 struct ParserState {
   int ltCounter;
 };

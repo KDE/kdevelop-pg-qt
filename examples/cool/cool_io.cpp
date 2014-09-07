@@ -19,11 +19,11 @@ namespace cool
 void Parser::report_problem( Parser::problem_type type, const QString & message )
 {
   if (type == error)
-    std::cerr << "** ERROR: " << message.toAscii().constData() << std::endl;
+    std::cerr << "** ERROR: " << qPrintable(message) << std::endl;
   else if (type == warning)
-    std::cerr << "** WARNING: " << message.toAscii().constData() << std::endl;
+    std::cerr << "** WARNING: " << qPrintable(message) << std::endl;
   else if (type == info)
-    std::cerr << "** Info: " << message.toAscii().constData() << std::endl;
+    std::cerr << "** Info: " << qPrintable(message) << std::endl;
 }
 
 

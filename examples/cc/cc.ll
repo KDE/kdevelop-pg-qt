@@ -27,7 +27,7 @@
 
 #define DONT_INCLUDE_FLEXLEXER
 #include "lexer.h"
-#include <kdebug.h>
+#include <QtCore/QDebug>
 
 %}
 
@@ -136,7 +136,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 [\n]            /* skip */ ;
 "*"+"/"         BEGIN(INITIAL);
 <<EOF>> {
-    kDebug() << "Encountered end of file in an unclosed block comment";
+    qWarning() << "Encountered end of file in an unclosed block comment";
     return Parser::Token_EOF;
 }
 }
@@ -238,13 +238,13 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 
 [']({Escape}|{Multibyte}|[^\\\n\'])[']   return Parser::Token_X_CONSTANT;
 [']({Escape}|{Multibyte}|[\\][^\\\n\']|[^\\\n\'])*([\\]?[\n]|[']) {
-    kDebug() << QString("Invalid character literal: %1").arg(yytext);
+    qWarning() << QString("Invalid character literal: %1").arg(yytext);
     return Parser::Token_X_CONSTANT;
 }
 
 ["]({Escape}|{Multibyte}|[^\\\n\"])*["]  return Parser::Token_STRING_LITERAL;
 ["]({Escape}|{Multibyte}|[\\][^\\\n\"]|[^\\\n\"])*([\\]?[\n]|["]) {
-    kDebug() << QString("Invalid string literal: %1").arg(yytext);
+    qWarning() << QString("Invalid string literal: %1").arg(yytext);
     return Parser::Token_STRING_LITERAL;
 }
 
@@ -260,7 +260,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
  /* everything else is not a valid lexeme */
 
 .                  {
-                        kDebug() << "INVALID TOKEN";
+                        qWarning() << "INVALID TOKEN";
                         exit(-1);
                    }
 

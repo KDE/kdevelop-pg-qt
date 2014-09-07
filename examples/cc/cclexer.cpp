@@ -9,7 +9,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 35
+#define YY_FLEX_SUBMINOR_VERSION 39
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -58,7 +58,6 @@ typedef int flex_int32_t;
 typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
-#endif /* ! C99 */
 
 /* Limits of integral types. */
 #ifndef INT8_MIN
@@ -89,14 +88,16 @@ typedef unsigned int flex_uint32_t;
 #define UINT32_MAX             (4294967295U)
 #endif
 
+#endif /* ! C99 */
+
 #endif /* ! FLEXINT_H */
 
 /* begin standard C++ headers. */
 #include <iostream> 
 #include <errno.h>
 #include <cstdlib>
-#include <cstring>
 #include <cstdio>
+#include <cstring>
 /* end standard C++ headers. */
 
 #ifdef __cplusplus
@@ -165,13 +166,19 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
-extern int yyleng;
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
+
+extern yy_size_t yyleng;
 
 #define EOB_ACT_CONTINUE_SCAN 0
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
     #define YY_LESS_LINENO(n)
+    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -188,11 +195,6 @@ extern int yyleng;
 	while ( 0 )
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
-
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
 
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
@@ -212,7 +214,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	int yy_n_chars;
+	yy_size_t yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -2657,7 +2659,7 @@ static yyconst flex_int16_t yy_chk[8893] =
 
 #define DONT_INCLUDE_FLEXLEXER
 #include "lexer.h"
-#include <kdebug.h>
+#include <QtCore/QDebug>
 
 /* UTF-8 sequences, generated with the Unicode.hs script from
 * http://lists.gnu.org/archive/html/help-flex/2005-01/msg00043.html */
@@ -2685,7 +2687,7 @@ static yyconst flex_int16_t yy_chk[8893] =
 /* Any multi-byte Unicode character. Single-byte ones are just . in lex. */
 /* non-Unicode stuff */
 
-#line 2689 "cclexer.cpp"
+#line 2691 "cclexer.cpp"
 
 #define INITIAL 0
 #define IN_BLOCKCOMMENT 1
@@ -2786,13 +2788,6 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 122 "cc.ll"
-
-
- /* whitespace, newlines, preprocessor-statements and comments */
-
-#line 2795 "cclexer.cpp"
-
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -2819,6 +2814,14 @@ YY_DECL
 		yy_load_buffer_state(  );
 		}
 
+	{
+#line 122 "cc.ll"
+
+
+ /* whitespace, newlines, preprocessor-statements and comments */
+
+#line 2824 "cclexer.cpp"
+
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
 		yy_cp = (yy_c_buf_p);
@@ -2835,7 +2838,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
 			if ( yy_accept[yy_current_state] )
 				{
 				(yy_last_accepting_state) = yy_current_state;
@@ -2925,7 +2928,7 @@ BEGIN(INITIAL);
 case YY_STATE_EOF(IN_BLOCKCOMMENT):
 #line 138 "cc.ll"
 {
-    kDebug() << "Encountered end of file in an unclosed block comment";
+    qWarning() << "Encountered end of file in an unclosed block comment";
     return Parser::Token_EOF;
 }
 	YY_BREAK
@@ -3354,7 +3357,7 @@ case 93:
 YY_RULE_SETUP
 #line 240 "cc.ll"
 {
-    kDebug() << QString("Invalid character literal: %1").arg(yytext);
+    qWarning() << QString("Invalid character literal: %1").arg(yytext);
     return Parser::Token_X_CONSTANT;
 }
 	YY_BREAK
@@ -3368,7 +3371,7 @@ case 95:
 YY_RULE_SETUP
 #line 246 "cc.ll"
 {
-    kDebug() << QString("Invalid string literal: %1").arg(yytext);
+    qWarning() << QString("Invalid string literal: %1").arg(yytext);
     return Parser::Token_STRING_LITERAL;
 }
 	YY_BREAK
@@ -3393,7 +3396,7 @@ case 99:
 YY_RULE_SETUP
 #line 262 "cc.ll"
 {
-                        kDebug() << "INVALID TOKEN";
+                        qWarning() << "INVALID TOKEN";
                         exit(-1);
                    }
 	YY_BREAK
@@ -3402,7 +3405,7 @@ YY_RULE_SETUP
 #line 267 "cc.ll"
 ECHO;
 	YY_BREAK
-#line 3406 "cclexer.cpp"
+#line 3409 "cclexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -3533,6 +3536,7 @@ case YY_STATE_EOF(INITIAL):
 			"fatal flex scanner internal error--no action found" );
 	} /* end of action switch */
 		} /* end of scanning one token */
+	} /* end of user's declarations */
 } /* end of yylex */
 
 /* The contents of this function are C++ specific, so the () macro is not used.
@@ -3677,21 +3681,21 @@ int yyFlexLexer::yy_get_next_buffer()
 
 	else
 		{
-			int num_to_read =
+			yy_size_t num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
 			{ /* Not enough room in the buffer - grow it. */
 
 			/* just a shorter name for the current buffer */
-			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
+			YY_BUFFER_STATE b = YY_CURRENT_BUFFER_LVALUE;
 
 			int yy_c_buf_p_offset =
 				(int) ((yy_c_buf_p) - b->yy_ch_buf);
 
 			if ( b->yy_is_our_buffer )
 				{
-				int new_size = b->yy_buf_size * 2;
+				yy_size_t new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -3722,7 +3726,7 @@ int yyFlexLexer::yy_get_next_buffer()
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), (size_t) num_to_read );
+			(yy_n_chars), num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -3817,7 +3821,7 @@ int yyFlexLexer::yy_get_next_buffer()
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 	yy_is_jam = (yy_current_state == 745);
 
-	return yy_is_jam ? 0 : yy_current_state;
+		return yy_is_jam ? 0 : yy_current_state;
 }
 
     void yyFlexLexer::yyunput( int c, register char* yy_bp)
@@ -3832,7 +3836,7 @@ int yyFlexLexer::yy_get_next_buffer()
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register int number_to_move = (yy_n_chars) + 2;
+		register yy_size_t number_to_move = (yy_n_chars) + 2;
 		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
 		register char *source =
@@ -3875,7 +3879,7 @@ int yyFlexLexer::yy_get_next_buffer()
 
 		else
 			{ /* need more input */
-			int offset = (yy_c_buf_p) - (yytext_ptr);
+			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -4034,8 +4038,6 @@ int yyFlexLexer::yy_get_next_buffer()
 	yyfree((void *) b  );
 }
 
-extern "C" int isatty (int );
-
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
@@ -4147,7 +4149,7 @@ void yyFlexLexer::yypop_buffer_state (void)
  */
 void yyFlexLexer::yyensure_buffer_stack(void)
 {
-	int num_to_alloc;
+	yy_size_t num_to_alloc;
     
 	if (!(yy_buffer_stack)) {
 

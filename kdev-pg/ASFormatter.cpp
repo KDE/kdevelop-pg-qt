@@ -341,7 +341,7 @@ string ASFormatter::nextLine()
             if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::CompatibilityLineNumbers)
               ret += "line";
             ret += " ";
-            ret += QString::number(inLineNumber+2).toAscii().data();
+            ret += to_string(inLineNumber+2);
             ret += " \"" + fileName + "\"";
             if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::FullLineNumbers)
               ret += " 2";
@@ -365,7 +365,7 @@ string ASFormatter::nextLine()
         if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::FullLineNumbers)
         {
           ret = "# ";
-          ret += QString::number(inLineNumber+4).toAscii().data();
+          ret += to_string(inLineNumber+4);
           ret += " \"" + fileName + "\"";
         }
         next

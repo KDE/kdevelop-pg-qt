@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <climits>
-#include <kdebug.h>
+#include <qdebug.h>
 #include "dumptree.h"
 #include "ccparser.h"
 #include "lexer.h"
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 			kind = lexer.yylex();
 			if ( !kind ) // when the lexer returns 0, the end of file is reached
 				kind = Parser::Token_EOF;
-                        kDebug() << kind;
+                        qDebug() << kind;
 			Parser::Token &t = token_stream.push();
 			t.kind = kind;
 			t.begin = lexer.tokenBegin();
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			kDebug() << "Parsing failed";
+			qDebug() << "Parsing failed";
 		}
 		delete[] contents;
 	}

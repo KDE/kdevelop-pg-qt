@@ -173,7 +173,11 @@ inline typename Codec2Container<codec>::Result qString2Codec(const QString& /*st
 template<>
 inline QByteArray qString2Codec<Ascii>(const QString& str)
 {
-  return str.toAscii();
+  /// FIXME: in Qt5 there is no Ascii anymore, and in Qt4 it also was something different
+  /// as it was configurable. In Russia, e.g. Ascii was something different than in Europe etc. pp...
+  /// See: http://qt-project.org/doc/qt-4.8/qstring.html#toAscii
+  /// All of this code here should probably be dropped and replaced by QTextCoded or similar
+  return str.toLatin1();
 }
 
 template<>

@@ -414,7 +414,7 @@ void generateOutput()
       << "namespace " << globalSystem.ns << "{" << endl
       << endl
 
-      << "QString " << globalSystem.exportMacro << " tokenText(int token)" << endl << "{" << endl;
+      << "QString tokenText(int token)" << endl << "{" << endl;
 
     GenerateTokenTexts gen(s);
     gen();

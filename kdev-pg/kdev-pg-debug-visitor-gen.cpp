@@ -26,7 +26,8 @@ namespace KDevPG
 
 void GenerateDebugVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " DebugVisitor: public DefaultVisitor {" << endl
+  // the debug visitor class is header-only, thus we don't need an export macro here
+  out << "class DebugVisitor: public DefaultVisitor {" << endl
       << "public:" << endl;
 
   out << "DebugVisitor("<< globalSystem.tokenStream << " *str, const QString& content = QString())" << endl;

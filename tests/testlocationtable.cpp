@@ -99,4 +99,3 @@ void TestLocationTable::underflow()
 
 QTEST_MAIN(KDevPG::TestLocationTable)
 
-#include "testlocationtable.moc"

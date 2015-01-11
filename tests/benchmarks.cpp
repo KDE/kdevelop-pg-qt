@@ -359,4 +359,3 @@ void Benchmarks::verifyPositionAt_data()
 
 QTEST_MAIN(KDevPG::Benchmarks)
 
-#include "benchmarks.moc"

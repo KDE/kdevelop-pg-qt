@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.9)
 project(kdevelop-pg)
 
 enable_testing()
@@ -8,7 +9,6 @@ set(KDEVPGQT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Qt only build
 if(NOT KDE4_FOUND)
-    cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
     # set the cmake policies to the 2.4.x compatibility settings
     cmake_policy(VERSION 2.4.5)
     # CMP0002: multiple targets with the saßme name for the unit tests
@@ -43,7 +43,6 @@ FIND_PROGRAM(BISON_EXECUTABLE
 add_subdirectory(cmake)
 add_subdirectory(include)
 add_subdirectory(kdev-pg)
-add_subdirectory(examples EXCLUDE_FROM_ALL)
 
 if(KDE4_FOUND)
     enable_testing()

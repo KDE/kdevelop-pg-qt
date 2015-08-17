@@ -564,7 +564,7 @@ void generateLexer()
       << endl
       
       << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
-      << (globalSystem.lexerBaseClass.isEmpty() ? "" : " public " + globalSystem.lexerBaseClass + ",")
+      << (globalSystem.lexerBaseClass.isEmpty() ? QString() : " public " + globalSystem.lexerBaseClass + ",")
       << "public " << globalSystem.inputStream << ","
       << "public TokenTypeWrapper" << endl
       << "{" << endl

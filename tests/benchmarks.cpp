@@ -85,7 +85,7 @@ public:
     }
     if ( i == -1 ) {
       // fallback to binary search
-      qint64 *it = qLowerBound(lines, lines + currentLine, offset);
+      qint64 *it = std::lower_bound(lines, lines + currentLine, offset);
       Q_ASSERT(it != lines + currentLine);
 
       if (*it != offset) {

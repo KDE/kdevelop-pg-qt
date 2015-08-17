@@ -8,8 +8,8 @@ find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core Test)
 
 find_package(ECM 1.1.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
-include(ECMAddTests)
 
+include(ECMAddTests)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
@@ -27,6 +27,9 @@ find_program(BISON_EXECUTABLE
   NAMES bison
   PATHS /usr/bin
   DOC "bison executable")
+
+add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS -DQT_NO_URL_CAST_FROM_STRING)
+add_definitions(-DQT_DEPRECATED_WARNINGS -DQT_DISABLE_DEPRECATED_BEFORE=0x050400)
 
 add_subdirectory(cmake)
 add_subdirectory(include)

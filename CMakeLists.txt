@@ -13,6 +13,7 @@ include(ECMAddTests)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
+include(FeatureSummary)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -42,3 +43,5 @@ include(CTest)
 # CTestCustom.cmake has to be in the CTEST_BINARY_DIR.
 # in the KDE build system, this is the same as CMAKE_BINARY_DIR.
 configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

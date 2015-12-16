@@ -1,6 +1,5 @@
 #include <iostream>
 #include <QString>
-#include <QDebug>
 
 class QUtf16Iterator
 {

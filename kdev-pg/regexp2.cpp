@@ -1,4 +1,3 @@
-#include <QString>
 #include <cstdlib>
 #include <kdevelop-pg-qt/kdev-pg-token-stream.h>
 #include "kdev-pg-char-sets.h"

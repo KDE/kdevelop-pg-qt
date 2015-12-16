@@ -28,11 +28,8 @@
 #include <string>
 #include <cassert>
 
-#include <QBitArray>
 
 #include <QString>
-#include <QFile>
-#include <QStringList>
 
 namespace KDevPG
 {

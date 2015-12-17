@@ -29,6 +29,8 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
+@PACKAGE_INIT@
+
 if( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE )
     set(KDevelop-PG-Qt_FIND_QUIETLY TRUE)
 endif( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE )
@@ -77,6 +79,8 @@ if( KDEVPGQT_INCLUDE_DIR
 
     if( NOT KDevelop-PG-Qt_FIND_QUIETLY )
         message(STATUS "Found KDevelop-PG-Qt")
+        message(STATUS "  Using kdevelop-pg-qt include dir: ${KDEVPGQT_INCLUDE_DIR}")
+        message(STATUS "  Using kdevelop-pg-qt executable: ${KDEVPGQT_EXECUTABLE}")
     endif( NOT KDevelop-PG-Qt_FIND_QUIETLY )
 
 # if all modules found
@@ -188,13 +192,3 @@ else( KDEVPGQT_INCLUDE_DIR
 
 endif( KDEVPGQT_INCLUDE_DIR
  AND KDEVPGQT_EXECUTABLE)
-
-if(KDEVPGQT_FOUND)
-message(STATUS "Using kdevelop-pg-qt include dir: ${KDEVPGQT_INCLUDE_DIR}")
-message(STATUS "Using kdevelop-pg-qt executable: ${KDEVPGQT_EXECUTABLE}")
-endif(KDEVPGQT_FOUND)
-set(KDevelop-PG-Qt_VERSION_COUNT 3)
-set(KDevelop-PG-Qt_VERSION_MAJOR 1)
-set(KDevelop-PG-Qt_VERSION_MINOR 90)
-set(KDevelop-PG-Qt_VERSION_PATCH 90)
-set(KDevelop-PG-Qt_VERSION "${KDevelop-PG-Qt_VERSION_MAJOR}.${KDevelop-PG-Qt_VERSION_MINOR}.${KDevelop-PG-Qt_VERSION_PATCH}")

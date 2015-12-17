@@ -12,7 +12,7 @@ SET(parser_srcs)
 
 SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
 SET(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/KDevelop-PG-QtConfig.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 kdevpgqt_generate(parser_srcs cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
 )

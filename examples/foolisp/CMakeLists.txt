@@ -1,4 +1,4 @@
-project(foolisp_lexer)  
+project(foolisp_lexer)
 
 set(parser_STAT_SRCS
     foolisptest.cpp
@@ -6,7 +6,7 @@ set(parser_STAT_SRCS
 
 SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
 SET(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/KDevelop-PG-QtConfig.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 kdevpgqt_generate(parser_SRCS foolisp NAMESPACE FooLisp DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
     "${CMAKE_CURRENT_SOURCE_DIR}/foolisp.g"
 )

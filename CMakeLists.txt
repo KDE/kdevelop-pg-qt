@@ -59,6 +59,11 @@ find_program(BISON_EXECUTABLE
 add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS -DQT_NO_URL_CAST_FROM_STRING)
 add_definitions(-DQT_DEPRECATED_WARNINGS -DQT_DISABLE_DEPRECATED_BEFORE=0x050400)
 
+# Silence a few warnings
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Wno-unused-local-typedefs")
+endif()
+
 add_subdirectory(include)
 add_subdirectory(kdev-pg)
 add_subdirectory(examples EXCLUDE_FROM_ALL)

@@ -23,7 +23,7 @@
 #ifndef KDEV_PG_TOKEN_STREAM_H
 #define KDEV_PG_TOKEN_STREAM_H
 
-#include <QtCore/QtGlobal>
+#include <vector>
 
 #include "kdev-pg-location-table.h"
 
@@ -72,10 +72,7 @@ class TokenStreamBase
 public:
   typedef T Token;
   TokenStreamBase()
-    : mTokenBuffer(0),
-      mTokenBufferSize(0),
-      mIndex(0),
-      mTokenCount(0),
+    : mIndex(0),
       mLocationTable(0)
   {
     reset();
@@ -83,8 +80,6 @@ public:
 
   ~TokenStreamBase()
   {
-    if (mTokenBuffer)
-      ::free(mTokenBuffer);
     if (mLocationTable)
       delete mLocationTable;
   }
@@ -98,7 +93,6 @@ public:
   inline void reset()
   {
     mIndex = 0;
-    mTokenCount = 0;
   }
   
   /**
@@ -109,8 +103,7 @@ public:
   inline void clear()
   {
     mIndex = 0;
-    mTokenCount = 0;
-    ::free(mTokenBuffer);
+    mTokenBuffer.clear();
   }
   
   /**
@@ -118,7 +111,7 @@ public:
    */
   inline qint64 size() const
   {
-    return mTokenCount;
+    return mTokenBuffer.size();
   }
   
   /**
@@ -156,22 +149,12 @@ public:
   
   /**
    * Pushes a new token to the stream.
-   * @return The new uninitialized token (reference)
+   * @return The new default-initialized token (reference)
    */
   inline T &push()
   {
-    if (mTokenCount == mTokenBufferSize)
-    {
-      if (mTokenBufferSize == 0)
-        mTokenBufferSize = 1024;
-      
-      mTokenBufferSize <<= 2;
-      
-      mTokenBuffer = reinterpret_cast<T*>
-      (::realloc(mTokenBuffer, mTokenBufferSize * sizeof(T)));
-    }
-    
-    return mTokenBuffer[mTokenCount++];
+    mTokenBuffer.push_back({});
+    return mTokenBuffer.back();
   }
   
   /**
@@ -180,7 +163,8 @@ public:
    */
   inline T &push(const T& t)
   {
-    return push() = t;
+    mTokenBuffer.push_back(t);
+    return mTokenBuffer.back();
   }
   
   /**
@@ -208,7 +192,7 @@ public:
    */
   inline T &back()
   {
-    return mTokenBuffer[mTokenCount];
+    return mTokenBuffer.back();
   }
   
   /**
@@ -216,7 +200,7 @@ public:
    */
   inline T &front()
   {
-    return mTokenBuffer[0];
+    return mTokenBuffer.front();
   }
   
   /**
@@ -257,10 +241,8 @@ public:
   }
 
 private:
-  T *mTokenBuffer;
-  qint64 mTokenBufferSize;
+  std::vector<T> mTokenBuffer;
   qint64 mIndex;
-  qint64 mTokenCount;
   LocationTable *mLocationTable;
 
 private:

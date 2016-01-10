@@ -116,19 +116,19 @@ if( KDEVPGQT_INCLUDE_DIR
             list(GET _depList 1 _namespace)
             list(REMOVE_AT _depList 0 1)
             set(_namespace --namespace=${_namespace})
-        elseif( ${_arg} STREQUAL "DEBUG_VISITOR" )
+        elseif()
             list(REMOVE_AT _depList 0)
             set(_dbgVisit "--debug-visitor")
             set(_outputList ${_outputList}
                 "${CMAKE_CURRENT_BINARY_DIR}/${_language}debugvisitor.h"
             )
-        elseif( ${_arg} STREQUAL "TOKEN_TEXT" )
+        elseif()
             list(REMOVE_AT _depList 0)
             set(_tokenText "--token-text")
             set(_outputList ${_outputList}
                 "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentext.h"
             )
-        elseif( ${_arg} STREQUAL "DUMP_INFO" )
+        elseif()
             list(REMOVE_AT _depList 0)
             set(_dumpInfo --terminals --symbols --rules)
             set(_outputList ${_outputList}
@@ -136,16 +136,16 @@ if( KDEVPGQT_INCLUDE_DIR
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-symbols"
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-rules"
             )
-        elseif( ${_arg} STREQUAL "BEAUTIFUL_CODE" )
+        elseif()
             list(REMOVE_AT _depList 0)
             set(_beautifulCode --beautiful-code)
-        elseif( ${_arg} STREQUAL "STRICT_CONFLICTS" )
+        elseif()
             list(REMOVE_AT _depList 0)
             set(_conflicts --strict-conflicts)
-        elseif( ${_arg} STREQUAL "IGNORE_CONFLICTS" )
+        elseif()
             list(REMOVE_AT _depList 0)
             set(_conflicts --ignore-conflicts)
-        elseif( ${_arg} STREQUAL "GENERATE_LEXER" )
+        elseif()
           list(REMOVE_AT _depList 0)
           set(_lexerList
               "${CMAKE_CURRENT_BINARY_DIR}/${_language}lexer.h"

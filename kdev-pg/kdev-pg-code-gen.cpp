@@ -123,7 +123,7 @@ namespace KDevPG
           out <<   "if (!mBlockErrors) {" << endl;
 
         out << "expectedSymbol(AstNode::" << capSymbolName << "Kind"
-            << ", \"" << symbol_name << "\"" << ");" << endl;
+            << ", QStringLiteral(\"" << symbol_name << "\")" << ");" << endl;
 
         if (globalSystem.needStateManagement)
           out << "}" << endl;
@@ -150,7 +150,7 @@ namespace KDevPG
           out << "if (!mBlockErrors) {" << endl;
 
         out << "expectedToken(yytoken, Token_" << node->mName
-            << ", \"" << node->mDescription << "\");" << endl;
+            << ", QStringLiteral(\"" << node->mDescription << "\"));" << endl;
 
         if (globalSystem.needStateManagement)
           out << "}" << endl;
@@ -1258,10 +1258,10 @@ void GenerateTokenTexts::operator()()
     out << "    case TokenTypeWrapper::Token_" << t->mName << ":" << endl;
     QString text = t->mDescription;
     text.replace('\\', "\\\\").replace('"', "\\\"");
-    out << "        return \"" <<  text << "\";" << endl;
+    out << "        return QStringLiteral(\"" <<  text << "\");" << endl;
   }
   out << "    default:" << endl;
-  out << "        return \"unknown token\";" << endl;
+  out << "        return QStringLiteral(\"unknown token\");" << endl;
   out << "}" << endl;
 }
 

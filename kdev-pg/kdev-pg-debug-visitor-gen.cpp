@@ -50,15 +50,15 @@ void GenerateDebugVisitor::operator()()
   out << "        int end = endToken.end;" << endl;
   out << "        if (end-begin > 30) {" << endl;
   out << "            tokenString = m_content.mid(begin, 10);" << endl;
-  out << "            tokenString += \" ...\";" << endl;
-  out << "            tokenString += QString(\"%1 more\").arg(end-begin-20);" << endl;
-  out << "            tokenString += \"... \";" << endl;
-  out << "            tokenString += m_content.mid(end-10, 10);" << endl;
+  out << "            tokenString += QStringLiteral(\" ...\");" << endl;
+  out << "            tokenString += QStringLiteral(\"%1 more\").arg(end-begin-20);" << endl;
+  out << "            tokenString += QStringLiteral(\"... \");" << endl;
+  out << "            tokenString += m_content.midRef(end-10, 10);" << endl;
   out << "        } else {" << endl;
   out << "            tokenString = m_content.mid(begin, end-begin+1);" << endl;
   out << "        }" << endl;
-  out << "        tokenString = tokenString.replace('\\n', \"\\\\n\");" << endl;
-  out << "        tokenString = tokenString.replace('\\r', \"\\\\r\");" << endl;
+  out << "        tokenString = tokenString.replace('\\n', QStringLiteral(\"\\\\n\"));" << endl;
+  out << "        tokenString = tokenString.replace('\\r', QStringLiteral(\"\\\\r\"));" << endl;
   out << "    }" << endl;
   out << "    qint64 beginLine,endLine,beginCol,endCol;" << endl;
   out << "    m_str->startPosition(node->startToken, &beginLine, &beginCol);" << endl;
@@ -92,7 +92,7 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
           << "(" << name << "Ast *" << "node" \
           << ") {" << endl;
   #define O2(name) \
-  out << "printToken(node, \"" << name << "\");" << endl;
+  out << "printToken(node, QStringLiteral(\"" << name << "\"));" << endl;
   #define O3(name) \
     out << "++m_indent;"; \
         \
@@ -166,14 +166,14 @@ void GenerateDebugVisitorRule::visitVariableDeclaration(Model::VariableDeclarati
             << "node->" << node->mName << "Sequence" << "->front()"
             << ", *__end = __it;" << endl
             << "do {" << endl
-            << "printToken(__it->element, \"" << node->mType << "\", \"" << node->mName << "[]\");" << endl
+            << "printToken(__it->element, QStringLiteral(\"" << node->mType << "\"), QStringLiteral(\"" << node->mName << "[]\"));" << endl
             << "__it = __it->next;" << endl
             << "} while (__it != __end);" << endl
             << "}" << endl;
       }
     else
       {
-        out << "if (node->" << node->mName << ") printToken(node->" << node->mName << ", \"" << node->mType << "\", \"" << node->mName << "\");" << endl;
+        out << "if (node->" << node->mName << ") printToken(node->" << node->mName << ", QStringLiteral(\"" << node->mType << "\"), QStringLiteral(\"" << node->mName << "\"));" << endl;
       }
 
     mNames.insert(node->mName);

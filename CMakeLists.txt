@@ -11,7 +11,7 @@ if(NOT KDE4_FOUND)
     cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
     # set the cmake policies to the 2.4.x compatibility settings
     cmake_policy(VERSION 2.4.5)
-    # CMP0002: multiple targets with the saßme name for the unit tests
+    # CMP0002: multiple targets with the same name for the unit tests
     cmake_policy(SET CMP0002 OLD)
     find_package(Qt4)
     set(DATA_INSTALL_DIR share)

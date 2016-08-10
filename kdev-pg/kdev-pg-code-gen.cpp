@@ -104,7 +104,7 @@ namespace KDevPG
         out << capSymbolName << "Ast *" << __var << " = 0;" << endl
             << "if (!parse" << capSymbolName << "(&" << __var;
 
-        if (node->mArguments[0] != '\0') // read: if (mArguments != "")
+        if (!node->mArguments.isEmpty())
             out << ", " << node->mArguments;
 
         out << "))" << endl;

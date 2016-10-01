@@ -12,13 +12,13 @@ enable_testing()
 find_package(ECM 1.1.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
 include(ECMPackageConfigHelpers)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDECompilerSettings)
 include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
 

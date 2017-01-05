@@ -1,9 +1,5 @@
-
-PROJECT(cc_parser)
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 ADD_DEFINITIONS(-DQT_NO_STL)
-
 
 # autogenerate the lexer and the parser
 

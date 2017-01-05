@@ -1,5 +1,3 @@
-project(foolisp_lexer)
-
 set(parser_STAT_SRCS
     foolisptest.cpp
     )

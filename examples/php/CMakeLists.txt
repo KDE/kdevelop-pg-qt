@@ -1,5 +1,3 @@
-project(php_lexer)
-
 set(parser_STAT_SRCS
   phptest.cpp
 )

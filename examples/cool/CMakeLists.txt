@@ -1,10 +1,6 @@
-
-PROJECT(cool_parser)
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 REMOVE_DEFINITIONS(-DQT_NO_STL)
 ADD_DEFINITIONS(-DQT_STL)
-
 
 # autogenerate the lexer and the parser
 

@@ -79,9 +79,9 @@ public:
       return *this = (bool)val;
     }
   };
-  inline BitArray(size_t size, bool val = false) : mSize(size), mByte(reinterpret_cast<unsigned char*>(malloc(bytes())))
+  inline BitArray(size_t size) : mSize(size), mByte(reinterpret_cast<unsigned char*>(malloc(bytes())))
   {
-    memset(mByte, (val ? (~(size_t(0))) : 0), bytes());
+    memset(mByte, 0, bytes());
     setZerosAtEnd();
   }
   inline BitArray() : mSize(0), mByte((unsigned char*)malloc(0))

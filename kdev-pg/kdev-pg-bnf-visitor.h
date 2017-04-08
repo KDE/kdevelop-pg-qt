@@ -50,16 +50,16 @@ private:
   inline _Tp * getSubArray(void *mem, qint64 s);
     
 protected:
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
-  virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitPlus(Model::PlusItem *node);
-  virtual void visitStar(Model::StarItem *node);
-  virtual void visitOperator(Model::OperatorItem *node);
-  virtual void visitTryCatch(Model::TryCatchItem *node);
-  virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem *node);
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitAction(Model::ActionItem *node);
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
+  void visitNonTerminal(Model::NonTerminalItem *node) override;
+  void visitPlus(Model::PlusItem *node) override;
+  void visitStar(Model::StarItem *node) override;
+  void visitOperator(Model::OperatorItem *node) override;
+  void visitTryCatch(Model::TryCatchItem *node) override;
+  void visitAnnotation(Model::AnnotationItem *node) override;
+  void visitCondition(Model::ConditionItem *node) override;
+  void visitEvolve(Model::EvolveItem *node) override;
+  void visitAction(Model::ActionItem *node) override;
 
   /// Should be reimplemented by first- and follow-set-generators
   virtual void copy(Model::Node *from, Model::Node *to)
@@ -74,7 +74,7 @@ protected:
   }
   
   virtual void finished();
-  virtual ~BnfVisitor()
+  ~BnfVisitor() override
   {
     finished();
   }

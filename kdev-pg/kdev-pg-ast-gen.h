@@ -62,11 +62,11 @@ public:
   void operator()(Model::SymbolItem *sym);
 
 protected:
-  virtual void visitAlternative(Model::AlternativeItem *node);
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
-  virtual void visitCons(Model::ConsItem *node);
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
+  void visitAlternative(Model::AlternativeItem *node) override;
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
+  void visitCons(Model::ConsItem *node) override;
+  void visitEvolve(Model::EvolveItem *node) override;
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
 
   bool switchAlternative(bool alt);
   bool switchCons(bool c);

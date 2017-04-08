@@ -48,11 +48,11 @@ protected:
   bool blockZeroMerge(bool block);
   void merge(Model::Node *__dest, Model::Node *__source, int K = 1);
 
-  virtual void visitNode(Model::Node *node);
-  virtual void visitAlternative(Model::AlternativeItem *node);
-  virtual void visitCons(Model::ConsItem *node);
+  void visitNode(Model::Node *node) override;
+  void visitAlternative(Model::AlternativeItem *node) override;
+  void visitCons(Model::ConsItem *node) override;
   
-  virtual void copy(Model::Node *from, Model::Node *to) { merge(to, from); }
+  void copy(Model::Node *from, Model::Node *to) override { merge(to, from); }
 
 private:
   bool mMergeZeroBlocked;

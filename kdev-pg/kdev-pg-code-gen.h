@@ -47,21 +47,21 @@ public:
   void operator()(Model::Node *node);
 
 protected:
-  virtual void visitZero(Model::ZeroItem *node);
-  virtual void visitSymbol(Model::SymbolItem *node);
-  virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitTerminal(Model::TerminalItem *node);
-  virtual void visitPlus(Model::PlusItem *node);
-  virtual void visitStar(Model::StarItem *node);
-  virtual void visitAction(Model::ActionItem *node);
-  virtual void visitAlternative(Model::AlternativeItem *node);
-  virtual void visitCons(Model::ConsItem *node);
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitTryCatch(Model::TryCatchItem *node);
-  virtual void visitAlias(Model::AliasItem *node);
-  virtual void visitAnnotation(Model::AnnotationItem *node);
-  virtual void visitCondition(Model::ConditionItem *node);
-  virtual void visitOperator(Model::OperatorItem *node);
+  void visitZero(Model::ZeroItem *node) override;
+  void visitSymbol(Model::SymbolItem *node) override;
+  void visitNonTerminal(Model::NonTerminalItem *node) override;
+  void visitTerminal(Model::TerminalItem *node) override;
+  void visitPlus(Model::PlusItem *node) override;
+  void visitStar(Model::StarItem *node) override;
+  void visitAction(Model::ActionItem *node) override;
+  void visitAlternative(Model::AlternativeItem *node) override;
+  void visitCons(Model::ConsItem *node) override;
+  void visitEvolve(Model::EvolveItem *node) override;
+  void visitTryCatch(Model::TryCatchItem *node) override;
+  void visitAlias(Model::AliasItem *node) override;
+  void visitAnnotation(Model::AnnotationItem *node) override;
+  void visitCondition(Model::ConditionItem *node) override;
+  void visitOperator(Model::OperatorItem *node) override;
 
 private:
   int mCurrentCatchId;
@@ -105,7 +105,7 @@ public:
   {}
 
   void operator()(Model::Node *node);
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
 };
 
 class GenerateParseMethodSignature: protected DefaultVisitor
@@ -121,7 +121,7 @@ public:
   {}
 
   void operator()(Model::SymbolItem *node);
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
 };
 
 class GenerateRecursiveDelegation
@@ -158,7 +158,7 @@ public:
   }
 
   void operator()(Model::SymbolItem* node);
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
 };
 
 class GenerateMemberCode

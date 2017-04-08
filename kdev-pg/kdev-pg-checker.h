@@ -40,9 +40,9 @@ public:
   void operator()(Model::Node *node);
 
 protected:
-  virtual void visitNonTerminal(Model::NonTerminalItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
-  virtual void visitSymbol(Model::SymbolItem *node);
+  void visitNonTerminal(Model::NonTerminalItem *node) override;
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
+  void visitSymbol(Model::SymbolItem *node) override;
 };
 
 class EmptyOperatorChecker: protected DefaultVisitor
@@ -51,7 +51,7 @@ public:
   void operator()(Model::Node *node);
 
 protected:
-  virtual void visitOperator(Model::OperatorItem *node);
+  void visitOperator(Model::OperatorItem *node) override;
 };
 
 class FirstFirstConflictChecker: protected DefaultVisitor
@@ -62,9 +62,9 @@ public:
 protected:
   void check(Model::Node *left, Model::Node *right);
 
-  virtual void visitEvolve(Model::EvolveItem *node);
-  virtual void visitAlternative(Model::AlternativeItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
+  void visitEvolve(Model::EvolveItem *node) override;
+  void visitAlternative(Model::AlternativeItem *node) override;
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
 
 private:
   Model::SymbolItem *mSymbol;
@@ -79,11 +79,11 @@ public:
 protected:
   void check(Model::Node *node, Model::Node *sym = nullptr);
 
-  virtual void visitAlternative(Model::AlternativeItem *node);
-  virtual void visitCons(Model::ConsItem *node);
-  virtual void visitPlus(Model::PlusItem *node);
-  virtual void visitStar(Model::StarItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
+  void visitAlternative(Model::AlternativeItem *node) override;
+  void visitCons(Model::ConsItem *node) override;
+  void visitPlus(Model::PlusItem *node) override;
+  void visitStar(Model::StarItem *node) override;
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
 
 private:
   Model::SymbolItem *mSymbol;
@@ -106,9 +106,9 @@ public:
   void operator()(Model::Node *node);
 
 protected:
-  virtual void visitSymbol(Model::SymbolItem *node);
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
+  void visitSymbol(Model::SymbolItem *node) override;
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
 
 private:
   Model::SymbolItem *mSymbol;
@@ -120,8 +120,8 @@ public:
   void operator()(Model::Node *node);
 
 protected:
-  virtual void visitTerminal(Model::TerminalItem *node);
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node);
+  void visitTerminal(Model::TerminalItem *node) override;
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override;
 
 private:
   Model::SymbolItem *mSymbol;

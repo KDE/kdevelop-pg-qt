@@ -32,8 +32,8 @@ class InlineChecker : public DefaultVisitor
 public:
     void operator()(Model::EvolveItem* node);
 protected:
-    virtual void visitNonTerminal(Model::NonTerminalItem* node);
-    virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node);
+    void visitNonTerminal(Model::NonTerminalItem* node) override;
+    void visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node) override;
 private:
     QSet<Model::Node*> mVisited, mCurrentlyVisiting;
 };

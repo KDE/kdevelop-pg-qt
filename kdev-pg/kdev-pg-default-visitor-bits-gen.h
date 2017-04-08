@@ -45,7 +45,7 @@ public:
   void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 
 protected:
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
 };
 
 class HasMemberNodes: protected DefaultVisitor
@@ -60,7 +60,7 @@ public:
   void operator()(Model::SymbolItem *sym);
 
 protected:
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
 };
 
 }

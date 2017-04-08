@@ -33,8 +33,8 @@ class IteratorQTextStream : public astyle::ASSourceIterator
 {
 public:
   IteratorQTextStream( QTextStream& stream );
-  virtual bool hasMoreLines() const;
-  virtual std::string nextLine();
+  bool hasMoreLines() const override;
+  std::string nextLine() override;
 private:
   QTextStream& strm;
 };

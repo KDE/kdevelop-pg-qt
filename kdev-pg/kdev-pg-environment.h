@@ -33,11 +33,11 @@ public:
     visitNode(node);
   }
 protected:
-  virtual void visitEvolve(Model::EvolveItem *node)
+  void visitEvolve(Model::EvolveItem *node) override
   {
     globalSystem.env.insert(node->mSymbol, node);
   }
-  virtual void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node)
+  void visitInlinedNonTerminal(Model::InlinedNonTerminalItem *node) override
   {
     Q_UNUSED(node);
   }

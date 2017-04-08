@@ -55,7 +55,7 @@ public:
   void operator()(QPair<QString, Model::SymbolItem*> const &__it);
 
 protected:
-  virtual void visitVariableDeclaration(Model::VariableDeclarationItem *node);
+  void visitVariableDeclaration(Model::VariableDeclarationItem *node) override;
 };
 
 }

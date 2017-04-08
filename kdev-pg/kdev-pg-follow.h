@@ -36,7 +36,7 @@ class InitializeFollow: protected DefaultVisitor
 public:
   void operator()(Model::Node *node);
 protected:
-  virtual void visitSymbol(Model::SymbolItem *node);
+  void visitSymbol(Model::SymbolItem *node) override;
 };
 
 class NextFollow: protected BnfVisitor
@@ -55,12 +55,12 @@ protected:
   @p dest FOLLOW set*/
   void addFollowToFollowDep(Model::Node *dest, Model::Node *dep);
 
-  virtual void visitNode(Model::Node *node);
-  virtual void visitAlternative(Model::AlternativeItem *node);
-  virtual void visitCons(Model::ConsItem *node);
+  void visitNode(Model::Node *node) override;
+  void visitAlternative(Model::AlternativeItem *node) override;
+  void visitCons(Model::ConsItem *node) override;
   
-  void preCopy(Model::Node *from, Model::Node *to);
-  void copy(Model::Node *from, Model::Node *to);
+  void preCopy(Model::Node *from, Model::Node *to) override;
+  void copy(Model::Node *from, Model::Node *to) override;
 
 private:
   bool &mChanged;

@@ -35,7 +35,7 @@ class LocationTable
 {
 public:
   inline LocationTable(qint64 size = 1024)
-    : lines(0), lineCount(0), currentLine(0), lastLine(0)
+    : lines(nullptr), lineCount(0), currentLine(0), lastLine(0)
   {
     resize(size);
     lines[currentLine++] = 0;

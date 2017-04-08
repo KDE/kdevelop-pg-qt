@@ -281,7 +281,7 @@ void BnfVisitor::visitAction(Model::ActionItem* node)
 
 void BnfVisitor::visitTryCatch(Model::TryCatchItem* node)
 {
-    if(node->mCatchItem == 0)
+    if(node->mCatchItem == nullptr)
     {
         preCopy(node->mTryItem, node);
       

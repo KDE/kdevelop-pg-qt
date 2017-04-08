@@ -42,7 +42,7 @@ public:
   inline void init(int block_size = 256)
   {
     blockSize = block_size;
-    chain = 0;
+    chain = nullptr;
     data = (char*) malloc(blockSize);
     ptr = data;
     end = data + block_size;

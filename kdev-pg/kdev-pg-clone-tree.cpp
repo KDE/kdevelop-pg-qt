@@ -126,7 +126,7 @@ void CloneTree::visitTryCatch(Model::TryCatchItem *node)
   Model::Node *try_item = mTemps.top();
   mTemps.pop();
 
-  Model::Node *catch_item = 0;
+  Model::Node *catch_item = nullptr;
 
   if (node->mCatchItem)
     {

@@ -40,7 +40,7 @@ void InlineChecker::visitNonTerminal(Model::NonTerminalItem* node)
 
 void InlineChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
 {
-    if(node->mSymbol == 0)
+    if(node->mSymbol == nullptr)
         return;
     if(mCurrentlyVisiting.contains(node->mSymbol))
     {
@@ -67,7 +67,7 @@ void InlineChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalItem* node)
         mCurrentlyVisiting.remove(node->mSymbol);
         if(node->mSymbol != thrown)
             throw;
-        node->mSymbol = 0; // avoid it in future
+        node->mSymbol = nullptr; // avoid it in future
         return;
     }
     mCurrentlyVisiting.remove(node->mSymbol);

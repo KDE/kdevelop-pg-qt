@@ -100,15 +100,15 @@ NextFollow::NextFollow(bool &changed)
 void NextFollow::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  Q_ASSERT(e != 0);
+  Q_ASSERT(e != nullptr);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
 
 void NextFollow::merge(Model::Node*__dest, World::NodeSet const &source)
 {
-  if (nodeCast<Model::ZeroItem*>(__dest) != 0
-      || nodeCast<Model::TerminalItem*>(__dest) != 0)
+  if (nodeCast<Model::ZeroItem*>(__dest) != nullptr
+      || nodeCast<Model::TerminalItem*>(__dest) != nullptr)
     {
       return;
     }
@@ -157,7 +157,7 @@ void NextFollow::visitAlternative(Model::AlternativeItem *node)
 
 void NextFollow::visitNode(Model::Node* node)
 {
-    if(node == 0)
+    if(node == nullptr)
       return;
   
     if(mVisited.contains(node))
@@ -172,7 +172,7 @@ void NextFollow::visitNode(Model::Node* node)
 
 void NextFollow::preCopy(Model::Node* from, Model::Node* to)
 {
-  if(from != 0 && to != 0)
+  if(from != nullptr && to != nullptr)
   {
     merge(from, globalSystem.follow(to));
     addFollowToFollowDep(from, to);

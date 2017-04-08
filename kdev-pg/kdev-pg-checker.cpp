@@ -40,7 +40,7 @@ int ProblemSummaryPrinter::mErrorCount = 0;
 void FirstFirstConflictChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  Q_ASSERT(e != 0);
+  Q_ASSERT(e != nullptr);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -113,7 +113,7 @@ void FirstFirstConflictChecker::visitEvolve(Model::EvolveItem *node)
 void FirstFollowConflictChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  Q_ASSERT(e != 0);
+  Q_ASSERT(e != nullptr);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -290,7 +290,7 @@ void UndefinedSymbolChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalIt
 void UndefinedSymbolChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  Q_ASSERT(e != 0);
+  Q_ASSERT(e != nullptr);
   mSymbol = e->mSymbol;
   visitNode(node);
 }
@@ -342,7 +342,7 @@ void UndefinedTokenChecker::visitInlinedNonTerminal(Model::InlinedNonTerminalIte
 void UndefinedTokenChecker::operator()(Model::Node *node)
 {
   Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(node);
-  Q_ASSERT(e != 0);
+  Q_ASSERT(e != nullptr);
   mSymbol = e->mSymbol;
   visitNode(node);
 }

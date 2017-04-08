@@ -57,7 +57,7 @@ bool NextFirst::blockZeroMerge(bool block)
 
 void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
 {
-  if(__source == 0 || __dest == 0)
+  if(__source == nullptr || __dest == nullptr)
     return;
   
   World::NodeSet &dest = globalSystem.first(__dest, K);
@@ -79,7 +79,7 @@ void NextFirst::merge(Model::Node *__dest, Model::Node *__source, int K)
 
 void NextFirst::visitNode(Model::Node *node)
 {
-  if(node == 0)
+  if(node == nullptr)
     return;
   
   if(mVisited.contains(node))

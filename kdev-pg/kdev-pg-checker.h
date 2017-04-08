@@ -77,7 +77,7 @@ public:
   void operator()(Model::Node *node);
 
 protected:
-  void check(Model::Node *node, Model::Node *sym = 0);
+  void check(Model::Node *node, Model::Node *sym = nullptr);
 
   virtual void visitAlternative(Model::AlternativeItem *node);
   virtual void visitCons(Model::ConsItem *node);

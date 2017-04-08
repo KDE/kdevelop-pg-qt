@@ -49,13 +49,13 @@ public:
   {
     sBlockIndex = sizeType(-1);
     sCurrentIndex = 0;
-    sStorage = 0;
-    sCurrentBlock = 0;
+    sStorage = nullptr;
+    sCurrentBlock = nullptr;
   }
 
   ~Allocator()
   {
-      if (sStorage != 0)
+      if (sStorage != nullptr)
       {
         for (sizeType index = 0; index <= sBlockIndex; ++index)
           delete[] sStorage[index];
@@ -80,11 +80,11 @@ public:
     return &__val;
   }
 
-  pointer allocate(sizeType __n, const void* = 0)
+  pointer allocate(sizeType __n, const void* = nullptr)
   {
     const sizeType bytes = __n * sizeof(_Tp);
 
-    if (sCurrentBlock == 0
+    if (sCurrentBlock == nullptr
         || sBlockSize < sCurrentIndex + bytes)
       {
         ++sBlockIndex;

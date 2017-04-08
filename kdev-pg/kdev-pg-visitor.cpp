@@ -25,7 +25,7 @@ namespace KDevPG
 {
 
 Visitor::VisitorFuncPointer Visitor::sTable[Model::NodeKindLast] = {
-  0,
+  nullptr,
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitZero),
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitPlus),
   reinterpret_cast<Visitor::VisitorFuncPointer>(&Visitor::visitStar),

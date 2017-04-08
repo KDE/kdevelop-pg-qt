@@ -73,7 +73,7 @@ public:
   typedef T Token;
   TokenStreamBase()
     : mIndex(0),
-      mLocationTable(0)
+      mLocationTable(nullptr)
   {
     reset();
   }

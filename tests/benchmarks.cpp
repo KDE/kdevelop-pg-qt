@@ -151,7 +151,7 @@ private:
 
 void Benchmarks::initTestCase()
 {
-  srand ( time(NULL) );
+  srand ( time(nullptr) );
 }
 
 void Benchmarks::positionAt()

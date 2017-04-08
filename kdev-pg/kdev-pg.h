@@ -124,7 +124,7 @@ public:
       generateDebugVisitor(false), generateTokenText(false),
       needStateManagement(false), needOperatorStack(false),
       lineNumberPolicy(FullLineNumbers), visitorTable(false),
-      conflictHandling(Permissive), mZero(0),
+      conflictHandling(Permissive), mZero(nullptr),
       lexerBaseClass("KDevPG::TokenStream")
   {}
   
@@ -187,7 +187,7 @@ public:
   void pushRule(Model::Node *rule)
   {
     Model::EvolveItem *e = nodeCast<Model::EvolveItem*>(rule);
-    Q_ASSERT(e != 0);
+    Q_ASSERT(e != nullptr);
 
     rules.push_back(e);
   }
@@ -195,7 +195,7 @@ public:
   void pushParserClassMember(Model::Node *member)
   {
     Settings::MemberItem *m = nodeCast<Settings::MemberItem*>(member);
-    Q_ASSERT(m != 0);
+    Q_ASSERT(m != nullptr);
 
     if (m->mMemberKind == Settings::MemberItem::ConstructorCode)
       parserclassMembers.constructorCode.push_back(m);
@@ -208,7 +208,7 @@ public:
   void pushLexerClassMember(Model::Node *member)
   {
     Settings::MemberItem *m = nodeCast<Settings::MemberItem*>(member);
-    Q_ASSERT(m != 0);
+    Q_ASSERT(m != nullptr);
     
     if (m->mMemberKind == Settings::MemberItem::ConstructorCode)
       lexerclassMembers.constructorCode.push_back(m);
@@ -271,9 +271,9 @@ public:
   
   inline static bool ruleComp(Model::Node *a, Model::Node *b)
   {
-    if(a != 0 && a->kind == Model::NodeKindEvolve)
+    if(a != nullptr && a->kind == Model::NodeKindEvolve)
       a = ((Model::EvolveItem*)a)->mSymbol;
-    if(b != 0 && b->kind == Model::NodeKindEvolve)
+    if(b != nullptr && b->kind == Model::NodeKindEvolve)
       b = ((Model::EvolveItem*)b)->mSymbol;
     return a < b;
   }
@@ -287,7 +287,7 @@ public:
   {
     auto i = std::lower_bound(rules.begin(), rules.end(), sym, &ruleComp);
     if(i == rules.end() || (*i)->mSymbol != sym)
-      return 0;
+      return nullptr;
     return *i;
   }
 

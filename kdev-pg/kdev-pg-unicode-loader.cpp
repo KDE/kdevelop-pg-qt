@@ -74,7 +74,7 @@ void standardFormat(const QString fileName)
             name.replace(' ', '_');
             name.replace('-', '_');
             auto toInsert = GNFA::range(start, end+1);
-            if(globalSystem.regexpById[name] == 0)
+            if(globalSystem.regexpById[name] == nullptr)
               globalSystem.regexpById[name] = new GNFA(toInsert);
             else
               *globalSystem.regexpById[name] |= toInsert;
@@ -89,7 +89,7 @@ void standardFormat(const QString fileName)
             name.replace(' ', '_');
             name.replace('-', '_');
             auto toInsert = GNFA::character(single);
-            if(globalSystem.regexpById[name] == 0)
+            if(globalSystem.regexpById[name] == nullptr)
               globalSystem.regexpById[name] = new GNFA(toInsert);
             else
               *globalSystem.regexpById[name] |= toInsert;

@@ -185,7 +185,7 @@ Model::VariableDeclarationItem *variableDeclaration(
   node->mStorageType     = storageType;
   node->mVariableType    = variableType;
   node->mIsSequence      = isSequence;
-  node->mNext = 0;
+  node->mNext = nullptr;
   return node;
 }
 
@@ -314,7 +314,7 @@ bool isOperatorSymbol(Model::SymbolItem *sym)
 
 bool reducesToEpsilon(Model::Node *node, QSet<Model::Node*>& v)
 {
-  if (node == 0)
+  if (node == nullptr)
     return true;
   if (v.contains(node))
     return true;

@@ -365,7 +365,7 @@ _Tp nodeCast(Model::Node *item)
   if (StripPtr<_Tp>::Result::NodeKind == item->kind)
     return static_cast<_Tp>(item);
 
-  return 0;
+  return nullptr;
 }
 
 extern KDevPG::Allocator<char> globalMemoryPool;

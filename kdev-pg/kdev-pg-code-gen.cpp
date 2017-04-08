@@ -51,7 +51,7 @@ namespace KDevPG
 
   void generateCondition(const World::NodeSet& s, QTextStream& out)
   {
-    if(s.size() == 0 || (s.size() == 1 && nodeCast<Model::ZeroItem*>(*s.begin()) != 0))
+    if(s.size() == 0 || (s.size() == 1 && nodeCast<Model::ZeroItem*>(*s.begin()) != nullptr))
     {
       out << "true /*epsilon*/";
       return;
@@ -194,7 +194,7 @@ namespace KDevPG
 void CodeGenerator::operator()(Model::Node *node)
 {
   mEvolve = nodeCast<Model::EvolveItem*>(node);
-  Q_ASSERT(mEvolve != 0);
+  Q_ASSERT(mEvolve != nullptr);
   visitNode(node);
 }
 
@@ -794,7 +794,7 @@ void GenerateForwardParserRule::operator()(QPair<QString, Model::SymbolItem*> co
   Model::SymbolItem *sym = __it.second;
   out << "bool" << " " << "parse" << sym->mCapitalizedName << "(";
 
-  GenerateParseMethodSignature gen_signature(out, 0);
+  GenerateParseMethodSignature gen_signature(out, nullptr);
   gen_signature(sym);
 
   out << ");" << endl;
@@ -899,7 +899,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
   if (node->mStorageType == Model::VariableDeclarationItem::StorageTemporary
       && node->mDeclarationType == Model::VariableDeclarationItem::DeclarationLocal)
     {
-      if ((mNames == 0) || mNames->find(node->mName) == mNames->end())
+      if ((mNames == nullptr) || mNames->find(node->mName) == mNames->end())
         {
           GenerateVariableDeclaration<true, true> gen_var_decl(out);
           gen_var_decl(node);
@@ -913,7 +913,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
 
           out << ";" << endl << endl;
 
-          if (mNames != 0)
+          if (mNames != nullptr)
             mNames->insert(node->mName);
         }
     }
@@ -1006,7 +1006,7 @@ void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDecla
           GenerateVariableDeclaration<true, true> gen_var_decl(out);
           gen_var_decl(node);
 
-          if (mNames != 0)
+          if (mNames != nullptr)
             mNames->insert(node->mName);
         }
     }

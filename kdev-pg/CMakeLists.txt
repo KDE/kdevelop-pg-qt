@@ -49,7 +49,7 @@ IF(BISON_EXECUTABLE)
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
         COMMAND ${BISON_EXECUTABLE}
-        ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
+        ARGS    -o "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
                 -d "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
         )
 
@@ -74,7 +74,7 @@ IF(FLEX_EXECUTABLE)
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
                  ${OPTIONAL_PARSER_HEADER_DEPENDENCY}
         COMMAND ${FLEX_EXECUTABLE}
-        ARGS    --yymore --nounistd -o"${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
+        ARGS    --yymore --nounistd -o "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
         )
 

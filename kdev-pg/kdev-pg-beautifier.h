@@ -32,11 +32,16 @@ namespace KDevPG
 class IteratorQTextStream : public astyle::ASSourceIterator
 {
 public:
-  IteratorQTextStream( QTextStream& stream );
+  IteratorQTextStream(QTextStream& stream);
+
   bool hasMoreLines() const override;
-  std::string nextLine() override;
+  std::string nextLine(bool emptyLineWasDeleted = false) override;
+  std::string peekNextLine() override;
+  void peekReset() override;
+
 private:
-  QTextStream& strm;
+  QTextStream& m_stream;
+  qint64 m_peekStart;
 };
 
 void format(QTextStream &in, const QString& oname);

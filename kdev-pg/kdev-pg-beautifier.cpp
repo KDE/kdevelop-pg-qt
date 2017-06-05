@@ -26,17 +26,35 @@ namespace KDevPG
 {
 
 IteratorQTextStream::IteratorQTextStream( QTextStream& stream )
-  : strm(stream)
+  : m_stream(stream)
+  , m_peekStart(-1)
 {
-  strcpy(outputEOL, "\n");
 }
+
 bool IteratorQTextStream::hasMoreLines() const
 {
-  return !strm.atEnd();
+  return !m_stream.atEnd();
 }
-std::string IteratorQTextStream::nextLine()
+
+std::string IteratorQTextStream::nextLine(bool emptyLineWasDeleted)
 {
-  return strm.readLine().toStdString();
+  Q_UNUSED(emptyLineWasDeleted)
+  return m_stream.readLine().toStdString();
+}
+
+string IteratorQTextStream::peekNextLine()
+{
+    if (m_peekStart == -1) {
+        m_peekStart = m_stream.pos();
+    }
+    return m_stream.readLine().toUtf8().data();
+}
+
+void IteratorQTextStream::peekReset()
+{
+    if(m_peekStart != -1)
+        m_stream.seek(m_peekStart);
+    m_peekStart = -1; // invalid
 }
 
 void format(QTextStream& in, const QString& oname)
@@ -63,7 +81,6 @@ void format(QTextStream& in, const QString& oname)
   f.setBreakElseIfsMode(false);
   f.setParensUnPaddingMode(false);
   f.setEmptyLineFill(false);
-  f.fileName = QFileInfo(ofile).absoluteFilePath().toStdString();
   IteratorQTextStream strm(in);
   f.init(&strm);
 

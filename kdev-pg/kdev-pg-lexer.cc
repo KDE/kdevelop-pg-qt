@@ -1,6 +1,6 @@
-#line 2 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 2 "kdev-pg-lexer.cc"
 
-#line 4 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 4 "kdev-pg-lexer.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -8,8 +8,8 @@
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 35
+#define YY_FLEX_MINOR_VERSION 6
+#define YY_FLEX_SUBMINOR_VERSION 1
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -54,7 +54,6 @@ typedef int flex_int32_t;
 typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
-#endif /* ! C99 */
 
 /* Limits of integral types. */
 #ifndef INT8_MIN
@@ -85,27 +84,17 @@ typedef unsigned int flex_uint32_t;
 #define UINT32_MAX             (4294967295U)
 #endif
 
+#endif /* ! C99 */
+
 #endif /* ! FLEXINT_H */
 
-#ifdef __cplusplus
-
-/* The "const" storage-class-modifier is valid. */
-#define YY_USE_CONST
-
-#else	/* ! __cplusplus */
-
-/* C99 requires __STDC__ to be defined as 1. */
-#if defined (__STDC__)
-
-#define YY_USE_CONST
-
-#endif	/* defined (__STDC__) */
-#endif	/* ! __cplusplus */
-
-#ifdef YY_USE_CONST
+/* TODO: this is always defined, so inline it */
 #define yyconst const
+
+#if defined(__GNUC__) && __GNUC__ >= 3
+#define yynoreturn __attribute__((__noreturn__))
 #else
-#define yyconst
+#define yynoreturn
 #endif
 
 /* Returned upon end-of-file. */
@@ -141,7 +130,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -153,6 +150,11 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
+
 extern int yyleng;
 
 extern FILE *yyin, *yyout;
@@ -162,6 +164,7 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_LAST_MATCH 2
 
     #define YY_LESS_LINENO(n)
+    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -179,11 +182,6 @@ extern FILE *yyin, *yyout;
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
-
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
@@ -196,7 +194,7 @@ struct yy_buffer_state
 	/* Size of input buffer in bytes, not including room for EOB
 	 * characters.
 	 */
-	yy_size_t yy_buf_size;
+	int yy_buf_size;
 
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
@@ -224,7 +222,7 @@ struct yy_buffer_state
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
-    
+
 	/* Whether to try to fill the input buffer when we reach the
 	 * end of it.
 	 */
@@ -252,7 +250,7 @@ struct yy_buffer_state
 /* Stack of input buffers. */
 static size_t yy_buffer_stack_top = 0; /**< index of top of stack. */
 static size_t yy_buffer_stack_max = 0; /**< capacity of stack. */
-static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
+static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 
 /* We provide macros for accessing buffer states in case in the
  * future we want to put the buffer states in a more general
@@ -275,7 +273,7 @@ static int yy_n_chars;		/* number of characters read into yy_ch_buf */
 int yyleng;
 
 /* Points to current character in buffer. */
-static char *yy_c_buf_p = (char *) 0;
+static char *yy_c_buf_p = NULL;
 static int yy_init = 0;		/* whether we need to initialize */
 static int yy_start = 0;	/* start state number */
 
@@ -334,7 +332,7 @@ void yyfree (void *  );
 
 typedef unsigned char YY_CHAR;
 
-FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
+FILE *yyin = NULL, *yyout = NULL;
 
 typedef int yy_state_type;
 
@@ -343,12 +341,15 @@ extern int yylineno;
 int yylineno = 1;
 
 extern char *yytext;
+#ifdef yytext_ptr
+#undef yytext_ptr
+#endif
 #define yytext_ptr yytext
 
 static yy_state_type yy_get_previous_state (void );
 static yy_state_type yy_try_NUL_trans (yy_state_type current_state  );
 static int yy_get_next_buffer (void );
-static void yy_fatal_error (yyconst char msg[]  );
+static void yynoreturn yy_fatal_error (yyconst char* msg  );
 
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up yytext.
@@ -356,7 +357,7 @@ static void yy_fatal_error (yyconst char msg[]  );
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
 	(yytext_ptr) -= (yy_more_len); \
-	yyleng = (size_t) (yy_cp - (yytext_ptr)); \
+	yyleng = (int) (yy_cp - (yytext_ptr)); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
@@ -508,7 +509,7 @@ static yyconst flex_int16_t yy_accept[670] =
       513,  513,  514,  515,  516,  516,  517,  518,  518
     } ;
 
-static yyconst flex_int32_t yy_ec[256] =
+static yyconst YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    2,    4,    1,    1,    1,    1,    1,    1,    1,
@@ -540,7 +541,7 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[71] =
+static yyconst YY_CHAR yy_meta[71] =
     {   0,
         1,    2,    3,    3,    4,    5,    6,    5,    5,    5,
         5,    5,    5,    5,    5,    7,    5,    5,    8,    8,
@@ -551,7 +552,7 @@ static yyconst flex_int32_t yy_meta[71] =
        12,   12,   12,   12,   12,   12,    5,    5,   14,    5
     } ;
 
-static yyconst flex_int16_t yy_base[704] =
+static yyconst flex_uint16_t yy_base[704] =
     {   0,
         0,    0,   68,   70,   73,   77,   92,   98,  138,    0,
        83,  100,  208,    0, 1820, 1821,   92, 1821, 1816,   76,
@@ -715,7 +716,7 @@ static yyconst flex_int16_t yy_def[704] =
       668,  668,  668
     } ;
 
-static yyconst flex_int16_t yy_nxt[1892] =
+static yyconst flex_uint16_t yy_nxt[1892] =
     {   0,
        16,   17,   18,   19,   17,   16,   20,   21,   22,   23,
        24,   25,   26,   27,   28,   29,   30,   16,   31,   32,
@@ -1169,8 +1170,8 @@ static int yy_more_len = 0;
 #define YY_MORE_ADJ (yy_more_len)
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-#line 2 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 1 "kdev-pg-lexer.ll"
+#line 2 "kdev-pg-lexer.ll"
 /* This file is part of kdev-pg-qt
    Copyright (C) 2006 Jakob Petsovits <jpetso@gmx.at>
 
@@ -1236,7 +1237,7 @@ namespace KDevPG
     } \
     else \
     { \
-      QByteArray tmp("\n\01!ASIgnore\"!!\n#"); \
+      QByteArray tmp("\n#"); \
       if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::CompatibilityLineNumbers) \
         tmp += "line"; \
       tmp += " " + QString::number(firstCodeLine).toLocal8Bit(); \
@@ -1249,7 +1250,6 @@ namespace KDevPG
       strncpy(yylval.str, tmp.data(), tmp.size()); \
       memset(yylval.str + tmp.size(), ' ', firstCodeColumn); \
       strncpy(yylval.str + tmp.size() + firstCodeColumn, string, len); \
-      strncpy(yylval.str + memlen - 17, "\n\01!AS/Ignore\"!!\n", 16); \
       yylval.str[memlen-1] = '\0'; \
     }
 
@@ -1280,7 +1280,7 @@ namespace {
 
 
 
-#line 1284 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 1284 "kdev-pg-lexer.cc"
 
 #define INITIAL 0
 #define CODE 1
@@ -1311,19 +1311,19 @@ void yyset_extra (YY_EXTRA_TYPE user_defined  );
 
 FILE *yyget_in (void );
 
-void yyset_in  (FILE * in_str  );
+void yyset_in  (FILE * _in_str  );
 
 FILE *yyget_out (void );
 
-void yyset_out  (FILE * out_str  );
+void yyset_out  (FILE * _out_str  );
 
-int yyget_leng (void );
+			int yyget_leng (void );
 
 char *yyget_text (void );
 
 int yyget_lineno (void );
 
-void yyset_lineno (int line_number  );
+void yyset_lineno (int _line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1337,8 +1337,12 @@ extern int yywrap (void );
 #endif
 #endif
 
+#ifndef YY_NO_UNPUT
+    
     static void yyunput (int c,char *buf_ptr  );
     
+#endif
+
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -1359,7 +1363,12 @@ static int input (void );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -1367,7 +1376,7 @@ static int input (void );
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO fwrite( yytext, yyleng, 1, yyout )
+#define ECHO do { if (fwrite( yytext, (size_t) yyleng, 1, yyout )) {} } while (0)
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -1378,7 +1387,7 @@ static int input (void );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		int n; \
+		size_t n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -1391,7 +1400,7 @@ static int input (void );
 	else \
 		{ \
 		errno=0; \
-		while ( (result = fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
+		while ( (result = (int) fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
 			{ \
 			if( errno != EINTR) \
 				{ \
@@ -1446,7 +1455,7 @@ extern int yylex (void);
 
 /* Code executed at the end of each rule. */
 #ifndef YY_BREAK
-#define YY_BREAK break;
+#define YY_BREAK /*LINTED*/break;
 #endif
 
 #define YY_RULE_SETUP \
@@ -1456,16 +1465,10 @@ extern int yylex (void);
  */
 YY_DECL
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp, *yy_bp;
-	register int yy_act;
+	yy_state_type yy_current_state;
+	char *yy_cp, *yy_bp;
+	int yy_act;
     
-#line 119 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
-
-
-
-#line 1468 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
-
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -1498,7 +1501,14 @@ YY_DECL
 		yy_load_buffer_state( );
 		}
 
-	while ( 1 )		/* loops until end-of-file is reached */
+	{
+#line 118 "kdev-pg-lexer.ll"
+
+
+
+#line 1510 "kdev-pg-lexer.cc"
+
+	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
 		(yy_more_len) = 0;
 		if ( (yy_more_flag) )
@@ -1524,14 +1534,14 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+			YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
 				if ( yy_current_state >= 669 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
-			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+			yy_current_state = yy_nxt[yy_base[yy_current_state] + (flex_int16_t) yy_c];
 			*(yy_state_ptr)++ = yy_current_state;
 			++yy_cp;
 			}
@@ -1587,361 +1597,361 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 122 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 121 "kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 123 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 122 "kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 124 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 123 "kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 126 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 125 "kdev-pg-lexer.ll"
 rulePosition = RuleBody; return ';';
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 127 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 126 "kdev-pg-lexer.ll"
 if(rulePosition == RuleLexer) BEGIN(RULE_LEXER); else rulePosition = RuleFooter; return T_ARROW;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 128 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 127 "kdev-pg-lexer.ll"
 return T_INLINE;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 130 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 129 "kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 131 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 130 "kdev-pg-lexer.ll"
 return ')';
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 132 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 131 "kdev-pg-lexer.ll"
 return '{';
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 133 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 132 "kdev-pg-lexer.ll"
 return '}';
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 134 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 133 "kdev-pg-lexer.ll"
 return ',';
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 135 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 134 "kdev-pg-lexer.ll"
 return '0';
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 136 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 135 "kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 137 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 136 "kdev-pg-lexer.ll"
 return '.';
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 138 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 137 "kdev-pg-lexer.ll"
 return ':';
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 139 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 138 "kdev-pg-lexer.ll"
 return '=';
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 140 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 139 "kdev-pg-lexer.ll"
 return '+';
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 141 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 140 "kdev-pg-lexer.ll"
 return '*';
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 142 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 141 "kdev-pg-lexer.ll"
 return '?';
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 143 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 142 "kdev-pg-lexer.ll"
 return '@';
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 144 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 143 "kdev-pg-lexer.ll"
 return '|';
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 145 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 144 "kdev-pg-lexer.ll"
 return '&';
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 147 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 146 "kdev-pg-lexer.ll"
 return T_TRY_RECOVER;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 148 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 147 "kdev-pg-lexer.ll"
 return T_TRY_ROLLBACK;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 149 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 148 "kdev-pg-lexer.ll"
 return T_CATCH;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 151 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 150 "kdev-pg-lexer.ll"
 return T_EXPORT_MACRO;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 152 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 151 "kdev-pg-lexer.ll"
 return T_EXPORT_MACRO_HEADER;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 153 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 152 "kdev-pg-lexer.ll"
 return T_TOKEN_DECLARATION;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 154 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 153 "kdev-pg-lexer.ll"
 return T_TOKEN_STREAM_DECLARATION;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 155 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 154 "kdev-pg-lexer.ll"
 return T_NAMESPACE_DECLARATION;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 156 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 155 "kdev-pg-lexer.ll"
 BEGIN(PARSERCLASS); return T_PARSERCLASS_DECLARATION;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 157 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 156 "kdev-pg-lexer.ll"
 BEGIN(PARSERCLASS); return T_LEXERCLASS_DECLARATION;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 158 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 157 "kdev-pg-lexer.ll"
 return T_INPUT_STREAM;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 159 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 158 "kdev-pg-lexer.ll"
 return T_AST_DECLARATION;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 160 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 159 "kdev-pg-lexer.ll"
 return T_PARSER_DECLARATION_HEADER;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 161 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 160 "kdev-pg-lexer.ll"
 return T_PARSER_BITS_HEADER;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 162 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 161 "kdev-pg-lexer.ll"
 return T_AST_HEADER;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 163 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 162 "kdev-pg-lexer.ll"
 return T_LEXER_DECLARATION_HEADER;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 164 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 163 "kdev-pg-lexer.ll"
 return T_LEXER_BITS_HEADER;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 165 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 164 "kdev-pg-lexer.ll"
 return T_INPUT_ENCODING;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 166 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 165 "kdev-pg-lexer.ll"
 return T_TABLE_LEXER;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 167 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 166 "kdev-pg-lexer.ll"
 return T_SEQUENCE_LEXER;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 168 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 167 "kdev-pg-lexer.ll"
 return T_AST_BASE;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 169 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 168 "kdev-pg-lexer.ll"
 return T_PARSER_BASE;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 170 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 169 "kdev-pg-lexer.ll"
 return T_LEXER_BASE;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 171 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 170 "kdev-pg-lexer.ll"
 return T_BIN;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 172 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 171 "kdev-pg-lexer.ll"
 return T_PRE;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 173 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 172 "kdev-pg-lexer.ll"
 return T_POST;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 174 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 173 "kdev-pg-lexer.ll"
 return T_TERN;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 175 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 174 "kdev-pg-lexer.ll"
 return T_PAREN;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 176 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 175 "kdev-pg-lexer.ll"
 return T_PRIORITY;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 177 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 176 "kdev-pg-lexer.ll"
 rulePosition = RuleBody; return T_LOPR;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 178 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 177 "kdev-pg-lexer.ll"
 rulePosition = RuleFooter; return T_ROPR;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 179 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 178 "kdev-pg-lexer.ll"
 return T_LEFT_ASSOC;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 180 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 179 "kdev-pg-lexer.ll"
 return T_RIGHT_ASSOC;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 181 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 180 "kdev-pg-lexer.ll"
 return T_IS_LEFT_ASSOC;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 182 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 181 "kdev-pg-lexer.ll"
 return T_IS_RIGHT_ASSOC;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 183 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 182 "kdev-pg-lexer.ll"
 rulePosition = RuleLexer; return T_LEXER;
 	YY_BREAK
 
 case 59:
 YY_RULE_SETUP
-#line 186 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 185 "kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 187 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 186 "kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 188 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 187 "kdev-pg-lexer.ll"
 return '(';
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 189 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 188 "kdev-pg-lexer.ll"
 return T_PUBLIC;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 190 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 189 "kdev-pg-lexer.ll"
 return T_PRIVATE;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 191 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 190 "kdev-pg-lexer.ll"
 return T_PROTECTED;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 192 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 191 "kdev-pg-lexer.ll"
 return T_DECLARATION;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 193 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 192 "kdev-pg-lexer.ll"
 return T_CONSTRUCTOR;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 194 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 193 "kdev-pg-lexer.ll"
 return T_DESTRUCTOR;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 195 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 194 "kdev-pg-lexer.ll"
 return T_BITS;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 196 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 195 "kdev-pg-lexer.ll"
 BEGIN(INITIAL); return ')';
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 197 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 196 "kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 case 71:
 YY_RULE_SETUP
-#line 201 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 200 "kdev-pg-lexer.ll"
 {
     if (rulePosition == RuleBody) { /* use the arguments in a rule call */
       firstCodeLine = yyLine;
@@ -1956,170 +1966,170 @@ YY_RULE_SETUP
 
 case 72:
 YY_RULE_SETUP
-#line 213 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 212 "kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 73:
 /* rule 73 can match eol */
 YY_RULE_SETUP
-#line 214 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 213 "kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 215 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 214 "kdev-pg-lexer.ll"
 ++yytext; COPY_TO_YYLVAL(yytext,yyleng-2); return T_NAMED_REGEXP;
 	YY_BREAK
 case 75:
 /* rule 75 can match eol */
 YY_RULE_SETUP
-#line 216 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 215 "kdev-pg-lexer.ll"
 countNewlines(yytext, yyleng); rulePosition = RuleBody; BEGIN(INITIAL); return ';';
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 217 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 216 "kdev-pg-lexer.ll"
 return ';';
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 218 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 217 "kdev-pg-lexer.ll"
 ++openBrackets; return '[';
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 219 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 218 "kdev-pg-lexer.ll"
 --openBrackets; return ']';
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 220 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 219 "kdev-pg-lexer.ll"
 ++openBrackets; return '(';
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 221 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 220 "kdev-pg-lexer.ll"
 --openBrackets; return ')';
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 222 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 221 "kdev-pg-lexer.ll"
 return '?';
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 223 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 222 "kdev-pg-lexer.ll"
 return '|';
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 224 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 223 "kdev-pg-lexer.ll"
 return '^';
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 225 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 224 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_RANGE;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 226 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 225 "kdev-pg-lexer.ll"
 return '&';
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 227 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 226 "kdev-pg-lexer.ll"
 return '~';
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 228 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 227 "kdev-pg-lexer.ll"
 return '*';
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 229 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 228 "kdev-pg-lexer.ll"
 return '+';
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 230 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 229 "kdev-pg-lexer.ll"
 return '@';
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 231 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 230 "kdev-pg-lexer.ll"
 return '.';
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 232 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 231 "kdev-pg-lexer.ll"
 return T_ARROW;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 233 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 232 "kdev-pg-lexer.ll"
 return T_CONTINUE;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 234 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 233 "kdev-pg-lexer.ll"
 return T_FAIL;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 235 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 234 "kdev-pg-lexer.ll"
 return T_ENTER_RULE_SET;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 236 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 235 "kdev-pg-lexer.ll"
 return T_LEAVE_RULE_SET;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 237 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 236 "kdev-pg-lexer.ll"
 return T_LOOKAHEAD;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 238 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 237 "kdev-pg-lexer.ll"
 return T_BARRIER;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 239 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 238 "kdev-pg-lexer.ll"
 firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 	YY_BREAK
 case 99:
 /* rule 99 can match eol */
 YY_RULE_SETUP
-#line 240 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 239 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
 	YY_BREAK
 case 100:
 /* rule 100 can match eol */
 YY_RULE_SETUP
-#line 241 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 240 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 242 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 241 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_UNQUOTED_STRING;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 243 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 242 "kdev-pg-lexer.ll"
 /* skip */
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 244 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 243 "kdev-pg-lexer.ll"
 yytext++; COPY_TO_YYLVAL(yytext,yyleng-2); return T_STRING;
 	YY_BREAK
 case YY_STATE_EOF(RULE_LEXER):
-#line 246 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 245 "kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
     KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << endl;
@@ -2132,32 +2142,32 @@ case YY_STATE_EOF(RULE_LEXER):
 case 104:
 /* rule 104 can match eol */
 YY_RULE_SETUP
-#line 255 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 254 "kdev-pg-lexer.ll"
 newline(); YYMORE;
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 256 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 255 "kdev-pg-lexer.ll"
 YYMORE; /* this and... */
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 257 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 256 "kdev-pg-lexer.ll"
 YYMORE; /* ...this prevent brackets inside strings to be counted */
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 258 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 257 "kdev-pg-lexer.ll"
 YYMORE; /* gather everything that's not a bracket, and append what comes next */
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 259 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 258 "kdev-pg-lexer.ll"
 openBrackets++; YYMORE;
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 260 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 259 "kdev-pg-lexer.ll"
 {
       openBrackets--;
       if (openBrackets < 0) {
@@ -2168,7 +2178,7 @@ YY_RULE_SETUP
   }
 	YY_BREAK
 case YY_STATE_EOF(RULE_ARGUMENTS):
-#line 268 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 267 "kdev-pg-lexer.ll"
 {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
       KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << endl;
@@ -2180,78 +2190,78 @@ case YY_STATE_EOF(RULE_ARGUMENTS):
 
 case 110:
 YY_RULE_SETUP
-#line 277 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 276 "kdev-pg-lexer.ll"
 /* skip */ ;
 	YY_BREAK
 case 111:
 /* rule 111 can match eol */
 YY_RULE_SETUP
-#line 278 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 277 "kdev-pg-lexer.ll"
 newline();
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 279 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 278 "kdev-pg-lexer.ll"
 /* line comments, skip */ ;
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 280 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 279 "kdev-pg-lexer.ll"
 BEGIN(RULE_PARAMETERS_VARNAME); return ':';
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 281 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 280 "kdev-pg-lexer.ll"
 return '#';
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 282 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 281 "kdev-pg-lexer.ll"
 return T_MEMBER;
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 283 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 282 "kdev-pg-lexer.ll"
 return T_TEMPORARY;
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 284 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 283 "kdev-pg-lexer.ll"
 return T_ARGUMENT;
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 285 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 284 "kdev-pg-lexer.ll"
 return T_NODE;
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 286 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 285 "kdev-pg-lexer.ll"
 return T_TOKEN;
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 287 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 286 "kdev-pg-lexer.ll"
 return T_VARIABLE;
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 288 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 287 "kdev-pg-lexer.ll"
 return ';';  /* only used for "token" types */
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 289 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 288 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 290 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 289 "kdev-pg-lexer.ll"
 BEGIN(INITIAL); return ']';
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 291 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 290 "kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
@@ -2259,17 +2269,17 @@ BEGIN(INITIAL); REJECT; /* everything else */
 case 125:
 /* rule 125 can match eol */
 YY_RULE_SETUP
-#line 295 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 294 "kdev-pg-lexer.ll"
 newline(); YYMORE;
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 296 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 295 "kdev-pg-lexer.ll"
 YYMORE; /* gather everything that's not a semicolon, and append what comes next */
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 297 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 296 "kdev-pg-lexer.ll"
 {
       // strip trailing whitespace
       int length = yyleng-1; // and first, the trailing semicolon
@@ -2292,35 +2302,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 316 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 315 "kdev-pg-lexer.ll"
 BEGIN(INITIAL); REJECT; /* everything else */
 	YY_BREAK
 
 case 129:
 YY_RULE_SETUP
-#line 320 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 319 "kdev-pg-lexer.ll"
 firstCodeLine = yyLine; firstCodeColumn = currentOffset + 2; BEGIN(CODE);
 	YY_BREAK
 
 case 130:
 /* rule 130 can match eol */
 YY_RULE_SETUP
-#line 322 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 321 "kdev-pg-lexer.ll"
 newline(); YYMORE;
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 323 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 322 "kdev-pg-lexer.ll"
 YYMORE; /* gather everything that's not a colon, and append what comes next */
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 324 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 323 "kdev-pg-lexer.ll"
 YYMORE; /* also gather colons that are not followed by colons or newlines */
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 325 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 324 "kdev-pg-lexer.ll"
 {
       COPY_CODE_TO_YYLVAL(yytext, (yyleng-2)); /* cut off the trailing stuff */
       if(rulePosition == RuleLexer)
@@ -2331,7 +2341,7 @@ YY_RULE_SETUP
   }
 	YY_BREAK
 case YY_STATE_EOF(CODE):
-#line 333 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 332 "kdev-pg-lexer.ll"
 {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
       KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << endl;
@@ -2342,22 +2352,22 @@ case YY_STATE_EOF(CODE):
 
 case 134:
 YY_RULE_SETUP
-#line 342 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 341 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_TERMINAL;
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 343 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 342 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_IDENTIFIER;
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 344 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 343 "kdev-pg-lexer.ll"
 COPY_TO_YYLVAL(yytext,yyleng); return T_NUMBER;
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 347 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 346 "kdev-pg-lexer.ll"
 {
    yytext++;                         /* start inside the quotes */
    COPY_TO_YYLVAL(yytext,yyleng-2);  /* cut off the trailing quote */
@@ -2366,7 +2376,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 353 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 352 "kdev-pg-lexer.ll"
 {
   KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << endl;
   yyerror("");
@@ -2374,10 +2384,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 359 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 358 "kdev-pg-lexer.ll"
 ECHO;
 	YY_BREAK
-#line 2381 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-lexer.cc"
+#line 2391 "kdev-pg-lexer.cc"
 			case YY_STATE_EOF(INITIAL):
 			case YY_STATE_EOF(PARSERCLASS):
 			case YY_STATE_EOF(RULE_PARAMETERS_HEADER):
@@ -2511,6 +2521,7 @@ ECHO;
 			"fatal flex scanner internal error--no action found" );
 	} /* end of action switch */
 		} /* end of scanning one token */
+	} /* end of user's declarations */
 } /* end of yylex */
 
 /* yy_get_next_buffer - try to read in a new buffer
@@ -2522,9 +2533,9 @@ ECHO;
  */
 static int yy_get_next_buffer (void)
 {
-    	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-	register char *source = (yytext_ptr);
-	register int number_to_move, i;
+    	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+	char *source = (yytext_ptr);
+	int number_to_move, i;
 	int ret_val;
 
 	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
@@ -2553,7 +2564,7 @@ static int yy_get_next_buffer (void)
 	/* Try to read more data. */
 
 	/* First move last chars to start of buffer. */
-	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
+	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr) - 1);
 
 	for ( i = 0; i < number_to_move; ++i )
 		*(dest++) = *(source++);
@@ -2582,7 +2593,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), (size_t) num_to_read );
+			(yy_n_chars), num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -2606,9 +2617,9 @@ static int yy_get_next_buffer (void)
 	else
 		ret_val = EOB_ACT_CONTINUE_SCAN;
 
-	if ((yy_size_t) ((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
+	if (((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
 		/* Extend the array by 50%, plus the number we really need. */
-		yy_size_t new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
+		int new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
 		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size  );
 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
 			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
@@ -2627,8 +2638,8 @@ static int yy_get_next_buffer (void)
 
     static yy_state_type yy_get_previous_state (void)
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp;
+	yy_state_type yy_current_state;
+	char *yy_cp;
     
 	yy_current_state = (yy_start);
 
@@ -2637,14 +2648,14 @@ static int yy_get_next_buffer (void)
 
 	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
 		{
-		register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+		YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
 			if ( yy_current_state >= 669 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
-		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+		yy_current_state = yy_nxt[yy_base[yy_current_state] + (flex_int16_t) yy_c];
 		*(yy_state_ptr)++ = yy_current_state;
 		}
 
@@ -2658,26 +2669,28 @@ static int yy_get_next_buffer (void)
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-	register int yy_is_jam;
+	int yy_is_jam;
     
-	register YY_CHAR yy_c = 1;
+	YY_CHAR yy_c = 1;
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
 		if ( yy_current_state >= 669 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
-	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+	yy_current_state = yy_nxt[yy_base[yy_current_state] + (flex_int16_t) yy_c];
 	yy_is_jam = (yy_current_state == 668);
 	if ( ! yy_is_jam )
 		*(yy_state_ptr)++ = yy_current_state;
 
-	return yy_is_jam ? 0 : yy_current_state;
+		return yy_is_jam ? 0 : yy_current_state;
 }
 
-    static void yyunput (int c, register char * yy_bp )
+#ifndef YY_NO_UNPUT
+
+    static void yyunput (int c, char * yy_bp )
 {
-	register char *yy_cp;
+	char *yy_cp;
     
     yy_cp = (yy_c_buf_p);
 
@@ -2687,10 +2700,10 @@ static int yy_get_next_buffer (void)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register int number_to_move = (yy_n_chars) + 2;
-		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
+		int number_to_move = (yy_n_chars) + 2;
+		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		register char *source =
+		char *source =
 				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
 
 		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
@@ -2699,7 +2712,7 @@ static int yy_get_next_buffer (void)
 		yy_cp += (int) (dest - source);
 		yy_bp += (int) (dest - source);
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
+			(yy_n_chars) = (int) YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
 
 		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 			YY_FATAL_ERROR( "flex scanner push-back overflow" );
@@ -2711,6 +2724,8 @@ static int yy_get_next_buffer (void)
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
 }
+
+#endif
 
 #ifndef YY_NO_INPUT
 #ifdef __cplusplus
@@ -2760,7 +2775,7 @@ static int yy_get_next_buffer (void)
 				case EOB_ACT_END_OF_FILE:
 					{
 					if ( yywrap( ) )
-						return EOF;
+						return 0;
 
 					if ( ! (yy_did_buffer_switch_on_eof) )
 						YY_NEW_FILE;
@@ -2861,7 +2876,7 @@ static void yy_load_buffer_state  (void)
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
-	b->yy_buf_size = size;
+	b->yy_buf_size = (yy_size_t)size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
@@ -2896,10 +2911,6 @@ static void yy_load_buffer_state  (void)
 	yyfree((void *) b  );
 }
 
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
-    
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
@@ -3020,15 +3031,15 @@ static void yyensure_buffer_stack (void)
 		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
 		 * immediate realloc on the next call.
          */
-		num_to_alloc = 1;
+      num_to_alloc = 1; /* After all that talk, this was set to 1 anyways... */
 		(yy_buffer_stack) = (struct yy_buffer_state**)yyalloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								);
 		if ( ! (yy_buffer_stack) )
 			YY_FATAL_ERROR( "out of dynamic memory in yyensure_buffer_stack()" );
-								  
+
 		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
-				
+
 		(yy_buffer_stack_max) = num_to_alloc;
 		(yy_buffer_stack_top) = 0;
 		return;
@@ -3037,7 +3048,7 @@ static void yyensure_buffer_stack (void)
 	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
 
 		/* Increase the buffer to prepare for a possible push. */
-		int grow_size = 8 /* arbitrary grow size */;
+		yy_size_t grow_size = 8 /* arbitrary grow size */;
 
 		num_to_alloc = (yy_buffer_stack_max) + grow_size;
 		(yy_buffer_stack) = (struct yy_buffer_state**)yyrealloc
@@ -3057,7 +3068,7 @@ static void yyensure_buffer_stack (void)
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
  * 
- * @return the newly allocated buffer state object. 
+ * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 {
@@ -3067,7 +3078,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
 		/* They forgot to leave room for the EOB's. */
-		return 0;
+		return NULL;
 
 	b = (YY_BUFFER_STATE) yyalloc(sizeof( struct yy_buffer_state )  );
 	if ( ! b )
@@ -3076,7 +3087,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
 	b->yy_is_our_buffer = 0;
-	b->yy_input_file = 0;
+	b->yy_input_file = NULL;
 	b->yy_n_chars = b->yy_buf_size;
 	b->yy_is_interactive = 0;
 	b->yy_at_bol = 1;
@@ -3099,13 +3110,13 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
 {
     
-	return yy_scan_bytes(yystr,strlen(yystr) );
+	return yy_scan_bytes(yystr,(int) strlen(yystr) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to yylex() will
  * scan from a @e copy of @a bytes.
- * @param bytes the byte buffer to scan
- * @param len the number of bytes in the buffer pointed to by @a bytes.
+ * @param yybytes the byte buffer to scan
+ * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
  * 
  * @return the newly allocated buffer state object.
  */
@@ -3117,7 +3128,7 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 	int i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
-	n = _yybytes_len + 2;
+	n = (yy_size_t) (_yybytes_len + 2);
 	buf = (char *) yyalloc(n  );
 	if ( ! buf )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
@@ -3143,9 +3154,9 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 #define YY_EXIT_FAILURE 2
 #endif
 
-static void yy_fatal_error (yyconst char* msg )
+static void yynoreturn yy_fatal_error (yyconst char* msg )
 {
-    	(void) fprintf( stderr, "%s\n", msg );
+			(void) fprintf( stderr, "%s\n", msg );
 	exit( YY_EXIT_FAILURE );
 }
 
@@ -3173,7 +3184,7 @@ static void yy_fatal_error (yyconst char* msg )
  */
 int yyget_lineno  (void)
 {
-        
+    
     return yylineno;
 }
 
@@ -3211,29 +3222,29 @@ char *yyget_text  (void)
 }
 
 /** Set the current line number.
- * @param line_number
+ * @param _line_number line number
  * 
  */
-void yyset_lineno (int  line_number )
+void yyset_lineno (int  _line_number )
 {
     
-    yylineno = line_number;
+    yylineno = _line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
- * @param in_str A readable stream.
+ * @param _in_str A readable stream.
  * 
  * @see yy_switch_to_buffer
  */
-void yyset_in (FILE *  in_str )
+void yyset_in (FILE *  _in_str )
 {
-        yyin = in_str ;
+        yyin = _in_str ;
 }
 
-void yyset_out (FILE *  out_str )
+void yyset_out (FILE *  _out_str )
 {
-        yyout = out_str ;
+        yyout = _out_str ;
 }
 
 int yyget_debug  (void)
@@ -3241,9 +3252,9 @@ int yyget_debug  (void)
         return yy_flex_debug;
 }
 
-void yyset_debug (int  bdebug )
+void yyset_debug (int  _bdebug )
 {
-        yy_flex_debug = bdebug ;
+        yy_flex_debug = _bdebug ;
 }
 
 static int yy_init_globals (void)
@@ -3252,10 +3263,10 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
-    (yy_buffer_stack) = 0;
+    (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
-    (yy_c_buf_p) = (char *) 0;
+    (yy_c_buf_p) = NULL;
     (yy_init) = 0;
     (yy_start) = 0;
 
@@ -3269,8 +3280,8 @@ static int yy_init_globals (void)
     yyin = stdin;
     yyout = stdout;
 #else
-    yyin = (FILE *) 0;
-    yyout = (FILE *) 0;
+    yyin = NULL;
+    yyout = NULL;
 #endif
 
     /* For future reference: Set errno on error, since we are called by
@@ -3311,7 +3322,8 @@ int yylex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-	register int i;
+		
+	int i;
 	for ( i = 0; i < n; ++i )
 		s1[i] = s2[i];
 }
@@ -3320,7 +3332,7 @@ static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-	register int n;
+	int n;
 	for ( n = 0; s[n]; ++n )
 		;
 
@@ -3330,11 +3342,12 @@ static int yy_flex_strlen (yyconst char * s )
 
 void *yyalloc (yy_size_t  size )
 {
-	return (void *) malloc( size );
+			return malloc(size);
 }
 
 void *yyrealloc  (void * ptr, yy_size_t  size )
 {
+		
 	/* The cast to (char *) in the following accommodates both
 	 * implementations that use char* generic pointers, and those
 	 * that use void* generic pointers.  It works with the latter
@@ -3342,17 +3355,17 @@ void *yyrealloc  (void * ptr, yy_size_t  size )
 	 * any pointer type to void*, and deal with argument conversions
 	 * as though doing an assignment.
 	 */
-	return (void *) realloc( (char *) ptr, size );
+	return realloc(ptr, size);
 }
 
 void yyfree (void * ptr )
 {
-	free( (char *) ptr );	/* see yyrealloc() for (char *) cast */
+			free( (char *) ptr );	/* see yyrealloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"
 
-#line 359 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-lexer.ll"
+#line 358 "kdev-pg-lexer.ll"
 
 
 

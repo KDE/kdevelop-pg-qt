@@ -64,7 +64,7 @@ namespace KDevPG
     } \
     else \
     { \
-      QByteArray tmp("\n\01!ASIgnore\"!!\n#"); \
+      QByteArray tmp("\n#"); \
       if(KDevPG::globalSystem.lineNumberPolicy == KDevPG::World::CompatibilityLineNumbers) \
         tmp += "line"; \
       tmp += " " + QString::number(firstCodeLine).toLocal8Bit(); \
@@ -77,7 +77,6 @@ namespace KDevPG
       strncpy(yylval.str, tmp.data(), tmp.size()); \
       memset(yylval.str + tmp.size(), ' ', firstCodeColumn); \
       strncpy(yylval.str + tmp.size() + firstCodeColumn, string, len); \
-      strncpy(yylval.str + memlen - 17, "\n\01!AS/Ignore\"!!\n", 16); \
       yylval.str[memlen-1] = '\0'; \
     }
 

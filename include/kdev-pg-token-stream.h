@@ -128,6 +128,7 @@ public:
    */
   inline void rewind(qint64 index)
   {
+    Q_ASSERT(0 <= index && index <= size());
     mIndex = index;
   }
   
@@ -136,6 +137,7 @@ public:
    */
   inline T const &at(qint64 index) const
   {
+    Q_ASSERT(0 <= index && index < size());
     return mTokenBuffer[index];
   }
   
@@ -144,6 +146,7 @@ public:
    */
   inline T &at(qint64 index)
   {
+    Q_ASSERT(0 <= index && index < size());
     return mTokenBuffer[index];
   }
   
@@ -184,6 +187,7 @@ public:
    */
   inline T &curr()
   {
+    Q_ASSERT(mIndex < size());
     return mTokenBuffer[mIndex];
   }
   
@@ -192,6 +196,7 @@ public:
    */
   inline T &back()
   {
+    Q_ASSERT(!mTokenBuffer.empty());
     return mTokenBuffer.back();
   }
   
@@ -200,6 +205,7 @@ public:
    */
   inline T &front()
   {
+    Q_ASSERT(!mTokenBuffer.empty());
     return mTokenBuffer.front();
   }
   

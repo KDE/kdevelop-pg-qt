@@ -40,36 +40,51 @@ void GenerateDebugVisitor::operator()()
   }
 
   out << "private:" << endl;
-  out << "void printToken(AstNode *node, const QString &mType, const QString &mName = QString())" << endl;
+  out << "void printToken(const AstNode *node, const QString &mType, const QString &mName = QString())" << endl;
   out << "{" << endl;
-  out << "    QString tokenString;" << endl;
-  out << "    if (!m_content.isEmpty()) {" << endl;
-  out << "        " << globalSystem.tokenStream << "::Token startToken = m_str->at(node->startToken);" << endl;
-  out << "        " << globalSystem.tokenStream << "::Token endToken = m_str->at(node->endToken);" << endl;
-  out << "        int begin = startToken.begin;" << endl;
-  out << "        int end = endToken.end;" << endl;
-  out << "        if (end-begin > 30) {" << endl;
-  out << "            tokenString = m_content.mid(begin, 10);" << endl;
-  out << "            tokenString += QStringLiteral(\" ...\");" << endl;
-  out << "            tokenString += QStringLiteral(\"%1 more\").arg(end-begin-20);" << endl;
-  out << "            tokenString += QStringLiteral(\"... \");" << endl;
-  out << "            tokenString += m_content.midRef(end-10, 10);" << endl;
+  out << "        KDevPG::TokenStream::Token startToken;" << endl;
+  out << "        KDevPG::TokenStream::Token endToken;" << endl;
+  out << "        qint64 line, column;" << endl;
+  out << "        const bool isValidStartToken = (0 <= node->startToken && node->startToken < m_str->size());" << endl;
+  out << "        QString startTokenString;" << endl;
+  out << "        if (isValidStartToken) {" << endl;
+  out << "            startToken = m_str->at(node->startToken);" << endl;
+  out << "            m_str->startPosition(node->startToken, &line, &column);" << endl;
+  out << "            startTokenString = QString::number(startToken.begin) + QLatin1String(\", \") + QString::number(line) + QLatin1String(\", \") + QString::number(column);" << endl;
   out << "        } else {" << endl;
-  out << "            tokenString = m_content.mid(begin, end-begin+1);" << endl;
+  out << "            startTokenString = QLatin1String(\"invalid token index: \") + QString::number(node->startToken);" << endl;
   out << "        }" << endl;
-  out << "        tokenString = tokenString.replace('\\n', QStringLiteral(\"\\\\n\"));" << endl;
-  out << "        tokenString = tokenString.replace('\\r', QStringLiteral(\"\\\\r\"));" << endl;
-  out << "    }" << endl;
-  out << "    qint64 beginLine,endLine,beginCol,endCol;" << endl;
-  out << "    m_str->startPosition(node->startToken, &beginLine, &beginCol);" << endl;
-  out << "m_str->endPosition(node->endToken, &endLine, &endCol);" << endl;
-  out << "qDebug() << QString().fill(' ', m_indent) + mName + (!mName.isEmpty() ? \"->\" : \"\") + mType + \"[\" << m_str->at( node->startToken ).begin"
-      << " << \",\" << beginLine << \",\" << beginCol << "
-      << "\"] --- [\" << m_str->at( node->endToken ).end <<"
-      << " \",\" << endLine << \",\" << endCol "
-      << "<< \"] \""
-      << " << tokenString"
-      << ";";
+  out << "        const bool isValidEndToken = (0 <= node->endToken && node->endToken < m_str->size());" << endl;
+  out << "        QString endTokenString;" << endl;
+  out << "        if (isValidEndToken) {" << endl;
+  out << "            endToken = m_str->at(node->endToken);" << endl;
+  out << "            m_str->startPosition(node->endToken, &line, &column);" << endl;
+  out << "            endTokenString = QString::number(endToken.begin) + QLatin1String(\", \") + QString::number(line) + QLatin1String(\", \") + QString::number(column);" << endl;
+  out << "        } else {" << endl;
+  out << "            endTokenString = QLatin1String(\"invalid token index: \") + QString::number(node->endToken);" << endl;
+  out << "        }" << endl;
+  out << "        QString tokenString;" << endl;
+  out << "        if (!m_content.isEmpty() && isValidStartToken && isValidEndToken) {" << endl;
+  out << "            const int begin = startToken.begin;" << endl;
+  out << "            const int end = endToken.end;" << endl;
+  out << "            if (end-begin > 30) {" << endl;
+  out << "                tokenString = m_content.mid(begin, 10);" << endl;
+  out << "                tokenString += QStringLiteral(\" ...\");" << endl;
+  out << "                tokenString += QStringLiteral(\"%1 more\").arg(end-begin-20);" << endl;
+  out << "                tokenString += QStringLiteral(\"... \");" << endl;
+  out << "                tokenString += m_content.midRef(end-10, 10);" << endl;
+  out << "            }" << endl;
+  out << "            else {" << endl;
+  out << "                tokenString = m_content.mid(begin, end-begin+1);" << endl;
+  out << "            }" << endl;
+  out << "            tokenString.replace('\\n', QStringLiteral(\"\\\\n\"));" << endl;
+  out << "            tokenString.replace('\\r', QStringLiteral(\"\\\\r\"));" << endl;
+  out << "        }" << endl;
+  out << "        qDebug() <<"
+      << " QString(QString().fill(QLatin1Char(' '), m_indent) +"
+      << " mName + QLatin1String(!mName.isEmpty() ? \"->\" : \"\") + mType +"
+      << " QLatin1Char('[') + startTokenString + QLatin1String(\"] --- [\") + endTokenString + QLatin1String(\"] \")).toUtf8().constData()"
+      << " << tokenString;" << endl;
   out << "}" << endl;
   out << globalSystem.tokenStream << " *m_str;" << endl;
   out << "int m_indent;" << endl;

@@ -92,6 +92,7 @@ ENDIF(FLEX_EXECUTABLE)
 
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg-qt ${parser_srcs} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
+ecm_mark_nongui_executable(kdev-pg-qt)
 TARGET_LINK_LIBRARIES( kdev-pg-qt Qt5::Core)
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 

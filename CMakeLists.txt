@@ -15,6 +15,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
+include(ECMMarkNonGuiExecutable)
 include(ECMPackageConfigHelpers)
 include(ECMSetupVersion)
 

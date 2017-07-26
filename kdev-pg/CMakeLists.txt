@@ -40,8 +40,6 @@ SET(kdevpg_srcs
 
 
 # Custom support for flex/bison
-SET(parser_srcs)
-
 IF(BISON_EXECUTABLE)
     # Add command to run the parser.
     ADD_CUSTOM_COMMAND(
@@ -53,7 +51,7 @@ IF(BISON_EXECUTABLE)
                 -d "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
+    SET(parser_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
@@ -63,7 +61,7 @@ IF(BISON_EXECUTABLE)
 ELSE(BISON_EXECUTABLE)
     MESSAGE("'bison' was not found!")
     MESSAGE("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
+    SET(parser_src ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
     SET(OPTIONAL_PARSER_HEADER_DEPENDENCY "")
 ENDIF(BISON_EXECUTABLE)
 
@@ -78,7 +76,7 @@ IF(FLEX_EXECUTABLE)
                 "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc ${parser_srcs})
+    SET(lexer_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc)
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc
         GENERATED
@@ -86,17 +84,18 @@ IF(FLEX_EXECUTABLE)
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("'flex' was not found!")
     MESSAGE("Assuming existence of the generated lexer file kdev-pg-lexer.cc")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc ${parser_srcs})
+    SET(lexer_src ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc)
 ENDIF(FLEX_EXECUTABLE)
+set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT -DYY_NO_UNPUT")
 
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(kdev-pg-qt ${parser_srcs} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
+ADD_EXECUTABLE(kdev-pg-qt ${parser_src} ${lexer_src} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
 ecm_mark_nongui_executable(kdev-pg-qt)
 TARGET_LINK_LIBRARIES( kdev-pg-qt Qt5::Core)
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"
 ADD_CUSTOM_TARGET(parser echo "Generating the parser"
-    DEPENDS ${parser_srcs}
+    DEPENDS ${parser_src} ${lexer_src}
     )

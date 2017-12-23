@@ -1,12 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-# KDEVELOP_PG_QT version
-set(KDEVELOP_PG_QT_VERSION_MAJOR 2)
-set(KDEVELOP_PG_QT_VERSION_MINOR 1)
-set(KDEVELOP_PG_QT_VERSION_PATCH 0)
-set(KDEVELOP_PG_QT_VERSION "${KDEVELOP_PG_QT_VERSION_MAJOR}.${KDEVELOP_PG_QT_VERSION_MINOR}.${KDEVELOP_PG_QT_VERSION_PATCH}")
-
-project(kdevelop-pg-qt)
+project(kdevelop-pg-qt VERSION 2.1.0)
 
 find_package(ECM 5.14.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
@@ -27,7 +21,7 @@ configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.
                               "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
                               INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
-ecm_setup_version(${KDEVELOP_PG_QT_VERSION_MAJOR}.${KDEVELOP_PG_QT_VERSION_MINOR}.${KDEVELOP_PG_QT_VERSION_PATCH}
+ecm_setup_version(${kdevelop-pg-qt_VERSION_MAJOR}.${kdevelop-pg-qt_VERSION_MINOR}.${kdevelop-pg-qt_VERSION_PATCH}
                   VARIABLE_PREFIX KDEVELOP_PG_QT
                   VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kdevelop-pg-qt_version.h"
                   PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"

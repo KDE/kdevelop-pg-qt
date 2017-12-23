@@ -26,10 +26,10 @@ class Benchmarks : public QObject
 {
     Q_OBJECT
 
-public slots:
+public Q_SLOTS:
     void initTestCase();
 
-private slots:
+private Q_SLOTS:
     /// benchmarks on of the PositionAtAlgorithms
     void positionAt();
     void positionAt_data();

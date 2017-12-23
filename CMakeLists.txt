@@ -35,8 +35,15 @@ install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}" )
 
+if(BUILD_TESTING)
+  set(REQUIRED_QT_TESTCOMPONENTS Test)
+endif()
 set(REQUIRED_QT_VERSION 5.5.0)
-find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core Test)
+find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED
+  COMPONENTS
+    Core
+    ${REQUIRED_QT_TESTCOMPONENTS}
+)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -69,7 +76,10 @@ endif()
 add_subdirectory(include)
 add_subdirectory(kdev-pg)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
-add_subdirectory(tests)
+
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
 
 include(CTest)
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0)
 
 # KDEVELOP_PG_QT version
 set(KDEVELOP_PG_QT_VERSION_MAJOR 2)
@@ -16,18 +16,18 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
 include(ECMMarkNonGuiExecutable)
-include(ECMPackageConfigHelpers)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
+include(CMakePackageConfigHelpers)
 
 set(CMAKECONFIG_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/KDevelop-PG-Qt)
-ecm_configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
-                                  "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
-                                  INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
+configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
+                              "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
+                              INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
 ecm_setup_version(${KDEVELOP_PG_QT_VERSION_MAJOR}.${KDEVELOP_PG_QT_VERSION_MINOR}.${KDEVELOP_PG_QT_VERSION_PATCH}
                   VARIABLE_PREFIX KDEVELOP_PG_QT

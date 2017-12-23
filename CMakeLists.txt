@@ -8,8 +8,6 @@ set(KDEVELOP_PG_QT_VERSION "${KDEVELOP_PG_QT_VERSION_MAJOR}.${KDEVELOP_PG_QT_VER
 
 project(kdevelop-pg-qt)
 
-enable_testing()
-
 find_package(ECM 1.1.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 

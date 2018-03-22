@@ -32,7 +32,9 @@ IF(FLEX_EXECUTABLE)
 
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp
-        GENERATED
+        PROPERTIES
+            GENERATED TRUE
+            SKIP_AUTOMOC ON
         )
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("--- Assuming existence of the generated lexer file cool_lexer.cpp")

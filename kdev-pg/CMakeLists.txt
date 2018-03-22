@@ -57,7 +57,9 @@ IF(BISON_EXECUTABLE)
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
-        GENERATED
+        PROPERTIES
+            GENERATED TRUE
+            SKIP_AUTOMOC ON
         )
     SET(OPTIONAL_PARSER_HEADER_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh")
 ELSE(BISON_EXECUTABLE)
@@ -81,7 +83,9 @@ IF(FLEX_EXECUTABLE)
     SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc ${parser_srcs})
     SET_SOURCE_FILES_PROPERTIES(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc
-        GENERATED
+        PROPERTIES
+            GENERATED TRUE
+            SKIP_AUTOMOC ON
         )
 ELSE(FLEX_EXECUTABLE)
     MESSAGE("'flex' was not found!")

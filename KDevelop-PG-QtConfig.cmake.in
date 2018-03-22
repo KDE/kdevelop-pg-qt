@@ -172,7 +172,10 @@ if( KDEVPGQT_INCLUDE_DIR
                     ${_dbgVisit} ${_dumpInfo} ${_beautifulCode} ${_conflicts} "${_grammarFile}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
-        set_source_files_properties("${_outputList}" GENERATED)
+        set_source_files_properties(${_outputList} PROPERTIES
+            GENERATED TRUE
+            SKIP_AUTOMOC ON
+        )
         set( ${_srcVar}
               "${_outputList}"
            )

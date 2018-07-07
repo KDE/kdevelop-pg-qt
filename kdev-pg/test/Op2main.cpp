@@ -2,7 +2,7 @@
 #include "Op2debugvisitor.h"
 #include "Op2tokenstream.h"
 
-#include <qfile.h>
+#include <QFile>
 #include <kdebug.h>
 
 using namespace Op2;

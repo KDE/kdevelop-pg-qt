@@ -23,7 +23,7 @@
 #include <ctime>
 #include <algorithm>
 
-#include <qalgorithms.h>
+#include <QtAlgorithms>
 
 #include "../include/kdev-pg-location-table.h"
 

@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <climits>
-#include <qdebug.h>
+#include <QDebug>
 #include "dumptree.h"
 #include "ccparser.h"
 #include "lexer.h"

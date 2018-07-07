@@ -34,8 +34,8 @@
 #include "kdev-pg-beautifier.h"
 #include "kdev-pg-regexp.h"
 
-#include <QtCore/QTextStream>
-#include <QtCore/QFile>
+#include <QTextStream>
+#include <QFile>
 #include "kdev-pg-token-type-gen.h"
 
 namespace KDevPG
@@ -74,7 +74,7 @@ void generateOutput()
       foreach (const QString& header, globalSystem.astHeaders)
         s << "#include \"" << header << "\"\n";
       
-      s <<  "#include <QtCore/QList>" << endl
+      s <<  "#include <QList>" << endl
         << "#include <kdev-pg-list.h>" << endl
         << endl;
       
@@ -210,7 +210,7 @@ void generateOutput()
         << endl;
     
     if (globalSystem.needOperatorStack)
-      s << "#include <QtCore/QVector>" << endl;
+      s << "#include <QVector>" << endl;
     
     if (!globalSystem.decl.isEmpty() && !globalSystem.generateAst)
       s << globalSystem.decl << endl;
@@ -329,8 +329,8 @@ void generateOutput()
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << endl;
 
-    s << "#include <QtCore/QTextStream>" << endl
-      << "#include <QtCore/QFile>" << endl
+    s << "#include <QTextStream>" << endl
+      << "#include <QFile>" << endl
       << endl
 
       << "namespace " << globalSystem.ns << "{" << endl
@@ -373,8 +373,8 @@ void generateOutput()
 
     s << "#include <kdev-pg-token-stream.h>" << endl;
     
-    s << "#include <QtCore/QTextStream>" << endl
-      << "#include <QtCore/QDebug>" << endl
+    s << "#include <QTextStream>" << endl
+      << "#include <QDebug>" << endl
       << endl
 
       << "namespace " << globalSystem.ns << "{" << endl

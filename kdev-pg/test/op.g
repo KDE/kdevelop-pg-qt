@@ -1,5 +1,5 @@
 [:
-#include <QtCore/QString>
+#include <QString>
 #include <kdebug.h>
 :]
 

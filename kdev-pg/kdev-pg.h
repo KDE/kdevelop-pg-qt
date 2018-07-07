@@ -24,15 +24,15 @@
 
 #include "kdev-pg-ast.h"
 
-#include <QtCore/QSet>
-#include <QtCore/QMap>
-#include <QtCore/QList>
-#include <QtCore/QFile>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QMultiMap>
-#include <QtCore/QtGlobal>
-#include <QtCore/QTextStream>
+#include <QSet>
+#include <QMap>
+#include <QList>
+#include <QFile>
+#include <QString>
+#include <QStringList>
+#include <QMultiMap>
+#include <QtGlobal>
+#include <QTextStream>
 
 #include <vector>
 #include <algorithm>

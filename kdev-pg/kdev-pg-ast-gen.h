@@ -23,11 +23,11 @@
 
 #include "kdev-pg-default-visitor.h"
 
-#include <QtCore/QTextStream>
-#include <QtCore/QSet>
-#include <QtCore/QPair>
-#include <QtCore/QList>
-#include <QtCore/QString>
+#include <QTextStream>
+#include <QSet>
+#include <QPair>
+#include <QList>
+#include <QString>
 
 namespace KDevPG
 {

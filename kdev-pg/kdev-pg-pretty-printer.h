@@ -22,7 +22,7 @@
 
 #include "kdev-pg-default-visitor.h"
 
-#include <QtCore/QTextStream>
+#include <QTextStream>
 
 namespace KDevPG
 {

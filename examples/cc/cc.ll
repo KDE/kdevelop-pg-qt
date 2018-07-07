@@ -27,7 +27,7 @@
 
 #define DONT_INCLUDE_FLEXLEXER
 #include "lexer.h"
-#include <QtCore/QDebug>
+#include <QDebug>
 
 %}
 

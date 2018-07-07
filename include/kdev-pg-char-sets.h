@@ -31,11 +31,11 @@
 
 using namespace std;
 
-#include <QtCore/QString>
-#include <QtCore/QByteArray>
-#include <QtCore/QVector>
-#include <QtCore/QTextStream>
-#include <QtCore/QStringList>
+#include <QString>
+#include <QByteArray>
+#include <QVector>
+#include <QTextStream>
+#include <QStringList>
 
 /**
  * @FILE

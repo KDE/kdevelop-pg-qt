@@ -17,8 +17,8 @@
 --   Boston, MA 02111-1307, USA.
 
 [:
-#include <QtCore/QString>
-#include <QtCore/QDebug>
+#include <QString>
+#include <QDebug>
 :]
 
 %parserclass (protected declaration)

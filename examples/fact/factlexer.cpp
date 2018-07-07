@@ -20,9 +20,9 @@
 
 #include "factlexer.h"
 
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QDebug>
+#include <QString>
+#include <QStringList>
+#include <QDebug>
 #include "factparser.h"
 #include <kdev-pg-location-table.h>
 #include <kdev-pg-token-stream.h>

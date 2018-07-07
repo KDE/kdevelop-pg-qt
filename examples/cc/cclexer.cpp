@@ -2659,7 +2659,7 @@ static yyconst flex_int16_t yy_chk[8893] =
 
 #define DONT_INCLUDE_FLEXLEXER
 #include "lexer.h"
-#include <QtCore/QDebug>
+#include <QDebug>
 
 /* UTF-8 sequences, generated with the Unicode.hs script from
 * http://lists.gnu.org/archive/html/help-flex/2005-01/msg00043.html */

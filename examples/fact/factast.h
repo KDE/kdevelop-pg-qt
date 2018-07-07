@@ -4,12 +4,12 @@
 #ifndef FACT_AST_H_INCLUDED
 #define FACT_AST_H_INCLUDED
 
-#include <QtCore/QList>
+#include <QList>
 #include <kdev-pg-list.h>
 
 
 
-#include <QtCore/QString>
+#include <QString>
 
 namespace fact
 {

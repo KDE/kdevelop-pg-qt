@@ -20,7 +20,7 @@
 #ifndef KDEVPG_KDEV_PG_TOKEN_TYPE_GEN_H
 #define KDEVPG_KDEV_PG_TOKEN_TYPE_GEN_H
 
-#include <QtCore/QTextStream>
+#include <QTextStream>
 
 namespace KDevPG
 {

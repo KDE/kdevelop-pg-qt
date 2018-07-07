@@ -1074,7 +1074,7 @@ try/recover(#classStatements=classStatement)*
 
 [:
 
-#include <QtCore/QDebug>
+#include <QDebug>
 
 namespace Php
 {

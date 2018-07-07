@@ -20,7 +20,7 @@
 #ifndef KDEV_PG_BEAUTIFIER_H
 #define KDEV_PG_BEAUTIFIER_H
 
-#include <QtCore/QTextStream>
+#include <QTextStream>
 
 #include "astyle.h"
 

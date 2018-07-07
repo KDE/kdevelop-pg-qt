@@ -21,7 +21,7 @@
 #include "ccast.h"
 #include "kdev-pg-token-stream.h"
 
-#include <QtCore/QString>
+#include <QString>
 
 #include <iostream>
 

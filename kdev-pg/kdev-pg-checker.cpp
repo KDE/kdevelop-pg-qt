@@ -23,7 +23,7 @@
 #include "kdev-pg-pretty-printer.h"
 #include "kdev-pg-bnf-visitor.h"
 
-#include <QtCore/QDebug>
+#include <QDebug>
 
 //uncomment this to see debug output for follow checker
 // #define FOLLOW_CHECKER_DEBUG

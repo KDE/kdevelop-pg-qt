@@ -21,10 +21,10 @@
 
 #include "kdev-pg-code-gen.h"
 
-#include <QtCore/QList>
-#include <QtCore/QDebug>
-#include <QtCore/QStack>
-#include <QtCore/QStringList>
+#include <QList>
+#include <QDebug>
+#include <QStack>
+#include <QStringList>
 #include "kdev-pg-pretty-printer.h"
 
 namespace KDevPG

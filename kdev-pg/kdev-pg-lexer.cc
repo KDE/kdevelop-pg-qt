@@ -1191,14 +1191,14 @@ char *yytext;
    Boston, MA 02110-1301, USA.
 */
 
-#include <QtCore/QDebug>
+#include <QDebug>
 
 #include "kdev-pg.h"
 #include "kdev-pg-parser.hh"
 
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QTextStream>
+#include <QFile>
+#include <QFileInfo>
+#include <QTextStream>
 
 int inp();
 void appendLineBuffer();

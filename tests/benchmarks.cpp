@@ -27,8 +27,8 @@
 
 #include "../include/kdev-pg-location-table.h"
 
-#include <QtTest/QTest>
-#include <QtCore/QDebug>
+#include <QTest>
+#include <QDebug>
 
 using namespace std;
 

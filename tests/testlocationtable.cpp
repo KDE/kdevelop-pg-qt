@@ -21,8 +21,8 @@
 #include "testlocationtable.h"
 
 #include <cstdlib>
-#include <QtTest/QTest>
-#include <QtCore/QDebug>
+#include <QTest>
+#include <QDebug>
 
 #include "../include/kdev-pg-location-table.h"
 

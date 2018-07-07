@@ -21,7 +21,7 @@
 #ifndef TESTLOCATIONTABLE_H
 #define TESTLOCATIONTABLE_H
 
-#include <QtCore/qobject.h>
+#include <QObject>
 
 namespace KDevPG
 {

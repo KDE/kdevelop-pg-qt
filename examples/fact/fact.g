@@ -5,7 +5,7 @@
 
 [:
 
-#include <QtCore/QString>
+#include <QString>
 
 namespace fact
 {
@@ -138,7 +138,7 @@ namespace fact
 
 [:
 #include "factlexer.h"
-#include <QtCore/QString>
+#include <QString>
 #include <QDebug>
 
 namespace fact

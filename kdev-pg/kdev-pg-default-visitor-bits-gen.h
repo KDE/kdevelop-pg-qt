@@ -23,9 +23,9 @@
 
 #include "kdev-pg-default-visitor.h"
 
-#include <QtCore/QSet>
-#include <QtCore/QList>
-#include <QtCore/QTextStream>
+#include <QSet>
+#include <QList>
+#include <QTextStream>
 
 namespace KDevPG
 {

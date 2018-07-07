@@ -21,8 +21,8 @@
 
 #include "factparser.h"
 
-#include <QtCore/QStack>
-#include <QtCore/QString>
+#include <QStack>
+#include <QString>
 
 namespace fact
 {

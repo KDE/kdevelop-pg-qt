@@ -21,7 +21,7 @@
 #define KDEV_PG_CLONE_TREE_H
 
 #include "kdev-pg-default-visitor.h"
-#include <QtCore/QStack>
+#include <QStack>
 
 namespace KDevPG
 {

@@ -24,9 +24,8 @@
 #ifndef KDEV_PG_LOCATION_TABLE_H
 #define KDEV_PG_LOCATION_TABLE_H
 
-#include <QtCore/QtGlobal>
-
-#include <QtCore/qalgorithms.h> // krazy:exclude=includes
+#include <QtGlobal>
+#include <QtAlgorithms>
 
 namespace KDevPG
 {

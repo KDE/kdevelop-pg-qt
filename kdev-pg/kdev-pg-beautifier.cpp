@@ -19,8 +19,8 @@
 
 #include "kdev-pg-beautifier.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
+#include <QFile>
+#include <QFileInfo>
 
 namespace KDevPG
 {

@@ -31,9 +31,9 @@ using std::vector;
 using std::pair;
 using std::make_pair;
 
-#include <QtCore/QString>
+#include <QString>
 
-#include <QtCore/QDebug>
+#include <QDebug>
 
 #define PG_NODE(k) \
     enum { NodeKind = NodeKind##k };

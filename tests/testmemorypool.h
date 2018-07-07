@@ -21,7 +21,7 @@
 #ifndef TESTMEMORYPOOL_H
 #define TESTMEMORYPOOL_H
 
-#include <QtCore/qobject.h>
+#include <QObject>
 
 namespace KDevPG
 {

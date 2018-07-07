@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include <QtCore/QString>
+#include <QString>
 #include <string>
 
 #ifndef DONT_INCLUDE_FLEXLEXER

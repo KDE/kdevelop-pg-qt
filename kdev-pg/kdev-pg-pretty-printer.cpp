@@ -20,8 +20,8 @@
 
 #include "kdev-pg-pretty-printer.h"
 
-#include <QtCore/QList>
-#include <QtCore/QStack>
+#include <QList>
+#include <QStack>
 #include <iostream>
 #include <cassert>
 

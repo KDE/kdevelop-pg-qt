@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <QtCore/QtGlobal>
+#include <QtGlobal>
 
 namespace KDevPG
 {

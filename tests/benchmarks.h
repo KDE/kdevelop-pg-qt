@@ -18,7 +18,7 @@
 #ifndef BENCHMARKS_H
 #define BENCHMARKS_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 namespace KDevPG
 {

@@ -21,8 +21,8 @@
 #include "testmemorypool.h"
 
 #include <cstdlib>
-#include <QtTest/QTest>
-#include <QtCore/QDebug>
+#include <QTest>
+#include <QDebug>
 
 #include "../include/kdev-pg-memory-pool.h"
 

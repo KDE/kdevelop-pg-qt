@@ -23,7 +23,7 @@
 #include "kdev-pg-follow.h"
 #include "kdev-pg-pretty-printer.h"
 
-#include <QtCore/QTextStream>
+#include <QTextStream>
 
 //uncomment this to see debug output for follow dependency calculation
 // #define followDepsEP_DEBUG

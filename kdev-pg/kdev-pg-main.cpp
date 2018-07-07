@@ -31,10 +31,10 @@
 #include "kdev-pg-generate.h"
 #include "kdev-pg-regexp.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QStringList>
-#include <QtCore/QCoreApplication>
-#include <QtCore/QFileInfo>
+#include <QFile>
+#include <QStringList>
+#include <QCoreApplication>
+#include <QFileInfo>
 
 namespace KDevPG
 {

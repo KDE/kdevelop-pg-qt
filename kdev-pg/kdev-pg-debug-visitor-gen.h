@@ -23,10 +23,10 @@
 #include "kdev-pg-default-visitor.h"
 #include "kdev-pg-default-visitor-bits-gen.h" // for the HasMemberNodes class
 
-#include <QtCore/QSet>
-#include <QtCore/QList>
-#include <QtCore/QString>
-#include <QtCore/QTextStream>
+#include <QSet>
+#include <QList>
+#include <QString>
+#include <QTextStream>
 
 namespace KDevPG
 {

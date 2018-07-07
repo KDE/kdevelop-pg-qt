@@ -22,7 +22,7 @@
 #include "kdev-pg-code-gen.h"
 #include "kdev-pg.h"
 
-#include <QtCore/QMap>
+#include <QMap>
 
 namespace KDevPG
 {

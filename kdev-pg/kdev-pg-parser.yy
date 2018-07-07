@@ -26,7 +26,7 @@
 #include "kdev-pg-unicode-loader.h"
 #include "kdev-pg-checker.h"
 
-#include <QtCore/QFile>
+#include <QFile>
 #include <cassert>
 
 extern int yylex();

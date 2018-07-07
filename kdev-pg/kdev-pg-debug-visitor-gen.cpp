@@ -103,9 +103,9 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
   hms(sym);
 
   #define O1(name) \
-      out << "virtual void visit" << name \
+      out << "void visit" << name \
           << "(" << name << "Ast *" << "node" \
-          << ") {" << endl;
+          << ") override {" << endl;
   #define O2(name) \
   out << "printToken(node, QStringLiteral(\"" << name << "\"));" << endl;
   #define O3(name) \

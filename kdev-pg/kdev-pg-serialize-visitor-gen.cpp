@@ -159,9 +159,9 @@ void GenerateSerializeVisitorRule::operator()(QPair<QString,
   HasMemberNodes hms(has_members);
   hms(sym);
 
-  out << "virtual void visit" << sym->mCapitalizedName
+  out << "void visit" << sym->mCapitalizedName
       << "(" << sym->mCapitalizedName << "Ast *" << "node"
-      << ") {" << endl;
+      << ") override {" << endl;
 
   Model::EvolveItem *e = globalSystem.searchRule(sym);
   visitNode(e);

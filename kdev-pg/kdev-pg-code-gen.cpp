@@ -101,7 +101,7 @@ namespace KDevPG
         sprintf(__var, "__node_%d", __id);
         ++__id;
 
-        out << capSymbolName << "Ast *" << __var << " = 0;" << endl
+        out << capSymbolName << "Ast *" << __var << " = nullptr;" << endl
             << "if (!parse" << capSymbolName << "(&" << __var;
 
         if (!node->mArguments.isEmpty())
@@ -586,7 +586,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->op.mCode;
-    out << "AstNode *last = 0; bool br = false;";
+    out << "AstNode *last = nullptr; bool br = false;";
     out << "while(priority < opStack.last().p + " << i->left << ") {";
     out << "if(opStack.size() == 1) {"
            "if(last)\n"
@@ -620,7 +620,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       out << " && " << i->op.mCond;
     out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->op.mCode;
-    out << "AstNode *last = 0; bool br = false;";
+    out << "AstNode *last = nullptr; bool br = false;";
     out << "while(priority < opStack.last().p + " << i->left << ") {";
     out << "if(opStack.size() == 1) {"
            "if(last)\n"
@@ -660,7 +660,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       out << " && " << i->first.mCond;
         out << ") { const unsigned int priority = " << i->priority << ";";
     out << i->first.mCode;
-    out << "AstNode *last = 0; bool br = false;";
+    out << "AstNode *last = nullptr; bool br = false;";
     out << "while(priority < opStack.last().p + " << i->left << ") {";
     out << "if(opStack.size() == 1) {"
            "if(last)\n"
@@ -719,9 +719,9 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "else"
            "{\n"
            "void *last = opStack.last().n;"
-           "if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n"
+           "if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == nullptr)\n"
            "reinterpret_cast<Prefix" << nodeType << "*>(last)->first = node;"
-           "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == 0)\n"
+           "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == nullptr)\n"
            "reinterpret_cast<Binary" << nodeType << "*>(last)->second = node;"
            "else\n"
            "reinterpret_cast<Ternary" << nodeType << "*>(last)->third = node;"
@@ -760,9 +760,9 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
 if(!opStack.isEmpty())\
 {\
   void *last = opStack.last().n;\
-  if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == 0)\n\
+  if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == nullptr)\n\
     reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << endl; \
-  out << "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == 0)\n\
+  out << "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == nullptr)\n\
   reinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";\
   else\nreinterpret_cast<Ternary" << nodeType << "*>(last)->third = " << __var << ";}\
 else\n\
@@ -866,7 +866,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
     {
       if(isOperatorSymbol(sym))
       {
-        out << "AstNode *olast, *last = 0;"
+        out << "AstNode *olast, *last = nullptr;"
                "while(!opStack.empty())\n"
                "{"
                "olast = last;"
@@ -1167,10 +1167,10 @@ void GenerateParserDeclarations::operator()()
   out << "Parser() {" << endl;
   if (globalSystem.generateAst)
     {
-      out << "memoryPool = 0;" << endl;
+      out << "memoryPool = nullptr;" << endl;
     }
 
-  out << "tokenStream = 0;" << endl
+  out << "tokenStream = nullptr;" << endl
       << "yytoken = Token_EOF;" << endl
       << "mBlockErrors = false;" << endl;
 

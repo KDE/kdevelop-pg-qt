@@ -47,7 +47,7 @@ void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> co
   Model::SymbolItem *sym = __it.second;
   
   #define O(name) \
-  out << "virtual void visit" << name << "(" << name << "Ast *node);" << endl;
+  out << "void visit" << name << "(" << name << "Ast *node) override;" << endl;
   
   if(isOperatorSymbol(sym))
   {

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(kdevelop-pg-qt VERSION 2.1.0)
 
 find_package(ECM 5.14.0 REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)

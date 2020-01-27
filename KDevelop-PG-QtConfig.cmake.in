@@ -23,6 +23,8 @@
 #                function that returns a readable name of a token
 #     DUMP_INFO will tell kdevelop-pg to dump extra information about symbols, terminals and rules
 #               into files in the binary dir
+#     ENFORCE_COMPATIBLE_ERROR_AWARE_CODE will ensure that --compatible-error-aware-code is also
+#               passed in case of GCC. By default it only is set for non-GNU compilers.
 #     Note: The macro only exists when KDEVPG was found
 #
 # Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>
@@ -139,6 +141,9 @@ if( KDEVPGQT_INCLUDE_DIR
         elseif( ${_arg} STREQUAL "BEAUTIFUL_CODE" )
             list(REMOVE_AT _depList 0)
             set(_beautifulCode --beautiful-code)
+        elseif( ${_arg} STREQUAL "ENFORCE_COMPATIBLE_ERROR_AWARE_CODE" )
+            list(REMOVE_AT _depList 0)
+            set(_beautifulCode --compatible-error-aware-code)
         elseif( ${_arg} STREQUAL "STRICT_CONFLICTS" )
             list(REMOVE_AT _depList 0)
             set(_conflicts --strict-conflicts)

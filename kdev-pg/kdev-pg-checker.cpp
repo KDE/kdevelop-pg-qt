@@ -171,8 +171,8 @@ void FollowDepChecker::check(Model::Node *node)
   mVisited.insert(node);
 
   World::FollowDep &D = globalSystem.followDep(node);
-  QList<Model::Node*> FD = D.first.toList();
-  QList<Model::Node*> FLD = D.second.toList();
+  QList<Model::Node*> FD = D.first.values();
+  QList<Model::Node*> FLD = D.second.values();
   QTextStream& str( checkOut );
   PrettyPrinter p(str);
 #ifdef FOLLOW_CHECKER_DEBUG
@@ -193,7 +193,7 @@ void FollowDepChecker::check(Model::Node *node)
         for(auto jt = set2.begin(); jt != set2.end(); ++jt)
           if(!BnfVisitor::isInternal(*jt))
             FD.append(*jt);
-        FD.append(set.toList());
+        FD.append(set.values());
       }
       else
       {
@@ -227,7 +227,7 @@ void FollowDepChecker::check(Model::Node *node)
       World::NodeSet set = globalSystem.followDep(FLD[i]).second;
       for(auto jt = FLD.begin(); jt != FLD.end(); ++jt)
         set.remove(*jt);
-      FLD.append(set.toList());
+      FLD.append(set.values());
     }
     else
     {

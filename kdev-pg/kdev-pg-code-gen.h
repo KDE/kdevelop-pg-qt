@@ -136,6 +136,12 @@ public:
   void operator()(Model::SymbolItem *node);
 };
 
+namespace GenerateVariableDeclarationImpl
+{
+  void printType(QTextStream &out, Model::VariableDeclarationItem *node);
+  void printName(QTextStream &out, Model::VariableDeclarationItem *node);
+};
+
 template<bool printType, bool printName>
 class GenerateVariableDeclaration
 {
@@ -146,7 +152,13 @@ public:
   GenerateVariableDeclaration(QTextStream& o): out(o)
   {}
 
-  void operator()(Model::VariableDeclarationItem *node);
+  void operator()(Model::VariableDeclarationItem *node)
+  {
+    if (printType)
+      GenerateVariableDeclarationImpl::printType(out, node);
+    if (printName)
+      GenerateVariableDeclarationImpl::printName(out, node);
+  }
 };
 
 class GenerateTokenVariableInitialization : public DefaultVisitor

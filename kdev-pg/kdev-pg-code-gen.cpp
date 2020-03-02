@@ -1014,35 +1014,34 @@ void GenerateParseMethodSignature::visitVariableDeclaration(Model::VariableDecla
   DefaultVisitor::visitVariableDeclaration(node);
 }
 
-template<bool printType, bool printName>
-void GenerateVariableDeclaration<printType, printName>::operator()(Model::VariableDeclarationItem *node)
+namespace GenerateVariableDeclarationImpl
 {
-  if(printType)
+void printType(QTextStream &out, Model::VariableDeclarationItem *node)
+{
+  if (node->mIsSequence)
+    out << "const KDevPG::ListNode<";
+
+  if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
+    out << "qint64 ";
+  else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
   {
-    if (node->mIsSequence)
-      out << "const KDevPG::ListNode<";
+    out << node->mCapitalizedType << "Ast *";
+  }else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable)
+    out << node->mType << " ";
+  else
+    Q_ASSERT(0); // ### not supported
 
-    if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
-      out << "qint64 ";
-    else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
-    {
-      out << node->mCapitalizedType << "Ast *";
-    }else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable)
-      out << node->mType << " ";
-    else
-      Q_ASSERT(0); // ### not supported
+  if (node->mIsSequence)
+    out << "> *";
+}
 
-    if (node->mIsSequence)
-      out << "> *";
-  }
+void printName(QTextStream &out, Model::VariableDeclarationItem *node)
+{
+  out << node->mName;
 
-  if(printName)
-  {
-    out << node->mName;
-
-    if (node->mIsSequence)
-      out << "Sequence";
-  }
+  if (node->mIsSequence)
+    out << "Sequence";
+}
 }
 
 void GenerateMemberCode::operator()(Settings::MemberItem* m)

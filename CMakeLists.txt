@@ -1,13 +1,16 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.16)
 
 project(kdevelop-pg-qt VERSION 2.2.1)
 
-find_package(ECM 5.14.0 REQUIRED NO_MODULE)
+find_package(ECM 5.91.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+
+set(KDE_COMPILERSETTINGS_LEVEL 5.84)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
+
 include(ECMAddTests)
 include(ECMMarkNonGuiExecutable)
 include(ECMSetupVersion)
@@ -38,7 +41,7 @@ install(FILES
 if(BUILD_TESTING)
   set(REQUIRED_QT_TESTCOMPONENTS Test)
 endif()
-set(REQUIRED_QT_VERSION 5.5.0)
+set(REQUIRED_QT_VERSION 5.15.2)
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED
   COMPONENTS
     Core

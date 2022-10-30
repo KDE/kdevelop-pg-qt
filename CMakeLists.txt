@@ -14,6 +14,7 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
 include(ECMMarkNonGuiExecutable)
 include(ECMSetupVersion)
+include(ECMDeprecationSettings)
 
 include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
@@ -60,9 +61,11 @@ find_program(BISON_EXECUTABLE
   PATHS /usr/bin
   DOC "bison executable")
 
+ecm_set_disabled_deprecation_versions(
+    QT 5.15.2
+)
+
 add_definitions(
-    -DQT_DEPRECATED_WARNINGS
-    -DQT_DISABLE_DEPRECATED_BEFORE=0x050500
     -DQT_NO_SIGNALS_SLOTS_KEYWORDS
     -DQT_STRICT_ITERATORS
     -DQT_USE_QSTRINGBUILDER

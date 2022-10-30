@@ -30,6 +30,7 @@
 #include "kdev-pg-inline-checker.h"
 #include "kdev-pg-generate.h"
 #include "kdev-pg-regexp.h"
+#include <../kdevelop-pg-qt_version.h>
 
 #include <QFile>
 #include <QStringList>
@@ -97,7 +98,7 @@ void help()
 
 void version()
 {
-  KDevPG::checkOut << "KDevelop-PG-Qt: 1.0.0" << endl;
+  KDevPG::checkOut << "KDevelop-PG-Qt: " << KDEVELOP_PG_QT_VERSION_STRING << endl;
   
   exit(EXIT_SUCCESS);
 }

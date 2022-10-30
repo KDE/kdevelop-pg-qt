@@ -2,7 +2,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 REMOVE_DEFINITIONS(-DQT_NO_STL)
 ADD_DEFINITIONS(-DQT_STL)
 
-QT5_ADD_RESOURCES(kdevpg_rcc_srcs ../unidata.qrc)
+qt_add_resources(kdevpg_rcc_srcs ../unidata.qrc)
 kde_enable_exceptions()
 
 SET(kdevpg_srcs
@@ -98,7 +98,7 @@ set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg-qt ${parser_src} ${lexer_src} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
 ecm_mark_nongui_executable(kdev-pg-qt)
-TARGET_LINK_LIBRARIES( kdev-pg-qt Qt5::Core)
+TARGET_LINK_LIBRARIES( kdev-pg-qt Qt${QT_MAJOR_VERSION}::Core)
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"

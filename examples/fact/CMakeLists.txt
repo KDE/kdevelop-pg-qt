@@ -22,5 +22,5 @@ ADD_DEFINITIONS(-Wall -O2)
 # tell CMake to generate the executable
 ADD_EXECUTABLE(fact-parser ${assembled_parser_srcs} ${parser_SRCS} main.cpp)
 
-target_link_libraries(fact-parser Qt5::Core)
+target_link_libraries(fact-parser Qt${QT_MAJOR_VERSION}::Core)
 

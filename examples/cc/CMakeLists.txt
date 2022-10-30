@@ -59,4 +59,4 @@ ADD_DEFINITIONS(-Wall -O2)
 # tell CMake to generate the executable
 ADD_EXECUTABLE(cc-parser ${cc_parser_srcs})
 
-TARGET_LINK_LIBRARIES( cc-parser Qt5::Core)
+TARGET_LINK_LIBRARIES( cc-parser Qt${QT_MAJOR_VERSION}::Core)

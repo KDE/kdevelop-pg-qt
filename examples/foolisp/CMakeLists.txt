@@ -11,4 +11,4 @@ kdevpgqt_generate(parser_SRCS foolisp NAMESPACE FooLisp DEBUG_VISITOR TOKEN_TEXT
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable( foolisptest ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries( foolisptest Qt5::Core)
+target_link_libraries( foolisptest Qt${QT_MAJOR_VERSION}::Core)

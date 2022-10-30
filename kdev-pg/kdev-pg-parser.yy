@@ -41,7 +41,7 @@ namespace KDevPG
     extern QTextStream checkOut;
 }
 
-KDevPG::Model::OperatorItem *operatorNode = 0;
+KDevPG::Model::OperatorItem *operatorNode = nullptr;
 QString r;
 
 %}
@@ -503,7 +503,7 @@ try_item
     : T_TRY_RECOVER '(' option_item ')'
         {
           KDevPG::globalSystem.needStateManagement = true;
-          $$ = KDevPG::tryCatch($3, 0);
+          $$ = KDevPG::tryCatch($3, nullptr);
         }
     | T_TRY_ROLLBACK '(' option_item ')' T_CATCH '(' option_item ')'
         {
@@ -546,7 +546,7 @@ postfix_item
           $$ = KDevPG::cons($1, KDevPG::star(KDevPG::cons(cl.clone($3), cl.clone($1))));
         }
     | postfix_item T_CODE               { $$ = KDevPG::action($1, $2); }
-    | T_CODE                            { $$ = KDevPG::action(0, $1); }
+    | T_CODE                            { $$ = KDevPG::action(nullptr, $1); }
     ;
 
 item_sequence
@@ -576,7 +576,7 @@ item
                           (KDevPG::Model::VariableDeclarationItem*) $5, $7);
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
-        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), 0, $4); }
+        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), nullptr, $4); }
     | { if(KDevPG::globalSystem.generateAst == false)
         {
           qFatal("Operator-expression-parsing is not yet supported with --no-ast!");
@@ -620,7 +620,7 @@ operatorRule
               operatorNode->mName = $5;
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
                 KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), 0, $6);
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), nullptr, $6);
             }
     ;
 
@@ -670,7 +670,7 @@ variableDeclarations
     | variableDeclarations variableDeclaration
         {
           KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) $1;
-          while (last->mNext != 0) {
+          while (last->mNext != nullptr) {
             last = last->mNext;
           }
           last->mNext = (KDevPG::Model::VariableDeclarationItem*) $2;

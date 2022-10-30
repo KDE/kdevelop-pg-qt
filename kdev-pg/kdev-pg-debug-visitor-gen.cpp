@@ -72,7 +72,7 @@ void GenerateDebugVisitor::operator()()
   out << "                tokenString += QStringLiteral(\" ...\");" << Qt::endl;
   out << "                tokenString += QStringLiteral(\"%1 more\").arg(end-begin-20);" << Qt::endl;
   out << "                tokenString += QStringLiteral(\"... \");" << Qt::endl;
-  out << "                tokenString += m_content.midRef(end-10, 10);" << Qt::endl;
+  out << "                tokenString += QStringView(m_content).mid(end-10, 10);" << Qt::endl;
   out << "            }" << Qt::endl;
   out << "            else {" << Qt::endl;
   out << "                tokenString = m_content.mid(begin, end-begin+1);" << Qt::endl;

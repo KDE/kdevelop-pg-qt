@@ -71,10 +71,10 @@ inline QString codeForDot(QString str)
     int npos = str.indexOf("\n\01!ASIgnore\"!!\n# ", pos);
     if(npos == -1)
     {
-      out += str.midRef(pos);
+      out += QStringView(str).mid(pos);
       break;
     }
-    out += str.midRef(pos, npos - pos);
+    out += QStringView(str).mid(pos, npos - pos);
     int nlpos = str.indexOf('\n', npos + 17);
     int codeendpos = str.indexOf("\n\01!AS/Ignore\"!!\n", nlpos);
     if(nlpos == -1 || codeendpos == -1)
@@ -82,7 +82,7 @@ inline QString codeForDot(QString str)
       out += "<junk>";
       break;
     }
-    out += str.midRef(nlpos + 1, codeendpos - nlpos - 1);
+    out += QStringView(str).mid(nlpos + 1, codeendpos - nlpos - 1);
     pos = codeendpos + 17;
   }
   return out.replace('\"', "\\\"").replace('\n', '\t').trimmed();

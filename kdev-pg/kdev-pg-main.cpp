@@ -35,6 +35,7 @@
 #include <QFile>
 #include <QStringList>
 #include <QCoreApplication>
+#include <QRegularExpression>
 #include <QFileInfo>
 
 namespace KDevPG
@@ -451,7 +452,7 @@ int main(int argc, char **argv)
       KDevPG::checkOut << "** ERROR missing start-state in the lexer" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
-    if(!QRegExp("[a-zA-Z_][a-zA-Z_0-9]*").exactMatch(KDevPG::globalSystem.tokenStream))
+    if(!QRegularExpression(QStringLiteral("\\A[a-zA-Z_][a-zA-Z_0-9]*\\z")).match(KDevPG::globalSystem.tokenStream).hasMatch())
     { // primarily to exclude KDevPG::TokenStream (the default value)
       KDevPG::checkOut << "** ERROR You have to specify a valid name for your lexer (%token_stream)" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();

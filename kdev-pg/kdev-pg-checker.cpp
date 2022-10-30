@@ -71,10 +71,10 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
       QTextStream& str( checkOut );
       PrettyPrinter printer(str);
       str << "** WARNING found FIRST/FIRST conflict in "
-                << mSymbol->mName << ":" << endl << "\tRule ``";
+                << mSymbol->mName << ":" << Qt::endl << "\tRule ``";
       printer(mCheckedNode);
       //      p(left);
-      str << "''" << endl << "\tTerminals [" << endl;
+      str << "''" << Qt::endl << "\tTerminals [" << Qt::endl;
 
       QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
@@ -84,9 +84,9 @@ void FirstFirstConflictChecker::check(Model::Node *left, Model::Node *right)
           str << "\t\t" << n;
           if (it != U.end())
             str << ", ";
-          str << endl;
+          str << Qt::endl;
         }
-      str << "\t]" << endl << endl;
+      str << "\t]" << Qt::endl << Qt::endl;
       ProblemSummaryPrinter::reportFirstFirstConflict();
     }
 }
@@ -139,12 +139,12 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
 #ifdef FOLLOW_CHECKER_DEBUG
       str << "(" << (uint*)mSymbol << ")";
 #endif
-      str << ":" << endl << "\tRule ``";
+      str << ":" << Qt::endl << "\tRule ``";
       p(node);
 #ifdef FOLLOW_CHECKER_DEBUG
       str << " [[" << (uint*)node << "]]";
 #endif
-      str << "''" << endl << "\tTerminals [" << endl;
+      str << "''" << Qt::endl << "\tTerminals [" << Qt::endl;
 
       QSet<Model::Node*>::iterator it = U.begin();
       while (it != U.end())
@@ -153,12 +153,12 @@ void FirstFollowConflictChecker::check(Model::Node *node, Model::Node *sym)
           if (isZero(n))
             continue;
 
-          str << "\t\t" << ((Model::TerminalItem*)n)->mName << ": conflicts with the FIRST set of: " << endl;
+          str << "\t\t" << ((Model::TerminalItem*)n)->mName << ": conflicts with the FIRST set of: " << Qt::endl;
           FollowDepChecker(n).check(node);
           if (it != U.end())
-            str << "," << endl;
+            str << "," << Qt::endl;
         }
-      str << "\t]" << endl << endl;
+      str << "\t]" << Qt::endl << Qt::endl;
       ProblemSummaryPrinter::reportFirstFollowConflict();
     }
 }
@@ -177,7 +177,7 @@ void FollowDepChecker::check(Model::Node *node)
   PrettyPrinter p(str);
 #ifdef FOLLOW_CHECKER_DEBUG
   str << "[["; p(node); str << " | " << (uint*)node << "]] ";
-  str << "{" << node->kind << "}" << endl;
+  str << "{" << node->kind << "}" << Qt::endl;
 #endif
   for (int i = 0; i != FD.size(); ++i) // no iterator → modifiable
     {
@@ -216,7 +216,7 @@ void FollowDepChecker::check(Model::Node *node)
           p(node);
           str << " \" )";
   #endif
-          str << ", " << endl;
+          str << ", " << Qt::endl;
         }
       }
     }
@@ -233,9 +233,9 @@ void FollowDepChecker::check(Model::Node *node)
     {
       World::NodeSet first = globalSystem.first(FLD[i]);
 #ifdef FOLLOW_CHECKER_DEBUG
-      str << endl << "\t\t" << "in ";
+      str << Qt::endl << "\t\t" << "in ";
       p(FLD[i]);
-      str << endl;
+      str << Qt::endl;
 #endif
       check(FLD[i]);
     }
@@ -300,7 +300,7 @@ void UndefinedSymbolChecker::visitSymbol(Model::SymbolItem *node)
   if (globalSystem.env.count(node) == 0)
     {
       checkOut << "** ERROR Undefined symbol ``" << node->mName << "'' in "
-                << mSymbol->mName << endl;
+                << mSymbol->mName << Qt::endl;
       ProblemSummaryPrinter::reportError();
     }
 }
@@ -318,7 +318,7 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
     {
       checkOut << "** ERROR Undefined symbol ``" << name
                 << "'' (rule parameter declaration) in "
-                << mSymbol->mName << endl;
+                << mSymbol->mName << Qt::endl;
       ProblemSummaryPrinter::reportError();
       return;
     }
@@ -329,7 +329,7 @@ void UndefinedSymbolChecker::visitVariableDeclaration(Model::VariableDeclaration
     {
       checkOut << "** ERROR Undefined symbol ``" << node->mName
                 << "'' (rule parameter declaration) in "
-                << mSymbol->mName << endl;
+                << mSymbol->mName << Qt::endl;
       ProblemSummaryPrinter::reportError();
     }
 }
@@ -353,7 +353,7 @@ void UndefinedTokenChecker::visitTerminal(Model::TerminalItem *node)
   if (globalSystem.terminals.find(name) == globalSystem.terminals.end())
     {
       checkOut << "** ERROR Undefined token ``" << node->mName << "'' in "
-                << mSymbol->mName << endl;
+                << mSymbol->mName << Qt::endl;
       ProblemSummaryPrinter::reportError();
     }
 }
@@ -378,7 +378,7 @@ void EmptyFirstChecker::visitSymbol(Model::SymbolItem *node)
   if (globalSystem.first(node).empty())
   {
     checkOut << "** ERROR Empty FIRST set for ``" << node->mName
-              << "''" << endl;
+              << "''" << Qt::endl;
     ProblemSummaryPrinter::reportError();
   }
 }
@@ -392,7 +392,7 @@ void EmptyOperatorChecker::visitOperator(Model::OperatorItem *node)
 {
   if (reducesToEpsilon((node->mBase->mSymbol)))
   {
-    checkOut << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``" << node->mName << "'' reduces to zero" << endl;
+    checkOut << "** ERROR Base symbol ``" << node->mBase->mSymbol->mName << "'' for operator ``" << node->mName << "'' reduces to zero" << Qt::endl;
     ProblemSummaryPrinter::reportError();
   }
 }
@@ -403,19 +403,19 @@ void ProblemSummaryPrinter::operator()()
     checkOut << (mFirstFirstConflictCount + mFirstFollowConflictCount)
               << " conflicts total: " << mFirstFollowConflictCount
               << " FIRST/FOLLOW conflicts, " << mFirstFirstConflictCount
-              << " FIRST/FIRST conflicts." << endl;
+              << " FIRST/FIRST conflicts." << Qt::endl;
 
   if (mErrorCount > 0)
     {
       checkOut << mErrorCount << " fatal errors found, exiting."
-                << endl;
+                << Qt::endl;
       exit(EXIT_FAILURE);
     }
     
   if (KDevPG::globalSystem.conflictHandling == KDevPG::World::Strict && mFirstFirstConflictCount + mFirstFollowConflictCount > 0)
     {
       checkOut << "Conflicts found, exiting."
-                << endl;
+                << Qt::endl;
       exit(EXIT_FAILURE);
     }
 }

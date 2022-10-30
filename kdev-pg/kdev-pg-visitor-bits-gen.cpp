@@ -34,7 +34,7 @@ void GenerateVisitorBits::operator()()
   
   if (globalSystem.visitorTable)
   {
-    out << "Visitor::ParserFuncType Visitor::sParserTable[] = {" << endl;
+    out << "Visitor::ParserFuncType Visitor::sParserTable[] = {" << Qt::endl;
 
     while (it != globalSystem.symbols.end())
       {
@@ -60,16 +60,16 @@ void GenerateVisitorBits::operator()()
         if (it != globalSystem.symbols.end())
           out << ",";
 
-        out << endl;
+        out << Qt::endl;
         
         #undef O
       }
 
-    out << "}; // sParserTable[]" << endl;
+    out << "}; // sParserTable[]" << Qt::endl;
     
     out << "void Visitor::visitNode(AstNode *node) { "
         << "if (node) (this->*sParserTable[node->kind - 1000])(node); "
-        << "}" << endl;
+        << "}" << Qt::endl;
   }
   else
   {
@@ -97,7 +97,7 @@ void GenerateVisitorBits::operator()()
     }
       
     out << "default: Q_ASSERT(false); } } }"
-        << endl;
+        << Qt::endl;
   }
 }
 

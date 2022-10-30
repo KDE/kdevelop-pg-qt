@@ -244,7 +244,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   
   <<EOF>> {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << endl;
+    KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << Qt::endl;
     yyerror("");
     return 0;
   }
@@ -266,7 +266,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   }
   <<EOF>> {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
-      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << endl;
+      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << Qt::endl;
       yyerror("");
       return 0;
   }
@@ -331,7 +331,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
   }
   <<EOF>> {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
-      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << endl;
+      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << Qt::endl;
       yyerror("");
       return 0;
   }
@@ -350,7 +350,7 @@ Char        [_a-zA-Z0-9]|\\[xXuU][0-9a-fA-F]{1,6}|\\[oO][0-7][0-7]*|\\[dD][0-9]{
 }
 
 . {
-  KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << endl;
+  KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << Qt::endl;
   yyerror("");
 }
 
@@ -433,7 +433,7 @@ void appendLineBuffer()
 void yyerror(const char* msg )
 {
   Q_UNUSED(msg);
-  KDevPG::checkOut << "** LEXICAL ERROR at line " << yyLine << " column " << currentOffset << endl;
+  KDevPG::checkOut << "** LEXICAL ERROR at line " << yyLine << " column " << currentOffset << Qt::endl;
 
   char *current_end = yyTextLine + strlen(yyTextLine);
   char *p;
@@ -461,7 +461,7 @@ void yyerror(const char* msg )
   KDevPG::checkOut << yyTextLine;
 
   /* print a ^ under the most recent token */
-  KDevPG::checkOut << QString(currentOffset, ' ').append('^') << endl; /* currentOffset spaces, then ^ */
+  KDevPG::checkOut << QString(currentOffset, ' ').append('^') << Qt::endl; /* currentOffset spaces, then ^ */
 
   exit(EXIT_FAILURE);
 }

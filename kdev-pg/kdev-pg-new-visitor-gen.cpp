@@ -28,8 +28,8 @@ namespace KDevPG
 
 void GenerateNewVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " " << name << ": public DefaultVisitor {" << endl
-      << "public:" << endl;
+  out << "class " << globalSystem.exportMacro << " " << name << ": public DefaultVisitor {" << Qt::endl
+      << "public:" << Qt::endl;
 
   GenerateDefaultVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
@@ -38,7 +38,7 @@ void GenerateNewVisitor::operator()()
     gen(qMakePair(it.key(), *it));
   }
 
-  out << "};" << endl;
+  out << "};" << Qt::endl;
 }
 
 }

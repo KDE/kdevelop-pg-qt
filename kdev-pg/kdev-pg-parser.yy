@@ -162,7 +162,7 @@ declaration
           base += 5;
         else
         {
-          KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << endl;
+          KDevPG::checkOut << "** ERROR unknown codec  ``" << $2 << "''" << Qt::endl;
           exit(-1);
         }
         KDevPG::GDFA::type = KDevPG::AutomatonType(base);
@@ -206,9 +206,9 @@ lexer_declaration_rest
     | regexp code_opt opt_lexer_action ';'
             {
               if($1->acceptsEpsilon())
-                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if($1->isEmpty())
-                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               QString s = QString($2) + QString(r);
               KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
@@ -216,19 +216,19 @@ lexer_declaration_rest
     | regexp T_LOOKAHEAD '(' regexp ')' code_opt opt_lexer_action ';'
             {
               if($1->acceptsEpsilon())
-                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if($1->isEmpty())
-                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               bool ignore = false;
               auto minLen = $4->minLength(), maxLen = $4->maxLength();
               if(minLen == 0)
               {
-                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << Qt::endl;
                 ignore = true;
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << endl;
+                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
@@ -248,19 +248,19 @@ lexer_declaration_rest
     | regexp T_BARRIER '(' regexp ')' code_opt opt_lexer_action ';'
             {
               if($1->acceptsEpsilon())
-                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if($1->isEmpty())
-                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               bool ignore = false;
               auto minLen = $4->minLength(), maxLen = $4->maxLength();
               if(minLen == 0)
               {
-                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << Qt::endl;
                 ignore = true;
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << endl;
+                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
@@ -358,7 +358,7 @@ regexp7
     | T_NAMED_REGEXP        {
                               if(!KDevPG::globalSystem.regexpById.contains($1))
                               {
-                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
+                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << Qt::endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
@@ -442,7 +442,7 @@ aregexp7
     | T_NAMED_REGEXP        {
                               if(!KDevPG::globalSystem.regexpById.contains($1))
                               {
-                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << endl;
+                                KDevPG::checkOut << "** ERROR: no named regexp " << $1 << Qt::endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];

@@ -138,7 +138,7 @@ public:
     /// .dot-output
     void dotOutput(QTextStream& out, const QString& name)
     {
-      out << "digraph " << name << "{" << endl;
+      out << "digraph " << name << "{" << Qt::endl;
       for(size_t i = 0; i != nstates; ++i)
       {
         out << "s" << i << " [ label = \"" << i << "\"";
@@ -148,24 +148,24 @@ public:
           out << ", shape=oval";
         if(accept[i] != 0)
           out << ", penwidth=4";
-        out << " ];" << endl;
+        out << " ];" << Qt::endl;
       }
       for(size_t i = 1; i <= numActions; ++i)
       {
-        out << "f" << i << " [ label = \"" << codeForDot(actions[i]) << "\", shape=rect, penwidth=2 ];" << endl;
+        out << "f" << i << " [ label = \"" << codeForDot(actions[i]) << "\", shape=rect, penwidth=2 ];" << Qt::endl;
       }
       for(size_t i = 0; i != nstates; ++i)
       {
         for(auto j = rules[i].begin(); j != rules[i].end(); ++j)
         {
-          out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << endl;
+          out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << Qt::endl;
         }
         if(accept[i] != 0)
         {
-          out << "s" << i << " -> " << "f" << accept[i] << ";" << endl;
+          out << "s" << i << " -> " << "f" << accept[i] << ";" << Qt::endl;
         }
       }
-      out << "}" << endl;
+      out << "}" << Qt::endl;
     }
     /// Debugging output
     void inspect()
@@ -410,7 +410,7 @@ public:
     }
     void dotOutput(QTextStream& out, const QString& name)
     {
-      out << "digraph " << name << "{" << endl;
+      out << "digraph " << name << "{" << Qt::endl;
       for(size_t i = 0; i != nstates; ++i)
       {
         out << "s" << i << " [ label = \"" << i << "\"";
@@ -420,16 +420,16 @@ public:
           out << ", shape=oval";
         if(i >= accept)
           out << ", penwidth=4";
-        out << " ];" << endl;
+        out << " ];" << Qt::endl;
       }
       for(size_t i = 0; i != nstates; ++i)
       {
         for(auto j = rules[i].begin(); j != rules[i].end(); ++j)
         {
-          out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << endl;
+          out << "s" << i << " -> " << "s" << j->second << " [ label = \"" << j->first << "\" ];" << Qt::endl;
         }
       }
-      out << "}" << endl;
+      out << "}" << Qt::endl;
     }
     /**
      * Accepts no words.

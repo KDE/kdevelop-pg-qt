@@ -28,24 +28,24 @@ namespace KDevPG
 
 void GenerateVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Visitor {" << endl;
+  out << "class " << globalSystem.exportMacro << " Visitor {" << Qt::endl;
   if (globalSystem.visitorTable)
   {
-    out << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << endl
-        << "static ParserFuncType sParserTable[];" << endl
-        << endl;
+    out << "typedef void (Visitor::*ParserFuncType)(AstNode *);" << Qt::endl
+        << "static ParserFuncType sParserTable[];" << Qt::endl
+        << Qt::endl;
   }
-  out << "public:" << endl
-      << "virtual ~Visitor() {}" << endl;
+  out << "public:" << Qt::endl
+      << "virtual ~Visitor() {}" << Qt::endl;
 
-  out << "virtual void visitNode(AstNode *node);" << endl;
+  out << "virtual void visitNode(AstNode *node);" << Qt::endl;
 
   for (QMap<QString, Model::SymbolItem*>::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it)
     {
       Model::SymbolItem *sym = (*it);
       #define O(str) \
-          out << "virtual void visit" << str << "(" << str << "Ast *) {}" << endl;
+          out << "virtual void visit" << str << "(" << str << "Ast *) {}" << Qt::endl;
       if(isOperatorSymbol(sym))
       {
         O("Prefix" + sym->mCapitalizedName)
@@ -58,7 +58,7 @@ void GenerateVisitor::operator()()
       #undef O
     }
 
-  out << "};" << endl;
+  out << "};" << Qt::endl;
 }
 
 }

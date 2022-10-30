@@ -46,71 +46,71 @@ int yyparse();
 
 void usage()
 {
-  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] <file.g>" << endl;
+  KDevPG::checkOut << "Usage: kdev-pg-qt [further-options] --output=<name> [further-options] <file.g>" << Qt::endl;
 }
 
 void help()
 {
   usage();
   KDevPG::checkOut
-           << "Options:" << endl
-           << "\t--output=<name> - Specify a prefix for all generated files" << endl
-           << "\t--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << endl
-           << "\t--no-output - Do not actually generate files" << endl
-           << "Components:" << endl
-           << "\t--debug-visitor - Generate a visitor to dump the parse-tree" << endl
-           << "\t--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << endl
-           << "\t--no-ast - Do not generate any AST-files" << endl
-           << "\t--with-ast - Generate AST (default)" << endl
-           << "\t--no-parser - Do not create the parser, built-in-visitors etc." << endl
-           << "\t--with-parser - The default, a parser will be generated" << endl
-           << "\t--no-lexer - Do not generate the lexer" << endl
-           << "\t--with-lexer - Ensure lexer generation" << endl
-           << "\t--token-text - Generate a function converting the number of a token into its name" << endl
-           << "Informative output:" << endl
-           << "\t--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << endl
-           << "\t--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << endl
-           << "\t--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << endl
-           << "\t--automata - Save DFAs for all used named regexps in \"kdev-pg-lexer-name-<name>.dot\" and for all states in \"kdev-pg-lexer-state-<name>.dot\"" << endl
-           << "Error-handling:" << endl
-           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue (default)" << endl
-           << "\t--strict-conflicts - Quit after having detected conflicts" << endl
-           << "\t--ignore-conflicts - Do not perform conflict-checking" << endl
-           << "Visitor generation:" << endl
-           << "\t--new-visitor=VisitorName - Create a new empty visitor" << endl
-           << "\t--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << endl
-           << "\t--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << endl
-           << "Output format:" << endl
-           << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << endl
-           << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << endl
-           << "\t--compatible-error-aware-code - Like --error-aware-code, but using #line instead of GCC-specific directives, thus not providing included-from-info to display the line number in the generated file" << endl
-           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array (default)" << endl
-           << "\t--visitor-switch - Visitor::visitNode will use a switch-statement" << endl
-           << "About:" << endl
-           << "\t--help - Show this messages" << endl
-           << "\t--usage - Show usage" << endl
-           << "\t--version - Show version" << endl
-           << "\t--author - Show authors" << endl << endl
-           << "See http://techbase.kde.org/Development/KDevelop-PG-Qt_Introduction for further aid." << endl;
+           << "Options:" << Qt::endl
+           << "\t--output=<name> - Specify a prefix for all generated files" << Qt::endl
+           << "\t--namespace=<NameSpaceName> - Specify the namespace for all generated classes (default: the prefix)" << Qt::endl
+           << "\t--no-output - Do not actually generate files" << Qt::endl
+           << "Components:" << Qt::endl
+           << "\t--debug-visitor - Generate a visitor to dump the parse-tree" << Qt::endl
+           << "\t--serialize-visitor - Generate a visitor to store the parse-tree in a QTextStream" << Qt::endl
+           << "\t--no-ast - Do not generate any AST-files" << Qt::endl
+           << "\t--with-ast - Generate AST (default)" << Qt::endl
+           << "\t--no-parser - Do not create the parser, built-in-visitors etc." << Qt::endl
+           << "\t--with-parser - The default, a parser will be generated" << Qt::endl
+           << "\t--no-lexer - Do not generate the lexer" << Qt::endl
+           << "\t--with-lexer - Ensure lexer generation" << Qt::endl
+           << "\t--token-text - Generate a function converting the number of a token into its name" << Qt::endl
+           << "Informative output:" << Qt::endl
+           << "\t--terminals - Save a list of all terminals in a file named \"kdev-pg-terminals\"" << Qt::endl
+           << "\t--symbols - Save a list of all non-terminals in a file named \"kdev-pg-symbols\"" << Qt::endl
+           << "\t--rules - Save debugging-information for all rules in a file named \"kdev-pg-rules\"" << Qt::endl
+           << "\t--automata - Save DFAs for all used named regexps in \"kdev-pg-lexer-name-<name>.dot\" and for all states in \"kdev-pg-lexer-state-<name>.dot\"" << Qt::endl
+           << "Error-handling:" << Qt::endl
+           << "\t--permissive-conflicts - The default, conflicts are shown, but kdev-pg-qt will continue (default)" << Qt::endl
+           << "\t--strict-conflicts - Quit after having detected conflicts" << Qt::endl
+           << "\t--ignore-conflicts - Do not perform conflict-checking" << Qt::endl
+           << "Visitor generation:" << Qt::endl
+           << "\t--new-visitor=VisitorName - Create a new empty visitor" << Qt::endl
+           << "\t--inherit-default-visitor - Use the DefaultVisitor to visit sub-nodes" << Qt::endl
+           << "\t--inherit-abstract-visitor - Reimplement the functionality of the DefaultVisitor" << Qt::endl
+           << "Output format:" << Qt::endl
+           << "\t--error-aware-code - Line-numbers in parser.cpp related compiler-messages will correspond to line-numbers in the grammar-file (default)" << Qt::endl
+           << "\t--beautiful-code - Line-numbers in compiler-messages will be arbitrary, but the code will look more beautiful and it is probably more compiler-independent" << Qt::endl
+           << "\t--compatible-error-aware-code - Like --error-aware-code, but using #line instead of GCC-specific directives, thus not providing included-from-info to display the line number in the generated file" << Qt::endl
+           << "\t--visitor-table - Visit::visitNode will be implemented by using a lookup-array (default)" << Qt::endl
+           << "\t--visitor-switch - Visitor::visitNode will use a switch-statement" << Qt::endl
+           << "About:" << Qt::endl
+           << "\t--help - Show this messages" << Qt::endl
+           << "\t--usage - Show usage" << Qt::endl
+           << "\t--version - Show version" << Qt::endl
+           << "\t--author - Show authors" << Qt::endl << Qt::endl
+           << "See http://techbase.kde.org/Development/KDevelop-PG-Qt_Introduction for further aid." << Qt::endl;
 
   exit(EXIT_SUCCESS);
 }
 
 void version()
 {
-  KDevPG::checkOut << "KDevelop-PG-Qt: " << KDEVELOP_PG_QT_VERSION_STRING << endl;
+  KDevPG::checkOut << "KDevelop-PG-Qt: " << KDEVELOP_PG_QT_VERSION_STRING << Qt::endl;
   
   exit(EXIT_SUCCESS);
 }
 
 void author()
 {
-  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2012 by the KDevelop-PG-Qt developers:") << endl
+  KDevPG::checkOut << QString::fromUtf8("KDevelop-PG-Qt: Copyright © 2005-2012 by the KDevelop-PG-Qt developers:") << Qt::endl
     << QString::fromUtf8("\tRoberto Raggi\n"
        "\tJakob Petsovits\n"
        "\tAndreas Pakulat\n"
        "\tJonathan Schmidt-Dominé\n"
-       "\t...and others") << endl;
+       "\t...and others") << Qt::endl;
 
   exit(EXIT_SUCCESS);
 }
@@ -127,14 +127,14 @@ public:
   {
     KDevPG::Model::EvolveItem *e = KDevPG::nodeCast<KDevPG::Model::EvolveItem*>(node);
 
-    out << endl;
+    out << Qt::endl;
     KDevPG::PrettyPrinter p(out);
     p(e);
 
     bool initial = true;
     KDevPG::World::NodeSet::iterator it;
 
-    out << endl;
+    out << Qt::endl;
     out << " FIRST:[";
     for (it = KDevPG::globalSystem.first(e).begin(); it != KDevPG::globalSystem.first(e).end(); ++it)
       {
@@ -148,7 +148,7 @@ public:
 
     initial = true;
 
-    out << endl;
+    out << Qt::endl;
     out << " FOLLOW:[";
     for (it = KDevPG::globalSystem.follow(e->mSymbol).begin();
          it != KDevPG::globalSystem.follow(e->mSymbol).end(); ++it)
@@ -160,7 +160,7 @@ public:
         initial = false;
       }
     out << "]";
-    out << endl;
+    out << Qt::endl;
   }
 };
 
@@ -329,7 +329,7 @@ int main(int argc, char **argv)
       if (!KDevPG::file.open(QIODevice::ReadOnly|QIODevice::Text))
         {
           KDevPG::checkOut << "kdev-pg-qt: file ``" << arg
-                    << "'' not found!" << endl;
+                    << "'' not found!" << Qt::endl;
           KDevPG::file.setFileName("");
         }
       else
@@ -338,7 +338,7 @@ int main(int argc, char **argv)
     else
     {
       KDevPG::checkOut << "kdev-pg-qt: unknown option ``" << arg << "''"
-                << endl;
+                << Qt::endl;
     }
   }
 
@@ -363,14 +363,14 @@ int main(int argc, char **argv)
   {
     if(KDevPG::globalSystem.rules.empty())
     {
-      KDevPG::checkOut << "** ERROR no parser rules" << endl;
+      KDevPG::checkOut << "** ERROR no parser rules" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
     else
     {
       
       if(KDevPG::globalSystem.start.empty())
-        KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << endl;
+        KDevPG::checkOut << "** WARNING could not detect a start-symbol, every symbol gets reused, you have to care about EOFs yourself!" << Qt::endl;
       
       for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
       {
@@ -436,7 +436,7 @@ int main(int argc, char **argv)
   
   if (ensure_generate_lexer_or_not && generate_lexer && !KDevPG::globalSystem.hasLexer)
   {
-    KDevPG::checkOut << "** ERROR no lexer definiton" << endl;
+    KDevPG::checkOut << "** ERROR no lexer definiton" << Qt::endl;
     KDevPG::ProblemSummaryPrinter::reportError();
     generate_lexer = false;
   }
@@ -448,12 +448,12 @@ int main(int argc, char **argv)
   {
     if(!KDevPG::globalSystem.lexerEnvs.contains("start"))
     {
-      KDevPG::checkOut << "** ERROR missing start-state in the lexer" << endl;
+      KDevPG::checkOut << "** ERROR missing start-state in the lexer" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
     if(!QRegExp("[a-zA-Z_][a-zA-Z_0-9]*").exactMatch(KDevPG::globalSystem.tokenStream))
     { // primarily to exclude KDevPG::TokenStream (the default value)
-      KDevPG::checkOut << "** ERROR You have to specify a valid name for your lexer (%token_stream)" << endl;
+      KDevPG::checkOut << "** ERROR You have to specify a valid name for your lexer (%token_stream)" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
     foreach(QString state, KDevPG::globalSystem.lexerEnvs.keys())
@@ -473,7 +473,7 @@ int main(int argc, char **argv)
       for (KDevPG::World::TerminalSet::iterator it = KDevPG::globalSystem.terminals.begin();
             it != KDevPG::globalSystem.terminals.end(); ++it)
         {
-          strm << it.key() << endl;
+          strm << it.key() << Qt::endl;
         }
     }
   if (dump_symbols)
@@ -484,7 +484,7 @@ int main(int argc, char **argv)
       for (KDevPG::World::SymbolSet::iterator it = KDevPG::globalSystem.symbols.begin();
             it != KDevPG::globalSystem.symbols.end(); ++it)
         {
-          strm << it.key() << endl;
+          strm << it.key() << Qt::endl;
         }
     }
   if (debug_rules)

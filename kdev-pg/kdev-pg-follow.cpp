@@ -40,7 +40,7 @@ extern QTextStream checkOut;
 #ifdef FOLLOWDEP_DEBUG
 void DebugFollowDep(Model::Node *dest, Model::Node *dep, const QString &message)
 {
-  checkOut << "=============================" << endl;
+  checkOut << "=============================" << Qt::endl;
   PrettyPrinter p(QTextStream( stderr ));
   checkOut << "adding " << message << " ";
   p(dep);
@@ -55,7 +55,7 @@ void DebugFollowDep(Model::Node *dest, Model::Node *dep, const QString &message)
     if (s)
       checkOut << "__"; p(s); checkOut << "__";
   }
-  checkOut << endl;
+  checkOut << Qt::endl;
 }
 
 void debugFirstToFollowDep(Model::Node *dest, Model::Node *dep)

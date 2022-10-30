@@ -38,7 +38,7 @@ namespace KDevPG
     foreach (const QString &token, tokens)
       {
         if (!initial)
-          out << endl << "|| ";
+          out << Qt::endl << "|| ";
 
         out << "yytoken == Token_" << token;
         initial = false;
@@ -101,39 +101,39 @@ namespace KDevPG
         sprintf(__var, "__node_%d", __id);
         ++__id;
 
-        out << capSymbolName << "Ast *" << __var << " = nullptr;" << endl
+        out << capSymbolName << "Ast *" << __var << " = nullptr;" << Qt::endl
             << "if (!parse" << capSymbolName << "(&" << __var;
 
         if (!node->mArguments.isEmpty())
             out << ", " << node->mArguments;
 
-        out << "))" << endl;
+        out << "))" << Qt::endl;
       }
     else
       {
         out << "if (!parse" << capSymbolName << "(" << node->mArguments << "))"
-            << endl;
+            << Qt::endl;
       }
 
     if (!catch_id)
       {
-        out << "{" << endl;
+        out << "{" << Qt::endl;
 
         if (globalSystem.needStateManagement)
-          out <<   "if (!mBlockErrors) {" << endl;
+          out <<   "if (!mBlockErrors) {" << Qt::endl;
 
         out << "expectedSymbol(AstNode::" << capSymbolName << "Kind"
-            << ", QStringLiteral(\"" << symbol_name << "\")" << ");" << endl;
+            << ", QStringLiteral(\"" << symbol_name << "\")" << ");" << Qt::endl;
 
         if (globalSystem.needStateManagement)
-          out << "}" << endl;
+          out << "}" << Qt::endl;
 
-        out << "return false;" << endl
-            << "}" << endl;
+        out << "return false;" << Qt::endl
+            << "}" << Qt::endl;
       }
     else
       {
-        out << "{ goto __catch_" << catch_id << "; }" << endl;
+        out << "{ goto __catch_" << catch_id << "; }" << Qt::endl;
       }
 
     return __var;
@@ -141,26 +141,26 @@ namespace KDevPG
 
   void generateTokenTest(Model::TerminalItem *node, int catch_id, QTextStream& out)
   {
-    out << "if (yytoken != Token_" << node->mName << ")" << endl;
+    out << "if (yytoken != Token_" << node->mName << ")" << Qt::endl;
     if (!catch_id)
       {
-        out << "{" << endl;
+        out << "{" << Qt::endl;
 
         if (globalSystem.needStateManagement)
-          out << "if (!mBlockErrors) {" << endl;
+          out << "if (!mBlockErrors) {" << Qt::endl;
 
         out << "expectedToken(yytoken, Token_" << node->mName
-            << ", QStringLiteral(\"" << node->mDescription << "\"));" << endl;
+            << ", QStringLiteral(\"" << node->mDescription << "\"));" << Qt::endl;
 
         if (globalSystem.needStateManagement)
-          out << "}" << endl;
+          out << "}" << Qt::endl;
 
-        out << "return false;" << endl
-            << "}" << endl;
+        out << "return false;" << Qt::endl
+            << "}" << Qt::endl;
       }
     else
       {
-        out << "goto __catch_" << catch_id << ";" << endl;
+        out << "goto __catch_" << catch_id << ";" << Qt::endl;
       }
   }
 
@@ -170,9 +170,9 @@ namespace KDevPG
     Model::Node *item = globalSystem.zero();
 
     out << "if (try_startToken_" << catch_id
-        << " == tokenStream->index() - 1  && yytoken != Token_EOF)" << endl
-        << "yylex();" << endl
-        << endl;
+        << " == tokenStream->index() - 1  && yytoken != Token_EOF)" << Qt::endl
+        << "yylex();" << Qt::endl
+        << Qt::endl;
 
     out << "while (yytoken != Token_EOF";
 
@@ -183,11 +183,11 @@ namespace KDevPG
         ++it;
 
         if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
-          out << endl << "&& yytoken != Token_" << t->mName;
+          out << Qt::endl << "&& yytoken != Token_" << t->mName;
       }
 
-    out << ")" << endl
-        << "{ yylex(); }" << endl;
+    out << ")" << Qt::endl
+        << "{ yylex(); }" << Qt::endl;
   }
 
 
@@ -219,26 +219,26 @@ void CodeGenerator::visitTerminal(Model::TerminalItem *node)
 {
   generateTokenTest(node, mCurrentCatchId, out);
 
-  out << "yylex();" << endl
-      << endl;
+  out << "yylex();" << Qt::endl
+      << Qt::endl;
 }
 
 void CodeGenerator::visitPlus(Model::PlusItem *node)
 {
-  out << "do {" << endl;
+  out << "do {" << Qt::endl;
   visitNode(node->mItem);
   out << "} while (";
   generateTestCondition(node, out);
-  out << ");" << endl;
+  out << ");" << Qt::endl;
 }
 
 void CodeGenerator::visitStar(Model::StarItem *node)
 {
   out << "while (";
   generateTestCondition(node, out);
-  out << ") {" << endl;
+  out << ") {" << Qt::endl;
   visitNode(node->mItem);
-  out << "}" << endl;
+  out << "}" << Qt::endl;
 }
 
 void CodeGenerator::visitAction(Model::ActionItem *node)
@@ -293,7 +293,7 @@ void CodeGenerator::visitAlternative(Model::AlternativeItem *node)
       if (cond)
         out << ") && (" << cond->mCode << ")";
 
-      out << ") {" << endl;
+      out << ") {" << Qt::endl;
       visitNode(n);
       out << "}";
 
@@ -301,14 +301,14 @@ void CodeGenerator::visitAlternative(Model::AlternativeItem *node)
         out << "else ";
       else
         {
-          out << "else {" << endl;
+          out << "else {" << Qt::endl;
 
           if (!mCurrentCatchId)
-              out << "return false;" << endl;
+              out << "return false;" << Qt::endl;
           else
               out << "goto __catch_" << mCurrentCatchId << ";";
 
-          out << "}" << endl;
+          out << "}" << Qt::endl;
         }
     }
 }
@@ -338,7 +338,7 @@ void CodeGenerator::visitEvolve(Model::EvolveItem *node)
   if (cond)
     out << ") && (" << cond->mCode << ")";
 
-  out << ") {" << endl;
+  out << ") {" << Qt::endl;
 
   GenerateLocalDeclarations gen_locals(out, mNames);
   gen_locals(node->mItem);
@@ -348,9 +348,9 @@ void CodeGenerator::visitEvolve(Model::EvolveItem *node)
   visitNode(node->mItem);
 
   if (globalSystem.start.contains(node->mSymbol))
-    out << "if (Token_EOF != yytoken) { return false; }" << endl;
+    out << "if (Token_EOF != yytoken) { return false; }" << Qt::endl;
 
-  out << "}" << endl;
+  out << "}" << Qt::endl;
 }
 
 void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
@@ -361,45 +361,45 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
   if (node->mCatchItem) // node is a try/rollback block
     {
       out << "bool blockErrors_" << mCurrentCatchId
-          << " = blockErrors(true);" << endl;
+          << " = blockErrors(true);" << Qt::endl;
     }
 
   out << "qint64 try_startToken_" << mCurrentCatchId
-      << " = tokenStream->index() - 1;" << endl;
+      << " = tokenStream->index() - 1;" << Qt::endl;
 
   if (!node->mUnsafe)
     {
       out << "ParserState *try_startState_" << mCurrentCatchId
-          << " = copyCurrentState();" << endl;
+          << " = copyCurrentState();" << Qt::endl;
     }
 
-  out << "{" << endl;
+  out << "{" << Qt::endl;
   visitNode(node->mTryItem);
-  out << "}" << endl;
+  out << "}" << Qt::endl;
 
   if (node->mCatchItem)
     {
-      out << "blockErrors(blockErrors_" << mCurrentCatchId << ");" << endl;
+      out << "blockErrors(blockErrors_" << mCurrentCatchId << ");" << Qt::endl;
     }
 
   if (!node->mUnsafe)
     {
-      out << "if (try_startState_" << mCurrentCatchId << ")" << endl
-          << "delete try_startState_" <<  mCurrentCatchId << ";" << endl
-          << endl;
+      out << "if (try_startState_" << mCurrentCatchId << ")" << Qt::endl
+          << "delete try_startState_" <<  mCurrentCatchId << ";" << Qt::endl
+          << Qt::endl;
     }
 
-  out << "if (false) // the only way to enter here is using goto" << endl
-      << "{" << endl
-      << "__catch_" << mCurrentCatchId << ":" << endl;
+  out << "if (false) // the only way to enter here is using goto" << Qt::endl
+      << "{" << Qt::endl
+      << "__catch_" << mCurrentCatchId << ":" << Qt::endl;
 
   if (!node->mUnsafe)
     {
-      out << "if (try_startState_" << mCurrentCatchId << ")" << endl
-          << "{" << endl
-          << "restoreState(try_startState_" <<  mCurrentCatchId << ");" << endl
-          << "delete try_startState_" <<  mCurrentCatchId << ";" << endl
-          << "}" << endl;
+      out << "if (try_startState_" << mCurrentCatchId << ")" << Qt::endl
+          << "{" << Qt::endl
+          << "restoreState(try_startState_" <<  mCurrentCatchId << ");" << Qt::endl
+          << "delete try_startState_" <<  mCurrentCatchId << ";" << Qt::endl
+          << "}" << Qt::endl;
     }
 
   if (!node->mCatchItem)
@@ -409,16 +409,16 @@ void CodeGenerator::visitTryCatch(Model::TryCatchItem *node)
     }
   else
     {
-      out << "blockErrors(blockErrors_" << mCurrentCatchId << ");" << endl
-          << "rewind(try_startToken_" << mCurrentCatchId << ");" << endl
-          << endl;
+      out << "blockErrors(blockErrors_" << mCurrentCatchId << ");" << Qt::endl
+          << "rewind(try_startToken_" << mCurrentCatchId << ");" << Qt::endl
+          << Qt::endl;
 
       setCatchId(previous_catch_id);
       visitNode(node->mCatchItem);
     }
 
-  out << "}" << endl
-      << endl;
+  out << "}" << Qt::endl
+      << Qt::endl;
 }
 
 int CodeGenerator::setCatchId(int catch_id)
@@ -458,9 +458,9 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
           target += "Sequence";
 
           out << target << " = snoc(" << target << ", "
-              << "tokenStream->index() - 1, memoryPool);" << endl
-              << "yylex();" << endl
-              << endl;
+              << "tokenStream->index() - 1, memoryPool);" << Qt::endl
+              << "yylex();" << Qt::endl
+              << Qt::endl;
         }
       else
         {
@@ -468,9 +468,9 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
             out << "(*yynode)->";
 
           out << node->mDeclaration->mName
-              << " = tokenStream->index() - 1;" << endl
-              << "yylex();" << endl
-              << endl;
+              << " = tokenStream->index() - 1;" << Qt::endl
+              << "yylex();" << Qt::endl
+              << Qt::endl;
         }
     }
   else if (Model::NonTerminalItem *nt = nodeCast<Model::NonTerminalItem*>(node->mItem))
@@ -529,8 +529,8 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
 
       if (check_startToken == true)
         {
-          out << "if (" << __var << "->startToken < (*yynode)->startToken)" << endl
-              << "(*yynode)->startToken = " << __var << "->startToken;" << endl;
+          out << "if (" << __var << "->startToken < (*yynode)->startToken)" << Qt::endl
+              << "(*yynode)->startToken = " << __var << "->startToken;" << Qt::endl;
         }
 
       QString target;
@@ -544,13 +544,13 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
           target += "Sequence";
 
           out << target << " = " << "snoc(" << target << ", "
-              << __var << ", memoryPool);" << endl
-              << endl;
+              << __var << ", memoryPool);" << Qt::endl
+              << Qt::endl;
         }
       else
         {
-          out << target << " = " << __var << ";" << endl
-              << endl;
+          out << target << " = " << __var << ";" << Qt::endl
+              << Qt::endl;
         }
     }
   else
@@ -729,7 +729,7 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
            "opStack.push_back(OperatorStackItem(node, priority));"
            "node->startToken = tokenStream->index() - 1;"
            "yylex();"
-           "}" << endl;
+           "}" << Qt::endl;
   }
   for(auto i = node->mParen.begin(); i != node->mParen.end(); ++i)
   {
@@ -761,7 +761,7 @@ if(!opStack.isEmpty())\
 {\
   void *last = opStack.last().n;\
   if(reinterpret_cast<Prefix" << nodeType << "*>(last)->first == nullptr)\n\
-    reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << endl; \
+    reinterpret_cast<Prefix" << nodeType << "*>(last)->first = " << __var << ";" << Qt::endl; \
   out << "else if(reinterpret_cast<Binary" << nodeType << "*>(last)->second == nullptr)\n\
   reinterpret_cast<Binary" << nodeType << "*>(last)->second = " << __var << ";\
   else\nreinterpret_cast<Ternary" << nodeType << "*>(last)->third = " << __var << ";}\
@@ -797,7 +797,7 @@ void GenerateForwardParserRule::operator()(QPair<QString, Model::SymbolItem*> co
   GenerateParseMethodSignature gen_signature(out, nullptr);
   gen_signature(sym);
 
-  out << ");" << endl;
+  out << ");" << Qt::endl;
 }
 
 void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__it)
@@ -811,21 +811,21 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
   GenerateParseMethodSignature gen_signature(out, &mNames);
   gen_signature(sym);
 
-  out << ")" << endl
-      << "{" << endl;
+  out << ")" << Qt::endl
+      << "{" << Qt::endl;
 
   if (globalSystem.generateAst)
     {
       if(isOperatorSymbol(sym))
-        out << "QVector<OperatorStackItem> opStack;" << endl;
+        out << "QVector<OperatorStackItem> opStack;" << Qt::endl;
       else
       {
-        out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << endl << endl
-            << "(*yynode)->startToken = tokenStream->index() - 1;" << endl;
+        out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << Qt::endl << Qt::endl
+            << "(*yynode)->startToken = tokenStream->index() - 1;" << Qt::endl;
         //Generate initialization for this ast nodes token-members using -1 as invalid value
         GenerateTokenVariableInitialization gentokenvar( out );
         gentokenvar(sym);
-        out << endl;
+        out << Qt::endl;
       }
     }
 
@@ -858,8 +858,8 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
       initial = false;
     }
 
-  out << "else" << endl << "{ return false; }" << endl
-      << endl;
+  out << "else" << Qt::endl << "{ return false; }" << Qt::endl
+      << Qt::endl;
 
 
   if (globalSystem.generateAst)
@@ -874,18 +874,18 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
                "if(olast)\n"
                "last->endToken = olast->endToken;"
                "opStack.pop_back();"
-               "}" << endl;
+               "}" << Qt::endl;
       }
       else
       {
-        out << "(*yynode)->endToken = tokenStream->index() - 2;" << endl
-            << endl;
+        out << "(*yynode)->endToken = tokenStream->index() - 2;" << Qt::endl
+            << Qt::endl;
       }
     }
 
-  out << "return true;" << endl
-      << "}" << endl
-      << endl;
+  out << "return true;" << Qt::endl
+      << "}" << Qt::endl
+      << Qt::endl;
 }
 
 void GenerateLocalDeclarations::operator()(Model::Node *node)
@@ -911,7 +911,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
               out << " = 0";
             }
 
-          out << ";" << endl << endl;
+          out << ";" << Qt::endl << Qt::endl;
 
           if (mNames != nullptr)
             mNames->insert(node->mName);
@@ -926,7 +926,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
       QString sequence_suffix = (node->mIsSequence) ? "Sequence" : "";
 
       out << "(*yynode)->" << node->mName << sequence_suffix << " = "
-          << node->mName << sequence_suffix << ";" << endl;
+          << node->mName << sequence_suffix << ";" << Qt::endl;
 
       if (node->mVariableType != Model::VariableDeclarationItem::TypeVariable)
         {
@@ -946,9 +946,9 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
               out << node->mName << sequence_suffix << " && ";
             }
 
-          out << argument_startToken << " < (*yynode)->startToken)" << endl
+          out << argument_startToken << " < (*yynode)->startToken)" << Qt::endl
               << "(*yynode)->startToken = " << argument_startToken << ";"
-            << endl << endl;
+            << Qt::endl << Qt::endl;
         }
     }
 
@@ -1049,13 +1049,13 @@ void GenerateMemberCode::operator()(Settings::MemberItem* m)
   if ((mKindMask & m->mMemberKind) != 0)
     {
       if (m->mMemberKind == Settings::MemberItem::PublicDeclaration)
-        out << "public:" << endl;
+        out << "public:" << Qt::endl;
       else if (m->mMemberKind == Settings::MemberItem::ProtectedDeclaration)
-        out << "protected:" << endl;
+        out << "protected:" << Qt::endl;
       else if (m->mMemberKind == Settings::MemberItem::PrivateDeclaration)
-        out << "private:" << endl;
+        out << "private:" << Qt::endl;
 
-      out << m->mCode << endl;
+      out << m->mCode << Qt::endl;
     }
 }
 
@@ -1065,10 +1065,10 @@ void GenerateParserDeclarations::operator()()
   if(!globalSystem.parserBaseClass.isEmpty())
     out << "public " << globalSystem.parserBaseClass << ", ";
   out << "public TokenTypeWrapper\n{"
-      << "public:" << endl
-      << "typedef " << globalSystem.tokenStream << "::Token Token;" << endl
-      << globalSystem.tokenStream << " *tokenStream;" << endl
-      << "int yytoken;" << endl;
+      << "public:" << Qt::endl
+      << "typedef " << globalSystem.tokenStream << "::Token Token;" << Qt::endl
+      << globalSystem.tokenStream << " *tokenStream;" << Qt::endl
+      << "int yytoken;" << Qt::endl;
   if(globalSystem.needOperatorStack)
     out << "struct OperatorStackItem{AstNode *n; int unsigned p;"
            "inline OperatorStackItem(AstNode *n, int unsigned p)\n"
@@ -1076,66 +1076,66 @@ void GenerateParserDeclarations::operator()()
            "inline OperatorStackItem()\n{}\n"
            "inline OperatorStackItem(const OperatorStackItem& o)\n"
            ": n(o.n), p(o.p)\n"
-           "{}\n};" << endl;
-  out << endl
-      << "inline Token LA(qint64 k = 1) const" << endl
+           "{}\n};" << Qt::endl;
+  out << Qt::endl
+      << "inline Token LA(qint64 k = 1) const" << Qt::endl
       << "{ qint64 idx = tokenStream->index() - 1 + k - 1; qint64 oldidx = tokenStream->index(); tokenStream->rewind(tokenStream->size()); while(idx >= tokenStream->size()) tokenStream->read(); tokenStream->rewind(oldidx); return tokenStream->at(idx); }"
-      << endl
-      << "inline int yylex() {" << endl
-      << "yytoken = tokenStream->read().kind; return yytoken;" << endl
-      << "}" << endl
-      << "inline void rewind(qint64 index) {" << endl
-      << "tokenStream->rewind(index);" << endl
-      << "yylex();" << endl
-      << "}" << endl
-      << endl;
+      << Qt::endl
+      << "inline int yylex() {" << Qt::endl
+      << "yytoken = tokenStream->read().kind; return yytoken;" << Qt::endl
+      << "}" << Qt::endl
+      << "inline void rewind(qint64 index) {" << Qt::endl
+      << "tokenStream->rewind(index);" << Qt::endl
+      << "yylex();" << Qt::endl
+      << "}" << Qt::endl
+      << Qt::endl;
 
-  out << "// token stream" << endl
-      << "void setTokenStream(" << globalSystem.tokenStream << " *s)" << endl
-      << "{ tokenStream = s; }" << endl
-      << endl;
+  out << "// token stream" << Qt::endl
+      << "void setTokenStream(" << globalSystem.tokenStream << " *s)" << Qt::endl
+      << "{ tokenStream = s; }" << Qt::endl
+      << Qt::endl;
 
-  out << "// error handling" << endl
-      << "void expectedSymbol(int kind, const QString& name);" << endl
-      << "void expectedToken(int kind, qint64 token, const QString& name);" << endl
-      << endl
-      << "bool mBlockErrors;" << endl
-      << "inline bool blockErrors(bool block) {" << endl
-      << "bool previous = mBlockErrors;" << endl
-      << "mBlockErrors = block;" << endl
-      << "return previous;" << endl
-      << "}" << endl;
+  out << "// error handling" << Qt::endl
+      << "void expectedSymbol(int kind, const QString& name);" << Qt::endl
+      << "void expectedToken(int kind, qint64 token, const QString& name);" << Qt::endl
+      << Qt::endl
+      << "bool mBlockErrors;" << Qt::endl
+      << "inline bool blockErrors(bool block) {" << Qt::endl
+      << "bool previous = mBlockErrors;" << Qt::endl
+      << "mBlockErrors = block;" << Qt::endl
+      << "return previous;" << Qt::endl
+      << "}" << Qt::endl;
 
-  out << endl;
+  out << Qt::endl;
 
     if (globalSystem.generateAst)
       {
-        out << "// memory pool" << endl
-            << "typedef KDevPG::MemoryPool memoryPoolType;" << endl
-            << endl
-            << "KDevPG::MemoryPool *memoryPool;" << endl
-            << "void setMemoryPool(KDevPG::MemoryPool *p)" << endl
-            << "{ memoryPool = p; }" << endl
-            << "template <class T>" << endl
-            << "inline T *create()" << endl
-            << "{" << endl
-            << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << endl
-            << "node->kind = T::KIND;" << endl
-            << "return node;" << endl
-            << "}" << endl
-            << "template <class T>" << endl
-            << "inline T *create(AstNode *u)" << endl
-            << "{" << endl
-            << "T *node = new (memoryPool->allocate(sizeof(T))) T(u);" << endl
-            << "node->kind = T::KIND;" << endl
-            << "return node;" << endl
-            << "}" << endl
-            << endl;
+        out << "// memory pool" << Qt::endl
+            << "typedef KDevPG::MemoryPool memoryPoolType;" << Qt::endl
+            << Qt::endl
+            << "KDevPG::MemoryPool *memoryPool;" << Qt::endl
+            << "void setMemoryPool(KDevPG::MemoryPool *p)" << Qt::endl
+            << "{ memoryPool = p; }" << Qt::endl
+            << "template <class T>" << Qt::endl
+            << "inline T *create()" << Qt::endl
+            << "{" << Qt::endl
+            << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << Qt::endl
+            << "node->kind = T::KIND;" << Qt::endl
+            << "return node;" << Qt::endl
+            << "}" << Qt::endl
+            << "template <class T>" << Qt::endl
+            << "inline T *create(AstNode *u)" << Qt::endl
+            << "{" << Qt::endl
+            << "T *node = new (memoryPool->allocate(sizeof(T))) T(u);" << Qt::endl
+            << "node->kind = T::KIND;" << Qt::endl
+            << "return node;" << Qt::endl
+            << "}" << Qt::endl
+            << Qt::endl;
       }
 
   if (globalSystem.parserclassMembers.declarations.empty() == false)
     {
-      out << "// user defined declarations:" << endl;
+      out << "// user defined declarations:" << Qt::endl;
       GenerateMemberCode gen(out, Settings::MemberItem::PublicDeclaration
                             | Settings::MemberItem::ProtectedDeclaration
                             | Settings::MemberItem::PrivateDeclaration);
@@ -1144,38 +1144,38 @@ void GenerateParserDeclarations::operator()()
       {
                     gen(*it);
       }
-      out << endl << "public:" << endl;
+      out << Qt::endl << "public:" << Qt::endl;
     }
 
   if (globalSystem.needStateManagement)
     {
-      out << "// The copyCurrentState() and restoreState() methods are only declared" << endl
-          << "// if you are using try blocks in your grammar, and have to be" << endl
-          << "// implemented by yourself, and you also have to define a" << endl
-          << "// \"struct ParserState\" inside a %parserclass directive." << endl
-          << endl
-          << "// This method should create a new ParserState object and return it," << endl
-          << "// or return 0 if no state variables need to be saved." << endl
-          << "ParserState *copyCurrentState();" << endl
-          << endl
-          << "// This method is only called for ParserState objects != 0" << endl
-          << "// and should restore the parser state given as argument." << endl
-          << "void restoreState(ParserState *state);" << endl;
+      out << "// The copyCurrentState() and restoreState() methods are only declared" << Qt::endl
+          << "// if you are using try blocks in your grammar, and have to be" << Qt::endl
+          << "// implemented by yourself, and you also have to define a" << Qt::endl
+          << "// \"struct ParserState\" inside a %parserclass directive." << Qt::endl
+          << Qt::endl
+          << "// This method should create a new ParserState object and return it," << Qt::endl
+          << "// or return 0 if no state variables need to be saved." << Qt::endl
+          << "ParserState *copyCurrentState();" << Qt::endl
+          << Qt::endl
+          << "// This method is only called for ParserState objects != 0" << Qt::endl
+          << "// and should restore the parser state given as argument." << Qt::endl
+          << "void restoreState(ParserState *state);" << Qt::endl;
     }
 
-  out << "Parser() {" << endl;
+  out << "Parser() {" << Qt::endl;
   if (globalSystem.generateAst)
     {
-      out << "memoryPool = nullptr;" << endl;
+      out << "memoryPool = nullptr;" << Qt::endl;
     }
 
-  out << "tokenStream = nullptr;" << endl
-      << "yytoken = Token_EOF;" << endl
-      << "mBlockErrors = false;" << endl;
+  out << "tokenStream = nullptr;" << Qt::endl
+      << "yytoken = Token_EOF;" << Qt::endl
+      << "mBlockErrors = false;" << Qt::endl;
 
   if (globalSystem.parserclassMembers.constructorCode.empty() == false)
     {
-      out << endl << "// user defined constructor code:" << endl;
+      out << Qt::endl << "// user defined constructor code:" << Qt::endl;
       GenerateMemberCode gen(out, Settings::MemberItem::ConstructorCode);
       for(QList<Settings::MemberItem*>::iterator it =
             globalSystem.parserclassMembers.constructorCode.begin();
@@ -1185,14 +1185,14 @@ void GenerateParserDeclarations::operator()()
       }
     }
 
-  out << "}" << endl << endl;
+  out << "}" << Qt::endl << Qt::endl;
 
   out << "virtual ~Parser() {";
 
   if (globalSystem.parserclassMembers.destructorCode.empty() == false)
     {
-      out << endl
-          << "// user defined destructor code:" << endl;
+      out << Qt::endl
+          << "// user defined destructor code:" << Qt::endl;
 
       GenerateMemberCode gen(out, Settings::MemberItem::DestructorCode);
       for(QList<Settings::MemberItem*>::iterator it = globalSystem.parserclassMembers.destructorCode.begin();
@@ -1202,7 +1202,7 @@ void GenerateParserDeclarations::operator()()
       }
     }
 
-  out << "}" << endl << endl;
+  out << "}" << Qt::endl << Qt::endl;
 
   GenerateForwardParserRule genfwdparserrule(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
@@ -1211,7 +1211,7 @@ void GenerateParserDeclarations::operator()()
     genfwdparserrule(qMakePair(it.key(), *it));
   }
 
-  out << "};" << endl;
+  out << "};" << Qt::endl;
 }
 
 void GenerateParserBits::operator()()
@@ -1243,25 +1243,25 @@ void GenerateTokenVariableInitialization::visitVariableDeclaration(Model::Variab
   if( node->mVariableType == Model::VariableDeclarationItem::TypeToken )
   {
     if( !node->mIsSequence )
-      out << "(*yynode)->" << node->mName << " = -1;" << endl;
+      out << "(*yynode)->" << node->mName << " = -1;" << Qt::endl;
   }
 }
 
 
 void GenerateTokenTexts::operator()()
 {
-  out << "switch (token) {" << endl;
+  out << "switch (token) {" << Qt::endl;
   for(World::TerminalSet::iterator it = globalSystem.terminals.begin(); it != globalSystem.terminals.end(); ++it )
   {
     Model::TerminalItem* t = *it;
-    out << "    case TokenTypeWrapper::Token_" << t->mName << ":" << endl;
+    out << "    case TokenTypeWrapper::Token_" << t->mName << ":" << Qt::endl;
     QString text = t->mDescription;
     text.replace('\\', "\\\\").replace('"', "\\\"");
-    out << "        return QStringLiteral(\"" <<  text << "\");" << endl;
+    out << "        return QStringLiteral(\"" <<  text << "\");" << Qt::endl;
   }
-  out << "    default:" << endl;
-  out << "        return QStringLiteral(\"unknown token\");" << endl;
-  out << "}" << endl;
+  out << "    default:" << Qt::endl;
+  out << "        return QStringLiteral(\"unknown token\");" << Qt::endl;
+  out << "}" << Qt::endl;
 }
 
 

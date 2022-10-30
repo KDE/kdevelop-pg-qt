@@ -27,114 +27,114 @@ namespace KDevPG
 
 void GenerateSerializeVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " Serialize: public DefaultVisitor {" << endl
-      << "public:" << endl;
+  out << "class " << globalSystem.exportMacro << " Serialize: public DefaultVisitor {" << Qt::endl
+      << "public:" << Qt::endl;
 
-  out << "static void read(KDevPG::MemoryPool *p," << endl
-      << "AstNode *node, QIODevice* i) { " << endl
-      << "Serialize(p, node, i); " << endl
-      << "}" << endl << endl;
+  out << "static void read(KDevPG::MemoryPool *p," << Qt::endl
+      << "AstNode *node, QIODevice* i) { " << Qt::endl
+      << "Serialize(p, node, i); " << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
-  out << "static void write(AstNode *node, QIODevice* o) { " << endl
-      << "Serialize(node, o); " << endl
-      << "}" << endl << endl;
+  out << "static void write(AstNode *node, QIODevice* o) { " << Qt::endl
+      << "Serialize(node, o); " << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
-  out << "private:" << endl;
-  out << "Serialize(KDevPG::MemoryPool *p," << endl
-      << "AstNode *node, QIODevice* i) : in(i) {" << endl
-      << "memoryPool = p;" << endl
-      << "if ( !node )" << endl
-      << "node = create<" << (*globalSystem.start.begin())->mCapitalizedName << "Ast>();" << endl
-      << "visitNode( node );" << endl
-      << "}" << endl << endl;
+  out << "private:" << Qt::endl;
+  out << "Serialize(KDevPG::MemoryPool *p," << Qt::endl
+      << "AstNode *node, QIODevice* i) : in(i) {" << Qt::endl
+      << "memoryPool = p;" << Qt::endl
+      << "if ( !node )" << Qt::endl
+      << "node = create<" << (*globalSystem.start.begin())->mCapitalizedName << "Ast>();" << Qt::endl
+      << "visitNode( node );" << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
-  out << "Serialize(AstNode *node, QIODevice *o) : out(o) {" << endl
-      << "visitNode( node );" << endl
-      << "}" << endl << endl;
+  out << "Serialize(AstNode *node, QIODevice *o) : out(o) {" << Qt::endl
+      << "visitNode( node );" << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
-  out << "QDataStream in;" << endl;
-  out << "QDataStream out;" << endl << endl;
+  out << "QDataStream in;" << Qt::endl;
+  out << "QDataStream out;" << Qt::endl << Qt::endl;
 
-  out << "// memory pool" << endl
-      << "typedef KDevPG::MemoryPool memoryPoolType;" << endl
-      << "KDevPG::MemoryPool *memoryPool;" << endl
-      << "template <class T>" << endl
-      << "inline T *create() {" << endl
-      << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << endl
-      << "node->kind = T::KIND;" << endl
-      << "return node;" << endl
-      << "}" << endl;
+  out << "// memory pool" << Qt::endl
+      << "typedef KDevPG::MemoryPool memoryPoolType;" << Qt::endl
+      << "KDevPG::MemoryPool *memoryPool;" << Qt::endl
+      << "template <class T>" << Qt::endl
+      << "inline T *create() {" << Qt::endl
+      << "T *node = new (memoryPool->allocate(sizeof(T))) T();" << Qt::endl
+      << "node->kind = T::KIND;" << Qt::endl
+      << "return node;" << Qt::endl
+      << "}" << Qt::endl;
 
-  out << "template <class T, class E>" << endl
-      << "void handleListNode(const KDevPG::ListNode<T> *t, E *e) {" << endl
-      << "if (in) {" << endl
+  out << "template <class T, class E>" << Qt::endl
+      << "void handleListNode(const KDevPG::ListNode<T> *t, E *e) {" << Qt::endl
+      << "if (in) {" << Qt::endl
 
       //list in
-      << "bool b;" << endl
-      << "in >> b;" << endl
-      << "if (b) {" << endl
-      << "qint64 count;" << endl
-      << "in >> count;" << endl
-      << "for ( qint64 i = 0; i < count; ++i ) {" << endl
-      << "    e = create<E>();" << endl // FIXME: what about token
-      << "    t = KDevPG::snoc(t, e, memoryPool);" << endl
-      << "}" << endl
-      << "}" << endl
+      << "bool b;" << Qt::endl
+      << "in >> b;" << Qt::endl
+      << "if (b) {" << Qt::endl
+      << "qint64 count;" << Qt::endl
+      << "in >> count;" << Qt::endl
+      << "for ( qint64 i = 0; i < count; ++i ) {" << Qt::endl
+      << "    e = create<E>();" << Qt::endl // FIXME: what about token
+      << "    t = KDevPG::snoc(t, e, memoryPool);" << Qt::endl
+      << "}" << Qt::endl
+      << "}" << Qt::endl
       //end list in
 
-      << "} else if (out) {" << endl
+      << "} else if (out) {" << Qt::endl
 
       //list out
-      <<"if (t) {" << endl
-      << "out << true;" << endl
-      << "out << t->count();" << endl
-      << "} else {" << endl
-      << "out << false;" << endl
-      << "}" << endl << endl
+      <<"if (t) {" << Qt::endl
+      << "out << true;" << Qt::endl
+      << "out << t->count();" << Qt::endl
+      << "} else {" << Qt::endl
+      << "out << false;" << Qt::endl
+      << "}" << Qt::endl << Qt::endl
       //end list out
 
-      << "}" << endl
-      << "}" << endl << endl;
+      << "}" << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
-  out << "template <class T>" << endl
-      << "void handleAstNode(T *t) {" << endl
-      << "if (in) {" << endl
+  out << "template <class T>" << Qt::endl
+      << "void handleAstNode(T *t) {" << Qt::endl
+      << "if (in) {" << Qt::endl
 
       //ast in
-      << "bool b;" << endl
-      << "in >> b;" << endl
-      << "if (b) {" << endl
-      << "t = create<T>();" << endl
+      << "bool b;" << Qt::endl
+      << "in >> b;" << Qt::endl
+      << "if (b) {" << Qt::endl
+      << "t = create<T>();" << Qt::endl
 
-      << "in >> t->startToken;" << endl
-      << "in >> t->endToken;" << endl
-      << "}" << endl
+      << "in >> t->startToken;" << Qt::endl
+      << "in >> t->endToken;" << Qt::endl
+      << "}" << Qt::endl
       //end ast in
 
-      << "} else if (out) {" << endl
+      << "} else if (out) {" << Qt::endl
 
       //ast out
-      << "if (t) {" << endl
-      << "bool b = true;" << endl
-      << "out << true;" << endl
-      << "out << t->startToken;" << endl
-      << "out << t->endToken;" << endl
-      << "} else {" << endl
-      << "out << false;" << endl
-      << "}" << endl << endl
+      << "if (t) {" << Qt::endl
+      << "bool b = true;" << Qt::endl
+      << "out << true;" << Qt::endl
+      << "out << t->startToken;" << Qt::endl
+      << "out << t->endToken;" << Qt::endl
+      << "} else {" << Qt::endl
+      << "out << false;" << Qt::endl
+      << "}" << Qt::endl << Qt::endl
       //end ast out
 
-      << "}" << endl
-      << "}" << endl << endl;
+      << "}" << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
-  out << "template <class T>" << endl
-      << "void handleVariable(T *t) {" << endl
-      << "if (in) {" << endl
-      << "in >> t;" << endl
-      << "} else if (out) {" << endl
-      << "out << t;" << endl
-      << "}" << endl
-      << "}" << endl << endl;
+  out << "template <class T>" << Qt::endl
+      << "void handleVariable(T *t) {" << Qt::endl
+      << "if (in) {" << Qt::endl
+      << "in >> t;" << Qt::endl
+      << "} else if (out) {" << Qt::endl
+      << "out << t;" << Qt::endl
+      << "}" << Qt::endl
+      << "}" << Qt::endl << Qt::endl;
 
 
   GenerateSerializeVisitorRule gen(out);
@@ -144,7 +144,7 @@ void GenerateSerializeVisitor::operator()()
     gen(qMakePair(it.key(), *it));
   }
 
-  out << "};" << endl;
+  out << "};" << Qt::endl;
 }
 
 void GenerateSerializeVisitorRule::operator()(QPair<QString,
@@ -161,16 +161,16 @@ void GenerateSerializeVisitorRule::operator()(QPair<QString,
 
   out << "void visit" << sym->mCapitalizedName
       << "(" << sym->mCapitalizedName << "Ast *" << "node"
-      << ") override {" << endl;
+      << ") override {" << Qt::endl;
 
   Model::EvolveItem *e = globalSystem.searchRule(sym);
   visitNode(e);
   
   out << "DefaultVisitor::visit" << sym->mCapitalizedName
       << "(" << "node"
-      << ");" << endl;
+      << ");" << Qt::endl;
 
-  out << "}" << endl << endl;
+  out << "}" << Qt::endl << Qt::endl;
 }
 
 void GenerateSerializeVisitorRule::visitVariableDeclaration(Model::VariableDeclarationItem *node)
@@ -195,19 +195,19 @@ void GenerateSerializeVisitorRule::visitVariableDeclaration(Model::VariableDecla
 
     if (node->mIsSequence)
     {
-      out << "{" << endl
-          << type << " *e = 0;" << endl
-          << "handleListNode(node->" << name << "Sequence, e);" << endl
-          << "}" << endl;
+      out << "{" << Qt::endl
+          << type << " *e = 0;" << Qt::endl
+          << "handleListNode(node->" << name << "Sequence, e);" << Qt::endl
+          << "}" << Qt::endl;
     }
     else if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
     {
-      out << "handleAstNode(node->" << name << ");" << endl;
+      out << "handleAstNode(node->" << name << ");" << Qt::endl;
     }
     else if (node->mVariableType == Model::VariableDeclarationItem::TypeVariable
              || node->mVariableType == Model::VariableDeclarationItem::TypeToken)
     {
-      out << "handleVariable(&node->" << name << ");" << endl;
+      out << "handleVariable(&node->" << name << ");" << Qt::endl;
     }
     else
     {

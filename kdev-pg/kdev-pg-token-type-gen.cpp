@@ -50,7 +50,7 @@ void GenerateToken::operator()(QPair<QString, Model::TerminalItem*> const &__it)
     out << mTokenValue;
     ++mTokenValue;
   }
-  out << "," << endl;
+  out << "," << Qt::endl;
 }
 
 void GenerateTokenType::operator()()

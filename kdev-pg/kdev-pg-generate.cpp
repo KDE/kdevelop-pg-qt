@@ -57,40 +57,40 @@ void generateOutput()
 
       GenerateAst _Ast(s);
 
-      s << "// THIS FILE IS GENERATED" << endl
-        << "// WARNING! All changes made in this file will be lost!" << endl
-        << endl
+      s << "// THIS FILE IS GENERATED" << Qt::endl
+        << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+        << Qt::endl
 
-        << "#ifndef " << language << "_AST_H_INCLUDED" << endl
-        << "#define " << language << "_AST_H_INCLUDED" << endl
-        << endl
+        << "#ifndef " << language << "_AST_H_INCLUDED" << Qt::endl
+        << "#define " << language << "_AST_H_INCLUDED" << Qt::endl
+        << Qt::endl
         
-        << "#include \"" << globalSystem.language << "ast-fwd.h\"" << endl
-        << endl;
+        << "#include \"" << globalSystem.language << "ast-fwd.h\"" << Qt::endl
+        << Qt::endl;
       if (!globalSystem.exportMacroHeader.isEmpty())
         s << "#include \"" << globalSystem.exportMacroHeader << "\""
-          << endl;
+          << Qt::endl;
 
       foreach (const QString& header, globalSystem.astHeaders)
         s << "#include \"" << header << "\"\n";
       
-      s <<  "#include <QList>" << endl
-        << "#include <kdev-pg-list.h>" << endl
-        << endl;
+      s <<  "#include <QList>" << Qt::endl
+        << "#include <kdev-pg-list.h>" << Qt::endl
+        << Qt::endl;
       
       if (!globalSystem.decl.isEmpty())
-        s << globalSystem.decl << endl;
+        s << globalSystem.decl << Qt::endl;
 
-      s << "namespace " << globalSystem.ns << "{" << endl
-        << endl;
+      s << "namespace " << globalSystem.ns << "{" << Qt::endl
+        << Qt::endl;
 
       _Ast();
 
-      s << endl << "} // end of namespace " << globalSystem.ns << endl
-        << endl
+      s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+        << Qt::endl
 
-        << "#endif" << endl
-        << endl;
+        << "#endif" << Qt::endl
+        << Qt::endl;
 
       QString oname = globalSystem.language;
       oname += "ast.h";
@@ -104,27 +104,27 @@ void generateOutput()
       
       GenerateAstFwd _AstFwd(s);
       
-      s << ""// THIS FILE IS GENERATED" << endl
-        << "// WARNING! All changes made in this file will be lost!" << endl
-        << endl
+      s << ""// THIS FILE IS GENERATED" << Qt::endl
+        << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+        << Qt::endl
 
-        << "#ifndef " << language << "_AST_FWD_INCLUDED" << endl
-        << "#define " << language << "_AST_FWD_INCLUDED" << endl
-        << endl;
+        << "#ifndef " << language << "_AST_FWD_INCLUDED" << Qt::endl
+        << "#define " << language << "_AST_FWD_INCLUDED" << Qt::endl
+        << Qt::endl;
       if (!globalSystem.exportMacroHeader.isEmpty())
         s << "#include \"" << globalSystem.exportMacroHeader << "\""
-          << endl;
+          << Qt::endl;
       
-      s << "namespace " << globalSystem.ns << "{" << endl
-        << endl;
+      s << "namespace " << globalSystem.ns << "{" << Qt::endl
+        << Qt::endl;
       
       _AstFwd();
       
-      s << endl << "} // end of namespace " << globalSystem.ns << endl
-        << endl
+      s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+        << Qt::endl
       
-        << "#endif" << endl
-        << endl;
+        << "#endif" << Qt::endl
+        << Qt::endl;
       
       QString oname = globalSystem.language;
       oname += "ast-fwd.h";
@@ -138,33 +138,33 @@ void generateOutput()
 
     GenerateTokenType gen(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_TOKEN_TYPE_H_INCLUDED" << endl
-      << "#define " << language << "_TOKEN_TYPE_H_INCLUDED" << endl
-      << endl;
+      << "#ifndef " << language << "_TOKEN_TYPE_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_TOKEN_TYPE_H_INCLUDED" << Qt::endl
+      << Qt::endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
 
     foreach (const QString& header, globalSystem.astHeaders)
       s << "#include \"" << header << "\"\n";
 
     if (!globalSystem.decl.isEmpty())
-      s << globalSystem.decl << endl;
+      s << globalSystem.decl << Qt::endl;
 
-    s << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+    s << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     gen();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl
 
-      << "#endif" << endl
-      << endl;
+      << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "tokentype.h";
@@ -177,54 +177,54 @@ void generateOutput()
 
     GenerateParserDeclarations __decls(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_H_INCLUDED" << endl
-      << "#define " << language << "_H_INCLUDED" << endl
-      << endl;
+      << "#ifndef " << language << "_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_H_INCLUDED" << Qt::endl
+      << Qt::endl;
     
     
-    s << "#include \"" << globalSystem.language << "tokentype.h\"" << endl;
+    s << "#include \"" << globalSystem.language << "tokentype.h\"" << Qt::endl;
     
     if(globalSystem.hasLexer)
-      s << "#include \"" << globalSystem.language << "lexer.h\"" << endl;
+      s << "#include \"" << globalSystem.language << "lexer.h\"" << Qt::endl;
 
     if (globalSystem.generateAst)
       {
-        s << "#include \"" << globalSystem.language << "ast-fwd.h\"" << endl
-          << "#include <kdev-pg-memory-pool.h>" << endl
-          << "#include <kdev-pg-allocator.h>" << endl;
+        s << "#include \"" << globalSystem.language << "ast-fwd.h\"" << Qt::endl
+          << "#include <kdev-pg-memory-pool.h>" << Qt::endl
+          << "#include <kdev-pg-allocator.h>" << Qt::endl;
       }
 
     if (globalSystem.tokenStream == "KDevPG::TokenStream")
-      s << "#include <kdev-pg-token-stream.h>" << endl;
+      s << "#include <kdev-pg-token-stream.h>" << Qt::endl;
     
     foreach (const QString& header, globalSystem.parserDeclarationHeaders)
       s << "#include \"" << header << "\"\n";
 
-    s << endl;
+    s << Qt::endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
     
     if (globalSystem.needOperatorStack)
-      s << "#include <QVector>" << endl;
+      s << "#include <QVector>" << Qt::endl;
     
     if (!globalSystem.decl.isEmpty() && !globalSystem.generateAst)
-      s << globalSystem.decl << endl;
+      s << globalSystem.decl << Qt::endl;
 
-    s << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+    s << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __decls();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl
 
-      << "#endif" << endl
-      << endl;
+      << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "parser.h";
@@ -239,30 +239,30 @@ void generateOutput()
 
     GenerateVisitor __visitor(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_VISITOR_H_INCLUDED" << endl
-      << "#define " << language << "_VISITOR_H_INCLUDED" << endl
-      << endl
+      << "#ifndef " << language << "_VISITOR_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_VISITOR_H_INCLUDED" << Qt::endl
+      << Qt::endl
 
-      << "#include \"" << globalSystem.language << "ast.h\"" << endl
-      << endl;
+      << "#include \"" << globalSystem.language << "ast.h\"" << Qt::endl
+      << Qt::endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
 
-    s << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+    s << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __visitor();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl
 
-      << "#endif" << endl
-      << endl;
+      << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "visitor.h";
@@ -277,30 +277,30 @@ void generateOutput()
 
     GenerateDefaultVisitor __DefaultVisitor(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
-      << "#define " << language << "_DEFAULT_VISITOR_H_INCLUDED" << endl
-      << endl
+      << "#ifndef " << language << "_DEFAULT_VISITOR_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_DEFAULT_VISITOR_H_INCLUDED" << Qt::endl
+      << Qt::endl
 
-      << "#include \"" << globalSystem.language << "visitor.h\"" << endl
-      << endl;
+      << "#include \"" << globalSystem.language << "visitor.h\"" << Qt::endl
+      << Qt::endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
 
-    s << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+    s << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __DefaultVisitor();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl
 
-      << "#endif" << endl
-      << endl;
+      << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "defaultvisitor.h";
@@ -315,34 +315,34 @@ void generateOutput()
 
     GenerateSerializeVisitor __serialize_visitor(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_SERIALIZATION_H_INCLUDED" << endl
-      << "#define " << language << "_SERIALIZATION_H_INCLUDED" << endl
-      << endl
+      << "#ifndef " << language << "_SERIALIZATION_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_SERIALIZATION_H_INCLUDED" << Qt::endl
+      << Qt::endl
 
-      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
-      << endl;
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << Qt::endl
+      << Qt::endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
 
-    s << "#include <QTextStream>" << endl
-      << "#include <QFile>" << endl
-      << endl
+    s << "#include <QTextStream>" << Qt::endl
+      << "#include <QFile>" << Qt::endl
+      << Qt::endl
 
-      << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+      << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __serialize_visitor();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
 
-    s << "#endif" << endl
-      << endl;
+    s << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "serializevisitor.h";
@@ -357,36 +357,36 @@ void generateOutput()
 
     GenerateDebugVisitor __debug_visitor(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_DEBUG_VISITOR_H_INCLUDED" << endl
-      << "#define " << language << "_DEBUG_VISITOR_H_INCLUDED" << endl
-      << endl
+      << "#ifndef " << language << "_DEBUG_VISITOR_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_DEBUG_VISITOR_H_INCLUDED" << Qt::endl
+      << Qt::endl
 
-      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
-      << endl;
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << Qt::endl
+      << Qt::endl;
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
 
-    s << "#include <kdev-pg-token-stream.h>" << endl;
+    s << "#include <kdev-pg-token-stream.h>" << Qt::endl;
     
-    s << "#include <QTextStream>" << endl
-      << "#include <QDebug>" << endl
-      << endl
+    s << "#include <QTextStream>" << Qt::endl
+      << "#include <QDebug>" << Qt::endl
+      << Qt::endl
 
-      << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+      << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __debug_visitor();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
 
-    s << "#endif" << endl
-      << endl;
+    s << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "debugvisitor.h";
@@ -398,33 +398,33 @@ void generateOutput()
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#ifndef " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
-      << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << endl
-      << endl;
+      << "#ifndef " << language << "_TOKEN_TEXT_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_TOKEN_TEXT_H_INCLUDED" << Qt::endl
+      << Qt::endl;
     
     if (!globalSystem.exportMacroHeader.isEmpty())
-      s << "#include \"" << globalSystem.exportMacroHeader << "\"" << endl;
+      s << "#include \"" << globalSystem.exportMacroHeader << "\"" << Qt::endl;
     
-    s << "#include \"" << globalSystem.language << "tokentype.h\"" << endl
+    s << "#include \"" << globalSystem.language << "tokentype.h\"" << Qt::endl
 
-      << "namespace " << globalSystem.ns << "{" << endl
-      << endl
+      << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl
 
-      << "QString tokenText(int token)" << endl << "{" << endl;
+      << "QString tokenText(int token)" << Qt::endl << "{" << Qt::endl;
 
     GenerateTokenTexts gen(s);
     gen();
 
     s << "}"
-      << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+      << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
 
-    s << "#endif" << endl
-      << endl;
+    s << "#endif" << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "tokentext.h";
@@ -437,33 +437,33 @@ void generateOutput()
 
     GenerateParserBits __bits(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl;
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl;
 
     s << "#include \"" << globalSystem.language << "parser.h\""
-      << endl;
+      << Qt::endl;
     
     if (globalSystem.generateAst)
     {
-      s << "#include \"" << globalSystem.language << "ast.h\"" << endl;
+      s << "#include \"" << globalSystem.language << "ast.h\"" << Qt::endl;
     }
 
     foreach (const QString& header, globalSystem.parserBitsHeaders)
       s << "#include \"" << header << "\"\n";
 
-    s << endl;
+    s << Qt::endl;
 
     if (!globalSystem.bits.isEmpty())
-      s << globalSystem.bits << endl;
+      s << globalSystem.bits << Qt::endl;
 
-    s << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+    s << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __bits();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "parser.cpp";
@@ -478,21 +478,21 @@ void generateOutput()
 
     GenerateVisitorBits __visitor_bits(s);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#include \"" << globalSystem.language << "visitor.h\"" << endl
+      << "#include \"" << globalSystem.language << "visitor.h\"" << Qt::endl
 
-      << endl
+      << Qt::endl
 
-      << "namespace " << globalSystem.ns << "{" << endl
-      << endl;
+      << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl;
 
     __visitor_bits();
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "visitor.cpp";
@@ -505,16 +505,16 @@ void generateOutput()
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
 
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
 
-      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
-      << endl
+      << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << Qt::endl
+      << Qt::endl
 
-      << "namespace " << globalSystem.ns << "{" << endl
+      << "namespace " << globalSystem.ns << "{" << Qt::endl
 
-      << endl;
+      << Qt::endl;
 
     GenerateDefaultVisitorBitsRule gen(s);
     for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
@@ -523,8 +523,8 @@ void generateOutput()
       gen(qMakePair(it.key(), *it));
     }
 
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
 
     QString oname = globalSystem.language;
     oname += "defaultvisitor.cpp";
@@ -542,44 +542,44 @@ void generateLexer()
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
     
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
     
-      << "#ifndef " << language << "_LEXER_H_INCLUDED" << endl
-      << "#define " << language << "_LEXER_H_INCLUDED" << endl
-      << endl
+      << "#ifndef " << language << "_LEXER_H_INCLUDED" << Qt::endl
+      << "#define " << language << "_LEXER_H_INCLUDED" << Qt::endl
+      << Qt::endl
       
-      << "#include \"" << globalSystem.language << "tokentype.h\"" << endl
-      << endl
+      << "#include \"" << globalSystem.language << "tokentype.h\"" << Qt::endl
+      << Qt::endl
       
-      << "#include <kdev-pg-char-sets.h>" << endl
-      << "#include <kdev-pg-token-stream.h>" << endl
-      << endl;
+      << "#include <kdev-pg-char-sets.h>" << Qt::endl
+      << "#include <kdev-pg-token-stream.h>" << Qt::endl
+      << Qt::endl;
       
     foreach (const QString& header, globalSystem.lexerDeclarationHeaders)
       s << "#include \"" << header << "\"\n";
     
-    s << endl << "namespace " << globalSystem.ns << "{" << endl
-      << endl
+    s << Qt::endl << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl
       
       << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
       << (globalSystem.lexerBaseClass.isEmpty() ? QString() : " public " + globalSystem.lexerBaseClass + ",")
       << "public " << globalSystem.inputStream << ","
-      << "public TokenTypeWrapper" << endl
-      << "{" << endl
-      << "public:" << endl
-      << "typedef " << (globalSystem.lexerBaseClass.isEmpty() ? globalSystem.tokenStream : globalSystem.lexerBaseClass) << " Base;" << endl
-      << "typedef " << globalSystem.inputStream << " Iterator;" << endl << endl << "private:" << endl;
+      << "public TokenTypeWrapper" << Qt::endl
+      << "{" << Qt::endl
+      << "public:" << Qt::endl
+      << "typedef " << (globalSystem.lexerBaseClass.isEmpty() ? globalSystem.tokenStream : globalSystem.lexerBaseClass) << " Base;" << Qt::endl
+      << "typedef " << globalSystem.inputStream << " Iterator;" << Qt::endl << Qt::endl << "private:" << Qt::endl;
       
     
     if(hasStates)
     {
       foreach(QString state, globalSystem.lexerEnvs.keys())
-        s << "Base::Token& lex" << KDevPG::capitalized(state) << "();" << endl;
+        s << "Base::Token& lex" << KDevPG::capitalized(state) << "();" << Qt::endl;
       s << "public:\nenum RuleSet {\n";
       foreach(QString state, globalSystem.lexerEnvs.keys())
-        s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << endl;
+        s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << Qt::endl;
       s << "State_COUNT\n};\n"
            "private:\n"
            "RuleSet m_ruleSet;\n"
@@ -588,24 +588,24 @@ void generateLexer()
            "void setRuleSet(RuleSet rs);\n";
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
-        s << "inline void enteringRuleSet" << state << "();" << endl;
-        s << "inline void leavingRuleSet" << state << "();" << endl;
+        s << "inline void enteringRuleSet" << state << "();" << Qt::endl;
+        s << "inline void leavingRuleSet" << state << "();" << Qt::endl;
       }
     }
       
-    s << "Iterator::PlainIterator spos;" << endl
-      << "bool continueLexeme;" << endl << endl
+    s << "Iterator::PlainIterator spos;" << Qt::endl
+      << "bool continueLexeme;" << Qt::endl << Qt::endl
       
-      << "public:" << endl << globalSystem.tokenStream << "(const Iterator& iter);" << endl
+      << "public:" << Qt::endl << globalSystem.tokenStream << "(const Iterator& iter);" << Qt::endl
       // non-virtual, virtuality will be inherited
       << "~" << globalSystem.tokenStream << "();"
-      <<  endl << "Base::Token& read();" << endl;
+      <<  Qt::endl << "Base::Token& read();" << Qt::endl;
     
       /// TODO: not good that it happens in a separate file for the parser but in this file for the lexer
 #define LEXER_EXTRA_CODE_GEN(name) \
     if (globalSystem.lexerclassMembers.name.empty() == false) \
     { \
-      s << "\n// user defined code:" << endl; \
+      s << "\n// user defined code:" << Qt::endl; \
       GenerateMemberCode gen(s, Settings::MemberItem::PublicDeclaration \
                                 | Settings::MemberItem::ProtectedDeclaration \
                                 | Settings::MemberItem::PrivateDeclaration \
@@ -620,11 +620,11 @@ void generateLexer()
     
     LEXER_EXTRA_CODE_GEN(declarations)
     
-    s << "};" << endl << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+    s << "};" << Qt::endl << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl
       
-      << "#endif" << endl
-      << endl;
+      << "#endif" << Qt::endl
+      << Qt::endl;
       
     QString oname = globalSystem.language;
     oname += "lexer.h";
@@ -636,28 +636,28 @@ void generateLexer()
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
     
-    s << "// THIS FILE IS GENERATED" << endl
-      << "// WARNING! All changes made in this file will be lost!" << endl
-      << endl
+    s << "// THIS FILE IS GENERATED" << Qt::endl
+      << "// WARNING! All changes made in this file will be lost!" << Qt::endl
+      << Qt::endl
     
-      << "#include \"" << globalSystem.language << "lexer.h\"" << endl
-      << endl;
+      << "#include \"" << globalSystem.language << "lexer.h\"" << Qt::endl
+      << Qt::endl;
     
     foreach (const QString& header, globalSystem.lexerBitsHeaders)
       s << "#include \"" << header << "\"\n";
     
     s << "\n#include <cassert>\n";
     
-    s << endl << "namespace " << globalSystem.ns << "{" << endl
-      << endl << globalSystem.tokenStream << "::" << globalSystem.tokenStream
-      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter), " << (hasStates ? "m_ruleSet(State_start), " : "") << "continueLexeme(false)" << endl
+    s << Qt::endl << "namespace " << globalSystem.ns << "{" << Qt::endl
+      << Qt::endl << globalSystem.tokenStream << "::" << globalSystem.tokenStream
+      << "(const " << globalSystem.tokenStream << "::Iterator& iter) : Base(), Iterator(iter), " << (hasStates ? "m_ruleSet(State_start), " : "") << "continueLexeme(false)" << Qt::endl
       << "{";
     LEXER_EXTRA_CODE_GEN(constructorCode)
-    s << "}" << endl << endl
+    s << "}" << Qt::endl << Qt::endl
       << globalSystem.tokenStream << "::~" << globalSystem.tokenStream
       << "()\n{";
     LEXER_EXTRA_CODE_GEN(destructorCode)
-    s << "}" << endl << endl
+    s << "}" << Qt::endl << Qt::endl
             
       << "#define PP_CONCAT_IMPL(x, y) x ## y\n" // necessary, otherwise CURRENT_RULE_SET would not get resolved
          "#define PP_CONCAT(x, y) PP_CONCAT_IMPL(x, y)\n\n"
@@ -677,16 +677,16 @@ void generateLexer()
          "#define yytoken (Base::back())\n"
          "#define lxFAIL {goto _fail;}\n"
          "#define lxSKIP {return read();}\n"
-         "#define lxNEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << endl;
+         "#define lxNEXT_CHR(chr) { if(!Iterator::hasNext()) goto _end; chr = Iterator::next(); }\n" << Qt::endl;
     
     if(hasStates)
     {
-      s << "#define lxSET_RULE_SET(r) {PP_CONCAT(leavingRuleSet, CURRENT_RULE_SET) (); m_ruleSet = State_##r; enteringRuleSet##r ();}\n" << endl << endl;
+      s << "#define lxSET_RULE_SET(r) {PP_CONCAT(leavingRuleSet, CURRENT_RULE_SET) (); m_ruleSet = State_##r; enteringRuleSet##r ();}\n" << Qt::endl << Qt::endl;
       
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
-        s << "inline void " << globalSystem.tokenStream << "::enteringRuleSet" << state << "() { " << globalSystem.enteringCode[state] << "}" << endl;
-        s << "inline void " << globalSystem.tokenStream << "::leavingRuleSet" << state << "() { " << globalSystem.leavingCode[state] << "}" << endl;
+        s << "inline void " << globalSystem.tokenStream << "::enteringRuleSet" << state << "() { " << globalSystem.enteringCode[state] << "}" << Qt::endl;
+        s << "inline void " << globalSystem.tokenStream << "::leavingRuleSet" << state << "() { " << globalSystem.leavingCode[state] << "}" << Qt::endl;
       }
       s << "\n"
            "void " << globalSystem.tokenStream << "::setRuleSet(RuleSet rs)\n"
@@ -719,36 +719,36 @@ void generateLexer()
     
 #define LEXER_CORE_IMPL(name, state, extra) \
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream << "::" \
-        << name << "()" << endl << "{" \
-        << extra << "if(!Iterator::hasNext())\n{\nlxFINISH\n}" << endl \
+        << name << "()" << Qt::endl << "{" \
+        << extra << "if(!Iterator::hasNext())\n{\nlxFINISH\n}" << Qt::endl \
         << "if(continueLexeme) continueLexeme = false;\nelse spos = plain();\nIterator::PlainIterator lpos = Iterator::plain();\nIterator::Int chr = 0;\nint lstate = 0;\n"; \
       globalSystem.dfaForNfa[globalSystem.lexerEnvResults[state]]->codegen(s); \
-      s << "/* assert(false);*/\nreturn Base::read();}" << endl << endl;
+      s << "/* assert(false);*/\nreturn Base::read();}" << Qt::endl << Qt::endl;
     
     if(hasStates)
     {
       foreach(QString state, globalSystem.lexerEnvs.keys())
       {
-        s << "#define CURRENT_RULE_SET " << state << endl;
+        s << "#define CURRENT_RULE_SET " << state << Qt::endl;
         LEXER_CORE_IMPL("lex" + KDevPG::capitalized(state), state, "")
-        s << "#undef CURRENT_RULE_SET" << endl;
+        s << "#undef CURRENT_RULE_SET" << Qt::endl;
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
-        << "::read()" << endl << "{" << endl << "if(Base::index() < Base::size())\nreturn Base::read();\nswitch(m_ruleSet)\n{" << endl;
+        << "::read()" << Qt::endl << "{" << Qt::endl << "if(Base::index() < Base::size())\nreturn Base::read();\nswitch(m_ruleSet)\n{" << Qt::endl;
       foreach(QString state, globalSystem.lexerEnvs.keys())
-        s << "case State_" << state << ": return lex" << capitalized(state) << "();" << endl;
-      s << "default:\nexit(-1);\n}\n}" << endl;
+        s << "case State_" << state << ": return lex" << capitalized(state) << "();" << Qt::endl;
+      s << "default:\nexit(-1);\n}\n}" << Qt::endl;
     }
     else
     {
       LEXER_CORE_IMPL("read", "start", "if(Base::index() < Base::size())\nreturn Base::read();\n")
     }
     
-    s << globalSystem.lexerBits << endl;
+    s << globalSystem.lexerBits << Qt::endl;
     
     if(hasStates)
     {
-      s << "#undef lxSET_RULE_SET\n" << endl;
+      s << "#undef lxSET_RULE_SET\n" << Qt::endl;
     }
     
     s << "#undef lxNEXT_CHR\n"
@@ -763,9 +763,9 @@ void generateLexer()
          "#undef lxCURR_POS\n\n"
          
          "#undef PP_CONCAT\n"
-         "#undef PP_CONCAT_IMPL\n" << endl;
+         "#undef PP_CONCAT_IMPL\n" << Qt::endl;
     
-    s << "} // end of namespace " << globalSystem.ns << endl << endl;
+    s << "} // end of namespace " << globalSystem.ns << Qt::endl << Qt::endl;
     
     QString oname = globalSystem.language;
     oname += "lexer.cpp";
@@ -788,18 +788,18 @@ void generateVisitor(const QString& name, bool inherit_default)
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
     
-    s << "#ifndef " << language << "_" << upper_name << "_H" << endl
-      << "#define " << language << "_" << upper_name << "_H" << endl
-      << endl
+    s << "#ifndef " << language << "_" << upper_name << "_H" << Qt::endl
+      << "#define " << language << "_" << upper_name << "_H" << Qt::endl
+      << Qt::endl
     
-      << "#include \"" << globalSystem.language << (inherit_default ? "default" : "") << "visitor.h\"" << endl
-      << endl;
+      << "#include \"" << globalSystem.language << (inherit_default ? "default" : "") << "visitor.h\"" << Qt::endl
+      << Qt::endl;
     
     if (!globalSystem.exportMacroHeader.isEmpty())
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
-        << endl;
+        << Qt::endl;
     
-    s << "namespace " << globalSystem.ns << "{" << endl << endl;
+    s << "namespace " << globalSystem.ns << "{" << Qt::endl << Qt::endl;
                                                             
     if (inherit_default)
     { // generate an empty visitor using the default-visitor
@@ -816,11 +816,11 @@ void generateVisitor(const QString& name, bool inherit_default)
       visitor();
     }
         
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl
         
-      << "#endif" << endl
-      << endl;
+      << "#endif" << Qt::endl
+      << Qt::endl;
         
     QString oname = globalSystem.language;
     oname += name.toLower() + ".h";
@@ -832,12 +832,12 @@ void generateVisitor(const QString& name, bool inherit_default)
     QString str;
     QTextStream s(&str, QIODevice::WriteOnly);
     
-    s << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << endl
-      << endl
+    s << "#include \"" << globalSystem.language << "defaultvisitor.h\"" << Qt::endl
+      << Qt::endl
     
-      << "namespace " << globalSystem.ns << "{" << endl
+      << "namespace " << globalSystem.ns << "{" << Qt::endl
     
-      << endl;
+      << Qt::endl;
     
     if(inherit_default)
     {
@@ -858,8 +858,8 @@ void generateVisitor(const QString& name, bool inherit_default)
       }
     }
     
-    s << endl << "} // end of namespace " << globalSystem.ns << endl
-      << endl;
+    s << Qt::endl << "} // end of namespace " << globalSystem.ns << Qt::endl
+      << Qt::endl;
     
     QString oname = globalSystem.language;
     oname += name.toLower() + ".cpp";

@@ -39,18 +39,18 @@ void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*
   #define O(ast) \
       out << "void " << name << "::visit" << ast \
       << "(" << ast << "Ast *" << (has_members ? "node" : "") \
-      << ") {" << endl;
+      << ") {" << Qt::endl;
       
   if(isOperatorSymbol(sym))
   {
     O("Prefix" + sym->mCapitalizedName)
-    out << "visitNode(node->first);" << endl << "}" << endl << endl;
+    out << "visitNode(node->first);" << Qt::endl << "}" << Qt::endl << Qt::endl;
     O("Postfix" + sym->mCapitalizedName)
-    out << "visitNode(node->first);" << endl << "}" << endl << endl;
+    out << "visitNode(node->first);" << Qt::endl << "}" << Qt::endl << Qt::endl;
     O("Binary" + sym->mCapitalizedName)
-    out << "visitNode(node->first);" << endl << "visitNode(node->second); }" << endl << endl;
+    out << "visitNode(node->first);" << Qt::endl << "visitNode(node->second); }" << Qt::endl << Qt::endl;
     O("Ternary" + sym->mCapitalizedName)
-    out << "visitNode(node->first);" << endl << "visitNode(node->second);" << endl << "visitNode(node->third);";
+    out << "visitNode(node->first);" << Qt::endl << "visitNode(node->second);" << Qt::endl << "visitNode(node->third);";
   }
   else
   {
@@ -69,7 +69,7 @@ void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*
       }
   }
 
-  out << "}" << endl << endl;
+  out << "}" << Qt::endl << Qt::endl;
   
   #undef O
 }
@@ -94,16 +94,16 @@ void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDec
         out << "if (" << "node->" << node->mName << "Sequence" << ") {"
             << "const KDevPG::ListNode<" << base_type << "> *__it = "
             << "node->" << node->mName << "Sequence" << "->front()"
-            << ", *__end = __it;" << endl
-            << "do {" << endl
-            << "visitNode(__it->element);" << endl
-            << "__it = __it->next;" << endl
-            << "} while (__it != __end);" << endl
-            << "}" << endl;
+            << ", *__end = __it;" << Qt::endl
+            << "do {" << Qt::endl
+            << "visitNode(__it->element);" << Qt::endl
+            << "__it = __it->next;" << Qt::endl
+            << "} while (__it != __end);" << Qt::endl
+            << "}" << Qt::endl;
       }
     else
       {
-        out << "visitNode(" << "node->" << node->mName << ")" << ";" << endl;
+        out << "visitNode(" << "node->" << node->mName << ")" << ";" << Qt::endl;
       }
 
     mNames.insert(node->mName);

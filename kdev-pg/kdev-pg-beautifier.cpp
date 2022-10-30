@@ -86,7 +86,7 @@ void format(QTextStream& in, const QString& oname)
 
   do
   {
-    out << QString::fromStdString( f.nextLine() ) << endl;
+    out << QString::fromStdString( f.nextLine() ) << Qt::endl;
   }
   while (f.hasMoreLines());
 }

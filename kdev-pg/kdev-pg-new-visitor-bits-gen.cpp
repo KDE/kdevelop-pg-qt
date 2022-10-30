@@ -35,9 +35,9 @@ void GenerateNewVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*> co
   #define O(name) \
     out << "void " << name << "::visit" << name \
         << "(" << name << "Ast *node" \
-        << ") {" << endl << endl \
-        << "DefaultVisitor::visit" << name << "(node)" << endl \
-        << "}" << endl << endl;
+        << ") {" << Qt::endl << Qt::endl \
+        << "DefaultVisitor::visit" << name << "(node)" << Qt::endl \
+        << "}" << Qt::endl << Qt::endl;
   
   if(isOperatorSymbol(__it.second))
   {

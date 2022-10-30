@@ -2132,7 +2132,7 @@ case YY_STATE_EOF(RULE_LEXER):
 #line 245 "kdev-pg-lexer.ll"
 {
     BEGIN(INITIAL); // is not set automatically by yyrestart()
-    KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << endl;
+    KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule lexer definition..." << Qt::endl;
     yyerror("");
     return 0;
   }
@@ -2181,7 +2181,7 @@ case YY_STATE_EOF(RULE_ARGUMENTS):
 #line 267 "kdev-pg-lexer.ll"
 {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
-      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << endl;
+      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed rule argument specification..." << Qt::endl;
       yyerror("");
       return 0;
   }
@@ -2344,7 +2344,7 @@ case YY_STATE_EOF(CODE):
 #line 332 "kdev-pg-lexer.ll"
 {
       BEGIN(INITIAL); // is not set automatically by yyrestart()
-      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << endl;
+      KDevPG::checkOut << "** ERROR Encountered end of file in an unclosed code segment..." << Qt::endl;
       yyerror("");
       return 0;
   }
@@ -2378,7 +2378,7 @@ case 138:
 YY_RULE_SETUP
 #line 352 "kdev-pg-lexer.ll"
 {
-  KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << endl;
+  KDevPG::checkOut << "Unexpected character: ``" << yytext[0] << "''" << Qt::endl;
   yyerror("");
 }
 	YY_BREAK
@@ -3445,7 +3445,7 @@ void appendLineBuffer()
 void yyerror(const char* msg )
 {
   Q_UNUSED(msg);
-  KDevPG::checkOut << "** LEXICAL ERROR at line " << yyLine << " column " << currentOffset << endl;
+  KDevPG::checkOut << "** LEXICAL ERROR at line " << yyLine << " column " << currentOffset << Qt::endl;
 
   char *current_end = yyTextLine + strlen(yyTextLine);
   char *p;
@@ -3473,7 +3473,7 @@ void yyerror(const char* msg )
   KDevPG::checkOut << yyTextLine;
 
   /* print a ^ under the most recent token */
-  KDevPG::checkOut << QString(currentOffset, ' ').append('^') << endl; /* currentOffset spaces, then ^ */
+  KDevPG::checkOut << QString(currentOffset, ' ').append('^') << Qt::endl; /* currentOffset spaces, then ^ */
 
   exit(EXIT_FAILURE);
 }

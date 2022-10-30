@@ -1917,7 +1917,7 @@ yyreduce:
           base += 5;
         else
         {
-          KDevPG::checkOut << "** ERROR unknown codec  ``" << (yyvsp[(2) - (2)].str) << "''" << endl;
+          KDevPG::checkOut << "** ERROR unknown codec  ``" << (yyvsp[(2) - (2)].str) << "''" << Qt::endl;
           exit(-1);
         }
         KDevPG::GDFA::type = KDevPG::AutomatonType(base);
@@ -2050,9 +2050,9 @@ yyreduce:
 #line 207 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               if((yyvsp[(1) - (4)].nfa)->acceptsEpsilon())
-                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if((yyvsp[(1) - (4)].nfa)->isEmpty())
-                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               QString s = QString((yyvsp[(2) - (4)].str)) + QString(r);
               KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (4)].nfa));
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
@@ -2065,19 +2065,19 @@ yyreduce:
 #line 217 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               if((yyvsp[(1) - (8)].nfa)->acceptsEpsilon())
-                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if((yyvsp[(1) - (8)].nfa)->isEmpty())
-                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               bool ignore = false;
               auto minLen = (yyvsp[(4) - (8)].nfa)->minLength(), maxLen = (yyvsp[(4) - (8)].nfa)->maxLength();
               if(minLen == 0)
               {
-                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << Qt::endl;
                 ignore = true;
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << endl;
+                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
@@ -2102,19 +2102,19 @@ yyreduce:
 #line 249 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
     {
               if((yyvsp[(1) - (8)].nfa)->acceptsEpsilon())
-                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if((yyvsp[(1) - (8)].nfa)->isEmpty())
-                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               bool ignore = false;
               auto minLen = (yyvsp[(4) - (8)].nfa)->minLength(), maxLen = (yyvsp[(4) - (8)].nfa)->maxLength();
               if(minLen == 0)
               {
-                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << endl;
+                KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << Qt::endl;
                 ignore = true;
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << endl;
+                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
@@ -2349,7 +2349,7 @@ yyreduce:
     {
                               if(!KDevPG::globalSystem.regexpById.contains((yyvsp[(1) - (1)].str)))
                               {
-                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << endl;
+                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << Qt::endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
@@ -2546,7 +2546,7 @@ yyreduce:
     {
                               if(!KDevPG::globalSystem.regexpById.contains((yyvsp[(1) - (1)].str)))
                               {
-                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << endl;
+                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << Qt::endl;
                                 exit(-1);
                               }
                               KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];

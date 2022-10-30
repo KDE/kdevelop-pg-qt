@@ -29,8 +29,8 @@ namespace KDevPG
 
 void GenerateDefaultVisitor::operator()()
 {
-  out << "class " << globalSystem.exportMacro << " " << name << ": public Visitor {" << endl
-      << "public:" << endl;
+  out << "class " << globalSystem.exportMacro << " " << name << ": public Visitor {" << Qt::endl
+      << "public:" << Qt::endl;
 
   GenerateDefaultVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
@@ -39,7 +39,7 @@ void GenerateDefaultVisitor::operator()()
     gen(qMakePair(it.key(), *it));
   }
 
-  out << "};" << endl;
+  out << "};" << Qt::endl;
 }
 
 void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> const &__it)
@@ -47,7 +47,7 @@ void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> co
   Model::SymbolItem *sym = __it.second;
   
   #define O(name) \
-  out << "void visit" << name << "(" << name << "Ast *node) override;" << endl;
+  out << "void visit" << name << "(" << name << "Ast *node) override;" << Qt::endl;
   
   if(isOperatorSymbol(sym))
   {

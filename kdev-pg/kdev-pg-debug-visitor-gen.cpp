@@ -27,11 +27,11 @@ namespace KDevPG
 void GenerateDebugVisitor::operator()()
 {
   // the debug visitor class is header-only, thus we don't need an export macro here
-  out << "class DebugVisitor: public DefaultVisitor {" << endl
-      << "public:" << endl;
+  out << "class DebugVisitor: public DefaultVisitor {" << Qt::endl
+      << "public:" << Qt::endl;
 
-  out << "DebugVisitor("<< globalSystem.tokenStream << " *str, const QString& content = QString())" << endl;
-  out << "    : m_str(str), m_indent(0), m_content(content) {}" << endl;
+  out << "DebugVisitor("<< globalSystem.tokenStream << " *str, const QString& content = QString())" << Qt::endl;
+  out << "    : m_str(str), m_indent(0), m_content(content) {}" << Qt::endl;
   GenerateDebugVisitorRule gen(out);
   for( World::SymbolSet::iterator it = globalSystem.symbols.begin();
        it != globalSystem.symbols.end(); ++it )
@@ -39,57 +39,57 @@ void GenerateDebugVisitor::operator()()
     gen(qMakePair(it.key(), *it));
   }
 
-  out << "private:" << endl;
-  out << "void printToken(const AstNode *node, const QString &mType, const QString &mName = QString())" << endl;
-  out << "{" << endl;
-  out << "        KDevPG::TokenStream::Token startToken;" << endl;
-  out << "        KDevPG::TokenStream::Token endToken;" << endl;
-  out << "        qint64 line, column;" << endl;
-  out << "        const bool isValidStartToken = (0 <= node->startToken && node->startToken < m_str->size());" << endl;
-  out << "        QString startTokenString;" << endl;
-  out << "        if (isValidStartToken) {" << endl;
-  out << "            startToken = m_str->at(node->startToken);" << endl;
-  out << "            m_str->startPosition(node->startToken, &line, &column);" << endl;
-  out << "            startTokenString = QString::number(startToken.begin) + QLatin1String(\", \") + QString::number(line) + QLatin1String(\", \") + QString::number(column);" << endl;
-  out << "        } else {" << endl;
-  out << "            startTokenString = QLatin1String(\"invalid token index: \") + QString::number(node->startToken);" << endl;
-  out << "        }" << endl;
-  out << "        const bool isValidEndToken = (0 <= node->endToken && node->endToken < m_str->size());" << endl;
-  out << "        QString endTokenString;" << endl;
-  out << "        if (isValidEndToken) {" << endl;
-  out << "            endToken = m_str->at(node->endToken);" << endl;
-  out << "            m_str->startPosition(node->endToken, &line, &column);" << endl;
-  out << "            endTokenString = QString::number(endToken.begin) + QLatin1String(\", \") + QString::number(line) + QLatin1String(\", \") + QString::number(column);" << endl;
-  out << "        } else {" << endl;
-  out << "            endTokenString = QLatin1String(\"invalid token index: \") + QString::number(node->endToken);" << endl;
-  out << "        }" << endl;
-  out << "        QString tokenString;" << endl;
-  out << "        if (!m_content.isEmpty() && isValidStartToken && isValidEndToken) {" << endl;
-  out << "            const int begin = startToken.begin;" << endl;
-  out << "            const int end = endToken.end;" << endl;
-  out << "            if (end-begin > 30) {" << endl;
-  out << "                tokenString = m_content.mid(begin, 10);" << endl;
-  out << "                tokenString += QStringLiteral(\" ...\");" << endl;
-  out << "                tokenString += QStringLiteral(\"%1 more\").arg(end-begin-20);" << endl;
-  out << "                tokenString += QStringLiteral(\"... \");" << endl;
-  out << "                tokenString += m_content.midRef(end-10, 10);" << endl;
-  out << "            }" << endl;
-  out << "            else {" << endl;
-  out << "                tokenString = m_content.mid(begin, end-begin+1);" << endl;
-  out << "            }" << endl;
-  out << "            tokenString.replace('\\n', QStringLiteral(\"\\\\n\"));" << endl;
-  out << "            tokenString.replace('\\r', QStringLiteral(\"\\\\r\"));" << endl;
-  out << "        }" << endl;
+  out << "private:" << Qt::endl;
+  out << "void printToken(const AstNode *node, const QString &mType, const QString &mName = QString())" << Qt::endl;
+  out << "{" << Qt::endl;
+  out << "        KDevPG::TokenStream::Token startToken;" << Qt::endl;
+  out << "        KDevPG::TokenStream::Token endToken;" << Qt::endl;
+  out << "        qint64 line, column;" << Qt::endl;
+  out << "        const bool isValidStartToken = (0 <= node->startToken && node->startToken < m_str->size());" << Qt::endl;
+  out << "        QString startTokenString;" << Qt::endl;
+  out << "        if (isValidStartToken) {" << Qt::endl;
+  out << "            startToken = m_str->at(node->startToken);" << Qt::endl;
+  out << "            m_str->startPosition(node->startToken, &line, &column);" << Qt::endl;
+  out << "            startTokenString = QString::number(startToken.begin) + QLatin1String(\", \") + QString::number(line) + QLatin1String(\", \") + QString::number(column);" << Qt::endl;
+  out << "        } else {" << Qt::endl;
+  out << "            startTokenString = QLatin1String(\"invalid token index: \") + QString::number(node->startToken);" << Qt::endl;
+  out << "        }" << Qt::endl;
+  out << "        const bool isValidEndToken = (0 <= node->endToken && node->endToken < m_str->size());" << Qt::endl;
+  out << "        QString endTokenString;" << Qt::endl;
+  out << "        if (isValidEndToken) {" << Qt::endl;
+  out << "            endToken = m_str->at(node->endToken);" << Qt::endl;
+  out << "            m_str->startPosition(node->endToken, &line, &column);" << Qt::endl;
+  out << "            endTokenString = QString::number(endToken.begin) + QLatin1String(\", \") + QString::number(line) + QLatin1String(\", \") + QString::number(column);" << Qt::endl;
+  out << "        } else {" << Qt::endl;
+  out << "            endTokenString = QLatin1String(\"invalid token index: \") + QString::number(node->endToken);" << Qt::endl;
+  out << "        }" << Qt::endl;
+  out << "        QString tokenString;" << Qt::endl;
+  out << "        if (!m_content.isEmpty() && isValidStartToken && isValidEndToken) {" << Qt::endl;
+  out << "            const int begin = startToken.begin;" << Qt::endl;
+  out << "            const int end = endToken.end;" << Qt::endl;
+  out << "            if (end-begin > 30) {" << Qt::endl;
+  out << "                tokenString = m_content.mid(begin, 10);" << Qt::endl;
+  out << "                tokenString += QStringLiteral(\" ...\");" << Qt::endl;
+  out << "                tokenString += QStringLiteral(\"%1 more\").arg(end-begin-20);" << Qt::endl;
+  out << "                tokenString += QStringLiteral(\"... \");" << Qt::endl;
+  out << "                tokenString += m_content.midRef(end-10, 10);" << Qt::endl;
+  out << "            }" << Qt::endl;
+  out << "            else {" << Qt::endl;
+  out << "                tokenString = m_content.mid(begin, end-begin+1);" << Qt::endl;
+  out << "            }" << Qt::endl;
+  out << "            tokenString.replace('\\n', QStringLiteral(\"\\\\n\"));" << Qt::endl;
+  out << "            tokenString.replace('\\r', QStringLiteral(\"\\\\r\"));" << Qt::endl;
+  out << "        }" << Qt::endl;
   out << "        qDebug() <<"
       << " QString(QString().fill(QLatin1Char(' '), m_indent) +"
       << " mName + QLatin1String(!mName.isEmpty() ? \"->\" : \"\") + mType +"
       << " QLatin1Char('[') + startTokenString + QLatin1String(\"] --- [\") + endTokenString + QLatin1String(\"] \")).toUtf8().constData()"
-      << " << tokenString;" << endl;
-  out << "}" << endl;
-  out << globalSystem.tokenStream << " *m_str;" << endl;
-  out << "int m_indent;" << endl;
-  out << "QString m_content;" << endl;
-  out << "};" << endl;
+      << " << tokenString;" << Qt::endl;
+  out << "}" << Qt::endl;
+  out << globalSystem.tokenStream << " *m_str;" << Qt::endl;
+  out << "int m_indent;" << Qt::endl;
+  out << "QString m_content;" << Qt::endl;
+  out << "};" << Qt::endl;
 }
 
 void GenerateDebugVisitorRule::operator()(QPair<QString,
@@ -105,19 +105,19 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
   #define O1(name) \
       out << "void visit" << name \
           << "(" << name << "Ast *" << "node" \
-          << ") override {" << endl;
+          << ") override {" << Qt::endl;
   #define O2(name) \
-  out << "printToken(node, QStringLiteral(\"" << name << "\"));" << endl;
+  out << "printToken(node, QStringLiteral(\"" << name << "\"));" << Qt::endl;
   #define O3(name) \
     out << "++m_indent;"; \
         \
     out << "DefaultVisitor::visit" << name \
         << "(" << "node" \
-        << ");" << endl; \
+        << ");" << Qt::endl; \
         \
     out << "m_indent--;"; \
         \
-    out << "}" << endl << endl;
+    out << "}" << Qt::endl << Qt::endl;
   
   if(isOperatorSymbol(sym))
   {
@@ -179,16 +179,16 @@ void GenerateDebugVisitorRule::visitVariableDeclaration(Model::VariableDeclarati
         out << "if (" << "node->" << node->mName << "Sequence" << ") {"
             << "const KDevPG::ListNode<" << base_type << "> *__it = "
             << "node->" << node->mName << "Sequence" << "->front()"
-            << ", *__end = __it;" << endl
-            << "do {" << endl
-            << "printToken(__it->element, QStringLiteral(\"" << node->mType << "\"), QStringLiteral(\"" << node->mName << "[]\"));" << endl
-            << "__it = __it->next;" << endl
-            << "} while (__it != __end);" << endl
-            << "}" << endl;
+            << ", *__end = __it;" << Qt::endl
+            << "do {" << Qt::endl
+            << "printToken(__it->element, QStringLiteral(\"" << node->mType << "\"), QStringLiteral(\"" << node->mName << "[]\"));" << Qt::endl
+            << "__it = __it->next;" << Qt::endl
+            << "} while (__it != __end);" << Qt::endl
+            << "}" << Qt::endl;
       }
     else
       {
-        out << "if (node->" << node->mName << ") printToken(node->" << node->mName << ", QStringLiteral(\"" << node->mType << "\"), QStringLiteral(\"" << node->mName << "\"));" << endl;
+        out << "if (node->" << node->mName << ") printToken(node->" << node->mName << ", QStringLiteral(\"" << node->mType << "\"), QStringLiteral(\"" << node->mName << "\"));" << Qt::endl;
       }
 
     mNames.insert(node->mName);

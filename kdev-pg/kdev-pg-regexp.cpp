@@ -35,9 +35,6 @@ using namespace std;
 // TODO: Line-End etc.
 // TODO: Deactivate/activate rules (have to keep the bitsets of possible final states)
 
-
-#define NC(...) __VA_ARGS__
-
 #define q_Hash_to_tr1_hash(type) \
 namespace std                                               \
 {                                                           \
@@ -189,7 +186,7 @@ public:
         size_t state = 0;
         foreach(const QChar c, str)
         {
-            foreach(NC(const pair<CharSet, size_t>& r), rules[state])
+            foreach(const auto& r, rules[state])
             {
                 if(r.first.accepts(c.unicode())) // make it more portable!!
                 {
@@ -216,7 +213,7 @@ public:
           action = accept[state];
         }
         quint64 chr = iter.next(); // make it more portable!!
-        foreach(NC(const pair<CharSet, size_t>& r), rules[state])
+        foreach(const auto& r, rules[state])
         {
           if(r.first.accepts(chr))
           {
@@ -275,7 +272,7 @@ public:
         {
             size_t curr = todo.top();
             todo.pop();
-            foreach(NC(const pair<CharSet, size_t>& i), rules[curr])
+            foreach(const auto& i, rules[curr])
             {
                 if(!arrivable[i.second])
                 {
@@ -319,9 +316,9 @@ public:
     bool sameGroup(size_t ngroups, const vector<size_t>& ogroups, size_t x, size_t y)
     {
         vector<CharSet> xsets(ngroups), ysets(ngroups);
-        foreach(NC(const pair<CharSet, size_t>& i), rules[x])
+        foreach(const auto& i, rules[x])
             xsets[ogroups[i.second]].unite(i.first);
-        foreach(NC(const pair<CharSet, size_t>& i), rules[y])
+        foreach(const auto& i, rules[y])
             ysets[ogroups[i.second]].unite(i.first);
         return xsets == ysets;
     }
@@ -362,7 +359,7 @@ public:
         for(size_t i = 0; i != nstates; ++i)
         {
             _accept[groups[i]] = accept[i];
-            foreach(NC(const pair<CharSet, size_t>& j), rules[i])
+            foreach(const auto& j, rules[i])
                 _rules[groups[i]].push_back(make_pair(j.first, groups[j.second]));
         }
         rules = _rules;
@@ -371,7 +368,7 @@ public:
         for(size_t i = 0; i != nstates; ++i)
         {
             vector<CharSet> mapping(nstates, CharSet::emptySet());
-            foreach(NC(const pair<CharSet, size_t>& j), rules[i])
+            foreach(const auto& j, rules[i])
                 mapping[j.second].unite(j.first);
             rules[i].clear();
             for(size_t j = 0; j != nstates; ++j)
@@ -575,7 +572,7 @@ public:
         {
             if(s[i])
             {
-                foreach(NC(const pair<CharSet, size_t>& r), rules[i])
+                foreach(const auto& r, rules[i])
                 {
                     UsedBitArray nxt(nstates);
                     nxt[r.second] = true;
@@ -650,7 +647,7 @@ public:
             states.insert(x);
             rules[x];
             vector<pair<CharSet, UsedBitArray > > nxt = follow(x);
-            foreach(NC(const pair<CharSet, UsedBitArray >& nx), nxt)
+            foreach(const auto& nx, nxt)
             {
                 if(!nx.first.epsilon())
                 {
@@ -694,7 +691,7 @@ public:
         for(auto i = rules.begin(); i != rules.end(); ++i)
         {
             size_t key = st[i->first];
-            foreach(NC(const pair<CharSet, UsedBitArray > nx), i->second)
+            foreach(const auto& nx, i->second)
                 _.rules[key].push_back(make_pair(nx.first, st[nx.second]));
         }
         return _;

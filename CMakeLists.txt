@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(kdevelop-pg-qt VERSION 2.2.1)
+project(kdevelop-pg-qt VERSION 2.2.90)
 
 find_package(ECM 5.91.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})

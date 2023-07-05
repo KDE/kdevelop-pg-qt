@@ -49,3 +49,4 @@ void TestMemoryPool::bigAlloc()
 
 QTEST_MAIN(KDevPG::TestMemoryPool)
 
+#include "moc_testmemorypool.cpp"

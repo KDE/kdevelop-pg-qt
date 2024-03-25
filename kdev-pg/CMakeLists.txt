@@ -98,7 +98,7 @@ set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT
 # tell CMake to generate the executable
 ADD_EXECUTABLE(kdev-pg-qt ${parser_src} ${lexer_src} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
 ecm_mark_nongui_executable(kdev-pg-qt)
-TARGET_LINK_LIBRARIES( kdev-pg-qt Qt${QT_MAJOR_VERSION}::Core)
+TARGET_LINK_LIBRARIES( kdev-pg-qt Qt6::Core)
 INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"

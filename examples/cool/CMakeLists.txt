@@ -55,4 +55,4 @@ ADD_DEFINITIONS(-Wall -O2)
 # tell CMake to generate the executable
 ADD_EXECUTABLE(cool-parser ${assembled_parser_srcs} main.cpp)
 
-TARGET_LINK_LIBRARIES( cool-parser Qt${QT_MAJOR_VERSION}::Core)
+TARGET_LINK_LIBRARIES( cool-parser Qt6::Core)

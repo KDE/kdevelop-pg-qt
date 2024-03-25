@@ -48,11 +48,6 @@ namespace std                                               \
     };                                                      \
 }
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-// Qt >= 5.14 already has std::hash for QBitArray
-q_Hash_to_tr1_hash(QBitArray)
-#endif
-
 namespace KDevPG
 {
 

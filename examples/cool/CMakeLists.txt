@@ -8,12 +8,9 @@ add_executable(cool-parser)
 
 # autogenerate the lexer and the parser
 
-set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../bin/kdev-pg-qt)
-set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
 kdevpgqt_generate(cool-parser cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
 )
-
 
 if(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
@@ -47,4 +44,7 @@ target_sources(cool-parser PRIVATE
     cool_io.cpp
 )
 
-target_link_libraries( cool-parser Qt6::Core)
+target_link_libraries(cool-parser
+    KDevelopPGQt::Utils
+    Qt6::Core
+)

@@ -6,8 +6,6 @@ add_definitions(-Wall -O2)
 add_executable(cc-parser)
 
 # autogenerate the lexer and the parser
-set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../bin/kdev-pg-qt)
-set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
 kdevpgqt_generate(cc-parser cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )
@@ -43,4 +41,7 @@ target_sources(cc-parser PRIVATE
     dumptree.cpp
 )
 
-target_link_libraries( cc-parser Qt6::Core)
+target_link_libraries(cc-parser
+    KDevelopPGQt::Utils
+    Qt6::Core
+)

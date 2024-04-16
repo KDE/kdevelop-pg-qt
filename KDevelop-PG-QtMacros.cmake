@@ -17,50 +17,38 @@
 #               into files in the binary dir
 #     ENFORCE_COMPATIBLE_ERROR_AWARE_CODE will ensure that --compatible-error-aware-code is also
 #               passed in case of GCC. By default it only is set for non-GNU compilers.
-#     Note: The macro only exists when KDEVPG was found
 
-if( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE)
-
-    if( NOT KDevelop-PG-Qt_FIND_QUIETLY )
-        message(STATUS "Found KDevelop-PG-Qt")
-        message(STATUS "  Using kdevelop-pg-qt include dir: ${KDEVPGQT_INCLUDE_DIR}")
-        message(STATUS "  Using kdevelop-pg-qt executable: ${KDEVPGQT_EXECUTABLE}")
+macro(KDEVPGQT_GENERATE _srcOrTargetVar _language )
+    if (TARGET ${_srcOrTargetVar})
+        get_target_property(aliased_target ${_srcOrTargetVar} ALIASED_TARGET)
+        if(aliased_target)
+          message(FATAL_ERROR "Target argument passed to kdevpgqt_generate must not be an alias: ${_srcOrTargetVar}")
+        endif()
     endif()
-
-# if all modules found
-    set(KDEVPGQT_FOUND TRUE)
-
-    macro(KDEVPGQT_GENERATE _srcOrTargetVar _language )
-        if (TARGET ${_srcOrTargetVar})
-            get_target_property(aliased_target ${_srcOrTargetVar} ALIASED_TARGET)
-            if(aliased_target)
-              message(FATAL_ERROR "Target argument passed to kdevpgqt_generate must not be an alias: ${_srcOrTargetVar}")
-            endif()
-        endif()
-        set(_outputList
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentype.h")
-        set(_depList ${ARGN})
-        set(_astList
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h")
-        set(_parserList
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp")
-        set(_lexerList)
-        set(_dbgVisit)
-        set(_namespace)
-        set(_tokenText)
-        set(_dumpInfo)
-        if(CMAKE_COMPILER_IS_GNUCC)
-          set(_beautifulCode)
-        else()
-          set(_beautifulCode --compatible-error-aware-code)
-        endif()
-        set(_conflicts)
-        while(1)
+    set(_outputList
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentype.h")
+    set(_depList ${ARGN})
+    set(_astList
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}ast.h")
+    set(_parserList
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}parser.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}visitor.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/${_language}defaultvisitor.cpp")
+    set(_lexerList)
+    set(_dbgVisit)
+    set(_namespace)
+    set(_tokenText)
+    set(_dumpInfo)
+    if(CMAKE_COMPILER_IS_GNUCC)
+        set(_beautifulCode)
+    else()
+        set(_beautifulCode --compatible-error-aware-code)
+    endif()
+    set(_conflicts)
+    while(1)
         list(GET _depList 0 _arg)
         if( ${_arg} STREQUAL "NAMESPACE" )
             list(GET _depList 1 _namespace)
@@ -106,33 +94,32 @@ if( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE)
         else()
             break()
         endif()
-        endwhile(1)
+    endwhile(1)
 
-        set(_outputList ${_outputList} ${_lexerList} ${_astList} ${_parserList})
+    set(_outputList ${_outputList} ${_lexerList} ${_astList} ${_parserList})
 
-        list(GET _depList 0 _grammarFile)
-        list(REMOVE_AT _depList 0)
-        if(NOT _grammarFile)
-            message(ERROR "No grammar file given to KDEVPGQT_GENERATE macro")
-        endif()
-        add_custom_command(
-            OUTPUT
-                    ${_outputList}
-            MAIN_DEPENDENCY "${_grammarFile}"
-            DEPENDS ${_depList} ${KDEVPGQT_EXECUTABLE}
-            COMMAND ${KDEVPGQT_EXECUTABLE}
-            ARGS    --output=${_language} ${_namespace}
-                    ${_dbgVisit} ${_dumpInfo} ${_beautifulCode} ${_conflicts} "${_grammarFile}"
-            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-        )
-        set_source_files_properties(${_outputList} PROPERTIES
-            GENERATED TRUE
-            SKIP_AUTOMOC ON
-        )
-        if(TARGET ${_srcOrTargetVar})
-            target_sources(${_srcOrTargetVar} PRIVATE ${_outputList})
-        else()
-            set( ${_srcOrTargetVar} ${_outputList})
-        endif()
-    endmacro()
-endif()
+    list(GET _depList 0 _grammarFile)
+    list(REMOVE_AT _depList 0)
+    if(NOT _grammarFile)
+        message(ERROR "No grammar file given to KDEVPGQT_GENERATE macro")
+    endif()
+    add_custom_command(
+        OUTPUT
+                ${_outputList}
+        MAIN_DEPENDENCY "${_grammarFile}"
+        DEPENDS ${_depList} KDevelopPGQt::kdev-pg-qt
+        COMMAND KDevelopPGQt::kdev-pg-qt
+        ARGS    --output=${_language} ${_namespace}
+                ${_dbgVisit} ${_dumpInfo} ${_beautifulCode} ${_conflicts} "${_grammarFile}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    set_source_files_properties(${_outputList} PROPERTIES
+        GENERATED TRUE
+        SKIP_AUTOMOC ON
+    )
+    if(TARGET ${_srcOrTargetVar})
+        target_sources(${_srcOrTargetVar} PRIVATE ${_outputList})
+    else()
+        set( ${_srcOrTargetVar} ${_outputList})
+    endif()
+endmacro()

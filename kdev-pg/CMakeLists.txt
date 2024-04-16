@@ -1,10 +1,14 @@
 remove_definitions(-DQT_NO_STL)
 add_definitions(-DQT_STL)
 
-qt_add_resources(kdevpg_rcc_srcs ../unidata.qrc)
+# tell CMake to generate the executable
+add_executable(kdev-pg-qt)
+ecm_mark_nongui_executable(kdev-pg-qt)
+
 kde_enable_exceptions()
 
-set(kdevpg_srcs
+target_sources(kdev-pg-qt PRIVATE
+    ../unidata.qrc
     ASBeautifier.cpp
     ASFormatter.cpp
     ASResource.cpp
@@ -93,10 +97,6 @@ else()
 endif()
 set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT -DYY_NO_UNPUT")
 
-
-# tell CMake to generate the executable
-add_executable(kdev-pg-qt ${parser_src} ${lexer_src} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
-ecm_mark_nongui_executable(kdev-pg-qt)
 target_link_libraries( kdev-pg-qt Qt6::Core)
 install(TARGETS kdev-pg-qt DESTINATION bin )
 
@@ -104,3 +104,8 @@ install(TARGETS kdev-pg-qt DESTINATION bin )
 add_custom_target(parser echo "Generating the parser"
     DEPENDS ${parser_src} ${lexer_src}
     )
+
+target_sources(kdev-pg-qt PRIVATE
+    ${parser_src}
+    ${lexer_src}
+)

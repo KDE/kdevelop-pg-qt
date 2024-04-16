@@ -1,12 +1,14 @@
+# add definitions, compiler switches, etc.
 add_definitions(-DQT_NO_STL)
+add_definitions(-Wall -O2)
+
+# tell CMake to generate the executable
+add_executable(cc-parser)
 
 # autogenerate the lexer and the parser
-
-set(parser_srcs)
-
-set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
+set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../bin/kdev-pg-qt)
 set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
-kdevpgqt_generate(parser_srcs cc NAMESPACE cc
+kdevpgqt_generate(cc-parser cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )
 
@@ -23,7 +25,7 @@ if(FLEX_EXECUTABLE)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    set(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp ${parser_srcs})
+    target_sources(cc-parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp)
 
     set_source_files_properties(
         ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp
@@ -33,21 +35,12 @@ if(FLEX_EXECUTABLE)
         )
 else()
     message("--- Assuming existence of the generated lexer file cclexer.cpp")
-    set(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp ${parser_srcs})
+    target_sources(cc-parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp)
 endif()
 
-
-set(cc_parser_srcs
-    ${parser_srcs}
+target_sources(cc-parser PRIVATE
     main.cpp
     dumptree.cpp
 )
-
-
-# add definitions, compiler switches, etc.
-add_definitions(-Wall -O2)
-
-# tell CMake to generate the executable
-add_executable(cc-parser ${cc_parser_srcs})
 
 target_link_libraries( cc-parser Qt6::Core)

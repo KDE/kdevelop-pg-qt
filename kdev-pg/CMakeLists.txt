@@ -98,7 +98,7 @@ endif()
 set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT -DYY_NO_UNPUT")
 
 target_link_libraries( kdev-pg-qt Qt6::Core)
-install(TARGETS kdev-pg-qt DESTINATION bin )
+install(TARGETS kdev-pg-qt DESTINATION ${KDE_INSTALL_BINDIR} )
 
 # in order to generate only the parser, call "make parser"
 add_custom_target(parser echo "Generating the parser"

@@ -52,15 +52,15 @@ find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-find_program(FLEX_EXECUTABLE
-  NAMES flex
-  PATHS /usr/bin
-  DOC "Flex executable")
+find_package(FLEX)
+set_package_properties(FLEX PROPERTIES
+    TYPE RECOMMENDED
+)
 
-find_program(BISON_EXECUTABLE
-  NAMES bison
-  PATHS /usr/bin
-  DOC "bison executable")
+find_package(BISON)
+set_package_properties(BISON PROPERTIES
+    TYPE RECOMMENDED
+)
 
 ecm_set_disabled_deprecation_versions(
     QT 5.15.2

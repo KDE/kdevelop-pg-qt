@@ -1,4 +1,3 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DQT_NO_STL)
 
 # autogenerate the lexer and the parser
@@ -17,7 +16,6 @@ include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 kdevpgqt_generate(parser_srcs cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 if(FLEX_EXECUTABLE)
     # Add command to generate the lexer.

@@ -1,4 +1,3 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 remove_definitions(-DQT_NO_STL)
 add_definitions(-DQT_STL)
 
@@ -12,7 +11,6 @@ include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 kdevpgqt_generate(parser_srcs cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
 )
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 if(FLEX_EXECUTABLE)

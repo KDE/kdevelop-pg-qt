@@ -1,4 +1,3 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 remove_definitions(-DQT_NO_STL)
 add_definitions(-DQT_STL)
 

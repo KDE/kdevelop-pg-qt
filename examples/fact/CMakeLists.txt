@@ -1,5 +1,3 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 find_package(KDevelop-PG-Qt)
 
 kdevpgqt_generate(_kdevpgList fact NAMESPACE fact DEBUG_VISITOR

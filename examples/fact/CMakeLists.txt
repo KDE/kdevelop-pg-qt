@@ -1,4 +1,4 @@
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(KDevelop-PG-Qt)
 
@@ -11,16 +11,16 @@ set( parser_SRCS
     ${_kdevpgList}
 )
 
-SET(assembled_parser_srcs
+set(assembled_parser_srcs
     factlexer.cpp
 )
 
 
 # add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -O2)
+add_definitions(-Wall -O2)
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(fact-parser ${assembled_parser_srcs} ${parser_SRCS} main.cpp)
+add_executable(fact-parser ${assembled_parser_srcs} ${parser_SRCS} main.cpp)
 
 target_link_libraries(fact-parser Qt6::Core)
 

@@ -1,13 +1,13 @@
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-REMOVE_DEFINITIONS(-DQT_NO_STL)
-ADD_DEFINITIONS(-DQT_STL)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+remove_definitions(-DQT_NO_STL)
+add_definitions(-DQT_STL)
 
 # autogenerate the lexer and the parser
 
-SET(parser_srcs)
+set(parser_srcs)
 
-SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
-SET(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
+set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
+set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
 include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 kdevpgqt_generate(parser_srcs cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
@@ -15,9 +15,9 @@ kdevpgqt_generate(parser_srcs cool NAMESPACE cool
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
-IF(FLEX_EXECUTABLE)
+if(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.h"
@@ -28,21 +28,21 @@ IF(FLEX_EXECUTABLE)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp ${parser_srcs})
+    set(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp ${parser_srcs})
 
-    SET_SOURCE_FILES_PROPERTIES(
+    set_source_files_properties(
         ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp
         PROPERTIES
             GENERATED TRUE
             SKIP_AUTOMOC ON
         )
-ELSE(FLEX_EXECUTABLE)
-    MESSAGE("--- Assuming existence of the generated lexer file cool_lexer.cpp")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp ${parser_srcs})
-ENDIF(FLEX_EXECUTABLE)
+else()
+    message("--- Assuming existence of the generated lexer file cool_lexer.cpp")
+    set(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cool_lexer.cpp ${parser_srcs})
+endif()
 
 
-SET(assembled_parser_srcs
+set(assembled_parser_srcs
     ${parser_srcs}
     decoder.cpp
     cool_io.cpp
@@ -50,9 +50,9 @@ SET(assembled_parser_srcs
 
 
 # add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -O2)
+add_definitions(-Wall -O2)
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(cool-parser ${assembled_parser_srcs} main.cpp)
+add_executable(cool-parser ${assembled_parser_srcs} main.cpp)
 
-TARGET_LINK_LIBRARIES( cool-parser Qt6::Core)
+target_link_libraries( cool-parser Qt6::Core)

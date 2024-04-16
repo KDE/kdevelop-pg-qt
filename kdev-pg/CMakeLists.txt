@@ -1,11 +1,11 @@
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-REMOVE_DEFINITIONS(-DQT_NO_STL)
-ADD_DEFINITIONS(-DQT_STL)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+remove_definitions(-DQT_NO_STL)
+add_definitions(-DQT_STL)
 
 qt_add_resources(kdevpg_rcc_srcs ../unidata.qrc)
 kde_enable_exceptions()
 
-SET(kdevpg_srcs
+set(kdevpg_srcs
     ASBeautifier.cpp
     ASFormatter.cpp
     ASResource.cpp
@@ -40,9 +40,9 @@ SET(kdevpg_srcs
 
 
 # Custom support for flex/bison
-IF(BISON_EXECUTABLE)
+if(BISON_EXECUTABLE)
     # Add command to run the parser.
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
                 "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
@@ -52,25 +52,25 @@ IF(BISON_EXECUTABLE)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
 
-    SET(parser_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
-    SET_SOURCE_FILES_PROPERTIES(
+    set(parser_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
+    set_source_files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
         PROPERTIES
             GENERATED TRUE
             SKIP_AUTOMOC ON
         )
-    SET(OPTIONAL_PARSER_HEADER_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh")
-ELSE(BISON_EXECUTABLE)
-    MESSAGE("'bison' was not found!")
-    MESSAGE("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")
-    SET(parser_src ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
-    SET(OPTIONAL_PARSER_HEADER_DEPENDENCY "")
-ENDIF(BISON_EXECUTABLE)
+    set(OPTIONAL_PARSER_HEADER_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh")
+else()
+    message("'bison' was not found!")
+    message("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")
+    set(parser_src ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.cc)
+    set(OPTIONAL_PARSER_HEADER_DEPENDENCY "")
+endif()
 
-IF(FLEX_EXECUTABLE)
+if(FLEX_EXECUTABLE)
     # Add command to run the lexer.
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
                  ${OPTIONAL_PARSER_HEADER_DEPENDENCY}
@@ -80,28 +80,28 @@ IF(FLEX_EXECUTABLE)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
 
-    SET(lexer_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc)
-    SET_SOURCE_FILES_PROPERTIES(
+    set(lexer_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc)
+    set_source_files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc
         PROPERTIES
             GENERATED TRUE
             SKIP_AUTOMOC ON
         )
-ELSE(FLEX_EXECUTABLE)
-    MESSAGE("'flex' was not found!")
-    MESSAGE("Assuming existence of the generated lexer file kdev-pg-lexer.cc")
-    SET(lexer_src ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc)
-ENDIF(FLEX_EXECUTABLE)
+else()
+    message("'flex' was not found!")
+    message("Assuming existence of the generated lexer file kdev-pg-lexer.cc")
+    set(lexer_src ${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.cc)
+endif()
 set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT -DYY_NO_UNPUT")
 
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(kdev-pg-qt ${parser_src} ${lexer_src} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
+add_executable(kdev-pg-qt ${parser_src} ${lexer_src} ${kdevpg_srcs} ${kdevpg_rcc_srcs})
 ecm_mark_nongui_executable(kdev-pg-qt)
-TARGET_LINK_LIBRARIES( kdev-pg-qt Qt6::Core)
-INSTALL(TARGETS kdev-pg-qt DESTINATION bin )
+target_link_libraries( kdev-pg-qt Qt6::Core)
+install(TARGETS kdev-pg-qt DESTINATION bin )
 
 # in order to generate only the parser, call "make parser"
-ADD_CUSTOM_TARGET(parser echo "Generating the parser"
+add_custom_target(parser echo "Generating the parser"
     DEPENDS ${parser_src} ${lexer_src}
     )

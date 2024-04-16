@@ -1,27 +1,27 @@
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-ADD_DEFINITIONS(-DQT_NO_STL)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_definitions(-DQT_NO_STL)
 
 # autogenerate the lexer and the parser
 
-SET(parser_srcs)
+set(parser_srcs)
 
-FIND_PROGRAM(FLEX_EXECUTABLE
+find_program(FLEX_EXECUTABLE
     NAMES flex
     PATHS /usr/bin
     DOC "Flex executable")
 
 
-SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
-SET(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
+set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
+set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
 include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 kdevpgqt_generate(parser_srcs cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-IF(FLEX_EXECUTABLE)
+if(FLEX_EXECUTABLE)
     # Add command to generate the lexer.
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT  "${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/cc.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/FlexLexer.h"
@@ -32,21 +32,21 @@ IF(FLEX_EXECUTABLE)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp ${parser_srcs})
+    set(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp ${parser_srcs})
 
-    SET_SOURCE_FILES_PROPERTIES(
+    set_source_files_properties(
         ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp
         PROPERTIES
             GENERATED TRUE
             SKIP_AUTOMOC ON
         )
-ELSE(FLEX_EXECUTABLE)
-    MESSAGE("--- Assuming existence of the generated lexer file cclexer.cpp")
-    SET(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp ${parser_srcs})
-ENDIF(FLEX_EXECUTABLE)
+else()
+    message("--- Assuming existence of the generated lexer file cclexer.cpp")
+    set(parser_srcs ${CMAKE_CURRENT_SOURCE_DIR}/cclexer.cpp ${parser_srcs})
+endif()
 
 
-SET(cc_parser_srcs
+set(cc_parser_srcs
     ${parser_srcs}
     main.cpp
     dumptree.cpp
@@ -54,9 +54,9 @@ SET(cc_parser_srcs
 
 
 # add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -O2)
+add_definitions(-Wall -O2)
 
 # tell CMake to generate the executable
-ADD_EXECUTABLE(cc-parser ${cc_parser_srcs})
+add_executable(cc-parser ${cc_parser_srcs})
 
-TARGET_LINK_LIBRARIES( cc-parser Qt6::Core)
+target_link_libraries( cc-parser Qt6::Core)

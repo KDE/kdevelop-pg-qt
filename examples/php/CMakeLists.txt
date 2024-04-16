@@ -2,7 +2,7 @@ set(parser_STAT_SRCS
   phptest.cpp
 )
 
-SET(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
+set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../kdev-pg/kdev-pg-qt)
 include(${CMAKE_CURRENT_BINARY_DIR}/../../KDevelop-PG-QtConfig.cmake)
 
 kdevpgqt_generate(parser_SRCS php NAMESPACE Php DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
@@ -14,4 +14,3 @@ add_definitions(-fexceptions)
 
 add_executable( phptest ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries( phptest Qt6::Core)
-

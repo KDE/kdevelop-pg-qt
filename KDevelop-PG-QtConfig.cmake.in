@@ -11,7 +11,8 @@
 #                              can be set by the user to select different include dirs
 # KDEVPGQT_EXECUTABLE          - the absolute path to the kdevelop-pg executable
 #
-# KDEVPGQT_GENERATE(SRC_FILE_VAR OUTPUT language
+# KDEVPGQT_GENERATE(SRC_FILE_VAR(|TARGET (since 2.3 ))
+#                     language
 #                     [NAMESPACE ns] [DEBUG_VISITOR] [TOKEN_TEXT] [DUMP_INFO]
 #                     GRAMMARFILE ADDITIONALDEPS)
 #     macro to add a custom target for the generation of the parser
@@ -88,7 +89,13 @@ if( KDEVPGQT_INCLUDE_DIR
 # if all modules found
     set(KDEVPGQT_FOUND TRUE)
 
-    macro(KDEVPGQT_GENERATE _srcVar _language )
+    macro(KDEVPGQT_GENERATE _srcOrTargetVar _language )
+        if (TARGET ${_srcOrTargetVar})
+            get_target_property(aliased_target ${_srcOrTargetVar} ALIASED_TARGET)
+            if(aliased_target)
+              message(FATAL_ERROR "Target argument passed to kdevpgqt_generate must not be an alias: ${_srcOrTargetVar}")
+            endif()
+        endif()
         set(_outputList
             "${CMAKE_CURRENT_BINARY_DIR}/${_language}tokentype.h")
         set(_depList ${ARGN})
@@ -181,9 +188,11 @@ if( KDEVPGQT_INCLUDE_DIR
             GENERATED TRUE
             SKIP_AUTOMOC ON
         )
-        set( ${_srcVar}
-              "${_outputList}"
-           )
+        if(TARGET ${_srcOrTargetVar})
+            target_sources(${_srcOrTargetVar} PRIVATE ${_outputList})
+        else()
+            set( ${_srcOrTargetVar} ${_outputList})
+        endif()
     endmacro(KDEVPGQT_GENERATE)
 
 

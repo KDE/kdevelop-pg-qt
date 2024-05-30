@@ -20,6 +20,7 @@ include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
 include(CMakePackageConfigHelpers)
 
+set(KDEVELOP_PG_QT_INSTALL_INCLUDEDIR "${KDE_INSTALL_INCLUDEDIR}/kdevelop-pg-qt")
 set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
                               "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
@@ -31,13 +32,20 @@ ecm_setup_version(${kdevelop-pg-qt_VERSION_MAJOR}.${kdevelop-pg-qt_VERSION_MINOR
                   PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
                   SOVERSION ${KDEVELOP_PG_QT_LIB_SOVERSION}
 )
+
 install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/kdevelop-pg-qt_version.h"
-        DESTINATION "${KDE_INSTALL_INCLUDEDIR}/kdevelop-pg-qt")
+        DESTINATION "${KDEVELOP_PG_QT_INSTALL_INCLUDEDIR}")
 install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}" )
+install(EXPORT KDevelopPGQtTargets
+    FILE        KDevelop-PG-QtTargets.cmake
+    DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+    NAMESPACE KDevelopPGQt::
+)
 
 if(BUILD_TESTING)
   set(REQUIRED_QT_TESTCOMPONENTS Test)
@@ -50,17 +58,15 @@ find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED
     ${REQUIRED_QT_TESTCOMPONENTS}
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+find_package(FLEX)
+set_package_properties(FLEX PROPERTIES
+    TYPE RECOMMENDED
+)
 
-find_program(FLEX_EXECUTABLE
-  NAMES flex
-  PATHS /usr/bin
-  DOC "Flex executable")
-
-find_program(BISON_EXECUTABLE
-  NAMES bison
-  PATHS /usr/bin
-  DOC "bison executable")
+find_package(BISON)
+set_package_properties(BISON PROPERTIES
+    TYPE RECOMMENDED
+)
 
 ecm_set_disabled_deprecation_versions(
     QT 5.15.2
@@ -82,6 +88,9 @@ endif()
 
 add_subdirectory(include)
 add_subdirectory(kdev-pg)
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake")
+
 add_subdirectory(examples EXCLUDE_FROM_ALL)
 
 if(BUILD_TESTING)

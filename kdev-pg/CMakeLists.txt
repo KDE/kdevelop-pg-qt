@@ -3,8 +3,6 @@ add_definitions(-DQT_STL)
 
 # tell CMake to generate the executable
 add_executable(kdev-pg-qt)
-add_executable(KDevelopPGQt::kdev-pg-qt ALIAS kdev-pg-qt)
-
 ecm_mark_nongui_executable(kdev-pg-qt)
 
 kde_enable_exceptions()
@@ -99,11 +97,8 @@ else()
 endif()
 set_source_files_properties(${lexer_src} PROPERTIES COMPILE_FLAGS "-DYY_NO_INPUT -DYY_NO_UNPUT")
 
-target_link_libraries(kdev-pg-qt
-    KDevelopPGQt::Utils
-    Qt6::Core
-)
-install(TARGETS kdev-pg-qt EXPORT KDevelopPGQtTargets DESTINATION ${KDE_INSTALL_BINDIR} )
+target_link_libraries( kdev-pg-qt Qt6::Core)
+install(TARGETS kdev-pg-qt DESTINATION ${KDE_INSTALL_BINDIR} )
 
 # in order to generate only the parser, call "make parser"
 add_custom_target(parser echo "Generating the parser"

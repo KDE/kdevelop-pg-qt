@@ -16,7 +16,5 @@ target_sources(fact-parser PRIVATE
     factlexer.cpp
 )
 
-target_link_libraries(fact-parser
-    KDevelopPGQt::Utils
-    Qt6::Core
-)
+target_link_libraries(fact-parser Qt6::Core)
+

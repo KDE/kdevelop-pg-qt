@@ -1,12 +1,90 @@
+#
+# Find the KDevelop Parser Generator and set various variables accordingly
+#
+# KDEVPGQT_DIR and can be set to adjust the directory where the kdevelop-pg-qt
+# headers and executable are searched. This should point to the installation
+# directory of kdevelop-pg-qt
+#
+# KDEVPGQT_FOUND - set to TRUE if KDevelop-PG was found FALSE otherwise
+#
+# KDEVPGQT_INCLUDE_DIR         - include dir of kdevelop-pg, for example /usr/include/kdevelop-pg
+#                              can be set by the user to select different include dirs
+# KDEVPGQT_EXECUTABLE          - the absolute path to the kdevelop-pg executable
+#
+# Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+
 @PACKAGE_INIT@
 
-include("${CMAKE_CURRENT_LIST_DIR}/KDevelop-PG-QtTargets.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/KDevelop-PG-QtMacros.cmake")
+if( KDEVPGQT_INCLUDE_DIR AND KDEVPGQT_EXECUTABLE )
+    set(KDevelop-PG-Qt_FIND_QUIETLY TRUE)
+endif()
 
-# BACKWARD COMPATIBILITY (to be removed on next occasion)
-# KDEVPGQT_INCLUDE_DIR         - include dir of kdevelop-pg, for example /usr/include/kdevelop-pg
-# KDEVPGQT_EXECUTABLE          - the absolute path to the kdevelop-pg executable
-get_target_property(KDEVPGQT_INCLUDE_DIR KDevelopPGQt::Utils INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(KDEVPGQT_EXECUTABLE KDevelopPGQt::kdev-pg-qt LOCATION)
-set(KDEVPGQT_INCLUDE_DIR ${KDEVPGQT_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
-set(KDEVPGQT_EXECUTABLE ${KDEVPGQT_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt")
+if(WIN32)
+    file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
+    set(_KDEVPGQT_DIR ${_progFiles}/kdevelop-pg-qt)
+endif()
+
+if( NOT KDEVPGQT_DIR )
+    find_path( _kdevpgqtIncDir kdevelop-pg-qt/kdev-pg-token-stream.h
+        PATHS
+        ${CMAKE_INSTALL_PREFIX}/include
+        ${_KDEVPGQT_DIR}/include
+    )
+    if( _kdevpgqtIncDir )
+        set(KDEVPGQT_INCLUDE_DIR ${_kdevpgqtIncDir}/kdevelop-pg-qt)
+    endif()
+    find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
+        PATHS
+        ${CMAKE_INSTALL_PREFIX}/bin
+        ${_KDEVPGQT_DIR}/bin
+    )
+
+    set(KDEVPGQT_INCLUDE_DIR ${KDEVPGQT_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
+    set( KDEVPGQT_EXECUTABLE ${KDEVPGQT_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
+else()
+    find_path( _kdevpgqtIncDir kdevelop-pg-qt/kdev-pg-token-stream.h
+        PATHS
+        ${CMAKE_INSTALL_PREFIX}/include
+        ${_KDEVPGQT_DIR}/include
+        ${KDEVPGQT_DIR}/include
+    )
+    set(KDEVPGQT_INCLUDE_DIR ${_kdevpgIncDir}/kdevelop-pg-qt)
+    find_program( KDEVPGQT_EXECUTABLE NAMES kdev-pg-qt
+        PATHS
+        ${CMAKE_INSTALL_PREFIX}/bin
+        ${_KDEVPGQT_DIR}/bin
+        ${KDEVPGQT_DIR}/bin
+    )
+    set(KDEVPGQT_INCLUDE_DIR ${KDEVPGQT_INCLUDE_DIR} CACHE PATH "kdevelop-pg-qt include directory containing the headers")
+    set( KDEVPGQT_EXECUTABLE ${KDEVPGQT_EXECUTABLE} CACHE PATH "executable for kdevelop-pg-qt" )
+endif()
+
+if( KDEVPGQT_INCLUDE_DIR
+ AND KDEVPGQT_EXECUTABLE)
+
+    if( NOT KDevelop-PG-Qt_FIND_QUIETLY )
+        message(STATUS "Found KDevelop-PG-Qt")
+        message(STATUS "  Using kdevelop-pg-qt include dir: ${KDEVPGQT_INCLUDE_DIR}")
+        message(STATUS "  Using kdevelop-pg-qt executable: ${KDEVPGQT_EXECUTABLE}")
+    endif()
+
+# if all modules found
+    set(KDEVPGQT_FOUND TRUE)
+
+else( KDEVPGQT_INCLUDE_DIR
+ AND KDEVPGQT_EXECUTABLE)
+
+    if( KDevelop-PG-Qt_FIND_REQUIRED)
+        message(FATAL_ERROR "Couldn't find KDevelop-PG-Qt.")
+    else()
+        message(STATUS "Couldn't find KDevelop-PG-Qt.")
+    endif()
+    message(STATUS "You can set KDEVPGQT_DIR to help cmake find KDevelop-PG-Qt")
+    set(KDEVPGQT_FOUND FALSE)
+
+endif( KDEVPGQT_INCLUDE_DIR
+ AND KDEVPGQT_EXECUTABLE)
+
+include("${CMAKE_CURRENT_LIST_DIR}/KDevelop-PG-QtMacros.cmake")

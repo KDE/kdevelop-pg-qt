@@ -20,8 +20,6 @@ include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
 include(CMakePackageConfigHelpers)
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake")
-
 set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
                               "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"

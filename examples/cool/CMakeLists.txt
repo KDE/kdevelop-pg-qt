@@ -10,6 +10,7 @@ add_executable(cool-parser)
 
 set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../bin/kdev-pg-qt)
 set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../KDevelop-PG-QtMacros.cmake)
 kdevpgqt_generate(cool-parser cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
 )

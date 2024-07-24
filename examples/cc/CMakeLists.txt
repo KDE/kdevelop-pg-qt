@@ -8,6 +8,7 @@ add_executable(cc-parser)
 # autogenerate the lexer and the parser
 set(KDEVPGQT_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/../../bin/kdev-pg-qt)
 set(KDEVPGQT_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../KDevelop-PG-QtMacros.cmake)
 kdevpgqt_generate(cc-parser cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )

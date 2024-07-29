@@ -214,10 +214,10 @@ namespace Model
     };
     QString mName;
     NonTerminalItem *mBase;
-    vector< ParenDescription > mParen;
-    vector< TernDescription > mTern;
-    vector< BinDescription > mBin, mPost;
-    vector< UnaryDescription > mPre;
+    std::vector< ParenDescription > mParen;
+    std::vector< TernDescription > mTern;
+    std::vector< BinDescription > mBin, mPost;
+    std::vector< UnaryDescription > mPre;
     
     inline void pushParen(const Operator& op1, const Operator& op2)
     {

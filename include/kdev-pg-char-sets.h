@@ -29,9 +29,6 @@
 #include <bitset>
 #include <algorithm>
 
-using namespace std;
-
-#include <QString>
 #include <QByteArray>
 #include <QVector>
 #include <QTextStream>
@@ -282,7 +279,7 @@ public:
 };
 
 typedef ByteStringIterator<QByteArray> QByteArrayIterator;
-typedef ByteStringIterator<string> StdStringIterator;
+typedef ByteStringIterator<std::string> StdStringIterator;
 
 class QUtf16ToUcs4Iterator
 {
@@ -414,7 +411,7 @@ public:
 };
 
 typedef Utf8ToUcs4Iterator<QByteArray> QUtf8ToUcs4Iterator;
-typedef Utf8ToUcs4Iterator<string> StdStringUtf8ToUcs4Iterator;
+typedef Utf8ToUcs4Iterator<std::string> StdStringUtf8ToUcs4Iterator;
 
 class QUtf8ToUcs2Iterator
 {

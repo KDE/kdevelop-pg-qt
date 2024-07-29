@@ -69,7 +69,7 @@ public:
   /// Minimization of the automaton
   GDFA& minimize();
   /// Code used for the detected tokens in the generated code
-  void setActions(const vector<QString>& actions);
+  void setActions(const std::vector<QString>& actions);
   GDFA(const GDFA& o);
   ~GDFA();
   GDFA& operator=(const GDFA& o);

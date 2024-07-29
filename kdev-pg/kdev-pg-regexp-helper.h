@@ -30,7 +30,7 @@ namespace KDevPG
 template<CharEncoding codec>
 class SeqCharSet;
 
-inline void printChar(ostream& o, uint x)
+inline void printChar(std::ostream& o, uint x)
 {
   auto flags = o.flags();
   auto width = o.width();
@@ -44,7 +44,7 @@ inline void printChar(ostream& o, uint x)
   else if(x >= 32 && x <= 126)
     o << '\'' << (char)x << '\'';
   else
-    o << hex << "\\" << setw(2) << setfill('0') << x;
+    o << std::hex << "\\" << std::setw(2) << std::setfill('0') << x;
   o.fill(fill);
   o.width(width);
   o.flags(flags);
@@ -83,7 +83,7 @@ public:
 private:
     typedef typename Codec2Int<codec>::Result Int;
     typedef SeqCharSet<codec> Self;
-    vector<pair<Int, Int> > data;
+    std::vector<std::pair<Int, Int> > data;
     bool mEpsilon: 1;
     template<typename Stream, CharEncoding codec> /* when using fixed codec I get linker errors (undefined reference), templates do not get recognized to be the same */
     friend Stream& operator<<(Stream&, const SeqCharSet<codec>&);
@@ -177,7 +177,7 @@ public:
             ++tpos;
           else
           {
-            ret.data.push_back(make_pair(max(o.data[opos].first, data[tpos].first), min(o.data[opos].second, data[tpos].second)));
+            ret.data.push_back(make_pair(std::max(o.data[opos].first, data[tpos].first), std::min(o.data[opos].second, data[tpos].second)));
             if(data[tpos].second > o.data[opos].second)
               ++opos;
             else
@@ -438,9 +438,9 @@ public:
   static const CharEncoding codec = _codec;
 private:
   static const size_t nChars = Codec2Size<codec>::value;
-  typedef bitset<nChars> BitArray;
+  typedef std::bitset<nChars> BitArray;
   static const BitArray nullData;
-  bitset<Codec2Size<codec>::value> data;
+  std::bitset<Codec2Size<codec>::value> data;
   bool mEpsilon: 1;
   typedef TableCharSet<codec> Self;
   typedef typename Codec2Int<codec>::Result Int;
@@ -562,7 +562,7 @@ class CharSetCondition<TableCharSet<codec> >
 {
   typedef typename Codec2Int<codec>::Result Int;
 public:
-  void operator()(QTextStream& str, const vector<pair<TableCharSet<codec>, size_t> >& transition)
+  void operator()(QTextStream& str, const std::vector<std::pair<TableCharSet<codec>, size_t> >& transition)
   {
     str << "switch(chr) { ";
     for(size_t j = 0; j != transition.size(); ++j)
@@ -585,7 +585,7 @@ template<CharEncoding codec>
 class CharSetCondition<SeqCharSet<codec> >
 {
   typedef typename Codec2Int<codec>::Result Int;
-  void codegen(QTextStream& str, const vector<pair<pair<Int, Int>, size_t> >& data, size_t l, size_t r, size_t tmin, size_t tmax)
+  void codegen(QTextStream& str, const std::vector<std::pair<std::pair<Int, Int>, size_t> >& data, size_t l, size_t r, size_t tmin, size_t tmax)
   {
     if(l == r)
       str << "goto _end;";
@@ -637,9 +637,9 @@ class CharSetCondition<SeqCharSet<codec> >
     }
   }
 public:
-  void operator()(QTextStream& str, const vector<pair<SeqCharSet<codec>, size_t> >& transition)
+  void operator()(QTextStream& str, const std::vector<std::pair<SeqCharSet<codec>, size_t> >& transition)
   {
-    vector<pair<pair<Int, Int>, size_t> > data;
+    std::vector<std::pair<std::pair<Int, Int>, size_t> > data;
     for(size_t i = 0; i != transition.size(); ++i)
     {
       for(size_t j = 0; j != transition[i].first.data.size(); ++j)

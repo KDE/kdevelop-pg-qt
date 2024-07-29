@@ -140,13 +140,13 @@ public:
   inline bool operator[](size_t x) const
   {
     if(x > size())
-      cerr << "out of bounds" << endl;
+      std::cerr << "out of bounds" << std::endl;
     return (mByte[x >> 3] & (1 << (x & 7))) == (1 << (x & 7));
   }
   inline BitRef operator[](size_t x)
   {
     if(x > size())
-      cerr << "out of bounds" << endl;
+      std::cerr << "out of bounds" << std::endl;
     return BitRef(mByte[x >> 3], x & 7);
   }
   inline void resize(size_t size)

@@ -804,7 +804,7 @@ void GenerateParserRule::operator()(QPair<QString, Model::SymbolItem*> const &__
   if (globalSystem.generateAst)
     {
       if(isOperatorSymbol(sym))
-        out << "QVector<OperatorStackItem> opStack;" << Qt::endl;
+        out << "QList<OperatorStackItem> opStack;" << Qt::endl;
       else
       {
         out << "*yynode = create<" << sym->mCapitalizedName << "Ast" << ">();" << Qt::endl << Qt::endl

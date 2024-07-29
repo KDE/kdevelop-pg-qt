@@ -197,7 +197,7 @@ void generateOutput()
         << Qt::endl;
     
     if (globalSystem.needOperatorStack)
-      s << "#include <QVector>" << Qt::endl;
+      s << "#include <QList>" << Qt::endl;
     
     if (!globalSystem.decl.isEmpty() && !globalSystem.generateAst)
       s << globalSystem.decl << Qt::endl;

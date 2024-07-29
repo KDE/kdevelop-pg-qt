@@ -1,6 +1,6 @@
-# Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>
-# Redistribution and use is allowed according to the terms of the BSD license.
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+# SPDX-FileCopyrightText: 2007 Andreas Pakulat <apaku@gmx.de>
+#
+# SPDX-License-Identifier: BSD-3-Clause
 #
 # KDEVPGQT_GENERATE(SRC_FILE_VAR(|TARGET (since 2.3 ))
 #                     language

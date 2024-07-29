@@ -4,7 +4,6 @@
     SPDX-License-Identifier: LGPL-2.0-only
 */
 
-#define QT_NO_STL
 #include <iostream>
 #include <fstream>
 #include <climits>

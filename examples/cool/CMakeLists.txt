@@ -1,6 +1,4 @@
 # add definitions, compiler switches, etc.
-remove_definitions(-DQT_NO_STL)
-add_definitions(-DQT_STL)
 add_definitions(-Wall -O2)
 
 # tell CMake to generate the executable

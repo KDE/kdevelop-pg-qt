@@ -1,6 +1,3 @@
-remove_definitions(-DQT_NO_STL)
-add_definitions(-DQT_STL)
-
 # tell CMake to generate the executable
 add_executable(kdev-pg-qt)
 add_executable(KDevelopPGQt::kdev-pg-qt ALIAS kdev-pg-qt)

@@ -9,12 +9,16 @@ ecm_mark_nongui_executable(kdev-pg-qt)
 
 kde_enable_exceptions()
 
+target_include_directories(kdev-pg-qt PRIVATE
+    3rdparty/libastyle
+)
+
 target_sources(kdev-pg-qt PRIVATE
     ../unidata.qrc
-    ASBeautifier.cpp
-    ASFormatter.cpp
-    ASResource.cpp
-    ASEnhancer.cpp
+    3rdparty/libastyle/ASBeautifier.cpp
+    3rdparty/libastyle/ASFormatter.cpp
+    3rdparty/libastyle/ASResource.cpp
+    3rdparty/libastyle/ASEnhancer.cpp
     kdev-pg.cpp
     kdev-pg-visitor.cpp
     kdev-pg-default-visitor.cpp

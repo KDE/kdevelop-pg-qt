@@ -21,6 +21,11 @@
 #ifndef KDEV_PG_CHAR_SETS
 #define KDEV_PG_CHAR_SETS
 
+#include <QByteArray>
+#include <QList>
+#include <QString>
+#include <QTextStream>
+
 #include <string>
 #include <iostream>
 #include <vector>
@@ -28,11 +33,6 @@
 #include <map>
 #include <bitset>
 #include <algorithm>
-
-#include <QByteArray>
-#include <QVector>
-#include <QTextStream>
-#include <QStringList>
 
 /**
  * @FILE
@@ -115,19 +115,19 @@ struct Codec2Container
 template<>
 struct Codec2Container<Ucs2>
 {
-  typedef QVector<quint16> Result;
+  typedef QList<quint16> Result;
 };
 
 template<>
 struct Codec2Container<Utf16>
 {
-  typedef QVector<quint16> Result;
+  typedef QList<quint16> Result;
 };
 
 template<>
 struct Codec2Container<Ucs4>
 {
-  typedef QVector<quint32> Result;
+  typedef QList<quint32> Result;
 };
 
 template<CharEncoding codec>
@@ -190,23 +190,23 @@ inline QByteArray qString2Codec<Utf8>(const QString& str)
 }
 
 template<>
-inline QVector<quint32> qString2Codec<Ucs4>(const QString& str)
+inline QList<quint32> qString2Codec<Ucs4>(const QString& str)
 {
   return str.toUcs4();
 }
 
 template<>
-inline QVector<quint16> qString2Codec<Ucs2>(const QString& str)
+inline QList<quint16> qString2Codec<Ucs2>(const QString& str)
 {
-  QVector<quint16> ret(str.size());
+  QList<quint16> ret(str.size());
   memcpy(&ret[0], str.utf16(), 2*str.size());
   return ret;
 }
 
 template<>
-inline QVector<quint16> qString2Codec<Utf16>(const QString& str)
+inline QList<quint16> qString2Codec<Utf16>(const QString& str)
 {
-  QVector<quint16> ret(str.size());
+  QList<quint16> ret(str.size());
   memcpy(&ret[0], str.utf16(), 2*str.size());
   return ret;
 }

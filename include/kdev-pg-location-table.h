@@ -24,8 +24,8 @@
 #ifndef KDEV_PG_LOCATION_TABLE_H
 #define KDEV_PG_LOCATION_TABLE_H
 
-#include <QtGlobal>
-#include <QtAlgorithms>
+#include <QtAssert>
+#include <QtTypes>
 
 namespace KDevPG
 {

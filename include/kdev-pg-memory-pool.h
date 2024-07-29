@@ -22,10 +22,10 @@
 #ifndef KDEV_PG_MEMORY_POOL
 #define KDEV_PG_MEMORY_POOL
 
-#include <QtGlobal>
+#include <QtTypes>
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 namespace KDevPG
 {

@@ -23,9 +23,9 @@
 #ifndef KDEV_PG_TOKEN_STREAM_H
 #define KDEV_PG_TOKEN_STREAM_H
 
-#include <vector>
-
 #include "kdev-pg-location-table.h"
+
+#include <vector>
 
 /* T& front() ✓
  * T& back() ✓

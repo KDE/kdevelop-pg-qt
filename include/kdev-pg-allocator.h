@@ -22,11 +22,11 @@
 #ifndef KDEV_PG_ALLOCATOR_H
 #define KDEV_PG_ALLOCATOR_H
 
+#include <QtTypes>
+
 #include <memory>
 #include <cstdlib>
 #include <cstring>
-
-#include <QtGlobal>
 
 namespace KDevPG
 {

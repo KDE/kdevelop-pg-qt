@@ -50,26 +50,19 @@ target_sources(kdev-pg-qt PRIVATE
 
 
 # Custom support for flex/bison
-if(BISON_EXECUTABLE)
-    # Add command to run the parser.
-    add_custom_command(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
-                "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
-        COMMAND ${BISON_EXECUTABLE}
-        ARGS    -o "kdev-pg-parser.cc"
-                -d "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-        )
+if (BISON_FOUND)
+    bison_target(kdev_pg_parser
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
+        "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
+        DEFINES_FILE "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
+    )
 
     set(parser_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)
-    set_source_files_properties(
-        ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc
-        ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
+    # workaround CMP0100 being OLD with currently min required CMake 3.16. Remove once unneeded.
+    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh
         PROPERTIES
-            GENERATED TRUE
             SKIP_AUTOMOC ON
-        )
+    )
 else()
     message("'bison' was not found!")
     message("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")

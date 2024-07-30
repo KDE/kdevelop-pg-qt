@@ -70,33 +70,19 @@ if(BISON_EXECUTABLE)
             GENERATED TRUE
             SKIP_AUTOMOC ON
         )
-    set(OPTIONAL_PARSER_HEADER_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh")
 else()
     message("'bison' was not found!")
     message("Assuming existence of the generated parser files kdev-pg-parser.[hh,cc]")
     set(parser_src ${CMAKE_CURRENT_SOURCE_DIR}/generated/kdev-pg-parser.cc)
-    set(OPTIONAL_PARSER_HEADER_DEPENDENCY "")
 endif()
 
-if(FLEX_EXECUTABLE)
-    # Add command to run the lexer.
-    add_custom_command(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
-                 ${OPTIONAL_PARSER_HEADER_DEPENDENCY}
-        COMMAND ${FLEX_EXECUTABLE}
-        ARGS    --yymore --nounistd -o "kdev-pg-lexer.cc"
-                "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-        )
-
+if (FLEX_FOUND)
+    flex_target(kdev_pg_lexer
+        "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-lexer.ll"
+        "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc"
+        COMPILE_FLAGS "--yymore --nounistd"
+    )
     set(lexer_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc)
-    set_source_files_properties(
-        ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-lexer.cc
-        PROPERTIES
-            GENERATED TRUE
-            SKIP_AUTOMOC ON
-        )
 else()
     message("'flex' was not found!")
     message("Assuming existence of the generated lexer file kdev-pg-lexer.cc")

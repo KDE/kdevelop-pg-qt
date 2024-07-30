@@ -18,6 +18,8 @@ include(FeatureSummary)
 include(WriteBasicConfigVersionFile)
 include(CMakePackageConfigHelpers)
 
+option(BUILD_EXAMPLES "Build examples" OFF)
+
 set(KDEVELOP_PG_QT_INSTALL_INCLUDEDIR "${KDE_INSTALL_INCLUDEDIR}/kdevelop-pg-qt")
 set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
@@ -90,7 +92,9 @@ add_subdirectory(kdev-pg)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake")
 
-add_subdirectory(examples EXCLUDE_FROM_ALL)
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 if(BUILD_TESTING)
   add_subdirectory(tests)

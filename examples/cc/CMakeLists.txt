@@ -23,6 +23,7 @@ if(FLEX_EXECUTABLE)
         )
 
     target_sources(cc-parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/generated/cclexer.cpp)
+    target_include_directories(cc-parser PRIVATE ${FLEX_INCLUDE_DIRS})
 
     set_source_files_properties(
         ${CMAKE_CURRENT_SOURCE_DIR}/generated/cclexer.cpp
@@ -33,6 +34,7 @@ if(FLEX_EXECUTABLE)
 else()
     message("--- Assuming existence of the generated lexer file cclexer.cpp")
     target_sources(cc-parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/generated/cclexer.cpp)
+    target_include_directories(cc-parser PRIVATE 3rdparty)
 endif()
 
 target_sources(cc-parser PRIVATE

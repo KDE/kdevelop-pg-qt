@@ -200,11 +200,11 @@ Iterator::PlainIterator hereDocHeaderBegin, hereDocHederEnd;
   ;
 
 %lexer "php" ->
-%error [: qDebug() << "error in php"; throw exception(); :] ;
+%error [: qDebug() << "error in php"; throw std::exception(); :] ;
 [{alphabetic}_][{alphabetic}{num}_]* -> identifier ;
 
-"<<<"{identifier}\n               [: qDebug() << "start heredoc"; nowDocStack.push(make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_HEREDOC;
-"<<<'"{identifier}"'"\n           [: lxSET_RULE_SET(nowdoc); nowDocStack.push(make_pair(lxBEGIN_POS + 4, lxCURR_POS - 2)); :] START_NOWDOC;
+"<<<"{identifier}\n               [: qDebug() << "start heredoc"; nowDocStack.push(std::make_pair(lxBEGIN_POS + 3, lxCURR_POS - 1)); :] START_HEREDOC;
+"<<<'"{identifier}"'"\n           [: lxSET_RULE_SET(nowdoc); nowDocStack.push(std::make_pair(lxBEGIN_POS + 4, lxCURR_POS - 2)); :] START_NOWDOC;
 
 -- abstract        ABSTRACT ;
 -- break           BREAK ;
@@ -352,7 +352,7 @@ echo            ECHO ;
 
 %lexer "heredoc" ->
 %enter [: qDebug() << "entering heredoc"; :]
-%fail [: qDebug() << "failed in heredoc"; throw exception(); :]
+%fail [: qDebug() << "failed in heredoc"; throw std::exception(); :]
 -- "$"{identifier}   
 "${"{identifier} [:
                     qDebug() << "found opening";
@@ -364,7 +364,7 @@ echo            ECHO ;
                 :] ;
 [.^\n]*. %ba("${")    [:
               std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
-              if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
+              if(lxLENGTH >= topLength && std::equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
               {
                   qDebug() << "heredoc match";
                   lxCURR_POS = lxBEGIN_POS + topLength;
@@ -379,7 +379,7 @@ echo            ECHO ;
 %lexer "nowdoc" ->
 [.^\n]*\n    [:
               std::size_t topLength = nowDocStack.top().second - nowDocStack.top().first;
-              if(lxLENGTH >= topLength && equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
+              if(lxLENGTH >= topLength && std::equal(nowDocStack.top().first, nowDocStack.top().second, lxBEGIN_POS))
               {
                   lxCURR_POS = lxBEGIN_POS + topLength;
                   nowDocStack.pop();

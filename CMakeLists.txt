@@ -5,8 +5,6 @@ project(kdevelop-pg-qt VERSION 2.3.90)
 find_package(ECM 6.0.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
-set(KDE_COMPILERSETTINGS_LEVEL 5.84)
-
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
@@ -72,13 +70,14 @@ ecm_set_disabled_deprecation_versions(
     QT 5.15.2
 )
 
+# added by KDE_COMPILERSETTINGS_LEVEL 5.85.0
+remove_definitions(
+    -DQT_NO_KEYWORDS
+    -DQT_NO_FOREACH
+    -DQT_NO_CAST_FROM_ASCII
+)
 add_definitions(
     -DQT_NO_SIGNALS_SLOTS_KEYWORDS
-    -DQT_STRICT_ITERATORS
-    -DQT_USE_QSTRINGBUILDER
-    -DQT_NO_URL_CAST_FROM_STRING
-    -DQT_NO_CAST_FROM_BYTEARRAY
-    -DQT_NO_CAST_TO_ASCII
 )
 
 # Silence a few warnings

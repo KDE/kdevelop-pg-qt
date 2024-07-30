@@ -13,7 +13,7 @@
 
 #include <QtAlgorithms>
 
-#include "../include/kdev-pg-location-table.h"
+#include <kdev-pg-location-table.h>
 
 #include <QTest>
 #include <QDebug>

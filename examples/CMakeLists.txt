@@ -1,3 +1,5 @@
+include("${CMAKE_SOURCE_DIR}/src/KDevelop-PG-QtMacros.cmake")
+
 # TODO: fix on windows
 if (NOT WIN32)
     add_subdirectory(cc)

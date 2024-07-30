@@ -10,7 +10,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "../include/kdev-pg-memory-pool.h"
+#include <kdev-pg-memory-pool.h>
 
 namespace KDevPG
 {

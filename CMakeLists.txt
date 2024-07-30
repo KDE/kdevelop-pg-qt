@@ -20,33 +20,6 @@ include(CMakePackageConfigHelpers)
 
 option(BUILD_EXAMPLES "Build examples" OFF)
 
-set(KDEVELOP_PG_QT_INSTALL_INCLUDEDIR "${KDE_INSTALL_INCLUDEDIR}/kdevelop-pg-qt")
-set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
-configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
-                              "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
-                              INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
-)
-ecm_setup_version(${kdevelop-pg-qt_VERSION_MAJOR}.${kdevelop-pg-qt_VERSION_MINOR}.${kdevelop-pg-qt_VERSION_PATCH}
-                  VARIABLE_PREFIX KDEVELOP_PG_QT
-                  VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kdevelop-pg-qt_version.h"
-                  PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
-                  SOVERSION ${KDEVELOP_PG_QT_LIB_SOVERSION}
-)
-
-install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/kdevelop-pg-qt_version.h"
-        DESTINATION "${KDEVELOP_PG_QT_INSTALL_INCLUDEDIR}")
-install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
-        "${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake"
-        DESTINATION "${CMAKECONFIG_INSTALL_DIR}" )
-install(EXPORT KDevelopPGQtTargets
-    FILE        KDevelop-PG-QtTargets.cmake
-    DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
-    NAMESPACE KDevelopPGQt::
-)
-
 if(BUILD_TESTING)
   set(REQUIRED_QT_TESTCOMPONENTS Test)
 endif()
@@ -87,10 +60,7 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Wno-unused-local-typedefs")
 endif()
 
-add_subdirectory(include)
-add_subdirectory(kdev-pg)
-
-include("${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake")
+add_subdirectory(src)
 
 if (BUILD_EXAMPLES)
     add_subdirectory(examples)

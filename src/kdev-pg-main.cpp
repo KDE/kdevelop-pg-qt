@@ -17,7 +17,7 @@
 #include "kdev-pg-inline-checker.h"
 #include "kdev-pg-generate.h"
 #include "kdev-pg-regexp.h"
-#include <../kdevelop-pg-qt_version.h>
+#include <kdevelop-pg-qt_version.h>
 
 #include <QFile>
 #include <QStringList>

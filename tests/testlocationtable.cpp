@@ -10,7 +10,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "../include/kdev-pg-location-table.h"
+#include <kdev-pg-location-table.h>
 
 namespace KDevPG
 {

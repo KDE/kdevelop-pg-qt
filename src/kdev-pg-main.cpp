@@ -86,7 +86,7 @@ void help()
 
 void version()
 {
-  KDevPG::checkOut << "KDevelop-PG-Qt: " << KDEVELOP_PG_QT_VERSION_STRING << Qt::endl;
+  KDevPG::checkOut << "KDevelop-PG-Qt: " << QCoreApplication::applicationVersion() << Qt::endl;
   
   exit(EXIT_SUCCESS);
 }
@@ -172,6 +172,7 @@ int main(int argc, char **argv)
   QString new_visitor;
 
   QCoreApplication app(argc, argv);
+  QCoreApplication::setApplicationVersion(QStringLiteral(KDEVELOP_PG_QT_VERSION_STRING));
 
   QStringList args = QCoreApplication::arguments();
   args.pop_front();

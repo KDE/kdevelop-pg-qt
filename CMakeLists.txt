@@ -47,12 +47,7 @@ ecm_set_disabled_deprecation_versions(
 
 # added by KDE_COMPILERSETTINGS_LEVEL 5.85.0
 remove_definitions(
-    -DQT_NO_KEYWORDS
-    -DQT_NO_FOREACH
     -DQT_NO_CAST_FROM_ASCII
-)
-add_definitions(
-    -DQT_NO_SIGNALS_SLOTS_KEYWORDS
 )
 
 # Silence a few warnings

@@ -65,7 +65,7 @@ void generateOutput()
         s << "#include \"" << globalSystem.exportMacroHeader << "\""
           << Qt::endl;
 
-      foreach (const QString& header, globalSystem.astHeaders)
+      for (const QString& header : std::as_const(globalSystem.astHeaders))
         s << "#include \"" << header << "\"\n";
       
       s <<  "#include <QList>" << Qt::endl
@@ -143,7 +143,7 @@ void generateOutput()
       s << "#include \"" << globalSystem.exportMacroHeader << "\""
         << Qt::endl;
 
-    foreach (const QString& header, globalSystem.astHeaders)
+    for (const QString& header : std::as_const(globalSystem.astHeaders))
       s << "#include \"" << header << "\"\n";
 
     if (!globalSystem.decl.isEmpty())
@@ -195,7 +195,7 @@ void generateOutput()
     if (globalSystem.tokenStream == "KDevPG::TokenStream")
       s << "#include <kdev-pg-token-stream.h>" << Qt::endl;
     
-    foreach (const QString& header, globalSystem.parserDeclarationHeaders)
+    for (const QString& header : std::as_const(globalSystem.parserDeclarationHeaders))
       s << "#include \"" << header << "\"\n";
 
     s << Qt::endl;
@@ -443,7 +443,7 @@ void generateOutput()
       s << "#include \"" << globalSystem.language << "ast.h\"" << Qt::endl;
     }
 
-    foreach (const QString& header, globalSystem.parserBitsHeaders)
+    for (const QString& header : std::as_const(globalSystem.parserBitsHeaders))
       s << "#include \"" << header << "\"\n";
 
     s << Qt::endl;
@@ -551,7 +551,7 @@ void generateLexer()
       << "#include <kdev-pg-token-stream.h>" << Qt::endl
       << Qt::endl;
       
-    foreach (const QString& header, globalSystem.lexerDeclarationHeaders)
+    for (const QString& header : std::as_const(globalSystem.lexerDeclarationHeaders))
       s << "#include \"" << header << "\"\n";
     
     s << Qt::endl << "namespace " << globalSystem.ns << "{" << Qt::endl
@@ -637,7 +637,7 @@ void generateLexer()
       << "#include \"" << globalSystem.language << "lexer.h\"" << Qt::endl
       << Qt::endl;
     
-    foreach (const QString& header, globalSystem.lexerBitsHeaders)
+    for (const QString& header : std::as_const(globalSystem.lexerBitsHeaders))
       s << "#include \"" << header << "\"\n";
     
     s << "\n#include <cassert>\n";

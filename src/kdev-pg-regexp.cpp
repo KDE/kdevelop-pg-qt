@@ -167,7 +167,7 @@ public:
     size_t accepts(const QString& str)
     {
         size_t state = 0;
-        foreach(const QChar c, str)
+        for(const QChar c : str)
         {
             for(const auto& r : rules[state])
             {

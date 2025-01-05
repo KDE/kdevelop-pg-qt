@@ -22,7 +22,7 @@ namespace KDevPG
   {
     tokens.sort();
     bool initial = true;
-    foreach (const QString &token, tokens)
+    for (const QString &token : std::as_const(tokens))
       {
         if (!initial)
           out << Qt::endl << "|| ";

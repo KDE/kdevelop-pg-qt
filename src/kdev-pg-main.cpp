@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 
   QStringList args = QCoreApplication::arguments();
   args.pop_front();
-  foreach(const QString& arg, args)
+  for(const QString& arg : std::as_const(args))
   {
     #define SW(str) arg.startsWith(QLatin1String(#str))
     if (SW(--output=))

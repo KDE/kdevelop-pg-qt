@@ -648,7 +648,7 @@ public:
         _.actions.resize(_.numActions + 1);
         unordered_map<UsedBitArray, size_t> st;
         size_t cnt = 0;
-        foreach(const UsedBitArray& i, states)
+        for(const UsedBitArray& i : states)
         {
             if(i == start && cnt)
             {
@@ -691,7 +691,7 @@ public:
         todo.pop();
         if(curr >= accept)
           return true;
-        foreach(const auto& nx, rules[curr])
+        for(const auto& nx : rules[curr])
         {
           if(nx.first.epsilon() && !vis[nx.second])
           {
@@ -714,7 +714,7 @@ public:
         todo.pop();
         if(curr >= accept)
           return false;
-        foreach(const auto& nx, rules[curr])
+        for(const auto& nx : rules[curr])
         {
           if(!vis[nx.second])
           {
@@ -739,7 +739,7 @@ public:
         todo0->pop();
         if(curr >= accept)
           return length;
-        foreach(const auto& nx, rules[curr])
+        for(const auto& nx : rules[curr])
         {
           if(!vis[nx.second])
           {
@@ -762,7 +762,7 @@ private:
     bool unboundedCheck(size_t x, UsedBitArray& vis) const
     {
       vis[x] = true;
-      foreach(const auto& nx, rules[x])
+      for(const auto& nx : rules[x])
       {
         if(vis[nx.second])
           return true;
@@ -792,7 +792,7 @@ public:
       vector<vector<pair<CharSet, size_t> > > brules(nstates);
       for(size_t i = 0; i != nstates; ++i)
       {
-        foreach(const auto& nx, rules[i])
+        for(const auto& nx : rules[i])
         {
           brules[nx.second].push_back(nx);
           brules[nx.second].back().second = i;
@@ -808,7 +808,7 @@ public:
       {
         size_t curr = todo0->front();
         todo0->pop();
-        foreach(const auto& nx, brules[curr])
+        for(const auto& nx : brules[curr])
         {
           if(nx.first.epsilon())
           {

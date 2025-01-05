@@ -48,7 +48,7 @@ inline QString codeForDot(QString str)
 {
   QString out = "";
   int pos = 0;
-  forever
+  while(true)
   {
     int npos = str.indexOf("\n\01!ASIgnore\"!!\n# ", pos);
     if(npos == -1)

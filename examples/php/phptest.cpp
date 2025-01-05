@@ -56,7 +56,7 @@ int main()
   cout << "blub" << endl;
   Php::DebugVisitor vis(&lex, QString(qcode));
   vis.visitStart(root);
-  forever
+  while(true)
   {
     auto t = lex.curr();
     lex.read();

@@ -569,18 +569,18 @@ void generateLexer()
     
     if(hasStates)
     {
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
         s << "Base::Token& lex" << KDevPG::capitalized(state) << "();" << Qt::endl;
       s << "public:\nenum RuleSet {\n";
-      foreach(QString state, globalSystem.lexerEnvs.keys())
-        s << "State_" << state << ", /*" << globalSystem.lexerEnvs[state].size() << "*/" << Qt::endl;
+      for (const auto &[state, envs] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
+        s << "State_" << state << ", /*" << envs.size() << "*/" << Qt::endl;
       s << "State_COUNT\n};\n"
            "private:\n"
            "RuleSet m_ruleSet;\n"
            "public:\n"
            "inline RuleSet ruleSet()\n{\nreturn m_ruleSet;\n}\n"
            "void setRuleSet(RuleSet rs);\n";
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
       {
         s << "inline void enteringRuleSet" << state << "();" << Qt::endl;
         s << "inline void leavingRuleSet" << state << "();" << Qt::endl;
@@ -677,7 +677,7 @@ void generateLexer()
     {
       s << "#define lxSET_RULE_SET(r) {PP_CONCAT(leavingRuleSet, CURRENT_RULE_SET) (); m_ruleSet = State_##r; enteringRuleSet##r ();}\n" << Qt::endl << Qt::endl;
       
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
       {
         s << "inline void " << globalSystem.tokenStream << "::enteringRuleSet" << state << "() { " << globalSystem.enteringCode[state] << "}" << Qt::endl;
         s << "inline void " << globalSystem.tokenStream << "::leavingRuleSet" << state << "() { " << globalSystem.leavingCode[state] << "}" << Qt::endl;
@@ -687,7 +687,7 @@ void generateLexer()
            "{\n"
            "switch(m_ruleSet)\n"
            "{\n";
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
       {
         s << "case State_" << state << ":\n"
              "leavingRuleSet" << state << "();\n"
@@ -699,7 +699,7 @@ void generateLexer()
            "m_ruleSet = rs;\n\n"
            "switch(m_ruleSet)\n"
            "{\n";
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
       {
         s << "case State_" << state << ":\n"
              "enteringRuleSet" << state << "();\n"
@@ -721,7 +721,7 @@ void generateLexer()
     
     if(hasStates)
     {
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
       {
         s << "#define CURRENT_RULE_SET " << state << Qt::endl;
         LEXER_CORE_IMPL("lex" + KDevPG::capitalized(state), state, "")
@@ -729,7 +729,7 @@ void generateLexer()
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
         << "::read()" << Qt::endl << "{" << Qt::endl << "if(Base::index() < Base::size())\nreturn Base::read();\nswitch(m_ruleSet)\n{" << Qt::endl;
-      foreach(QString state, globalSystem.lexerEnvs.keys())
+      for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
         s << "case State_" << state << ": return lex" << capitalized(state) << "();" << Qt::endl;
       s << "default:\nexit(-1);\n}\n}" << Qt::endl;
     }

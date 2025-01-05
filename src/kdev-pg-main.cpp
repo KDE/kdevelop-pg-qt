@@ -445,9 +445,9 @@ int main(int argc, char **argv)
       KDevPG::checkOut << "** ERROR You have to specify a valid name for your lexer (%token_stream)" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();
     }
-    foreach(QString state, KDevPG::globalSystem.lexerEnvs.keys())
+    for (const auto &[state, envs] : std::as_const(KDevPG::globalSystem.lexerEnvs).asKeyValueRange())
     {
-      KDevPG::GNFA &alltogether = **KDevPG::globalSystem.lexerEnvResults.insert(state, new KDevPG::GNFA(KDevPG::globalSystem.lexerEnvs[state]));
+      KDevPG::GNFA &alltogether = **KDevPG::globalSystem.lexerEnvResults.insert(state, new KDevPG::GNFA(envs));
       KDevPG::GDFA &deterministic = **KDevPG::globalSystem.dfaForNfa.insert(&alltogether, new KDevPG::GDFA(alltogether.dfa()));
       deterministic.minimize();
       deterministic.setActions(KDevPG::globalSystem.lexerActions[state]);
@@ -489,7 +489,7 @@ int main(int argc, char **argv)
     }
   if (debug_automata)
   {
-    foreach(QString state, KDevPG::globalSystem.lexerEnvs.keys())
+    for (const auto &[state, _] : std::as_const(KDevPG::globalSystem.lexerEnvs).asKeyValueRange())
     {
       QFile ft(QString("kdev-pg-lexer-state-") + state + ".dot");
       ft.open(QIODevice::WriteOnly);
@@ -497,14 +497,14 @@ int main(int argc, char **argv)
       KDevPG::globalSystem.dfaForNfa[KDevPG::globalSystem.lexerEnvResults[state]]->dotOutput(str, state);
       ft.close();
     }
-    foreach(QString name, KDevPG::globalSystem.regexpById.keys())
+    for (const auto &[name, regexp] : std::as_const(KDevPG::globalSystem.regexpById).asKeyValueRange())
     {
-      if(KDevPG::globalSystem.dfaForNfa.contains(KDevPG::globalSystem.regexpById[name]))
+      if(KDevPG::globalSystem.dfaForNfa.contains(regexp))
       {
         QFile ft(QString("kdev-pg-lexer-name-") + name + ".dot");
         ft.open(QIODevice::WriteOnly);
         QTextStream str(&ft);
-        KDevPG::globalSystem.dfaForNfa[KDevPG::globalSystem.regexpById[name]]->dotOutput(str, name);
+        KDevPG::globalSystem.dfaForNfa[regexp]->dotOutput(str, name);
         ft.close();
       }
     }

@@ -2,12 +2,19 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# KDEVPGQT_GENERATE(SRC_FILE_VAR(|TARGET (since 2.3 ))
-#                     language
-#                     [NAMESPACE ns] [DEBUG_VISITOR] [TOKEN_TEXT] [DUMP_INFO]
-#                     GRAMMARFILE ADDITIONALDEPS)
-#     macro to add a custom target for the generation of the parser
-#     OUTPUT will be given to kdev-pg as the --output parameter and thus sets the filename prefix
+# KDEVPGQT_GENERATE(
+#     <src_file_var>(|<target> (since 2.3 ))
+#     <language>
+#     [NAMESPACE <ns>]
+#     [DEBUG_VISITOR]
+#     [TOKEN_TEXT]
+#     [DUMP_INFO]
+#     [ENFORCE_COMPATIBLE_ERROR_AWARE_CODE]
+#     <grammarfile>
+#     <additionaldeps>
+# )
+# This macro to add a custom target for the generation of the parser.
+#     <language> will be given to kdev-pg as the --output parameter and thus sets the filename prefix
 #     NAMESPACE can be given to choose a namespace different from the OUTPUT value
 #     DEBUG_VISITOR will run kdevelop-pg with the --debug-visitor argument to generate a simple
 #                   visitor that will print debug messages

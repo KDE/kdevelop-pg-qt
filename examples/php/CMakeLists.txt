@@ -6,7 +6,7 @@ target_sources(phptest PRIVATE
     phptest.cpp
 )
 
-kdevpgqt_generate(phptest php NAMESPACE Php DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
+kdeveloppgqt_generate(phptest php NAMESPACE Php DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
     "${CMAKE_CURRENT_SOURCE_DIR}/php.g"
 )
 

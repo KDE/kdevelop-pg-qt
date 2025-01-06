@@ -5,7 +5,7 @@ add_definitions(-Wall -O2)
 add_executable(cc-parser)
 
 # autogenerate the lexer and the parser
-kdevpgqt_generate(cc-parser cc NAMESPACE cc
+kdeveloppgqt_generate(cc-parser cc NAMESPACE cc
     "${CMAKE_CURRENT_SOURCE_DIR}/cc.g"
 )
 

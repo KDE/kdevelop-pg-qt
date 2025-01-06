@@ -6,7 +6,7 @@ add_executable(cool-parser)
 
 # autogenerate the lexer and the parser
 
-kdevpgqt_generate(cool-parser cool NAMESPACE cool
+kdeveloppgqt_generate(cool-parser cool NAMESPACE cool
     "${CMAKE_CURRENT_SOURCE_DIR}/cool.g"
 )
 

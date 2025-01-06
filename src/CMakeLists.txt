@@ -1,4 +1,4 @@
-set(KDEVELOP_PG_QT_INSTALL_INCLUDEDIR "${KDE_INSTALL_INCLUDEDIR}/kdevelop-pg-qt")
+set(KDEVELOP_PG_QT_INSTALL_INCLUDEDIR "${KDE_INSTALL_INCLUDEDIR}/KDevelopPGQt")
 
 add_subdirectory(include)
 
@@ -101,18 +101,18 @@ target_sources(kdev-pg-qt PRIVATE
     ${lexer_src}
 )
 
-set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
+set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelopPGQt)
 
 configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/KDevelopPGQtConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelopPGQtConfig.cmake"
     INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
 
 ecm_setup_version(${kdevelop-pg-qt_VERSION}
     VARIABLE_PREFIX KDEVELOP_PG_QT
     VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kdevelop-pg-qt_version.h"
-    PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
+    PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KDevelopPGQtConfigVersion.cmake"
 )
 
 install(FILES
@@ -120,13 +120,36 @@ install(FILES
     DESTINATION "${KDEVELOP_PG_QT_INSTALL_INCLUDEDIR}"
 )
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
-    "${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtMacros.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelopPGQtConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelopPGQtConfigVersion.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/KDevelopPGQtMacros.cmake"
     DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
 )
 install(EXPORT KDevelopPGQtTargets
-    FILE        KDevelop-PG-QtTargets.cmake
+    FILE        KDevelopPGQtTargets.cmake
     DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     NAMESPACE KDevelopPGQt::
 )
+
+# < 2.4 backward compat
+if (BUILD_COMPAT_CMAKECONFIG)
+
+set(CMAKECONFIG_COMPAT_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
+    INSTALL_DESTINATION ${CMAKECONFIG_COMPAT_INSTALL_DIR}
+)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
+    VERSION ${kdevelop-pg-qt_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
+    DESTINATION "${CMAKECONFIG_COMPAT_INSTALL_DIR}"
+)
+
+endif()

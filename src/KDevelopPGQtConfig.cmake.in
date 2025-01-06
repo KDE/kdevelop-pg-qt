@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Qt6Core "6.5")
+
+include("${CMAKE_CURRENT_LIST_DIR}/KDevelopPGQtTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/KDevelopPGQtMacros.cmake")

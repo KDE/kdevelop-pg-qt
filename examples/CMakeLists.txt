@@ -1,4 +1,4 @@
-include("${CMAKE_SOURCE_DIR}/src/KDevelop-PG-QtMacros.cmake")
+include("${CMAKE_SOURCE_DIR}/src/KDevelopPGQtMacros.cmake")
 
 # TODO: fix on windows
 if (NOT WIN32)

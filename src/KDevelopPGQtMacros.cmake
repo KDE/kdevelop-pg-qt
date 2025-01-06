@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# KDEVPGQT_GENERATE(
-#     <src_file_var>(|<target> (since 2.3 ))
+# KDEVELOPPGQT_GENERATE(
+#     <src_file_var>|<target>
 #     <language>
 #     [NAMESPACE <ns>]
 #     [DEBUG_VISITOR]
@@ -25,11 +25,11 @@
 #     ENFORCE_COMPATIBLE_ERROR_AWARE_CODE will ensure that --compatible-error-aware-code is also
 #               passed in case of GCC. By default it only is set for non-GNU compilers.
 
-macro(KDEVPGQT_GENERATE _srcOrTargetVar _language )
+macro(KDEVELOPPGQT_GENERATE _srcOrTargetVar _language )
     if (TARGET ${_srcOrTargetVar})
         get_target_property(aliased_target ${_srcOrTargetVar} ALIASED_TARGET)
         if(aliased_target)
-          message(FATAL_ERROR "Target argument passed to kdevpgqt_generate must not be an alias: ${_srcOrTargetVar}")
+          message(FATAL_ERROR "Target argument passed to kdeveloppgqt_generate must not be an alias: ${_srcOrTargetVar}")
         endif()
     endif()
     set(_outputList
@@ -108,7 +108,7 @@ macro(KDEVPGQT_GENERATE _srcOrTargetVar _language )
     list(GET _depList 0 _grammarFile)
     list(REMOVE_AT _depList 0)
     if(NOT _grammarFile)
-        message(ERROR "No grammar file given to KDEVPGQT_GENERATE macro")
+        message(ERROR "No grammar file given to KDEVELOPPGQT_GENERATE macro")
     endif()
     add_custom_command(
         OUTPUT

@@ -4,7 +4,7 @@ target_sources(foolisptest PRIVATE
     foolisptest.cpp
 )
 
-kdevpgqt_generate(foolisptest foolisp NAMESPACE FooLisp DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
+kdeveloppgqt_generate(foolisptest foolisp NAMESPACE FooLisp DEBUG_VISITOR TOKEN_TEXT GENERATE_LEXER
     "${CMAKE_CURRENT_SOURCE_DIR}/foolisp.g"
 )
 

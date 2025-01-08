@@ -214,7 +214,7 @@ QString unescaped(const QByteArray& str)
         ret += '\a';
       else if(nxt == 'x' || nxt == 'X' || nxt == 'u' || nxt == 'U')
       {
-        quint32 x = 0;
+        char32_t x = 0;
         for(++i; ; ++i)
         {
           x *= 16;
@@ -231,11 +231,11 @@ QString unescaped(const QByteArray& str)
         }
         --i;
         x /= 16;
-        ret += QString::fromUcs4(&x, 1);
+        ret += QChar::fromUcs4(x);
       }
       else if(nxt == 'd' || nxt == 'D')
       {
-        quint32 x = 0;
+        char32_t x = 0;
         for(++i; ; ++i)
         {
           x *= 10;
@@ -248,11 +248,11 @@ QString unescaped(const QByteArray& str)
         }
         --i;
         x /= 10;
-        ret += QString::fromUcs4(&x, 1);
+        ret += QChar::fromUcs4(x);
       }
       else if(nxt == 'o' || nxt == 'O')
       {
-        quint32 x = 0;
+        char32_t x = 0;
         for(++i; ; ++i)
         {
           x *= 8;
@@ -265,11 +265,11 @@ QString unescaped(const QByteArray& str)
         }
         --i;
         x /= 8;
-        ret += QString::fromUcs4(&x, 1);
+        ret += QChar::fromUcs4(x);
       }
       else if(nxt == 'y' || nxt == 'Y')
       {
-        quint32 x = 0;
+        char32_t x = 0;
         for(++i; ; ++i)
         {
           x *= 2;
@@ -282,7 +282,7 @@ QString unescaped(const QByteArray& str)
         }
         --i;
         x /= 2;
-        ret += QString::fromUcs4(&x, 1);
+        ret += QChar::fromUcs4(x);
       }
       else
         ret += nxt;

@@ -64,8 +64,8 @@ void GenerateDebugVisitor::operator()()
   out << "            else {" << Qt::endl;
   out << "                tokenString = m_content.mid(begin, end-begin+1);" << Qt::endl;
   out << "            }" << Qt::endl;
-  out << "            tokenString.replace('\\n', QStringLiteral(\"\\\\n\"));" << Qt::endl;
-  out << "            tokenString.replace('\\r', QStringLiteral(\"\\\\r\"));" << Qt::endl;
+  out << "            tokenString.replace(QLatin1Char('\\n'), QLatin1String(\"\\\\n\"));" << Qt::endl;
+  out << "            tokenString.replace(QLatin1Char('\\r'), QLatin1String(\"\\\\r\"));" << Qt::endl;
   out << "        }" << Qt::endl;
   out << "        qDebug() <<"
       << " QString(QString().fill(QLatin1Char(' '), m_indent) +"

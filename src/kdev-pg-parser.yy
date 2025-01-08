@@ -134,7 +134,7 @@ declaration
         int base = (KDevPG::GDFA::type / 4) * 4; // warning: magic constant: number of different codecs
         QString str = $2;
         str = str.toLower();
-        str.replace('-', "");
+        str.remove(QLatin1Char('-'));
         if(str == "ascii")
           /* base += 0*/;
         else if(str == "latin1")

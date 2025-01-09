@@ -85,7 +85,7 @@ void GenerateAstRule::operator()(Model::SymbolItem *sym)
 {
   if(!mForce)
   {
-    QString base = globalSystem.astBaseClasses.value(sym->mName, "");
+    QString base = globalSystem.astBaseClasses.value(sym->mName, QString());
     if(!base.isEmpty() && !mGenerated.contains(base))
     {
       if(mFirstTime)
@@ -118,7 +118,7 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
   if (node->mItem->kind == Model::OperatorItem::NodeKind)
   {
     out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
-        << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << globalSystem.astBaseClasses.value(sym->mName, QStringLiteral("AstNode"))
         << "{ enum { KIND = " << sym->mCapitalizedName << "Kind }; };" << Qt::endl << Qt::endl;
     #define O(thestr) \
     out << "struct " << globalSystem.exportMacro << thestr << sym->mCapitalizedName << "Ast: public " \
@@ -135,12 +135,12 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
         << "{\n}" << Qt::endl;\
         mGenerated.insert(thestr);
         
-    O(" Prefix")
+    O(QStringLiteral(" Prefix"))
 
     DefaultVisitor::visitEvolve(node);
       
     out << "};" << Qt::endl << Qt::endl;
-    O(" Postfix")
+    O(QStringLiteral(" Postfix"))
 
     DefaultVisitor::visitEvolve(node);
       
@@ -178,7 +178,7 @@ void GenerateAstRule::visitEvolve(Model::EvolveItem *node)
   else
   {
     out << "struct " << globalSystem.exportMacro << " " << sym->mCapitalizedName << "Ast: public "
-        << globalSystem.astBaseClasses.value(sym->mName, "AstNode")
+        << globalSystem.astBaseClasses.value(sym->mName, QStringLiteral("AstNode"))
         << " {" << Qt::endl
         << "enum { KIND = " << sym->mCapitalizedName << "Kind };" << Qt::endl << Qt::endl;
 
@@ -285,10 +285,10 @@ void GenerateAstFwd::operator()()
     O(sym->mCapitalizedName)
     if(isOperatorSymbol(sym))
     {
-      O("Prefix" + sym->mCapitalizedName)
-      O("Postfix" + sym->mCapitalizedName)
-      O("Binary" + sym->mCapitalizedName)
-      O("Ternary" + sym->mCapitalizedName)
+      O(QLatin1String("Prefix") + sym->mCapitalizedName)
+      O(QLatin1String("Postfix") + sym->mCapitalizedName)
+      O(QLatin1String("Binary") + sym->mCapitalizedName)
+      O(QLatin1String("Ternary") + sym->mCapitalizedName)
     }
     #undef O
   }

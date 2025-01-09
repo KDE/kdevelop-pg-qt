@@ -129,7 +129,7 @@ bool parse_file(char const *filename)
     }
   else
     {
-      cool_parser.expectedSymbol(AstNode::ProgramKind, "program"); // ### remove me
+      cool_parser.expectedSymbol(AstNode::ProgramKind, QStringLiteral("program")); // ### remove me
     }
 
   delete[] contents;

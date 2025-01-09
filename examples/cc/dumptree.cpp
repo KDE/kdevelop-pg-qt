@@ -108,7 +108,7 @@ void DumpTree::visitNode(AstNode *node)
   QString nodeText;
   if (node)
   {
-    std::cout << QString(indent * 2, ' ').toLatin1().constData() << names[node->kind - 1000]
+    std::cout << QString(indent * 2, QLatin1Char(' ')).toLatin1().constData() << names[node->kind - 1000]
              <<  "[" << node->startToken << "," << node->endToken << "]" << nodeText.toLatin1().constData() << std::endl;
   }
 
@@ -118,7 +118,7 @@ void DumpTree::visitNode(AstNode *node)
 
   if (node)
   {
-    std::cout << QString(indent * 2, ' ').toLatin1().constData() << names[node->kind - 1000] << std::endl;
+    std::cout << QString(indent * 2, QLatin1Char(' ')).toLatin1().constData() << names[node->kind - 1000] << std::endl;
   }
 }
 

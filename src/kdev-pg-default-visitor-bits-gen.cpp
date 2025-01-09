@@ -30,13 +30,13 @@ void GenerateDefaultVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*
       
   if(isOperatorSymbol(sym))
   {
-    O("Prefix" + sym->mCapitalizedName)
+    O(QLatin1String("Prefix") + sym->mCapitalizedName)
     out << "visitNode(node->first);" << Qt::endl << "}" << Qt::endl << Qt::endl;
-    O("Postfix" + sym->mCapitalizedName)
+    O(QLatin1String("Postfix") + sym->mCapitalizedName)
     out << "visitNode(node->first);" << Qt::endl << "}" << Qt::endl << Qt::endl;
-    O("Binary" + sym->mCapitalizedName)
+    O(QLatin1String("Binary") + sym->mCapitalizedName)
     out << "visitNode(node->first);" << Qt::endl << "visitNode(node->second); }" << Qt::endl << Qt::endl;
-    O("Ternary" + sym->mCapitalizedName)
+    O(QLatin1String("Ternary") + sym->mCapitalizedName)
     out << "visitNode(node->first);" << Qt::endl << "visitNode(node->second);" << Qt::endl << "visitNode(node->third);";
   }
   else
@@ -74,7 +74,7 @@ void GenerateDefaultVisitorBitsRule::visitVariableDeclaration(Model::VariableDec
     if (mNames.find(node->mName) != mNames.end())
       break;
 
-    QString base_type = node->mCapitalizedType + "Ast*";
+    QString base_type = node->mCapitalizedType + QLatin1String("Ast*");
 
     if (node->mIsSequence)
       {

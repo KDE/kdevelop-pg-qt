@@ -188,79 +188,79 @@ int main(int argc, char **argv)
     {
       KDevPG::globalSystem.ns = arg.mid( 12 );
     }
-    else if (arg == "--no-output")
+    else if (arg == QLatin1String("--no-output"))
     {
       output = false;
     }
-    else if (arg == "--no-ast")
+    else if (arg == QLatin1String("--no-ast"))
     {
       KDevPG::globalSystem.generateAst = false;
     }
-    else if (arg == "--with-ast")
+    else if (arg == QLatin1String("--with-ast"))
     {
       KDevPG::globalSystem.generateAst = true;
     }
-    else if (arg == "--serialize-visitor")
+    else if (arg == QLatin1String("--serialize-visitor"))
     {
       KDevPG::globalSystem.generateSerializeVisitor = true;
     }
-    else if (arg == "--ignore-conflicts")
+    else if (arg == QLatin1String("--ignore-conflicts"))
     {
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
     }
-    else if (arg == "--strict-conflicts")
+    else if (arg == QLatin1String("--strict-conflicts"))
     {
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Strict;
     }
-    else if (arg == "--permissive-conflicts")
+    else if (arg == QLatin1String("--permissive-conflicts"))
     {
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Permissive;
     }
-    else if (arg == "--debug-visitor")
+    else if (arg == QLatin1String("--debug-visitor"))
     {
       KDevPG::globalSystem.generateDebugVisitor = true;
     }
-    else if (arg == "--token-text")
+    else if (arg == QLatin1String("--token-text"))
     {
       KDevPG::globalSystem.generateTokenText = true;
     }
-    else if (arg == "--no-parser")
+    else if (arg == QLatin1String("--no-parser"))
     {
       generate_parser = false;
       ensure_generate_parser_or_not = true;
     }
-    else if (arg == "--with-parser")
+    else if (arg == QLatin1String("--with-parser"))
     {
       generate_parser = true;
       ensure_generate_parser_or_not = true;
     }
-    else if (arg == "--no-lexer")
+    else if (arg == QLatin1String("--no-lexer"))
     {
       generate_lexer = false;
       ensure_generate_lexer_or_not = true;
     }
-    else if (arg == "--with-lexer")
+    else if (arg == QLatin1String("--with-lexer"))
     {
       generate_lexer = true;
       ensure_generate_lexer_or_not = true;
     }
-    else if (arg == "--beautiful-code")
+    else if (arg == QLatin1String("--beautiful-code"))
     {
       KDevPG::globalSystem.lineNumberPolicy = KDevPG::World::BeautifulCode;
     }
-    else if (arg == "--error-aware-code")
+    else if (arg == QLatin1String("--error-aware-code"))
     {
       KDevPG::globalSystem.lineNumberPolicy = KDevPG::World::FullLineNumbers;
     }
-    else if (arg == "--compatible-error-aware-code")
+    else if (arg == QLatin1String("--compatible-error-aware-code"))
     {
       KDevPG::globalSystem.lineNumberPolicy = KDevPG::World::CompatibilityLineNumbers;
     }
-    else if (arg == "--visitor-table")
+    else if (arg == QLatin1String("--visitor-table"))
     {
       KDevPG::globalSystem.visitorTable = true;
     }
-    else if (arg == "--visitor-switch")
+    else if (arg == QLatin1String("--visitor-switch"))
     {
       KDevPG::globalSystem.visitorTable = false;
     }
@@ -270,44 +270,44 @@ int main(int argc, char **argv)
       KDevPG::globalSystem.conflictHandling = KDevPG::World::Ignore;
       output = false;
     }
-    else if (arg == "--inherit-default-visitor")
+    else if (arg == QLatin1String("--inherit-default-visitor"))
     {
       inherit_default = true;
     }
-    else if (arg == "--inherit-abstract-visitor")
+    else if (arg == QLatin1String("--inherit-abstract-visitor"))
     {
       inherit_default = false;
     }
-    else if (arg == "--help")
+    else if (arg == QLatin1String("--help"))
     {
       help();
     }
-    else if (arg == "--version")
+    else if (arg == QLatin1String("--version"))
     {
       version();
     }
-    else if (arg == "--author")
+    else if (arg == QLatin1String("--author"))
     {
       author();
     }
-    else if (arg == "--usage")
+    else if (arg == QLatin1String("--usage"))
     {
       usage();
       exit(EXIT_SUCCESS);
     }
-    else if (arg == "--terminals")
+    else if (arg == QLatin1String("--terminals"))
     {
       dump_terminals = true;
     }
-    else if (arg == "--symbols")
+    else if (arg == QLatin1String("--symbols"))
     {
       dump_symbols = true;
     }
-    else if (arg == "--rules")
+    else if (arg == QLatin1String("--rules"))
     {
       debug_rules = true;
     }
-    else if (arg == "--automata")
+    else if (arg == QLatin1String("--automata"))
     {
       debug_automata = true;
     }
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
         {
           KDevPG::checkOut << "kdev-pg-qt: file ``" << arg
                     << "'' not found!" << Qt::endl;
-          KDevPG::file.setFileName("");
+          KDevPG::file.setFileName(QString());
         }
       else
           KDevPG::fileInfo.setFile(KDevPG::file);
@@ -435,7 +435,7 @@ int main(int argc, char **argv)
     
   if (generate_lexer)
   {
-    if(!KDevPG::globalSystem.lexerEnvs.contains("start"))
+    if(!KDevPG::globalSystem.lexerEnvs.contains(QStringLiteral("start")))
     {
       KDevPG::checkOut << "** ERROR missing start-state in the lexer" << Qt::endl;
       KDevPG::ProblemSummaryPrinter::reportError();
@@ -456,7 +456,7 @@ int main(int argc, char **argv)
 
   if(dump_terminals)
     {
-      QFile ft("kdev-pg-terminals");
+      QFile ft(QStringLiteral("kdev-pg-terminals"));
       ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
       QTextStream strm(&ft);
       for (KDevPG::World::TerminalSet::iterator it = KDevPG::globalSystem.terminals.begin();
@@ -467,7 +467,7 @@ int main(int argc, char **argv)
     }
   if (dump_symbols)
     {
-      QFile ft("kdev-pg-symbols");
+      QFile ft(QStringLiteral("kdev-pg-symbols"));
       ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
       QTextStream strm(&ft);
       for (KDevPG::World::SymbolSet::iterator it = KDevPG::globalSystem.symbols.begin();
@@ -478,7 +478,7 @@ int main(int argc, char **argv)
     }
   if (debug_rules)
     {
-      QFile ft("kdev-pg-rules");
+      QFile ft(QStringLiteral("kdev-pg-rules"));
       ft.open( QIODevice::WriteOnly | QIODevice::Truncate );
       QTextStream strm(&ft);
       for(QList<KDevPG::Model::EvolveItem*>::iterator it = KDevPG::globalSystem.rules.begin(); it != KDevPG::globalSystem.rules.end(); ++it)
@@ -491,7 +491,7 @@ int main(int argc, char **argv)
   {
     for (const auto &[state, _] : std::as_const(KDevPG::globalSystem.lexerEnvs).asKeyValueRange())
     {
-      QFile ft(QString("kdev-pg-lexer-state-") + state + ".dot");
+      QFile ft(QLatin1String("kdev-pg-lexer-state-") + state + QLatin1String(".dot"));
       ft.open(QIODevice::WriteOnly);
       QTextStream str(&ft);
       KDevPG::globalSystem.dfaForNfa[KDevPG::globalSystem.lexerEnvResults[state]]->dotOutput(str, state);
@@ -501,7 +501,7 @@ int main(int argc, char **argv)
     {
       if(KDevPG::globalSystem.dfaForNfa.contains(regexp))
       {
-        QFile ft(QString("kdev-pg-lexer-name-") + name + ".dot");
+        QFile ft(QLatin1String("kdev-pg-lexer-name-") + name + QLatin1String(".dot"));
         ft.open(QIODevice::WriteOnly);
         QTextStream str(&ft);
         KDevPG::globalSystem.dfaForNfa[regexp]->dotOutput(str, name);

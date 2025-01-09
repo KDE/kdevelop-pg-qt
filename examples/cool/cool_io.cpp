@@ -33,9 +33,9 @@ void Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString & n
   print_token_environment(this);
   report_problem(
     Parser::error,
-    "Expected token ``" + name
+    QLatin1String("Expected token ``") + name
       //+ "'' instead of ``" + current_token_text
-      + "''"
+      + QLatin1String("''")
   );
 }
 
@@ -44,9 +44,9 @@ void Parser::expectedSymbol(int /*expected_symbol*/, const QString & name)
   print_token_environment(this);
   report_problem(
     Parser::error,
-    "Expected symbol ``" + name
+    QLatin1String("Expected symbol ``") + name
       //+ "'' instead of ``" + current_token_text
-      + "''"
+      + QLatin1String("''")
   );
 }
 

@@ -26,7 +26,7 @@ public:
   QString name;
 
 public:
-  explicit GenerateDefaultVisitor(QTextStream& o, const QString& n = "DefaultVisitor"): out(o), name(n)
+  explicit GenerateDefaultVisitor(QTextStream& o, const QString& n = QStringLiteral("DefaultVisitor")): out(o), name(n)
   {}
 
   void operator()();

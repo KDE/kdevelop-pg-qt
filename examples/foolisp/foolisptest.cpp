@@ -29,7 +29,7 @@ int main()
   parser.rewind(0);
   StartAst *ast;
   parser.parseStart(&ast);
-  DebugVisitor vis(&lex, qcode);
+  DebugVisitor vis(&lex, QString::fromUtf8(qcode));
   vis.visitNode(ast);
   qDebug() << ast->sexp;
   qDebug() << ast->sexp->sexpSequence;

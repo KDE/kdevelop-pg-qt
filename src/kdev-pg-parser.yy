@@ -78,10 +78,10 @@ QString r;
 %%
 
 system
-    : code_opt { KDevPG::globalSystem.decl = $1; }
+    : code_opt { KDevPG::globalSystem.decl = QString::fromUtf8($1); }
       declarations
       rules
-      code_opt { KDevPG::globalSystem.bits += $5; }
+      code_opt { KDevPG::globalSystem.bits += QString::fromUtf8($5); }
     ;
 
 declarations
@@ -93,11 +93,11 @@ declaration
     : T_PARSERCLASS_DECLARATION member_declaration_rest
         { KDevPG::globalSystem.pushParserClassMember($2); }
     | T_PARSERCLASS_DECLARATION '(' T_BITS ')' T_CODE
-        { KDevPG::globalSystem.bits += $5; }
+        { KDevPG::globalSystem.bits += QString::fromUtf8($5); }
     | T_LEXERCLASS_DECLARATION member_declaration_rest
         { KDevPG::globalSystem.pushLexerClassMember($2); }
     | T_LEXERCLASS_DECLARATION '(' T_BITS ')' T_CODE
-        { KDevPG::globalSystem.lexerBits += $5; }
+        { KDevPG::globalSystem.lexerBits += QString::fromUtf8($5); }
     | T_TOKEN_DECLARATION declared_tokens ';'
     | T_TABLE_LEXER
       { if(KDevPG::globalSystem.hasLexer)
@@ -132,20 +132,20 @@ declaration
         if(KDevPG::globalSystem.hasLexer)
         { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
         int base = (KDevPG::GDFA::type / 4) * 4; // warning: magic constant: number of different codecs
-        QString str = $2;
+        QString str = QString::fromUtf8($2);
         str = str.toLower();
         str.remove(QLatin1Char('-'));
-        if(str == "ascii")
+        if(str == QLatin1String("ascii"))
           /* base += 0*/;
-        else if(str == "latin1")
+        else if(str == QLatin1String("latin1"))
           base += 1;
-        else if(str == "utf8")
+        else if(str == QLatin1String("utf8"))
           base += 2;
-        else if(str == "ucs2")
+        else if(str == QLatin1String("ucs2"))
           base += 3;
-        else if(str == "utf16")
+        else if(str == QLatin1String("utf16"))
           base += 4;
-        else if(str == "ucs4" || str == "utf32")
+        else if(str == QLatin1String("ucs4") || str == QLatin1String("utf32"))
           base += 5;
         else
         {
@@ -155,40 +155,40 @@ declaration
         KDevPG::GDFA::type = KDevPG::AutomatonType(base);
       }
     | T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'
-        { KDevPG::globalSystem.tokenStream = $2;           }
+        { KDevPG::globalSystem.tokenStream = QString::fromUtf8($2);           }
     | T_EXPORT_MACRO T_STRING
-        { KDevPG::globalSystem.exportMacro = $2;           }
+        { KDevPG::globalSystem.exportMacro = QString::fromUtf8($2);           }
     | T_EXPORT_MACRO_HEADER T_STRING
-        { KDevPG::globalSystem.exportMacroHeader = $2;     }
+        { KDevPG::globalSystem.exportMacroHeader = QString::fromUtf8($2);     }
     | T_NAMESPACE_DECLARATION T_CODE
-        { KDevPG::globalSystem.namespaceCode = $2;         }
+        { KDevPG::globalSystem.namespaceCode = QString::fromUtf8($2);         }
     | T_AST_DECLARATION T_CODE
-        { KDevPG::globalSystem.astCode = $2;               }
+        { KDevPG::globalSystem.astCode = QString::fromUtf8($2);               }
     | T_PARSER_DECLARATION_HEADER T_STRING
-        { KDevPG::globalSystem.pushParserDeclarationHeader($2); }
+        { KDevPG::globalSystem.pushParserDeclarationHeader(QString::fromUtf8($2)); }
     | T_PARSER_BITS_HEADER T_STRING
-        { KDevPG::globalSystem.pushParserBitsHeader($2); }
+        { KDevPG::globalSystem.pushParserBitsHeader(QString::fromUtf8($2)); }
     | T_AST_HEADER T_STRING
-        { KDevPG::globalSystem.pushAstHeader($2); }
+        { KDevPG::globalSystem.pushAstHeader(QString::fromUtf8($2)); }
     | T_LEXER_DECLARATION_HEADER T_STRING
-        { KDevPG::globalSystem.pushLexerDeclarationHeader($2); }
+        { KDevPG::globalSystem.pushLexerDeclarationHeader(QString::fromUtf8($2)); }
     | T_INPUT_STREAM T_STRING
-        { KDevPG::globalSystem.inputStream = $2; }
+        { KDevPG::globalSystem.inputStream = QString::fromUtf8($2); }
     | T_LEXER_BITS_HEADER T_STRING
-        { KDevPG::globalSystem.pushLexerBitsHeader($2); }
+        { KDevPG::globalSystem.pushLexerBitsHeader(QString::fromUtf8($2)); }
     | T_AST_BASE T_IDENTIFIER T_STRING
-        { KDevPG::globalSystem.astBaseClasses[$2] = $3; }
+        { KDevPG::globalSystem.astBaseClasses[QString::fromUtf8($2)] = QString::fromUtf8($3); }
     | T_PARSER_BASE T_STRING
-        { KDevPG::globalSystem.parserBaseClass = $2; }
+        { KDevPG::globalSystem.parserBaseClass = QString::fromUtf8($2); }
     | T_LEXER_BASE T_STRING
-        { KDevPG::globalSystem.lexerBaseClass = $2; }
-    | T_LEXER T_STRING { KDevPG::globalSystem.hasLexer = true; lexerEnv = $2; if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
-    | T_LEXER { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); } T_ARROW lexer_declaration_rest ';'
+        { KDevPG::globalSystem.lexerBaseClass = QString::fromUtf8($2); }
+    | T_LEXER T_STRING { KDevPG::globalSystem.hasLexer = true; lexerEnv = QString::fromUtf8($2); if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QStringLiteral("qDebug() << \"error\"; exit(-1);")); } T_ARROW lexer_declaration_rest ';'
+    | T_LEXER { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = QStringLiteral("start"); if(KDevPG::globalSystem.lexerActions[QStringLiteral("start")].empty()) KDevPG::globalSystem.lexerActions[QStringLiteral("start")].push_back(QStringLiteral("qDebug() << \"error\"; exit(-1);")); } T_ARROW lexer_declaration_rest ';'
     ;
 
 lexer_declaration_rest
     : regexp T_ARROW T_IDENTIFIER ';'
-            { KDevPG::globalSystem.regexpById[$3] = $1;
+            { KDevPG::globalSystem.regexpById[QString::fromUtf8($3)] = $1;
             } lexer_declaration_rest
     | regexp code_opt opt_lexer_action ';'
             {
@@ -196,7 +196,7 @@ lexer_declaration_rest
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
               else if($1->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
-              QString s = QString($2) + QString(r);
+              QString s = QString::fromUtf8($2) + r;
               KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
             } lexer_declaration_rest
@@ -215,18 +215,18 @@ lexer_declaration_rest
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << Qt::endl;
+                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? QStringLiteral("none") : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? QStringLiteral("infinity") : (maxLen == -1 ? QStringLiteral("none") : QString::number(maxLen))) << "), ignore the lookahead." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
               {
-                QString s = QString($6) + QString(r);
+                QString s = QString::fromUtf8($6) + r;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
               else
               {
-                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
+                QString s = QLatin1String("Iterator::plain() -= ") + QString::number(minLen) + QLatin1String("; ") + QString::fromUtf8($6) + r;
                 *$1 <<= *$4;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
@@ -247,12 +247,12 @@ lexer_declaration_rest
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << Qt::endl;
+                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? QStringLiteral("none") : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? QStringLiteral("infinity") : (maxLen == -1 ? QStringLiteral("none") : QString::number(maxLen))) << "), ignore the barrier." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
               {
-                QString s = QString($6) + QString(r);
+                QString s = QString::fromUtf8($6) + r;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
@@ -264,39 +264,39 @@ lexer_declaration_rest
                 KDevPG::GNFA *staying = new KDevPG::GNFA(*$1);
                 *staying ^= exclude;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(staying);
-                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString($6) + QString(r));
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString::fromUtf8($6) + r);
                 // barrier should not get read partially
                 exclude <<= KDevPG::GNFA::anyChar();
                 *$1 <<= *$4;
                 *$1 ^= exclude;
-                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString($6) + QString(r);
+                QString s = QLatin1String("Iterator::plain() -= ") + QString::number(minLen) + QLatin1String("; ") + QString::fromUtf8($6) + r;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back($1);
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
             } lexer_declaration_rest
     | T_FAIL T_CODE
             {
-              KDevPG::globalSystem.lexerActions[lexerEnv][0] = QString($2);
+              KDevPG::globalSystem.lexerActions[lexerEnv][0] = QString::fromUtf8($2);
             } lexer_declaration_rest
     | T_ENTER_RULE_SET T_CODE
             {
-              KDevPG::globalSystem.enteringCode[lexerEnv] = QString($2);
+              KDevPG::globalSystem.enteringCode[lexerEnv] = QString::fromUtf8($2);
             } lexer_declaration_rest
     | T_LEAVE_RULE_SET T_CODE
             {
-              KDevPG::globalSystem.leavingCode[lexerEnv] = QString($2);
+              KDevPG::globalSystem.leavingCode[lexerEnv] = QString::fromUtf8($2);
             } lexer_declaration_rest
     | /* empty */
     ;
 
 opt_lexer_action
     : T_TERMINAL {
-        r = "\nlxRETURN(" + QString($1) + ")\n";
+        r = QLatin1String("\nlxRETURN(") + QString::fromUtf8($1) + QLatin1String(")\n");
       }
     | T_CONTINUE {
-        r = "\nlxCONTINUE;\n";
+        r = QStringLiteral("\nlxCONTINUE;\n");
       }
-    | /* empty */ { r = "\nlxSKIP\n"; }
+    | /* empty */ { r = QStringLiteral("\nlxSKIP\n"); }
     ;
 
 regexp
@@ -343,12 +343,12 @@ regexp7
     | T_STRING              { $$ = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray($1)))); }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray($1)))); }
     | T_NAMED_REGEXP        {
-                              if(!KDevPG::globalSystem.regexpById.contains($1))
+                              if(!KDevPG::globalSystem.regexpById.contains(QString::fromUtf8($1)))
                               {
                                 KDevPG::checkOut << "** ERROR: no named regexp " << $1 << Qt::endl;
                                 exit(-1);
                               }
-                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[QString::fromUtf8($1)];
                               if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
                                 KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
@@ -406,7 +406,7 @@ aregexp7
       quint32 begin, end;
       QString str = KDevPG::unescaped(QByteArray($1));
       assert(str.size() >= 3 && str.size() <= 5);
-      if(str[1] == '-')
+      if(str[1] == QLatin1Char('-'))
       {
         begin = str[0].unicode();
         if(str.size() == 3)
@@ -417,7 +417,7 @@ aregexp7
       else
       {
         begin = QChar::surrogateToUcs4(str[0], str[1]);
-        assert(str[2] == '-');
+        assert(str[2] == QLatin1Char('-'));
         if(str.size() == 4)
           end = str[3].unicode();
         else
@@ -427,12 +427,12 @@ aregexp7
     }
     | T_UNQUOTED_STRING     { $$ = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray($1)))); }
     | T_NAMED_REGEXP        {
-                              if(!KDevPG::globalSystem.regexpById.contains($1))
+                              if(!KDevPG::globalSystem.regexpById.contains(QString::fromUtf8($1)))
                               {
                                 KDevPG::checkOut << "** ERROR: no named regexp " << $1 << Qt::endl;
                                 exit(-1);
                               }
-                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[$1];
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[QString::fromUtf8($1)];
                               if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
                                 KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
@@ -447,23 +447,23 @@ aregexp7
 
 member_declaration_rest
     : '(' T_PUBLIC T_DECLARATION ')' T_CODE
-        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, $5);    }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, QString::fromUtf8($5));    }
     | '(' T_PROTECTED T_DECLARATION ')' T_CODE
-        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, $5); }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, QString::fromUtf8($5)); }
     | '(' T_PRIVATE T_DECLARATION ')' T_CODE
-        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, $5);   }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, QString::fromUtf8($5));   }
     | '(' T_CONSTRUCTOR ')' T_CODE
-        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, $4);      }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, QString::fromUtf8($4));      }
     | '(' T_DESTRUCTOR ')' T_CODE
-        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, $4);       }
+        { $$ = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, QString::fromUtf8($4));       }
     ;
 
 declared_tokens
-    : T_TERMINAL                        { KDevPG::globalSystem.pushTerminal($1,$1); }
-    | T_TERMINAL '(' T_STRING ')'       { KDevPG::globalSystem.pushTerminal($1,$3); }
-    | declared_tokens ',' T_TERMINAL    { KDevPG::globalSystem.pushTerminal($3,$3); }
+    : T_TERMINAL                        { KDevPG::globalSystem.pushTerminal(QString::fromUtf8($1), QString::fromUtf8($1)); }
+    | T_TERMINAL '(' T_STRING ')'       { KDevPG::globalSystem.pushTerminal(QString::fromUtf8($1), QString::fromUtf8($3)); }
+    | declared_tokens ',' T_TERMINAL    { KDevPG::globalSystem.pushTerminal(QString::fromUtf8($3), QString::fromUtf8($3)); }
     | declared_tokens ',' T_TERMINAL '(' T_STRING ')'
-                                        { KDevPG::globalSystem.pushTerminal($3,$5); }
+                                        { KDevPG::globalSystem.pushTerminal(QString::fromUtf8($3), QString::fromUtf8($5)); }
     ;
 
 rules
@@ -474,16 +474,16 @@ rules
 primary_item
     : '0'                               { $$ = KDevPG::globalSystem.zero(); }
     | '(' option_item ')'               { $$ = $2; }
-    | try_item                    { $$ = $1; }
+    | try_item                          { $$ = $1; }
     | primary_atom                      { $$ = $1; }
-    | T_INLINE T_IDENTIFIER              { $$ = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol($2)); }
-    | name scope primary_atom           { $$ = KDevPG::annotation($1, $3, false, $2); }
-    | '#' name scope primary_atom       { $$ = KDevPG::annotation($2, $4, true, $3);  }
+    | T_INLINE T_IDENTIFIER             { $$ = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol(QString::fromUtf8($2))); }
+    | name scope primary_atom           { $$ = KDevPG::annotation(QString::fromUtf8($1), $3, false, $2); }
+    | '#' name scope primary_atom       { $$ = KDevPG::annotation(QString::fromUtf8($2), $4, true, $3);  }
     ;
 
 primary_atom
-    : T_IDENTIFIER rule_arguments_opt   { $$ = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol($1), $2); }
-    | T_TERMINAL                        { $$ = KDevPG::globalSystem.terminal($1); }
+    : T_IDENTIFIER rule_arguments_opt   { $$ = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol(QString::fromUtf8($1)), QString::fromUtf8($2)); }
+    | T_TERMINAL                        { $$ = KDevPG::globalSystem.terminal(QString::fromUtf8($1)); }
     ;
 
 try_item
@@ -522,7 +522,7 @@ unary_item
     : primary_item '+'                  { $$ = KDevPG::plus($1); }
     | primary_item '*'                  { $$ = KDevPG::star($1); }
     | primary_item                      { $$ = $1; }
-    | '?' primary_item                   { $$ = KDevPG::alternative($2, KDevPG::globalSystem.zero()); }
+    | '?' primary_item                  { $$ = KDevPG::alternative($2, KDevPG::globalSystem.zero()); }
     ;
 
 postfix_item
@@ -532,8 +532,8 @@ postfix_item
           KDevPG::CloneTree cl;
           $$ = KDevPG::cons($1, KDevPG::star(KDevPG::cons(cl.clone($3), cl.clone($1))));
         }
-    | postfix_item T_CODE               { $$ = KDevPG::action($1, $2); }
-    | T_CODE                            { $$ = KDevPG::action(nullptr, $1); }
+    | postfix_item T_CODE               { $$ = KDevPG::action($1, QString::fromUtf8($2)); }
+    | T_CODE                            { $$ = KDevPG::action(nullptr, QString::fromUtf8($1)); }
     ;
 
 item_sequence
@@ -543,7 +543,7 @@ item_sequence
 
 conditional_item
     : item_sequence                     { $$ = $1; }
-    | '?' T_CODE item_sequence          { $$ = KDevPG::condition($2, $3); }
+    | '?' T_CODE item_sequence          { $$ = KDevPG::condition(QString::fromUtf8($2), $3); }
     ;
 
 option_item
@@ -554,16 +554,16 @@ option_item
 item
     : option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'
         {
-          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
-                          (KDevPG::Model::VariableDeclarationItem*) $6, $4);
+          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol(QString::fromUtf8($3)),
+                          (KDevPG::Model::VariableDeclarationItem*) $6, QString::fromUtf8($4));
         }
     | option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt
         {
-          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3),
-                          (KDevPG::Model::VariableDeclarationItem*) $5, $7);
+          $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol(QString::fromUtf8($3)),
+                          (KDevPG::Model::VariableDeclarationItem*) $5, QString::fromUtf8($7));
         }
     | option_item T_ARROW T_IDENTIFIER code_opt
-        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol($3), nullptr, $4); }
+        { $$ = KDevPG::evolve($1, KDevPG::globalSystem.pushSymbol(QString::fromUtf8($3)), nullptr, QString::fromUtf8($4)); }
     | { if(KDevPG::globalSystem.generateAst == false)
         {
           qFatal("Operator-expression-parsing is not yet supported with --no-ast!");
@@ -588,35 +588,35 @@ operatorRule
     : T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt
             {
               operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$2;
-              operatorNode->mName = $5;
+              operatorNode->mName = QString::fromUtf8($5);
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), (KDevPG::Model::VariableDeclarationItem*)$7, $9);
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + QLatin1String("Ast");
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol(QString::fromUtf8($5)), (KDevPG::Model::VariableDeclarationItem*)$7, QString::fromUtf8($9));
             }
     | T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'
             {
               operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$2;
-              operatorNode->mName = $5;
+              operatorNode->mName = QString::fromUtf8($5);
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), (KDevPG::Model::VariableDeclarationItem*)$8, $6);
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + QLatin1String("Ast");
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol(QString::fromUtf8($5)), (KDevPG::Model::VariableDeclarationItem*)$8, QString::fromUtf8($6));
             }
     | T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER code_opt
             {
               operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)$2;
-              operatorNode->mName = $5;
+              operatorNode->mName = QString::fromUtf8($5);
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol($5), nullptr, $6);
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + QLatin1String("Ast");
+              $$ = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol(QString::fromUtf8($5)), nullptr, QString::fromUtf8($6));
             }
     ;
 
 operatorDeclaration
-    : T_BIN operator priority assoc              { operatorNode->pushBin(*$2, $4, $3); free($2); }
-    | T_TERN operator operator priority assoc    { operatorNode->pushTern(*$2, *$3, $5, $4); free($2); free($3); }
-    | T_PRE operator priority                    { operatorNode->pushPre(*$2, $3); free($2); }
-    | T_POST operator priority                   { operatorNode->pushPost(*$2, "0", $3); free($2); free($3); }
-    | T_POST operator priority assoc             { operatorNode->pushPost(*$2, $4, $3); free($2); }
+    : T_BIN operator priority assoc              { operatorNode->pushBin(*$2, QString::fromUtf8($4), QString::fromUtf8($3)); free($2); }
+    | T_TERN operator operator priority assoc    { operatorNode->pushTern(*$2, *$3, QString::fromUtf8($5), QString::fromUtf8($4)); free($2); free($3); }
+    | T_PRE operator priority                    { operatorNode->pushPre(*$2, QString::fromUtf8($3)); free($2); }
+    | T_POST operator priority                   { operatorNode->pushPost(*$2, QStringLiteral("0"), QString::fromUtf8($3)); free($2); free($3); }
+    | T_POST operator priority assoc             { operatorNode->pushPost(*$2, QString::fromUtf8($4), QString::fromUtf8($3)); free($2); }
     | T_PAREN operator operator                  { operatorNode->pushParen(*$2, *$3); free($2); free($3); }
     ;
     
@@ -646,10 +646,10 @@ assoc
     ;
     
 operator
-    : '?' T_CODE T_TERMINAL T_CODE { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($3), $2, $4); }
-    | '?' T_CODE T_TERMINAL        { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($3), $2, ""); }
-    | T_TERMINAL T_CODE            { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($1), "", $2); }
-    | T_TERMINAL                   { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal($1), "", ""); }
+    : '?' T_CODE T_TERMINAL T_CODE { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8($3)), QString::fromUtf8($2), QString::fromUtf8($4)); }
+    | '?' T_CODE T_TERMINAL        { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8($3)), QString::fromUtf8($2), QString()); }
+    | T_TERMINAL T_CODE            { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8($1)), QString(), QString::fromUtf8($2)); }
+    | T_TERMINAL                   { $$ = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8($1)), QString(), QString()); }
     ;
 
 variableDeclarations
@@ -667,13 +667,13 @@ variableDeclarations
 
 variableDeclaration
     : declarationType_opt storageType variableType T_IDENTIFIER ':' T_IDENTIFIER
-        { $$ = KDevPG::variableDeclaration($1, $2, $3, false, $4, $6); }
+        { $$ = KDevPG::variableDeclaration($1, $2, $3, false, QString::fromUtf8($4), QString::fromUtf8($6)); }
     | declarationType_opt storageType T_TOKEN       T_IDENTIFIER ';'
-        { $$ = KDevPG::variableDeclaration($1, $2, KDevPG::Model::VariableDeclarationItem::TypeToken, false, $4, ""); }
+        { $$ = KDevPG::variableDeclaration($1, $2, KDevPG::Model::VariableDeclarationItem::TypeToken, false, QString::fromUtf8($4), QString()); }
     | declarationType_opt storageType variableType '#' T_IDENTIFIER ':' T_IDENTIFIER
-        { $$ = KDevPG::variableDeclaration($1, $2, $3, true, $5, $7); }
+        { $$ = KDevPG::variableDeclaration($1, $2, $3, true, QString::fromUtf8($5), QString::fromUtf8($7)); }
     | declarationType_opt storageType T_TOKEN       '#' T_IDENTIFIER ';'
-        { $$ = KDevPG::variableDeclaration($1, $2, KDevPG::Model::VariableDeclarationItem::TypeToken, true, $5, ""); }
+        { $$ = KDevPG::variableDeclaration($1, $2, KDevPG::Model::VariableDeclarationItem::TypeToken, true, QString::fromUtf8($5), QString()); }
     ;
 
 declarationType_opt
@@ -682,7 +682,7 @@ declarationType_opt
     ;
 
 storageType
-    : T_MEMBER          { $$ = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    }
+    : T_MEMBER          { $$ = KDevPG::Model::VariableDeclarationItem::StorageAstMember;     }
     | T_TEMPORARY       { $$ = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     }
     ;
 

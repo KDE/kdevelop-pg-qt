@@ -421,8 +421,8 @@ echo            ECHO ;
         if (!reported) {
             qint64 index = tokenStream->index() - 1;
             Token &token = tokenStream->at(index);
-            QString tokenValue = token.kind != 0 ? tokenText(token.begin, token.end) : "EOF";
-            reportProblem(Error, QString("Unexpected token \"%1\".").arg(tokenValue));
+            QString tokenValue = token.kind != 0 ? tokenText(token.begin, token.end) : QStringLiteral("EOF");
+            reportProblem(Error, QStringLiteral("Unexpected token \"%1\".").arg(tokenValue));
             reported = true;
         }
         yylex();
@@ -505,7 +505,7 @@ expression=conditionalExpression
 ASSIGN
     assignmentExpressionCheckIfVariable --as in assignmentExpression
     (BIT_AND [: if (yytoken == Token_NEW) {
-                reportProblem(Warning, "=& new foo() is deprecated", -2);
+                reportProblem(Warning, QStringLiteral("=& new foo() is deprecated"), -2);
                 m_state.varExpressionState = OnlyNewObject;
               } else {
                 m_state.varExpressionState = OnlyVariable;
@@ -519,7 +519,7 @@ ASSIGN
 0 --to allow cpp-code
 [:
     if (!m_state.varExpressionIsVariable) {
-        reportProblem(Error, "Left side is not a variable");
+        reportProblem(Error, QStringLiteral("Left side is not a variable"));
         return false;
     }
 :]
@@ -672,7 +672,7 @@ expression=booleanOrExpression
         LBRACE try/recover(functionBody=innerStatementList) RBRACE
 -> closure ;;
 
-  (#lexicalVars=lexicalVar @ COMMA) | 0 [: reportProblem(Error, "Use list of closure must not be empty."); :]
+  (#lexicalVars=lexicalVar @ COMMA) | 0 [: reportProblem(Error, QStringLiteral("Use list of closure must not be empty.")); :]
 -> lexicalVarList ;;
 
   (isRef=BIT_AND | 0) variable=variableIdentifier
@@ -985,7 +985,7 @@ LBRACKET dimOffset=dimOffset RBRACKET | LBRACE expr=expr RBRACE
     NAMESPACE #namespaceName=identifier* @ BACKSLASH
     (
         -- the semicolon case needs at least one namespace identifier, the {...} case not...
-        SEMICOLON [: if (!(*yynode)->namespaceNameSequence) { reportProblem(Error, "Missing namespace identifier.", -2); } :]
+        SEMICOLON [: if (!(*yynode)->namespaceNameSequence) { reportProblem(Error, QStringLiteral("Missing namespace identifier."), -2); } :]
     | LBRACE try/recover(body=innerStatementList) RBRACE )
 -> namespaceDeclarationStatement ;;
 
@@ -1010,7 +1010,7 @@ identifier=namespacedIdentifier
 try/recover(#classStatements=classStatement)*
 [: if (yytoken != Token_RBRACE && yytoken != Token_EOF && yytoken != Token_CLOSE_TAG) {
         if (!reported) {
-            reportProblem(Error, "Unexpected token in class context.");
+            reportProblem(Error, QStringLiteral("Unexpected token in class context."));
             reported = true;
         }
         yylex();
@@ -1099,7 +1099,7 @@ void Parser::reportProblem( Parser::ProblemType type, const QString& message, in
 // custom error recovery
 void Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString& name)
 {
-    reportProblem( Parser::Error, QString("Expected token \"%1\"").arg(name));
+    reportProblem( Parser::Error, QStringLiteral("Expected token \"%1\"").arg(name));
 }
 
 void Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)
@@ -1116,9 +1116,9 @@ void Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)
     qint64 eCol;
     tokenStream->endPosition(index, &eLine, &eCol);
     reportProblem( Parser::Error,
-                   QString("Expected symbol \"%1\" (current token: \"%2\" [%3] at %4:%5 - %6:%7)")
+                   QStringLiteral("Expected symbol \"%1\" (current token: \"%2\" [%3] at %4:%5 - %6:%7)")
                   .arg(name)
-                  .arg(token.kind != 0 ? tokenValue : "EOF")
+                  .arg(token.kind != 0 ? tokenValue : QStringLiteral("EOF"))
                   .arg(token.kind)
                   .arg(line)
                   .arg(col)

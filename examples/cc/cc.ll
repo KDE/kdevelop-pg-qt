@@ -227,13 +227,13 @@ FloatingPoint   {Float1}|{Float2}|{Float3}|{Float4}|{HexFloat1}|{HexFloat2}
 
 [']({Escape}|{Multibyte}|[^\\\n\'])[']   return Parser::Token_X_CONSTANT;
 [']({Escape}|{Multibyte}|[\\][^\\\n\']|[^\\\n\'])*([\\]?[\n]|[']) {
-    qWarning() << QString("Invalid character literal: %1").arg(yytext);
+    qWarning() << QStringLiteral("Invalid character literal: %1").arg(QString::fromUtf8(yytext));
     return Parser::Token_X_CONSTANT;
 }
 
 ["]({Escape}|{Multibyte}|[^\\\n\"])*["]  return Parser::Token_STRING_LITERAL;
 ["]({Escape}|{Multibyte}|[\\][^\\\n\"]|[^\\\n\"])*([\\]?[\n]|["]) {
-    qWarning() << QString("Invalid string literal: %1").arg(yytext);
+    qWarning() << QStringLiteral("Invalid string literal: %1").arg(QString::fromUtf8(yytext));
     return Parser::Token_STRING_LITERAL;
 }
 

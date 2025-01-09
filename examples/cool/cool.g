@@ -169,7 +169,7 @@ namespace cool
 
 void Parser::tokenize( char *contents )
 {
-    m_contents = contents;
+    m_contents = QString::fromUtf8(contents);
     Lexer lexer( this, contents );
 
     int kind = Parser::Token_EOF;

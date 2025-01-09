@@ -197,21 +197,21 @@ QString unescaped(const QByteArray& str)
     {
       char nxt = *++i;
       if(nxt == 'n')
-        ret += '\n';
+        ret += QLatin1Char('\n');
       else if(nxt == 't')
-        ret += '\t';
+        ret += QLatin1Char('\t');
       else if(nxt == 'f')
-        ret += '\f';
+        ret += QLatin1Char('\f');
       else if(nxt == 'v')
-        ret += '\v';
+        ret += QLatin1Char('\v');
       else if(nxt == 'r')
-        ret += '\r';
+        ret += QLatin1Char('\r');
       else if(nxt == '0')
-        ret += '\0';
+        ret += QLatin1Char('\0');
       else if(nxt == 'b')
-        ret += '\b';
+        ret += QLatin1Char('\b');
       else if(nxt == 'a')
-        ret += '\a';
+        ret += QLatin1Char('\a');
       else if(nxt == 'x' || nxt == 'X' || nxt == 'u' || nxt == 'U')
       {
         char32_t x = 0;
@@ -285,10 +285,10 @@ QString unescaped(const QByteArray& str)
         ret += QChar::fromUcs4(x);
       }
       else
-        ret += nxt;
+        ret += QLatin1Char(nxt);
     }
     else
-      ret += *i;
+      ret += QLatin1Char(*i);
   }
   return ret;
 }

@@ -172,13 +172,13 @@ void GenerateSerializeVisitorRule::visitVariableDeclaration(Model::VariableDecla
 
     QString ext =
         ( node->mVariableType == Model::VariableDeclarationItem::TypeNode ?
-        "Ast" : "");
+        QStringLiteral("Ast") : QString());
 
     QString type = node->mType + ext;
     QString name = node->mName;
 
     if (node->mVariableType == Model::VariableDeclarationItem::TypeToken)
-      type = "qint64";
+      type = QStringLiteral("qint64");
 
     if (node->mIsSequence)
     {

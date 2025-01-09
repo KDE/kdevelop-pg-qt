@@ -28,10 +28,10 @@ void GenerateNewVisitorBitsRule::operator()(QPair<QString,Model::SymbolItem*> co
   
   if(isOperatorSymbol(__it.second))
   {
-    O("Prefix" + __it.second->mCapitalizedName)
-    O("Postfix" + __it.second->mCapitalizedName)
-    O("Binary" + __it.second->mCapitalizedName)
-    O("Ternary" + __it.second->mCapitalizedName)
+    O(QLatin1String("Prefix") + __it.second->mCapitalizedName)
+    O(QLatin1String("Postfix") + __it.second->mCapitalizedName)
+    O(QLatin1String("Binary") + __it.second->mCapitalizedName)
+    O(QLatin1String("Ternary") + __it.second->mCapitalizedName)
   }
   else if(has_members)
   {

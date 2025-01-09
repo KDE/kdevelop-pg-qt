@@ -46,28 +46,28 @@ template<typename CharSet> class NFA;
 
 inline QString codeForDot(QString str)
 {
-  QString out = "";
+  QString out;
   int pos = 0;
   while(true)
   {
-    int npos = str.indexOf("\n\01!ASIgnore\"!!\n# ", pos);
+    int npos = str.indexOf(QLatin1String("\n\01!ASIgnore\"!!\n# "), pos);
     if(npos == -1)
     {
       out += QStringView(str).mid(pos);
       break;
     }
     out += QStringView(str).mid(pos, npos - pos);
-    int nlpos = str.indexOf('\n', npos + 17);
-    int codeendpos = str.indexOf("\n\01!AS/Ignore\"!!\n", nlpos);
+    int nlpos = str.indexOf(QLatin1Char('\n'), npos + 17);
+    int codeendpos = str.indexOf(QLatin1String("\n\01!AS/Ignore\"!!\n"), nlpos);
     if(nlpos == -1 || codeendpos == -1)
     {
-      out += "<junk>";
+      out += QLatin1String("<junk>");
       break;
     }
     out += QStringView(str).mid(nlpos + 1, codeendpos - nlpos - 1);
     pos = codeendpos + 17;
   }
-  return out.replace('\"', "\\\"").replace('\n', '\t').trimmed();
+  return out.replace(QLatin1Char('\"'), QLatin1String("\\\"")).replace(QLatin1Char('\n'), QLatin1Char('\t')).trimmed();
 }
 
 /**
@@ -99,7 +99,7 @@ public:
       CharSetCondition<CharSet> csc;
       for(size_t i = 0; i != nstates; ++i)
       {
-        str << "\n_state_" + QString::number(i) + ":\n";
+        str << "\n_state_" << QString::number(i) << ":\n";
         if(accept[i])
           str << "lpos = lxCURR_POS; lstate = " << accept[i] << ";\n";
         str << "lxNEXT_CHR(chr); ";

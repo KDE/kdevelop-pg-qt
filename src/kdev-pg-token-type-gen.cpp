@@ -28,7 +28,7 @@ void GenerateToken::operator()(QPair<QString, Model::TerminalItem*> const &__it)
 {
   Model::TerminalItem *t = __it.second;
   out << "Token_" << t->mName << " = ";
-  if(t->mName == "EOF")
+  if(t->mName == QLatin1String("EOF"))
   {
     out << 1000;
   }

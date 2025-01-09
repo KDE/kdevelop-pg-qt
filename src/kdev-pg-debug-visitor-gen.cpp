@@ -108,18 +108,18 @@ void GenerateDebugVisitorRule::operator()(QPair<QString,
   
   if(isOperatorSymbol(sym))
   {
-    O1("Prefix" + sym->mCapitalizedName)
-    O2("prefix-" + sym->mName)
-    O3("Prefix" + sym->mCapitalizedName)
-    O1("Postfix" + sym->mCapitalizedName)
-    O2("postfix-" + sym->mName)
-    O3("Postfix" + sym->mCapitalizedName)
-    O1("Binary" + sym->mCapitalizedName)
-    O2("binary-" + sym->mName)
-    O3("Binary" + sym->mCapitalizedName)
-    O1("Ternary" + sym->mCapitalizedName)
-    O2("ternary-" + sym->mName)
-    O3("Ternary" + sym->mCapitalizedName)
+    O1(QLatin1String("Prefix") + sym->mCapitalizedName)
+    O2(QLatin1String("prefix-") + sym->mName)
+    O3(QLatin1String("Prefix") + sym->mCapitalizedName)
+    O1(QLatin1String("Postfix") + sym->mCapitalizedName)
+    O2(QLatin1String("postfix-") + sym->mName)
+    O3(QLatin1String("Postfix") + sym->mCapitalizedName)
+    O1(QLatin1String("Binary") + sym->mCapitalizedName)
+    O2(QLatin1String("binary-") + sym->mName)
+    O3(QLatin1String("Binary") + sym->mCapitalizedName)
+    O1(QLatin1String("Ternary") + sym->mCapitalizedName)
+    O2(QLatin1String("ternary-") + sym->mName)
+    O3(QLatin1String("Ternary") + sym->mCapitalizedName)
   }
   else
   {
@@ -159,7 +159,7 @@ void GenerateDebugVisitorRule::visitVariableDeclaration(Model::VariableDeclarati
     if (mNames.find(node->mName) != mNames.end())
       break;
 
-    QString base_type = node->mCapitalizedType + "Ast*";
+    QString base_type = node->mCapitalizedType + QLatin1String("Ast*");
 
     if (node->mIsSequence)
       {

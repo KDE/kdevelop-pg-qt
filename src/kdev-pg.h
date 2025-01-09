@@ -104,15 +104,15 @@ public:
   typedef QMap<QString, QString> AstBaseClasses;
 
   World()
-    : tokenStream("KDevPG::TokenStream"), language(), ns(), decl(), bits(),
-      exportMacro(""), exportMacroHeader(), astCode(""), namespaceCode(""),
-      inputStream("KDevPG::QUtf16ToUcs4Iterator"),
+    : tokenStream(QStringLiteral("KDevPG::TokenStream")), language(), ns(), decl(), bits(),
+      exportMacro(), exportMacroHeader(), astCode(), namespaceCode(),
+      inputStream(QStringLiteral("KDevPG::QUtf16ToUcs4Iterator")),
       generateAst(true), hasLexer(false), generateSerializeVisitor(false),
       generateDebugVisitor(false), generateTokenText(false),
       needStateManagement(false), needOperatorStack(false),
       lineNumberPolicy(FullLineNumbers), visitorTable(false),
       conflictHandling(Permissive), mZero(nullptr),
-      lexerBaseClass("KDevPG::TokenStream")
+      lexerBaseClass(QStringLiteral("KDevPG::TokenStream"))
   {}
   
   ~World()

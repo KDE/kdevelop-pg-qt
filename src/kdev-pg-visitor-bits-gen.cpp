@@ -32,13 +32,13 @@ void GenerateVisitorBits::operator()()
         
         if(isOperatorSymbol(sym))
         {
-          O("Prefix" + sym->mCapitalizedName)
+          O(QLatin1String("Prefix") + sym->mCapitalizedName)
           out << ",\n";
-          O("Postfix" + sym->mCapitalizedName)
+          O(QLatin1String("Postfix") + sym->mCapitalizedName)
           out << ",\n";
-          O("Binary" + sym->mCapitalizedName)
+          O(QLatin1String("Binary") + sym->mCapitalizedName)
           out << ",\n";
-          O("Ternary" + sym->mCapitalizedName)
+          O(QLatin1String("Ternary") + sym->mCapitalizedName)
           out << ",\n0";
         }
         else
@@ -72,10 +72,10 @@ void GenerateVisitorBits::operator()()
       
       if(isOperatorSymbol(sym))
         {
-          O("Prefix" + sym->mCapitalizedName)
-          O("Postfix" + sym->mCapitalizedName)
-          O("Binary" + sym->mCapitalizedName)
-          O("Ternary" + sym->mCapitalizedName)
+          O(QLatin1String("Prefix") + sym->mCapitalizedName)
+          O(QLatin1String("Postfix") + sym->mCapitalizedName)
+          O(QLatin1String("Binary") + sym->mCapitalizedName)
+          O(QLatin1String("Ternary") + sym->mCapitalizedName)
         }
       else
         O(sym->mCapitalizedName)

@@ -38,10 +38,10 @@ void GenerateDefaultVisitorRule::operator()(QPair<QString,Model::SymbolItem*> co
   
   if(isOperatorSymbol(sym))
   {
-    O("Prefix" + sym->mCapitalizedName)
-    O("Postfix" + sym->mCapitalizedName)
-    O("Binary" + sym->mCapitalizedName)
-    O("Ternary" + sym->mCapitalizedName)
+    O(QLatin1String("Prefix") + sym->mCapitalizedName)
+    O(QLatin1String("Postfix") + sym->mCapitalizedName)
+    O(QLatin1String("Binary") + sym->mCapitalizedName)
+    O(QLatin1String("Ternary") + sym->mCapitalizedName)
   }
   else
     O(sym->mCapitalizedName)

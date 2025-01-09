@@ -72,7 +72,7 @@ void debugFollowToFollowDep(Model::Node *dest, Model::Node *dep)
 NextFollow::NextFollow(bool &changed)
   : mChanged(changed)
 {
-  Model::TerminalItem *teof = globalSystem.pushTerminal("EOF", "end of file");
+  Model::TerminalItem *teof = globalSystem.pushTerminal(QStringLiteral("EOF"), QStringLiteral("end of file"));
   for(auto i = globalSystem.rules.begin(); i != globalSystem.rules.end(); ++i)
   {
     if(globalSystem.start.contains((*i)->mSymbol))

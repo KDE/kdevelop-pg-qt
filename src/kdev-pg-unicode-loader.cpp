@@ -61,10 +61,11 @@ void standardFormat(const QString fileName)
             name.replace(' ', '_');
             name.replace('-', '_');
             auto toInsert = GNFA::range(start, end+1);
-            if(globalSystem.regexpById[name] == nullptr)
-              globalSystem.regexpById[name] = new GNFA(toInsert);
+            const QString _name = QString::fromUtf8(name);
+            if(globalSystem.regexpById[_name] == nullptr)
+              globalSystem.regexpById[_name] = new GNFA(toInsert);
             else
-              *globalSystem.regexpById[name] |= toInsert;
+              *globalSystem.regexpById[_name] |= toInsert;
           }
           else
           {
@@ -76,10 +77,11 @@ void standardFormat(const QString fileName)
             name.replace(' ', '_');
             name.replace('-', '_');
             auto toInsert = GNFA::character(single);
-            if(globalSystem.regexpById[name] == nullptr)
-              globalSystem.regexpById[name] = new GNFA(toInsert);
+            const QString _name = QString::fromUtf8(name);
+            if(globalSystem.regexpById[_name] == nullptr)
+              globalSystem.regexpById[_name] = new GNFA(toInsert);
             else
-              *globalSystem.regexpById[name] |= toInsert;
+              *globalSystem.regexpById[_name] |= toInsert;
           }
         }
       }
@@ -95,17 +97,17 @@ void loadUnicodeData()
   if(!loaded)
   {
     loaded = true;
-    standardFormat(":/unidata/Blocks.txt");
-    standardFormat(":/unidata/PropList.txt");
-    standardFormat(":/unidata/DerivedCoreProperties.txt");
-    standardFormat(":/unidata/Scripts.txt");
-    standardFormat(":/unidata/ScriptExtensions.txt");
-    standardFormat(":/unidata/DerivedNumericType.txt");
-    globalSystem.regexpById["num"] = new GNFA(*globalSystem.regexpById["numeric"]);
-    *globalSystem.regexpById["num"] |= *globalSystem.regexpById["digit"];
-    *globalSystem.regexpById["num"] |= *globalSystem.regexpById["decimal"];
-    globalSystem.regexpById["ascii-range"] = new GNFA(GNFA::range(0, 0x80));
-    globalSystem.regexpById["latin1-range"] = new GNFA(GNFA::range(0, 0x100));
+    standardFormat(QStringLiteral(":/unidata/Blocks.txt"));
+    standardFormat(QStringLiteral(":/unidata/PropList.txt"));
+    standardFormat(QStringLiteral(":/unidata/DerivedCoreProperties.txt"));
+    standardFormat(QStringLiteral(":/unidata/Scripts.txt"));
+    standardFormat(QStringLiteral(":/unidata/ScriptExtensions.txt"));
+    standardFormat(QStringLiteral(":/unidata/DerivedNumericType.txt"));
+    globalSystem.regexpById[QStringLiteral("num")] = new GNFA(*globalSystem.regexpById[QStringLiteral("numeric")]);
+    *globalSystem.regexpById[QStringLiteral("num")] |= *globalSystem.regexpById[QStringLiteral("digit")];
+    *globalSystem.regexpById[QStringLiteral("num")] |= *globalSystem.regexpById[QStringLiteral("decimal")];
+    globalSystem.regexpById[QStringLiteral("ascii-range")] = new GNFA(GNFA::range(0, 0x80));
+    globalSystem.regexpById[QStringLiteral("latin1-range")] = new GNFA(GNFA::range(0, 0x100));
     // IndicMatraCategory and IndicSyllabicCategory: same format, but should have a prefix, names like “vowel” are confusing when used for Indian vowels only
     // named sequences: other format
   }

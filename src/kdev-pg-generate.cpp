@@ -87,7 +87,7 @@ void generateOutput()
         << Qt::endl;
 
       QString oname = globalSystem.language;
-      oname += "ast.h";
+      oname += QLatin1String("ast.h");
 
       format(s, oname);
     }
@@ -121,7 +121,7 @@ void generateOutput()
         << Qt::endl;
       
       QString oname = globalSystem.language;
-      oname += "ast-fwd.h";
+      oname += QLatin1String("ast-fwd.h");
       
       format(s, oname);
     }
@@ -161,7 +161,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "tokentype.h";
+    oname += QLatin1String("tokentype.h");
 
     format(s, oname);
   }
@@ -192,7 +192,7 @@ void generateOutput()
           << "#include <kdev-pg-allocator.h>" << Qt::endl;
       }
 
-    if (globalSystem.tokenStream == "KDevPG::TokenStream")
+    if (globalSystem.tokenStream == QLatin1String("KDevPG::TokenStream"))
       s << "#include <kdev-pg-token-stream.h>" << Qt::endl;
     
     for (const QString& header : std::as_const(globalSystem.parserDeclarationHeaders))
@@ -221,7 +221,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "parser.h";
+    oname += QLatin1String("parser.h");
 
     format(s, oname);
   }
@@ -259,7 +259,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "visitor.h";
+    oname += QLatin1String("visitor.h");
 
     format(s, oname);
   }
@@ -297,7 +297,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "defaultvisitor.h";
+    oname += QLatin1String("defaultvisitor.h");
 
     format(s, oname);
   }
@@ -339,7 +339,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "serializevisitor.h";
+    oname += QLatin1String("serializevisitor.h");
 
     format(s, oname);
   }
@@ -383,7 +383,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "debugvisitor.h";
+    oname += QLatin1String("debugvisitor.h");
 
     format(s, oname);
   }
@@ -421,7 +421,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "tokentext.h";
+    oname += QLatin1String("tokentext.h");
 
     format(s, oname);
   }
@@ -460,7 +460,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "parser.cpp";
+    oname += QLatin1String("parser.cpp");
 
     format(s, oname);
   }
@@ -489,7 +489,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "visitor.cpp";
+    oname += QLatin1String("visitor.cpp");
 
     format(s, oname);
   }
@@ -521,7 +521,7 @@ void generateOutput()
       << Qt::endl;
 
     QString oname = globalSystem.language;
-    oname += "defaultvisitor.cpp";
+    oname += QLatin1String("defaultvisitor.cpp");
 
     format(s, oname);
   }
@@ -558,7 +558,7 @@ void generateLexer()
       << Qt::endl
       
       << "class " << globalSystem.exportMacro << " " << globalSystem.tokenStream << " : " 
-      << (globalSystem.lexerBaseClass.isEmpty() ? QString() : " public " + globalSystem.lexerBaseClass + ",")
+      << (globalSystem.lexerBaseClass.isEmpty() ? QString() : QLatin1String(" public ") + globalSystem.lexerBaseClass + QLatin1Char(','))
       << "public " << globalSystem.inputStream << ","
       << "public TokenTypeWrapper" << Qt::endl
       << "{" << Qt::endl
@@ -621,7 +621,7 @@ void generateLexer()
       << Qt::endl;
       
     QString oname = globalSystem.language;
-    oname += "lexer.h";
+    oname += QLatin1String("lexer.h");
         
     format(s, oname);
     
@@ -724,7 +724,7 @@ void generateLexer()
       for (const auto &[state, _] : std::as_const(globalSystem.lexerEnvs).asKeyValueRange())
       {
         s << "#define CURRENT_RULE_SET " << state << Qt::endl;
-        LEXER_CORE_IMPL("lex" + KDevPG::capitalized(state), state, "")
+        LEXER_CORE_IMPL(QLatin1String("lex") + KDevPG::capitalized(state), state, "")
         s << "#undef CURRENT_RULE_SET" << Qt::endl;
       }
       s << globalSystem.tokenStream << "::Base::Token& " << globalSystem.tokenStream
@@ -735,7 +735,7 @@ void generateLexer()
     }
     else
     {
-      LEXER_CORE_IMPL("read", "start", "if(Base::index() < Base::size())\nreturn Base::read();\n")
+      LEXER_CORE_IMPL("read", QStringLiteral("start"), "if(Base::index() < Base::size())\nreturn Base::read();\n")
     }
     
     s << globalSystem.lexerBits << Qt::endl;
@@ -762,7 +762,7 @@ void generateLexer()
     s << "} // end of namespace " << globalSystem.ns << Qt::endl << Qt::endl;
     
     QString oname = globalSystem.language;
-    oname += "lexer.cpp";
+    oname += QLatin1String("lexer.cpp");
         
     format(s, oname);
   }
@@ -817,7 +817,7 @@ void generateVisitor(const QString& name, bool inherit_default)
       << Qt::endl;
         
     QString oname = globalSystem.language;
-    oname += name.toLower() + ".h";
+    oname += name.toLower() + QLatin1String(".h");
     
     format(s, oname);
   }
@@ -856,7 +856,7 @@ void generateVisitor(const QString& name, bool inherit_default)
       << Qt::endl;
     
     QString oname = globalSystem.language;
-    oname += name.toLower() + ".cpp";
+    oname += name.toLower() + QLatin1String(".cpp");
 
     format(s, oname);
   }

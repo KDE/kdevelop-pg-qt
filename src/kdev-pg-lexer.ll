@@ -448,7 +448,7 @@ void yyerror(const char* msg )
   KDevPG::checkOut << yyTextLine;
 
   /* print a ^ under the most recent token */
-  KDevPG::checkOut << QString(currentOffset, ' ').append('^') << Qt::endl; /* currentOffset spaces, then ^ */
+  KDevPG::checkOut << QString(currentOffset, QLatin1Char(' ')).append(QLatin1Char('^')) << Qt::endl; /* currentOffset spaces, then ^ */
 
   exit(EXIT_FAILURE);
 }

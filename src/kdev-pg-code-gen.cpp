@@ -123,7 +123,7 @@ namespace KDevPG
         out << "{ goto __catch_" << catch_id << "; }" << Qt::endl;
       }
 
-    return __var;
+    return QString::fromUtf8(__var);
   }
 
   void generateTokenTest(Model::TerminalItem *node, int catch_id, QTextStream& out)
@@ -439,10 +439,10 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
           QString target;
 
           if (node->mDeclaration->mStorageType == Model::VariableDeclarationItem::StorageAstMember)
-            target += "(*yynode)->";
+            target += QLatin1String("(*yynode)->");
 
           target += node->mDeclaration->mName;
-          target += "Sequence";
+          target += QLatin1String("Sequence");
 
           out << target << " = snoc(" << target << ", "
               << "tokenStream->index() - 1, memoryPool);" << Qt::endl
@@ -522,13 +522,13 @@ void CodeGenerator::visitAnnotation(Model::AnnotationItem *node)
 
       QString target;
       if (node->mDeclaration->mStorageType == Model::VariableDeclarationItem::StorageAstMember)
-        target += "(*yynode)->";
+        target += QLatin1String("(*yynode)->");
 
       target += node->mDeclaration->mName;
 
       if (node->mDeclaration->mIsSequence)
         {
-          target += "Sequence";
+          target += QLatin1String("Sequence");
 
           out << target << " = " << "snoc(" << target << ", "
               << __var << ", memoryPool);" << Qt::endl
@@ -551,9 +551,9 @@ void CodeGenerator::visitOperator(Model::OperatorItem *node)
       << "if(expectOperator) {"
       << " ";
   const QString capNode = capitalized(node->mName);
-  const QString nodeType = capNode + "Ast";
+  const QString nodeType = capNode + QLatin1String("Ast");
   const QString baseNameC = node->mBase->mSymbol->mCapitalizedName;
-  const QString baseType = baseNameC + "Ast";
+  const QString baseType = baseNameC + QLatin1String("Ast");
   Model::NonTerminalItem ntItem;
   ntItem.mSymbol = mSym;
   ntItem.kind = Model::NodeKindNonTerminal;
@@ -910,7 +910,7 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
            && node->mDeclarationType == Model::VariableDeclarationItem::DeclarationArgument
            && globalSystem.generateAst)
     {
-      QString sequence_suffix = (node->mIsSequence) ? "Sequence" : "";
+      QString sequence_suffix = (node->mIsSequence) ? QStringLiteral("Sequence") : QString();
 
       out << "(*yynode)->" << node->mName << sequence_suffix << " = "
           << node->mName << sequence_suffix << ";" << Qt::endl;
@@ -919,10 +919,10 @@ void GenerateLocalDeclarations::visitVariableDeclaration(Model::VariableDeclarat
         {
           QString argument_startToken = node->mName;
           if (node->mIsSequence)
-            argument_startToken += "Sequence->front()->element";
+            argument_startToken += QLatin1String("Sequence->front()->element");
 
           if (node->mVariableType == Model::VariableDeclarationItem::TypeNode)
-            argument_startToken += "->startToken";
+            argument_startToken += QLatin1String("->startToken");
 
           out << "if (";
 
@@ -1243,7 +1243,7 @@ void GenerateTokenTexts::operator()()
     Model::TerminalItem* t = *it;
     out << "    case TokenTypeWrapper::Token_" << t->mName << ":" << Qt::endl;
     QString text = t->mDescription;
-    text.replace('\\', "\\\\").replace('"', "\\\"");
+    text.replace(QLatin1Char('\\'), QLatin1String("\\\\")).replace(QLatin1Char('"'), QLatin1String("\\\""));
     out << "        return QStringLiteral(\"" <<  text << "\");" << Qt::endl;
   }
   out << "    default:" << Qt::endl;

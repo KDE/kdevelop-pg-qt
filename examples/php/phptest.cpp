@@ -54,7 +54,7 @@ int main()
   }
   lex.rewind(0);
   cout << "blub" << endl;
-  Php::DebugVisitor vis(&lex, QString(qcode));
+  Php::DebugVisitor vis(&lex, QString::fromUtf8(qcode));
   vis.visitStart(root);
   while(true)
   {

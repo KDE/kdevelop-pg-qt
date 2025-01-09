@@ -51,7 +51,7 @@ inline void printChar(QTextStream& o, uint x)
   else if(x >= 32 && x <= 126)
     o << '\'' << (char)x << '\'';
   else
-    o << Qt::hex << "\\" << qSetFieldWidth(2) << qSetPadChar('0') << x;
+    o << Qt::hex << "\\" << qSetFieldWidth(2) << qSetPadChar(QLatin1Char('0')) << x;
   o.setPadChar(pad);
   o.setFieldWidth(width);
   o.setIntegerBase(base);

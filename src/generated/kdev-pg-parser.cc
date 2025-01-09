@@ -1,14 +1,18 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-    SPDX-FileCopyrightText: 1984, 1989-1990, 2000-2011 Free Software Foundation Inc.
+    SPDX-FileCopyrightText: 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation, Inc.
 
     SPDX-License-Identifier: GPL-3.0-or-later WITH Bison-exception-2.2
 */
 
 /* C LALR(1) parser skeleton written by Richard Stallman, by
    simplifying the original so-called "semantic" parser.  */
+
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 /* All symbols defined below should begin with yy or YY, to avoid
    infringing on user name space.  This should be done even for local
@@ -17,11 +21,11 @@
    define necessary library symbols; they are noted "INFRINGES ON
    USER NAME SPACE" below.  */
 
-/* Identify Bison output.  */
-#define YYBISON 1
+/* Identify Bison output, and Bison version.  */
+#define YYBISON 30802
 
-/* Bison version.  */
-#define YYBISON_VERSION "2.5"
+/* Bison version string.  */
+#define YYBISON_VERSION "3.8.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -35,15 +39,11 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
-/* Using locations.  */
-#define YYLSP_NEEDED 0
 
 
 
-/* Copy the first part of user declarations.  */
-
-/* Line 268 of yacc.c  */
-#line 2 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
+/* First part of user prologue.  */
+#line 2 "kdev-pg-parser.yy"
 
 /*
     SPDX-FileCopyrightText: 2005 Roberto Raggi <roberto@kdevelop.org>
@@ -73,172 +73,278 @@ namespace KDevPG
     extern QTextStream checkOut;
 }
 
-KDevPG::Model::OperatorItem *operatorNode = 0;
+KDevPG::Model::OperatorItem *operatorNode = nullptr;
 QString r;
 
 
+#line 105 "kdev-pg-parser.cc"
 
-/* Line 268 of yacc.c  */
-#line 119 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
+# ifndef YY_CAST
+#  ifdef __cplusplus
+#   define YY_CAST(Type, Val) static_cast<Type> (Val)
+#   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
+#  else
+#   define YY_CAST(Type, Val) ((Type) (Val))
+#   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
+#  endif
+# endif
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
 
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-
-/* Enabling verbose error messages.  */
-#ifdef YYERROR_VERBOSE
-# undef YYERROR_VERBOSE
-# define YYERROR_VERBOSE 1
-#else
-# define YYERROR_VERBOSE 0
-#endif
-
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
-#endif
-
-
-/* Tokens.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     T_IDENTIFIER = 258,
-     T_ARROW = 259,
-     T_TERMINAL = 260,
-     T_CODE = 261,
-     T_STRING = 262,
-     T_UNQUOTED_STRING = 263,
-     T_NUMBER = 264,
-     T_TOKEN_DECLARATION = 265,
-     T_TOKEN_STREAM_DECLARATION = 266,
-     T_NAMESPACE_DECLARATION = 267,
-     T_PARSERCLASS_DECLARATION = 268,
-     T_LEXERCLASS_DECLARATION = 269,
-     T_PUBLIC = 270,
-     T_PRIVATE = 271,
-     T_PROTECTED = 272,
-     T_DECLARATION = 273,
-     T_BITS = 274,
-     T_CONSTRUCTOR = 275,
-     T_DESTRUCTOR = 276,
-     T_TRY_RECOVER = 277,
-     T_TRY_ROLLBACK = 278,
-     T_CATCH = 279,
-     T_RULE_ARGUMENTS = 280,
-     T_MEMBER = 281,
-     T_TEMPORARY = 282,
-     T_ARGUMENT = 283,
-     T_EXPORT_MACRO = 284,
-     T_NODE = 285,
-     T_NODE_SEQUENCE = 286,
-     T_TOKEN = 287,
-     T_VARIABLE = 288,
-     T_EXPORT_MACRO_HEADER = 289,
-     T_AST_DECLARATION = 290,
-     T_PARSER_DECLARATION_HEADER = 291,
-     T_PARSER_BITS_HEADER = 292,
-     T_AST_HEADER = 293,
-     T_LEXER_DECLARATION_HEADER = 294,
-     T_LEXER_BITS_HEADER = 295,
-     T_PARSER_BASE = 296,
-     T_AST_BASE = 297,
-     T_LEXER_BASE = 298,
-     T_BIN = 299,
-     T_PRE = 300,
-     T_POST = 301,
-     T_TERN = 302,
-     T_LOPR = 303,
-     T_ROPR = 304,
-     T_LEFT_ASSOC = 305,
-     T_RIGHT_ASSOC = 306,
-     T_IS_LEFT_ASSOC = 307,
-     T_IS_RIGHT_ASSOC = 308,
-     T_PRIORITY = 309,
-     T_PAREN = 310,
-     T_INLINE = 311,
-     T_LEXER = 312,
-     T_INPUT_STREAM = 313,
-     T_INPUT_ENCODING = 314,
-     T_TABLE_LEXER = 315,
-     T_SEQUENCE_LEXER = 316,
-     T_NAMED_REGEXP = 317,
-     T_CONTINUE = 318,
-     T_RANGE = 319,
-     T_FAIL = 320,
-     T_LOOKAHEAD = 321,
-     T_BARRIER = 322,
-     T_ENTER_RULE_SET = 323,
-     T_LEAVE_RULE_SET = 324
-   };
-#endif
-
-
-
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
+#include "kdev-pg-parser.hh"
+/* Symbol kind.  */
+enum yysymbol_kind_t
 {
+  YYSYMBOL_YYEMPTY = -2,
+  YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
+  YYSYMBOL_YYerror = 1,                    /* error  */
+  YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
+  YYSYMBOL_T_IDENTIFIER = 3,               /* T_IDENTIFIER  */
+  YYSYMBOL_T_ARROW = 4,                    /* T_ARROW  */
+  YYSYMBOL_T_TERMINAL = 5,                 /* T_TERMINAL  */
+  YYSYMBOL_T_CODE = 6,                     /* T_CODE  */
+  YYSYMBOL_T_STRING = 7,                   /* T_STRING  */
+  YYSYMBOL_T_UNQUOTED_STRING = 8,          /* T_UNQUOTED_STRING  */
+  YYSYMBOL_T_NUMBER = 9,                   /* T_NUMBER  */
+  YYSYMBOL_10_ = 10,                       /* ';'  */
+  YYSYMBOL_T_TOKEN_DECLARATION = 11,       /* T_TOKEN_DECLARATION  */
+  YYSYMBOL_T_TOKEN_STREAM_DECLARATION = 12, /* T_TOKEN_STREAM_DECLARATION  */
+  YYSYMBOL_T_NAMESPACE_DECLARATION = 13,   /* T_NAMESPACE_DECLARATION  */
+  YYSYMBOL_T_PARSERCLASS_DECLARATION = 14, /* T_PARSERCLASS_DECLARATION  */
+  YYSYMBOL_T_LEXERCLASS_DECLARATION = 15,  /* T_LEXERCLASS_DECLARATION  */
+  YYSYMBOL_T_PUBLIC = 16,                  /* T_PUBLIC  */
+  YYSYMBOL_T_PRIVATE = 17,                 /* T_PRIVATE  */
+  YYSYMBOL_T_PROTECTED = 18,               /* T_PROTECTED  */
+  YYSYMBOL_T_DECLARATION = 19,             /* T_DECLARATION  */
+  YYSYMBOL_T_BITS = 20,                    /* T_BITS  */
+  YYSYMBOL_T_CONSTRUCTOR = 21,             /* T_CONSTRUCTOR  */
+  YYSYMBOL_T_DESTRUCTOR = 22,              /* T_DESTRUCTOR  */
+  YYSYMBOL_T_TRY_RECOVER = 23,             /* T_TRY_RECOVER  */
+  YYSYMBOL_T_TRY_ROLLBACK = 24,            /* T_TRY_ROLLBACK  */
+  YYSYMBOL_T_CATCH = 25,                   /* T_CATCH  */
+  YYSYMBOL_T_RULE_ARGUMENTS = 26,          /* T_RULE_ARGUMENTS  */
+  YYSYMBOL_T_MEMBER = 27,                  /* T_MEMBER  */
+  YYSYMBOL_T_TEMPORARY = 28,               /* T_TEMPORARY  */
+  YYSYMBOL_T_ARGUMENT = 29,                /* T_ARGUMENT  */
+  YYSYMBOL_T_EXPORT_MACRO = 30,            /* T_EXPORT_MACRO  */
+  YYSYMBOL_T_NODE = 31,                    /* T_NODE  */
+  YYSYMBOL_T_NODE_SEQUENCE = 32,           /* T_NODE_SEQUENCE  */
+  YYSYMBOL_T_TOKEN = 33,                   /* T_TOKEN  */
+  YYSYMBOL_T_VARIABLE = 34,                /* T_VARIABLE  */
+  YYSYMBOL_T_EXPORT_MACRO_HEADER = 35,     /* T_EXPORT_MACRO_HEADER  */
+  YYSYMBOL_T_AST_DECLARATION = 36,         /* T_AST_DECLARATION  */
+  YYSYMBOL_T_PARSER_DECLARATION_HEADER = 37, /* T_PARSER_DECLARATION_HEADER  */
+  YYSYMBOL_T_PARSER_BITS_HEADER = 38,      /* T_PARSER_BITS_HEADER  */
+  YYSYMBOL_T_AST_HEADER = 39,              /* T_AST_HEADER  */
+  YYSYMBOL_T_LEXER_DECLARATION_HEADER = 40, /* T_LEXER_DECLARATION_HEADER  */
+  YYSYMBOL_T_LEXER_BITS_HEADER = 41,       /* T_LEXER_BITS_HEADER  */
+  YYSYMBOL_T_PARSER_BASE = 42,             /* T_PARSER_BASE  */
+  YYSYMBOL_T_AST_BASE = 43,                /* T_AST_BASE  */
+  YYSYMBOL_T_LEXER_BASE = 44,              /* T_LEXER_BASE  */
+  YYSYMBOL_T_BIN = 45,                     /* T_BIN  */
+  YYSYMBOL_T_PRE = 46,                     /* T_PRE  */
+  YYSYMBOL_T_POST = 47,                    /* T_POST  */
+  YYSYMBOL_T_TERN = 48,                    /* T_TERN  */
+  YYSYMBOL_T_LOPR = 49,                    /* T_LOPR  */
+  YYSYMBOL_T_ROPR = 50,                    /* T_ROPR  */
+  YYSYMBOL_T_LEFT_ASSOC = 51,              /* T_LEFT_ASSOC  */
+  YYSYMBOL_T_RIGHT_ASSOC = 52,             /* T_RIGHT_ASSOC  */
+  YYSYMBOL_T_IS_LEFT_ASSOC = 53,           /* T_IS_LEFT_ASSOC  */
+  YYSYMBOL_T_IS_RIGHT_ASSOC = 54,          /* T_IS_RIGHT_ASSOC  */
+  YYSYMBOL_T_PRIORITY = 55,                /* T_PRIORITY  */
+  YYSYMBOL_T_PAREN = 56,                   /* T_PAREN  */
+  YYSYMBOL_T_INLINE = 57,                  /* T_INLINE  */
+  YYSYMBOL_T_LEXER = 58,                   /* T_LEXER  */
+  YYSYMBOL_T_INPUT_STREAM = 59,            /* T_INPUT_STREAM  */
+  YYSYMBOL_T_INPUT_ENCODING = 60,          /* T_INPUT_ENCODING  */
+  YYSYMBOL_T_TABLE_LEXER = 61,             /* T_TABLE_LEXER  */
+  YYSYMBOL_T_SEQUENCE_LEXER = 62,          /* T_SEQUENCE_LEXER  */
+  YYSYMBOL_T_NAMED_REGEXP = 63,            /* T_NAMED_REGEXP  */
+  YYSYMBOL_T_CONTINUE = 64,                /* T_CONTINUE  */
+  YYSYMBOL_T_RANGE = 65,                   /* T_RANGE  */
+  YYSYMBOL_T_FAIL = 66,                    /* T_FAIL  */
+  YYSYMBOL_T_LOOKAHEAD = 67,               /* T_LOOKAHEAD  */
+  YYSYMBOL_T_BARRIER = 68,                 /* T_BARRIER  */
+  YYSYMBOL_T_ENTER_RULE_SET = 69,          /* T_ENTER_RULE_SET  */
+  YYSYMBOL_T_LEAVE_RULE_SET = 70,          /* T_LEAVE_RULE_SET  */
+  YYSYMBOL_71_ = 71,                       /* '('  */
+  YYSYMBOL_72_ = 72,                       /* ')'  */
+  YYSYMBOL_73_ = 73,                       /* '|'  */
+  YYSYMBOL_74_ = 74,                       /* '&'  */
+  YYSYMBOL_75_ = 75,                       /* '^'  */
+  YYSYMBOL_76_ = 76,                       /* '~'  */
+  YYSYMBOL_77_ = 77,                       /* '?'  */
+  YYSYMBOL_78_ = 78,                       /* '@'  */
+  YYSYMBOL_79_ = 79,                       /* '*'  */
+  YYSYMBOL_80_ = 80,                       /* '+'  */
+  YYSYMBOL_81_ = 81,                       /* '['  */
+  YYSYMBOL_82_ = 82,                       /* ']'  */
+  YYSYMBOL_83_ = 83,                       /* '.'  */
+  YYSYMBOL_84_ = 84,                       /* ','  */
+  YYSYMBOL_85_0_ = 85,                     /* '0'  */
+  YYSYMBOL_86_ = 86,                       /* '#'  */
+  YYSYMBOL_87_ = 87,                       /* '='  */
+  YYSYMBOL_88_ = 88,                       /* ':'  */
+  YYSYMBOL_YYACCEPT = 89,                  /* $accept  */
+  YYSYMBOL_system = 90,                    /* system  */
+  YYSYMBOL_91_1 = 91,                      /* $@1  */
+  YYSYMBOL_declarations = 92,              /* declarations  */
+  YYSYMBOL_declaration = 93,               /* declaration  */
+  YYSYMBOL_94_2 = 94,                      /* $@2  */
+  YYSYMBOL_95_3 = 95,                      /* $@3  */
+  YYSYMBOL_lexer_declaration_rest = 96,    /* lexer_declaration_rest  */
+  YYSYMBOL_97_4 = 97,                      /* $@4  */
+  YYSYMBOL_98_5 = 98,                      /* $@5  */
+  YYSYMBOL_99_6 = 99,                      /* $@6  */
+  YYSYMBOL_100_7 = 100,                    /* $@7  */
+  YYSYMBOL_101_8 = 101,                    /* $@8  */
+  YYSYMBOL_102_9 = 102,                    /* $@9  */
+  YYSYMBOL_103_10 = 103,                   /* $@10  */
+  YYSYMBOL_opt_lexer_action = 104,         /* opt_lexer_action  */
+  YYSYMBOL_regexp = 105,                   /* regexp  */
+  YYSYMBOL_regexp1 = 106,                  /* regexp1  */
+  YYSYMBOL_regexp2 = 107,                  /* regexp2  */
+  YYSYMBOL_regexp3 = 108,                  /* regexp3  */
+  YYSYMBOL_regexp4 = 109,                  /* regexp4  */
+  YYSYMBOL_regexp5 = 110,                  /* regexp5  */
+  YYSYMBOL_regexp6 = 111,                  /* regexp6  */
+  YYSYMBOL_regexp7 = 112,                  /* regexp7  */
+  YYSYMBOL_aregexp = 113,                  /* aregexp  */
+  YYSYMBOL_aregexp1 = 114,                 /* aregexp1  */
+  YYSYMBOL_aregexp2 = 115,                 /* aregexp2  */
+  YYSYMBOL_aregexp3 = 116,                 /* aregexp3  */
+  YYSYMBOL_aregexp4 = 117,                 /* aregexp4  */
+  YYSYMBOL_aregexp5 = 118,                 /* aregexp5  */
+  YYSYMBOL_aregexp6 = 119,                 /* aregexp6  */
+  YYSYMBOL_aregexp7 = 120,                 /* aregexp7  */
+  YYSYMBOL_member_declaration_rest = 121,  /* member_declaration_rest  */
+  YYSYMBOL_declared_tokens = 122,          /* declared_tokens  */
+  YYSYMBOL_rules = 123,                    /* rules  */
+  YYSYMBOL_primary_item = 124,             /* primary_item  */
+  YYSYMBOL_primary_atom = 125,             /* primary_atom  */
+  YYSYMBOL_try_item = 126,                 /* try_item  */
+  YYSYMBOL_rule_arguments_opt = 127,       /* rule_arguments_opt  */
+  YYSYMBOL_name = 128,                     /* name  */
+  YYSYMBOL_scope = 129,                    /* scope  */
+  YYSYMBOL_unary_item = 130,               /* unary_item  */
+  YYSYMBOL_postfix_item = 131,             /* postfix_item  */
+  YYSYMBOL_item_sequence = 132,            /* item_sequence  */
+  YYSYMBOL_conditional_item = 133,         /* conditional_item  */
+  YYSYMBOL_option_item = 134,              /* option_item  */
+  YYSYMBOL_item = 135,                     /* item  */
+  YYSYMBOL_136_11 = 136,                   /* $@11  */
+  YYSYMBOL_code_opt = 137,                 /* code_opt  */
+  YYSYMBOL_operatorDeclarations = 138,     /* operatorDeclarations  */
+  YYSYMBOL_operatorRule = 139,             /* operatorRule  */
+  YYSYMBOL_operatorDeclaration = 140,      /* operatorDeclaration  */
+  YYSYMBOL_priority = 141,                 /* priority  */
+  YYSYMBOL_assoc = 142,                    /* assoc  */
+  YYSYMBOL_operator = 143,                 /* operator  */
+  YYSYMBOL_variableDeclarations = 144,     /* variableDeclarations  */
+  YYSYMBOL_variableDeclaration = 145,      /* variableDeclaration  */
+  YYSYMBOL_declarationType_opt = 146,      /* declarationType_opt  */
+  YYSYMBOL_storageType = 147,              /* storageType  */
+  YYSYMBOL_variableType = 148              /* variableType  */
+};
+typedef enum yysymbol_kind_t yysymbol_kind_t;
 
-/* Line 293 of yacc.c  */
-#line 49 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-
-    KDevPG::Model::Node *item;
-    char* str;
-    KDevPG::Model::VariableDeclarationItem::DeclarationType declarationType;
-    KDevPG::Model::VariableDeclarationItem::StorageType     storageType;
-    KDevPG::Model::VariableDeclarationItem::VariableType    variableType;
-    KDevPG::Model::Operator                                *operatorInformation;
-    KDevPG::GNFA                                           *nfa;
 
 
-
-/* Line 293 of yacc.c  */
-#line 236 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
-} YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
-#endif
-
-
-/* Copy the second part of user declarations.  */
-
-
-/* Line 343 of yacc.c  */
-#line 248 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
 
 #ifdef short
 # undef short
 #endif
 
-#ifdef YYTYPE_UINT8
-typedef YYTYPE_UINT8 yytype_uint8;
-#else
-typedef unsigned char yytype_uint8;
+/* On compilers that do not define __PTRDIFF_MAX__ etc., make sure
+   <limits.h> and (if available) <stdint.h> are included
+   so that the code can choose integer types of a good width.  */
+
+#ifndef __PTRDIFF_MAX__
+# include <limits.h> /* INFRINGES ON USER NAME SPACE */
+# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+#  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
+#  define YY_STDINT_H
+# endif
 #endif
 
-#ifdef YYTYPE_INT8
-typedef YYTYPE_INT8 yytype_int8;
-#elif (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+/* Narrow types that promote to a signed type and that can represent a
+   signed or unsigned integer of at least N bits.  In tables they can
+   save space and decrease cache pressure.  Promoting to a signed type
+   helps avoid bugs in integer arithmetic.  */
+
+#ifdef __INT_LEAST8_MAX__
+typedef __INT_LEAST8_TYPE__ yytype_int8;
+#elif defined YY_STDINT_H
+typedef int_least8_t yytype_int8;
+#else
 typedef signed char yytype_int8;
-#else
-typedef short int yytype_int8;
 #endif
 
-#ifdef YYTYPE_UINT16
-typedef YYTYPE_UINT16 yytype_uint16;
+#ifdef __INT_LEAST16_MAX__
+typedef __INT_LEAST16_TYPE__ yytype_int16;
+#elif defined YY_STDINT_H
+typedef int_least16_t yytype_int16;
 #else
-typedef unsigned short int yytype_uint16;
+typedef short yytype_int16;
 #endif
 
-#ifdef YYTYPE_INT16
-typedef YYTYPE_INT16 yytype_int16;
+/* Work around bug in HP-UX 11.23, which defines these macros
+   incorrectly for preprocessor constants.  This workaround can likely
+   be removed in 2023, as HPE has promised support for HP-UX 11.23
+   (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
+   <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
+#ifdef __hpux
+# undef UINT_LEAST8_MAX
+# undef UINT_LEAST16_MAX
+# define UINT_LEAST8_MAX 255
+# define UINT_LEAST16_MAX 65535
+#endif
+
+#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST8_TYPE__ yytype_uint8;
+#elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST8_MAX <= INT_MAX)
+typedef uint_least8_t yytype_uint8;
+#elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
+typedef unsigned char yytype_uint8;
 #else
-typedef short int yytype_int16;
+typedef short yytype_uint8;
+#endif
+
+#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST16_TYPE__ yytype_uint16;
+#elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST16_MAX <= INT_MAX)
+typedef uint_least16_t yytype_uint16;
+#elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
+typedef unsigned short yytype_uint16;
+#else
+typedef int yytype_uint16;
+#endif
+
+#ifndef YYPTRDIFF_T
+# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+#  define YYPTRDIFF_T __PTRDIFF_TYPE__
+#  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
+# elif defined PTRDIFF_MAX
+#  ifndef ptrdiff_t
+#   include <stddef.h> /* INFRINGES ON USER NAME SPACE */
+#  endif
+#  define YYPTRDIFF_T ptrdiff_t
+#  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
+# else
+#  define YYPTRDIFF_T long
+#  define YYPTRDIFF_MAXIMUM LONG_MAX
+# endif
 #endif
 
 #ifndef YYSIZE_T
@@ -246,55 +352,106 @@ typedef short int yytype_int16;
 #  define YYSIZE_T __SIZE_TYPE__
 # elif defined size_t
 #  define YYSIZE_T size_t
-# elif ! defined YYSIZE_T && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+# elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
 # else
-#  define YYSIZE_T unsigned int
+#  define YYSIZE_T unsigned
 # endif
 #endif
 
-#define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
+#define YYSIZE_MAXIMUM                                  \
+  YY_CAST (YYPTRDIFF_T,                                 \
+           (YYPTRDIFF_MAXIMUM < YY_CAST (YYSIZE_T, -1)  \
+            ? YYPTRDIFF_MAXIMUM                         \
+            : YY_CAST (YYSIZE_T, -1)))
+
+#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, sizeof (X))
+
+
+/* Stored state numbers (used for stacks). */
+typedef yytype_int16 yy_state_t;
+
+/* State numbers in computations.  */
+typedef int yy_state_fast_t;
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
-#   define YY_(msgid) dgettext ("bison-runtime", msgid)
+#   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
 # endif
 # ifndef YY_
-#  define YY_(msgid) msgid
+#  define YY_(Msgid) Msgid
+# endif
+#endif
+
+
+#ifndef YY_ATTRIBUTE_PURE
+# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
+# else
+#  define YY_ATTRIBUTE_PURE
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
+# else
+#  define YY_ATTRIBUTE_UNUSED
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(e) ((void) (e))
+# define YY_USE(E) ((void) (E))
 #else
-# define YYUSE(e) /* empty */
+# define YY_USE(E) /* empty */
 #endif
 
-/* Identity function, used to suppress warnings about constant conditions.  */
-#ifndef lint
-# define YYID(n) (n)
+/* Suppress an incorrect diagnostic about yylval being uninitialized.  */
+#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
+# else
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
+    _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+# endif
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
+    _Pragma ("GCC diagnostic pop")
 #else
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static int
-YYID (int yyi)
-#else
-static int
-YYID (yyi)
-    int yyi;
+# define YY_INITIAL_VALUE(Value) Value
 #endif
-{
-  return yyi;
-}
+#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END
+#endif
+#ifndef YY_INITIAL_VALUE
+# define YY_INITIAL_VALUE(Value) /* Nothing. */
 #endif
 
-#if ! defined yyoverflow || YYERROR_VERBOSE
+#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+# define YY_IGNORE_USELESS_CAST_BEGIN                          \
+    _Pragma ("GCC diagnostic push")                            \
+    _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
+# define YY_IGNORE_USELESS_CAST_END            \
+    _Pragma ("GCC diagnostic pop")
+#endif
+#ifndef YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_END
+#endif
+
+
+#define YY_ASSERT(E) ((void) (0 && (E)))
+
+#if !defined yyoverflow
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
 
@@ -311,9 +468,9 @@ YYID (yyi)
 #    define alloca _alloca
 #   else
 #    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
+      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
 #      define EXIT_SUCCESS 0
 #     endif
@@ -323,8 +480,8 @@ YYID (yyi)
 # endif
 
 # ifdef YYSTACK_ALLOC
-   /* Pacify GCC's `empty if-body' warning.  */
-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (YYID (0))
+   /* Pacify GCC's 'empty if-body' warning.  */
+#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
     /* The OS might guarantee only one guard page at the bottom of the stack,
        and a page size can be as small as 4096 bytes.  So we cannot safely
@@ -340,7 +497,7 @@ YYID (yyi)
 #  endif
 #  if (defined __cplusplus && ! defined EXIT_SUCCESS \
        && ! ((defined YYMALLOC || defined malloc) \
-	     && (defined YYFREE || defined free)))
+             && (defined YYFREE || defined free)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
 #   ifndef EXIT_SUCCESS
 #    define EXIT_SUCCESS 0
@@ -348,40 +505,37 @@ YYID (yyi)
 #  endif
 #  ifndef YYMALLOC
 #   define YYMALLOC malloc
-#   if ! defined malloc && ! defined EXIT_SUCCESS && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#   if ! defined malloc && ! defined EXIT_SUCCESS
 void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 #  ifndef YYFREE
 #   define YYFREE free
-#   if ! defined free && ! defined EXIT_SUCCESS && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#   if ! defined free && ! defined EXIT_SUCCESS
 void free (void *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
-#endif /* ! defined yyoverflow || YYERROR_VERBOSE */
-
+#endif /* !defined yyoverflow */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-	 || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
-  yytype_int16 yyss_alloc;
+  yy_state_t yyss_alloc;
   YYSTYPE yyvs_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
-# define YYSTACK_GAP_MAXIMUM (sizeof (union yyalloc) - 1)
+# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (union yyalloc) - 1)
 
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE)) \
+     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
       + YYSTACK_GAP_MAXIMUM)
 
 # define YYCOPY_NEEDED 1
@@ -391,35 +545,35 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack_alloc, Stack)				\
-    do									\
-      {									\
-	YYSIZE_T yynewbytes;						\
-	YYCOPY (&yyptr->Stack_alloc, Stack, yysize);			\
-	Stack = &yyptr->Stack_alloc;					\
-	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-	yyptr += yynewbytes / sizeof (*yyptr);				\
-      }									\
-    while (YYID (0))
+# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
+    do                                                                  \
+      {                                                                 \
+        YYPTRDIFF_T yynewbytes;                                         \
+        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
+        Stack = &yyptr->Stack_alloc;                                    \
+        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
+      }                                                                 \
+    while (0)
 
 #endif
 
 #if defined YYCOPY_NEEDED && YYCOPY_NEEDED
-/* Copy COUNT objects from FROM to TO.  The source and destination do
+/* Copy COUNT objects from SRC to DST.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
 #  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(To, From, Count) \
-      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
+#   define YYCOPY(Dst, Src, Count) \
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
 #  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  YYSIZE_T yyi;				\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
-      while (YYID (0))
+#   define YYCOPY(Dst, Src, Count)              \
+      do                                        \
+        {                                       \
+          YYPTRDIFF_T yyi;                      \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (Dst)[yyi] = (Src)[yyi];            \
+        }                                       \
+      while (0)
 #  endif
 # endif
 #endif /* !YYCOPY_NEEDED */
@@ -435,18 +589,23 @@ union yyalloc
 #define YYNNTS  60
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  178
-/* YYNRULES -- Number of states.  */
+/* YYNSTATES -- Number of states.  */
 #define YYNSTATES  350
 
-/* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
-#define YYUNDEFTOK  2
+/* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   324
 
-#define YYTRANSLATE(YYX)						\
-  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
-/* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
-static const yytype_uint8 yytranslate[] =
+/* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex, with out-of-bounds checking.  */
+#define YYTRANSLATE(YYX)                                \
+  (0 <= (YYX) && (YYX) <= YYMAXUTOK                     \
+   ? YY_CAST (yysymbol_kind_t, yytranslate[YYX])        \
+   : YYSYMBOL_YYUNDEF)
+
+/* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex.  */
+static const yytype_int8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -484,127 +643,45 @@ static const yytype_uint8 yytranslate[] =
 };
 
 #if YYDEBUG
-/* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
-   YYRHS.  */
-static const yytype_uint16 yyprhs[] =
+/* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+static const yytype_int16 yyrline[] =
 {
-       0,     0,     3,     4,    10,    12,    15,    18,    24,    27,
-      33,    37,    39,    41,    44,    48,    51,    54,    57,    60,
-      63,    66,    69,    72,    75,    78,    82,    85,    88,    89,
-      96,    97,   103,   104,   111,   112,   119,   120,   131,   132,
-     143,   144,   149,   150,   155,   156,   161,   162,   164,   166,
-     167,   171,   173,   177,   179,   183,   185,   188,   191,   193,
-     196,   198,   202,   204,   207,   210,   212,   216,   220,   222,
-     224,   226,   228,   229,   233,   235,   239,   241,   245,   247,
-     250,   253,   255,   258,   260,   264,   266,   269,   272,   274,
-     278,   282,   284,   286,   288,   290,   292,   293,   299,   305,
-     311,   316,   321,   323,   328,   332,   339,   340,   344,   346,
-     350,   352,   354,   357,   361,   366,   369,   371,   376,   385,
-     386,   388,   390,   392,   394,   397,   400,   402,   405,   407,
-     411,   414,   416,   418,   421,   423,   427,   429,   433,   441,
-     449,   454,   455,   458,   459,   461,   464,   465,   475,   485,
-     492,   497,   503,   507,   511,   516,   520,   522,   524,   527,
-     529,   531,   534,   537,   542,   546,   549,   551,   553,   556,
-     563,   569,   577,   584,   585,   587,   589,   591,   593
-};
-
-/* YYRHS -- A `-1'-separated list of the rules' RHS.  */
-static const yytype_int16 yyrhs[] =
-{
-      90,     0,    -1,    -1,   137,    91,    92,   123,   137,    -1,
-      93,    -1,    92,    93,    -1,    14,   121,    -1,    14,    71,
-      20,    72,     6,    -1,    15,   121,    -1,    15,    71,    20,
-      72,     6,    -1,    11,   122,    10,    -1,    61,    -1,    62,
-      -1,    60,     7,    -1,    12,     3,    10,    -1,    30,     7,
-      -1,    35,     7,    -1,    13,     6,    -1,    36,     6,    -1,
-      37,     7,    -1,    38,     7,    -1,    39,     7,    -1,    40,
-       7,    -1,    59,     7,    -1,    41,     7,    -1,    43,     3,
-       7,    -1,    42,     7,    -1,    44,     7,    -1,    -1,    58,
-       7,    94,     4,    96,    10,    -1,    -1,    58,    95,     4,
-      96,    10,    -1,    -1,   105,     4,     3,    10,    97,    96,
-      -1,    -1,   105,   137,   104,    10,    98,    96,    -1,    -1,
-     105,    67,    71,   105,    72,   137,   104,    10,    99,    96,
-      -1,    -1,   105,    68,    71,   105,    72,   137,   104,    10,
-     100,    96,    -1,    -1,    66,     6,   101,    96,    -1,    -1,
-      69,     6,   102,    96,    -1,    -1,    70,     6,   103,    96,
-      -1,    -1,     5,    -1,    64,    -1,    -1,   105,    73,   106,
-      -1,   106,    -1,   106,    74,   107,    -1,   107,    -1,   108,
-      75,   107,    -1,   108,    -1,    76,   108,    -1,    77,   108,
-      -1,   109,    -1,   109,   110,    -1,   110,    -1,   110,    78,
-     111,    -1,   111,    -1,   111,    79,    -1,   111,    80,    -1,
-     112,    -1,    71,   105,    72,    -1,    81,   113,    82,    -1,
-      83,    -1,     7,    -1,     8,    -1,    63,    -1,    -1,   113,
-      73,   114,    -1,   114,    -1,   114,    74,   115,    -1,   115,
-      -1,   116,    75,   115,    -1,   116,    -1,    76,   116,    -1,
-      77,   116,    -1,   117,    -1,   117,   118,    -1,   118,    -1,
-     118,    78,   119,    -1,   119,    -1,   119,    79,    -1,   119,
-      80,    -1,   120,    -1,    71,   105,    72,    -1,    81,   113,
-      82,    -1,    83,    -1,     7,    -1,    65,    -1,     8,    -1,
-      63,    -1,    -1,    71,    16,    19,    72,     6,    -1,    71,
-      18,    19,    72,     6,    -1,    71,    17,    19,    72,     6,
-      -1,    71,    21,    72,     6,    -1,    71,    22,    72,     6,
-      -1,     5,    -1,     5,    71,     7,    72,    -1,   122,    84,
-       5,    -1,   122,    84,     5,    71,     7,    72,    -1,    -1,
-     123,   135,    10,    -1,    85,    -1,    71,   134,    72,    -1,
-     126,    -1,   125,    -1,    57,     3,    -1,   128,   129,   125,
-      -1,    86,   128,   129,   125,    -1,     3,   127,    -1,     5,
-      -1,    23,    71,   134,    72,    -1,    24,    71,   134,    72,
-      25,    71,   134,    72,    -1,    -1,    26,    -1,     3,    -1,
-      87,    -1,    88,    -1,   124,    80,    -1,   124,    79,    -1,
-     124,    -1,    77,   124,    -1,   130,    -1,   131,    78,   124,
-      -1,   131,     6,    -1,     6,    -1,   131,    -1,   132,   131,
-      -1,   132,    -1,    77,     6,   132,    -1,   133,    -1,   134,
-      73,   133,    -1,   134,     4,     3,     6,    81,   144,    82,
-      -1,   134,     4,     3,    81,   144,    82,   137,    -1,   134,
-       4,     3,   137,    -1,    -1,   136,   139,    -1,    -1,     6,
-      -1,   140,   138,    -1,    -1,    49,   125,   138,    50,     3,
-      81,   144,    82,   137,    -1,    49,   125,   138,    50,     3,
-       6,    81,   144,    82,    -1,    49,   125,   138,    50,     3,
-     137,    -1,    45,   143,   141,   142,    -1,    48,   143,   143,
-     141,   142,    -1,    46,   143,   141,    -1,    47,   143,   141,
-      -1,    47,   143,   141,   142,    -1,    56,   143,   143,    -1,
-      85,    -1,     9,    -1,    55,     6,    -1,    51,    -1,    52,
-      -1,    53,     6,    -1,    54,     6,    -1,    77,     6,     5,
-       6,    -1,    77,     6,     5,    -1,     5,     6,    -1,     5,
-      -1,   145,    -1,   144,   145,    -1,   146,   147,   148,     3,
-      88,     3,    -1,   146,   147,    33,     3,    10,    -1,   146,
-     147,   148,    86,     3,    88,     3,    -1,   146,   147,    33,
-      86,     3,    10,    -1,    -1,    29,    -1,    27,    -1,    28,
-      -1,    31,    -1,    34,    -1
-};
-
-/* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
-{
-       0,    94,    94,    94,   101,   102,   106,   108,   110,   112,
-     114,   115,   129,   143,   170,   172,   174,   176,   178,   180,
-     182,   184,   186,   188,   190,   192,   194,   196,   198,   198,
-     199,   199,   204,   203,   207,   206,   217,   216,   249,   248,
-     291,   290,   295,   294,   299,   298,   302,   306,   309,   312,
-     316,   317,   321,   322,   326,   327,   331,   332,   333,   337,
-     338,   342,   343,   347,   348,   349,   353,   354,   355,   356,
-     357,   358,   373,   377,   378,   382,   383,   387,   388,   392,
-     393,   394,   398,   399,   403,   404,   408,   409,   410,   414,
-     415,   416,   417,   418,   441,   442,   457,   462,   464,   466,
-     468,   470,   475,   476,   477,   478,   482,   484,   488,   489,
-     490,   491,   492,   493,   494,   498,   499,   503,   508,   515,
-     516,   520,   530,   531,   535,   536,   537,   538,   542,   543,
-     548,   549,   553,   554,   558,   559,   563,   564,   568,   573,
-     578,   580,   580,   590,   591,   596,   597,   601,   609,   617,
-     628,   629,   630,   631,   632,   633,   637,   638,   639,   643,
-     644,   645,   652,   662,   663,   664,   665,   669,   670,   682,
-     684,   686,   688,   693,   694,   698,   699,   703,   704
+       0,    81,    81,    81,    88,    89,    93,    95,    97,    99,
+     101,   102,   116,   130,   157,   159,   161,   163,   165,   167,
+     169,   171,   173,   175,   177,   179,   181,   183,   185,   185,
+     186,   186,   191,   190,   194,   193,   204,   203,   236,   235,
+     278,   277,   282,   281,   286,   285,   289,   293,   296,   299,
+     303,   304,   308,   309,   313,   314,   318,   319,   320,   324,
+     325,   329,   330,   334,   335,   336,   340,   341,   342,   343,
+     344,   345,   360,   364,   365,   369,   370,   374,   375,   379,
+     380,   381,   385,   386,   390,   391,   395,   396,   397,   401,
+     402,   403,   404,   405,   428,   429,   444,   449,   451,   453,
+     455,   457,   462,   463,   464,   465,   470,   471,   475,   476,
+     477,   478,   479,   480,   481,   485,   486,   490,   495,   502,
+     503,   507,   517,   518,   522,   523,   524,   525,   529,   530,
+     535,   536,   540,   541,   545,   546,   550,   551,   555,   560,
+     565,   567,   567,   577,   578,   583,   584,   588,   596,   604,
+     615,   616,   617,   618,   619,   620,   624,   625,   626,   630,
+     631,   632,   639,   649,   650,   651,   652,   656,   657,   669,
+     671,   673,   675,   680,   681,   685,   686,   690,   691
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+/** Accessing symbol of state STATE.  */
+#define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
+
+#if YYDEBUG || 0
+/* The user-facing name of the symbol whose (internal) number is
+   YYSYMBOL.  No bounds checking.  */
+static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
+
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "T_IDENTIFIER", "T_ARROW", "T_TERMINAL",
-  "T_CODE", "T_STRING", "T_UNQUOTED_STRING", "T_NUMBER", "';'",
-  "T_TOKEN_DECLARATION", "T_TOKEN_STREAM_DECLARATION",
+  "\"end of file\"", "error", "\"invalid token\"", "T_IDENTIFIER",
+  "T_ARROW", "T_TERMINAL", "T_CODE", "T_STRING", "T_UNQUOTED_STRING",
+  "T_NUMBER", "';'", "T_TOKEN_DECLARATION", "T_TOKEN_STREAM_DECLARATION",
   "T_NAMESPACE_DECLARATION", "T_PARSERCLASS_DECLARATION",
   "T_LEXERCLASS_DECLARATION", "T_PUBLIC", "T_PRIVATE", "T_PROTECTED",
   "T_DECLARATION", "T_BITS", "T_CONSTRUCTOR", "T_DESTRUCTOR",
@@ -633,75 +710,69 @@ static const char *const yytname[] =
   "operatorDeclarations", "operatorRule", "operatorDeclaration",
   "priority", "assoc", "operator", "variableDeclarations",
   "variableDeclaration", "declarationType_opt", "storageType",
-  "variableType", 0
+  "variableType", YY_NULLPTR
 };
+
+static const char *
+yysymbol_name (yysymbol_kind_t yysymbol)
+{
+  return yytname[yysymbol];
+}
 #endif
 
-# ifdef YYPRINT
-/* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
-   token YYLEX-NUM.  */
-static const yytype_uint16 yytoknum[] =
-{
-       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-      59,   265,   266,   267,   268,   269,   270,   271,   272,   273,
-     274,   275,   276,   277,   278,   279,   280,   281,   282,   283,
-     284,   285,   286,   287,   288,   289,   290,   291,   292,   293,
-     294,   295,   296,   297,   298,   299,   300,   301,   302,   303,
-     304,   305,   306,   307,   308,   309,   310,   311,   312,   313,
-     314,   315,   316,   317,   318,   319,   320,   321,   322,   323,
-     324,    40,    41,   124,    38,    94,   126,    63,    64,    42,
-      43,    91,    93,    46,    44,    48,    35,    61,    58
-};
-# endif
+#define YYPACT_NINF (-258)
 
-/* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const yytype_uint8 yyr1[] =
-{
-       0,    89,    91,    90,    92,    92,    93,    93,    93,    93,
-      93,    93,    93,    93,    93,    93,    93,    93,    93,    93,
-      93,    93,    93,    93,    93,    93,    93,    93,    94,    93,
-      95,    93,    97,    96,    98,    96,    99,    96,   100,    96,
-     101,    96,   102,    96,   103,    96,    96,   104,   104,   104,
-     105,   105,   106,   106,   107,   107,   108,   108,   108,   109,
-     109,   110,   110,   111,   111,   111,   112,   112,   112,   112,
-     112,   112,   112,   113,   113,   114,   114,   115,   115,   116,
-     116,   116,   117,   117,   118,   118,   119,   119,   119,   120,
-     120,   120,   120,   120,   120,   120,   120,   121,   121,   121,
-     121,   121,   122,   122,   122,   122,   123,   123,   124,   124,
-     124,   124,   124,   124,   124,   125,   125,   126,   126,   127,
-     127,   128,   129,   129,   130,   130,   130,   130,   131,   131,
-     131,   131,   132,   132,   133,   133,   134,   134,   135,   135,
-     135,   136,   135,   137,   137,   138,   138,   139,   139,   139,
-     140,   140,   140,   140,   140,   140,   141,   141,   141,   142,
-     142,   142,   142,   143,   143,   143,   143,   144,   144,   145,
-     145,   145,   145,   146,   146,   147,   147,   148,   148
-};
+#define yypact_value_is_default(Yyn) \
+  ((Yyn) == YYPACT_NINF)
 
-/* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
-static const yytype_uint8 yyr2[] =
+#define YYTABLE_NINF (-145)
+
+#define yytable_value_is_error(Yyn) \
+  0
+
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+   STATE-NUM.  */
+static const yytype_int16 yypact[] =
 {
-       0,     2,     0,     5,     1,     2,     2,     5,     2,     5,
-       3,     1,     1,     2,     3,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     3,     2,     2,     0,     6,
-       0,     5,     0,     6,     0,     6,     0,    10,     0,    10,
-       0,     4,     0,     4,     0,     4,     0,     1,     1,     0,
-       3,     1,     3,     1,     3,     1,     2,     2,     1,     2,
-       1,     3,     1,     2,     2,     1,     3,     3,     1,     1,
-       1,     1,     0,     3,     1,     3,     1,     3,     1,     2,
-       2,     1,     2,     1,     3,     1,     2,     2,     1,     3,
-       3,     1,     1,     1,     1,     1,     0,     5,     5,     5,
-       4,     4,     1,     4,     3,     6,     0,     3,     1,     3,
-       1,     1,     2,     3,     4,     2,     1,     4,     8,     0,
-       1,     1,     1,     1,     2,     2,     1,     2,     1,     3,
-       2,     1,     1,     2,     1,     3,     1,     3,     7,     7,
-       4,     0,     2,     0,     1,     2,     0,     9,     9,     6,
-       4,     5,     3,     3,     4,     3,     1,     1,     2,     1,
-       1,     2,     2,     4,     3,     2,     1,     1,     2,     6,
-       5,     7,     6,     0,     1,     1,     1,     1,     1
+      12,  -258,    21,  -258,  -258,   236,    19,    28,    51,     9,
+      15,    59,    63,    72,    91,   125,   133,   155,   164,   166,
+     119,   169,   184,   200,   205,  -258,  -258,   236,  -258,    56,
+      34,   142,  -258,   267,  -258,   283,  -258,  -258,  -258,  -258,
+    -258,  -258,  -258,  -258,  -258,  -258,   221,  -258,  -258,   139,
+    -258,  -258,  -258,     6,   238,  -258,   194,  -258,   170,   206,
+     295,   185,   230,   243,   244,  -258,   313,    65,    42,  -258,
+     318,   248,   249,   319,    10,    22,  -258,   320,    88,  -258,
+    -258,   116,  -258,    26,    17,  -258,    43,   311,   275,  -258,
+     253,   255,   256,   257,   258,   321,   325,   326,   327,    65,
+    -258,  -258,  -258,   328,   329,   330,   143,   143,   143,    98,
+    -258,   331,   192,   263,  -258,   264,   130,   260,   136,  -258,
+    -258,  -258,    10,    10,  -258,  -258,   145,    17,  -258,  -258,
+     116,  -258,  -258,  -258,  -258,    50,  -258,    14,    14,    26,
+     337,    10,  -258,    50,  -258,  -258,   335,   338,   339,   340,
+    -258,  -258,  -258,  -258,   333,  -258,  -258,  -258,   162,  -258,
+    -258,  -258,  -258,  -258,  -258,   143,    98,    98,    98,  -258,
+     -34,   273,  -258,   274,   107,   270,   157,  -258,  -258,   347,
+     280,   281,   143,     0,   143,   143,   260,   158,  -258,  -258,
+     180,   182,  -258,    17,    50,   332,  -258,  -258,    20,  -258,
+     108,   282,  -258,  -258,  -258,  -258,    65,    65,    65,  -258,
+     191,  -258,  -258,   -17,    98,  -258,    98,    98,   270,   175,
+    -258,  -258,   343,   143,   143,   263,  -258,  -258,   345,  -258,
+    -258,   136,  -258,   334,  -258,   276,   336,  -258,     5,     5,
+       5,     5,     5,   306,   108,  -258,  -258,  -258,  -258,  -258,
+    -258,   273,  -258,  -258,   157,  -258,   195,   197,  -258,   289,
+     336,  -258,     7,  -258,   254,   355,   356,    -1,    -1,    -1,
+       5,     5,   360,  -258,    65,    12,    12,    65,    10,   115,
+      12,  -258,  -258,  -258,   161,  -258,   359,  -258,   361,  -258,
+     106,  -258,   106,    -1,  -258,    36,  -258,     0,     0,  -258,
+     218,  -258,  -258,  -258,     4,  -258,    11,   362,  -258,  -258,
+    -258,   363,   364,  -258,  -258,   106,   285,   336,  -258,   365,
+     366,  -258,   367,   368,   284,   370,  -258,  -258,  -258,  -258,
+     336,   118,  -258,  -258,  -258,   369,   371,   290,   120,    12,
+      65,    65,  -258,  -258,   377,  -258,  -258,  -258,  -258,  -258
 };
 
-/* YYDEFACT[STATE-NAME] -- Default reduction number in state STATE-NUM.
-   Performed when YYTABLE doesn't specify something else to do.  Zero
+/* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+   Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
@@ -742,59 +813,6 @@ static const yytype_uint8 yydefact[] =
       72,    72,   172,   169,     0,   148,   147,    37,    39,   171
 };
 
-/* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int16 yydefgoto[] =
-{
-      -1,     2,     5,    27,    28,    66,    49,   111,   274,   277,
-     340,   341,   206,   207,   208,   228,   112,   113,   114,   115,
-     116,   117,   118,   119,   170,   171,   172,   173,   174,   175,
-     176,   177,    34,    30,    53,    78,    79,    80,   121,    81,
-     135,    82,    83,    84,    85,    86,    87,    88,     3,   243,
-     144,   244,   290,   313,   267,   262,   263,   264,   284,   306
-};
-
-/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-   STATE-NUM.  */
-#define YYPACT_NINF -258
-static const yytype_int16 yypact[] =
-{
-      12,  -258,    21,  -258,  -258,   236,    19,    28,    51,     9,
-      15,    59,    63,    72,    91,   125,   133,   155,   164,   166,
-     119,   169,   184,   200,   205,  -258,  -258,   236,  -258,    56,
-      34,   142,  -258,   267,  -258,   283,  -258,  -258,  -258,  -258,
-    -258,  -258,  -258,  -258,  -258,  -258,   221,  -258,  -258,   139,
-    -258,  -258,  -258,     6,   238,  -258,   194,  -258,   170,   206,
-     295,   185,   230,   243,   244,  -258,   313,    65,    42,  -258,
-     318,   248,   249,   319,    10,    22,  -258,   320,    88,  -258,
-    -258,   116,  -258,    26,    17,  -258,    43,   311,   275,  -258,
-     253,   255,   256,   257,   258,   321,   325,   326,   327,    65,
-    -258,  -258,  -258,   328,   329,   330,   143,   143,   143,    98,
-    -258,   331,   192,   263,  -258,   264,   130,   260,   136,  -258,
-    -258,  -258,    10,    10,  -258,  -258,   145,    17,  -258,  -258,
-     116,  -258,  -258,  -258,  -258,    50,  -258,    14,    14,    26,
-     337,    10,  -258,    50,  -258,  -258,   335,   338,   339,   340,
-    -258,  -258,  -258,  -258,   333,  -258,  -258,  -258,   162,  -258,
-    -258,  -258,  -258,  -258,  -258,   143,    98,    98,    98,  -258,
-     -34,   273,  -258,   274,   107,   270,   157,  -258,  -258,   347,
-     280,   281,   143,     0,   143,   143,   260,   158,  -258,  -258,
-     180,   182,  -258,    17,    50,   332,  -258,  -258,    20,  -258,
-     108,   282,  -258,  -258,  -258,  -258,    65,    65,    65,  -258,
-     191,  -258,  -258,   -17,    98,  -258,    98,    98,   270,   175,
-    -258,  -258,   343,   143,   143,   263,  -258,  -258,   345,  -258,
-    -258,   136,  -258,   334,  -258,   276,   336,  -258,     5,     5,
-       5,     5,     5,   306,   108,  -258,  -258,  -258,  -258,  -258,
-    -258,   273,  -258,  -258,   157,  -258,   195,   197,  -258,   289,
-     336,  -258,     7,  -258,   254,   355,   356,    -1,    -1,    -1,
-       5,     5,   360,  -258,    65,    12,    12,    65,    10,   115,
-      12,  -258,  -258,  -258,   161,  -258,   359,  -258,   361,  -258,
-     106,  -258,   106,    -1,  -258,    36,  -258,     0,     0,  -258,
-     218,  -258,  -258,  -258,     4,  -258,    11,   362,  -258,  -258,
-    -258,   363,   364,  -258,  -258,   106,   285,   336,  -258,   365,
-     366,  -258,   367,   368,   284,   370,  -258,  -258,  -258,  -258,
-     336,   118,  -258,  -258,  -258,   369,   371,   290,   120,    12,
-      65,    65,  -258,  -258,   377,  -258,  -258,  -258,  -258,  -258
-};
-
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
@@ -806,10 +824,20 @@ static const yytype_int16 yypgoto[] =
     -258,  -258,  -217,  -257,    -9,  -191,  -219,  -258,  -258,  -258
 };
 
-/* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
-   positive, shift that token.  If negative, reduce the rule which
+/* YYDEFGOTO[NTERM-NUM].  */
+static const yytype_int16 yydefgoto[] =
+{
+       0,     2,     5,    27,    28,    66,    49,   111,   274,   277,
+     340,   341,   206,   207,   208,   228,   112,   113,   114,   115,
+     116,   117,   118,   119,   170,   171,   172,   173,   174,   175,
+     176,   177,    34,    30,    53,    78,    79,    80,   121,    81,
+     135,    82,    83,    84,    85,    86,    87,    88,     3,   243,
+     144,   244,   290,   313,   267,   262,   263,   264,   284,   306
+};
+
+/* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+   positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -145
 static const yytype_int16 yytable[] =
 {
       89,   126,   154,   158,   139,   226,  -143,   322,   287,    68,
@@ -854,13 +882,7 @@ static const yytype_int16 yytable[] =
      254,   194,   193,   199,   273
 };
 
-#define yypact_value_is_default(yystate) \
-  ((yystate) == (-258))
-
-#define yytable_value_is_error(yytable_value) \
-  YYID (0)
-
-static const yytype_uint16 yycheck[] =
+static const yytype_int16 yycheck[] =
 {
       53,    74,    99,   106,    84,     5,     0,     3,     9,     3,
        5,     5,     6,     3,     3,     5,     6,     3,     6,     5,
@@ -904,8 +926,8 @@ static const yytype_uint16 yycheck[] =
      219,   130,   127,   141,   244
 };
 
-/* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-   symbol of state STATE-NUM.  */
+/* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+   state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
        0,     6,    90,   137,     0,    91,    11,    12,    13,    14,
@@ -945,94 +967,87 @@ static const yytype_uint8 yystos[] =
       99,   100,    10,     3,    88,    82,   137,    96,    96,     3
 };
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		(-2)
-#define YYEOF		0
+/* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
+static const yytype_uint8 yyr1[] =
+{
+       0,    89,    91,    90,    92,    92,    93,    93,    93,    93,
+      93,    93,    93,    93,    93,    93,    93,    93,    93,    93,
+      93,    93,    93,    93,    93,    93,    93,    93,    94,    93,
+      95,    93,    97,    96,    98,    96,    99,    96,   100,    96,
+     101,    96,   102,    96,   103,    96,    96,   104,   104,   104,
+     105,   105,   106,   106,   107,   107,   108,   108,   108,   109,
+     109,   110,   110,   111,   111,   111,   112,   112,   112,   112,
+     112,   112,   112,   113,   113,   114,   114,   115,   115,   116,
+     116,   116,   117,   117,   118,   118,   119,   119,   119,   120,
+     120,   120,   120,   120,   120,   120,   120,   121,   121,   121,
+     121,   121,   122,   122,   122,   122,   123,   123,   124,   124,
+     124,   124,   124,   124,   124,   125,   125,   126,   126,   127,
+     127,   128,   129,   129,   130,   130,   130,   130,   131,   131,
+     131,   131,   132,   132,   133,   133,   134,   134,   135,   135,
+     135,   136,   135,   137,   137,   138,   138,   139,   139,   139,
+     140,   140,   140,   140,   140,   140,   141,   141,   141,   142,
+     142,   142,   142,   143,   143,   143,   143,   144,   144,   145,
+     145,   145,   145,   146,   146,   147,   147,   148,   148
+};
 
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT		goto yyabortlab
-#define YYERROR		goto yyerrorlab
+/* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
+static const yytype_int8 yyr2[] =
+{
+       0,     2,     0,     5,     1,     2,     2,     5,     2,     5,
+       3,     1,     1,     2,     3,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     3,     2,     2,     0,     6,
+       0,     5,     0,     6,     0,     6,     0,    10,     0,    10,
+       0,     4,     0,     4,     0,     4,     0,     1,     1,     0,
+       3,     1,     3,     1,     3,     1,     2,     2,     1,     2,
+       1,     3,     1,     2,     2,     1,     3,     3,     1,     1,
+       1,     1,     0,     3,     1,     3,     1,     3,     1,     2,
+       2,     1,     2,     1,     3,     1,     2,     2,     1,     3,
+       3,     1,     1,     1,     1,     1,     0,     5,     5,     5,
+       4,     4,     1,     4,     3,     6,     0,     3,     1,     3,
+       1,     1,     2,     3,     4,     2,     1,     4,     8,     0,
+       1,     1,     1,     1,     2,     2,     1,     2,     1,     3,
+       2,     1,     1,     2,     1,     3,     1,     3,     7,     7,
+       4,     0,     2,     0,     1,     2,     0,     9,     9,     6,
+       4,     5,     3,     3,     4,     3,     1,     1,     2,     1,
+       1,     2,     2,     4,     3,     2,     1,     1,     2,     6,
+       5,     7,     6,     0,     1,     1,     1,     1,     1
+};
 
 
-/* Like YYERROR except do call yyerror.  This remains here temporarily
-   to ease the transition to the new meaning of YYERROR, for GCC.
-   Once GCC version 2 has supplanted version 1, this can go.  However,
-   YYFAIL appears to be in use.  Nevertheless, it is formally deprecated
-   in Bison 2.4.2's NEWS entry, where a plan to phase it out is
-   discussed.  */
+enum { YYENOMEM = -2 };
 
-#define YYFAIL		goto yyerrlab
-#if defined YYFAIL
-  /* This is here to suppress warnings from the GCC cpp's
-     -Wunused-macros.  Normally we don't worry about that warning, but
-     some users do, and we want to make it easy for users to remove
-     YYFAIL uses, which will produce warnings from Bison 2.5.  */
-#endif
+#define yyerrok         (yyerrstatus = 0)
+#define yyclearin       (yychar = YYEMPTY)
+
+#define YYACCEPT        goto yyacceptlab
+#define YYABORT         goto yyabortlab
+#define YYERROR         goto yyerrorlab
+#define YYNOMEM         goto yyexhaustedlab
+
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      YYPOPSTACK (1);						\
-      goto yybackup;						\
-    }								\
-  else								\
-    {								\
-      yyerror (YY_("syntax error: cannot back up")); \
-      YYERROR;							\
-    }								\
-while (YYID (0))
+#define YYBACKUP(Token, Value)                                    \
+  do                                                              \
+    if (yychar == YYEMPTY)                                        \
+      {                                                           \
+        yychar = (Token);                                         \
+        yylval = (Value);                                         \
+        YYPOPSTACK (yylen);                                       \
+        yystate = *yyssp;                                         \
+        goto yybackup;                                            \
+      }                                                           \
+    else                                                          \
+      {                                                           \
+        yyerror (YY_("syntax error: cannot back up")); \
+        YYERROR;                                                  \
+      }                                                           \
+  while (0)
 
+/* Backward compatibility with an undocumented macro.
+   Use YYerror or YYUNDEF. */
+#define YYERRCODE YYUNDEF
 
-#define YYTERROR	1
-#define YYERRCODE	256
-
-
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
-      if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
-    while (YYID (0))
-#endif
-
-
-/* This macro is provided for backward compatibility. */
-
-#ifndef YY_LOCATION_PRINT
-# define YY_LOCATION_PRINT(File, Loc) ((void) 0)
-#endif
-
-
-/* YYLEX -- calling `yylex' with the right arguments.  */
-
-#ifdef YYLEX_PARAM
-# define YYLEX yylex (YYLEX_PARAM)
-#else
-# define YYLEX yylex ()
-#endif
 
 /* Enable debugging if requested.  */
 #if YYDEBUG
@@ -1042,80 +1057,58 @@ while (YYID (0))
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)			\
-do {						\
-  if (yydebug)					\
-    YYFPRINTF Args;				\
-} while (YYID (0))
-
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)			  \
-do {									  \
-  if (yydebug)								  \
-    {									  \
-      YYFPRINTF (stderr, "%s ", Title);					  \
-      yy_symbol_print (stderr,						  \
-		  Type, Value); \
-      YYFPRINTF (stderr, "\n");						  \
-    }									  \
-} while (YYID (0))
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (yydebug)                                  \
+    YYFPRINTF Args;                             \
+} while (0)
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
 
-/*ARGSUSED*/
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+
+# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
+do {                                                                      \
+  if (yydebug)                                                            \
+    {                                                                     \
+      YYFPRINTF (stderr, "%s ", Title);                                   \
+      yy_symbol_print (stderr,                                            \
+                  Kind, Value); \
+      YYFPRINTF (stderr, "\n");                                           \
+    }                                                                     \
+} while (0)
+
+
+/*-----------------------------------.
+| Print this symbol's value on YYO.  |
+`-----------------------------------*/
+
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
-#else
-static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep)
-    FILE *yyoutput;
-    int yytype;
-    YYSTYPE const * const yyvaluep;
-#endif
+yy_symbol_value_print (FILE *yyo,
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
 {
+  FILE *yyoutput = yyo;
+  YY_USE (yyoutput);
   if (!yyvaluep)
     return;
-# ifdef YYPRINT
-  if (yytype < YYNTOKENS)
-    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
-# else
-  YYUSE (yyoutput);
-# endif
-  switch (yytype)
-    {
-      default:
-	break;
-    }
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  YY_USE (yykind);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
+/*---------------------------.
+| Print this symbol on YYO.  |
+`---------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
-#else
-static void
-yy_symbol_print (yyoutput, yytype, yyvaluep)
-    FILE *yyoutput;
-    int yytype;
-    YYSTYPE const * const yyvaluep;
-#endif
+yy_symbol_print (FILE *yyo,
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
 {
-  if (yytype < YYNTOKENS)
-    YYFPRINTF (yyoutput, "token %s (", yytname[yytype]);
-  else
-    YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
+  YYFPRINTF (yyo, "%s %s (",
+             yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep);
-  YYFPRINTF (yyoutput, ")");
+  yy_symbol_value_print (yyo, yykind, yyvaluep);
+  YYFPRINTF (yyo, ")");
 }
 
 /*------------------------------------------------------------------.
@@ -1123,16 +1116,8 @@ yy_symbol_print (yyoutput, yytype, yyvaluep)
 | TOP (included).                                                   |
 `------------------------------------------------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_stack_print (yytype_int16 *yybottom, yytype_int16 *yytop)
-#else
-static void
-yy_stack_print (yybottom, yytop)
-    yytype_int16 *yybottom;
-    yytype_int16 *yytop;
-#endif
+yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
   for (; yybottom <= yytop; yybottom++)
@@ -1143,63 +1128,56 @@ yy_stack_print (yybottom, yytop)
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)				\
-do {								\
-  if (yydebug)							\
-    yy_stack_print ((Bottom), (Top));				\
-} while (YYID (0))
+# define YY_STACK_PRINT(Bottom, Top)                            \
+do {                                                            \
+  if (yydebug)                                                  \
+    yy_stack_print ((Bottom), (Top));                           \
+} while (0)
 
 
 /*------------------------------------------------.
 | Report that the YYRULE is going to be reduced.  |
 `------------------------------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule)
-#else
-static void
-yy_reduce_print (yyvsp, yyrule)
-    YYSTYPE *yyvsp;
-    int yyrule;
-#endif
+yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
+                 int yyrule)
 {
+  int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
   int yyi;
-  unsigned long int yylno = yyrline[yyrule];
-  YYFPRINTF (stderr, "Reducing stack by rule %d (line %lu):\n",
-	     yyrule - 1, yylno);
+  YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
+             yyrule - 1, yylno);
   /* The symbols being reduced.  */
   for (yyi = 0; yyi < yynrhs; yyi++)
     {
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
-      yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
-		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       );
+      yy_symbol_print (stderr,
+                       YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
+                       &yyvsp[(yyi + 1) - (yynrhs)]);
       YYFPRINTF (stderr, "\n");
     }
 }
 
-# define YY_REDUCE_PRINT(Rule)		\
-do {					\
-  if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule); \
-} while (YYID (0))
+# define YY_REDUCE_PRINT(Rule)          \
+do {                                    \
+  if (yydebug)                          \
+    yy_reduce_print (yyssp, yyvsp, Rule); \
+} while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
 int yydebug;
 #else /* !YYDEBUG */
-# define YYDPRINTF(Args)
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
+# define YYDPRINTF(Args) ((void) 0)
+# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
 # define YY_STACK_PRINT(Bottom, Top)
 # define YY_REDUCE_PRINT(Rule)
 #endif /* !YYDEBUG */
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 # define YYINITDEPTH 200
 #endif
 
@@ -1215,365 +1193,77 @@ int yydebug;
 #endif
 
 
-#if YYERROR_VERBOSE
 
-# ifndef yystrlen
-#  if defined __GLIBC__ && defined _STRING_H
-#   define yystrlen strlen
-#  else
-/* Return the length of YYSTR.  */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static YYSIZE_T
-yystrlen (const char *yystr)
-#else
-static YYSIZE_T
-yystrlen (yystr)
-    const char *yystr;
-#endif
-{
-  YYSIZE_T yylen;
-  for (yylen = 0; yystr[yylen]; yylen++)
-    continue;
-  return yylen;
-}
-#  endif
-# endif
 
-# ifndef yystpcpy
-#  if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
-#   define yystpcpy stpcpy
-#  else
-/* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
-   YYDEST.  */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static char *
-yystpcpy (char *yydest, const char *yysrc)
-#else
-static char *
-yystpcpy (yydest, yysrc)
-    char *yydest;
-    const char *yysrc;
-#endif
-{
-  char *yyd = yydest;
-  const char *yys = yysrc;
 
-  while ((*yyd++ = *yys++) != '\0')
-    continue;
-
-  return yyd - 1;
-}
-#  endif
-# endif
-
-# ifndef yytnamerr
-/* Copy to YYRES the contents of YYSTR after stripping away unnecessary
-   quotes and backslashes, so that it's suitable for yyerror.  The
-   heuristic is that double-quoting is unnecessary unless the string
-   contains an apostrophe, a comma, or backslash (other than
-   backslash-backslash).  YYSTR is taken from yytname.  If YYRES is
-   null, do not copy; instead, return the length of what the result
-   would have been.  */
-static YYSIZE_T
-yytnamerr (char *yyres, const char *yystr)
-{
-  if (*yystr == '"')
-    {
-      YYSIZE_T yyn = 0;
-      char const *yyp = yystr;
-
-      for (;;)
-	switch (*++yyp)
-	  {
-	  case '\'':
-	  case ',':
-	    goto do_not_strip_quotes;
-
-	  case '\\':
-	    if (*++yyp != '\\')
-	      goto do_not_strip_quotes;
-	    /* Fall through.  */
-	  default:
-	    if (yyres)
-	      yyres[yyn] = *yyp;
-	    yyn++;
-	    break;
-
-	  case '"':
-	    if (yyres)
-	      yyres[yyn] = '\0';
-	    return yyn;
-	  }
-    do_not_strip_quotes: ;
-    }
-
-  if (! yyres)
-    return yystrlen (yystr);
-
-  return yystpcpy (yyres, yystr) - yyres;
-}
-# endif
-
-/* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
-   about the unexpected token YYTOKEN for the state stack whose top is
-   YYSSP.
-
-   Return 0 if *YYMSG was successfully written.  Return 1 if *YYMSG is
-   not large enough to hold the message.  In that case, also set
-   *YYMSG_ALLOC to the required number of bytes.  Return 2 if the
-   required number of bytes is too large to store.  */
-static int
-yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
-                yytype_int16 *yyssp, int yytoken)
-{
-  YYSIZE_T yysize0 = yytnamerr (0, yytname[yytoken]);
-  YYSIZE_T yysize = yysize0;
-  YYSIZE_T yysize1;
-  enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-  /* Internationalized format string. */
-  const char *yyformat = 0;
-  /* Arguments of yyformat. */
-  char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-  /* Number of reported tokens (one for the "unexpected", one per
-     "expected"). */
-  int yycount = 0;
-
-  /* There are many possibilities here to consider:
-     - Assume YYFAIL is not used.  It's too flawed to consider.  See
-       <http://lists.gnu.org/archive/html/bison-patches/2009-12/msg00024.html>
-       for details.  YYERROR is fine as it does not invoke this
-       function.
-     - If this state is a consistent state with a default action, then
-       the only way this function was invoked is if the default action
-       is an error action.  In that case, don't check for expected
-       tokens because there are none.
-     - The only way there can be no lookahead present (in yychar) is if
-       this state is a consistent state with a default action.  Thus,
-       detecting the absence of a lookahead is sufficient to determine
-       that there is no unexpected or expected token to report.  In that
-       case, just report a simple "syntax error".
-     - Don't assume there isn't a lookahead just because this state is a
-       consistent state with a default action.  There might have been a
-       previous inconsistent state, consistent state with a non-default
-       action, or user semantic action that manipulated yychar.
-     - Of course, the expected token list depends on states to have
-       correct lookahead information, and it depends on the parser not
-       to perform extra reductions after fetching a lookahead from the
-       scanner and before detecting a syntax error.  Thus, state merging
-       (from LALR or IELR) and default reductions corrupt the expected
-       token list.  However, the list is correct for canonical LR with
-       one exception: it will still contain any token that will not be
-       accepted due to an error action in a later state.
-  */
-  if (yytoken != YYEMPTY)
-    {
-      int yyn = yypact[*yyssp];
-      yyarg[yycount++] = yytname[yytoken];
-      if (!yypact_value_is_default (yyn))
-        {
-          /* Start YYX at -YYN if negative to avoid negative indexes in
-             YYCHECK.  In other words, skip the first -YYN actions for
-             this state because they are default actions.  */
-          int yyxbegin = yyn < 0 ? -yyn : 0;
-          /* Stay within bounds of both yycheck and yytname.  */
-          int yychecklim = YYLAST - yyn + 1;
-          int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-          int yyx;
-
-          for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR
-                && !yytable_value_is_error (yytable[yyx + yyn]))
-              {
-                if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-                  {
-                    yycount = 1;
-                    yysize = yysize0;
-                    break;
-                  }
-                yyarg[yycount++] = yytname[yyx];
-                yysize1 = yysize + yytnamerr (0, yytname[yyx]);
-                if (! (yysize <= yysize1
-                       && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-                  return 2;
-                yysize = yysize1;
-              }
-        }
-    }
-
-  switch (yycount)
-    {
-# define YYCASE_(N, S)                      \
-      case N:                               \
-        yyformat = S;                       \
-      break
-      YYCASE_(0, YY_("syntax error"));
-      YYCASE_(1, YY_("syntax error, unexpected %s"));
-      YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
-      YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
-      YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
-      YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
-# undef YYCASE_
-    }
-
-  yysize1 = yysize + yystrlen (yyformat);
-  if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-    return 2;
-  yysize = yysize1;
-
-  if (*yymsg_alloc < yysize)
-    {
-      *yymsg_alloc = 2 * yysize;
-      if (! (yysize <= *yymsg_alloc
-             && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
-        *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
-      return 1;
-    }
-
-  /* Avoid sprintf, as that infringes on the user's name space.
-     Don't have undefined behavior even if the translation
-     produced a string with the wrong number of "%s"s.  */
-  {
-    char *yyp = *yymsg;
-    int yyi = 0;
-    while ((*yyp = *yyformat) != '\0')
-      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
-        {
-          yyp += yytnamerr (yyp, yyarg[yyi++]);
-          yyformat += 2;
-        }
-      else
-        {
-          yyp++;
-          yyformat++;
-        }
-  }
-  return 0;
-}
-#endif /* YYERROR_VERBOSE */
 
 /*-----------------------------------------------.
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
 
-/*ARGSUSED*/
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
-#else
-static void
-yydestruct (yymsg, yytype, yyvaluep)
-    const char *yymsg;
-    int yytype;
-    YYSTYPE *yyvaluep;
-#endif
+yydestruct (const char *yymsg,
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep)
 {
-  YYUSE (yyvaluep);
-
+  YY_USE (yyvaluep);
   if (!yymsg)
     yymsg = "Deleting";
-  YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+  YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
-  switch (yytype)
-    {
-
-      default:
-	break;
-    }
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  YY_USE (yykind);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-/* Prevent warnings from -Wmissing-prototypes.  */
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
-
-
-/* The lookahead symbol.  */
+/* Lookahead token kind.  */
 int yychar;
 
 /* The semantic value of the lookahead symbol.  */
 YYSTYPE yylval;
-
 /* Number of syntax errors so far.  */
 int yynerrs;
+
+
 
 
 /*----------.
 | yyparse.  |
 `----------*/
 
-#ifdef YYPARSE_PARAM
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-int
-yyparse (void *YYPARSE_PARAM)
-#else
-int
-yyparse (YYPARSE_PARAM)
-    void *YYPARSE_PARAM;
-#endif
-#else /* ! YYPARSE_PARAM */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 int
 yyparse (void)
-#else
-int
-yyparse ()
-
-#endif
-#endif
 {
-    int yystate;
+    yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
-    int yyerrstatus;
+    int yyerrstatus = 0;
 
-    /* The stacks and their tools:
-       `yyss': related to states.
-       `yyvs': related to semantic values.
-
-       Refer to the stacks thru separate pointers, to allow yyoverflow
+    /* Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
 
-    /* The state stack.  */
-    yytype_int16 yyssa[YYINITDEPTH];
-    yytype_int16 *yyss;
-    yytype_int16 *yyssp;
+    /* Their size.  */
+    YYPTRDIFF_T yystacksize = YYINITDEPTH;
 
-    /* The semantic value stack.  */
+    /* The state stack: array, bottom, top.  */
+    yy_state_t yyssa[YYINITDEPTH];
+    yy_state_t *yyss = yyssa;
+    yy_state_t *yyssp = yyss;
+
+    /* The semantic value stack: array, bottom, top.  */
     YYSTYPE yyvsa[YYINITDEPTH];
-    YYSTYPE *yyvs;
-    YYSTYPE *yyvsp;
-
-    YYSIZE_T yystacksize;
+    YYSTYPE *yyvs = yyvsa;
+    YYSTYPE *yyvsp = yyvs;
 
   int yyn;
+  /* The return value of yyparse.  */
   int yyresult;
-  /* Lookahead token as an internal (translated) token number.  */
-  int yytoken;
+  /* Lookahead symbol kind.  */
+  yysymbol_kind_t yytoken = YYSYMBOL_YYEMPTY;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
 
-#if YYERROR_VERBOSE
-  /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
-  YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
-#endif
+
 
 #define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
@@ -1581,111 +1271,107 @@ yyparse ()
      Keep to zero when no symbol should be popped.  */
   int yylen = 0;
 
-  yytoken = 0;
-  yyss = yyssa;
-  yyvs = yyvsa;
-  yystacksize = YYINITDEPTH;
-
   YYDPRINTF ((stderr, "Starting parse\n"));
 
-  yystate = 0;
-  yyerrstatus = 0;
-  yynerrs = 0;
   yychar = YYEMPTY; /* Cause a token to be read.  */
-
-  /* Initialize stack pointers.
-     Waste one element of value and location stack
-     so that they stay on the same level as the state stack.
-     The wasted elements are never initialized.  */
-  yyssp = yyss;
-  yyvsp = yyvs;
 
   goto yysetstate;
 
+
 /*------------------------------------------------------------.
-| yynewstate -- Push a new state, which is found in yystate.  |
+| yynewstate -- push a new state, which is found in yystate.  |
 `------------------------------------------------------------*/
- yynewstate:
+yynewstate:
   /* In all cases, when you get here, the value and location stacks
      have just been pushed.  So pushing a state here evens the stacks.  */
   yyssp++;
 
- yysetstate:
-  *yyssp = yystate;
+
+/*--------------------------------------------------------------------.
+| yysetstate -- set current state (the top of the stack) to yystate.  |
+`--------------------------------------------------------------------*/
+yysetstate:
+  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
+  YY_ASSERT (0 <= yystate && yystate < YYNSTATES);
+  YY_IGNORE_USELESS_CAST_BEGIN
+  *yyssp = YY_CAST (yy_state_t, yystate);
+  YY_IGNORE_USELESS_CAST_END
+  YY_STACK_PRINT (yyss, yyssp);
 
   if (yyss + yystacksize - 1 <= yyssp)
+#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+    YYNOMEM;
+#else
     {
       /* Get the current used size of the three stacks, in elements.  */
-      YYSIZE_T yysize = yyssp - yyss + 1;
+      YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-#ifdef yyoverflow
+# if defined yyoverflow
       {
-	/* Give user a chance to reallocate the stack.  Use copies of
-	   these so that the &'s don't force the real ones into
-	   memory.  */
-	YYSTYPE *yyvs1 = yyvs;
-	yytype_int16 *yyss1 = yyss;
+        /* Give user a chance to reallocate the stack.  Use copies of
+           these so that the &'s don't force the real ones into
+           memory.  */
+        yy_state_t *yyss1 = yyss;
+        YYSTYPE *yyvs1 = yyvs;
 
-	/* Each stack pointer address is followed by the size of the
-	   data in use in that stack, in bytes.  This used to be a
-	   conditional around just the two extra args, but that might
-	   be undefined if yyoverflow is a macro.  */
-	yyoverflow (YY_("memory exhausted"),
-		    &yyss1, yysize * sizeof (*yyssp),
-		    &yyvs1, yysize * sizeof (*yyvsp),
-		    &yystacksize);
-
-	yyss = yyss1;
-	yyvs = yyvs1;
+        /* Each stack pointer address is followed by the size of the
+           data in use in that stack, in bytes.  This used to be a
+           conditional around just the two extra args, but that might
+           be undefined if yyoverflow is a macro.  */
+        yyoverflow (YY_("memory exhausted"),
+                    &yyss1, yysize * YYSIZEOF (*yyssp),
+                    &yyvs1, yysize * YYSIZEOF (*yyvsp),
+                    &yystacksize);
+        yyss = yyss1;
+        yyvs = yyvs1;
       }
-#else /* no yyoverflow */
-# ifndef YYSTACK_RELOCATE
-      goto yyexhaustedlab;
-# else
+# else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-	goto yyexhaustedlab;
+        YYNOMEM;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
-	yystacksize = YYMAXDEPTH;
+        yystacksize = YYMAXDEPTH;
 
       {
-	yytype_int16 *yyss1 = yyss;
-	union yyalloc *yyptr =
-	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
-	if (! yyptr)
-	  goto yyexhaustedlab;
-	YYSTACK_RELOCATE (yyss_alloc, yyss);
-	YYSTACK_RELOCATE (yyvs_alloc, yyvs);
+        yy_state_t *yyss1 = yyss;
+        union yyalloc *yyptr =
+          YY_CAST (union yyalloc *,
+                   YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
+        if (! yyptr)
+          YYNOMEM;
+        YYSTACK_RELOCATE (yyss_alloc, yyss);
+        YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
-	if (yyss1 != yyssa)
-	  YYSTACK_FREE (yyss1);
+        if (yyss1 != yyssa)
+          YYSTACK_FREE (yyss1);
       }
 # endif
-#endif /* no yyoverflow */
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
 
-      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-		  (unsigned long int) yystacksize));
+      YY_IGNORE_USELESS_CAST_BEGIN
+      YYDPRINTF ((stderr, "Stack size increased to %ld\n",
+                  YY_CAST (long, yystacksize)));
+      YY_IGNORE_USELESS_CAST_END
 
       if (yyss + yystacksize - 1 <= yyssp)
-	YYABORT;
+        YYABORT;
     }
+#endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
-  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
 
   if (yystate == YYFINAL)
     YYACCEPT;
 
   goto yybackup;
 
+
 /*-----------.
 | yybackup.  |
 `-----------*/
 yybackup:
-
   /* Do appropriate processing given the current state.  Read a
      lookahead token if we need one and don't already have one.  */
 
@@ -1696,17 +1382,28 @@ yybackup:
 
   /* Not known => get a lookahead token if don't already have one.  */
 
-  /* YYCHAR is either YYEMPTY or YYEOF or a valid lookahead symbol.  */
+  /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
   if (yychar == YYEMPTY)
     {
-      YYDPRINTF ((stderr, "Reading a token: "));
-      yychar = YYLEX;
+      YYDPRINTF ((stderr, "Reading a token\n"));
+      yychar = yylex ();
     }
 
   if (yychar <= YYEOF)
     {
-      yychar = yytoken = YYEOF;
+      yychar = YYEOF;
+      yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
+    }
+  else if (yychar == YYerror)
+    {
+      /* The scanner already issued an error message, process directly
+         to error recovery.  But do not keep the error token as
+         lookahead, it is too special and may lead us to an endless
+         loop in error recovery. */
+      yychar = YYUNDEF;
+      yytoken = YYSYMBOL_YYerror;
+      goto yyerrlab1;
     }
   else
     {
@@ -1735,13 +1432,13 @@ yybackup:
 
   /* Shift the lookahead token.  */
   YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
+  yystate = yyn;
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
   /* Discard the shifted token.  */
   yychar = YYEMPTY;
-
-  yystate = yyn;
-  *++yyvsp = yylval;
-
   goto yynewstate;
 
 
@@ -1756,14 +1453,14 @@ yydefault:
 
 
 /*-----------------------------.
-| yyreduce -- Do a reduction.  |
+| yyreduce -- do a reduction.  |
 `-----------------------------*/
 yyreduce:
   /* yyn is the number of a rule to reduce with.  */
   yylen = yyr2[yyn];
 
   /* If YYLEN is nonzero, implement the default value of the action:
-     `$$ = $1'.
+     '$$ = $1'.
 
      Otherwise, the following line sets YYVAL to garbage.
      This behavior is undocumented and Bison
@@ -1776,53 +1473,45 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-
-/* Line 1806 of yacc.c  */
-#line 94 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.decl = (yyvsp[(1) - (1)].str); }
+  case 2: /* $@1: %empty  */
+#line 81 "kdev-pg-parser.yy"
+               { KDevPG::globalSystem.decl = QString::fromUtf8((yyvsp[0].str)); }
+#line 1504 "kdev-pg-parser.cc"
     break;
 
-  case 3:
-
-/* Line 1806 of yacc.c  */
-#line 97 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.bits += (yyvsp[(5) - (5)].str); }
+  case 3: /* system: code_opt $@1 declarations rules code_opt  */
+#line 84 "kdev-pg-parser.yy"
+               { KDevPG::globalSystem.bits += QLatin1StringView((yyvsp[0].str)); }
+#line 1510 "kdev-pg-parser.cc"
     break;
 
-  case 6:
-
-/* Line 1806 of yacc.c  */
-#line 107 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushParserClassMember((yyvsp[(2) - (2)].item)); }
+  case 6: /* declaration: T_PARSERCLASS_DECLARATION member_declaration_rest  */
+#line 94 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushParserClassMember((yyvsp[0].item)); }
+#line 1516 "kdev-pg-parser.cc"
     break;
 
-  case 7:
-
-/* Line 1806 of yacc.c  */
-#line 109 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.bits += (yyvsp[(5) - (5)].str); }
+  case 7: /* declaration: T_PARSERCLASS_DECLARATION '(' T_BITS ')' T_CODE  */
+#line 96 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.bits += QLatin1StringView((yyvsp[0].str)); }
+#line 1522 "kdev-pg-parser.cc"
     break;
 
-  case 8:
-
-/* Line 1806 of yacc.c  */
-#line 111 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushLexerClassMember((yyvsp[(2) - (2)].item)); }
+  case 8: /* declaration: T_LEXERCLASS_DECLARATION member_declaration_rest  */
+#line 98 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushLexerClassMember((yyvsp[0].item)); }
+#line 1528 "kdev-pg-parser.cc"
     break;
 
-  case 9:
-
-/* Line 1806 of yacc.c  */
-#line 113 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.lexerBits += (yyvsp[(5) - (5)].str); }
+  case 9: /* declaration: T_LEXERCLASS_DECLARATION '(' T_BITS ')' T_CODE  */
+#line 100 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.lexerBits += QLatin1StringView((yyvsp[0].str)); }
+#line 1534 "kdev-pg-parser.cc"
     break;
 
-  case 11:
-
-/* Line 1806 of yacc.c  */
-#line 116 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { if(KDevPG::globalSystem.hasLexer)
+  case 11: /* declaration: T_TABLE_LEXER  */
+#line 103 "kdev-pg-parser.yy"
+      { if(KDevPG::globalSystem.hasLexer)
         { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%table_lexer) before any lexer rules"; exit(-1); }
         switch(KDevPG::GDFA::type)
         {
@@ -1835,13 +1524,12 @@ yyreduce:
           default: /* empty */;
         }
       }
+#line 1552 "kdev-pg-parser.cc"
     break;
 
-  case 12:
-
-/* Line 1806 of yacc.c  */
-#line 130 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { if(KDevPG::globalSystem.hasLexer)
+  case 12: /* declaration: T_SEQUENCE_LEXER  */
+#line 117 "kdev-pg-parser.yy"
+      { if(KDevPG::globalSystem.hasLexer)
       { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
       switch(KDevPG::GDFA::type)
       {
@@ -1854,186 +1542,166 @@ yyreduce:
         default: /* empty */;
       }
       }
+#line 1570 "kdev-pg-parser.cc"
     break;
 
-  case 13:
-
-/* Line 1806 of yacc.c  */
-#line 144 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
+  case 13: /* declaration: T_INPUT_ENCODING T_STRING  */
+#line 131 "kdev-pg-parser.yy"
+      {
         if(KDevPG::globalSystem.hasLexer)
         { KDevPG::checkOut << "** ERROR you have to specify the lexer-type (%sequence_lexer) before any lexer rules"; exit(-1); }
         int base = (KDevPG::GDFA::type / 4) * 4; // warning: magic constant: number of different codecs
-        QString str = (yyvsp[(2) - (2)].str);
+        QString str = QString::fromUtf8((yyvsp[0].str));
         str = str.toLower();
         str.remove(QLatin1Char('-'));
-        if(str == "ascii")
+        if(str == QLatin1String("ascii"))
           /* base += 0*/;
-        else if(str == "latin1")
+        else if(str == QLatin1String("latin1"))
           base += 1;
-        else if(str == "utf8")
+        else if(str == QLatin1String("utf8"))
           base += 2;
-        else if(str == "ucs2")
+        else if(str == QLatin1String("ucs2"))
           base += 3;
-        else if(str == "utf16")
+        else if(str == QLatin1String("utf16"))
           base += 4;
-        else if(str == "ucs4" || str == "utf32")
+        else if(str == QLatin1String("ucs4") || str == QLatin1String("utf32"))
           base += 5;
         else
         {
-          KDevPG::checkOut << "** ERROR unknown codec  ``" << (yyvsp[(2) - (2)].str) << "''" << Qt::endl;
+          KDevPG::checkOut << "** ERROR unknown codec  ``" << (yyvsp[0].str) << "''" << Qt::endl;
           exit(-1);
         }
         KDevPG::GDFA::type = KDevPG::AutomatonType(base);
       }
+#line 1601 "kdev-pg-parser.cc"
     break;
 
-  case 14:
-
-/* Line 1806 of yacc.c  */
-#line 171 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.tokenStream = (yyvsp[(2) - (3)].str);           }
+  case 14: /* declaration: T_TOKEN_STREAM_DECLARATION T_IDENTIFIER ';'  */
+#line 158 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.tokenStream = QString::fromUtf8((yyvsp[-1].str));           }
+#line 1607 "kdev-pg-parser.cc"
     break;
 
-  case 15:
-
-/* Line 1806 of yacc.c  */
-#line 173 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.exportMacro = (yyvsp[(2) - (2)].str);           }
+  case 15: /* declaration: T_EXPORT_MACRO T_STRING  */
+#line 160 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.exportMacro = QString::fromUtf8((yyvsp[0].str));           }
+#line 1613 "kdev-pg-parser.cc"
     break;
 
-  case 16:
-
-/* Line 1806 of yacc.c  */
-#line 175 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.exportMacroHeader = (yyvsp[(2) - (2)].str);     }
+  case 16: /* declaration: T_EXPORT_MACRO_HEADER T_STRING  */
+#line 162 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.exportMacroHeader = QString::fromUtf8((yyvsp[0].str));     }
+#line 1619 "kdev-pg-parser.cc"
     break;
 
-  case 17:
-
-/* Line 1806 of yacc.c  */
-#line 177 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.namespaceCode = (yyvsp[(2) - (2)].str);         }
+  case 17: /* declaration: T_NAMESPACE_DECLARATION T_CODE  */
+#line 164 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.namespaceCode = QString::fromUtf8((yyvsp[0].str));         }
+#line 1625 "kdev-pg-parser.cc"
     break;
 
-  case 18:
-
-/* Line 1806 of yacc.c  */
-#line 179 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.astCode = (yyvsp[(2) - (2)].str);               }
+  case 18: /* declaration: T_AST_DECLARATION T_CODE  */
+#line 166 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.astCode = QString::fromUtf8((yyvsp[0].str));               }
+#line 1631 "kdev-pg-parser.cc"
     break;
 
-  case 19:
-
-/* Line 1806 of yacc.c  */
-#line 181 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushParserDeclarationHeader((yyvsp[(2) - (2)].str)); }
+  case 19: /* declaration: T_PARSER_DECLARATION_HEADER T_STRING  */
+#line 168 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushParserDeclarationHeader(QString::fromUtf8((yyvsp[0].str))); }
+#line 1637 "kdev-pg-parser.cc"
     break;
 
-  case 20:
-
-/* Line 1806 of yacc.c  */
-#line 183 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushParserBitsHeader((yyvsp[(2) - (2)].str)); }
+  case 20: /* declaration: T_PARSER_BITS_HEADER T_STRING  */
+#line 170 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushParserBitsHeader(QString::fromUtf8((yyvsp[0].str))); }
+#line 1643 "kdev-pg-parser.cc"
     break;
 
-  case 21:
-
-/* Line 1806 of yacc.c  */
-#line 185 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushAstHeader((yyvsp[(2) - (2)].str)); }
+  case 21: /* declaration: T_AST_HEADER T_STRING  */
+#line 172 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushAstHeader(QString::fromUtf8((yyvsp[0].str))); }
+#line 1649 "kdev-pg-parser.cc"
     break;
 
-  case 22:
-
-/* Line 1806 of yacc.c  */
-#line 187 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushLexerDeclarationHeader((yyvsp[(2) - (2)].str)); }
+  case 22: /* declaration: T_LEXER_DECLARATION_HEADER T_STRING  */
+#line 174 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushLexerDeclarationHeader(QString::fromUtf8((yyvsp[0].str))); }
+#line 1655 "kdev-pg-parser.cc"
     break;
 
-  case 23:
-
-/* Line 1806 of yacc.c  */
-#line 189 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.inputStream = (yyvsp[(2) - (2)].str); }
+  case 23: /* declaration: T_INPUT_STREAM T_STRING  */
+#line 176 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.inputStream = QString::fromUtf8((yyvsp[0].str)); }
+#line 1661 "kdev-pg-parser.cc"
     break;
 
-  case 24:
-
-/* Line 1806 of yacc.c  */
-#line 191 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushLexerBitsHeader((yyvsp[(2) - (2)].str)); }
+  case 24: /* declaration: T_LEXER_BITS_HEADER T_STRING  */
+#line 178 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.pushLexerBitsHeader(QString::fromUtf8((yyvsp[0].str))); }
+#line 1667 "kdev-pg-parser.cc"
     break;
 
-  case 25:
-
-/* Line 1806 of yacc.c  */
-#line 193 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.astBaseClasses[(yyvsp[(2) - (3)].str)] = (yyvsp[(3) - (3)].str); }
+  case 25: /* declaration: T_AST_BASE T_IDENTIFIER T_STRING  */
+#line 180 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.astBaseClasses[QString::fromUtf8((yyvsp[-1].str))] = QString::fromUtf8((yyvsp[0].str)); }
+#line 1673 "kdev-pg-parser.cc"
     break;
 
-  case 26:
-
-/* Line 1806 of yacc.c  */
-#line 195 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.parserBaseClass = (yyvsp[(2) - (2)].str); }
+  case 26: /* declaration: T_PARSER_BASE T_STRING  */
+#line 182 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.parserBaseClass = QString::fromUtf8((yyvsp[0].str)); }
+#line 1679 "kdev-pg-parser.cc"
     break;
 
-  case 27:
-
-/* Line 1806 of yacc.c  */
-#line 197 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.lexerBaseClass = (yyvsp[(2) - (2)].str); }
+  case 27: /* declaration: T_LEXER_BASE T_STRING  */
+#line 184 "kdev-pg-parser.yy"
+        { KDevPG::globalSystem.lexerBaseClass = QString::fromUtf8((yyvsp[0].str)); }
+#line 1685 "kdev-pg-parser.cc"
     break;
 
-  case 28:
-
-/* Line 1806 of yacc.c  */
-#line 198 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.hasLexer = true; lexerEnv = (yyvsp[(2) - (2)].str); if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back("qDebug() << \"error\"; exit(-1);"); }
+  case 28: /* $@2: %empty  */
+#line 185 "kdev-pg-parser.yy"
+                       { KDevPG::globalSystem.hasLexer = true; lexerEnv = QString::fromUtf8((yyvsp[0].str)); if(KDevPG::globalSystem.lexerActions[lexerEnv].empty()) KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QStringLiteral("qDebug() << \"error\"; exit(-1);")); }
+#line 1691 "kdev-pg-parser.cc"
     break;
 
-  case 30:
-
-/* Line 1806 of yacc.c  */
-#line 199 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = "start"; if(KDevPG::globalSystem.lexerActions["start"].empty()) KDevPG::globalSystem.lexerActions["start"].push_back("qDebug() << \"error\"; exit(-1);"); }
+  case 30: /* $@3: %empty  */
+#line 186 "kdev-pg-parser.yy"
+              { KDevPG::globalSystem.hasLexer = true; KDevPG::loadUnicodeData(); lexerEnv = QStringLiteral("start"); if(KDevPG::globalSystem.lexerActions[QStringLiteral("start")].empty()) KDevPG::globalSystem.lexerActions[QStringLiteral("start")].push_back(QStringLiteral("qDebug() << \"error\"; exit(-1);")); }
+#line 1697 "kdev-pg-parser.cc"
     break;
 
-  case 32:
-
-/* Line 1806 of yacc.c  */
-#line 204 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.regexpById[(yyvsp[(3) - (4)].str)] = (yyvsp[(1) - (4)].nfa);
+  case 32: /* $@4: %empty  */
+#line 191 "kdev-pg-parser.yy"
+            { KDevPG::globalSystem.regexpById[QString::fromUtf8((yyvsp[-1].str))] = (yyvsp[-3].nfa);
             }
+#line 1704 "kdev-pg-parser.cc"
     break;
 
-  case 34:
-
-/* Line 1806 of yacc.c  */
-#line 207 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              if((yyvsp[(1) - (4)].nfa)->acceptsEpsilon())
+  case 34: /* $@5: %empty  */
+#line 194 "kdev-pg-parser.yy"
+            {
+              if((yyvsp[-3].nfa)->acceptsEpsilon())
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
-              else if((yyvsp[(1) - (4)].nfa)->isEmpty())
+              else if((yyvsp[-3].nfa)->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
-              QString s = QString((yyvsp[(2) - (4)].str)) + QString(r);
-              KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (4)].nfa));
+              QString s = QLatin1StringView((yyvsp[-2].str)) + r;
+              KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[-3].nfa));
               KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
             }
+#line 1718 "kdev-pg-parser.cc"
     break;
 
-  case 36:
-
-/* Line 1806 of yacc.c  */
-#line 217 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              if((yyvsp[(1) - (8)].nfa)->acceptsEpsilon())
+  case 36: /* $@6: %empty  */
+#line 204 "kdev-pg-parser.yy"
+            {
+              if((yyvsp[-7].nfa)->acceptsEpsilon())
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
-              else if((yyvsp[(1) - (8)].nfa)->isEmpty())
+              else if((yyvsp[-7].nfa)->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               bool ignore = false;
-              auto minLen = (yyvsp[(4) - (8)].nfa)->minLength(), maxLen = (yyvsp[(4) - (8)].nfa)->maxLength();
+              auto minLen = (yyvsp[-4].nfa)->minLength(), maxLen = (yyvsp[-4].nfa)->maxLength();
               if(minLen == 0)
               {
                 KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-lookahead at line " << yyLine << ", ignore the lookahead." << Qt::endl;
@@ -2041,36 +1709,35 @@ yyreduce:
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the lookahead." << Qt::endl;
+                KDevPG::checkOut << "** WARNING Invalid lookahead (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? QStringLiteral("none") : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? QStringLiteral("infinity") : (maxLen == -1 ? QStringLiteral("none") : QString::number(maxLen))) << "), ignore the lookahead." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
               {
-                QString s = QString((yyvsp[(6) - (8)].str)) + QString(r);
-                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (8)].nfa));
+                QString s = QLatin1StringView((yyvsp[-2].str)) + r;
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[-7].nfa));
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
               else
               {
-                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString((yyvsp[(6) - (8)].str)) + QString(r);
-                *(yyvsp[(1) - (8)].nfa) <<= *(yyvsp[(4) - (8)].nfa);
-                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (8)].nfa));
+                QString s = QLatin1String("Iterator::plain() -= ") + QString::number(minLen) + QLatin1String("; ") + QLatin1StringView((yyvsp[-2].str)) + r;
+                *(yyvsp[-7].nfa) <<= *(yyvsp[-4].nfa);
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[-7].nfa));
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
             }
+#line 1754 "kdev-pg-parser.cc"
     break;
 
-  case 38:
-
-/* Line 1806 of yacc.c  */
-#line 249 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              if((yyvsp[(1) - (8)].nfa)->acceptsEpsilon())
+  case 38: /* $@7: %empty  */
+#line 236 "kdev-pg-parser.yy"
+            {
+              if((yyvsp[-7].nfa)->acceptsEpsilon())
                 KDevPG::checkOut << "** WARNING Lexer rule accepting the empty word at line " << yyLine << Qt::endl;
-              else if((yyvsp[(1) - (8)].nfa)->isEmpty())
+              else if((yyvsp[-7].nfa)->isEmpty())
                 KDevPG::checkOut << "** WARNING Lexer rule not accepting anything at line " << yyLine << Qt::endl;
               bool ignore = false;
-              auto minLen = (yyvsp[(4) - (8)].nfa)->minLength(), maxLen = (yyvsp[(4) - (8)].nfa)->maxLength();
+              auto minLen = (yyvsp[-4].nfa)->minLength(), maxLen = (yyvsp[-4].nfa)->maxLength();
               if(minLen == 0)
               {
                 KDevPG::checkOut << "** WARNING Lexer rule specifying epsilon-barrier at line " << yyLine << ", ignore the barrier." << Qt::endl;
@@ -2078,245 +1745,217 @@ yyreduce:
               }
               else if(minLen != maxLen)
               {
-                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? "none" : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? "infinity" : (maxLen == -1 ? "none" : QString::number(maxLen))) << "), ignore the barrier." << Qt::endl;
+                KDevPG::checkOut << "** WARNING Invalid barrier (no fixed length) at line " << yyLine << " (min length: " << (minLen == -1 ? QStringLiteral("none") : QString::number(minLen)) << ", max length: " << (maxLen == -2 ? QStringLiteral("infinity") : (maxLen == -1 ? QStringLiteral("none") : QString::number(maxLen))) << "), ignore the barrier." << Qt::endl;
                 ignore = true;
               }
               if(ignore)
               {
-                QString s = QString((yyvsp[(6) - (8)].str)) + QString(r);
-                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (8)].nfa));
+                QString s = QLatin1StringView((yyvsp[-2].str)) + r;
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[-7].nfa));
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
               else
               {
                 KDevPG::GNFA exclude = KDevPG::GNFA::anything();
-                exclude <<= *(yyvsp[(4) - (8)].nfa);
+                exclude <<= *(yyvsp[-4].nfa);
                 exclude <<= KDevPG::GNFA::anything();
-                KDevPG::GNFA *staying = new KDevPG::GNFA(*(yyvsp[(1) - (8)].nfa));
+                KDevPG::GNFA *staying = new KDevPG::GNFA(*(yyvsp[-7].nfa));
                 *staying ^= exclude;
                 KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back(staying);
-                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QString((yyvsp[(6) - (8)].str)) + QString(r));
+                KDevPG::globalSystem.lexerActions[lexerEnv].push_back(QLatin1StringView((yyvsp[-2].str)) + r);
                 // barrier should not get read partially
                 exclude <<= KDevPG::GNFA::anyChar();
-                *(yyvsp[(1) - (8)].nfa) <<= *(yyvsp[(4) - (8)].nfa);
-                *(yyvsp[(1) - (8)].nfa) ^= exclude;
-                QString s = "Iterator::plain() -= " + QString::number(minLen) + "; " + QString((yyvsp[(6) - (8)].str)) + QString(r);
-                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[(1) - (8)].nfa));
+                *(yyvsp[-7].nfa) <<= *(yyvsp[-4].nfa);
+                *(yyvsp[-7].nfa) ^= exclude;
+                QString s = QLatin1String("Iterator::plain() -= ") + QString::number(minLen) + QLatin1String("; ") + QLatin1StringView((yyvsp[-2].str)) + r;
+                KDevPG::globalSystem.lexerEnvs[lexerEnv].push_back((yyvsp[-7].nfa));
                 KDevPG::globalSystem.lexerActions[lexerEnv].push_back(s);
               }
             }
+#line 1800 "kdev-pg-parser.cc"
     break;
 
-  case 40:
-
-/* Line 1806 of yacc.c  */
-#line 291 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              KDevPG::globalSystem.lexerActions[lexerEnv][0] = QString((yyvsp[(2) - (2)].str));
+  case 40: /* $@8: %empty  */
+#line 278 "kdev-pg-parser.yy"
+            {
+              KDevPG::globalSystem.lexerActions[lexerEnv][0] = QString::fromUtf8((yyvsp[0].str));
             }
+#line 1808 "kdev-pg-parser.cc"
     break;
 
-  case 42:
-
-/* Line 1806 of yacc.c  */
-#line 295 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              KDevPG::globalSystem.enteringCode[lexerEnv] = QString((yyvsp[(2) - (2)].str));
+  case 42: /* $@9: %empty  */
+#line 282 "kdev-pg-parser.yy"
+            {
+              KDevPG::globalSystem.enteringCode[lexerEnv] = QString::fromUtf8((yyvsp[0].str));
             }
+#line 1816 "kdev-pg-parser.cc"
     break;
 
-  case 44:
-
-/* Line 1806 of yacc.c  */
-#line 299 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              KDevPG::globalSystem.leavingCode[lexerEnv] = QString((yyvsp[(2) - (2)].str));
+  case 44: /* $@10: %empty  */
+#line 286 "kdev-pg-parser.yy"
+            {
+              KDevPG::globalSystem.leavingCode[lexerEnv] = QString::fromUtf8((yyvsp[0].str));
             }
+#line 1824 "kdev-pg-parser.cc"
     break;
 
-  case 47:
-
-/* Line 1806 of yacc.c  */
-#line 306 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-        r = "\nlxRETURN(" + QString((yyvsp[(1) - (1)].str)) + ")\n";
+  case 47: /* opt_lexer_action: T_TERMINAL  */
+#line 293 "kdev-pg-parser.yy"
+                 {
+        r = QLatin1String("\nlxRETURN(") + QLatin1StringView((yyvsp[0].str)) + QLatin1String(")\n");
       }
+#line 1832 "kdev-pg-parser.cc"
     break;
 
-  case 48:
-
-/* Line 1806 of yacc.c  */
-#line 309 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-        r = "\nlxCONTINUE;\n";
+  case 48: /* opt_lexer_action: T_CONTINUE  */
+#line 296 "kdev-pg-parser.yy"
+                 {
+        r = QStringLiteral("\nlxCONTINUE;\n");
       }
+#line 1840 "kdev-pg-parser.cc"
     break;
 
-  case 49:
-
-/* Line 1806 of yacc.c  */
-#line 312 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { r = "\nlxSKIP\n"; }
+  case 49: /* opt_lexer_action: %empty  */
+#line 299 "kdev-pg-parser.yy"
+                  { r = QStringLiteral("\nlxSKIP\n"); }
+#line 1846 "kdev-pg-parser.cc"
     break;
 
-  case 50:
-
-/* Line 1806 of yacc.c  */
-#line 316 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) |= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 50: /* regexp: regexp '|' regexp1  */
+#line 303 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa) |= *(yyvsp[0].nfa)); delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 1852 "kdev-pg-parser.cc"
     break;
 
-  case 51:
-
-/* Line 1806 of yacc.c  */
-#line 317 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 51: /* regexp: regexp1  */
+#line 304 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1858 "kdev-pg-parser.cc"
     break;
 
-  case 52:
-
-/* Line 1806 of yacc.c  */
-#line 321 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) &= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 52: /* regexp1: regexp1 '&' regexp2  */
+#line 308 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa) &= *(yyvsp[0].nfa)); delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 1864 "kdev-pg-parser.cc"
     break;
 
-  case 53:
-
-/* Line 1806 of yacc.c  */
-#line 322 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 53: /* regexp1: regexp2  */
+#line 309 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1870 "kdev-pg-parser.cc"
     break;
 
-  case 54:
-
-/* Line 1806 of yacc.c  */
-#line 326 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) ^= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 54: /* regexp2: regexp3 '^' regexp2  */
+#line 313 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa) ^= *(yyvsp[0].nfa)); delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 1876 "kdev-pg-parser.cc"
     break;
 
-  case 55:
-
-/* Line 1806 of yacc.c  */
-#line 327 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 55: /* regexp2: regexp3  */
+#line 314 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1882 "kdev-pg-parser.cc"
     break;
 
-  case 56:
-
-/* Line 1806 of yacc.c  */
-#line 331 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA((yyvsp[(2) - (2)].nfa)->negate()); delete (yyvsp[(2) - (2)].nfa); }
+  case 56: /* regexp3: '~' regexp3  */
+#line 318 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA((yyvsp[0].nfa)->negate()); delete (yyvsp[0].nfa); }
+#line 1888 "kdev-pg-parser.cc"
     break;
 
-  case 57:
-
-/* Line 1806 of yacc.c  */
-#line 332 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA::emptyWord()); delete (yyvsp[(2) - (2)].nfa); }
+  case 57: /* regexp3: '?' regexp3  */
+#line 319 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[0].nfa) |= KDevPG::GNFA::emptyWord()); delete (yyvsp[0].nfa); }
+#line 1894 "kdev-pg-parser.cc"
     break;
 
-  case 58:
-
-/* Line 1806 of yacc.c  */
-#line 333 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 58: /* regexp3: regexp4  */
+#line 320 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1900 "kdev-pg-parser.cc"
     break;
 
-  case 59:
-
-/* Line 1806 of yacc.c  */
-#line 337 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa) <<= *(yyvsp[(2) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); delete (yyvsp[(2) - (2)].nfa); }
+  case 59: /* regexp4: regexp4 regexp5  */
+#line 324 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-1].nfa) <<= *(yyvsp[0].nfa)); delete (yyvsp[-1].nfa); delete (yyvsp[0].nfa); }
+#line 1906 "kdev-pg-parser.cc"
     break;
 
-  case 60:
-
-/* Line 1806 of yacc.c  */
-#line 338 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 60: /* regexp4: regexp5  */
+#line 325 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1912 "kdev-pg-parser.cc"
     break;
 
-  case 61:
-
-/* Line 1806 of yacc.c  */
-#line 342 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa)); KDevPG::GNFA *tmp = new KDevPG::GNFA(*(yyvsp[(3) - (3)].nfa) <<= *(yyvsp[(1) - (3)].nfa)); **tmp; *(yyval.nfa) <<= *tmp; delete tmp; delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 61: /* regexp5: regexp5 '@' regexp6  */
+#line 329 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa)); KDevPG::GNFA *tmp = new KDevPG::GNFA(*(yyvsp[0].nfa) <<= *(yyvsp[-2].nfa)); **tmp; *(yyval.nfa) <<= *tmp; delete tmp; delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 1918 "kdev-pg-parser.cc"
     break;
 
-  case 62:
-
-/* Line 1806 of yacc.c  */
-#line 343 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 62: /* regexp5: regexp6  */
+#line 330 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1924 "kdev-pg-parser.cc"
     break;
 
-  case 63:
-
-/* Line 1806 of yacc.c  */
-#line 347 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(**(yyvsp[(1) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); }
+  case 63: /* regexp6: regexp6 '*'  */
+#line 334 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(**(yyvsp[-1].nfa)); delete (yyvsp[-1].nfa); }
+#line 1930 "kdev-pg-parser.cc"
     break;
 
-  case 64:
-
-/* Line 1806 of yacc.c  */
-#line 348 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa)); **(yyval.nfa); *(yyval.nfa) <<= *(yyvsp[(1) - (2)].nfa); delete (yyvsp[(1) - (2)].nfa); }
+  case 64: /* regexp6: regexp6 '+'  */
+#line 335 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-1].nfa)); **(yyval.nfa); *(yyval.nfa) <<= *(yyvsp[-1].nfa); delete (yyvsp[-1].nfa); }
+#line 1936 "kdev-pg-parser.cc"
     break;
 
-  case 65:
-
-/* Line 1806 of yacc.c  */
-#line 349 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 65: /* regexp6: regexp7  */
+#line 336 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 1942 "kdev-pg-parser.cc"
     break;
 
-  case 66:
-
-/* Line 1806 of yacc.c  */
-#line 353 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (3)].nfa)); delete (yyvsp[(2) - (3)].nfa); }
+  case 66: /* regexp7: '(' regexp ')'  */
+#line 340 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-1].nfa)); delete (yyvsp[-1].nfa); }
+#line 1948 "kdev-pg-parser.cc"
     break;
 
-  case 67:
-
-/* Line 1806 of yacc.c  */
-#line 354 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(2) - (3)].nfa); }
+  case 67: /* regexp7: '[' aregexp ']'  */
+#line 341 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[-1].nfa); }
+#line 1954 "kdev-pg-parser.cc"
     break;
 
-  case 68:
-
-/* Line 1806 of yacc.c  */
-#line 355 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+  case 68: /* regexp7: '.'  */
+#line 342 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+#line 1960 "kdev-pg-parser.cc"
     break;
 
-  case 69:
-
-/* Line 1806 of yacc.c  */
-#line 356 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); }
+  case 69: /* regexp7: T_STRING  */
+#line 343 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[0].str))))); }
+#line 1966 "kdev-pg-parser.cc"
     break;
 
-  case 70:
-
-/* Line 1806 of yacc.c  */
-#line 357 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); }
+  case 70: /* regexp7: T_UNQUOTED_STRING  */
+#line 344 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[0].str))))); }
+#line 1972 "kdev-pg-parser.cc"
     break;
 
-  case 71:
-
-/* Line 1806 of yacc.c  */
-#line 358 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-                              if(!KDevPG::globalSystem.regexpById.contains((yyvsp[(1) - (1)].str)))
+  case 71: /* regexp7: T_NAMED_REGEXP  */
+#line 345 "kdev-pg-parser.yy"
+                            {
+                              if(!KDevPG::globalSystem.regexpById.contains(QString::fromUtf8((yyvsp[0].str))))
                               {
-                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << Qt::endl;
+                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[0].str) << Qt::endl;
                                 exit(-1);
                               }
-                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[QString::fromUtf8((yyvsp[0].str))];
                               if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
                                 KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
@@ -2325,157 +1964,136 @@ yyreduce:
                               }
                               (yyval.nfa) = new KDevPG::GNFA(*regexp);
                             }
+#line 1992 "kdev-pg-parser.cc"
     break;
 
-  case 72:
-
-/* Line 1806 of yacc.c  */
-#line 373 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
+  case 72: /* regexp7: %empty  */
+#line 360 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
+#line 1998 "kdev-pg-parser.cc"
     break;
 
-  case 73:
-
-/* Line 1806 of yacc.c  */
-#line 377 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) |= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 73: /* aregexp: aregexp '|' aregexp1  */
+#line 364 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa) |= *(yyvsp[0].nfa)); delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 2004 "kdev-pg-parser.cc"
     break;
 
-  case 74:
-
-/* Line 1806 of yacc.c  */
-#line 378 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 74: /* aregexp: aregexp1  */
+#line 365 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 2010 "kdev-pg-parser.cc"
     break;
 
-  case 75:
-
-/* Line 1806 of yacc.c  */
-#line 382 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) &= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 75: /* aregexp1: aregexp1 '&' aregexp2  */
+#line 369 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa) &= *(yyvsp[0].nfa)); delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 2016 "kdev-pg-parser.cc"
     break;
 
-  case 76:
-
-/* Line 1806 of yacc.c  */
-#line 383 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 76: /* aregexp1: aregexp2  */
+#line 370 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 2022 "kdev-pg-parser.cc"
     break;
 
-  case 77:
-
-/* Line 1806 of yacc.c  */
-#line 387 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa) ^= *(yyvsp[(3) - (3)].nfa)); delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 77: /* aregexp2: aregexp3 '^' aregexp2  */
+#line 374 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa) ^= *(yyvsp[0].nfa)); delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 2028 "kdev-pg-parser.cc"
     break;
 
-  case 78:
-
-/* Line 1806 of yacc.c  */
-#line 388 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 78: /* aregexp2: aregexp3  */
+#line 375 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 2034 "kdev-pg-parser.cc"
     break;
 
-  case 79:
-
-/* Line 1806 of yacc.c  */
-#line 392 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA((yyvsp[(2) - (2)].nfa)->negate()); delete (yyvsp[(2) - (2)].nfa); }
+  case 79: /* aregexp3: '~' aregexp3  */
+#line 379 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA((yyvsp[0].nfa)->negate()); delete (yyvsp[0].nfa); }
+#line 2040 "kdev-pg-parser.cc"
     break;
 
-  case 80:
-
-/* Line 1806 of yacc.c  */
-#line 393 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (2)].nfa) |= KDevPG::GNFA::emptyWord()); delete (yyvsp[(2) - (2)].nfa); }
+  case 80: /* aregexp3: '?' aregexp3  */
+#line 380 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[0].nfa) |= KDevPG::GNFA::emptyWord()); delete (yyvsp[0].nfa); }
+#line 2046 "kdev-pg-parser.cc"
     break;
 
-  case 81:
-
-/* Line 1806 of yacc.c  */
-#line 394 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 81: /* aregexp3: aregexp4  */
+#line 381 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 2052 "kdev-pg-parser.cc"
     break;
 
-  case 82:
-
-/* Line 1806 of yacc.c  */
-#line 398 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa) |= *(yyvsp[(2) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); delete (yyvsp[(2) - (2)].nfa); }
+  case 82: /* aregexp4: aregexp4 aregexp5  */
+#line 385 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-1].nfa) |= *(yyvsp[0].nfa)); delete (yyvsp[-1].nfa); delete (yyvsp[0].nfa); }
+#line 2058 "kdev-pg-parser.cc"
     break;
 
-  case 84:
-
-/* Line 1806 of yacc.c  */
-#line 403 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (3)].nfa)); KDevPG::GNFA *tmp = new KDevPG::GNFA(*(yyvsp[(3) - (3)].nfa) <<= *(yyvsp[(1) - (3)].nfa)); **tmp; *(yyval.nfa) <<= *tmp; delete tmp; delete (yyvsp[(1) - (3)].nfa); delete (yyvsp[(3) - (3)].nfa); }
+  case 84: /* aregexp5: aregexp5 '@' aregexp6  */
+#line 390 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-2].nfa)); KDevPG::GNFA *tmp = new KDevPG::GNFA(*(yyvsp[0].nfa) <<= *(yyvsp[-2].nfa)); **tmp; *(yyval.nfa) <<= *tmp; delete tmp; delete (yyvsp[-2].nfa); delete (yyvsp[0].nfa); }
+#line 2064 "kdev-pg-parser.cc"
     break;
 
-  case 85:
-
-/* Line 1806 of yacc.c  */
-#line 404 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 85: /* aregexp5: aregexp6  */
+#line 391 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 2070 "kdev-pg-parser.cc"
     break;
 
-  case 86:
-
-/* Line 1806 of yacc.c  */
-#line 408 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(**(yyvsp[(1) - (2)].nfa)); delete (yyvsp[(1) - (2)].nfa); }
+  case 86: /* aregexp6: aregexp6 '*'  */
+#line 395 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(**(yyvsp[-1].nfa)); delete (yyvsp[-1].nfa); }
+#line 2076 "kdev-pg-parser.cc"
     break;
 
-  case 87:
-
-/* Line 1806 of yacc.c  */
-#line 409 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(1) - (2)].nfa)); **(yyval.nfa); *(yyval.nfa) <<= *(yyvsp[(1) - (2)].nfa); delete (yyvsp[(1) - (2)].nfa); }
+  case 87: /* aregexp6: aregexp6 '+'  */
+#line 396 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-1].nfa)); **(yyval.nfa); *(yyval.nfa) <<= *(yyvsp[-1].nfa); delete (yyvsp[-1].nfa); }
+#line 2082 "kdev-pg-parser.cc"
     break;
 
-  case 88:
-
-/* Line 1806 of yacc.c  */
-#line 410 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(1) - (1)].nfa); }
+  case 88: /* aregexp6: aregexp7  */
+#line 397 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[0].nfa); }
+#line 2088 "kdev-pg-parser.cc"
     break;
 
-  case 89:
-
-/* Line 1806 of yacc.c  */
-#line 414 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[(2) - (3)].nfa)); delete (yyvsp[(2) - (3)].nfa); }
+  case 89: /* aregexp7: '(' regexp ')'  */
+#line 401 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(*(yyvsp[-1].nfa)); delete (yyvsp[-1].nfa); }
+#line 2094 "kdev-pg-parser.cc"
     break;
 
-  case 90:
-
-/* Line 1806 of yacc.c  */
-#line 415 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = (yyvsp[(2) - (3)].nfa); }
+  case 90: /* aregexp7: '[' aregexp ']'  */
+#line 402 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = (yyvsp[-1].nfa); }
+#line 2100 "kdev-pg-parser.cc"
     break;
 
-  case 91:
-
-/* Line 1806 of yacc.c  */
-#line 416 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+  case 91: /* aregexp7: '.'  */
+#line 403 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::anyChar()); }
+#line 2106 "kdev-pg-parser.cc"
     break;
 
-  case 92:
-
-/* Line 1806 of yacc.c  */
-#line 417 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); }
+  case 92: /* aregexp7: T_STRING  */
+#line 404 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::word(KDevPG::unescaped(QByteArray((yyvsp[0].str))))); }
+#line 2112 "kdev-pg-parser.cc"
     break;
 
-  case 93:
-
-/* Line 1806 of yacc.c  */
-#line 418 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
+  case 93: /* aregexp7: T_RANGE  */
+#line 405 "kdev-pg-parser.yy"
+                            {
       quint32 begin, end;
-      QString str = KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str)));
+      QString str = KDevPG::unescaped(QByteArray((yyvsp[0].str)));
       assert(str.size() >= 3 && str.size() <= 5);
-      if(str[1] == '-')
+      if(str[1] == QLatin1Char('-'))
       {
         begin = str[0].unicode();
         if(str.size() == 3)
@@ -2486,7 +2104,7 @@ yyreduce:
       else
       {
         begin = QChar::surrogateToUcs4(str[0], str[1]);
-        assert(str[2] == '-');
+        assert(str[2] == QLatin1Char('-'));
         if(str.size() == 4)
           end = str[3].unicode();
         else
@@ -2494,26 +2112,24 @@ yyreduce:
       }
       (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::range(begin, end+1));
     }
+#line 2140 "kdev-pg-parser.cc"
     break;
 
-  case 94:
-
-/* Line 1806 of yacc.c  */
-#line 441 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray((yyvsp[(1) - (1)].str))))); }
+  case 94: /* aregexp7: T_UNQUOTED_STRING  */
+#line 428 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::collection(KDevPG::unescaped(QByteArray((yyvsp[0].str))))); }
+#line 2146 "kdev-pg-parser.cc"
     break;
 
-  case 95:
-
-/* Line 1806 of yacc.c  */
-#line 442 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-                              if(!KDevPG::globalSystem.regexpById.contains((yyvsp[(1) - (1)].str)))
+  case 95: /* aregexp7: T_NAMED_REGEXP  */
+#line 429 "kdev-pg-parser.yy"
+                            {
+                              if(!KDevPG::globalSystem.regexpById.contains(QString::fromUtf8((yyvsp[0].str))))
                               {
-                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[(1) - (1)].str) << Qt::endl;
+                                KDevPG::checkOut << "** ERROR: no named regexp " << (yyvsp[0].str) << Qt::endl;
                                 exit(-1);
                               }
-                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[(yyvsp[(1) - (1)].str)];
+                              KDevPG::GNFA *regexp = KDevPG::globalSystem.regexpById[QString::fromUtf8((yyvsp[0].str))];
                               if(!KDevPG::globalSystem.dfaForNfa.contains(regexp))
                               {
                                 KDevPG::globalSystem.dfaForNfa[regexp] = new KDevPG::GDFA(regexp->dfa());
@@ -2522,637 +2138,556 @@ yyreduce:
                               }
                               (yyval.nfa) = new KDevPG::GNFA(*regexp);
                             }
+#line 2166 "kdev-pg-parser.cc"
     break;
 
-  case 96:
-
-/* Line 1806 of yacc.c  */
-#line 457 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
+  case 96: /* aregexp7: %empty  */
+#line 444 "kdev-pg-parser.yy"
+                            { (yyval.nfa) = new KDevPG::GNFA(KDevPG::GNFA::emptyWord()); }
+#line 2172 "kdev-pg-parser.cc"
     break;
 
-  case 97:
-
-/* Line 1806 of yacc.c  */
-#line 463 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, (yyvsp[(5) - (5)].str));    }
+  case 97: /* member_declaration_rest: '(' T_PUBLIC T_DECLARATION ')' T_CODE  */
+#line 450 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PublicDeclaration, QString::fromUtf8((yyvsp[0].str)));    }
+#line 2178 "kdev-pg-parser.cc"
     break;
 
-  case 98:
-
-/* Line 1806 of yacc.c  */
-#line 465 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, (yyvsp[(5) - (5)].str)); }
+  case 98: /* member_declaration_rest: '(' T_PROTECTED T_DECLARATION ')' T_CODE  */
+#line 452 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ProtectedDeclaration, QString::fromUtf8((yyvsp[0].str))); }
+#line 2184 "kdev-pg-parser.cc"
     break;
 
-  case 99:
-
-/* Line 1806 of yacc.c  */
-#line 467 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, (yyvsp[(5) - (5)].str));   }
+  case 99: /* member_declaration_rest: '(' T_PRIVATE T_DECLARATION ')' T_CODE  */
+#line 454 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::PrivateDeclaration, QString::fromUtf8((yyvsp[0].str)));   }
+#line 2190 "kdev-pg-parser.cc"
     break;
 
-  case 100:
-
-/* Line 1806 of yacc.c  */
-#line 469 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, (yyvsp[(4) - (4)].str));      }
+  case 100: /* member_declaration_rest: '(' T_CONSTRUCTOR ')' T_CODE  */
+#line 456 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::ConstructorCode, QString::fromUtf8((yyvsp[0].str)));      }
+#line 2196 "kdev-pg-parser.cc"
     break;
 
-  case 101:
-
-/* Line 1806 of yacc.c  */
-#line 471 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, (yyvsp[(4) - (4)].str));       }
+  case 101: /* member_declaration_rest: '(' T_DESTRUCTOR ')' T_CODE  */
+#line 458 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::member(KDevPG::Settings::MemberItem::DestructorCode, QString::fromUtf8((yyvsp[0].str)));       }
+#line 2202 "kdev-pg-parser.cc"
     break;
 
-  case 102:
-
-/* Line 1806 of yacc.c  */
-#line 475 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (1)].str),(yyvsp[(1) - (1)].str)); }
+  case 102: /* declared_tokens: T_TERMINAL  */
+#line 462 "kdev-pg-parser.yy"
+                                        { KDevPG::globalSystem.pushTerminal(QString::fromUtf8((yyvsp[0].str)),QString::fromUtf8((yyvsp[0].str))); }
+#line 2208 "kdev-pg-parser.cc"
     break;
 
-  case 103:
-
-/* Line 1806 of yacc.c  */
-#line 476 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushTerminal((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str)); }
+  case 103: /* declared_tokens: T_TERMINAL '(' T_STRING ')'  */
+#line 463 "kdev-pg-parser.yy"
+                                        { KDevPG::globalSystem.pushTerminal(QString::fromUtf8((yyvsp[-3].str)),QString::fromUtf8((yyvsp[-1].str))); }
+#line 2214 "kdev-pg-parser.cc"
     break;
 
-  case 104:
-
-/* Line 1806 of yacc.c  */
-#line 477 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (3)].str),(yyvsp[(3) - (3)].str)); }
+  case 104: /* declared_tokens: declared_tokens ',' T_TERMINAL  */
+#line 464 "kdev-pg-parser.yy"
+                                        { KDevPG::globalSystem.pushTerminal(QString::fromUtf8((yyvsp[0].str)),QString::fromUtf8((yyvsp[0].str))); }
+#line 2220 "kdev-pg-parser.cc"
     break;
 
-  case 105:
-
-/* Line 1806 of yacc.c  */
-#line 479 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushTerminal((yyvsp[(3) - (6)].str),(yyvsp[(5) - (6)].str)); }
+  case 105: /* declared_tokens: declared_tokens ',' T_TERMINAL '(' T_STRING ')'  */
+#line 466 "kdev-pg-parser.yy"
+                                        { KDevPG::globalSystem.pushTerminal(QString::fromUtf8((yyvsp[-3].str)),QString::fromUtf8((yyvsp[-1].str))); }
+#line 2226 "kdev-pg-parser.cc"
     break;
 
-  case 107:
-
-/* Line 1806 of yacc.c  */
-#line 484 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.pushRule((yyvsp[(2) - (3)].item)); }
+  case 107: /* rules: rules item ';'  */
+#line 471 "kdev-pg-parser.yy"
+                                        { KDevPG::globalSystem.pushRule((yyvsp[-1].item)); }
+#line 2232 "kdev-pg-parser.cc"
     break;
 
-  case 108:
-
-/* Line 1806 of yacc.c  */
-#line 488 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::globalSystem.zero(); }
+  case 108: /* primary_item: '0'  */
+#line 475 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::globalSystem.zero(); }
+#line 2238 "kdev-pg-parser.cc"
     break;
 
-  case 109:
-
-/* Line 1806 of yacc.c  */
-#line 489 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(2) - (3)].item); }
+  case 109: /* primary_item: '(' option_item ')'  */
+#line 476 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[-1].item); }
+#line 2244 "kdev-pg-parser.cc"
     break;
 
-  case 110:
-
-/* Line 1806 of yacc.c  */
-#line 490 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 110: /* primary_item: try_item  */
+#line 477 "kdev-pg-parser.yy"
+                                  { (yyval.item) = (yyvsp[0].item); }
+#line 2250 "kdev-pg-parser.cc"
     break;
 
-  case 111:
-
-/* Line 1806 of yacc.c  */
-#line 491 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 111: /* primary_item: primary_atom  */
+#line 478 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[0].item); }
+#line 2256 "kdev-pg-parser.cc"
     break;
 
-  case 112:
-
-/* Line 1806 of yacc.c  */
-#line 492 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol((yyvsp[(2) - (2)].str))); }
+  case 112: /* primary_item: T_INLINE T_IDENTIFIER  */
+#line 479 "kdev-pg-parser.yy"
+                                         { (yyval.item) = KDevPG::inlinedNonTerminal(KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[0].str)))); }
+#line 2262 "kdev-pg-parser.cc"
     break;
 
-  case 113:
-
-/* Line 1806 of yacc.c  */
-#line 493 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::annotation((yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].item), false, (yyvsp[(2) - (3)].storageType)); }
+  case 113: /* primary_item: name scope primary_atom  */
+#line 480 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::annotation(QString::fromUtf8((yyvsp[-2].str)), (yyvsp[0].item), false, (yyvsp[-1].storageType)); }
+#line 2268 "kdev-pg-parser.cc"
     break;
 
-  case 114:
-
-/* Line 1806 of yacc.c  */
-#line 494 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::annotation((yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].item), true, (yyvsp[(3) - (4)].storageType));  }
+  case 114: /* primary_item: '#' name scope primary_atom  */
+#line 481 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::annotation(QString::fromUtf8((yyvsp[-2].str)), (yyvsp[0].item), true, (yyvsp[-1].storageType));  }
+#line 2274 "kdev-pg-parser.cc"
     break;
 
-  case 115:
-
-/* Line 1806 of yacc.c  */
-#line 498 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol((yyvsp[(1) - (2)].str)), (yyvsp[(2) - (2)].str)); }
+  case 115: /* primary_atom: T_IDENTIFIER rule_arguments_opt  */
+#line 485 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::nonTerminal(KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-1].str))), QString::fromUtf8((yyvsp[0].str))); }
+#line 2280 "kdev-pg-parser.cc"
     break;
 
-  case 116:
-
-/* Line 1806 of yacc.c  */
-#line 499 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::globalSystem.terminal((yyvsp[(1) - (1)].str)); }
+  case 116: /* primary_atom: T_TERMINAL  */
+#line 486 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::globalSystem.terminal(QString::fromUtf8((yyvsp[0].str))); }
+#line 2286 "kdev-pg-parser.cc"
     break;
 
-  case 117:
-
-/* Line 1806 of yacc.c  */
-#line 504 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
+  case 117: /* try_item: T_TRY_RECOVER '(' option_item ')'  */
+#line 491 "kdev-pg-parser.yy"
+        {
           KDevPG::globalSystem.needStateManagement = true;
-          (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (4)].item), 0);
+          (yyval.item) = KDevPG::tryCatch((yyvsp[-1].item), nullptr);
         }
+#line 2295 "kdev-pg-parser.cc"
     break;
 
-  case 118:
-
-/* Line 1806 of yacc.c  */
-#line 509 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
+  case 118: /* try_item: T_TRY_ROLLBACK '(' option_item ')' T_CATCH '(' option_item ')'  */
+#line 496 "kdev-pg-parser.yy"
+        {
           KDevPG::globalSystem.needStateManagement = true;
-          (yyval.item) = KDevPG::tryCatch((yyvsp[(3) - (8)].item), (yyvsp[(7) - (8)].item));
+          (yyval.item) = KDevPG::tryCatch((yyvsp[-5].item), (yyvsp[-1].item));
         }
+#line 2304 "kdev-pg-parser.cc"
     break;
 
-  case 119:
-
-/* Line 1806 of yacc.c  */
-#line 515 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = const_cast<char*>(""); }
+  case 119: /* rule_arguments_opt: %empty  */
+#line 502 "kdev-pg-parser.yy"
+                                        { (yyval.str) = const_cast<char*>(""); }
+#line 2310 "kdev-pg-parser.cc"
     break;
 
-  case 120:
-
-/* Line 1806 of yacc.c  */
-#line 516 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (yyvsp[(1) - (1)].str); }
+  case 120: /* rule_arguments_opt: T_RULE_ARGUMENTS  */
+#line 503 "kdev-pg-parser.yy"
+                                        { (yyval.str) = (yyvsp[0].str); }
+#line 2316 "kdev-pg-parser.cc"
     break;
 
-  case 121:
-
-/* Line 1806 of yacc.c  */
-#line 520 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (yyvsp[(1) - (1)].str); }
+  case 121: /* name: T_IDENTIFIER  */
+#line 507 "kdev-pg-parser.yy"
+                                        { (yyval.str) = (yyvsp[0].str); }
+#line 2322 "kdev-pg-parser.cc"
     break;
 
-  case 122:
-
-/* Line 1806 of yacc.c  */
-#line 530 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember; }
+  case 122: /* scope: '='  */
+#line 517 "kdev-pg-parser.yy"
+          { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember; }
+#line 2328 "kdev-pg-parser.cc"
     break;
 
-  case 123:
-
-/* Line 1806 of yacc.c  */
-#line 531 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;  }
+  case 123: /* scope: ':'  */
+#line 518 "kdev-pg-parser.yy"
+          { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;  }
+#line 2334 "kdev-pg-parser.cc"
     break;
 
-  case 124:
-
-/* Line 1806 of yacc.c  */
-#line 535 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::plus((yyvsp[(1) - (2)].item)); }
+  case 124: /* unary_item: primary_item '+'  */
+#line 522 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::plus((yyvsp[-1].item)); }
+#line 2340 "kdev-pg-parser.cc"
     break;
 
-  case 125:
-
-/* Line 1806 of yacc.c  */
-#line 536 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::star((yyvsp[(1) - (2)].item)); }
+  case 125: /* unary_item: primary_item '*'  */
+#line 523 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::star((yyvsp[-1].item)); }
+#line 2346 "kdev-pg-parser.cc"
     break;
 
-  case 126:
-
-/* Line 1806 of yacc.c  */
-#line 537 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 126: /* unary_item: primary_item  */
+#line 524 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[0].item); }
+#line 2352 "kdev-pg-parser.cc"
     break;
 
-  case 127:
-
-/* Line 1806 of yacc.c  */
-#line 538 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::alternative((yyvsp[(2) - (2)].item), KDevPG::globalSystem.zero()); }
+  case 127: /* unary_item: '?' primary_item  */
+#line 525 "kdev-pg-parser.yy"
+                                         { (yyval.item) = KDevPG::alternative((yyvsp[0].item), KDevPG::globalSystem.zero()); }
+#line 2358 "kdev-pg-parser.cc"
     break;
 
-  case 128:
-
-/* Line 1806 of yacc.c  */
-#line 542 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 128: /* postfix_item: unary_item  */
+#line 529 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[0].item); }
+#line 2364 "kdev-pg-parser.cc"
     break;
 
-  case 129:
-
-/* Line 1806 of yacc.c  */
-#line 544 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
+  case 129: /* postfix_item: postfix_item '@' primary_item  */
+#line 531 "kdev-pg-parser.yy"
+        {
           KDevPG::CloneTree cl;
-          (yyval.item) = KDevPG::cons((yyvsp[(1) - (3)].item), KDevPG::star(KDevPG::cons(cl.clone((yyvsp[(3) - (3)].item)), cl.clone((yyvsp[(1) - (3)].item)))));
+          (yyval.item) = KDevPG::cons((yyvsp[-2].item), KDevPG::star(KDevPG::cons(cl.clone((yyvsp[0].item)), cl.clone((yyvsp[-2].item)))));
         }
+#line 2373 "kdev-pg-parser.cc"
     break;
 
-  case 130:
-
-/* Line 1806 of yacc.c  */
-#line 548 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::action((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].str)); }
+  case 130: /* postfix_item: postfix_item T_CODE  */
+#line 535 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::action((yyvsp[-1].item), QString::fromUtf8((yyvsp[0].str))); }
+#line 2379 "kdev-pg-parser.cc"
     break;
 
-  case 131:
-
-/* Line 1806 of yacc.c  */
-#line 549 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::action(0, (yyvsp[(1) - (1)].str)); }
+  case 131: /* postfix_item: T_CODE  */
+#line 536 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::action(nullptr, QString::fromUtf8((yyvsp[0].str))); }
+#line 2385 "kdev-pg-parser.cc"
     break;
 
-  case 132:
-
-/* Line 1806 of yacc.c  */
-#line 553 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 132: /* item_sequence: postfix_item  */
+#line 540 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[0].item); }
+#line 2391 "kdev-pg-parser.cc"
     break;
 
-  case 133:
-
-/* Line 1806 of yacc.c  */
-#line 554 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::cons((yyvsp[(1) - (2)].item), (yyvsp[(2) - (2)].item)); }
+  case 133: /* item_sequence: item_sequence postfix_item  */
+#line 541 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::cons((yyvsp[-1].item), (yyvsp[0].item)); }
+#line 2397 "kdev-pg-parser.cc"
     break;
 
-  case 134:
-
-/* Line 1806 of yacc.c  */
-#line 558 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 134: /* conditional_item: item_sequence  */
+#line 545 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[0].item); }
+#line 2403 "kdev-pg-parser.cc"
     break;
 
-  case 135:
-
-/* Line 1806 of yacc.c  */
-#line 559 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::condition((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].item)); }
+  case 135: /* conditional_item: '?' T_CODE item_sequence  */
+#line 546 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::condition(QString::fromUtf8((yyvsp[-1].str)), (yyvsp[0].item)); }
+#line 2409 "kdev-pg-parser.cc"
     break;
 
-  case 136:
-
-/* Line 1806 of yacc.c  */
-#line 563 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 136: /* option_item: conditional_item  */
+#line 550 "kdev-pg-parser.yy"
+                                        { (yyval.item) = (yyvsp[0].item); }
+#line 2415 "kdev-pg-parser.cc"
     break;
 
-  case 137:
-
-/* Line 1806 of yacc.c  */
-#line 564 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::alternative((yyvsp[(1) - (3)].item), (yyvsp[(3) - (3)].item)); }
+  case 137: /* option_item: option_item '|' conditional_item  */
+#line 551 "kdev-pg-parser.yy"
+                                        { (yyval.item) = KDevPG::alternative((yyvsp[-2].item), (yyvsp[0].item)); }
+#line 2421 "kdev-pg-parser.cc"
     break;
 
-  case 138:
-
-/* Line 1806 of yacc.c  */
-#line 569 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-          (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
-                          (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(6) - (7)].item), (yyvsp[(4) - (7)].str));
+  case 138: /* item: option_item T_ARROW T_IDENTIFIER T_CODE '[' variableDeclarations ']'  */
+#line 556 "kdev-pg-parser.yy"
+        {
+          (yyval.item) = KDevPG::evolve((yyvsp[-6].item), KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-4].str))),
+                          (KDevPG::Model::VariableDeclarationItem*) (yyvsp[-1].item), QString::fromUtf8((yyvsp[-3].str)));
         }
+#line 2430 "kdev-pg-parser.cc"
     break;
 
-  case 139:
-
-/* Line 1806 of yacc.c  */
-#line 574 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-          (yyval.item) = KDevPG::evolve((yyvsp[(1) - (7)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (7)].str)),
-                          (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(5) - (7)].item), (yyvsp[(7) - (7)].str));
+  case 139: /* item: option_item T_ARROW T_IDENTIFIER '[' variableDeclarations ']' code_opt  */
+#line 561 "kdev-pg-parser.yy"
+        {
+          (yyval.item) = KDevPG::evolve((yyvsp[-6].item), KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-4].str))),
+                          (KDevPG::Model::VariableDeclarationItem*) (yyvsp[-2].item), QString::fromUtf8((yyvsp[0].str)));
         }
+#line 2439 "kdev-pg-parser.cc"
     break;
 
-  case 140:
-
-/* Line 1806 of yacc.c  */
-#line 579 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::evolve((yyvsp[(1) - (4)].item), KDevPG::globalSystem.pushSymbol((yyvsp[(3) - (4)].str)), 0, (yyvsp[(4) - (4)].str)); }
+  case 140: /* item: option_item T_ARROW T_IDENTIFIER code_opt  */
+#line 566 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::evolve((yyvsp[-3].item), KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-1].str))), nullptr, QString::fromUtf8((yyvsp[0].str))); }
+#line 2445 "kdev-pg-parser.cc"
     break;
 
-  case 141:
-
-/* Line 1806 of yacc.c  */
-#line 580 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { if(KDevPG::globalSystem.generateAst == false)
+  case 141: /* $@11: %empty  */
+#line 567 "kdev-pg-parser.yy"
+      { if(KDevPG::globalSystem.generateAst == false)
         {
           qFatal("Operator-expression-parsing is not yet supported with --no-ast!");
           exit(-1);
         }
         operatorNode = KDevPG::createNode<KDevPG::Model::OperatorItem>();
       }
+#line 2457 "kdev-pg-parser.cc"
     break;
 
-  case 142:
-
-/* Line 1806 of yacc.c  */
-#line 586 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { KDevPG::globalSystem.needOperatorStack = true; (yyval.item) = (yyvsp[(2) - (2)].item); }
+  case 142: /* item: $@11 operatorRule  */
+#line 573 "kdev-pg-parser.yy"
+                     { KDevPG::globalSystem.needOperatorStack = true; (yyval.item) = (yyvsp[0].item); }
+#line 2463 "kdev-pg-parser.cc"
     break;
 
-  case 143:
-
-/* Line 1806 of yacc.c  */
-#line 590 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = const_cast<char*>(""); }
+  case 143: /* code_opt: %empty  */
+#line 577 "kdev-pg-parser.yy"
+                                        { (yyval.str) = const_cast<char*>(""); }
+#line 2469 "kdev-pg-parser.cc"
     break;
 
-  case 144:
-
-/* Line 1806 of yacc.c  */
-#line 591 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (yyvsp[(1) - (1)].str); }
+  case 144: /* code_opt: T_CODE  */
+#line 578 "kdev-pg-parser.yy"
+                                        { (yyval.str) = (yyvsp[0].str); }
+#line 2475 "kdev-pg-parser.cc"
     break;
 
-  case 146:
-
-/* Line 1806 of yacc.c  */
-#line 597 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { ; }
+  case 146: /* operatorDeclarations: %empty  */
+#line 584 "kdev-pg-parser.yy"
+                    { ; }
+#line 2481 "kdev-pg-parser.cc"
     break;
 
-  case 147:
-
-/* Line 1806 of yacc.c  */
-#line 602 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (9)].item);
-              operatorNode->mName = (yyvsp[(5) - (9)].str);
+  case 147: /* operatorRule: T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER '[' variableDeclarations ']' code_opt  */
+#line 589 "kdev-pg-parser.yy"
+            {
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[-7].item);
+              operatorNode->mName = QString::fromUtf8((yyvsp[-4].str));
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(5) - (9)].str)), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[(7) - (9)].item), (yyvsp[(9) - (9)].str));
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + QLatin1String("Ast");
+              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-4].str))), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[-2].item), QString::fromUtf8((yyvsp[0].str)));
             }
+#line 2493 "kdev-pg-parser.cc"
     break;
 
-  case 148:
-
-/* Line 1806 of yacc.c  */
-#line 610 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (9)].item);
-              operatorNode->mName = (yyvsp[(5) - (9)].str);
+  case 148: /* operatorRule: T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER T_CODE '[' variableDeclarations ']'  */
+#line 597 "kdev-pg-parser.yy"
+            {
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[-7].item);
+              operatorNode->mName = QString::fromUtf8((yyvsp[-4].str));
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(5) - (9)].str)), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[(8) - (9)].item), (yyvsp[(6) - (9)].str));
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + QLatin1String("Ast");
+              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-4].str))), (KDevPG::Model::VariableDeclarationItem*)(yyvsp[-1].item), QString::fromUtf8((yyvsp[-3].str)));
             }
+#line 2505 "kdev-pg-parser.cc"
     break;
 
-  case 149:
-
-/* Line 1806 of yacc.c  */
-#line 618 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[(2) - (6)].item);
-              operatorNode->mName = (yyvsp[(5) - (6)].str);
+  case 149: /* operatorRule: T_LOPR primary_atom operatorDeclarations T_ROPR T_IDENTIFIER code_opt  */
+#line 605 "kdev-pg-parser.yy"
+            {
+              operatorNode->mBase = (KDevPG::Model::NonTerminalItem*)(yyvsp[-4].item);
+              operatorNode->mName = QString::fromUtf8((yyvsp[-1].str));
               if(!KDevPG::globalSystem.astBaseClasses.contains(operatorNode->mBase->mSymbol->mName))
-                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + "Ast";
-              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol((yyvsp[(5) - (6)].str)), 0, (yyvsp[(6) - (6)].str));
+                KDevPG::globalSystem.astBaseClasses[operatorNode->mBase->mSymbol->mName] = KDevPG::capitalized(operatorNode->mName) + QLatin1String("Ast");
+              (yyval.item) = KDevPG::evolve(operatorNode, KDevPG::globalSystem.pushSymbol(QString::fromUtf8((yyvsp[-1].str))), nullptr, QString::fromUtf8((yyvsp[0].str)));
             }
+#line 2517 "kdev-pg-parser.cc"
     break;
 
-  case 150:
-
-/* Line 1806 of yacc.c  */
-#line 628 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode->pushBin(*(yyvsp[(2) - (4)].operatorInformation), (yyvsp[(4) - (4)].str), (yyvsp[(3) - (4)].str)); free((yyvsp[(2) - (4)].operatorInformation)); }
+  case 150: /* operatorDeclaration: T_BIN operator priority assoc  */
+#line 615 "kdev-pg-parser.yy"
+                                                 { operatorNode->pushBin(*(yyvsp[-2].operatorInformation), QString::fromUtf8((yyvsp[0].str)), QString::fromUtf8((yyvsp[-1].str))); free((yyvsp[-2].operatorInformation)); }
+#line 2523 "kdev-pg-parser.cc"
     break;
 
-  case 151:
-
-/* Line 1806 of yacc.c  */
-#line 629 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode->pushTern(*(yyvsp[(2) - (5)].operatorInformation), *(yyvsp[(3) - (5)].operatorInformation), (yyvsp[(5) - (5)].str), (yyvsp[(4) - (5)].str)); free((yyvsp[(2) - (5)].operatorInformation)); free((yyvsp[(3) - (5)].operatorInformation)); }
+  case 151: /* operatorDeclaration: T_TERN operator operator priority assoc  */
+#line 616 "kdev-pg-parser.yy"
+                                                 { operatorNode->pushTern(*(yyvsp[-3].operatorInformation), *(yyvsp[-2].operatorInformation), QString::fromUtf8((yyvsp[0].str)), QString::fromUtf8((yyvsp[-1].str))); free((yyvsp[-3].operatorInformation)); free((yyvsp[-2].operatorInformation)); }
+#line 2529 "kdev-pg-parser.cc"
     break;
 
-  case 152:
-
-/* Line 1806 of yacc.c  */
-#line 630 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode->pushPre(*(yyvsp[(2) - (3)].operatorInformation), (yyvsp[(3) - (3)].str)); free((yyvsp[(2) - (3)].operatorInformation)); }
+  case 152: /* operatorDeclaration: T_PRE operator priority  */
+#line 617 "kdev-pg-parser.yy"
+                                                 { operatorNode->pushPre(*(yyvsp[-1].operatorInformation), QString::fromUtf8((yyvsp[0].str))); free((yyvsp[-1].operatorInformation)); }
+#line 2535 "kdev-pg-parser.cc"
     break;
 
-  case 153:
-
-/* Line 1806 of yacc.c  */
-#line 631 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode->pushPost(*(yyvsp[(2) - (3)].operatorInformation), "0", (yyvsp[(3) - (3)].str)); free((yyvsp[(2) - (3)].operatorInformation)); free((yyvsp[(3) - (3)].str)); }
+  case 153: /* operatorDeclaration: T_POST operator priority  */
+#line 618 "kdev-pg-parser.yy"
+                                                 { operatorNode->pushPost(*(yyvsp[-1].operatorInformation), QStringLiteral("0"), QString::fromUtf8((yyvsp[0].str))); free((yyvsp[-1].operatorInformation)); free((yyvsp[0].str)); }
+#line 2541 "kdev-pg-parser.cc"
     break;
 
-  case 154:
-
-/* Line 1806 of yacc.c  */
-#line 632 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode->pushPost(*(yyvsp[(2) - (4)].operatorInformation), (yyvsp[(4) - (4)].str), (yyvsp[(3) - (4)].str)); free((yyvsp[(2) - (4)].operatorInformation)); }
+  case 154: /* operatorDeclaration: T_POST operator priority assoc  */
+#line 619 "kdev-pg-parser.yy"
+                                                 { operatorNode->pushPost(*(yyvsp[-2].operatorInformation), QString::fromUtf8((yyvsp[0].str)), QString::fromUtf8((yyvsp[-1].str))); free((yyvsp[-2].operatorInformation)); }
+#line 2547 "kdev-pg-parser.cc"
     break;
 
-  case 155:
-
-/* Line 1806 of yacc.c  */
-#line 633 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { operatorNode->pushParen(*(yyvsp[(2) - (3)].operatorInformation), *(yyvsp[(3) - (3)].operatorInformation)); free((yyvsp[(2) - (3)].operatorInformation)); free((yyvsp[(3) - (3)].operatorInformation)); }
+  case 155: /* operatorDeclaration: T_PAREN operator operator  */
+#line 620 "kdev-pg-parser.yy"
+                                                 { operatorNode->pushParen(*(yyvsp[-1].operatorInformation), *(yyvsp[0].operatorInformation)); free((yyvsp[-1].operatorInformation)); free((yyvsp[0].operatorInformation)); }
+#line 2553 "kdev-pg-parser.cc"
     break;
 
-  case 156:
-
-/* Line 1806 of yacc.c  */
-#line 637 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (char*)"0"; }
+  case 156: /* priority: '0'  */
+#line 624 "kdev-pg-parser.yy"
+                                   { (yyval.str) = (char*)"0"; }
+#line 2559 "kdev-pg-parser.cc"
     break;
 
-  case 157:
-
-/* Line 1806 of yacc.c  */
-#line 638 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (yyvsp[(1) - (1)].str); }
+  case 157: /* priority: T_NUMBER  */
+#line 625 "kdev-pg-parser.yy"
+                                   { (yyval.str) = (yyvsp[0].str); }
+#line 2565 "kdev-pg-parser.cc"
     break;
 
-  case 158:
-
-/* Line 1806 of yacc.c  */
-#line 639 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (yyvsp[(2) - (2)].str); }
+  case 158: /* priority: T_PRIORITY T_CODE  */
+#line 626 "kdev-pg-parser.yy"
+                                   { (yyval.str) = (yyvsp[0].str); }
+#line 2571 "kdev-pg-parser.cc"
     break;
 
-  case 159:
-
-/* Line 1806 of yacc.c  */
-#line 643 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (char*)"1"; }
+  case 159: /* assoc: T_LEFT_ASSOC  */
+#line 630 "kdev-pg-parser.yy"
+                                   { (yyval.str) = (char*)"1"; }
+#line 2577 "kdev-pg-parser.cc"
     break;
 
-  case 160:
-
-/* Line 1806 of yacc.c  */
-#line 644 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.str) = (char*)"0"; }
+  case 160: /* assoc: T_RIGHT_ASSOC  */
+#line 631 "kdev-pg-parser.yy"
+                                   { (yyval.str) = (char*)"0"; }
+#line 2583 "kdev-pg-parser.cc"
     break;
 
-  case 161:
-
-/* Line 1806 of yacc.c  */
-#line 645 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { uint yyleng = strlen((yyvsp[(2) - (2)].str));
+  case 161: /* assoc: T_IS_LEFT_ASSOC T_CODE  */
+#line 632 "kdev-pg-parser.yy"
+                                   { uint yyleng = strlen((yyvsp[0].str));
                                      char *tmp = (char*)calloc(yyleng+7, sizeof(char));
                                      tmp[0] = '(';
-                                     strcpy(tmp+1, (yyvsp[(2) - (2)].str));
+                                     strcpy(tmp+1, (yyvsp[0].str));
                                      strcpy(tmp+yyleng+6-6+1, "?1:0)");
                                      (yyval.str) = tmp;
                                    }
+#line 2595 "kdev-pg-parser.cc"
     break;
 
-  case 162:
-
-/* Line 1806 of yacc.c  */
-#line 652 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { uint yyleng = strlen((yyvsp[(2) - (2)].str));
+  case 162: /* assoc: T_IS_RIGHT_ASSOC T_CODE  */
+#line 639 "kdev-pg-parser.yy"
+                                   { uint yyleng = strlen((yyvsp[0].str));
                                      char *tmp = (char*)calloc(yyleng+7, sizeof(char));
                                      tmp[0] = '(';
-                                     strcpy(tmp+1, (yyvsp[(2) - (2)].str));
+                                     strcpy(tmp+1, (yyvsp[0].str));
                                      strcpy(tmp+yyleng+6-6+1, "?0:1)");
                                      (yyval.str) = tmp;
                                    }
+#line 2607 "kdev-pg-parser.cc"
     break;
 
-  case 163:
-
-/* Line 1806 of yacc.c  */
-#line 662 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(3) - (4)].str)), (yyvsp[(2) - (4)].str), (yyvsp[(4) - (4)].str)); }
+  case 163: /* operator: '?' T_CODE T_TERMINAL T_CODE  */
+#line 649 "kdev-pg-parser.yy"
+                                   { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8((yyvsp[-1].str))), QString::fromUtf8((yyvsp[-2].str)), QString::fromUtf8((yyvsp[0].str))); }
+#line 2613 "kdev-pg-parser.cc"
     break;
 
-  case 164:
-
-/* Line 1806 of yacc.c  */
-#line 663 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(3) - (3)].str)), (yyvsp[(2) - (3)].str), ""); }
+  case 164: /* operator: '?' T_CODE T_TERMINAL  */
+#line 650 "kdev-pg-parser.yy"
+                                   { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8((yyvsp[0].str))), QString::fromUtf8((yyvsp[-1].str)), QString()); }
+#line 2619 "kdev-pg-parser.cc"
     break;
 
-  case 165:
-
-/* Line 1806 of yacc.c  */
-#line 664 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(1) - (2)].str)), "", (yyvsp[(2) - (2)].str)); }
+  case 165: /* operator: T_TERMINAL T_CODE  */
+#line 651 "kdev-pg-parser.yy"
+                                   { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8((yyvsp[-1].str))), QString(), QString::fromUtf8((yyvsp[0].str))); }
+#line 2625 "kdev-pg-parser.cc"
     break;
 
-  case 166:
-
-/* Line 1806 of yacc.c  */
-#line 665 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal((yyvsp[(1) - (1)].str)), "", ""); }
+  case 166: /* operator: T_TERMINAL  */
+#line 652 "kdev-pg-parser.yy"
+                                   { (yyval.operatorInformation) = KDevPG::makeOperator(KDevPG::globalSystem.terminal(QString::fromUtf8((yyvsp[0].str))), QString(), QString()); }
+#line 2631 "kdev-pg-parser.cc"
     break;
 
-  case 167:
-
-/* Line 1806 of yacc.c  */
-#line 669 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = (yyvsp[(1) - (1)].item); }
+  case 167: /* variableDeclarations: variableDeclaration  */
+#line 656 "kdev-pg-parser.yy"
+                                       { (yyval.item) = (yyvsp[0].item); }
+#line 2637 "kdev-pg-parser.cc"
     break;
 
-  case 168:
-
-/* Line 1806 of yacc.c  */
-#line 671 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    {
-          KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(1) - (2)].item);
-          while (last->mNext != 0) {
+  case 168: /* variableDeclarations: variableDeclarations variableDeclaration  */
+#line 658 "kdev-pg-parser.yy"
+        {
+          KDevPG::Model::VariableDeclarationItem *last = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[-1].item);
+          while (last->mNext != nullptr) {
             last = last->mNext;
           }
-          last->mNext = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[(2) - (2)].item);
-          (yyval.item) = (yyvsp[(1) - (2)].item);
+          last->mNext = (KDevPG::Model::VariableDeclarationItem*) (yyvsp[0].item);
+          (yyval.item) = (yyvsp[-1].item);
         }
+#line 2650 "kdev-pg-parser.cc"
     break;
 
-  case 169:
-
-/* Line 1806 of yacc.c  */
-#line 683 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), (yyvsp[(3) - (6)].variableType), false, (yyvsp[(4) - (6)].str), (yyvsp[(6) - (6)].str)); }
+  case 169: /* variableDeclaration: declarationType_opt storageType variableType T_IDENTIFIER ':' T_IDENTIFIER  */
+#line 670 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::variableDeclaration((yyvsp[-5].declarationType), (yyvsp[-4].storageType), (yyvsp[-3].variableType), false, QString::fromUtf8((yyvsp[-2].str)), QString::fromUtf8((yyvsp[0].str))); }
+#line 2656 "kdev-pg-parser.cc"
     break;
 
-  case 170:
-
-/* Line 1806 of yacc.c  */
-#line 685 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (5)].declarationType), (yyvsp[(2) - (5)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, false, (yyvsp[(4) - (5)].str), ""); }
+  case 170: /* variableDeclaration: declarationType_opt storageType T_TOKEN T_IDENTIFIER ';'  */
+#line 672 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::variableDeclaration((yyvsp[-4].declarationType), (yyvsp[-3].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, false, QString::fromUtf8((yyvsp[-1].str)), QString()); }
+#line 2662 "kdev-pg-parser.cc"
     break;
 
-  case 171:
-
-/* Line 1806 of yacc.c  */
-#line 687 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (7)].declarationType), (yyvsp[(2) - (7)].storageType), (yyvsp[(3) - (7)].variableType), true, (yyvsp[(5) - (7)].str), (yyvsp[(7) - (7)].str)); }
+  case 171: /* variableDeclaration: declarationType_opt storageType variableType '#' T_IDENTIFIER ':' T_IDENTIFIER  */
+#line 674 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::variableDeclaration((yyvsp[-6].declarationType), (yyvsp[-5].storageType), (yyvsp[-4].variableType), true, QString::fromUtf8((yyvsp[-2].str)), QString::fromUtf8((yyvsp[0].str))); }
+#line 2668 "kdev-pg-parser.cc"
     break;
 
-  case 172:
-
-/* Line 1806 of yacc.c  */
-#line 689 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.item) = KDevPG::variableDeclaration((yyvsp[(1) - (6)].declarationType), (yyvsp[(2) - (6)].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, true, (yyvsp[(5) - (6)].str), ""); }
+  case 172: /* variableDeclaration: declarationType_opt storageType T_TOKEN '#' T_IDENTIFIER ';'  */
+#line 676 "kdev-pg-parser.yy"
+        { (yyval.item) = KDevPG::variableDeclaration((yyvsp[-5].declarationType), (yyvsp[-4].storageType), KDevPG::Model::VariableDeclarationItem::TypeToken, true, QString::fromUtf8((yyvsp[-1].str)), QString()); }
+#line 2674 "kdev-pg-parser.cc"
     break;
 
-  case 173:
-
-/* Line 1806 of yacc.c  */
-#line 693 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     }
+  case 173: /* declarationType_opt: %empty  */
+#line 680 "kdev-pg-parser.yy"
+                        { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationLocal;     }
+#line 2680 "kdev-pg-parser.cc"
     break;
 
-  case 174:
-
-/* Line 1806 of yacc.c  */
-#line 694 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  }
+  case 174: /* declarationType_opt: T_ARGUMENT  */
+#line 681 "kdev-pg-parser.yy"
+                        { (yyval.declarationType) = KDevPG::Model::VariableDeclarationItem::DeclarationArgument;  }
+#line 2686 "kdev-pg-parser.cc"
     break;
 
-  case 175:
-
-/* Line 1806 of yacc.c  */
-#line 698 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    }
+  case 175: /* storageType: T_MEMBER  */
+#line 685 "kdev-pg-parser.yy"
+                        { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageAstMember;    }
+#line 2692 "kdev-pg-parser.cc"
     break;
 
-  case 176:
-
-/* Line 1806 of yacc.c  */
-#line 699 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     }
+  case 176: /* storageType: T_TEMPORARY  */
+#line 686 "kdev-pg-parser.yy"
+                        { (yyval.storageType) = KDevPG::Model::VariableDeclarationItem::StorageTemporary;     }
+#line 2698 "kdev-pg-parser.cc"
     break;
 
-  case 177:
-
-/* Line 1806 of yacc.c  */
-#line 703 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeNode;             }
+  case 177: /* variableType: T_NODE  */
+#line 690 "kdev-pg-parser.yy"
+                        { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeNode;             }
+#line 2704 "kdev-pg-parser.cc"
     break;
 
-  case 178:
-
-/* Line 1806 of yacc.c  */
-#line 704 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-    { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeVariable;         }
+  case 178: /* variableType: T_VARIABLE  */
+#line 691 "kdev-pg-parser.yy"
+                        { (yyval.variableType) = KDevPG::Model::VariableDeclarationItem::TypeVariable;         }
+#line 2710 "kdev-pg-parser.cc"
     break;
 
 
+#line 2714 "kdev-pg-parser.cc"
 
-/* Line 1806 of yacc.c  */
-#line 3192 "/home/jonathan/gitKDE/kdevelop-pg-qt/build/kdev-pg/kdev-pg-parser.cc"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3166,96 +2701,58 @@ yyreduce:
      case of YYERROR or YYBACKUP, subsequent parser actions might lead
      to an incorrect destructor call or verbose syntax error message
      before the lookahead is translated.  */
-  YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
+  YY_SYMBOL_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
   yylen = 0;
-  YY_STACK_PRINT (yyss, yyssp);
 
   *++yyvsp = yyval;
 
-  /* Now `shift' the result of the reduction.  Determine what state
+  /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
-
-  yyn = yyr1[yyn];
-
-  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
-  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
-    yystate = yytable[yystate];
-  else
-    yystate = yydefgoto[yyn - YYNTOKENS];
+  {
+    const int yylhs = yyr1[yyn] - YYNTOKENS;
+    const int yyi = yypgoto[yylhs] + *yyssp;
+    yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
+               ? yytable[yyi]
+               : yydefgoto[yylhs]);
+  }
 
   goto yynewstate;
 
 
-/*------------------------------------.
-| yyerrlab -- here on detecting error |
-`------------------------------------*/
+/*--------------------------------------.
+| yyerrlab -- here on detecting error.  |
+`--------------------------------------*/
 yyerrlab:
   /* Make sure we have latest lookahead translation.  See comments at
      user semantic actions for why this is necessary.  */
-  yytoken = yychar == YYEMPTY ? YYEMPTY : YYTRANSLATE (yychar);
-
+  yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
       ++yynerrs;
-#if ! YYERROR_VERBOSE
       yyerror (YY_("syntax error"));
-#else
-# define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
-                                        yyssp, yytoken)
-      {
-        char const *yymsgp = YY_("syntax error");
-        int yysyntax_error_status;
-        yysyntax_error_status = YYSYNTAX_ERROR;
-        if (yysyntax_error_status == 0)
-          yymsgp = yymsg;
-        else if (yysyntax_error_status == 1)
-          {
-            if (yymsg != yymsgbuf)
-              YYSTACK_FREE (yymsg);
-            yymsg = (char *) YYSTACK_ALLOC (yymsg_alloc);
-            if (!yymsg)
-              {
-                yymsg = yymsgbuf;
-                yymsg_alloc = sizeof yymsgbuf;
-                yysyntax_error_status = 2;
-              }
-            else
-              {
-                yysyntax_error_status = YYSYNTAX_ERROR;
-                yymsgp = yymsg;
-              }
-          }
-        yyerror (yymsgp);
-        if (yysyntax_error_status == 2)
-          goto yyexhaustedlab;
-      }
-# undef YYSYNTAX_ERROR
-#endif
     }
-
-
 
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
-	 error, discard it.  */
+         error, discard it.  */
 
       if (yychar <= YYEOF)
-	{
-	  /* Return failure if at end of input.  */
-	  if (yychar == YYEOF)
-	    YYABORT;
-	}
+        {
+          /* Return failure if at end of input.  */
+          if (yychar == YYEOF)
+            YYABORT;
+        }
       else
-	{
-	  yydestruct ("Error: discarding",
-		      yytoken, &yylval);
-	  yychar = YYEMPTY;
-	}
+        {
+          yydestruct ("Error: discarding",
+                      yytoken, &yylval);
+          yychar = YYEMPTY;
+        }
     }
 
   /* Else will try to reuse lookahead token after shifting the error
@@ -3267,14 +2764,13 @@ yyerrlab:
 | yyerrorlab -- error raised explicitly by YYERROR.  |
 `---------------------------------------------------*/
 yyerrorlab:
+  /* Pacify compilers when the user code never invokes YYERROR and the
+     label yyerrorlab therefore never appears in user code.  */
+  if (0)
+    YYERROR;
+  ++yynerrs;
 
-  /* Pacify compilers like GCC when the user code never invokes
-     YYERROR and the label yyerrorlab therefore never appears in user
-     code.  */
-  if (/*CONSTCOND*/ 0)
-     goto yyerrorlab;
-
-  /* Do not reclaim the symbols of the rule which action triggered
+  /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
   YYPOPSTACK (yylen);
   yylen = 0;
@@ -3287,39 +2783,42 @@ yyerrorlab:
 | yyerrlab1 -- common code for both syntax error and YYERROR.  |
 `-------------------------------------------------------------*/
 yyerrlab1:
-  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
+  yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
+  /* Pop stack until we find a state that shifts the error token.  */
   for (;;)
     {
       yyn = yypact[yystate];
       if (!yypact_value_is_default (yyn))
-	{
-	  yyn += YYTERROR;
-	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
-	    {
-	      yyn = yytable[yyn];
-	      if (0 < yyn)
-		break;
-	    }
-	}
+        {
+          yyn += YYSYMBOL_YYerror;
+          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
+            {
+              yyn = yytable[yyn];
+              if (0 < yyn)
+                break;
+            }
+        }
 
       /* Pop the current state because it cannot handle the error token.  */
       if (yyssp == yyss)
-	YYABORT;
+        YYABORT;
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
     }
 
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
 
   /* Shift the error token.  */
-  YY_SYMBOL_PRINT ("Shifting", yystos[yyn], yyvsp, yylsp);
+  YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
 
   yystate = yyn;
   goto yynewstate;
@@ -3330,26 +2829,30 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturn;
+  goto yyreturnlab;
+
 
 /*-----------------------------------.
 | yyabortlab -- YYABORT comes here.  |
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturn;
+  goto yyreturnlab;
 
-#if !defined(yyoverflow) || YYERROR_VERBOSE
-/*-------------------------------------------------.
-| yyexhaustedlab -- memory exhaustion comes here.  |
-`-------------------------------------------------*/
+
+/*-----------------------------------------------------------.
+| yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
+`-----------------------------------------------------------*/
 yyexhaustedlab:
   yyerror (YY_("memory exhausted"));
   yyresult = 2;
-  /* Fall through.  */
-#endif
+  goto yyreturnlab;
 
-yyreturn:
+
+/*----------------------------------------------------------.
+| yyreturnlab -- parsing is finished, clean up and return.  |
+`----------------------------------------------------------*/
+yyreturnlab:
   if (yychar != YYEMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
@@ -3358,31 +2861,23 @@ yyreturn:
       yydestruct ("Cleanup: discarding lookahead",
                   yytoken, &yylval);
     }
-  /* Do not reclaim the symbols of the rule which action triggered
+  /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
   YY_STACK_PRINT (yyss, yyssp);
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
   if (yyss != yyssa)
     YYSTACK_FREE (yyss);
 #endif
-#if YYERROR_VERBOSE
-  if (yymsg != yymsgbuf)
-    YYSTACK_FREE (yymsg);
-#endif
-  /* Make sure YYID is used.  */
-  return YYID (yyresult);
+
+  return yyresult;
 }
 
-
-
-/* Line 2067 of yacc.c  */
-#line 707 "/home/jonathan/gitKDE/kdevelop-pg-qt/kdev-pg/kdev-pg-parser.yy"
-
+#line 694 "kdev-pg-parser.yy"
 

@@ -45,11 +45,6 @@ ecm_set_disabled_deprecation_versions(
     QT 6.5
 )
 
-# added by KDE_COMPILERSETTINGS_LEVEL 5.85.0
-remove_definitions(
-    -DQT_NO_CAST_FROM_ASCII
-)
-
 # Silence a few warnings
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Wno-unused-local-typedefs")

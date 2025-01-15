@@ -71,7 +71,7 @@ public:
     memset(mByte, 0, bytes());
     setZerosAtEnd();
   }
-  inline BitArray() : mSize(0), mByte((unsigned char*)malloc(0))
+  inline BitArray() : mSize(0), mByte(nullptr)
   {
   }
   inline BitArray(const BitArray& o) : mSize(o.mSize), mByte(reinterpret_cast<unsigned char*>(malloc(bytes())))

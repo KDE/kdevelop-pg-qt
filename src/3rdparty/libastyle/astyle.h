@@ -517,9 +517,9 @@ class ASFormatter : public ASBeautifier
 	public:	// functions
 		ASFormatter();
 		virtual ~ASFormatter();
-		virtual void init(ASSourceIterator* iter);
-		virtual bool hasMoreLines() const;
-		virtual string nextLine();
+		void init(ASSourceIterator* iter) override;
+		bool hasMoreLines() const override;
+		string nextLine() override;
 		LineEndFormat getLineEndFormat() const;
 		void setFormattingStyle(FormatStyle style);
 		void setAddBracketsMode(bool state);

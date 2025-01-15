@@ -460,6 +460,7 @@ public:
         }
       }
     }
+    NFA<CharSet>& operator=(const NFA<CharSet>& o) = default;
     void adjust(size_t startnum)
     {
         accept += startnum;

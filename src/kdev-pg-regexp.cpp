@@ -1473,7 +1473,7 @@ GNFA GNFA::range(quint32 begin, quint32 end)
     } break;
     case TUcs2: {
       res.t2 = new NFA<TableCharSet<Ucs2> >(begin >= 0x10000 ? TableCharSet<Ucs2>::emptySet() : TableCharSet<Ucs2>::range(begin, min((quint32)0x10000, end))/*.difference(TableCharSet<Ucs2>::range(0xd800, 0xe000))*/);
-    }
+    } break;
     case TUtf16: {
       UTF16_IMPL(TableCharSet, t2)
       #undef UTF16_IMPL

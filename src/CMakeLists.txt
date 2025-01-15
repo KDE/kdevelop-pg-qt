@@ -55,6 +55,8 @@ if (BISON_FOUND)
         "${CMAKE_CURRENT_SOURCE_DIR}/kdev-pg-parser.yy"
         "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc"
         DEFINES_FILE "${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.hh"
+        # line info mostly not helpful, also avoids "warning: style of line directive is a GCC extension"
+        COMPILE_FLAGS "--no-lines"
     )
 
     set(parser_src ${CMAKE_CURRENT_BINARY_DIR}/kdev-pg-parser.cc)

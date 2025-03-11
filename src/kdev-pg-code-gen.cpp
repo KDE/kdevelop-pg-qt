@@ -13,6 +13,7 @@
 #include <QStack>
 #include <QStringList>
 #include "kdev-pg-pretty-printer.h"
+#include <vector>
 
 namespace KDevPG
 {
@@ -151,6 +152,11 @@ namespace KDevPG
       }
   }
 
+  bool terminalItemNameLess(Model::TerminalItem *a, Model::TerminalItem *b)
+  {
+        return (a->mName < b->mName);
+  }
+
   void generateRecovery(Model::Node *node, int catch_id, QTextStream& out)
   {
     World::NodeSet s = globalSystem.follow(node);
@@ -163,6 +169,9 @@ namespace KDevPG
 
     out << "while (yytoken != Token_EOF";
 
+    // output sorted for build reproducibility, for now alphabetically due to lack of e.g. runtime priorities
+    std::vector<Model::TerminalItem *> sortedTerminalItems;
+    sortedTerminalItems.reserve(s.size());
     World::NodeSet::iterator it = s.begin();
     while (it != s.end())
       {
@@ -170,9 +179,14 @@ namespace KDevPG
         ++it;
 
         if (Model::TerminalItem *t = nodeCast<Model::TerminalItem*>(item))
-          out << Qt::endl << "&& yytoken != Token_" << t->mName;
+          sortedTerminalItems.push_back(t);
       }
 
+    std::sort(sortedTerminalItems.begin(), sortedTerminalItems.end(), terminalItemNameLess);
+    for (auto *terminalItem : sortedTerminalItems)
+      {
+        out << Qt::endl << "&& yytoken != Token_" << terminalItem->mName;
+      }
     out << ")" << Qt::endl
         << "{ yylex(); }" << Qt::endl;
   }

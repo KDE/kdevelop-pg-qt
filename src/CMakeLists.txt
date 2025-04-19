@@ -130,26 +130,3 @@ install(EXPORT KDevelopPGQtTargets
     DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
     NAMESPACE KDevelopPGQt::
 )
-
-# < 2.4 backward compat
-if (BUILD_COMPAT_CMAKECONFIG)
-
-set(CMAKECONFIG_COMPAT_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/KDevelop-PG-Qt)
-
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/KDevelop-PG-QtConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
-    INSTALL_DESTINATION ${CMAKECONFIG_COMPAT_INSTALL_DIR}
-)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
-    VERSION ${kdevelop-pg-qt_VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/KDevelop-PG-QtConfigVersion.cmake"
-    DESTINATION "${CMAKECONFIG_COMPAT_INSTALL_DIR}"
-)
-
-endif()

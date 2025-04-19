@@ -20,8 +20,6 @@ include(CMakePackageConfigHelpers)
 
 option(BUILD_EXAMPLES "Build examples" OFF)
 
-option(BUILD_COMPAT_CMAKECONFIG "Build backward compat CMake Config files" ON)
-
 if(BUILD_TESTING)
   set(REQUIRED_QT_TESTCOMPONENTS Test)
 endif()
